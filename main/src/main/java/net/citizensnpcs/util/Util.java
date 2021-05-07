@@ -99,6 +99,22 @@ public class Util {
         NMS.look(entity, to, headOnly, immediate);
     }
 
+    public static void generateTeamFor(NPC npc, String name, String teamName) {
+        Scoreboard scoreboard = getDummyScoreboard();
+        Team team = scoreboard.getTeam(teamName);
+        int mode = 2;
+        if (team == null) {
+            team = scoreboard.registerNewTeam(teamName);
+            if (npc.requiresNameHologram() || npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("false")) {
+                NMS.setTeamNameTagVisible(team, false);
+            }
+            mode = 0;
+        }
+        team.addEntry(name);
+        npc.data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
+        sendTeamPacketToOnlinePlayers(team, mode);
+    }
+
     public static Scoreboard getDummyScoreboard() {
         return DUMMY_SCOREBOARD;
     }
@@ -264,6 +280,24 @@ public class Util {
     public static String prettyPrintLocation(Location to) {
         return String.format("%s at %d, %d, %d (%d, %d)", to.getWorld().getName(), to.getBlockX(), to.getBlockY(),
                 to.getBlockZ(), (int) to.getYaw(), (int) to.getPitch());
+    }
+
+    public static void removeTeamFor(NPC npc, String name) {
+        String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+        if (teamName.isEmpty())
+            return;
+        Team team = getDummyScoreboard().getTeam(teamName);
+        npc.data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+        if (team == null)
+            return;
+        if (team.hasEntry(name)) {
+            if (team.getSize() == 1) {
+                sendTeamPacketToOnlinePlayers(team, 1);
+                team.unregister();
+            } else {
+                team.removeEntry(name);
+            }
+        }
     }
 
     /**
