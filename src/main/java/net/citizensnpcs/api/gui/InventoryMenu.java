@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -62,6 +63,7 @@ import net.citizensnpcs.api.util.Messaging;
  */
 public class InventoryMenu implements Listener, Runnable {
     private final List<Runnable> closeCallbacks = Lists.newArrayList();
+    private boolean manualClose;
     private PageContext page;
     private int pickupAmount = -1;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
@@ -93,22 +95,29 @@ public class InventoryMenu implements Listener, Runnable {
      */
     public void close() {
         HandlerList.unregisterAll(this);
+        manualClose = true;
         for (InventoryView view : views) {
             page.page.onClose(view.getPlayer());
             view.close();
         }
+        views.clear();
+        manualClose = false;
     }
 
     /**
      * Closes the GUI for just a specific Player.
      */
     public void close(Player player) {
-        for (InventoryView view : views) {
+        Iterator<InventoryView> itr = views.iterator();
+        manualClose = true;
+        while (itr.hasNext()) {
+            InventoryView view = itr.next();
             if (view.getPlayer() == player) {
-                page.page.onClose(player);
                 view.close();
+                itr.remove();
             }
         }
+        manualClose = false;
     }
 
     private InventoryMenuSlot createSlot(int pos, MenuSlot slotInfo) {
@@ -186,19 +195,55 @@ public class InventoryMenu implements Listener, Runnable {
         }
     }
 
-    public void transitionBack() {
-        if (page == null)
-            return;
-        Map<String, Object> data = page.ctx.data();
-        page = stack.poll();
-        if (page != null) {
-            page.ctx.data().putAll(data);
-        }
-        data.clear();
-        transitionViewersToInventory(page == null ? null : page.ctx.getInventory());
-        if (page == null) {
-            for (Runnable callback : closeCallbacks) {
-                callback.run();
+    private void handleShiftClick(InventoryClickEvent event, Inventory dest, boolean toNPC) {
+        int amount = event.getCurrentItem().getAmount();
+        ItemStack merging = new ItemStack(event.getCurrentItem().clone());
+        ItemStack[] contents = dest.getContents();
+        for (int i = 0; i < contents.length; i++) {
+            if (contents[i] == null || contents[i].getType() == Material.AIR) {
+                merging.setAmount(amount);
+                if (toNPC) {
+                    event.getView().setCursor(merging);
+                }
+                InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
+                        toNPC ? i : event.getRawSlot(), event.getClick(),
+                        toNPC ? InventoryAction.PLACE_ALL : InventoryAction.PICKUP_ALL);
+                onInventoryClick(e);
+                if (toNPC) {
+                    event.getView().setCursor(null);
+                }
+                if (!e.isCancelled() && e.getResult() != Result.DENY) {
+                    dest.setItem(i, merging);
+                    event.setCurrentItem(null);
+                    break;
+                }
+            } else if (contents[i].getType() == event.getCurrentItem().getType()) {
+                ItemStack stack = contents[i].clone();
+                merging.setAmount(Math.min(amount, stack.getType().getMaxStackSize() - stack.getAmount()));
+                InventoryAction action;
+                if (toNPC) {
+                    event.getView().setCursor(merging);
+                    action = amount - merging.getAmount() <= 0 ? InventoryAction.PLACE_ALL : InventoryAction.PLACE_SOME;
+                } else {
+                    action = amount - merging.getAmount() <= 0 ? InventoryAction.PICKUP_ALL
+                            : InventoryAction.PICKUP_SOME;
+                    pickupAmount = merging.getAmount();
+                }
+                InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
+                        toNPC ? i : event.getRawSlot(), event.getClick(), action);
+                onInventoryClick(e);
+                if (toNPC) {
+                    event.getView().setCursor(null);
+                }
+                if (!e.isCancelled() && e.getResult() != Result.DENY) {
+                    stack.setAmount(stack.getAmount() + merging.getAmount());
+                    dest.setItem(i, stack);
+                    amount -= merging.getAmount();
+                    event.getCurrentItem().setAmount(amount);
+                    if (amount <= 0) {
+                        break;
+                    }
+                }
             }
         }
     }
@@ -215,57 +260,7 @@ public class InventoryMenu implements Listener, Runnable {
                     : event.getInventory();
             boolean toNPC = dest == page.ctx.getInventory();
             if ((event.getCursor() == null || event.getCursor().getType() == Material.AIR)) {
-                int amount = event.getCurrentItem().getAmount();
-                ItemStack merging = new ItemStack(event.getCurrentItem().clone());
-                ItemStack[] contents = dest.getContents();
-                for (int i = 0; i < contents.length; i++) {
-                    if (contents[i] == null || contents[i].getType() == Material.AIR) {
-                        merging.setAmount(amount);
-                        if (toNPC) {
-                            event.getView().setCursor(merging);
-                        }
-                        InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
-                                toNPC ? i : event.getRawSlot(), event.getClick(),
-                                toNPC ? InventoryAction.PLACE_ALL : InventoryAction.PICKUP_ALL);
-                        onInventoryClick(e);
-                        if (toNPC) {
-                            event.getView().setCursor(null);
-                        }
-                        if (!e.isCancelled() && e.getResult() != Result.DENY) {
-                            dest.setItem(i, merging);
-                            event.setCurrentItem(null);
-                            break;
-                        }
-                    } else if (contents[i].getType() == event.getCurrentItem().getType()) {
-                        ItemStack stack = contents[i].clone();
-                        merging.setAmount(Math.min(amount, stack.getType().getMaxStackSize() - stack.getAmount()));
-                        InventoryAction action;
-                        if (toNPC) {
-                            event.getView().setCursor(merging);
-                            action = amount - merging.getAmount() <= 0 ? InventoryAction.PLACE_ALL
-                                    : InventoryAction.PLACE_SOME;
-                        } else {
-                            action = amount - merging.getAmount() <= 0 ? InventoryAction.PICKUP_ALL
-                                    : InventoryAction.PICKUP_SOME;
-                            pickupAmount = merging.getAmount();
-                        }
-                        InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
-                                toNPC ? i : event.getRawSlot(), event.getClick(), action);
-                        onInventoryClick(e);
-                        if (toNPC) {
-                            event.getView().setCursor(null);
-                        }
-                        if (!e.isCancelled() && e.getResult() != Result.DENY) {
-                            stack.setAmount(stack.getAmount() + merging.getAmount());
-                            dest.setItem(i, stack);
-                            amount -= merging.getAmount();
-                            event.getCurrentItem().setAmount(amount);
-                            if (amount <= 0) {
-                                break;
-                            }
-                        }
-                    }
-                }
+                handleShiftClick(event, dest, toNPC);
                 return;
             }
         }
@@ -318,7 +313,7 @@ public class InventoryMenu implements Listener, Runnable {
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (page == null || !event.getInventory().equals(page.ctx.getInventory()))
+        if (page == null || !event.getInventory().equals(page.ctx.getInventory()) || manualClose)
             return;
         page.page.onClose(event.getPlayer());
         transitionBack();
@@ -488,6 +483,23 @@ public class InventoryMenu implements Listener, Runnable {
         }
         InventoryMenuInfo info = CACHED_INFOS.get(clazz);
         transition(info, instance, context);
+    }
+
+    public void transitionBack() {
+        if (page == null)
+            return;
+        Map<String, Object> data = page.ctx.data();
+        page = stack.poll();
+        if (page != null) {
+            page.ctx.data().putAll(data);
+        }
+        data.clear();
+        transitionViewersToInventory(page == null ? null : page.ctx.getInventory());
+        if (page == null) {
+            for (Runnable callback : closeCallbacks) {
+                callback.run();
+            }
+        }
     }
 
     private void transitionViewersToInventory(Inventory inventory) {

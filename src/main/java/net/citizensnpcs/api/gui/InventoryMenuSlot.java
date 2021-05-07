@@ -123,6 +123,15 @@ public class InventoryMenuSlot {
         }
     }
 
+    public void setDescription(String description) {
+        ItemStack item = inventory.getItem(index);
+        ItemMeta meta = item.getItemMeta();
+        meta.setLore(Arrays.asList(Colorizer.parseColors(description).split("\n")));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        item.setItemMeta(meta);
+        inventory.setItem(index, item);
+    }
+
     /**
      * Sets a new {@link ClickType} filter that will only accept clicks with the given type. An empty set is equivalent
      * to allowing all click types.
