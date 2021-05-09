@@ -42,6 +42,10 @@ public class NPCDamageEvent extends NPCEvent implements Cancellable {
         event.setCancelled(cancel);
     }
 
+    public void setDamage(double damage) {
+        event.setDamage(damage);
+    }
+
     public void setDamage(int damage) {
         event.setDamage(damage);
     }
