@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.bukkit.util.Vector;
 
+import com.google.common.collect.Collections2;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 
@@ -32,7 +34,7 @@ public class Flocker implements Runnable {
 
     @Override
     public void run() {
-        Collection<NPC> nearby = flock.getNearby(npc);
+        Collection<NPC> nearby = Collections2.filter(flock.getNearby(npc), npc -> npc.isSpawned());
         if (nearby.isEmpty())
             return;
         Vector base = new Vector(0, 0, 0);
@@ -50,6 +52,8 @@ public class Flocker implements Runnable {
      *            the new maximum length
      */
     public void setMaxForce(double maxForce) {
+        if (maxForce == 0)
+            throw new IllegalArgumentException();
         this.maxForce = maxForce;
     }
 
