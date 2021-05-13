@@ -88,7 +88,7 @@ public class PersistenceLoader {
         public DataKey getDataKey(DataKey root) {
             if (Modifier.isStatic(field.getModifiers())) {
                 if (persistAnnotation.namespace().isEmpty()) {
-                    throw new IllegalArgumentException("Missing namespace");
+                    throw new IllegalArgumentException("Missing @Persist namespace for " + field);
                 }
                 return root.getFromRoot("global." + persistAnnotation.namespace());
             }
