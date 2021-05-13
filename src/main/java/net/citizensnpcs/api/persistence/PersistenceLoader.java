@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -54,12 +55,10 @@ public class PersistenceLoader {
     private static class PersistField {
         private final Persister<?> delegate;
         private final Field field;
-        private final Object instance;
         private final String key;
         private final Persist persistAnnotation;
-        private Object value;
 
-        private PersistField(Field field, Object instance) {
+        private PersistField(Field field) {
             this.field = field;
             this.persistAnnotation = field.getAnnotation(Persist.class);
             this.key = persistAnnotation.value().equals("UNINITIALISED") ? field.getName() : persistAnnotation.value();
@@ -69,21 +68,16 @@ public class PersistenceLoader {
                 fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[index];
             }
             this.delegate = persistAnnotation.reify() ? new GenericPersister(fallback) : getDelegate(field, fallback);
-            this.instance = instance;
         }
 
         @SuppressWarnings("unchecked")
-        public <T> T get() {
-            if (value == null)
-                try {
-                    value = field.get(instance);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    value = NULL;
-                }
-            if (value == NULL)
-                return null;
-            return (T) value;
+        public <T> T get(Object instance) {
+            try {
+                return (T) field.get(instance);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return (T) NULL;
+            }
         }
 
         public Class<?> getCollectionType() {
@@ -98,7 +92,7 @@ public class PersistenceLoader {
             return persistAnnotation.required();
         }
 
-        public void set(Object value) {
+        public void set(Object instance, Object value) {
             try {
                 field.set(instance, value);
             } catch (Exception e) {
@@ -122,7 +116,8 @@ public class PersistenceLoader {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void deserialise(PersistField field, DataKey root) throws Exception {
+    private static void deserialise(PersistField field, Object instance, Object oldValue, DataKey root)
+            throws Exception {
         Object value;
         Class<?> type = field.getType();
         Class<?> collectionType = field.getCollectionType();
@@ -147,8 +142,8 @@ public class PersistenceLoader {
                 if (field.getType().isEnum()) {
                     set = EnumSet.noneOf((Class<? extends Enum>) field.getType());
                 } else {
-                    set = (Set) (field.get() != null && Set.class.isAssignableFrom(field.get().getClass())
-                            ? field.get().getClass().newInstance()
+                    set = (Set) (oldValue != null && Set.class.isAssignableFrom(oldValue.getClass())
+                            ? oldValue.getClass().newInstance()
                             : Sets.newHashSet());
                 }
             }
@@ -163,9 +158,9 @@ public class PersistenceLoader {
             if (Map.class.isAssignableFrom(collectionType)) {
                 map = (Map<String, Object>) collectionType.newInstance();
             } else {
-                boolean hasConcreteType = field.get() != null && Map.class.isAssignableFrom(field.get().getClass())
-                        && !field.get().getClass().isInterface();
-                map = (Map<String, Object>) (hasConcreteType ? field.get() : Maps.newHashMap());
+                boolean hasConcreteType = oldValue != null && Map.class.isAssignableFrom(oldValue.getClass())
+                        && !oldValue.getClass().isInterface();
+                map = (Map<String, Object>) (hasConcreteType ? oldValue : Maps.newHashMap());
             }
             deserialiseMap(map, root, field);
             value = map;
@@ -233,11 +228,11 @@ public class PersistenceLoader {
                     && type != Double.class && type != Long.class && type != Float.class) {
                 return;
             }
-            field.set(value);
+            field.set(instance, value);
         } else {
             if (value != null && !type.isAssignableFrom(value.getClass()))
                 return;
-            field.set(value);
+            field.set(instance, value);
         }
     }
 
@@ -333,15 +328,15 @@ public class PersistenceLoader {
         return persister == null ? loadedDelegates.get(persistRedirects.get(fallback)) : persister;
     }
 
-    private static Field[] getFields(Class<?> clazz) {
-        Field[] fields = fieldCache.get(clazz);
+    private static PersistField[] getFields(Class<?> clazz) {
+        PersistField[] fields = fieldCache.get(clazz);
         if (fields == null) {
             fieldCache.put(clazz, fields = getFieldsFromClass(clazz));
         }
         return fields;
     }
 
-    private static Field[] getFieldsFromClass(Class<?> clazz) {
+    private static PersistField[] getFieldsFromClass(Class<?> clazz) {
         List<Field> toFilter = Lists.newArrayList(clazz.getDeclaredFields());
         Class<?> superClass = clazz.getSuperclass();
         while (superClass != Object.class && superClass != null) {
@@ -369,7 +364,7 @@ public class PersistenceLoader {
                 continue;
             }
         }
-        return toFilter.toArray(new Field[toFilter.size()]);
+        return Collections2.transform(toFilter, (a) -> new PersistField(a)).toArray(new PersistField[toFilter.size()]);
     }
 
     private static Class<?> getGenericType(Field field) {
@@ -423,10 +418,10 @@ public class PersistenceLoader {
      */
     public static <T> T load(T instance, DataKey root) {
         Class<?> clazz = instance.getClass();
-        Field[] fields = getFields(clazz);
-        for (Field field : fields) {
+        PersistField[] fields = getFields(clazz);
+        for (PersistField field : fields) {
             try {
-                deserialise(new PersistField(field, instance), root);
+                deserialise(field, instance, field.get(instance), root);
             } catch (Exception e) {
                 if (e != loadException) {
                     e.printStackTrace();
@@ -465,20 +460,20 @@ public class PersistenceLoader {
      */
     public static void save(Object instance, DataKey root) {
         Class<?> clazz = instance.getClass();
-        Field[] fields = getFields(clazz);
-        for (Field field : fields) {
-            serialise(new PersistField(field, instance), root);
+        PersistField[] fields = getFields(clazz);
+        for (PersistField field : fields) {
+            serialise(field, field.get(instance), root);
         }
         if (instance instanceof Persistable) {
             ((Persistable) instance).save(root);
         }
     }
 
-    private static void serialise(PersistField field, DataKey root) {
-        if (field.get() == null)
+    private static void serialise(PersistField field, Object fieldValue, DataKey root) {
+        if (fieldValue == null)
             return;
         if (Collection.class.isAssignableFrom(field.getType())) {
-            Collection<?> collection = field.get();
+            Collection<?> collection = (Collection<?>) fieldValue;
             root.removeKey(field.key);
             int i = 0;
             for (Object object : collection) {
@@ -487,35 +482,36 @@ public class PersistenceLoader {
                 i++;
             }
         } else if (Map.class.isAssignableFrom(field.getType())) {
-            Map<String, Object> map = field.get();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) fieldValue;
             root.removeKey(field.key);
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 String key = createRelativeKey(field.key, entry.getKey());
                 serialiseValue(field, root.getRelative(key), entry.getValue());
             }
         } else if (float[].class.isAssignableFrom(field.getType())) {
-            float[] floats = field.get();
+            float[] floats = (float[]) fieldValue;
             root.removeKey(field.key);
             for (int i = 0; i < floats.length; i++) {
                 String key = createRelativeKey(field.key, i);
                 serialiseValue(field, root.getRelative(key), floats[i]);
             }
         } else if (double[].class.isAssignableFrom(field.getType())) {
-            double[] doubles = field.get();
+            double[] doubles = (double[]) fieldValue;
             root.removeKey(field.key);
             for (int i = 0; i < doubles.length; i++) {
                 String key = createRelativeKey(field.key, i);
                 serialiseValue(field, root.getRelative(key), doubles[i]);
             }
         } else if (int[].class.isAssignableFrom(field.getType())) {
-            int[] ints = field.get();
+            int[] ints = (int[]) fieldValue;
             root.removeKey(field.key);
             for (int i = 0; i < ints.length; i++) {
                 String key = createRelativeKey(field.key, i);
                 serialiseValue(field, root.getRelative(key), ints[i]);
             }
         } else {
-            serialiseValue(field, root.getRelative(field.key), field.get());
+            serialiseValue(field, root.getRelative(field.key), fieldValue);
         }
     }
 
@@ -530,7 +526,7 @@ public class PersistenceLoader {
         }
     }
 
-    private static final Map<Class<?>, Field[]> fieldCache = new WeakHashMap<Class<?>, Field[]>();
+    private static final Map<Class<?>, PersistField[]> fieldCache = new WeakHashMap<Class<?>, PersistField[]>();
     private static final Map<Class<? extends Persister<?>>, Persister<?>> loadedDelegates = new WeakHashMap<Class<? extends Persister<?>>, Persister<?>>();
     private static final Exception loadException = new Exception() {
         @SuppressWarnings("unused")
