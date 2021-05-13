@@ -14,7 +14,6 @@ public class AStarMachine<N extends AStarNode, P extends Plan> {
         float g = node.g + goal.g(node, neighbour); // calculate the cost from the start additively
         float h = goal.h(neighbour);
 
-        neighbour.f = g + h;
         neighbour.g = g;
         neighbour.h = h;
     }
@@ -22,7 +21,8 @@ public class AStarMachine<N extends AStarNode, P extends Plan> {
     private AStarStorage getInitialisedStorage(AStarGoal<N> goal, N start) {
         AStarStorage storage = storageSupplier.get();
         storage.open(start);
-        start.f = goal.getInitialCost(start);
+        start.g = goal.getInitialCost(start);
+        start.h = 0;
         return storage;
     }
 

@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -16,7 +17,8 @@ public class VectorNode extends AStarNode implements PathPoint {
     List<PathCallback> callbacks;
     private final PathInfo info;
     Vector location;
-    Vector locationClone;
+    Vector locationCache;
+    List<Vector> pathVectors;
 
     public VectorNode(VectorGoal goal, Location location, BlockSource source, BlockExaminer... examiners) {
         this(null, goal, location.toVector(), source, examiners);
@@ -143,11 +145,16 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     @Override
+    public List<Vector> getPathVectors() {
+        return pathVectors != null ? pathVectors : Collections.singletonList(location);
+    }
+
+    @Override
     public Vector getVector() {
-        if (locationClone == null) {
-            locationClone = location.clone();
+        if (locationCache == null) {
+            locationCache = location.clone();
         }
-        return locationClone.setX(location.getBlockX()).setY(location.getBlockY()).setZ(location.getBlockZ());
+        return locationCache.setX(location.getBlockX()).setY(location.getBlockY()).setZ(location.getBlockZ());
     }
 
     @Override
@@ -169,6 +176,11 @@ public class VectorNode extends AStarNode implements PathPoint {
             passable |= state == PassableState.PASSABLE ? true : false;
         }
         return passable;
+    }
+
+    @Override
+    public void setPathVectors(List<Vector> vectors) {
+        this.pathVectors = vectors;
     }
 
     @Override

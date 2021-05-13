@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 public abstract class AStarNode implements Comparable<AStarNode> {
-    float f, g, h;
+    float g, h;
     AStarNode parent;
     List<AStarNode> parents;
 
@@ -18,7 +18,7 @@ public abstract class AStarNode implements Comparable<AStarNode> {
 
     @Override
     public int compareTo(AStarNode other) {
-        return Float.compare(f, other.f);
+        return Float.compare(g + h, other.g + other.h);
     }
 
     @Override
@@ -45,7 +45,7 @@ public abstract class AStarNode implements Comparable<AStarNode> {
     }
 
     protected float getPathCost() {
-        return f;
+        return g + h;
     }
 
     @Override

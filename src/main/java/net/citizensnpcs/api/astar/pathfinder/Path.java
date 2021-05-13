@@ -8,7 +8,6 @@ import java.util.ListIterator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -45,8 +44,9 @@ public class Path implements Plan {
         // possibly expose cullability in an API
         List<PathEntry> path = Lists.newArrayList();
         for (VectorNode node : unfiltered) {
-            Vector vector = node.location;
-            path.add(new PathEntry(vector, node.callbacks));
+            for (Vector vector : node.getPathVectors()) {
+                path.add(new PathEntry(vector, node.callbacks));
+            }
         }
         return path.toArray(new PathEntry[path.size()]);
     }
@@ -120,14 +120,11 @@ public class Path implements Plan {
             this.callbacks = callbacks;
         }
 
-        private Block getBlockUsingWorld(World world) {
-            return world.getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
-        }
-
         public void run(final NPC npc) {
             if (callbacks == null)
                 return;
-            Block block = getBlockUsingWorld(npc.getEntity().getWorld());
+            Block current = npc.getEntity().getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(),
+                    vector.getBlockZ());
             for (PathCallback callback : callbacks) {
                 if (blockList == null) {
                     blockList = Lists.transform(Arrays.asList(path), new Function<PathEntry, Block>() {
@@ -144,7 +141,7 @@ public class Path implements Plan {
                         vec.next();
                     }
                 }
-                callback.run(npc, block, vec);
+                callback.run(npc, current, vec);
             }
         }
 
