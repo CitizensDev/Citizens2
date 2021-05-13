@@ -171,6 +171,11 @@ public class YamlStorage implements FileStorage {
         }
 
         @Override
+        public DataKey getFromRoot(String path) {
+            return new YamlKey(path);
+        }
+
+        @Override
         public int getInt(String key) {
             return getInt(key, 0);
         }

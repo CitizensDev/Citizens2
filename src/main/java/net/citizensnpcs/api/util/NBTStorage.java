@@ -230,6 +230,11 @@ public class NBTStorage implements FileStorage {
         }
 
         @Override
+        public DataKey getFromRoot(String path) {
+            return new NBTKey(path);
+        }
+
+        @Override
         public int getInt(String key) {
             Number number = extractNumber(findLastTag(key));
             if (number == null)

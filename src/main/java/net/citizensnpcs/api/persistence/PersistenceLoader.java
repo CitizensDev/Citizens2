@@ -2,6 +2,7 @@ package net.citizensnpcs.api.persistence;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -82,6 +83,16 @@ public class PersistenceLoader {
 
         public Class<?> getCollectionType() {
             return persistAnnotation.collectionType();
+        }
+
+        public DataKey getDataKey(DataKey root) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                if (persistAnnotation.namespace().isEmpty()) {
+                    throw new IllegalArgumentException("Missing namespace");
+                }
+                return root.getFromRoot("global." + persistAnnotation.namespace());
+            }
+            return root;
         }
 
         public Class<?> getType() {
@@ -421,7 +432,7 @@ public class PersistenceLoader {
         PersistField[] fields = getFields(clazz);
         for (PersistField field : fields) {
             try {
-                deserialise(field, instance, field.get(instance), root);
+                deserialise(field, instance, field.get(instance), field.getDataKey(root));
             } catch (Exception e) {
                 if (e != loadException) {
                     e.printStackTrace();
@@ -462,7 +473,7 @@ public class PersistenceLoader {
         Class<?> clazz = instance.getClass();
         PersistField[] fields = getFields(clazz);
         for (PersistField field : fields) {
-            serialise(field, field.get(instance), root);
+            serialise(field, field.get(instance), field.getDataKey(root));
         }
         if (instance instanceof Persistable) {
             ((Persistable) instance).save(root);

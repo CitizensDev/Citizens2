@@ -21,6 +21,11 @@ public @interface Persist {
     Class<?> collectionType() default Collection.class;
 
     /**
+     * If using global/static persistence, must be non-empty.
+     */
+    String namespace() default "";
+
+    /**
      * Whether to use PersistenceLoader to load/save the value of this class.
      */
     boolean reify() default false;

@@ -62,6 +62,8 @@ public abstract class DataKey {
         return value;
     }
 
+    public abstract DataKey getFromRoot(String path);
+
     public abstract int getInt(String key);
 
     public int getInt(String key, int value) {

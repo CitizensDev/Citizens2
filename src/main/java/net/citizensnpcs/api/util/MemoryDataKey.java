@@ -57,6 +57,11 @@ public class MemoryDataKey extends DataKey {
     }
 
     @Override
+    public DataKey getFromRoot(String path) {
+        return new MemoryDataKey(root, path);
+    }
+
+    @Override
     public int getInt(String key) {
         return root.getInt(getKeyFor(key), 0);
     }

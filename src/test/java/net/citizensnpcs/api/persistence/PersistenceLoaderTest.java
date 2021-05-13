@@ -119,6 +119,15 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void staticPersistence() {
+        StaticPersistenceTest.abc = "a";
+        PersistenceLoader.save(new StaticPersistenceTest(), root);
+        assertThat(root.getString("global.test.abc"), equalTo("a"));
+        root.setString("global.test.abc", "test");
+        assertThat(PersistenceLoader.load(StaticPersistenceTest.class, root).abc, equalTo("test"));
+    }
+
+    @Test
     public void testMapReload() {
         root.setBoolean("enabled.trig1", true);
         TestMap stored = PersistenceLoader.load(TestMap.class, root);
@@ -210,6 +219,11 @@ public class PersistenceLoaderTest {
 
         @Persist(collectionType = LinkedHashSet.class)
         private Set<Integer> set;
+    }
+
+    private static class StaticPersistenceTest {
+        @Persist(namespace = "test")
+        private static String abc;
     }
 
     public static class Superclass {
