@@ -151,6 +151,7 @@ public class Settings {
         TABLIST_REMOVE_PACKET_DELAY("npc.tablist.remove-packet-delay", 1),
         TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 5),
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 10),
+        TALK_CLOSE_TO_NPCS("npc.chat.options.talk-to-npcs", true),
         TALK_ITEM("npc.text.talk-item", "*"),
         TELEPORT_DELAY("npc.teleport-delay", -1),
         USE_BOAT_CONTROLS("npc.controllable.use-boat-controls", true),

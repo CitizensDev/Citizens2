@@ -33,7 +33,7 @@ import net.citizensnpcs.api.util.SpigotUtil;
         slots = { @MenuSlot(
                 filter = InventoryAction.UNKNOWN,
                 pat = 'x',
-                compatMaterial = { "GLASS_PANE", "FIRE" },
+                compatMaterial = { "BARRIER", "FIRE" },
                 title = "<4>Unused") },
         value = "xxx")
 public class EndermanEquipperGUI extends InventoryMenuPage {

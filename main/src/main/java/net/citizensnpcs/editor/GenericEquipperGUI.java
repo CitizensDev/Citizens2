@@ -63,7 +63,7 @@ import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
         slots = { @MenuSlot(
                 filter = InventoryAction.UNKNOWN,
                 pat = 'x',
-                compatMaterial = { "GLASS_PANE", "FIRE" },
+                compatMaterial = { "BARRIER", "FIRE" },
                 title = "<4>Unused") },
         value = "xxx\nxxx")
 public class GenericEquipperGUI extends InventoryMenuPage {

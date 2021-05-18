@@ -35,7 +35,6 @@ public class TalkableEntity implements Talkable {
      */
     @Override
     public int compareTo(Object o) {
-        // If not living entity, return -1
         if (!(o instanceof Entity)) {
             return -1;
             // If NPC and matches, return 0

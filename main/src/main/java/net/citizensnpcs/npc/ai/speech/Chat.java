@@ -3,6 +3,8 @@ package net.citizensnpcs.npc.ai.speech;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.entity.Entity;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
@@ -10,8 +12,6 @@ import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
-
-import org.bukkit.entity.Entity;
 
 public class Chat implements VocalChord {
     public final String VOCAL_CHORD_NAME = "chat";
@@ -110,10 +110,10 @@ public class Chat implements VocalChord {
         List<Entity> bystanderEntities = npc.getEntity().getNearbyEntities(Setting.CHAT_RANGE.asDouble(),
                 Setting.CHAT_RANGE.asDouble(), Setting.CHAT_RANGE.asDouble());
         for (Entity bystander : bystanderEntities) {
-            // Continue if a LivingEntity, which is compatible with
-            // TalkableEntity
             boolean shouldTalk = true;
-            // Exclude targeted recipients
+            if (!Setting.TALK_CLOSE_TO_NPCS.asBoolean() && CitizensAPI.getNPCRegistry().isNPC(bystander)) {
+                shouldTalk = false;
+            }
             if (context.hasRecipients()) {
                 for (Talkable target : context) {
                     if (target.getEntity().equals(bystander)) {
@@ -123,8 +123,6 @@ public class Chat implements VocalChord {
                 }
             }
 
-            // Found a nearby LivingEntity, make it Talkable and
-            // talkNear it if 'should_talk'
             if (shouldTalk) {
                 new TalkableEntity(bystander).talkNear(context, text, this);
             }
