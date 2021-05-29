@@ -31,7 +31,6 @@ public class HumanController extends AbstractEntityController {
         final WorldServer nmsWorld = ((CraftWorld) at.getWorld()).getHandle();
         String coloredName = npc.getFullName();
         String name = coloredName.length() > 16 ? coloredName.substring(0, 16) : coloredName;
-
         UUID uuid = npc.getUniqueId();
         if (uuid.version() == 4) { // clear version
             long msb = uuid.getMostSignificantBits();

@@ -24,8 +24,9 @@ public class Settings {
         for (Setting setting : Setting.values()) {
             if (!root.keyExists(setting.path)) {
                 setting.setAtKey(root);
-            } else
+            } else {
                 setting.loadFromKey(root);
+            }
         }
         updateMessagingSettings();
 

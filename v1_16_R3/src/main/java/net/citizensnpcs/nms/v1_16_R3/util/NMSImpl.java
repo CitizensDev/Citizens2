@@ -327,9 +327,8 @@ public class NMSImpl implements NMSBridge {
         EntityLiving handle = getHandle(attacker);
         EntityLiving target = getHandle(btarget);
         if (handle instanceof EntityPlayer) {
-            EntityPlayer humanHandle = (EntityPlayer) handle;
-            humanHandle.attack(target);
-            PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
+            ((EntityPlayer) handle).attack(target);
+            PlayerAnimation.ARM_SWING.play((Player) handle.getBukkitEntity());
             return;
         }
         if (handle instanceof EntityInsentient) {

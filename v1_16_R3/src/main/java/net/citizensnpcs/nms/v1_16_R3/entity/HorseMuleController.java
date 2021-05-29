@@ -103,14 +103,6 @@ public class HorseMuleController extends MobEntityController {
         }
 
         @Override
-        public boolean cj() {
-            if (npc != null && riding) {
-                return true;
-            }
-            return super.cj();
-        }
-
-        @Override
         public void collide(net.minecraft.server.v1_16_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -118,6 +110,14 @@ public class HorseMuleController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean cs() {
+            if (npc != null && riding) {
+                return true;
+            }
+            return super.cs();
         }
 
         @Override
