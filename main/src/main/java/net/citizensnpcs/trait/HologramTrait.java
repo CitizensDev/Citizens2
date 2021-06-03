@@ -1,12 +1,15 @@
 package net.citizensnpcs.trait;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
@@ -41,12 +44,21 @@ public class HologramTrait extends Trait {
         super("hologramtrait");
     }
 
+    /**
+     * Adds a new hologram line which will displayed over an NPC's head.
+     *
+     * @param text
+     *            The new line to add
+     */
     public void addLine(String text) {
         lines.add(text);
         unload();
         load();
     }
 
+    /**
+     * Clears all hologram lines
+     */
     public void clear() {
         unload();
         lines.clear();
@@ -69,6 +81,9 @@ public class HologramTrait extends Trait {
         return hologramNPC;
     }
 
+    /**
+     * @return The direction that hologram lines are displayed in
+     */
     public HologramDirection getDirection() {
         return direction;
     }
@@ -81,10 +96,23 @@ public class HologramTrait extends Trait {
         return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight) * (lineNumber + 1);
     }
 
+    /**
+     * Note: this is implementation-specific and may be removed at a later date.
+     */
+    public Collection<ArmorStand> getHologramEntities() {
+        return Collections2.transform(hologramNPCs, (n) -> (ArmorStand) n.getEntity());
+    }
+
+    /**
+     * @return The line height between each hologram line, in blocks
+     */
     public double getLineHeight() {
         return lineHeight;
     }
 
+    /**
+     * @return the hologram lines, in bottom-up order
+     */
     public List<String> getLines() {
         return lines;
     }
@@ -92,6 +120,13 @@ public class HologramTrait extends Trait {
     private double getMaxHeight() {
         return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight)
                 * (lines.size() + (npc.requiresNameHologram() ? 0 : 1));
+    }
+
+    /**
+     * Note: this is implementation-specific and may be removed at a later date.
+     */
+    public ArmorStand getNameEntity() {
+        return nameNPC != null && nameNPC.isSpawned() ? ((ArmorStand) npc.getEntity()) : null;
     }
 
     private void load() {
@@ -122,6 +157,11 @@ public class HologramTrait extends Trait {
         load();
     }
 
+    /**
+     * Removes the line at the specified index
+     *
+     * @param idx
+     */
     public void removeLine(int idx) {
         lines.remove(idx);
         unload();
@@ -174,12 +214,25 @@ public class HologramTrait extends Trait {
         }
     }
 
+    /**
+     * @see #getDirection()
+     * @param direction
+     *            The new direction
+     */
     public void setDirection(HologramDirection direction) {
         this.direction = direction;
         unload();
         load();
     }
 
+    /**
+     * Sets the hologram line at a specific index
+     *
+     * @param idx
+     *            The index
+     * @param text
+     *            The new line
+     */
     public void setLine(int idx, String text) {
         if (idx == lines.size()) {
             lines.add(idx, text);
@@ -188,6 +241,13 @@ public class HologramTrait extends Trait {
         }
     }
 
+    /**
+     * Sets the line height
+     *
+     * @see #getLineHeight()
+     * @param height
+     *            The line height in blocks
+     */
     public void setLineHeight(double height) {
         lineHeight = height;
         unload();
