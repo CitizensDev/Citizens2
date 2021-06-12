@@ -16,6 +16,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -42,6 +43,7 @@ public class PhantomController extends MobEntityController {
     }
 
     public static class EntityPhantomNPC extends Phantom implements NPCHolder {
+        boolean calledNMSHeight = false;
         private final CitizensNPC npc;
         private LookControl oldLookController;
         private MoveControl oldMoveController;
@@ -184,6 +186,17 @@ public class PhantomController extends MobEntityController {
             } else {
                 return false;
             }
+        }
+
+        @Override
+        public void onSyncedDataUpdated(EntityDataAccessor<?> datawatcherobject) {
+            if (npc != null && !calledNMSHeight) {
+                calledNMSHeight = true;
+                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
+                calledNMSHeight = false;
+            }
+
+            super.onSyncedDataUpdated(datawatcherobject);
         }
 
         @Override

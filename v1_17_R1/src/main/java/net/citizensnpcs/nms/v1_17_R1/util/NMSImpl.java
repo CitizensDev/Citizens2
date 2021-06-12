@@ -1465,7 +1465,6 @@ public class NMSImpl implements NMSBridge {
             size = (EntityDimensions) SIZE_FIELD_GETTER.invoke(living);
         } catch (Throwable e) {
             e.printStackTrace();
-            living.onSyncedDataUpdated(datawatcherobject);
             return;
         }
         float oldw = size.width;

@@ -19,6 +19,7 @@ import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ControllerLook;
 import net.minecraft.server.v1_16_R3.ControllerMove;
 import net.minecraft.server.v1_16_R3.DamageSource;
+import net.minecraft.server.v1_16_R3.DataWatcherObject;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityBoat;
 import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
@@ -43,6 +44,7 @@ public class PhantomController extends MobEntityController {
     }
 
     public static class EntityPhantomNPC extends EntityPhantom implements NPCHolder {
+        boolean calledNMSHeight = false;
         private final CitizensNPC npc;
         private ControllerLook oldLookController;
         private ControllerMove oldMoveController;
@@ -63,6 +65,17 @@ public class PhantomController extends MobEntityController {
                 this.lookController = new ControllerLook(this);
                 // TODO: phantom pitch reversed
             }
+        }
+
+        @Override
+        public void a(DataWatcherObject<?> datawatcherobject) {
+            if (npc != null && !calledNMSHeight) {
+                calledNMSHeight = true;
+                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
+                calledNMSHeight = false;
+            }
+
+            super.a(datawatcherobject);
         }
 
         @Override
