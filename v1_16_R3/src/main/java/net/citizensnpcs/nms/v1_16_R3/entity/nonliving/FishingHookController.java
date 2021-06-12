@@ -110,7 +110,7 @@ public class FishingHookController extends MobEntityController {
                 ((EntityHuman) getShooter()).inventory.items.set(((EntityHuman) getShooter()).inventory.itemInHandIndex,
                         new ItemStack(Items.FISHING_ROD, 1));
                 try {
-                    D.invoke(this, 0);
+                    G.invoke(this, 0);
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -120,7 +120,7 @@ public class FishingHookController extends MobEntityController {
             }
         }
 
-        private static MethodHandle D = NMS.getSetter(EntityFishingHook.class, "d");
+        private static MethodHandle G = NMS.getSetter(EntityFishingHook.class, "g");
     }
 
     public static class FishingHookNPC extends CraftFishHook implements ForwardingNPCHolder {

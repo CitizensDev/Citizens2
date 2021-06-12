@@ -205,8 +205,8 @@ public class TraderLlamaController extends MobEntityController {
                     super.mobTick();
                 }
                 try {
-                    if (bF != null) {
-                        bF.invoke(this, 10); // DespawnDelay
+                    if (bw != null) {
+                        bw.invoke(this, 10); // DespawnDelay
                     }
                 } catch (Throwable e) {
                 }
@@ -223,7 +223,7 @@ public class TraderLlamaController extends MobEntityController {
             return super.n(entity);
         }
 
-        private static final MethodHandle bF = NMS.getSetter(EntityLlamaTrader.class, "bF");
+        private static final MethodHandle bw = NMS.getSetter(EntityLlamaTrader.class, "bw");
     }
 
     public static class TraderLlamaNPC extends CraftTraderLlama implements ForwardingNPCHolder {

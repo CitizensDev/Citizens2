@@ -121,7 +121,7 @@ public class PufferFishController extends MobEntityController {
 
         @Override
         public boolean doAITick() {
-            return false;
+            return npc == null ? super.doAITick() : false;
         }
 
         @Override

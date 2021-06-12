@@ -164,6 +164,37 @@ public class NMS {
         return null;
     }
 
+    public static MethodHandle getFirstMethodHandle(Class<?> clazz, boolean log, Class<?>... params) {
+        if (clazz == null)
+            return null;
+        try {
+            Method first = null;
+            for (Method method : clazz.getDeclaredMethods()) {
+                Class<?>[] paramTypes = method.getParameterTypes();
+                if (paramTypes.length == params.length) {
+                    first = method;
+                    for (int i = 0; i < paramTypes.length; i++) {
+                        if (paramTypes[i] != params[i]) {
+                            first = null;
+                        }
+                    }
+                    if (first != null) {
+                        break;
+                    }
+                }
+            }
+            if (first == null)
+                return null;
+            first.setAccessible(true);
+            return LOOKUP.unreflect(first);
+        } catch (Exception e) {
+            if (log) {
+                Messaging.logTr(Messages.ERROR_GETTING_METHOD, e.getLocalizedMessage());
+            }
+        }
+        return null;
+    }
+
     public static GameProfileRepository getGameProfileRepository() {
         return BRIDGE.getGameProfileRepository();
     }
@@ -320,7 +351,12 @@ public class NMS {
     }
 
     public static void loadBridge(String rev) throws Exception {
-        Class<?> entity = Class.forName("net.minecraft.server.v" + rev + ".Entity");
+        Class<?> entity = null;
+        try {
+            entity = Class.forName("net.minecraft.server.v" + rev + ".Entity");
+        } catch (ClassNotFoundException ex) {
+            entity = Class.forName("net.minecraft.world.entity.Entity");
+        }
         giveReflectiveAccess(entity, NMS.class);
         BRIDGE = (NMSBridge) Class.forName("net.citizensnpcs.nms.v" + rev + ".util.NMSImpl").getConstructor()
                 .newInstance();
@@ -518,7 +554,6 @@ public class NMS {
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
-
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {

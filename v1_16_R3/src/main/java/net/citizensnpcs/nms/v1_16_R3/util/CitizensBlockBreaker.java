@@ -58,7 +58,7 @@ public class CitizensBlockBreaker extends BlockBreaker {
     }
 
     private float getStrength(IBlockData block) {
-        float base = block.getBlock().a(block, null, new BlockPosition(0, 0, 0));
+        float base = block.h(null, new BlockPosition(0, 0, 0));
         return base < 0.0F ? 0.0F : (!isDestroyable(block) ? 1.0F / base / 100.0F : strengthMod(block) / base / 30.0F);
     }
 
