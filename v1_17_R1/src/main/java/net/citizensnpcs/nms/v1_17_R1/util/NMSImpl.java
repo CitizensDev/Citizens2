@@ -339,10 +339,8 @@ public class NMSImpl implements NMSBridge {
         float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;
 
-        if (target instanceof LivingEntity) {
-            f += EnchantmentHelper.getDamageBonus(handle.getMainHandItem(), target.getMobType());
-            i += EnchantmentHelper.getKnockbackBonus(handle);
-        }
+        f += EnchantmentHelper.getDamageBonus(handle.getMainHandItem(), target.getMobType());
+        i += EnchantmentHelper.getKnockbackBonus(handle);
 
         boolean flag = target.hurt(DamageSource.mobAttack(handle), f);
 
@@ -1273,7 +1271,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public boolean shouldJump(org.bukkit.entity.Entity entity) {
-        if (JUMP_FIELD == null || !(entity instanceof LivingEntity))
+        if (JUMP_FIELD == null || !(entity instanceof org.bukkit.entity.LivingEntity))
             return false;
         try {
             return (boolean) JUMP_FIELD.invoke(NMSImpl.getHandle(entity));
