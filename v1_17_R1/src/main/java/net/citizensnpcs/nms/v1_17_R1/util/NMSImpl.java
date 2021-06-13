@@ -213,7 +213,6 @@ import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -256,7 +255,6 @@ import net.minecraft.world.entity.animal.PolarBear;
 import net.minecraft.world.entity.animal.Pufferfish;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.animal.horse.TraderLlama;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -266,6 +264,7 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -527,18 +526,10 @@ public class NMSImpl implements NMSBridge {
     public String getSound(String flag) throws CommandException {
         try {
             Sound sound = Sound.valueOf(flag.toUpperCase());
-            if (CRAFTSOUND_GETSOUND != null) {
-                String ret = (String) CRAFTSOUND_GETSOUND.invoke(sound);
-                if (ret == null)
-                    throw new CommandException(Messages.INVALID_SOUND);
-                return ret;
-            } else {
-                SoundEvent effect = CraftSound.getSoundEffect(sound);
-                if (effect == null)
-                    throw new CommandException(Messages.INVALID_SOUND);
-                ResourceLocation key = (ResourceLocation) SOUNDEFFECT_LOCATION.invoke(effect);
-                return key.getPath();
-            }
+            SoundEvent effect = CraftSound.getSoundEffect(sound);
+            if (effect == null)
+                throw new CommandException(Messages.INVALID_SOUND);
+            return effect.getLocation().getPath();
         } catch (Throwable e) {
             throw new CommandException(Messages.INVALID_SOUND);
         }
@@ -1031,26 +1022,13 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity) {
-        if (FISHING_HOOK_HOOKED == null)
-            return;
         FishingHook hook = (FishingHook) NMSImpl.getHandle(entity);
-        Entity hooked = null;
-        try {
-            hooked = (Entity) FISHING_HOOK_HOOKED.invoke(hook);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        Entity hooked = hook.getHookedIn();
         if (hooked == null)
             return;
         NPC npc = npcRegistry.getNPC(hooked.getBukkitEntity());
-        if (npc == null)
-            return;
-        if (npc.isProtected()) {
-            try {
-                FISHING_HOOK_HOOKED_SETTER.invoke(hook, null);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+        if (npc != null && npc.isProtected()) {
+            hook.hookedIn = null;
             hook.setRemoved(RemovalReason.KILLED);
         }
     }
@@ -1153,9 +1131,9 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setEndermanAngry(org.bukkit.entity.Enderman enderman, boolean angry) {
-        if (ENDERMAN_ANGRY == null)
+        if (ENDERMAN_CREEPY == null)
             return;
-        getHandle(enderman).getEntityData().set(ENDERMAN_ANGRY, angry);
+        getHandle(enderman).getEntityData().set(ENDERMAN_CREEPY, angry);
     }
 
     @Override
@@ -1373,14 +1351,14 @@ public class NMSImpl implements NMSBridge {
             }
             return;
         }
-        if (NAVIGATION_S == null)
+        if (NAVIGATION_PATHFINDER == null)
             return;
         PathNavigation navigation = ((Mob) en).getNavigation();
         AttributeInstance inst = en.getAttribute(Attributes.FOLLOW_RANGE);
         inst.setBaseValue(pathfindingRange);
         int mc = Mth.floor(en.getAttributeBaseValue(Attributes.FOLLOW_RANGE) * 16.0D);
         try {
-            NAVIGATION_S.invoke(navigation, NAVIGATION_A.invoke(navigation, mc));
+            NAVIGATION_PATHFINDER.invoke(navigation, NAVIGATION_CREATE_PATHFINDER.invoke(navigation, mc));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1475,12 +1453,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void clearGoals(NPC npc, GoalSelector... goalSelectors) {
-        if (GOAL_SET_FIELD == null || goalSelectors == null)
+        if (goalSelectors == null)
             return;
         int i = 0;
         for (GoalSelector selector : goalSelectors) {
             try {
-                Collection<?> list = (Collection<?>) GOAL_SET_FIELD.invoke(selector);
+                Collection<?> list = selector.getAvailableGoals();
                 if (!list.isEmpty()) {
                     npc.data().set("selector" + i, Lists.newArrayList(list));
                 }
@@ -1654,14 +1632,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static EntityDataAccessor<Integer> getRabbitTypeField() {
-        if (RABBIT_DATAWATCHER_FIELD == null)
-            return null;
-        try {
-            return (EntityDataAccessor<Integer>) RABBIT_DATAWATCHER_FIELD.invoke();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return null;
+        return RABBIT_TYPE_DATAWATCHER;
     }
 
     public static EntityDimensions getSize(Entity entity) {
@@ -1716,15 +1687,15 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void restoreGoals(NPC npc, GoalSelector... goalSelectors) {
-        if (GOAL_SET_FIELD == null || goalSelectors == null)
+        if (goalSelectors == null)
             return;
         int i = 0;
         for (GoalSelector selector : goalSelectors) {
             try {
-                Collection<Object> list = (Collection<Object>) GOAL_SET_FIELD.invoke(selector);
+                Collection list = selector.getAvailableGoals();
                 list.clear();
 
-                Collection<Object> old = npc.data().get("selector" + i);
+                Collection old = npc.data().get("selector" + i);
                 if (old != null) {
                     list.addAll(old);
                 }
@@ -1784,16 +1755,6 @@ public class NMSImpl implements NMSBridge {
     public static void setBukkitEntity(Entity entity, CraftEntity bukkitEntity) {
         try {
             BUKKITENTITY_FIELD_SETTER.invoke(entity, bukkitEntity);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void setDespawnDelay(TraderLlama llama, int ticks) {
-        if (TRADER_DESPAWN_DELAY == null)
-            return;
-        try {
-            TRADER_DESPAWN_DELAY.invoke(llama, ticks);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1902,58 +1863,55 @@ public class NMSImpl implements NMSBridge {
     private static final Map<Class<?>, net.minecraft.world.entity.EntityType<?>> CITIZENS_ENTITY_TYPES = Maps
             .newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
-    private static MethodHandle CRAFTSOUND_GETSOUND = NMS.getMethodHandle(CraftSound.class, "getSound", false,
-            Sound.class);
     private static final float DEFAULT_SPEED = 1F;
-    private static EntityDataAccessor<Boolean> ENDERMAN_ANGRY = null;
-    private static final MethodHandle ENTITY_FISH_NUM_IN_SCHOOL = NMS.getSetter(AbstractSchoolingFish.class, "c",
-            false);
+    private static EntityDataAccessor<Boolean> ENDERMAN_CREEPY = null;
+    private static final MethodHandle ENTITY_FISH_NUM_IN_SCHOOL = NMS.getSetter(AbstractSchoolingFish.class, "c");
     private static final MethodHandle ENTITY_GET_SOUND_FALL = NMS.getMethodHandle(LivingEntity.class, "getSoundFall",
             true, int.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static MethodHandle ENTITY_REGISTRY_SETTER;
-    private static final MethodHandle FISHING_HOOK_HOOKED = NMS.getGetter(FishingHook.class, "av");
-    private static final MethodHandle FISHING_HOOK_HOOKED_SETTER = NMS.getSetter(FishingHook.class, "av");
     private static final MethodHandle FISHING_HOOK_LIFE = NMS.getSetter(FishingHook.class, "ap");
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
-    private static final MethodHandle GOAL_SET_FIELD = NMS.getGetter(GoalSelector.class, "d");
     private static final MethodHandle HEAD_HEIGHT = NMS.getSetter(Entity.class, "aX");
     private static final MethodHandle HEAD_HEIGHT_METHOD = NMS.getFirstMethodHandle(Entity.class, true, Pose.class,
             EntityDimensions.class);
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(LivingEntity.class, "bn");
     private static final MethodHandle MAKE_REQUEST = NMS.getMethodHandle(YggdrasilAuthenticationService.class,
             "makeRequest", true, URL.class, Object.class, Class.class);
-    private static final MethodHandle NAVIGATION_A = NMS.getMethodHandle(PathNavigation.class, "a", true, int.class);
-    private static final MethodHandle NAVIGATION_S = NMS.getFinalSetter(PathNavigation.class, "t");
-    private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getSetter(PathNavigation.class, "b");
+    private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS.getMethodHandle(PathNavigation.class, "a",
+            true, int.class);
+    private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFinalSetter(PathNavigation.class, "t");
+    private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(ChunkMap.class, "J");
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(ChunkMap.class, "J");
     private static final MethodHandle PUFFERFISH_C = NMS.getSetter(Pufferfish.class, "bS");
     private static final MethodHandle PUFFERFISH_D = NMS.getSetter(Pufferfish.class, "bT");
-    private static final MethodHandle RABBIT_DATAWATCHER_FIELD = NMS.getGetter(Rabbit.class, "ch");
+    private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
     private static final Random RANDOM = Util.getFastRandom();
-    private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "aW");
-    private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "aW");
+    private static final MethodHandle SIZE_FIELD_GETTER = NMS.getFirstGetter(Entity.class, EntityDimensions.class);
+    private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
     private static Field SKULL_PROFILE_FIELD;
-    private static MethodHandle SOUNDEFFECT_LOCATION = NMS.getGetter(SoundEvent.class, "b");
     private static MethodHandle TEAM_FIELD;
-    private static final MethodHandle TRADER_DESPAWN_DELAY = NMS.getSetter(TraderLlama.class, "ci");
-    public static final MethodHandle UUID_FIELD = NMS.getSetter(net.minecraft.world.entity.Entity.class, "aj");
     static {
         try {
-            ENTITY_REGISTRY = new CustomEntityRegistry((DefaultedRegistry<net.minecraft.world.entity.EntityType<?>>) NMS
-                    .getGetter(Registry.class, "Y").invoke());
+            ENTITY_REGISTRY = new CustomEntityRegistry(Registry.ENTITY_TYPE);
             ENTITY_REGISTRY_SETTER = NMS.getFinalSetter(Registry.class, "Y");
             ENTITY_REGISTRY_SETTER.invoke(ENTITY_REGISTRY);
         } catch (Throwable e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
         try {
-            ENDERMAN_ANGRY = (EntityDataAccessor<Boolean>) NMS.getField(EnderMan.class, "bU").get(null);
+            ENDERMAN_CREEPY = (EntityDataAccessor<Boolean>) NMS.getField(EnderMan.class, "bU").get(null);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        try {
+            RABBIT_TYPE_DATAWATCHER = (EntityDataAccessor<Integer>) NMS
+                    .getFirstGetter(Rabbit.class, EntityDataAccessor.class).invoke();
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }

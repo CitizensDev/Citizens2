@@ -39,11 +39,7 @@ public abstract class MobEntityController extends AbstractEntityController {
         if (beneath.isSolid()) {
             entity.setOnGround(true);
         }
-        try {
-            NMSImpl.UUID_FIELD.invoke(entity, npc.getUniqueId());
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        entity.setUUID(npc.getUniqueId());
         return entity.getBukkitEntity();
     }
 

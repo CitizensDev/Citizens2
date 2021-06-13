@@ -194,6 +194,7 @@ public class PhantomController extends MobEntityController {
                 calledNMSHeight = true;
                 NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
                 calledNMSHeight = false;
+                return;
             }
 
             super.onSyncedDataUpdated(datawatcherobject);
@@ -224,12 +225,12 @@ public class PhantomController extends MobEntityController {
         @Override
         public void tick() {
             // avoid suicide
-            boolean resetDifficulty = this.level.getDifficulty() == Difficulty.PEACEFUL;
-            if (npc != null && resetDifficulty) {
+            boolean resetDifficulty = npc != null && this.level.getDifficulty() == Difficulty.PEACEFUL;
+            if (resetDifficulty) {
                 ((WorldData) this.level.getLevelData()).setDifficulty(Difficulty.NORMAL);
             }
             super.tick();
-            if (npc != null && resetDifficulty) {
+            if (resetDifficulty) {
                 ((WorldData) this.level.getLevelData()).setDifficulty(Difficulty.PEACEFUL);
             }
         }

@@ -249,7 +249,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     public float getPathfindingMalus(BlockPathTypes pathtype) {
-        return this.bz.containsKey(pathtype) ? this.bz.get(pathtype).floatValue() : pathtype.getMalus();
+        return this.bz.containsKey(pathtype) ? this.bz.get(pathtype) : pathtype.getMalus();
     }
 
     @Override
@@ -418,7 +418,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     public void setPathfindingMalus(BlockPathTypes pathtype, float f) {
-        this.bz.put(pathtype, Float.valueOf(f));
+        this.bz.put(pathtype, f);
     }
 
     public void setShouldJump() {

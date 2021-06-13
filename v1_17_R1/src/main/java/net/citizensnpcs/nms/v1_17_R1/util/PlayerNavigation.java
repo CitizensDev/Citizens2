@@ -220,11 +220,7 @@ public class PlayerNavigation extends PathNavigation {
 
     @Override
     protected Path createPath(Set<BlockPos> var0, int var1, boolean var2, int var3, float var4) {
-        if (var0.isEmpty())
-            return null;
-        if (this.mob.getY() < this.level.getMinBuildHeight())
-            return null;
-        if (!canUpdatePath())
+        if (var0.isEmpty() || (this.mob.getY() < this.level.getMinBuildHeight()) || !canUpdatePath())
             return null;
         if (this.path != null && !this.path.isDone() && var0.contains(this.targetPos))
             return this.path;
@@ -341,11 +337,7 @@ public class PlayerNavigation extends PathNavigation {
     }
 
     protected boolean hasValidPathType(BlockPathTypes var0) {
-        if (var0 == BlockPathTypes.WATER)
-            return false;
-        if (var0 == BlockPathTypes.LAVA)
-            return false;
-        if (var0 == BlockPathTypes.OPEN)
+        if ((var0 == BlockPathTypes.WATER) || (var0 == BlockPathTypes.LAVA) || (var0 == BlockPathTypes.OPEN))
             return false;
         return true;
     }

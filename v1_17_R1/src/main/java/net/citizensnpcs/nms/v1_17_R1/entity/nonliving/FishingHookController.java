@@ -19,6 +19,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -46,7 +47,7 @@ public class FishingHookController extends MobEntityController {
         }
 
         public EntityFishingHookNPC(EntityType<? extends FishingHook> types, Level level, NPC npc) {
-            super(new ServerPlayer(level.getServer().getServer(), (ServerLevel) level,
+            super(new ServerPlayer(MinecraftServer.getServer(), (ServerLevel) level,
                     new GameProfile(UUID.randomUUID(), "dummyfishhook")) {
             }, level, 0, 0);
             this.npc = (CitizensNPC) npc;

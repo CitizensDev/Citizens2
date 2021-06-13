@@ -205,6 +205,7 @@ public class HorseMuleController extends MobEntityController {
                 calledNMSHeight = true;
                 NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
                 calledNMSHeight = false;
+                return;
             }
 
             super.onSyncedDataUpdated(datawatcherobject);

@@ -371,8 +371,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
     }
 
     private boolean hasCollisions(AABB var0) {
-        return this.m.computeIfAbsent(var0, var1 -> Boolean.valueOf(!this.level.noCollision(this.mob, var0)))
-                .booleanValue();
+        return this.m.computeIfAbsent(var0, var1 -> !this.level.noCollision(this.mob, var0));
     }
 
     private boolean hasPositiveMalus(BlockPos var0) {
@@ -385,9 +384,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
     }
 
     protected boolean isDiagonalValid(Node var0, Node var1, Node var2, Node var3) {
-        if (var3 == null || var2 == null || var1 == null)
-            return false;
-        if (var3.closed)
+        if (var3 == null || var2 == null || var1 == null || var3.closed)
             return false;
         if (var2.y > var0.y || var1.y > var0.y)
             return false;

@@ -103,7 +103,7 @@ public class TraderLlamaController extends MobEntityController {
                 if (npc.useMinecraftAI()) {
                     super.customServerAiStep();
                 }
-                NMSImpl.setDespawnDelay(this, 10);
+                setDespawnDelay(10);
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
@@ -178,6 +178,7 @@ public class TraderLlamaController extends MobEntityController {
                 calledNMSHeight = true;
                 NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
                 calledNMSHeight = false;
+                return;
             }
 
             super.onSyncedDataUpdated(datawatcherobject);
