@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -564,16 +563,10 @@ public class CommandTrait extends Trait {
             }
             long currentTimeSec = System.currentTimeMillis() / 1000;
             String commandKey = BaseEncoding.base64().encode(command.command.getBytes());
-            // TODO: remove this in 2.0.28
-            for (Map map : Arrays.asList(lastUsed, nUsed)) {
-                if (map.containsKey(command)) {
-                    Object value = map.remove(command);
-                    map.put(commandKey, value);
-                }
-            }
             if (lastUsed.containsKey(commandKey)) {
-                if (currentTimeSec < lastUsed.get(commandKey) + command.cooldown) {
-                    long seconds = (lastUsed.get(commandKey) + command.cooldown) - currentTimeSec;
+                long deadline = ((Number) lastUsed.get(commandKey)).longValue() + command.cooldown;
+                if (currentTimeSec < deadline) {
+                    long seconds = deadline - currentTimeSec;
                     trait.sendErrorMessage(player, CommandTraitMessages.ON_COOLDOWN,
                             new TimeVariableFormatter(seconds, TimeUnit.SECONDS), seconds);
                     return false;
@@ -581,9 +574,9 @@ public class CommandTrait extends Trait {
                 lastUsed.remove(commandKey);
             }
             if (command.globalCooldown > 0 && trait.globalCooldowns.containsKey(commandKey)) {
-                long lastUsedSec = trait.globalCooldowns.get(commandKey);
-                if (currentTimeSec < lastUsedSec + command.cooldown) {
-                    long seconds = (lastUsedSec + command.cooldown) - currentTimeSec;
+                long deadline = ((Number) trait.globalCooldowns.get(commandKey)).longValue() + command.cooldown;
+                if (currentTimeSec < deadline) {
+                    long seconds = deadline - currentTimeSec;
                     trait.sendErrorMessage(player, CommandTraitMessages.ON_GLOBAL_COOLDOWN,
                             new TimeVariableFormatter(seconds, TimeUnit.SECONDS), seconds);
                     return false;
