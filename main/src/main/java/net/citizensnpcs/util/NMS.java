@@ -164,6 +164,32 @@ public class NMS {
         return null;
     }
 
+    private static Field getFirstFieldMatchingType(Class<?> clazz, Class<?> type) {
+        Field found = null;
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.getType() == type) {
+                found = field;
+                break;
+            }
+        }
+        if (found != null) {
+            found.setAccessible(true);
+        }
+        return found;
+    }
+
+    public static MethodHandle getFirstGetter(Class<?> clazz, Class<?> type) {
+        try {
+            Field found = getFirstFieldMatchingType(clazz, type);
+            if (found == null)
+                return null;
+            return LOOKUP.unreflectGetter(found);
+        } catch (Exception e) {
+            Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
+        }
+        return null;
+    }
+
     public static MethodHandle getFirstMethodHandle(Class<?> clazz, boolean log, Class<?>... params) {
         if (clazz == null)
             return null;
@@ -191,6 +217,18 @@ public class NMS {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_METHOD, e.getLocalizedMessage());
             }
+        }
+        return null;
+    }
+
+    public static MethodHandle getFirstSetter(Class<?> clazz, Class<?> type) {
+        try {
+            Field found = getFirstFieldMatchingType(clazz, type);
+            if (found == null)
+                return null;
+            return LOOKUP.unreflectSetter(found);
+        } catch (Exception e) {
+            Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
         }
         return null;
     }
