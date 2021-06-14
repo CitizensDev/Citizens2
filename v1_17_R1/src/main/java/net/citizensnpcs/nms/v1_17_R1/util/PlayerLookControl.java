@@ -8,13 +8,13 @@ import net.minecraft.world.phys.Vec3;
 
 public class PlayerLookControl {
     private final EntityHumanNPC a;
-    protected float b;
-    protected float c;
     private final PlayerBodyControl control;
-    protected boolean d;
-    protected double e;
-    protected double f;
-    protected double g;
+    protected boolean move;
+    protected float tpitch;
+    protected double tx;
+    protected double ty;
+    protected float tyaw;
+    protected double tz;
 
     public PlayerLookControl(EntityHumanNPC entityinsentient) {
         this.a = entityinsentient;
@@ -27,10 +27,10 @@ public class PlayerLookControl {
         if (this.b()) {
             // this.a.setXRot(0.0F);
         }
-        if (this.d) {
-            this.d = false;
-            this.a.setXRot(this.a(this.a.getXRot(), this.g(), this.c));
-            this.a.yHeadRot = this.a(this.a.yHeadRot, this.h(), this.b);
+        if (this.move) {
+            this.move = false;
+            this.a.setXRot(this.rotateTowards(this.a.getXRot(), this.g(), this.tpitch));
+            this.a.yHeadRot = this.rotateTowards(this.a.yHeadRot, this.h(), this.tyaw);
             while (this.a.yHeadRot >= 180F) {
                 this.a.yHeadRot -= 360F;
             }
@@ -55,8 +55,8 @@ public class PlayerLookControl {
                 while (d < -180F) {
                     d += 360F;
                 }
-                if (d < this.a.yHeadRot) {
-                    this.a.yHeadRot = (float) d;
+                if (d < this.a.getYRot()) {
+                    this.a.setYRot((float) d);
                 }
             }
             // this.a.setYRot(this.a(this.a.yHeadRot, this.h(), this.b));
@@ -74,26 +74,20 @@ public class PlayerLookControl {
     }
 
     public void a(double var0, double var2, double var4, float var6, float var7) {
-        double d = Math.pow(this.e - var0, 2) + Math.pow(this.f - var2, 2) + Math.pow(this.g - var4, 2);
+        double d = Math.pow(this.tx - var0, 2) + Math.pow(this.ty - var2, 2) + Math.pow(this.tz - var4, 2);
         if (d < 0.01) {
             // return;
         }
-        this.e = var0;
-        this.f = var2;
-        this.g = var4;
-        this.b = var6;
-        this.c = var7;
-        this.d = true;
+        this.tx = var0;
+        this.ty = var2;
+        this.tz = var4;
+        this.tyaw = var6;
+        this.tpitch = var7;
+        this.move = true;
     }
 
     public void a(Entity var0, float var1, float var2) {
         this.a(var0.getX(), b(var0), var0.getZ(), var1, var2);
-    }
-
-    protected float a(float var0, float var1, float var2) {
-        float var3 = Mth.degreesDifference(var0, var1);
-        float var4 = Mth.clamp(var3, -var2, var2);
-        return var0 + var4;
     }
 
     public void a(Vec3 var0) {
@@ -105,33 +99,39 @@ public class PlayerLookControl {
     }
 
     public boolean c() {
-        return this.d;
+        return this.move;
     }
 
     public double d() {
-        return this.e;
+        return this.tx;
     }
 
     public double e() {
-        return this.f;
+        return this.ty;
     }
 
     public double f() {
-        return this.g;
+        return this.tz;
     }
 
     protected float g() {
-        double var0 = this.e - this.a.getX();
-        double var2 = this.f - (this.a.getY() + this.a.getEyeY());
-        double var4 = this.g - this.a.getZ();
+        double var0 = this.tx - this.a.getX();
+        double var2 = this.ty - (this.a.getY() + this.a.getEyeY());
+        double var4 = this.tz - this.a.getZ();
         double var6 = Mth.sqrt((float) (var0 * var0 + var4 * var4));
         return (float) (-(Mth.atan2(var2, var6) * 57.2957763671875D));
     }
 
     protected float h() {
-        double var0 = this.e - this.a.getX();
-        double var2 = this.g - this.a.getZ();
+        double var0 = this.tx - this.a.getX();
+        double var2 = this.tz - this.a.getZ();
         return (float) (Mth.atan2(var2, var0) * 57.2957763671875D) - 90.0F;
+    }
+
+    protected float rotateTowards(float var0, float var1, float var2) {
+        float var3 = Mth.degreesDifference(var0, var1);
+        float var4 = Mth.clamp(var3, -var2, var2);
+        return var0 + var4;
     }
 
     private static double b(Entity var0) {
