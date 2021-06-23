@@ -560,22 +560,16 @@ public class NMSImpl implements NMSBridge {
         }));
         Node last = list.size() > 0 ? list.get(list.size() - 1) : null;
         final Path path = new Path(list, last != null ? new BlockPos(last.x, last.y, last.z) : null, true);
-        return getTargetNavigator(entity, params, new Function<PathNavigation, Boolean>() {
-            @Override
-            public Boolean apply(PathNavigation input) {
-                return input.moveTo(path, params.speed());
-            }
+        return getTargetNavigator(entity, params, (input) -> {
+            return input.moveTo(path, params.speed());
         });
     }
 
     @Override
     public MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final Location dest,
             final NavigatorParameters params) {
-        return getTargetNavigator(entity, params, new Function<PathNavigation, Boolean>() {
-            @Override
-            public Boolean apply(PathNavigation input) {
-                return input.moveTo(dest.getX(), dest.getY(), dest.getZ(), params.speed());
-            }
+        return getTargetNavigator(entity, params, (input) -> {
+            return input.moveTo(dest.getX(), dest.getY(), dest.getZ(), params.speed());
         });
     }
 
@@ -613,10 +607,11 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void stop() {
-                if (params.debug() && navigation.getPath() != null) {
+                Path path = getPathEntity(navigation);
+                if (params.debug() && path != null) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.getPath().getNodeCount(); i++) {
-                            Node pp = navigation.getPath().getNode(i);
+                        for (int i = 0; i < path.getNodeCount(); i++) {
+                            Node pp = path.getNode(i);
                             org.bukkit.block.Block block = new Vector(pp.x, pp.y, pp.z).toLocation(player.getWorld())
                                     .getBlock();
                             player.sendBlockChange(block.getLocation(), block.getBlockData());
@@ -667,9 +662,10 @@ public class NMSImpl implements NMSBridge {
                 }
                 if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
                     BlockData data = Material.DANDELION.createBlockData();
+                    Path path = getPathEntity(navigation);
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.getPath().getNodeCount(); i++) {
-                            Node pp = navigation.getPath().getNode(i);
+                        for (int i = 0; i < path.getNodeCount(); i++) {
+                            Node pp = path.getNode(i);
                             player.sendBlockChange(new Vector(pp.x, pp.y, pp.z).toLocation(player.getWorld()), data);
                         }
                     }
@@ -1410,9 +1406,10 @@ public class NMSImpl implements NMSBridge {
 
         @Override
         public Iterator<Vector> iterator() {
-            final int npoints = navigation.getPath() == null ? 0 : navigation.getPath().getNodeCount();
+            Path path = getPathEntity(navigation);
+            final int npoints = path == null ? 0 : path.getNodeCount();
             return new Iterator<Vector>() {
-                Node curr = npoints > 0 ? navigation.getPath().getNode(0) : null;
+                Node curr = npoints > 0 ? path.getNode(0) : null;
                 int i = 0;
 
                 @Override
@@ -1423,7 +1420,7 @@ public class NMSImpl implements NMSBridge {
                 @Override
                 public Vector next() {
                     Node old = curr;
-                    curr = i + 1 < npoints ? navigation.getPath().getNode(++i) : null;
+                    curr = i + 1 < npoints ? path.getNode(++i) : null;
                     return new Vector(old.x, old.y, old.z);
                 }
 
@@ -1629,6 +1626,16 @@ public class NMSImpl implements NMSBridge {
         Entity handle = getHandle(entity);
         return handle instanceof Mob ? ((Mob) handle).getNavigation()
                 : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getNavigation() : null;
+    }
+
+    private static Path getPathEntity(PathNavigation nav) {
+        try {
+            return nav instanceof PlayerNavigation ? ((PlayerNavigation) nav).getPathEntity()
+                    : (Path) NAVIGATION_PATH.invoke(nav);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static EntityDataAccessor<Integer> getRabbitTypeField() {
@@ -1854,6 +1861,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cr");
+
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
@@ -1880,6 +1888,7 @@ public class NMSImpl implements NMSBridge {
             "makeRequest", true, URL.class, Object.class, Class.class);
     private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS.getMethodHandle(PathNavigation.class, "a",
             true, int.class);
+    private static MethodHandle NAVIGATION_PATH = NMS.getGetter(PathNavigation.class, "c");
     private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFinalSetter(PathNavigation.class, "t");
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);

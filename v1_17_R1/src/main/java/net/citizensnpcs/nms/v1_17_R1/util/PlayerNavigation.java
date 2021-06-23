@@ -306,6 +306,10 @@ public class PlayerNavigation extends PathNavigation {
         return this.path;
     }
 
+    public Path getPathEntity() {
+        return this.path;
+    }
+
     private int getSurfaceY() {
         if (!this.mob.isInWater() || !canFloat())
             return Mth.floor(this.mob.getY() + 0.5D);
@@ -370,7 +374,7 @@ public class PlayerNavigation extends PathNavigation {
 
     @Override
     public boolean moveTo(double var0, double var2, double var4, double var6) {
-        return moveTo(createPath(var0, var2, var4, 1), var6);
+        return moveTo(createPath(new BlockPos(var0, var2, var4), 1), var6);
     }
 
     @Override
@@ -506,8 +510,9 @@ public class PlayerNavigation extends PathNavigation {
     @Override
     public void tick() {
         this.tick++;
-        if (this.hasDelayedRecomputation)
+        if (this.hasDelayedRecomputation) {
             recomputePath();
+        }
         if (isDone())
             return;
         if (canUpdatePath()) {

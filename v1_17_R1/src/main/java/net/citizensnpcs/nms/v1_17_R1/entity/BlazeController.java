@@ -25,7 +25,7 @@ import net.minecraft.world.level.Level;
 
 public class BlazeController extends MobEntityController {
     public BlazeController() {
-        super(BlazeNPC.class);
+        super(EntityBlazeNPC.class);
     }
 
     @Override
