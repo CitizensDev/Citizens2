@@ -9,6 +9,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
@@ -31,7 +33,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             return 1F;
         if (below == Material.SOUL_SAND || below == Material.ICE)
             return 1F;
-        if (isLiquid(in)) {
+        if (isLiquidOrInLiquid(source.getWorld().getBlockAt(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))) {
             if (in == Material.LAVA)
                 return 2F;
             return 1F;
@@ -215,6 +217,17 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return false;
     }
 
+    public static boolean isLiquidOrInLiquid(Block block) {
+        if (isLiquid(block.getType()))
+            return true;
+        try {
+            BlockData data = block.getBlockData();
+            return data instanceof Waterlogged && ((Waterlogged) data).isWaterlogged();
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     public static boolean validPosition(Block in) {
         return canStandIn(in.getType()) && canStandIn(in.getRelative(BlockFace.UP).getType())
                 && canStandOn(in.getRelative(BlockFace.DOWN).getType());
@@ -225,6 +238,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.CACTUS);
+
     private static Material WEB = SpigotUtil.isUsing1_13API() ? Material.COBWEB : Material.valueOf("WEB");
 
     static {

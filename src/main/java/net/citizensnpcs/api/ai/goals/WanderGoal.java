@@ -54,7 +54,8 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
                 xrange, yrange, new Function<Block, Boolean>() {
                     @Override
                     public Boolean apply(Block block) {
-                        if ((block.getRelative(BlockFace.UP).isLiquid() || block.getRelative(0, 2, 0).isLiquid())
+                        if ((MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(BlockFace.UP))
+                                || MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(0, 2, 0)))
                                 && npc.getNavigator().getDefaultParameters().avoidWater()) {
                             return false;
                         }

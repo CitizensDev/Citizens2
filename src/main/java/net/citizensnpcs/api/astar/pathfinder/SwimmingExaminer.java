@@ -22,8 +22,9 @@ public class SwimmingExaminer implements BlockExaminer {
     @Override
     public float getCost(BlockSource source, PathPoint point) {
         if (SpigotUtil.isUsing1_13API() && npc.getEntity() instanceof WaterMob) {
-            Material in = source.getMaterialAt(point.getVector());
-            if (!MinecraftBlockExaminer.isLiquid(in)) {
+            Vector vector = point.getVector();
+            if (!MinecraftBlockExaminer.isLiquidOrInLiquid(
+                    source.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ()))) {
                 return 0.5F;
             }
         }
@@ -32,21 +33,22 @@ public class SwimmingExaminer implements BlockExaminer {
 
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
-        Material in = source.getMaterialAt(point.getVector());
-        if (!MinecraftBlockExaminer.isLiquid(in)) {
+        Vector vector = point.getVector();
+        if (!MinecraftBlockExaminer.isLiquidOrInLiquid(
+                source.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ()))) {
             return PassableState.IGNORE;
         }
         if (SpigotUtil.isUsing1_13API() && npc.getEntity() instanceof WaterMob) {
             return PassableState.PASSABLE;
         }
-        Material above = source.getMaterialAt(point.getVector().add(new Vector(0, 1, 0)));
+        Material above = source.getMaterialAt(vector.add(new Vector(0, 1, 0)));
         PassableState canSwim = isSwimmableLiquid(above) || MinecraftBlockExaminer.canStandIn(above)
                 ? PassableState.PASSABLE
                 : PassableState.UNPASSABLE;
         if (point.getParentPoint() == null) {
             return canSwim;
         }
-        if (point.getVector().getBlockY() < point.getParentPoint().getVector().getBlockY()) {
+        if (vector.getBlockY() < point.getParentPoint().getVector().getBlockY()) {
             if (!isSwimmableLiquid(source.getMaterialAt(point.getParentPoint().getVector()))) {
                 return canSwim;
             }
