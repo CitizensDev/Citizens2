@@ -105,7 +105,8 @@ public class Util {
         int mode = 2;
         if (team == null) {
             team = scoreboard.registerNewTeam(teamName);
-            if (npc.requiresNameHologram() || npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("false")) {
+            if (npc.requiresNameHologram()
+                    || npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("false")) {
                 NMS.setTeamNameTagVisible(team, false);
             }
             mode = 0;

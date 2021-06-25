@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
@@ -68,9 +69,10 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             @Override
             public float getCost(BlockSource source, PathPoint point) {
                 Vector pos = point.getVector();
-                Material in = source.getMaterialAt(pos);
                 Material above = source.getMaterialAt(pos.setY(pos.getY() + 1));
-                return params.avoidWater() && MinecraftBlockExaminer.isLiquid(in, above) ? 1F : 0F;
+                return params.avoidWater() && (MinecraftBlockExaminer.isLiquid(above)
+                        || MinecraftBlockExaminer.isLiquidOrInLiquid(pos.toLocation(source.getWorld()).getBlock())) ? 1F
+                                : 0F;
             }
 
             @Override
@@ -135,7 +137,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         Location currLoc = npc.getEntity().getLocation(NPC_LOCATION);
         Vector destVector = new Vector(vector.getX() + 0.5, vector.getY(), vector.getZ() + 0.5);
         /* Proper door movement - gets stuck on corners at times
-
+        
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
@@ -168,8 +170,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                     params.speed());
         } else {
             Vector dir = destVector.subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
-            Material in = npc.getEntity().getLocation().getBlock().getType();
-            if (distance > 0 && dY >= 1 && xzDistance <= 2.75 || (dY >= 0.2 && MinecraftBlockExaminer.isLiquid(in))) {
+            Block in = npc.getEntity().getLocation().getBlock();
+            if (distance > 0 && dY >= 1 && xzDistance <= 2.75
+                    || (dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrInLiquid(in))) {
                 dir.add(new Vector(0, 0.75, 0));
             }
             Util.faceLocation(npc.getEntity(), destVector.toLocation(npc.getEntity().getWorld()));

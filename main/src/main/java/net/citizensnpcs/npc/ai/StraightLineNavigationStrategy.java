@@ -1,7 +1,6 @@
 package net.citizensnpcs.npc.ai;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -113,8 +112,9 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
                     params.speed());
         } else {
             Vector dir = destVector.subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
-            Material in = npc.getEntity().getLocation().getBlock().getType();
-            if (distance > 0 && dY >= 1 && xzDistance <= 2.75 || (dY >= 0.2 && MinecraftBlockExaminer.isLiquid(in))) {
+            Block in = npc.getEntity().getLocation().getBlock();
+            if (distance > 0 && dY >= 1 && xzDistance <= 2.75
+                    || (dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrInLiquid(in))) {
                 dir.add(new Vector(0, 0.75, 0));
             }
             Util.faceLocation(npc.getEntity(), destVector.toLocation(npc.getEntity().getWorld()));
