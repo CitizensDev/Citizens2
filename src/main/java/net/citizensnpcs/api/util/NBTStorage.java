@@ -324,7 +324,7 @@ public class NBTStorage implements FileStorage {
 
         @Override
         public boolean keyExists(String key) {
-            return findLastTag(createRelativeKey(key)) != null;
+            return findLastTag(createRelativeKey(key), false) != null;
         }
 
         @Override
