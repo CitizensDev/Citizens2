@@ -311,7 +311,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 if (event.getClickedBlock() == null)
                     return;
                 event.setCancelled(true);
-                Location at = event.getClickedBlock().getLocation();
+                Location at = event.getClickedBlock().getLocation().add(0, 1, 0);
                 Location prev = getLastWaypoint();
 
                 if (prev != null && prev.getWorld() == at.getWorld()) {
@@ -327,7 +327,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 Waypoint element = new Waypoint(at);
                 waypoints.add(element);
                 if (showingMarkers) {
-                    markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
+                    markers.createMarker(element, element.getLocation().clone());
                 }
                 Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at),
                         waypoints.size());

@@ -9,7 +9,7 @@ import net.minecraft.world.phys.Vec3;
 public class PlayerLookControl {
     private final EntityHumanNPC a;
     private final PlayerBodyControl control;
-    protected boolean move;
+    protected boolean looking;
     protected float tpitch;
     protected double tx;
     protected double ty;
@@ -27,8 +27,8 @@ public class PlayerLookControl {
         if (this.b()) {
             // this.a.setXRot(0.0F);
         }
-        if (this.move) {
-            this.move = false;
+        if (this.looking) {
+            this.looking = false;
             this.a.setXRot(this.rotateTowards(this.a.getXRot(), this.g(), this.tpitch));
             this.a.yHeadRot = this.rotateTowards(this.a.yHeadRot, this.h(), this.tyaw);
             while (this.a.yHeadRot >= 180F) {
@@ -61,8 +61,7 @@ public class PlayerLookControl {
             }
             // this.a.setYRot(this.a(this.a.yHeadRot, this.h(), this.b));
         } else {
-            // this.a.setYRot(MathHelper.b(this.a.getYRot(), this.a.yHeadRot, 40F));
-            // this.a.aK = this.a(this.a.yHeadRot, this.a.aA, 10.0F);
+            // this.a.yHeadRot = rotateTowards(this.a.yHeadRot, this.a.yBodyRot, 10.0F);
         }
         if (!this.a.getNavigation().isDone()) { // TODO: use Citizens AI?
             this.a.yHeadRot = Mth.rotateIfNecessary(this.a.yHeadRot, this.a.yBodyRot, 75);
@@ -83,7 +82,7 @@ public class PlayerLookControl {
         this.tz = var4;
         this.tyaw = var6;
         this.tpitch = var7;
-        this.move = true;
+        this.looking = true;
     }
 
     public void a(Entity var0, float var1, float var2) {
@@ -99,7 +98,7 @@ public class PlayerLookControl {
     }
 
     public boolean c() {
-        return this.move;
+        return this.looking;
     }
 
     public double d() {

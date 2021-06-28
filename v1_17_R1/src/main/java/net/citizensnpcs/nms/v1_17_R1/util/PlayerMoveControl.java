@@ -15,20 +15,20 @@ import net.minecraft.world.entity.monster.Slime;
 
 public class PlayerMoveControl extends MoveControl {
     protected LivingEntity a;
-    protected double b;
-    protected double c;
-    protected double d;
-    protected double e;
-    protected boolean f;
     private int h;
+    protected boolean moving;
+    protected double speed;
+    protected double tx;
+    protected double ty;
+    protected double tz;
 
     public PlayerMoveControl(LivingEntity entityinsentient) {
         super(entityinsentient instanceof Mob ? (Mob) entityinsentient
                 : new Slime(EntityType.SLIME, entityinsentient.level));
         this.a = entityinsentient;
-        this.b = entityinsentient.getX();
-        this.c = entityinsentient.getY();
-        this.d = entityinsentient.getZ();
+        this.tx = entityinsentient.getX();
+        this.ty = entityinsentient.getY();
+        this.tz = entityinsentient.getZ();
     }
 
     protected int cg() {
@@ -37,27 +37,27 @@ public class PlayerMoveControl extends MoveControl {
 
     @Override
     public double getSpeedModifier() {
-        return this.e;
+        return this.speed;
     }
 
     @Override
     public double getWantedX() {
-        return this.b;
+        return this.tx;
     }
 
     @Override
     public double getWantedY() {
-        return this.c;
+        return this.ty;
     }
 
     @Override
     public double getWantedZ() {
-        return this.d;
+        return this.tz;
     }
 
     @Override
     public boolean hasWanted() {
-        return this.f;
+        return this.moving;
     }
 
     @Override
@@ -85,11 +85,11 @@ public class PlayerMoveControl extends MoveControl {
 
     @Override
     public void setWantedPosition(double d0, double d1, double d2, double d3) {
-        this.b = d0;
-        this.c = d1;
-        this.d = d2;
-        this.e = d3;
-        this.f = true;
+        this.tx = d0;
+        this.ty = d1;
+        this.tz = d2;
+        this.speed = d3;
+        this.moving = true;
     }
 
     private boolean shouldSlimeJump() {
@@ -105,26 +105,25 @@ public class PlayerMoveControl extends MoveControl {
     @Override
     public void tick() {
         this.a.zza = 0;
-        if (this.f) {
-            this.f = false;
-            int i = Mth.floor(this.a.getBoundingBox().minY + 0.5D);
-            double d0 = this.b - this.a.getX();
-            double d1 = this.d - this.a.getZ();
-            double d2 = this.c - i;
-            double d3 = d0 * d0 + d2 * d2 + d1 * d1;
-            if (d3 < 2.500000277905201E-007D) {
+        if (this.moving) {
+            this.moving = false;
+            double dX = this.tx - this.a.getX();
+            double dZ = this.tz - this.a.getZ();
+            double dY = this.ty - this.a.getY();
+            double dXZ = dY * dY + dZ * dZ;
+            if (dY * dY < 1.0 && dXZ < 2.500000277905201E-007D) {
                 this.a.zza = 0.0F;
                 return;
             }
-            float f = (float) Math.toDegrees(Math.atan2(d1, d0)) - 90.0F;
+            float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
             this.a.setYRot(rotlerp(this.a.getYRot(), f, 90.0F));
             NMS.setHeadYaw(a.getBukkitEntity(), this.a.getYRot());
             AttributeInstance speed = this.a.getAttribute(Attributes.MOVEMENT_SPEED);
-            speed.setBaseValue(0.3D * this.e);
-            float movement = (float) (this.e * speed.getValue());
+            speed.setBaseValue(0.3D * this.speed);
+            float movement = (float) (this.speed * speed.getValue());
             this.a.setSpeed(movement);
             this.a.zza = movement;
-            if (shouldSlimeJump() || (d2 >= NMS.getStepHeight(a.getBukkitEntity()) && (d0 * d0 + d1 * d1) < 1.0D)) {
+            if (shouldSlimeJump() || (dY >= NMS.getStepHeight(a.getBukkitEntity()) && dXZ < 1.0D)) {
                 this.h = cg();
                 this.h /= 3;
                 if (this.a instanceof EntityHumanNPC) {
