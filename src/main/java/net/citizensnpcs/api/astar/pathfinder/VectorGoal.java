@@ -11,7 +11,7 @@ public class VectorGoal implements AStarGoal<VectorNode> {
 
     public VectorGoal(Location dest, float range) {
         if (!MinecraftBlockExaminer.canStandIn(dest.getBlock().getType())) {
-            dest = MinecraftBlockExaminer.findValidLocation(dest, 1);
+            dest = MinecraftBlockExaminer.findValidLocationAbove(dest, 2);
         }
         this.leeway = range;
         this.goal = dest.toVector();

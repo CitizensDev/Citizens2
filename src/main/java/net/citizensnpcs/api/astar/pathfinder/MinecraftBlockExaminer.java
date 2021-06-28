@@ -200,6 +200,19 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return location;
     }
 
+    public static Location findValidLocationAbove(Location location, int radius) {
+        Block base = location.getBlock();
+        if (canStandOn(base.getRelative(BlockFace.DOWN)))
+            return location;
+        for (int y = 0; y <= radius; y++) {
+            Block relative = base.getRelative(0, y, 0);
+            if (canStandOn(relative.getRelative(BlockFace.DOWN))) {
+                return relative.getLocation();
+            }
+        }
+        return location;
+    }
+
     public static boolean isDoor(Material in) {
         return in.name().contains("DOOR") && !in.name().contains("TRAPDOOR");
     }
@@ -238,7 +251,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.CACTUS);
-
     private static Material WEB = SpigotUtil.isUsing1_13API() ? Material.COBWEB : Material.valueOf("WEB");
 
     static {
