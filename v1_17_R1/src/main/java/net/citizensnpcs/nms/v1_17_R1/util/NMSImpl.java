@@ -1110,7 +1110,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
-        getHandle(entity).setYBodyRot(yaw);
+        getHandle(entity).setYRot(yaw);
     }
 
     @Override

@@ -22,8 +22,11 @@ public class PlayerLookControl {
     }
 
     public void a() {
-        if (!NMSImpl.isNavigationFinished(this.a.getNavigation()))
+        if (!NMSImpl.isNavigationFinished(this.a.getNavigation())) {
+            // TODO: use Citizens AI?
+            // this.a.yHeadRot = Mth.rotateIfNecessary(this.a.yHeadRot, this.a.yBodyRot, 75);
             return;
+        }
         if (this.b()) {
             // this.a.setXRot(0.0F);
         }
@@ -62,9 +65,6 @@ public class PlayerLookControl {
             // this.a.setYRot(this.a(this.a.yHeadRot, this.h(), this.b));
         } else {
             // this.a.yHeadRot = rotateTowards(this.a.yHeadRot, this.a.yBodyRot, 10.0F);
-        }
-        if (!this.a.getNavigation().isDone()) { // TODO: use Citizens AI?
-            this.a.yHeadRot = Mth.rotateIfNecessary(this.a.yHeadRot, this.a.yBodyRot, 75);
         }
     }
 

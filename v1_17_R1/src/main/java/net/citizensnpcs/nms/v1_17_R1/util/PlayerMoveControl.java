@@ -15,7 +15,7 @@ import net.minecraft.world.entity.monster.Slime;
 
 public class PlayerMoveControl extends MoveControl {
     protected LivingEntity a;
-    private int h;
+    private int jumpTicks;
     protected boolean moving;
     protected double speed;
     protected double tx;
@@ -29,10 +29,6 @@ public class PlayerMoveControl extends MoveControl {
         this.tx = entityinsentient.getX();
         this.ty = entityinsentient.getY();
         this.tz = entityinsentient.getZ();
-    }
-
-    protected int cg() {
-        return new Random().nextInt(20) + 10;
     }
 
     @Override
@@ -58,6 +54,10 @@ public class PlayerMoveControl extends MoveControl {
     @Override
     public boolean hasWanted() {
         return this.moving;
+    }
+
+    protected int jumpTicks() {
+        return new Random().nextInt(20) + 10;
     }
 
     @Override
@@ -92,11 +92,11 @@ public class PlayerMoveControl extends MoveControl {
         this.moving = true;
     }
 
-    private boolean shouldSlimeJump() {
+    private boolean shouldJump() {
         if (!(this.a instanceof Slime)) {
             return false;
         }
-        if (this.h-- <= 0) {
+        if (this.jumpTicks-- <= 0) {
             return true;
         }
         return false;
@@ -115,7 +115,7 @@ public class PlayerMoveControl extends MoveControl {
                 this.a.zza = 0.0F;
                 return;
             }
-            float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
+            float f = (float) (Mth.atan2(dZ, dX) * 57.2957763671875D) - 90.0F;
             this.a.setYRot(rotlerp(this.a.getYRot(), f, 90.0F));
             NMS.setHeadYaw(a.getBukkitEntity(), this.a.getYRot());
             AttributeInstance speed = this.a.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -123,9 +123,9 @@ public class PlayerMoveControl extends MoveControl {
             float movement = (float) (this.speed * speed.getValue());
             this.a.setSpeed(movement);
             this.a.zza = movement;
-            if (shouldSlimeJump() || (dY >= NMS.getStepHeight(a.getBukkitEntity()) && dXZ < 1.0D)) {
-                this.h = cg();
-                this.h /= 3;
+            if (shouldJump() || (dY >= NMS.getStepHeight(a.getBukkitEntity()) && dXZ < 1.0D)) {
+                this.jumpTicks = jumpTicks();
+                this.jumpTicks /= 3;
                 if (this.a instanceof EntityHumanNPC) {
                     ((EntityHumanNPC) this.a).getControllerJump().jump();
                 } else {
