@@ -372,7 +372,12 @@ public abstract class AbstractNPC implements NPC {
         for (Trait trait : traits.values()) {
             DataKey traitKey = root.getRelative("traits." + trait.getName());
             trait.save(traitKey);
-            PersistenceLoader.save(trait, traitKey);
+            try {
+                PersistenceLoader.save(trait, traitKey);
+            } catch (Throwable t) {
+                Messaging.log("PersistenceLoader failed for", trait);
+                continue;
+            }
             removedTraits.remove(trait.getName());
             traitNames.append(trait.getName() + ",");
         }
