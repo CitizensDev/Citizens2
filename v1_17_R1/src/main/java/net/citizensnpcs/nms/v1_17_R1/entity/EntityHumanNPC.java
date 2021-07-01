@@ -468,8 +468,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
 
-        boolean navigating = npc.getNavigator().isNavigating();
-        updatePackets(navigating);
+        updatePackets(npc.getNavigator().isNavigating());
 
         if (invulnerableTime > 0) {
             --invulnerableTime;
@@ -520,12 +519,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
         updateCounter = 0;
         Location current = getBukkitEntity().getLocation(packetLocationCache);
-        Packet<?>[] packets = new Packet[1];
         List<Pair<EquipmentSlot, ItemStack>> vals = Lists.newArrayList();
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             vals.add(new Pair<EquipmentSlot, ItemStack>(slot, getItemBySlot(slot)));
         }
-        packets[0] = new ClientboundSetEquipmentPacket(getId(), vals);
+        Packet<?>[] packets = { new ClientboundSetEquipmentPacket(getId(), vals) };
         NMSImpl.sendPacketsNearby(getBukkitEntity(), current, packets);
     }
 

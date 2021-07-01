@@ -1139,7 +1139,7 @@ public class NMSImpl implements NMSBridge {
         LivingEntity handle = (LivingEntity) getHandle(entity);
         yaw = Util.clampYaw(yaw);
         handle.yBodyRotO = yaw;
-        if (!(handle instanceof ServerPlayer)) {
+        if (!(handle instanceof net.minecraft.world.entity.player.Player)) {
             handle.setYBodyRot(yaw);
         }
         handle.setYHeadRot(yaw);
