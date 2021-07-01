@@ -141,9 +141,10 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
+                EntityHumanNPC.this.getLevel().removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
                 ((ServerLevel) level).getChunkProvider().removeEntity(EntityHumanNPC.this);
             }
-        }, 35); // give enough time for death and smoke animation
+        }, 15); // give enough time for death and smoke animation
     }
 
     @Override
