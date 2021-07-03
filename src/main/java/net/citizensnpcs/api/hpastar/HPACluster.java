@@ -17,7 +17,7 @@ public class HPACluster {
     private final int level;
     private final List<HPAGraphNode> nodes = new ArrayList<HPAGraphNode>();
 
-    public HPACluster(HPAGraph graph, int level, int clusterSize, int clusterY, int clusterX, int clusterZ) {
+    public HPACluster(HPAGraph graph, int level, int clusterSize, int clusterX, int clusterY, int clusterZ) {
         this.graph = graph;
         this.level = level;
         this.clusterSize = clusterSize;
@@ -182,6 +182,17 @@ public class HPACluster {
         return node;
     }
 
+    public boolean hasWalkableNodes() {
+        for (int i = 0; i < clusterSize; i++) {
+            for (int j = 0; j < clusterSize; j++) {
+                if (offsetWalkable(i, j)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void insert(HPAGraphNode node) {
         nodes.add(node);
         for (HPAGraphNode other : nodes) {
@@ -195,21 +206,21 @@ public class HPACluster {
     }
 
     private boolean offsetWalkable(int x, int z) {
-        return walkable(this.clusterX + x, this.clusterZ + z);
+        return graph.walkable(clusterX + x, clusterY, clusterZ + z);
     }
 
     private AStarSolution pathfind(HPAGraphNode start, HPAGraphNode dest, boolean getPath) {
-        SimpleAStarNode startNode = new WorldAStarNode(start.x, start.z);
+        ReversableAStarNode startNode = new ClusterNode(start.x, start.z);
         if (start.x == dest.x && start.y == dest.y && start.z == dest.y) {
             return new AStarSolution(getPath ? null : startNode.reconstructSolution(), 0);
         }
-        Map<SimpleAStarNode, Float> open = new HashMap<SimpleAStarNode, Float>();
-        Map<SimpleAStarNode, Float> closed = new HashMap<SimpleAStarNode, Float>();
-        Queue<SimpleAStarNode> frontier = new PriorityQueue<SimpleAStarNode>();
+        Map<ReversableAStarNode, Float> open = new HashMap<ReversableAStarNode, Float>();
+        Map<ReversableAStarNode, Float> closed = new HashMap<ReversableAStarNode, Float>();
+        Queue<ReversableAStarNode> frontier = new PriorityQueue<ReversableAStarNode>();
         frontier.add(startNode);
         open.put(startNode, startNode.g);
         while (!frontier.isEmpty()) {
-            WorldAStarNode node = (WorldAStarNode) frontier.poll();
+            ClusterNode node = (ClusterNode) frontier.poll();
             if (node.x == dest.x && node.z == dest.z) {
                 return new AStarSolution(getPath ? null : node.reconstructSolution(), node.g);
             }
@@ -222,9 +233,9 @@ public class HPACluster {
                     if (node.x + dx < 0 || node.z + dz < 0 || node.x + dx >= 16 || node.z + dz >= 16) {
                         continue;
                     }
-                    if (!walkable(node.x + dx, node.z + dz))
+                    if (!offsetWalkable(dx, dz))
                         continue;
-                    WorldAStarNode neighbour = new WorldAStarNode(node.x + dx, node.z + dz);
+                    ClusterNode neighbour = new ClusterNode(node.x + dx, node.z + dz);
                     if (closed.containsKey(neighbour))
                         continue;
                     neighbour.parent = node;
@@ -263,9 +274,5 @@ public class HPACluster {
     public String toString() {
         return "C[" + level + "] (" + clusterX + "," + clusterY + "," + clusterZ + ")->(" + (clusterX + clusterSize - 1)
                 + "," + clusterY + "," + (clusterZ + clusterSize - 1) + ")";
-    }
-
-    private boolean walkable(int x, int z) {
-        return graph.walkable(x, clusterY, z);
     }
 }

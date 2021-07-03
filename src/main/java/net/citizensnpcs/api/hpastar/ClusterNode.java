@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.hpastar;
 
-public class WorldAStarNode extends SimpleAStarNode {
+public class ClusterNode extends ReversableAStarNode {
     int x, z;
 
-    public WorldAStarNode(int x, int z) {
+    public ClusterNode(int x, int z) {
         this.x = x;
         this.z = z;
     }
@@ -16,14 +16,12 @@ public class WorldAStarNode extends SimpleAStarNode {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        WorldAStarNode other = (WorldAStarNode) obj;
+        ClusterNode other = (ClusterNode) obj;
         return x == other.x && z == other.z;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime + x;
-        return prime * result + z;
+        return 31 * (31 + x) + z;
     }
 }

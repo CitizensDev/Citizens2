@@ -2,7 +2,6 @@ package net.citizensnpcs.api.hpastar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -11,7 +10,9 @@ import java.util.Queue;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 import ch.ethz.globis.phtree.PhTreeSolid;
 import ch.ethz.globis.phtree.PhTreeSolid.PhQueryS;
@@ -19,6 +20,7 @@ import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.astar.pathfinder.BlockSource;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.Path;
+import net.citizensnpcs.api.util.Messaging;
 
 public class HPAGraph {
     private final BlockSource blockSource;
@@ -33,43 +35,54 @@ public class HPAGraph {
         this.cx = cx;
         this.cy = cy;
         this.cz = cz;
+
+        while (clusters.size() <= MAX_DEPTH) {
+            clusters.add(new ArrayList<HPACluster>());
+            if (clusters.size() != phtrees.size()) {
+                phtrees.add(PhTreeSolid.create(3));
+            }
+        }
     }
 
     public void addClusters(int x, int z) {
         int baseX = MAX_CLUSTER_SIZE * ((x - cx) / MAX_CLUSTER_SIZE) + cx;
         int baseZ = MAX_CLUSTER_SIZE * ((z - cz) / MAX_CLUSTER_SIZE) + cz;
+        Messaging.log(baseX, baseZ);
         List<HPACluster> newClusters = new ArrayList<>();
         if (phtrees.size() == 0) {
             phtrees.add(PhTreeSolid.create(3));
         }
-        PhTreeSolid<HPACluster> baseTree = phtrees.get(0);
+        PhTreeSolid<HPACluster> baseLevel = phtrees.get(0);
 
         // build clusters
-        int clusterSize = BASE_CLUSTER_SIZE / 2;
+        int clusterSize = BASE_CLUSTER_SIZE;
         for (int y = 0; y < 128; y++) {
             for (int ci = 0; ci < MAX_CLUSTER_SIZE; ci += clusterSize) {
                 for (int cj = 0; cj < MAX_CLUSTER_SIZE; cj += clusterSize) {
-                    HPACluster cluster = new HPACluster(this, 0, clusterSize, y, baseX + ci, baseZ + cj);
+                    HPACluster cluster = new HPACluster(this, 0, clusterSize, baseX + ci, y, baseZ + cj);
+                    if (!cluster.hasWalkableNodes())
+                        continue;
                     newClusters.add(cluster);
-                    baseTree.put(
+                    baseLevel.put(
                             new long[] { cluster.clusterX, cluster.clusterY, cluster.clusterZ }, new long[] {
                                     cluster.clusterX + clusterSize, cluster.clusterY, cluster.clusterZ + clusterSize },
                             cluster);
+                    Messaging.log(cluster);
                 }
             }
         }
 
-        Map<HPACluster, List<HPACluster>> clusterMap = new IdentityHashMap<>();
+        Multimap<HPACluster, HPACluster> neighbours = HashMultimap.create();
         for (HPACluster cluster : newClusters) {
-            PhQueryS<HPACluster> q = baseTree.queryIntersect(
+            PhQueryS<HPACluster> q = baseLevel.queryIntersect(
                     new long[] { cluster.clusterX - clusterSize, cluster.clusterY - 1, cluster.clusterZ - clusterSize },
                     new long[] { cluster.clusterX + clusterSize, cluster.clusterY + 1,
                             cluster.clusterZ + clusterSize });
-            clusterMap.putIfAbsent(cluster, new ArrayList<HPACluster>());
             while (q.hasNext()) {
                 HPACluster neighbour = q.nextValue();
-                if (neighbour == cluster || clusterMap.get(cluster).contains(neighbour))
+                if (neighbour == cluster || neighbours.get(cluster).contains(neighbour))
                     continue;
+
                 // TODO: diagonal connections using length=sqrt(2)
                 if (neighbour.clusterX - cluster.clusterX != 0 && neighbour.clusterZ - cluster.clusterZ != 0)
                     continue;
@@ -78,39 +91,44 @@ public class HPAGraph {
                 Direction direction = null;
                 if (dx > 0)
                     direction = Direction.EAST;
-                if (dx < 0)
+                else if (dx < 0)
                     direction = Direction.WEST;
-                if (dz > 0)
+                else if (dz > 0)
                     direction = Direction.NORTH;
-                if (dz < 0)
+                else if (dz < 0)
                     direction = Direction.SOUTH;
                 if (direction == null)
                     continue;
                 cluster.connect(neighbour, direction);
-                clusterMap.putIfAbsent(neighbour, new ArrayList<HPACluster>());
-                clusterMap.get(cluster).add(neighbour);
-                clusterMap.get(neighbour).add(cluster);
+                neighbours.get(cluster).add(neighbour);
+                neighbours.get(neighbour).add(cluster);
+                Messaging.log("CONNECTED", cluster, neighbour);
             }
         }
         for (HPACluster cluster : newClusters) {
             cluster.connectIntra();
         }
         addClustersAtDepth(0, newClusters);
-
         for (int depth = 1; depth <= MAX_DEPTH; depth++) {
             newClusters = new ArrayList<HPACluster>();
-            clusterSize = (int) (2 * Math.pow(2, depth));
+            clusterSize = (int) (BASE_CLUSTER_SIZE * Math.pow(2, depth));
 
             for (int y = 0; y < 128; y++) {
                 for (int ci = 0; ci < MAX_CLUSTER_SIZE; ci += clusterSize) {
                     for (int cj = 0; cj < MAX_CLUSTER_SIZE; cj += clusterSize) {
-                        HPACluster cluster = new HPACluster(this, depth, clusterSize, y, baseX + ci, baseZ + cj);
-                        PhTreeSolid<HPACluster> lowerDepth = this.phtrees.get(depth - 1);
-                        cluster.buildFrom(Lists.newArrayList(lowerDepth.queryInclude(
-                                new long[] { cluster.clusterX - clusterSize, cluster.clusterY,
-                                        cluster.clusterZ - clusterSize },
+                        HPACluster cluster = new HPACluster(this, depth, clusterSize, baseX + ci, y, baseZ + cj);
+                        List<HPACluster> parentClusters = Lists.newArrayList(phtrees.get(depth - 1).queryInclude(
+                                new long[] { cluster.clusterX, cluster.clusterY, cluster.clusterZ },
                                 new long[] { cluster.clusterX + clusterSize, cluster.clusterY,
-                                        cluster.clusterZ + clusterSize })));
+                                        cluster.clusterZ + clusterSize }));
+                        if (parentClusters.size() == 0)
+                            continue;
+                        cluster.buildFrom(parentClusters);
+                        phtrees.get(depth).put(new long[] { cluster.clusterX, cluster.clusterY, cluster.clusterZ },
+                                new long[] { cluster.clusterX + clusterSize, cluster.clusterY,
+                                        cluster.clusterZ + clusterSize },
+                                cluster);
+                        Messaging.log(cluster);
                         newClusters.add(cluster);
                     }
                 }
@@ -121,12 +139,6 @@ public class HPAGraph {
     }
 
     public void addClustersAtDepth(int depth, List<HPACluster> other) {
-        while (clusters.size() <= depth) {
-            clusters.add(new ArrayList<HPACluster>());
-            if (clusters.size() != phtrees.size()) {
-                phtrees.add(PhTreeSolid.create(3));
-            }
-        }
         clusters.get(depth).addAll(other);
     }
 
@@ -135,18 +147,24 @@ public class HPAGraph {
         List<HPACluster> clustersToClean = new ArrayList<HPACluster>();
         HPAGraphNode startNode = new HPAGraphNode(start.getBlockX(), start.getBlockY(), start.getBlockZ()),
                 goalNode = new HPAGraphNode(goal.getBlockX(), goal.getBlockY(), goal.getBlockZ());
+        int i = 0;
+        // TODO: verify that below insertion code works properly
         for (PhTreeSolid<HPACluster> phtree : phtrees) {
-            HPACluster startCluster = phtree.get(new long[] { start.getBlockX(), start.getBlockY(), start.getBlockZ() },
+            PhQueryS<HPACluster> q = phtree.queryIntersect(
+                    new long[] { start.getBlockX(), start.getBlockY(), start.getBlockZ() },
                     new long[] { start.getBlockX(), start.getBlockY(), start.getBlockZ() });
-            HPACluster goalCluster = phtree.get(new long[] { goal.getBlockX(), goal.getBlockY(), goal.getBlockZ() },
+            HPACluster startCluster = q.hasNext() ? q.next() : null;
+            q = phtree.queryIntersect(new long[] { goal.getBlockX(), goal.getBlockY(), goal.getBlockZ() },
                     new long[] { goal.getBlockX(), goal.getBlockY(), goal.getBlockZ() });
-            startCluster.insert(startNode);
+            HPACluster goalCluster = q.hasNext() ? q.next() : null;
+            Messaging.log(i, startCluster, goalCluster);
+            startCluster.insert(startNode); // TODO: don't need to pathfind for higher levels
             goalCluster.insert(goalNode);
             clustersToClean.add(startCluster);
             clustersToClean.add(goalCluster);
         }
         AStarSolution sln = pathfind(startNode, goalNode, 0);
-        System.out.println(":" + start + "->" + goal + "=" + sln.cost);
+        System.out.println(":" + start + "->" + goal + "@" + sln.cost);
         for (HPACluster cluster : clustersToClean) {
             cluster.remove(startNode, goalNode);
         }
@@ -154,10 +172,10 @@ public class HPAGraph {
     }
 
     AStarSolution pathfind(HPAGraphNode start, HPAGraphNode dest, int level) {
-        Map<SimpleAStarNode, Float> open = new HashMap<SimpleAStarNode, Float>();
-        Map<SimpleAStarNode, Float> closed = new HashMap<SimpleAStarNode, Float>();
-        Queue<SimpleAStarNode> frontier = new PriorityQueue<SimpleAStarNode>();
-        SimpleAStarNode startNode = new HPAGraphAStarNode(start, null);
+        Map<ReversableAStarNode, Float> open = new HashMap<ReversableAStarNode, Float>();
+        Map<ReversableAStarNode, Float> closed = new HashMap<ReversableAStarNode, Float>();
+        Queue<ReversableAStarNode> frontier = new PriorityQueue<ReversableAStarNode>();
+        ReversableAStarNode startNode = new HPAGraphAStarNode(start, null);
         frontier.add(startNode);
         open.put(startNode, startNode.g);
         while (!frontier.isEmpty()) {
@@ -196,12 +214,12 @@ public class HPAGraph {
             return false;
         }
         Material in = blockSource.getMaterialAt(x, y, z), on = blockSource.getMaterialAt(x, y - 1, z),
-                above = blockSource.getMaterialAt(x, y + 2, z);
-        return MinecraftBlockExaminer.canStandOn(in) && MinecraftBlockExaminer.canStandIn(on)
+                above = blockSource.getMaterialAt(x, y + 1, z);
+        return MinecraftBlockExaminer.canStandOn(on) && MinecraftBlockExaminer.canStandIn(in)
                 && MinecraftBlockExaminer.canStandIn(above);
     }
 
-    private static int BASE_CLUSTER_SIZE = (int) (2 * Math.pow(2, 1));
-    private static int MAX_CLUSTER_SIZE = (int) (2 * Math.pow(2, 7));
+    private static int BASE_CLUSTER_SIZE = (int) (2 * Math.pow(2, 3));
+    private static int MAX_CLUSTER_SIZE = (int) (2 * Math.pow(2, 5));
     private static int MAX_DEPTH = 3;
 }

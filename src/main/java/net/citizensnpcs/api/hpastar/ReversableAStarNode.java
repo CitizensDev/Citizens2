@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SimpleAStarNode implements Comparable<SimpleAStarNode> {
+public class ReversableAStarNode implements Comparable<ReversableAStarNode> {
     float g;
     float h;
-    SimpleAStarNode parent;
+    ReversableAStarNode parent;
 
     @Override
-    public int compareTo(SimpleAStarNode o) {
+    public int compareTo(ReversableAStarNode o) {
         return Float.compare(g + h, o.g + o.h);
     }
 
-    public List<SimpleAStarNode> reconstructSolution() {
-        List<SimpleAStarNode> parents = new ArrayList<SimpleAStarNode>();
-        SimpleAStarNode start = this;
+    public List<ReversableAStarNode> reconstructSolution() {
+        List<ReversableAStarNode> parents = new ArrayList<ReversableAStarNode>();
+        ReversableAStarNode start = this;
         while (start != null) {
             parents.add(start);
             start = start.parent;

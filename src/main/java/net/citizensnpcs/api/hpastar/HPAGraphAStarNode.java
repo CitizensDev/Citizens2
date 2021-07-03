@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.hpastar;
 
-public class HPAGraphAStarNode extends SimpleAStarNode {
+public class HPAGraphAStarNode extends ReversableAStarNode {
     private final HPAGraphEdge edge;
     final HPAGraphNode node;
 
@@ -23,9 +23,7 @@ public class HPAGraphAStarNode extends SimpleAStarNode {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime + node.x;
-        return prime * result + node.z;
+        return 31 * (31 + node.x) + node.z;
     }
 
     @Override

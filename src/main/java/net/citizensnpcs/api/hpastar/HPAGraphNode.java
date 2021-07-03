@@ -27,15 +27,16 @@ public class HPAGraphNode {
         to.edges.get(level).add(new HPAGraphEdge(to, this, type, weight));
     }
 
+    public double distance(HPAGraphNode dest) {
+        return Math.sqrt(Math.pow(x - dest.x, 2) + Math.pow(y - dest.y, 2) + Math.pow(z - dest.z, 2));
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         HPAGraphNode other = (HPAGraphNode) obj;
@@ -54,10 +55,7 @@ public class HPAGraphNode {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime + x;
-        result = prime * result + y;
-        return prime * result + z;
+        return 31 * (31 * (31 + x) + y) + z;
     }
 
     @Override
