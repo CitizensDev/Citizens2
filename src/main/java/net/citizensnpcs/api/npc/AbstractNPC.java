@@ -376,6 +376,7 @@ public abstract class AbstractNPC implements NPC {
                 PersistenceLoader.save(trait, traitKey);
             } catch (Throwable t) {
                 Messaging.log("PersistenceLoader failed for", trait);
+                t.printStackTrace();
                 continue;
             }
             removedTraits.remove(trait.getName());
