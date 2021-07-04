@@ -9,10 +9,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Citizens;
+import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.hpastar.HPAGraph;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
@@ -67,8 +69,27 @@ public class WaypointCommands {
 
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
+            usage = "hpa",
+            desc = "Debugging command",
+            modifiers = { "hpa" },
+            min = 1,
+            max = 1,
+            permission = "citizens.waypoints.hpa")
+    public void hpa(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (Messaging.isDebugging() && sender.isOp()) {
+            HPAGraph graph = new HPAGraph(new ChunkBlockSource(npc.getStoredLocation(), 16),
+                    npc.getStoredLocation().getBlockX(), npc.getStoredLocation().getBlockY(),
+                    npc.getStoredLocation().getBlockZ());
+            graph.addClusters(npc.getStoredLocation().getBlockX(), npc.getStoredLocation().getBlockZ());
+            System.out.println(graph.findPath(new Location(npc.getStoredLocation().getWorld(), 8, 68, -134),
+                    new Location(npc.getStoredLocation().getWorld(), 11, 68, -131)));
+        }
+    }
+
+    @Command(
+            aliases = { "waypoints", "waypoint", "wp" },
             usage = "opendoors",
-            desc = "Enables opening doors when pathfinding (temporary command)",
+            desc = "Enables opening doors when pathfinding",
             modifiers = { "opendoors" },
             min = 1,
             max = 1,

@@ -21,6 +21,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.util.NMS;
 
@@ -52,15 +53,15 @@ public class HologramTrait extends Trait {
      */
     public void addLine(String text) {
         lines.add(text);
-        unload();
-        load();
+        onDespawn();
+        onSpawn();
     }
 
     /**
      * Clears all hologram lines
      */
     public void clear() {
-        unload();
+        onDespawn();
         lines.clear();
     }
 
@@ -129,32 +130,34 @@ public class HologramTrait extends Trait {
         return nameNPC != null && nameNPC.isSpawned() ? ((ArmorStand) npc.getEntity()) : null;
     }
 
-    private void load() {
-        currentLoc = npc.getStoredLocation();
-        int i = 0;
-        if (npc.requiresNameHologram()
-                && Boolean.parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString())) {
-            nameNPC = createHologram(npc.getFullName(), 0);
-        }
-        for (String line : lines) {
-            hologramNPCs.add(createHologram(Placeholders.replace(line, null, npc), getHeight(i)));
-            i++;
-        }
-    }
-
     @Override
     public void onDespawn() {
-        unload();
+        if (nameNPC != null) {
+            nameNPC.destroy();
+            nameNPC = null;
+        }
+        for (NPC npc : hologramNPCs) {
+            npc.destroy();
+        }
+        hologramNPCs.clear();
     }
 
     @Override
     public void onRemove() {
-        unload();
+        onDespawn();
     }
 
     @Override
     public void onSpawn() {
-        load();
+        currentLoc = npc.getStoredLocation();
+        if (npc.requiresNameHologram()
+                && Boolean.parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString())) {
+            nameNPC = createHologram(npc.getFullName(), 0);
+        }
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            hologramNPCs.add(createHologram(Placeholders.replace(line, null, npc), getHeight(i)));
+        }
     }
 
     /**
@@ -164,14 +167,14 @@ public class HologramTrait extends Trait {
      */
     public void removeLine(int idx) {
         lines.remove(idx);
-        unload();
-        load();
+        onDespawn();
+        onSpawn();
     }
 
     @Override
     public void run() {
         if (!npc.isSpawned()) {
-            unload();
+            onDespawn();
             return;
         }
         if (npc.requiresNameHologram()) {
@@ -203,6 +206,10 @@ public class HologramTrait extends Trait {
                 hologramNPC.teleport(currentLoc.clone().add(0, getEntityHeight() + getHeight(i), 0),
                         TeleportCause.PLUGIN);
             }
+            if (i >= lines.size()) {
+                Messaging.severe("More hologram NPCs than lines for ID", npc.getId());
+                break;
+            }
             String text = lines.get(i);
             if (text != null && !ChatColor.stripColor(Colorizer.parseColors(text)).isEmpty()) {
                 hologramNPC.setName(Placeholders.replace(text, null, npc));
@@ -221,8 +228,8 @@ public class HologramTrait extends Trait {
      */
     public void setDirection(HologramDirection direction) {
         this.direction = direction;
-        unload();
-        load();
+        onDespawn();
+        onSpawn();
     }
 
     /**
@@ -239,6 +246,8 @@ public class HologramTrait extends Trait {
         } else {
             lines.set(idx, text);
         }
+        onDespawn();
+        onSpawn();
     }
 
     /**
@@ -250,19 +259,8 @@ public class HologramTrait extends Trait {
      */
     public void setLineHeight(double height) {
         lineHeight = height;
-        unload();
-        load();
-    }
-
-    private void unload() {
-        if (nameNPC != null) {
-            nameNPC.destroy();
-            nameNPC = null;
-        }
-        for (NPC npc : hologramNPCs) {
-            npc.destroy();
-        }
-        hologramNPCs.clear();
+        onDespawn();
+        onSpawn();
     }
 
     public enum HologramDirection {
