@@ -26,16 +26,19 @@
 		</repository>
 		<repository>
 			<id>everything</id>
-			<url>http://repo.citizensnpcs.co</url>
+			<url>https://repo.citizensnpcs.co</url>
 		</repository> 
 		<repository>
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
-        <repository>
-            <id>sk89q-repo</id>
-            <url>https://maven.enginehub.org/repo/</url>
-        </repository>
+		<repository>
+			<id>sk89q-repo</id>
+			<url>https://maven.enginehub.org/repo/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
