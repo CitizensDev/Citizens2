@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import ch.ethz.globis.phtree.PhTreeSolid;
 import net.citizensnpcs.api.CitizensAPI;
@@ -61,7 +61,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
                         }
                         if (worldguardRegion != null) {
                             try {
-                                if (!((Region) worldguardRegion)
+                                if (!((ProtectedRegion) worldguardRegion)
                                         .contains(BukkitAdapter.asBlockVector(block.getLocation())))
                                     return false;
                             } catch (Throwable t) {
