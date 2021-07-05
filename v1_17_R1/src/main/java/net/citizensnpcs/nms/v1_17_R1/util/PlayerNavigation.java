@@ -527,7 +527,7 @@ public class PlayerNavigation extends PathNavigation {
         if (isDone())
             return;
         Vec3 var0 = this.path.getNextEntityPos(this.mob);
-        BlockPos var1 = new BlockPos(var0); 
+        BlockPos var1 = new BlockPos(var0);
         this.mob.getMoveControl().setWantedPosition(var0.x, this.level.getBlockState(var1.down()).isAir() ? var0.y
                 : WalkNodeEvaluator.getFloorLevel(this.level, var1), var0.z, this.speedModifier);
     }

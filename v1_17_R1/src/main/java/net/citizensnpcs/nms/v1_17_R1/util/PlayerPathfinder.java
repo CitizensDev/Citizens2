@@ -156,5 +156,4 @@ public class PlayerPathfinder extends PathFinder {
         }
         return new Path(var3, var1, var2);
     }
-
 }

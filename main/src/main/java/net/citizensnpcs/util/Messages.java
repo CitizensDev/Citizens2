@@ -18,6 +18,9 @@ public class Messages {
     public static final String ANIMATION_ADDED = "citizens.editors.waypoints.triggers.animation.added";
     public static final String ANIMATION_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.animation.prompt";
     public static final String AVAILABLE_WAYPOINT_PROVIDERS = "citizens.waypoints.available-providers-header";
+    public static final String AXOLOTL_NOT_PLAYING_DEAD = "citizens.commands.npc.axolotl.playing-dead-stopped";
+    public static final String AXOLOTL_PLAYING_DEAD = "citizens.commands.npc.axolotl.playing-dead";
+    public static final String AXOLOTL_VARIANT_SET = "citizens.commands.npc.axolotl.variant-set";
     public static final String BEE_ANGER_SET = "citizens.commands.npc.bee.anger-set";
     public static final String BEE_HAS_NECTAR = "citizens.commands.npc.bee.has-nectar";
     public static final String BEE_NO_NECTAR = "citizens.commands.npc.bee.no-nectar";
@@ -162,6 +165,7 @@ public class Messages {
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";
+    public static final String INVALID_AXOLOTL_VARIANT = "citizens.commands.npc.axolotl.invalid-variant";
     public static final String INVALID_BEE_ANGER = "citizens.commands.npc.bee.invalid-anger";
     public static final String INVALID_CAT_COLLAR_COLOR = "citizens.commands.npc.cat.invalid-collar-color";
     public static final String INVALID_CAT_TYPE = "citizens.commands.npc.cat.invalid-type";

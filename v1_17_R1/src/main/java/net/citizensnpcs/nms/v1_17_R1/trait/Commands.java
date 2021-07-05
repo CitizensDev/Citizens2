@@ -6,6 +6,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
@@ -30,6 +31,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.CatTrait;
@@ -49,6 +51,40 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
 public class Commands {
+    @Command(
+            aliases = { "npc" },
+            usage = "axolotl (-d) (--variant variant)",
+            desc = "Sets axolotl modifiers",
+            modifiers = { "axolotl" },
+            min = 1,
+            max = 1,
+            flags = "d",
+            permission = "citizens.npc.axolotl")
+    @Requirements(selected = true, ownership = true, types = EntityType.AXOLOTL)
+    public void axolotl(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        AxolotlTrait trait = npc.getOrAddTrait(AxolotlTrait.class);
+        String output = "";
+        if (args.hasValueFlag("variant")) {
+            Axolotl.Variant variant = Util.matchEnum(Axolotl.Variant.values(), args.getFlag("variant"));
+            if (variant == null) {
+                throw new CommandException(Messages.INVALID_AXOLOTL_VARIANT,
+                        Util.listValuesPretty(Axolotl.Variant.values()));
+            }
+            trait.setVariant(variant);
+            output += ' ' + Messaging.tr(Messages.AXOLOTL_VARIANT_SET, args.getFlag("variant"));
+        }
+        if (args.hasFlag('d')) {
+            trait.setPlayingDead(!trait.isPlayingDead());
+            output += ' ' + (trait.isPlayingDead() ? Messaging.tr(Messages.AXOLOTL_PLAYING_DEAD, npc.getName())
+                    : Messaging.tr(Messages.AXOLOTL_NOT_PLAYING_DEAD, npc.getName()));
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output.trim());
+        } else {
+            throw new CommandUsageException();
+        }
+    }
+
     @Command(
             aliases = { "npc" },
             usage = "bee (-s/-n) --anger anger",
