@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.util;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -15,8 +14,11 @@ public class Placeholders {
         if (npc == null) {
             return text;
         }
-        return StringUtils.replaceEach(text, CITIZENS_PLACEHOLDERS, new String[] { Integer.toString(npc.getId()),
-                npc.getName(), npc.getOrAddTrait(Owner.class).getOwner() });
+        for (int i = 0; i < CITIZENS_PLACEHOLDERS.length; i++) {
+            text = text.replace(CITIZENS_PLACEHOLDERS[i], i == 0 ? Integer.toString(npc.getId())
+                    : i == 1 ? npc.getName() : npc.getOrAddTrait(Owner.class).getOwner());
+        }
+        return text;
     }
 
     public static String replace(String text, OfflinePlayer player) {
@@ -24,11 +26,14 @@ public class Placeholders {
             return setPlaceholderAPIPlaceholders(text, player);
         }
         if (player instanceof Entity && ((Entity) player).isValid()) {
-            text = StringUtils.replaceEach(text, PLAYER_WORLD_PLACEHOLDERS, new String[] { player.getName(),
-                    player.getName(), player.getName(), player.getName(), ((Entity) player).getWorld().getName() });
+            for (int i = 0; i < PLAYER_WORLD_PLACEHOLDERS.length; i++) {
+                text = text.replace(PLAYER_WORLD_PLACEHOLDERS[i],
+                        i < 4 ? player.getName() : ((Entity) player).getWorld().getName());
+            }
         } else {
-            text = StringUtils.replaceEach(text, PLAYER_PLACEHOLDERS,
-                    new String[] { player.getName(), player.getName(), player.getName(), player.getName() });
+            for (int i = 0; i < PLAYER_PLACEHOLDERS.length; i++) {
+                text = text.replace(PLAYER_PLACEHOLDERS[i], player.getName());
+            }
         }
         return setPlaceholderAPIPlaceholders(text, player);
     }
