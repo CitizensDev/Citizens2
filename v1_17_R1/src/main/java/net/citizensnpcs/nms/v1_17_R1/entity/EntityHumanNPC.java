@@ -609,9 +609,10 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
     }
 
-    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getGetter(AttributeSupplier.class, "a");
+    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeSupplier.class, "a");
-    private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getGetter(AttributeMap.class, "d");
+    private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
+            AttributeSupplier.class);
     private static final float EPSILON = 0.005F;
     private static final MethodHandle GAMEMODE_SETTING = NMS.getFirstMethodHandle(ServerPlayerGameMode.class, true,
             GameType.class, GameType.class);

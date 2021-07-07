@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<craftbukkit.version>1.17-R0.1-SNAPSHOT</craftbukkit.version>
+		<craftbukkit.version>1.17.1-R0.1-SNAPSHOT</craftbukkit.version>
 	</properties>
 
 	<repositories>
@@ -73,9 +73,9 @@
 						</goals>
 						<id>remap-obf</id>
 						<configuration>
-							<srgIn>org.spigotmc:minecraft-server:1.17-R0.1-SNAPSHOT:txt:maps-mojang</srgIn>
+							<srgIn>org.spigotmc:minecraft-server:${craftbukkit.version}:txt:maps-mojang</srgIn>
 							<reverse>true</reverse>
-							<remappedDependencies>org.spigotmc:spigot:1.17-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>
+							<remappedDependencies>org.spigotmc:spigot:${craftbukkit.version}:jar:remapped-mojang</remappedDependencies>
 							<remappedArtifactAttached>true</remappedArtifactAttached>
 							<remappedClassifierName>remapped-obf</remappedClassifierName>
 						</configuration>
@@ -88,8 +88,8 @@
 						<id>remap-spigot</id>
 						<configuration>
 							<inputFile>${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar</inputFile>
-							<srgIn>org.spigotmc:minecraft-server:1.17-R0.1-SNAPSHOT:csrg:maps-spigot</srgIn>
-							<remappedDependencies>org.spigotmc:spigot:1.17-R0.1-SNAPSHOT:jar:remapped-obf</remappedDependencies>
+							<srgIn>org.spigotmc:minecraft-server:${craftbukkit.version}:csrg:maps-spigot</srgIn>
+							<remappedDependencies>org.spigotmc:spigot:${craftbukkit.version}:jar:remapped-obf</remappedDependencies>
 						</configuration>
 					</execution>
 				</executions>

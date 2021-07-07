@@ -224,7 +224,7 @@ public class CustomEntityRegistry extends DefaultedRegistry {
         entityIds.put(entityClass, entityId);
     }
 
-    private static final MethodHandle IREGISTRY_LIFECYCLE = NMS.getGetter(Registry.class, "bv");
+    private static final MethodHandle IREGISTRY_LIFECYCLE = NMS.getFirstGetter(Registry.class, Lifecycle.class);
     // replace regex
     // .*?> ([A-Z_]+).*?of\((.*?)::new.*?$
     // minecraftClassMap.put(EntityType.\1, \2.class);

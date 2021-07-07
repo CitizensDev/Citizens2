@@ -1863,7 +1863,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cr");
-
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
@@ -1896,7 +1895,7 @@ public class NMSImpl implements NMSBridge {
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(ChunkMap.class, "J");
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(ChunkMap.class, "J");
-    private static final MethodHandle PUFFERFISH_C = NMS.getSetter(Pufferfish.class, "bS");
+    private static final MethodHandle PUFFERFISH_C = NMS.getSetter(Pufferfish.class, "bU");
     private static final MethodHandle PUFFERFISH_D = NMS.getSetter(Pufferfish.class, "bT");
     private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
     private static final Random RANDOM = Util.getFastRandom();
@@ -1913,7 +1912,7 @@ public class NMSImpl implements NMSBridge {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
         try {
-            ENDERMAN_CREEPY = (EntityDataAccessor<Boolean>) NMS.getField(EnderMan.class, "bU").get(null);
+            ENDERMAN_CREEPY = (EntityDataAccessor<Boolean>) NMS.getField(EnderMan.class, "bV").get(null);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

@@ -94,7 +94,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
 
     private static final MethodHandle E = NMS.getGetter(ServerEntity.class, "e");
     private static final MethodHandle F = NMS.getGetter(ServerEntity.class, "f");
-    private static final MethodHandle TRACKER = NMS.getGetter(TrackedEntity.class, "c");
-    private static final MethodHandle TRACKER_ENTRY = NMS.getGetter(TrackedEntity.class, "b");
-    private static final MethodHandle TRACKING_DISTANCE = NMS.getGetter(TrackedEntity.class, "d");
+    private static final MethodHandle TRACKER = NMS.getFirstGetter(TrackedEntity.class, Entity.class);
+    private static final MethodHandle TRACKER_ENTRY = NMS.getFirstGetter(TrackedEntity.class, ServerEntity.class);
+    private static final MethodHandle TRACKING_DISTANCE = NMS.getFirstGetter(TrackedEntity.class, int.class);
 }
