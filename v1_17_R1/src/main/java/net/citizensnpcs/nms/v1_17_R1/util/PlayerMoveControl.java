@@ -14,8 +14,9 @@ import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.monster.Slime;
 
 public class PlayerMoveControl extends MoveControl {
-    protected LivingEntity a;
+    protected LivingEntity entity;
     private int jumpTicks;
+    private int keepMovingTicks;
     protected boolean moving;
     protected double speed;
     protected double tx;
@@ -25,7 +26,7 @@ public class PlayerMoveControl extends MoveControl {
     public PlayerMoveControl(LivingEntity entityinsentient) {
         super(entityinsentient instanceof Mob ? (Mob) entityinsentient
                 : new Slime(EntityType.SLIME, entityinsentient.level));
-        this.a = entityinsentient;
+        this.entity = entityinsentient;
         this.tx = entityinsentient.getX();
         this.ty = entityinsentient.getY();
         this.tz = entityinsentient.getZ();
@@ -90,10 +91,11 @@ public class PlayerMoveControl extends MoveControl {
         this.tz = d2;
         this.speed = d3;
         this.moving = true;
+        this.keepMovingTicks = 1;
     }
 
     private boolean shouldJump() {
-        if (!(this.a instanceof Slime)) {
+        if (!(this.entity instanceof Slime)) {
             return false;
         }
         if (this.jumpTicks-- <= 0) {
@@ -104,32 +106,32 @@ public class PlayerMoveControl extends MoveControl {
 
     @Override
     public void tick() {
-        this.a.zza = 0;
+        this.entity.zza = 0;
         if (this.moving) {
             this.moving = false;
-            double dX = this.tx - this.a.getX();
-            double dZ = this.tz - this.a.getZ();
-            double dY = this.ty - this.a.getY();
-            double dXZ = dY * dY + dZ * dZ;
+            double dX = this.tx - this.entity.getX();
+            double dZ = this.tz - this.entity.getZ();
+            double dY = this.ty - this.entity.getY();
+            double dXZ = dX * dX + dZ * dZ;
             if (dY * dY < 1.0 && dXZ < 0.005) {
-                this.a.zza = 0.0F;
+                this.entity.zza = 0.0F;
                 return;
             }
             float f = (float) (Mth.atan2(dZ, dX) * 57.2957763671875D) - 90.0F;
-            this.a.setYRot(rotlerp(this.a.getYRot(), f, 90.0F));
-            NMS.setHeadYaw(a.getBukkitEntity(), this.a.getYRot());
-            AttributeInstance speed = this.a.getAttribute(Attributes.MOVEMENT_SPEED);
+            this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
+            NMS.setHeadYaw(entity.getBukkitEntity(), this.entity.getYRot());
+            AttributeInstance speed = this.entity.getAttribute(Attributes.MOVEMENT_SPEED);
             speed.setBaseValue(0.3D * this.speed);
             float movement = (float) (this.speed * speed.getValue());
-            this.a.setSpeed(movement);
-            this.a.zza = movement;
-            if (shouldJump() || (dY >= NMS.getStepHeight(a.getBukkitEntity()) && dXZ < 1.0D)) {
+            this.entity.setSpeed(movement);
+            this.entity.zza = movement;
+            if (shouldJump() || (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 1.0D)) {
                 this.jumpTicks = jumpTicks();
                 this.jumpTicks /= 3;
-                if (this.a instanceof EntityHumanNPC) {
-                    ((EntityHumanNPC) this.a).getControllerJump().jump();
+                if (this.entity instanceof EntityHumanNPC) {
+                    ((EntityHumanNPC) this.entity).getControllerJump().jump();
                 } else {
-                    ((Mob) this.a).getJumpControl().jump();
+                    ((Mob) this.entity).getJumpControl().jump();
                 }
             }
         }

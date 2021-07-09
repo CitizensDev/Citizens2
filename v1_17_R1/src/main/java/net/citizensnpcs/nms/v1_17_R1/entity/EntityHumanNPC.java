@@ -31,6 +31,7 @@ import net.citizensnpcs.nms.v1_17_R1.network.EmptyNetHandler;
 import net.citizensnpcs.nms.v1_17_R1.network.EmptyNetworkManager;
 import net.citizensnpcs.nms.v1_17_R1.network.EmptySocket;
 import net.citizensnpcs.nms.v1_17_R1.util.EmptyAdvancementDataPlayer;
+import net.citizensnpcs.nms.v1_17_R1.util.EmptyServerStatsCounter;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
 import net.citizensnpcs.nms.v1_17_R1.util.PlayerControllerJump;
 import net.citizensnpcs.nms.v1_17_R1.util.PlayerLookControl;
@@ -55,6 +56,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -72,17 +74,18 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityHumanNPC extends ServerPlayer implements NPCHolder, SkinnableEntity {
-    private final Map<BlockPathTypes, Float> bz = Maps.newEnumMap(BlockPathTypes.class);
     private PlayerControllerJump controllerJump;
     private PlayerLookControl controllerLook;
     private PlayerMoveControl controllerMove;
     private final Map<EquipmentSlot, ItemStack> equipmentCache = Maps.newEnumMap(EquipmentSlot.class);
     private int jumpTicks = 0;
+    private final Map<BlockPathTypes, Float> malus = Maps.newEnumMap(BlockPathTypes.class);
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private PlayerlistTracker playerlistTracker;
     private final SkinPacketTracker skinTracker;
+    private EmptyServerStatsCounter statsCache;
     private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, ServerLevel world, GameProfile gameProfile, NPC npc) {
@@ -166,17 +169,19 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             super.doTick();
             return;
         }
-        super.tick();
+        super.baseTick();
         boolean navigating = npc.getNavigator().isNavigating();
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            travel(new Vec3(0, 0, 0));
+            travel(Vec3.ZERO);
         }
+
         Vec3 mot = getDeltaMovement();
         if (Math.abs(mot.x) < EPSILON && Math.abs(mot.y) < EPSILON && Math.abs(mot.z) < EPSILON) {
-            setDeltaMovement(new Vec3(0, 0, 0));
+            setDeltaMovement(Vec3.ZERO);
         }
+
         if (navigating) {
             if (!NMSImpl.isNavigationFinished(navigation)) {
                 NMSImpl.updateNavigation(navigation);
@@ -194,8 +199,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             this.hurtTime--;
         if (this.invulnerableTime > 0)
             this.invulnerableTime--;
-        if (isDeadOrDying())
+        if (isDeadOrDying()) {
             tickDeath();
+        }
         if (this.lastHurtByPlayerTime > 0) {
             this.lastHurtByPlayerTime--;
         } else {
@@ -250,7 +256,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     public float getPathfindingMalus(BlockPathTypes pathtype) {
-        return this.bz.containsKey(pathtype) ? this.bz.get(pathtype) : pathtype.getMalus();
+        return this.malus.containsKey(pathtype) ? this.malus.get(pathtype) : pathtype.getMalus();
     }
 
     @Override
@@ -270,6 +276,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     @Override
     public SkinPacketTracker getSkinTracker() {
         return skinTracker;
+    }
+
+    @Override
+    public ServerStatsCounter getStats() {
+        return this.statsCache == null ? statsCache = new EmptyServerStatsCounter() : statsCache;
     }
 
     @Override
@@ -419,7 +430,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     public void setPathfindingMalus(BlockPathTypes pathtype, float f) {
-        this.bz.put(pathtype, f);
+        this.malus.put(pathtype, f);
     }
 
     public void setShouldJump() {

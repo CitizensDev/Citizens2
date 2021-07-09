@@ -164,9 +164,11 @@ public class NMS {
         return null;
     }
 
-    private static Field getFirstFieldMatchingType(Class<?> clazz, Class<?> type) {
+    private static Field getFirstFieldMatchingType(Class<?> clazz, Class<?> type, boolean allowStatic) {
         Field found = null;
         for (Field field : clazz.getDeclaredFields()) {
+            if (allowStatic ^ Modifier.isStatic(field.getModifiers()))
+                continue;
             if (field.getType() == type) {
                 found = field;
                 break;
@@ -180,7 +182,7 @@ public class NMS {
 
     public static MethodHandle getFirstGetter(Class<?> clazz, Class<?> type) {
         try {
-            Field found = getFirstFieldMatchingType(clazz, type);
+            Field found = getFirstFieldMatchingType(clazz, type, false);
             if (found == null)
                 return null;
             return LOOKUP.unreflectGetter(found);
@@ -223,10 +225,22 @@ public class NMS {
 
     public static MethodHandle getFirstSetter(Class<?> clazz, Class<?> type) {
         try {
-            Field found = getFirstFieldMatchingType(clazz, type);
+            Field found = getFirstFieldMatchingType(clazz, type, false);
             if (found == null)
                 return null;
             return LOOKUP.unreflectSetter(found);
+        } catch (Exception e) {
+            Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
+        }
+        return null;
+    }
+
+    public static MethodHandle getFirstStaticGetter(Class<?> clazz, Class<?> type) {
+        try {
+            Field found = getFirstFieldMatchingType(clazz, type, true);
+            if (found == null)
+                return null;
+            return LOOKUP.unreflectGetter(found);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
         }

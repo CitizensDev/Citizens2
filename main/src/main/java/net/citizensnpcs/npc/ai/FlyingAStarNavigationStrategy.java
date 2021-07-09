@@ -28,6 +28,7 @@ import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
+import net.citizensnpcs.util.Util;
 
 public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     private int iterations;
@@ -153,9 +154,10 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
             }
         }
 
-        double d0 = vector.getX() + 0.5D - current.getX();
-        double d1 = vector.getY() + 0.1D - current.getY();
-        double d2 = vector.getZ() + 0.5D - current.getZ();
+        Vector centeredDest = new Vector(vector.getX() + 0.5D, vector.getY() + 0.1D, vector.getZ() + 0.5D);
+        double d0 = centeredDest.getX() - current.getX();
+        double d1 = centeredDest.getY() - current.getY();
+        double d2 = centeredDest.getZ() - current.getZ();
 
         Vector velocity = npc.getEntity().getVelocity();
         double motX = velocity.getX(), motY = velocity.getY(), motZ = velocity.getZ();
@@ -166,7 +168,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
         npc.getEntity().setVelocity(velocity);
 
-        float targetYaw = (float) (Math.atan2(motZ, motX) * 180.0D / Math.PI) - 90.0F;
+        float targetYaw = (float) (Math.toDegrees(Math.atan2(motZ, motX))) - 90.0F;
         float normalisedTargetYaw = (targetYaw - current.getYaw()) % 360;
         if (normalisedTargetYaw >= 180.0F) {
             normalisedTargetYaw -= 360.0F;
@@ -177,7 +179,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
 
         if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
             NMS.setVerticalMovement(npc.getEntity(), 0.5);
-            NMS.setHeadYaw(npc.getEntity(), current.getYaw() + normalisedTargetYaw);
+            Util.faceLocation(npc.getEntity(), centeredDest.toLocation(npc.getEntity().getWorld()));
         }
         parameters.run();
         plan.run(npc);

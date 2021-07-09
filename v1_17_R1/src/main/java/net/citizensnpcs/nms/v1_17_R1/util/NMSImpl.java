@@ -1920,7 +1920,7 @@ public class NMSImpl implements NMSBridge {
         }
         try {
             RABBIT_TYPE_DATAWATCHER = (EntityDataAccessor<Integer>) NMS
-                    .getFirstGetter(Rabbit.class, EntityDataAccessor.class).invoke();
+                    .getFirstStaticGetter(Rabbit.class, EntityDataAccessor.class).invoke();
         } catch (Throwable e) {
             e.printStackTrace();
         }
