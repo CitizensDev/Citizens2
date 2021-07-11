@@ -17,6 +17,8 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -24,8 +26,11 @@ import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -161,6 +166,17 @@ public class AxolotlController extends MobEntityController {
                 dropLeash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
+        }
+
+        @Override
+        public InteractionResult mobInteract(Player entityhuman, InteractionHand enumhand) {
+            if (npc == null || !npc.isProtected())
+                return super.mobInteract(entityhuman, enumhand);
+            ItemStack itemstack = entityhuman.getItemInHand(enumhand);
+            if (itemstack.getItem() == Items.BUCKET) {
+                return InteractionResult.FAIL;
+            }
+            return super.mobInteract(entityhuman, enumhand);
         }
 
         @Override
