@@ -173,7 +173,7 @@ public class AxolotlController extends MobEntityController {
             if (npc == null || !npc.isProtected())
                 return super.mobInteract(entityhuman, enumhand);
             ItemStack itemstack = entityhuman.getItemInHand(enumhand);
-            if (itemstack.getItem() == Items.BUCKET) {
+            if (itemstack.getItem() == Items.BUCKET || itemstack.getItem() == Items.WATER_BUCKET) {
                 return InteractionResult.FAIL;
             }
             return super.mobInteract(entityhuman, enumhand);
