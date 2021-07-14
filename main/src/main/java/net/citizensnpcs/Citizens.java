@@ -76,8 +76,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final List<NPCRegistry> anonymousRegistries = Lists.newArrayList();
     private final List<NPCRegistry> citizensBackedRegistries = Lists.newArrayList();
     private final CommandManager commands = new CommandManager();
-    private boolean compatible;
     private Settings config;
+    private boolean loaded;
     private CitizensNPCRegistry npcRegistry;
     private NPCDataStore saves;
     private NPCSelector selector;
@@ -143,6 +143,19 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             }
             reg.despawnNPCs(DespawnReason.RELOAD);
         }
+    }
+
+    public void disable() {
+        if (loaded) {
+            Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
+            Editor.leaveAll();
+            despawnNPCs(true);
+            npcRegistry = null;
+            NMS.shutdown();
+            loaded = false;
+        }
+
+        CitizensAPI.shutdown();
     }
 
     private void enableSubPlugins() {
@@ -277,16 +290,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onDisable() {
-        Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
-        Editor.leaveAll();
-
-        if (compatible) {
-            despawnNPCs(true);
-            npcRegistry = null;
-            NMS.shutdown();
-        }
-
-        CitizensAPI.shutdown();
+        disable();
     }
 
     @Override
@@ -296,11 +300,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         setupTranslator();
         // Disable if the server is not using the compatible Minecraft version
         String mcVersion = Util.getMinecraftRevision();
-        compatible = true;
+        loaded = true;
         try {
             NMS.loadBridge(mcVersion);
         } catch (Exception e) {
-            compatible = false;
+            loaded = false;
             if (Messaging.isDebugging()) {
                 e.printStackTrace();
             }

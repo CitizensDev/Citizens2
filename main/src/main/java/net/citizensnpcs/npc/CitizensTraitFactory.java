@@ -46,6 +46,7 @@ import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
+import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SlimeSize;
@@ -92,6 +93,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(SkinTrait.class));
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(SlimeSize.class));
+        registerTrait(TraitInfo.create(ShopTrait.class));
         registerTrait(TraitInfo.create(Spawned.class));
         registerTrait(TraitInfo.create(Speech.class));
         registerTrait(TraitInfo.create(Text.class));

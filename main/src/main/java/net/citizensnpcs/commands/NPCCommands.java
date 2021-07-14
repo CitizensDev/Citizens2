@@ -114,6 +114,8 @@ import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
+import net.citizensnpcs.trait.ShopTrait;
+import net.citizensnpcs.trait.ShopTrait.NPCShop;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SkinTrait;
@@ -1916,6 +1918,29 @@ public class NPCCommands {
         }
         if (!hasArg) {
             throw new CommandException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "shop (name) (editr)",
+            desc = "NPC shop edit/show",
+            modifiers = { "shop" },
+            min = 1,
+            max = 3,
+            permission = "citizens.npc.shop")
+    public void shop(CommandContext args, Player sender, NPC npc) throws CommandException {
+        ShopTrait trait = npc.getOrAddTrait(ShopTrait.class);
+        if (args.argsLength() > 1) {
+            NPCShop shop = trait.getShop(args.getString(1));
+            if (args.getString(1).equalsIgnoreCase("edit")) {
+            } else if (args.getString(1).equalsIgnoreCase("show") && args.argsLength() == 3) {
+                shop.display(sender);
+            } else {
+                throw new CommandUsageException();
+            }
+        } else {
+            trait.getDefaultShop().display(sender);
         }
     }
 
