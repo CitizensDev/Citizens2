@@ -77,7 +77,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final List<NPCRegistry> citizensBackedRegistries = Lists.newArrayList();
     private final CommandManager commands = new CommandManager();
     private Settings config;
-    private boolean loaded;
+    private boolean enabled;
     private CitizensNPCRegistry npcRegistry;
     private NPCDataStore saves;
     private NPCSelector selector;
@@ -98,6 +98,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     };
     private CitizensSpeechFactory speechFactory;
     private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
+
     private CitizensTraitFactory traitFactory;
 
     @Override
@@ -143,19 +144,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             }
             reg.despawnNPCs(DespawnReason.RELOAD);
         }
-    }
-
-    public void disable() {
-        if (loaded) {
-            Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
-            Editor.leaveAll();
-            despawnNPCs(true);
-            npcRegistry = null;
-            NMS.shutdown();
-            loaded = false;
-        }
-
-        CitizensAPI.shutdown();
     }
 
     private void enableSubPlugins() {
@@ -290,7 +278,15 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onDisable() {
-        disable();
+        if (!enabled)
+            return;
+        Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
+        Editor.leaveAll();
+        despawnNPCs(true);
+        npcRegistry = null;
+        NMS.shutdown();
+        enabled = false;
+        CitizensAPI.shutdown();
     }
 
     @Override
@@ -300,15 +296,14 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         setupTranslator();
         // Disable if the server is not using the compatible Minecraft version
         String mcVersion = Util.getMinecraftRevision();
-        loaded = true;
         try {
             NMS.loadBridge(mcVersion);
         } catch (Exception e) {
-            loaded = false;
             if (Messaging.isDebugging()) {
                 e.printStackTrace();
             }
             Messaging.severeTr(Messages.CITIZENS_INCOMPATIBLE, getDescription().getVersion(), mcVersion);
+            enabled = true;
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -500,6 +495,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private class CitizensLoadTask implements Runnable {
+
         @Override
         public void run() {
             saves.loadInto(npcRegistry);
@@ -508,6 +504,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
             Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
+            enabled = true;
         }
     }
 

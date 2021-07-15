@@ -1,6 +1,5 @@
 package net.citizensnpcs;
 
-import java.lang.invoke.MethodHandle;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.base.Predicates;
@@ -229,28 +228,6 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onCommandSenderCreateNPC(CommandSenderCreateNPCEvent event) {
         checkCreationEvent(event);
-    }
-
-    @EventHandler
-    public void onDisable(PluginDisableEvent event) {
-        // hack: Spigot now unloads plugin classes on disable in reverse order so prefer unloading at the start of
-        // plugin disable cycle
-        if (event.getPlugin() instanceof JavaPlugin) {
-            try {
-                MethodHandle field = CLASSES_FIELD == null
-                        ? CLASSES_FIELD = NMS.getGetter(event.getPlugin().getPluginLoader().getClass(), "classes")
-                        : CLASSES_FIELD;
-                Map<String, Class<?>> classes = (Map<String, Class<?>>) field
-                        .invoke(event.getPlugin().getPluginLoader());
-                if (classes.containsKey("net.citizensnpcs.api.CitizensAPI")) {
-                    CitizensAPI.getPlugin().onDisable();
-                }
-            } catch (Throwable e) {
-                CitizensAPI.getPlugin().onDisable();
-            }
-        } else {
-            CitizensAPI.getPlugin().onDisable();
-        }
     }
 
     /*
@@ -586,6 +563,19 @@ public class EventListen implements Listener {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
     }
 
+    @EventHandler
+    public void onPluginDisable(PluginDisableEvent event) {
+        // hack: Spigot now unloads plugin classes on disable in reverse order so prefer unloading at the start of
+        // plugin disable cycle
+        PluginDescriptionFile file = event.getPlugin().getDescription();
+        for (String plugin : Iterables.concat(file.getDepend(), file.getSoftDepend())) {
+            if (plugin.equalsIgnoreCase("citizens")) {
+                CitizensAPI.getPlugin().onDisable();
+                break;
+            }
+        }
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onPotionSplashEvent(PotionSplashEvent event) {
         for (LivingEntity entity : event.getAffectedEntities()) {
@@ -742,6 +732,4 @@ public class EventListen implements Listener {
         }
         return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
     }
-
-    private static MethodHandle CLASSES_FIELD = null;
 }
