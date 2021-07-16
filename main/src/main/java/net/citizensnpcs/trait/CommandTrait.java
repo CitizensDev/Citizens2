@@ -166,12 +166,13 @@ public class CommandTrait extends Trait {
 
     public void dispatch(final Player player, final Hand hand) {
         NPCCommandDispatchEvent event = new NPCCommandDispatchEvent(npc, player);
-        event.setCancelled(!checkPreconditions(player, hand));
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
         }
         Runnable task = new Runnable() {
+            boolean charged = false;
+
             @Override
             public void run() {
                 List<NPCCommand> commandList = Lists
@@ -232,6 +233,10 @@ public class CommandTrait extends Trait {
                             cooldowns.put(player.getUniqueId().toString(), info = new PlayerNPCCommand());
                         }
                         if (info != null && !info.canUse(CommandTrait.this, player, command)) {
+                            return;
+                        }
+                        if (!charged && !checkPreconditions(player, hand)) {
+                            charged = true;
                             return;
                         }
                         PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
