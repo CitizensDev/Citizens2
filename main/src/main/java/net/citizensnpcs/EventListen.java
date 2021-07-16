@@ -569,7 +569,7 @@ public class EventListen implements Listener {
         // plugin disable cycle
         PluginDescriptionFile file = event.getPlugin().getDescription();
         for (String plugin : Iterables.concat(file.getDepend(), file.getSoftDepend())) {
-            if (plugin.equalsIgnoreCase("citizens")) {
+            if (plugin.equalsIgnoreCase("citizens") && CitizensAPI.hasImplementation()) {
                 CitizensAPI.getPlugin().onDisable();
                 break;
             }
