@@ -115,7 +115,7 @@ public class HologramTrait extends Trait {
      * @return the hologram lines, in bottom-up order
      */
     public List<String> getLines() {
-        return lines;
+        return Lists.newArrayList(lines);
     }
 
     private double getMaxHeight() {
@@ -207,7 +207,7 @@ public class HologramTrait extends Trait {
                         TeleportCause.PLUGIN);
             }
             if (i >= lines.size()) {
-                Messaging.severe("More hologram NPCs than lines for ID", npc.getId());
+                Messaging.severe("More hologram NPCs than lines for ID", npc.getId(), "lines", lines);
                 break;
             }
             String text = lines.get(i);
@@ -242,7 +242,7 @@ public class HologramTrait extends Trait {
      */
     public void setLine(int idx, String text) {
         if (idx == lines.size()) {
-            lines.add(idx, text);
+            lines.add(text);
         } else {
             lines.set(idx, text);
         }
