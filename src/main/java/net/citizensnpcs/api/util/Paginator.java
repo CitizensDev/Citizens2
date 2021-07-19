@@ -19,29 +19,39 @@ public class Paginator {
         return this;
     }
 
+    public String getPageText(int page) {
+        int linesPerPage = console ? 200 : LINES_PER_PAGE;
+        int pages = (int) (Math.ceil((double) lines.size() / linesPerPage) == 0 ? 1
+                : Math.ceil((double) lines.size() / linesPerPage));
+        if (page <= 0 || page > pages)
+            return null;
+
+        int startIndex = linesPerPage * page - linesPerPage;
+        int endIndex = page * linesPerPage;
+
+        String text = header == null ? "" : wrapHeader("[[" + header + " <f>" + page + "/" + pages);
+
+        if (lines.size() < endIndex)
+            endIndex = lines.size();
+        for (String line : lines.subList(startIndex, endIndex)) {
+            text += "\n" + line;
+        }
+        return text;
+    }
+
     public Paginator header(String header) {
         this.header = header;
         return this;
     }
 
     public boolean sendPage(CommandSender sender, int page) {
-        int linesPerPage = console ? 200 : LINES_PER_PAGE;
-        int pages = (int) (Math.ceil((double) lines.size() / linesPerPage) == 0 ? 1
-                : Math.ceil((double) lines.size() / linesPerPage));
-        if (page <= 0 || page > pages)
+        String text = getPageText(page);
+        if (text != null) {
+            Messaging.send(sender, text);
+            return true;
+        } else {
             return false;
-
-        int startIndex = linesPerPage * page - linesPerPage;
-        int endIndex = page * linesPerPage;
-
-        Messaging.send(sender, wrapHeader("[[" + header + " <f>" + page + "/" + pages));
-
-        if (lines.size() < endIndex)
-            endIndex = lines.size();
-        for (String line : lines.subList(startIndex, endIndex)) {
-            Messaging.send(sender, line);
         }
-        return true;
     }
 
     public static String wrapHeader(Object string) {
