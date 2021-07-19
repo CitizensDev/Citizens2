@@ -21,7 +21,7 @@ public class PageChangePrompt extends NumericPrompt {
         Player player = (Player) context.getForWhom();
         if (!text.sendPage(player, input.intValue())) {
             Messaging.sendErrorTr(player, Messages.TEXT_EDITOR_INVALID_PAGE);
-            return new TextStartPrompt(text);
+            return new TextBasePrompt(text);
         }
         return (Prompt) context.getSessionData("previous");
     }

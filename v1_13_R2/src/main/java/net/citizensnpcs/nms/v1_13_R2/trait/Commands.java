@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.DyeColor;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Llama.Color;
@@ -37,14 +38,18 @@ import net.citizensnpcs.util.Util;
 public class Commands {
     @Command(
             aliases = { "npc" },
-            usage = "bossbar --color [color] --title [title] --visible [visible] --flags [flags]",
+            usage = "bossbar --style [style] --color [color] --title [title] --visible [visible] --flags [flags]",
             desc = "Edit bossbar properties",
             modifiers = { "bossbar" },
             min = 1,
             max = 1)
-    @Requirements(selected = true, ownership = true, types = { EntityType.WITHER, EntityType.ENDER_DRAGON })
+    @Requirements(selected = true, ownership = true)
     public void bossbar(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         BossBarTrait trait = npc.getOrAddTrait(BossBarTrait.class);
+        if (args.hasValueFlag("style")) {
+            BarStyle style = Util.matchEnum(BarStyle.values(), args.getFlag("style"));
+            trait.setStyle(style);
+        }
         if (args.hasValueFlag("color")) {
             BarColor color = Util.matchEnum(BarColor.values(), args.getFlag("color"));
             trait.setColor(color);

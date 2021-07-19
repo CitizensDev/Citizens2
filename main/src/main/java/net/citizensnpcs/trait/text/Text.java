@@ -31,6 +31,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
@@ -40,6 +41,7 @@ import net.citizensnpcs.util.Util;
  */
 @TraitName("text")
 public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
+    private int bubbleTicks;
     private final Map<UUID, Long> cooldowns = Maps.newHashMap();
     private int currentIndex;
     private int delay = -1;
@@ -48,6 +50,8 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
+    private boolean speechBubbles;
+    private int speechIndex = -1;
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
     private final List<String> text = new ArrayList<String>();
 
@@ -64,6 +68,14 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
      */
     public void add(String string) {
         text.add(string);
+    }
+
+    private void clearBubble() {
+        if (speechIndex < npc.getOrAddTrait(HologramTrait.class).getLines().size()) {
+            npc.getOrAddTrait(HologramTrait.class).removeLine(speechIndex);
+            speechIndex = -1;
+        }
+        bubbleTicks = 0;
     }
 
     @Override
@@ -88,7 +100,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     public Editor getEditor(final Player player) {
         final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
                 .withLocalEcho(false).withEscapeSequence("/npc text").withEscapeSequence("exit").withModality(false)
-                .withFirstPrompt(new TextStartPrompt(this)).buildConversation(player);
+                .withFirstPrompt(new TextBasePrompt(this)).buildConversation(player);
         return new Editor() {
             @Override
             public void begin() {
@@ -104,6 +116,21 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         };
     }
 
+    String getPageText(int page) {
+        Paginator paginator = new Paginator().header("Current Texts");
+        for (int i = 0; i < text.size(); i++)
+            paginator.addLine("<a>" + i + " <7>- <e>" + text.get(i));
+
+        return paginator.getPageText(page);
+    }
+
+    /**
+     * @return The list of all texts
+     */
+    public List<String> getTexts() {
+        return text;
+    }
+
     /**
      * @return whether there is text at a certain index
      */
@@ -114,10 +141,6 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
     @Override
     public void load(DataKey key) throws NPCLoadException {
         text.clear();
-        // TODO: legacy, remove later
-        for (DataKey sub : key.getIntegerSubKeys()) {
-            text.add(sub.getString(""));
-        }
         for (DataKey sub : key.getRelative("text").getIntegerSubKeys()) {
             text.add(sub.getString(""));
         }
@@ -157,14 +180,21 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
 
     @Override
     public void run() {
-        if (!talkClose || !npc.isSpawned())
+        if (!npc.isSpawned())
+            return;
+
+        if (bubbleTicks > 0 && --bubbleTicks == 0) {
+            clearBubble();
+        }
+
+        if (!talkClose)
             return;
         List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         for (Entity search : nearby) {
             if (!(search instanceof Player) || ((Player) search).getGameMode() == GameMode.SPECTATOR)
                 continue;
             Player player = (Player) search;
-            // If the cooldown is not expired, do not send text
+
             Long cooldown = cooldowns.get(player.getUniqueId());
             if (cooldown != null) {
                 if (System.currentTimeMillis() < cooldown) {
@@ -173,7 +203,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
                 cooldowns.remove(player.getUniqueId());
             }
             sendText(player);
-            // Add a cooldown if the text was successfully sent
+
             int secondsDelta = delay != -1 ? delay
                     : RANDOM.nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
                             + Setting.TALK_CLOSE_MINIMUM_COOLDOWN.asInt();
@@ -192,16 +222,14 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         key.setBoolean("realistic-looking", realisticLooker);
         key.setDouble("range", range);
         key.setString("talkitem", itemInHandPattern);
-        // TODO: legacy, remove later
-        for (int i = 0; i < 100; i++)
-            key.removeKey(String.valueOf(i));
         key.removeKey("text");
-        for (int i = 0; i < text.size(); i++)
+        for (int i = 0; i < text.size(); i++) {
             key.setString("text." + String.valueOf(i), text.get(i));
+        }
     }
 
     boolean sendPage(Player player, int page) {
-        Paginator paginator = new Paginator().header(npc.getName() + "'s Text Entries");
+        Paginator paginator = new Paginator().header("Current Texts");
         for (int i = 0; i < text.size(); i++)
             paginator.addLine("<a>" + i + " <7>- <e>" + text.get(i));
 
@@ -213,15 +241,27 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
             return false;
 
         int index = 0;
-        if (randomTalker)
+        if (randomTalker) {
             index = RANDOM.nextInt(text.size());
-        else {
-            if (currentIndex > text.size() - 1)
+        } else {
+            if (currentIndex > text.size() - 1) {
                 currentIndex = 0;
+            }
             index = currentIndex++;
         }
 
-        npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
+        if (speechBubbles) {
+            HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
+            if (speechIndex == -1) {
+                speechIndex = trait.getLines().size();
+                trait.addLine(text.get(index));
+                bubbleTicks = Setting.DEFAULT_TEXT_SPEECH_BUBBLE_TICKS.asInt();
+            } else if (speechIndex < trait.getLines().size()) {
+                trait.setLine(speechIndex, text.get(index));
+            }
+        } else {
+            npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
+        }
         return true;
     }
 
@@ -235,7 +275,13 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         this.delay = delay;
     }
 
-    void setItemInHandPattern(String pattern) {
+    /**
+     * Sets the item in hand pattern required to talk to NPCs, if enabled.
+     *
+     * @param pattern
+     *            The new pattern
+     */
+    public void setItemInHandPattern(String pattern) {
         itemInHandPattern = pattern;
     }
 
@@ -248,7 +294,10 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         this.range = range;
     }
 
-    boolean shouldTalkClose() {
+    /**
+     * @return Whether talking close is enabled.
+     */
+    public boolean shouldTalkClose() {
         return talkClose;
     }
 
@@ -274,14 +323,14 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         return (realisticLooker = !realisticLooker);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Text{talk-close=" + talkClose + ",text=");
-        for (String line : text)
-            builder.append(line + ",");
-        builder.append("}");
-        return builder.toString();
+    /**
+     * Toggles using speech bubbles instead of messages.
+     */
+    public boolean toggleSpeechBubbles() {
+        if (speechBubbles) {
+            clearBubble();
+        }
+        return (speechBubbles = !speechBubbles);
     }
 
     private static Random RANDOM = Util.getFastRandom();

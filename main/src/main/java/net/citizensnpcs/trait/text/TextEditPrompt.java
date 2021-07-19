@@ -21,7 +21,7 @@ public class TextEditPrompt extends StringPrompt {
         int index = (Integer) context.getSessionData("index");
         text.edit(index, input);
         Messaging.sendTr((CommandSender) context.getForWhom(), Messages.TEXT_EDITOR_EDITED_TEXT, index, input);
-        return new TextStartPrompt(text);
+        return new TextBasePrompt(text);
     }
 
     @Override

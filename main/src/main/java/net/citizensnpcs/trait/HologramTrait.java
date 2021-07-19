@@ -115,7 +115,7 @@ public class HologramTrait extends Trait {
      * @return the hologram lines, in bottom-up order
      */
     public List<String> getLines() {
-        return Lists.newArrayList(lines);
+        return lines;
     }
 
     private double getMaxHeight() {

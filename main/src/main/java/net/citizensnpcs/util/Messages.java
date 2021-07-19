@@ -354,6 +354,7 @@ public class Messages {
     public static final String TEXT_EDITOR_INVALID_INPUT = "citizens.editors.text.invalid-input";
     public static final String TEXT_EDITOR_INVALID_PAGE = "citizens.editors.text.invalid-page";
     public static final String TEXT_EDITOR_INVALID_RANGE = "citizens.editors.text.invalid-range";
+    public static final String TEXT_EDITOR_LIST = "citizens.editors.text.text-list-header";
     public static final String TEXT_EDITOR_MISSING_ITEM_PATTERN = "citizens.editors.text.missing-item-set-pattern";
     public static final String TEXT_EDITOR_PAGE_PROMPT = "citizens.editors.text.change-page-prompt";
     public static final String TEXT_EDITOR_RANDOM_TALKER_SET = "citizens.editors.text.random-talker-set";
@@ -362,6 +363,7 @@ public class Messages {
     public static final String TEXT_EDITOR_REMOVE_PROMPT = "citizens.editors.text.remove-prompt";
     public static final String TEXT_EDITOR_REMOVED_ENTRY = "citizens.editors.text.removed-entry";
     public static final String TEXT_EDITOR_SET_ITEM = "citizens.editors.text.talk-item-set";
+    public static final String TEXT_EDITOR_SPEECH_BUBBLES_SET = "citizens.editors.text.speech-bubbles-set";
     public static final String TEXT_EDITOR_START_PROMPT = "citizens.editors.text.start-prompt";
     public static final String TO_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.to-not-found";
     public static final String TPTO_SUCCESS = "citizens.commands.npc.tpto.success";

@@ -22,7 +22,7 @@ public class TextEditStartPrompt extends StringPrompt {
             int index = Integer.parseInt(input);
             if (!text.hasIndex(index)) {
                 Messaging.sendErrorTr(player, Messages.TEXT_EDITOR_INVALID_INDEX, index);
-                return new TextStartPrompt(text);
+                return new TextBasePrompt(text);
             }
             context.setSessionData("index", index);
             return new TextEditPrompt(text);
@@ -33,7 +33,7 @@ public class TextEditStartPrompt extends StringPrompt {
             }
         }
         Messaging.sendErrorTr(player, Messages.TEXT_EDITOR_INVALID_INPUT);
-        return new TextStartPrompt(text);
+        return new TextBasePrompt(text);
     }
 
     @Override

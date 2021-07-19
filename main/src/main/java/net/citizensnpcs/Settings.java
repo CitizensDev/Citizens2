@@ -61,6 +61,7 @@ public class Settings {
         ALWAYS_USE_NAME_HOLOGRAM("npc.always-use-name-holograms", false),
         ASTAR_ITERATIONS_PER_TICK("npc.pathfinding.new-finder.iterations-per-tick", 5000),
         AUTH_SERVER_URL("general.authlib.profile-url", "https://sessionserver.mojang.com/session/minecraft/profile/"),
+        BOSSBAR_RANGE("npc.default.bossbar-view-range", 64),
         CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", false),
         CHAT_FORMAT("npc.chat.format.no-targets", "[<npc>]: <text>"),
         CHAT_FORMAT_TO_BYSTANDERS("npc.chat.format.with-target-to-bystanders", "[<npc>] -> [<target>]: <text>"),
@@ -85,7 +86,7 @@ public class Settings {
         DEFAULT_NPC_LIMIT("npc.limits.default-limit", 10),
         DEFAULT_PATH_DISTANCE_MARGIN("npc.pathfinding.default-path-distance-margin", 1),
         DEFAULT_PATHFINDER_UPDATE_PATH_RATE("npc.pathfinding.update-path-rate", 20),
-        DEFAULT_PATHFINDING_RANGE("npc.default.pathfinding.range", 25F),
+        DEFAULT_PATHFINDING_RANGE("npc.default.pathfinding.range", 75F),
         DEFAULT_RANDOM_LOOK_CLOSE("npc.default.look-close.random-look-enabled", false),
         DEFAULT_RANDOM_LOOK_DELAY("npc.default.look-close.random-look-delay", 60),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", false),
@@ -103,6 +104,7 @@ public class Settings {
                 value = list;
             }
         },
+        DEFAULT_TEXT_SPEECH_BUBBLE_TICKS("npc.text.speech-bubble-ticks", 50),
         DISABLE_LOOKCLOSE_WHILE_NAVIGATING("npc.default.look-close.disable-while-navigating", true),
         DISABLE_MC_NAVIGATION_FALLBACK("npc.pathfinding.disable-mc-fallback-navigation", true),
         DISABLE_TABLIST("npc.tablist.disable", true),

@@ -22,11 +22,11 @@ public class TextRemovePrompt extends StringPrompt {
             int index = Integer.parseInt(input);
             if (!text.hasIndex(index)) {
                 Messaging.sendErrorTr(player, Messages.TEXT_EDITOR_INVALID_INDEX, index);
-                return new TextStartPrompt(text);
+                return new TextBasePrompt(text);
             }
             text.remove(index);
             Messaging.sendTr(player, Messages.TEXT_EDITOR_REMOVED_ENTRY, index);
-            return new TextStartPrompt(text);
+            return new TextBasePrompt(text);
         } catch (NumberFormatException ex) {
             if (input.equalsIgnoreCase("page")) {
                 context.setSessionData("previous", this);
@@ -34,7 +34,7 @@ public class TextRemovePrompt extends StringPrompt {
             }
         }
         Messaging.sendErrorTr(player, Messages.TEXT_EDITOR_INVALID_INPUT);
-        return new TextStartPrompt(text);
+        return new TextBasePrompt(text);
     }
 
     @Override
