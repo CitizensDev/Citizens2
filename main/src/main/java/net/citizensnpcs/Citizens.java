@@ -80,6 +80,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private Settings config;
     private boolean enabled;
     private CitizensNPCRegistry npcRegistry;
+    private boolean saveOnDisable = true;
     private NPCDataStore saves;
     private NPCSelector selector;
     private final SkullMetaProvider skullMetaProvider = new SkullMetaProvider() {
@@ -99,7 +100,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     };
     private CitizensSpeechFactory speechFactory;
     private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
-
     private CitizensTraitFactory traitFactory;
 
     @Override
@@ -283,11 +283,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
         Editor.leaveAll();
-        despawnNPCs(true);
+        despawnNPCs(saveOnDisable);
         HandlerList.unregisterAll(this);
         npcRegistry = null;
         NMS.shutdown();
         enabled = false;
+        saveOnDisable = true;
         CitizensAPI.shutdown();
     }
 
@@ -348,6 +349,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void onImplementationChanged() {
         Messaging.severeTr(Messages.CITIZENS_IMPLEMENTATION_DISABLED);
         Bukkit.getPluginManager().disablePlugin(this);
+    }
+
+    public void onDependentPluginDisable() {
+        storeNPCs();
+        saveOnDisable = false;
     }
 
     public void registerCommandClass(Class<?> clazz) {

@@ -570,7 +570,7 @@ public class EventListen implements Listener {
         PluginDescriptionFile file = event.getPlugin().getDescription();
         for (String plugin : Iterables.concat(file.getDepend(), file.getSoftDepend())) {
             if (plugin.equalsIgnoreCase("citizens") && CitizensAPI.hasImplementation()) {
-                CitizensAPI.getPlugin().onDisable();
+                ((Citizens) CitizensAPI.getPlugin()).onDependentPluginDisable();
                 break;
             }
         }
