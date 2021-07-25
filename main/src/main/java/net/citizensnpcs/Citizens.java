@@ -277,6 +277,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return commands.executeSafe(command, args, sender, methodArgs);
     }
 
+    public void onDependentPluginDisable() {
+        storeNPCs();
+        saves.saveToDiskImmediate();
+        saveOnDisable = false;
+    }
+
     @Override
     public void onDisable() {
         if (!enabled)
@@ -286,9 +292,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs(saveOnDisable);
         HandlerList.unregisterAll(this);
         npcRegistry = null;
-        NMS.shutdown();
         enabled = false;
         saveOnDisable = true;
+        NMS.shutdown();
         CitizensAPI.shutdown();
     }
 
@@ -349,11 +355,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void onImplementationChanged() {
         Messaging.severeTr(Messages.CITIZENS_IMPLEMENTATION_DISABLED);
         Bukkit.getPluginManager().disablePlugin(this);
-    }
-
-    public void onDependentPluginDisable() {
-        storeNPCs();
-        saveOnDisable = false;
     }
 
     public void registerCommandClass(Class<?> clazz) {
