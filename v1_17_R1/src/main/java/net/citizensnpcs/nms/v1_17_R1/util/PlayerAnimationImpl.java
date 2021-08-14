@@ -93,12 +93,12 @@ public class PlayerAnimationImpl {
                 player.startFallFlying();
                 break;
             case START_USE_MAINHAND_ITEM:
-                player.swing(InteractionHand.MAIN_HAND);
+                player.startUsingItem(InteractionHand.MAIN_HAND);
                 sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData(), true),
                         player, radius);
                 break;
             case START_USE_OFFHAND_ITEM:
-                player.swing(InteractionHand.OFF_HAND);
+                player.startUsingItem(InteractionHand.OFF_HAND);
                 sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData(), true),
                         player, radius);
                 break;
