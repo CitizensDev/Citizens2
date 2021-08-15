@@ -26,13 +26,13 @@ public class MountTrait extends Trait {
         super("mounttrait");
     }
 
-    public void checkMount(Entity e) {
-        if (mountedOn != null && (e == null || !e.getUniqueId().equals(mountedOn))) {
-            NPC other = CitizensAPI.getNPCRegistry().getByUniqueId(mountedOn);
-            if (other != null && other.isSpawned()) {
-                NMS.mount(other.getEntity(), npc.getEntity());
-                triggered = true;
-            }
+    public void checkMounted(Entity mounted) {
+        if (mountedOn == null || (mounted != null && mounted.getUniqueId().equals(mountedOn)))
+            return;
+        NPC other = CitizensAPI.getNPCRegistry().getByUniqueId(mountedOn);
+        if (other != null && other.isSpawned()) {
+            NMS.mount(other.getEntity(), npc.getEntity());
+            triggered = true;
         }
     }
 
@@ -42,15 +42,14 @@ public class MountTrait extends Trait {
 
     @Override
     public void onDespawn() {
-        Entity e = NMS.getVehicle(npc.getEntity());
-        if (e != null) {
+        if (NMS.getVehicle(npc.getEntity()) != null) {
             npc.getEntity().leaveVehicle();
         }
     }
 
     @Override
     public void onSpawn() {
-        checkMount(null);
+        checkMounted(null);
     }
 
     @Override
@@ -63,26 +62,29 @@ public class MountTrait extends Trait {
             } catch (IllegalArgumentException e) {
                 mountedOn = null;
             }
-            checkMount(null);
+            checkMounted(null);
         }
-        Entity e = NMS.getVehicle(npc.getEntity());
-        if (e == null && !triggered) {
+        Entity vehicle = NMS.getVehicle(npc.getEntity());
+        if (vehicle == null && !triggered) {
             mountedOn = null;
-        } else if (e instanceof NPCHolder) {
-            mountedOn = ((NPCHolder) e).getNPC().getUniqueId();
-            uuid = mountedOn.toString();
+        } else if (vehicle instanceof NPCHolder) {
+            setMountedOn(((NPCHolder) vehicle).getNPC().getUniqueId());
         }
-        checkMount(e);
+        checkMounted(vehicle);
+    }
+
+    public void setMountedOn(UUID uuid) {
+        this.mountedOn = uuid;
+        this.uuid = uuid.toString();
     }
 
     public void unmount() {
-        if (mountedOn != null) {
-            Entity e = NMS.getVehicle(npc.getEntity());
-            if (e != null) {
-                npc.getEntity().leaveVehicle();
-            }
-            uuid = null;
-            mountedOn = null;
+        if (mountedOn == null)
+            return;
+        if (NMS.getVehicle(npc.getEntity()) != null) {
+            npc.getEntity().leaveVehicle();
         }
+        uuid = null;
+        mountedOn = null;
     }
 }
