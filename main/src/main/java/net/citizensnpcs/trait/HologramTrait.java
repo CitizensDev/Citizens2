@@ -149,6 +149,8 @@ public class HologramTrait extends Trait {
 
     @Override
     public void onSpawn() {
+        if (!npc.isSpawned())
+            return;
         currentLoc = npc.getStoredLocation();
         if (npc.requiresNameHologram()
                 && Boolean.parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString())) {
