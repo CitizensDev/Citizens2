@@ -33,6 +33,10 @@ public class GroupNPCFlock implements NPCFlock {
         }).collect(Collectors.<NPC> toList());
     }
 
+    public List<NPC> getNPCs() {
+        return npcs;
+    }
+
     public static GroupNPCFlock create(Iterable<NPC> npcs) {
         return new GroupNPCFlock(npcs, -1);
     }
