@@ -76,10 +76,7 @@ public class YamlStorage implements FileStorage {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((file == null) ? 0 : file.hashCode());
-        return result;
+        return 31 + ((file == null) ? 0 : file.hashCode());
     }
 
     @Override

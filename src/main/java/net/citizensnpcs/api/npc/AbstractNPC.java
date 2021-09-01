@@ -306,24 +306,29 @@ public abstract class AbstractNPC implements NPC {
                 return root.getRelative("traits." + input);
             }
         }));
-        for (DataKey traitKey : keys) {
-            Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
-            Trait trait;
-            if (hasTrait(clazz)) {
-                trait = getTraitNullable(clazz);
-            } else {
-                trait = CitizensAPI.getTraitFactory().getTrait(clazz);
-                if (trait == null) {
-                    Messaging.severeTr("citizens.notifications.trait-load-failed", traitKey.name(), getId());
-                    continue;
-                }
-                addTrait(trait);
-            }
-            loadTrait(trait, traitKey);
+        DataKey locationKey = root.getRelative("traits.location");
+        if (locationKey.keyExists()) {
+            loadTraitFromKey(locationKey);
+            keys.remove(locationKey);
+        }
+        for (DataKey key : keys) {
+            loadTraitFromKey(key);
         }
     }
 
-    private void loadTrait(Trait trait, DataKey traitKey) {
+    private void loadTraitFromKey(DataKey traitKey) {
+        Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
+        Trait trait;
+        if (hasTrait(clazz)) {
+            trait = getTraitNullable(clazz);
+        } else {
+            trait = CitizensAPI.getTraitFactory().getTrait(clazz);
+            if (trait == null) {
+                Messaging.severeTr("citizens.notifications.trait-load-failed", traitKey.name(), getId());
+                return;
+            }
+            addTrait(trait);
+        }
         try {
             PersistenceLoader.load(trait, traitKey);
             trait.load(traitKey);
