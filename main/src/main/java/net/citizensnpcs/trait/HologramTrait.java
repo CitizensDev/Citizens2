@@ -33,9 +33,9 @@ public class HologramTrait extends Trait {
     private Location currentLoc;
     @Persist
     private HologramDirection direction = HologramDirection.BOTTOM_UP;
-    private final List<NPC> hologramNPCs = Lists.newArrayList();
     @Persist
     private double lineHeight = -1;
+    private final List<NPC> lineHolograms = Lists.newArrayList();
     @Persist
     private final List<String> lines = Lists.newArrayList();
     private NPC nameNPC;
@@ -101,7 +101,7 @@ public class HologramTrait extends Trait {
      * Note: this is implementation-specific and may be removed at a later date.
      */
     public Collection<ArmorStand> getHologramEntities() {
-        return Collections2.transform(hologramNPCs, (n) -> (ArmorStand) n.getEntity());
+        return Collections2.transform(lineHolograms, (n) -> (ArmorStand) n.getEntity());
     }
 
     /**
@@ -136,10 +136,10 @@ public class HologramTrait extends Trait {
             nameNPC.destroy();
             nameNPC = null;
         }
-        for (NPC npc : hologramNPCs) {
+        for (NPC npc : lineHolograms) {
             npc.destroy();
         }
-        hologramNPCs.clear();
+        lineHolograms.clear();
     }
 
     @Override
@@ -158,7 +158,7 @@ public class HologramTrait extends Trait {
         }
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            hologramNPCs.add(createHologram(Placeholders.replace(line, null, npc), getHeight(i)));
+            lineHolograms.add(createHologram(Placeholders.replace(line, null, npc), getHeight(i)));
         }
     }
 
@@ -178,6 +178,9 @@ public class HologramTrait extends Trait {
         if (!npc.isSpawned()) {
             onDespawn();
             return;
+        }
+        if (currentLoc == null) {
+            currentLoc = npc.getStoredLocation();
         }
         if (npc.requiresNameHologram()) {
             boolean visible = Boolean
@@ -200,8 +203,8 @@ public class HologramTrait extends Trait {
             }
             nameNPC.setName(npc.getFullName());
         }
-        for (int i = 0; i < hologramNPCs.size(); i++) {
-            NPC hologramNPC = hologramNPCs.get(i);
+        for (int i = 0; i < lineHolograms.size(); i++) {
+            NPC hologramNPC = lineHolograms.get(i);
             if (!hologramNPC.isSpawned())
                 continue;
             if (update) {
