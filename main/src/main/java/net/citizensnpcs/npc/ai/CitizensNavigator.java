@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import com.google.common.collect.Iterables;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -34,10 +35,12 @@ import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class CitizensNavigator implements Navigator, Runnable {
+    private Location activeTicket;
     private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)
             .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat()).debug(Setting.DEBUG_PATHFINDING.asBoolean())
             .defaultAttackStrategy(MCTargetStrategy.DEFAULT_ATTACK_STRATEGY)
@@ -317,8 +320,14 @@ public class CitizensNavigator implements Navigator, Runnable {
             velocity.setX(0).setY(0).setZ(0);
             npc.getEntity().setVelocity(velocity);
         }
-        Location loc = npc.getEntity().getLocation(STATIONARY_LOCATION);
-        NMS.look(npc.getEntity(), loc.getYaw(), 0);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                updateTicket(isNavigating() ? executing.getTargetAsLocation() : null);
+            }
+        }, 10);
+        // Location loc = npc.getEntity().getLocation(STATIONARY_LOCATION);
+        // NMS.look(npc.getEntity(), loc.getYaw(), 0);
     }
 
     private void stopNavigating(CancelReason reason) {
@@ -377,6 +386,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         stationaryTicks = 0;
         if (npc.isSpawned()) {
             NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
+            updateTicket(executing.getTargetAsLocation());
         }
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
     }
@@ -430,6 +440,23 @@ public class CitizensNavigator implements Navigator, Runnable {
         lastY = current.getBlockY();
         lastZ = current.getBlockZ();
         return false;
+    }
+
+    private void updateTicket(Location target) {
+        if (target != null && this.activeTicket != null
+                && new ChunkCoord(target.getChunk()).equals(new ChunkCoord(this.activeTicket.getChunk()))) {
+            this.activeTicket = target.clone();
+            return;
+        }
+        if (this.activeTicket != null) {
+            this.activeTicket.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
+        }
+        if (target == null) {
+            this.activeTicket = null;
+            return;
+        }
+        this.activeTicket = target.clone();
+        this.activeTicket.getChunk().addPluginChunkTicket(CitizensAPI.getPlugin());
     }
 
     private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
