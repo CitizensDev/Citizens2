@@ -443,7 +443,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private void updateTicket(Location target) {
-        if (!CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
+        if (!SUPPORT_CHUNK_TICKETS || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
             return;
         if (target != null && this.activeTicket != null
                 && new ChunkCoord(target.getChunk()).equals(new ChunkCoord(this.activeTicket.getChunk()))) {
@@ -451,16 +451,27 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
         }
         if (this.activeTicket != null) {
-            this.activeTicket.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
+            try {
+                this.activeTicket.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
+            } catch (NoSuchMethodError e) {
+                SUPPORT_CHUNK_TICKETS = false;
+                this.activeTicket = null;
+            }
         }
         if (target == null) {
             this.activeTicket = null;
             return;
         }
         this.activeTicket = target.clone();
-        this.activeTicket.getChunk().addPluginChunkTicket(CitizensAPI.getPlugin());
+        try {
+            this.activeTicket.getChunk().addPluginChunkTicket(CitizensAPI.getPlugin());
+        } catch (NoSuchMethodError e) {
+            SUPPORT_CHUNK_TICKETS = false;
+            this.activeTicket = null;
+        }
     }
 
     private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
+    private static boolean SUPPORT_CHUNK_TICKETS = true;
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
 }
