@@ -127,7 +127,7 @@ public class HologramTrait extends Trait {
      * Note: this is implementation-specific and may be removed at a later date.
      */
     public ArmorStand getNameEntity() {
-        return nameNPC != null && nameNPC.isSpawned() ? ((ArmorStand) npc.getEntity()) : null;
+        return nameNPC != null && nameNPC.isSpawned() ? ((ArmorStand) nameNPC.getEntity()) : null;
     }
 
     @Override

@@ -443,6 +443,8 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private void updateTicket(Location target) {
+        if (!CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
+            return;
         if (target != null && this.activeTicket != null
                 && new ChunkCoord(target.getChunk()).equals(new ChunkCoord(this.activeTicket.getChunk()))) {
             this.activeTicket = target.clone();
