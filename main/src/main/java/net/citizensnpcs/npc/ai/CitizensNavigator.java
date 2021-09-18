@@ -320,6 +320,8 @@ public class CitizensNavigator implements Navigator, Runnable {
             velocity.setX(0).setY(0).setZ(0);
             npc.getEntity().setVelocity(velocity);
         }
+        if (!SUPPORT_CHUNK_TICKETS || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
+            return;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
