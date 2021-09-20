@@ -1188,8 +1188,9 @@ public class NMSImpl implements NMSBridge {
         if (entity instanceof Player) {
             ((Player) entity).setSneaking(sneaking);
         }
+        EntityPose pose = sneaking ? EntityPose.SNEAKING : EntityPose.STANDING;
         try {
-            ENTITY_SETPOSE.invoke(getHandle(entity), sneaking ? EntityPose.SNEAKING : EntityPose.STANDING);
+            ENTITY_SETPOSE.invoke(getHandle(entity), pose);
         } catch (Throwable e) {
             e.printStackTrace();
         }
