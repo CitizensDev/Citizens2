@@ -200,7 +200,6 @@ import net.minecraft.server.v1_10_R1.PathType;
 import net.minecraft.server.v1_10_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_10_R1.ReportedException;
 import net.minecraft.server.v1_10_R1.ScoreboardTeam;
-import net.minecraft.server.v1_10_R1.ScoreboardTeamBase.EnumNameTagVisibility;
 import net.minecraft.server.v1_10_R1.SoundEffect;
 import net.minecraft.server.v1_10_R1.Vec3D;
 import net.minecraft.server.v1_10_R1.WorldServer;
@@ -1028,6 +1027,13 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setSitting(Tameable tameable, boolean sitting) {
         ((EntityTameableAnimal) NMSImpl.getHandle((LivingEntity) tameable)).setSitting(sitting);
+    }
+
+    @Override
+    public void setSneaking(org.bukkit.entity.Entity entity, boolean sneaking) {
+        if (entity instanceof Player) {
+            ((Player) entity).setSneaking(sneaking);
+        }
     }
 
     @Override

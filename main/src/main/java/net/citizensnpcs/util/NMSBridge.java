@@ -161,6 +161,8 @@ public interface NMSBridge {
 
     public void setSitting(Tameable tameable, boolean sitting);
 
+    public void setSneaking(Entity entity, boolean sneaking);
+
     public void setStepHeight(Entity entity, float height);
 
     public void setTeamNameTagVisible(Team team, boolean visible);

@@ -965,6 +965,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setSneaking(org.bukkit.entity.Entity entity, boolean sneaking) {
+        if (entity instanceof Player) {
+            ((Player) entity).setSneaking(sneaking);
+        }
+    }
+
+    @Override
     public void setStepHeight(org.bukkit.entity.Entity entity, float height) {
         NMSImpl.getHandle(entity).S = height;
     }
@@ -1427,7 +1434,6 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE,
             EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
             EntityType.GHAST);
-
     private static final float DEFAULT_SPEED = 1F;
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;

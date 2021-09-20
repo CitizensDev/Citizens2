@@ -1229,6 +1229,14 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setSneaking(org.bukkit.entity.Entity entity, boolean sneaking) {
+        if (entity instanceof Player) {
+            ((Player) entity).setSneaking(sneaking);
+        }
+        getHandle(entity).setPose(sneaking ? EntityPose.CROUCHING : EntityPose.STANDING);
+    }
+
+    @Override
     public void setStepHeight(org.bukkit.entity.Entity entity, float height) {
         NMSImpl.getHandle(entity).G = height;
     }

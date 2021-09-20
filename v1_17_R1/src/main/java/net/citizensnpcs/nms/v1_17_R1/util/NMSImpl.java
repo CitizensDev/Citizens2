@@ -229,6 +229,7 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.v1_16_R3.EntityPose;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -1219,6 +1220,14 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setSitting(Tameable tameable, boolean sitting) {
         ((TamableAnimal) NMSImpl.getHandle(tameable)).setInSittingPose(sitting);
+    }
+
+    @Override
+    public void setSneaking(org.bukkit.entity.Entity entity, boolean sneaking) {
+        if (entity instanceof Player) {
+            ((Player) entity).setSneaking(sneaking);
+        }
+        getHandle(entity).setPose(sneaking ? EntityPose.CROUCHING : EntityPose.STANDING);
     }
 
     @Override

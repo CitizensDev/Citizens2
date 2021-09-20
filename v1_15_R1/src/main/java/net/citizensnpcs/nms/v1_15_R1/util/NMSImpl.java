@@ -1202,6 +1202,18 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setSneaking(org.bukkit.entity.Entity entity, boolean sneaking) {
+        if (entity instanceof Player) {
+            ((Player) entity).setSneaking(sneaking);
+        }
+        try {
+            ENTITY_SETPOSE.invoke(getHandle(entity), sneaking ? EntityPose.CROUCHING : EntityPose.STANDING);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void setStepHeight(org.bukkit.entity.Entity entity, float height) {
         NMSImpl.getHandle(entity).H = height;
     }
@@ -1873,6 +1885,7 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
             "advancementDataPlayer");
+
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
@@ -1889,6 +1902,8 @@ public class NMSImpl implements NMSBridge {
             true, int.class);
     private static final MethodHandle ENTITY_R = NMS.getMethodHandle(EntityLiving.class, "r", true, float.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
+    private static final MethodHandle ENTITY_SETPOSE = NMS.getMethodHandle(Entity.class, "setPose", false,
+            EntityPose.class);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle GOAL_SET_FIELD = NMS.getGetter(PathfinderGoalSelector.class, "d");
     private static final MethodHandle HEAD_HEIGHT = NMS.getSetter(Entity.class, "headHeight");

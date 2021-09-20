@@ -487,16 +487,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
 
         npc.update();
-        /*
-         double diff = this.yaw - this.aK;
-         if (diff != 40 && diff != -40) {
-         ++this.yawUpdateRequiredTicks;
-         }
-         if (this.yawUpdateRequiredTicks > 5) {
-         this.yaw = (diff > -40 && diff < 0) || (diff > 0 && diff > 40) ? this.aK - 40 : this.aK + 40;
-         this.yawUpdateRequiredTicks = 0;
-         }
-         */
     }
 
     @Override

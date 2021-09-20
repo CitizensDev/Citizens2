@@ -45,6 +45,7 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.ScoreboardTrait;
+import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -316,6 +317,9 @@ public class CitizensNPC extends AbstractNPC {
             if (getEntity() instanceof Player) {
                 NMS.replaceTrackerEntry((Player) getEntity());
                 PlayerUpdateTask.registerPlayer(getEntity());
+                if (!hasTrait(SneakTrait.class)) {
+                    addTrait(SneakTrait.class);
+                }
             }
         }
 

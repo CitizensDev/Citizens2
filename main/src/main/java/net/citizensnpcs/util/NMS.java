@@ -554,6 +554,10 @@ public class NMS {
         BRIDGE.setSitting(tameable, sitting);
     }
 
+    public static void setSneaking(Entity entity, boolean sneaking) {
+        BRIDGE.setSneaking(entity, sneaking);
+    }
+
     public static void setStepHeight(org.bukkit.entity.Entity entity, float height) {
         BRIDGE.setStepHeight(entity, height);
     }
