@@ -92,9 +92,13 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
                 @Override
                 public void run() {
-                    if (isClimbable(npc.getEntity().getLocation(dummy).getBlock().getType())
-                            && current.next().getY() > current.previous().getY()) {
-                        npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
+                    Material type = npc.getEntity().getLocation(dummy).getBlock().getType();
+                    if (isClimbable(type)) {
+                        if (current.next().getY() > current.previous().getY()) {
+                            npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
+                        } else if (type.name().equals("SCAFFOLDING")) {
+                            npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(-0.3));
+                        }
                     }
                 }
             };
