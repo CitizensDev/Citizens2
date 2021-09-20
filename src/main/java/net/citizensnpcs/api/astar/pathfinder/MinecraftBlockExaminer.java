@@ -87,8 +87,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 added = true;
                 return;
             }
-            Runnable callback = new Runnable() {
+            npc.getNavigator().getLocalParameters().addRunCallback(new Runnable() {
                 Location dummy = new Location(null, 0, 0, 0);
+                boolean sneakingForScaffolding;
 
                 @Override
                 public void run() {
@@ -96,19 +97,23 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                     if (isClimbable(type)) {
                         if (current.next().getY() > current.previous().getY()) {
                             npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
+                            if (sneakingForScaffolding) {
+                                npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = false);
+                            }
                         } else if (type.name().equals("SCAFFOLDING")) {
-                            npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(-0.3));
+                            npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = true);
                         }
+                    } else if (sneakingForScaffolding) {
+                        npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = false);
                     }
                 }
-            };
+            });
             npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
                 @Override
                 public void onCompletion(CancelReason cancelReason) {
                     npc.data().set("running-ladder", false);
                 }
             });
-            npc.getNavigator().getLocalParameters().addRunCallback(callback);
             added = true;
         }
     }

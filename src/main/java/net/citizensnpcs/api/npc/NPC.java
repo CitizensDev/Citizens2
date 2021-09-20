@@ -465,6 +465,10 @@ public interface NPC extends Agent, Cloneable {
      */
     public static final String SILENT_METADATA = "silent-sounds";
     /**
+     * Whether to sneak. Boolean.
+     */
+    public static final String SNEAKING_METADATA = "citizens-sneaking";
+    /**
      * Whether to allow swimming. Boolean.
      */
     public static final String SWIMMING_METADATA = "swim";
