@@ -91,16 +91,22 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 Location dummy = new Location(null, 0, 0, 0);
                 boolean sneakingForScaffolding;
 
+                private boolean isScaffolding(Material type) {
+                    return type.name().contains("SCAFFOLDING");
+                }
+
                 @Override
                 public void run() {
-                    Material type = npc.getEntity().getLocation(dummy).getBlock().getType();
-                    if (isClimbable(type)) {
+                    Material in = npc.getEntity().getLocation(dummy).getBlock().getType(),
+                            next = current.next().getType();
+                    current.previous();
+                    if (isClimbable(in)) {
                         if (current.next().getY() > current.previous().getY()) {
                             npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
                             if (sneakingForScaffolding) {
                                 npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = false);
                             }
-                        } else if (type.name().equals("SCAFFOLDING")) {
+                        } else if (isScaffolding(in) || isScaffolding(next)) {
                             npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = true);
                         }
                     } else if (sneakingForScaffolding) {
@@ -112,6 +118,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 @Override
                 public void onCompletion(CancelReason cancelReason) {
                     npc.data().set("running-ladder", false);
+                    npc.data().set(NPC.SNEAKING_METADATA, false);
                 }
             });
             added = true;
