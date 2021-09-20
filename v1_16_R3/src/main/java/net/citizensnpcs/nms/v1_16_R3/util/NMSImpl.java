@@ -1219,8 +1219,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setSitting(Ocelot ocelot, boolean sitting) {
-        EntityPose pose = sitting ? EntityPose.CROUCHING : EntityPose.STANDING;
-        getHandle(ocelot).setPose(pose);
+        setSneaking(ocelot, sitting);
     }
 
     @Override
@@ -1233,7 +1232,8 @@ public class NMSImpl implements NMSBridge {
         if (entity instanceof Player) {
             ((Player) entity).setSneaking(sneaking);
         }
-        getHandle(entity).setPose(sneaking ? EntityPose.CROUCHING : EntityPose.STANDING);
+        EntityPose pose = sneaking ? EntityPose.CROUCHING : EntityPose.STANDING;
+        getHandle(entity).setPose(pose);
     }
 
     @Override
