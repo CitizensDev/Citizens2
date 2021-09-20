@@ -100,7 +100,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                     Material in = npc.getEntity().getLocation(dummy).getBlock().getType(),
                             next = current.next().getType();
                     current.previous();
-                    if (isClimbable(in)) {
+                    if (isClimbable(in) || isScaffolding(next)) {
                         if (current.next().getY() > current.previous().getY()) {
                             npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
                             if (sneakingForScaffolding) {
