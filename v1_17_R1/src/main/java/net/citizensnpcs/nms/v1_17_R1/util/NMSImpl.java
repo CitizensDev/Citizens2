@@ -229,7 +229,6 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.v1_16_R3.EntityPose;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -1213,8 +1212,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setSitting(org.bukkit.entity.Ocelot ocelot, boolean sitting) {
-        Pose pose = sitting ? Pose.CROUCHING : Pose.STANDING;
-        getHandle(ocelot).setPose(pose);
+        setSneaking(ocelot, sitting);
     }
 
     @Override
@@ -1227,7 +1225,8 @@ public class NMSImpl implements NMSBridge {
         if (entity instanceof Player) {
             ((Player) entity).setSneaking(sneaking);
         }
-        getHandle(entity).setPose(sneaking ? EntityPose.CROUCHING : EntityPose.STANDING);
+        Pose pose = sneaking ? Pose.CROUCHING : Pose.STANDING;
+        getHandle(entity).setPose(pose);
     }
 
     @Override
