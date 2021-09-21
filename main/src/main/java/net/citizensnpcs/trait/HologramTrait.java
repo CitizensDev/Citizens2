@@ -95,7 +95,8 @@ public class HologramTrait extends Trait {
     }
 
     private double getHeight(int lineNumber) {
-        return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight) * (lineNumber + 1);
+        return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight)
+                * (lastNameplateVisible ? lineNumber + 1 : lineNumber);
     }
 
     /**
@@ -212,8 +213,7 @@ public class HologramTrait extends Trait {
             if (!hologramNPC.isSpawned())
                 continue;
             if (update) {
-                hologramNPC.teleport(
-                        currentLoc.clone().add(0, getEntityHeight() + getHeight(nameplateVisible ? i : i - 1), 0),
+                hologramNPC.teleport(currentLoc.clone().add(0, getEntityHeight() + getHeight(i), 0),
                         TeleportCause.PLUGIN);
             }
             if (i >= lines.size()) {
