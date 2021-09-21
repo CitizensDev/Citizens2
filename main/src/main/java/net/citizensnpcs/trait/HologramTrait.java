@@ -33,6 +33,7 @@ public class HologramTrait extends Trait {
     private Location currentLoc;
     @Persist
     private HologramDirection direction = HologramDirection.BOTTOM_UP;
+    private boolean lastNameplateVisible;
     @Persist
     private double lineHeight = -1;
     private final List<NPC> lineHolograms = Lists.newArrayList();
@@ -151,9 +152,10 @@ public class HologramTrait extends Trait {
     public void onSpawn() {
         if (!npc.isSpawned())
             return;
+        lastNameplateVisible = Boolean
+                .parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString());
         currentLoc = npc.getStoredLocation();
-        if (npc.requiresNameHologram()
-                && Boolean.parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString())) {
+        if (npc.requiresNameHologram() && lastNameplateVisible) {
             nameNPC = createHologram(npc.getFullName(), 0);
         }
         for (int i = 0; i < lines.size(); i++) {
@@ -182,18 +184,20 @@ public class HologramTrait extends Trait {
         if (currentLoc == null) {
             currentLoc = npc.getStoredLocation();
         }
+        boolean nameplateVisible = Boolean
+                .parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString());
         if (npc.requiresNameHologram()) {
-            boolean visible = Boolean
-                    .parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString());
-            if (nameNPC != null && !visible) {
+            if (nameNPC != null && !nameplateVisible) {
                 nameNPC.destroy();
                 nameNPC = null;
-            } else if (nameNPC == null && visible) {
+            } else if (nameNPC == null && nameplateVisible) {
                 nameNPC = createHologram(npc.getFullName(), 0);
             }
         }
         boolean update = currentLoc.getWorld() != npc.getStoredLocation().getWorld()
-                || currentLoc.distance(npc.getStoredLocation()) >= 0.001;
+                || currentLoc.distance(npc.getStoredLocation()) >= 0.001 || lastNameplateVisible != nameplateVisible;
+        lastNameplateVisible = nameplateVisible;
+
         if (update) {
             currentLoc = npc.getStoredLocation();
         }
@@ -208,7 +212,8 @@ public class HologramTrait extends Trait {
             if (!hologramNPC.isSpawned())
                 continue;
             if (update) {
-                hologramNPC.teleport(currentLoc.clone().add(0, getEntityHeight() + getHeight(i), 0),
+                hologramNPC.teleport(
+                        currentLoc.clone().add(0, getEntityHeight() + getHeight(nameplateVisible ? i : i - 1), 0),
                         TeleportCause.PLUGIN);
             }
             if (i >= lines.size()) {
