@@ -255,6 +255,16 @@ public class CitizensNPC extends AbstractNPC {
         entityController.spawn(at.clone(), this);
         getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
+        Collection<Trait> onPreSpawn = traits.values();
+        for (Trait trait : onPreSpawn.toArray(new Trait[onPreSpawn.size()])) {
+            try {
+                trait.onPreSpawn();
+            } catch (Throwable ex) {
+                Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
+                ex.printStackTrace();
+            }
+        }
+
         boolean loaded = Util.isLoaded(at);
         boolean couldSpawn = !loaded ? false : NMS.addEntityToWorld(getEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
 
@@ -294,10 +304,7 @@ public class CitizensNPC extends AbstractNPC {
 
         navigator.onSpawn();
 
-        // Modify NPC using traits after the entity has been created
         Collection<Trait> onSpawn = traits.values();
-
-        // work around traits modifying the map during this iteration.
         for (Trait trait : onSpawn.toArray(new Trait[onSpawn.size()])) {
             try {
                 trait.onSpawn();

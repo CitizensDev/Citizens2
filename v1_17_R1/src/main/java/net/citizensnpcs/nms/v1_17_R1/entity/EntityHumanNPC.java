@@ -197,11 +197,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
         if (this.hurtTime > 0)
             this.hurtTime--;
-        if (this.invulnerableTime > 0)
-            this.invulnerableTime--;
+
         if (isDeadOrDying()) {
             tickDeath();
         }
+
         if (this.lastHurtByPlayerTime > 0) {
             this.lastHurtByPlayerTime--;
         } else {
@@ -481,10 +481,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
 
         updatePackets(npc.getNavigator().isNavigating());
-
-        if (invulnerableTime > 0) {
-            --invulnerableTime;
-        }
 
         npc.update();
     }

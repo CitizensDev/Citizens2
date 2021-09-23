@@ -183,7 +183,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             public void run() {
                 ((WorldServer) world).removeEntity(EntityHumanNPC.this);
             }
-        }, 35); // give enough time for death and smoke animation
+        }, 15); // give enough time for death and smoke animation
     }
 
     @Override
@@ -454,10 +454,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
-
-        if (noDamageTicks > 0) {
-            --noDamageTicks;
-        }
 
         npc.update();
         /*
