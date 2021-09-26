@@ -237,7 +237,7 @@ public class CitizensNPC extends AbstractNPC {
     public boolean spawn(Location at, SpawnReason reason) {
         Preconditions.checkNotNull(at, "location cannot be null");
         Preconditions.checkNotNull(reason, "reason cannot be null");
-        if (isSpawned()) {
+        if (getEntity() != null) {
             Messaging.debug("Tried to spawn", getId(), "while already spawned. SpawnReason." + reason);
             return false;
         }
