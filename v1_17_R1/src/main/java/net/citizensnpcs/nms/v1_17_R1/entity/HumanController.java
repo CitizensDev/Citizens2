@@ -90,8 +90,6 @@ public class HumanController extends AbstractEntityController {
             npc.getSkinTracker().onRemoveNPC();
         }
         NMS.remove(entity);
-        super.setEntity(null);
-        // Paper decided to break Spigot compatibility.
-        // super.remove();
+        setEntity(null);
     }
 }
