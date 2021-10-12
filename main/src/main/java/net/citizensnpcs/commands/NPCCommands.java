@@ -1418,7 +1418,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "owner [name]",
+            usage = "owner [uuid]",
             desc = "Set the owner of an NPC",
             modifiers = { "owner" },
             min = 1,
@@ -1427,15 +1427,15 @@ public class NPCCommands {
     public void owner(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Owner ownerTrait = npc.getOrAddTrait(Owner.class);
         if (args.argsLength() == 1) {
-            Messaging.sendTr(sender, Messages.NPC_OWNER, npc.getName(), ownerTrait.getOwner());
+            Messaging.sendTr(sender, Messages.NPC_OWNER, npc.getName(), ownerTrait.getOwnerId());
             return;
         }
-        String name = args.getString(1);
-        if (ownerTrait.isOwnedBy(name))
-            throw new CommandException(Messages.ALREADY_OWNER, name, npc.getName());
-        ownerTrait.setOwner(name);
-        boolean serverOwner = name.equalsIgnoreCase(Owner.SERVER);
-        Messaging.sendTr(sender, serverOwner ? Messages.OWNER_SET_SERVER : Messages.OWNER_SET, npc.getName(), name);
+        UUID uuid = args.getString(1).equals("SERVER") ? null : UUID.fromString(args.getString(1));
+        if (ownerTrait.isOwnedBy(uuid))
+            throw new CommandException(Messages.ALREADY_OWNER, uuid, npc.getName());
+        ownerTrait.setOwner(uuid);
+        boolean serverOwner = uuid == null;
+        Messaging.sendTr(sender, serverOwner ? Messages.OWNER_SET_SERVER : Messages.OWNER_SET, npc.getName(), uuid);
     }
 
     @Command(
