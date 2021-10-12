@@ -2,8 +2,9 @@ package net.citizensnpcs.api.trait.trait;
 
 import java.util.UUID;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.command.ConsoleCommandSender;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
@@ -15,7 +16,6 @@ import net.citizensnpcs.api.util.DataKey;
  */
 @TraitName("owner")
 public class Owner extends Trait {
-    private String owner = SERVER;
     private UUID uuid = null;
 
     public Owner() {
@@ -25,10 +25,11 @@ public class Owner extends Trait {
     /**
      * Gets the owner.
      *
-     * @return The owner's name
+     * @return "SERVER" or the UUID string
      */
+    @Deprecated
     public String getOwner() {
-        return owner;
+        return uuid == null ? "SERVER" : uuid.toString();
     }
 
     /**
@@ -47,56 +48,42 @@ public class Owner extends Trait {
      * @return Whether the sender is the owner of an NPC
      */
     public boolean isOwnedBy(CommandSender sender) {
-        if (sender instanceof Player) {
-            if (owner.equalsIgnoreCase(sender.getName())) {
-                if (uuid == null) {
-                    uuid = ((Player) sender).getUniqueId();
-                } else if (uuid.equals(((Player) sender).getUniqueId())) {
-                    return true;
-                }
-            }
-            return sender.hasPermission("citizens.admin")
-                    || (owner.equals(SERVER) && sender.hasPermission("citizens.admin"));
+        if (uuid == null && sender instanceof ConsoleCommandSender)
+            return true;
+        if (sender instanceof OfflinePlayer && uuid.equals(((OfflinePlayer) sender).getUniqueId())) {
+            return true;
         }
-        return owner.equals(SERVER);
+        return sender.hasPermission("citizens.admin") || (uuid == null && sender.hasPermission("citizens.admin"));
     }
 
     public boolean isOwnedBy(String name) {
-        return owner.equalsIgnoreCase(name) || (uuid != null && uuid.toString().equalsIgnoreCase(name));
+        return uuid == null ? "SERVER".equals(name) : uuid != null && uuid.toString().equalsIgnoreCase(name);
+    }
+
+    public boolean isOwnedBy(UUID other) {
+        return uuid == null ? other == null : uuid.equals(other);
     }
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (key.keyExists("owner")) {
-            owner = key.getString("owner");
-            if (key.keyExists("uuid") && !key.getString("uuid").isEmpty()) {
-                uuid = UUID.fromString(key.getString("uuid"));
-            }
+        if (key.keyExists("uuid") && !key.getString("uuid").isEmpty()) {
+            uuid = UUID.fromString(key.getString("uuid"));
         } else {
-            try {
-                owner = key.getString("");
-                uuid = null;
-            } catch (Exception ex) {
-                owner = SERVER;
-                uuid = null;
-                throw new NPCLoadException("Invalid owner.");
-            }
+            uuid = null;
         }
+        key.removeKey("owner");
     }
 
     @Override
     public void save(DataKey key) {
-        if (key.getString("") != null && !key.getString("").isEmpty()) {
-            key.removeKey("");
-        }
-        key.setString("owner", owner);
         key.setString("uuid", uuid == null ? "" : uuid.toString());
     }
 
     public void setOwner(CommandSender sender) {
-        this.owner = sender.getName();
-        if (sender instanceof Player) {
-            this.uuid = ((Player) sender).getUniqueId();
+        if (sender instanceof OfflinePlayer) {
+            this.uuid = ((OfflinePlayer) sender).getUniqueId();
+        } else {
+            this.uuid = null;
         }
     }
 
@@ -106,6 +93,7 @@ public class Owner extends Trait {
      * @param owner
      *            Name of the player to set as owner of an NPC
      */
+    @Deprecated
     public void setOwner(String owner) {
         setOwner(owner, null);
     }
@@ -118,15 +106,17 @@ public class Owner extends Trait {
      * @param uuid
      *            UUID of the owner
      */
+    @Deprecated
     public void setOwner(String owner, UUID uuid) {
-        this.owner = owner;
+        this.uuid = uuid;
+    }
+
+    public void setOwner(UUID uuid) {
         this.uuid = uuid;
     }
 
     @Override
     public String toString() {
-        return "Owner{" + owner + "}";
+        return "Owner{" + uuid + "}";
     }
-
-    public static final String SERVER = "server";
 }
