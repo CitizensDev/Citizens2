@@ -1430,7 +1430,13 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.NPC_OWNER, npc.getName(), ownerTrait.getOwnerId());
             return;
         }
-        UUID uuid = args.getString(1).equals("SERVER") ? null : UUID.fromString(args.getString(1));
+        OfflinePlayer p = Bukkit.getOfflinePlayer(args.getString(1));
+        UUID uuid;
+        if (p != null) {
+            uuid = p.getUniqueId();
+        } else {
+            uuid = args.getString(1).equals("SERVER") ? null : UUID.fromString(args.getString(1));
+        }
         if (ownerTrait.isOwnedBy(uuid))
             throw new CommandException(Messages.ALREADY_OWNER, uuid, npc.getName());
         ownerTrait.setOwner(uuid);
