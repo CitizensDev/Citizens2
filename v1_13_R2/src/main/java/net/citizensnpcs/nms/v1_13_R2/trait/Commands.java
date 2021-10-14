@@ -48,11 +48,15 @@ public class Commands {
         BossBarTrait trait = npc.getOrAddTrait(BossBarTrait.class);
         if (args.hasValueFlag("style")) {
             BarStyle style = Util.matchEnum(BarStyle.values(), args.getFlag("style"));
-            trait.setStyle(style);
+            if (style != null) {
+                trait.setStyle(style);
+            }
         }
         if (args.hasValueFlag("color")) {
             BarColor color = Util.matchEnum(BarColor.values(), args.getFlag("color"));
-            trait.setColor(color);
+            if (color != null) {
+                trait.setColor(color);
+            }
         }
         if (args.hasValueFlag("title")) {
             trait.setTitle(Colorizer.parseColors(args.getFlag("title")));
