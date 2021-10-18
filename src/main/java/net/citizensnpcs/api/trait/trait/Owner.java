@@ -48,6 +48,8 @@ public class Owner extends Trait {
      * @return Whether the sender is the owner of an NPC
      */
     public boolean isOwnedBy(CommandSender sender) {
+        if (sender == null)
+            return false;
         if (uuid == null && sender instanceof ConsoleCommandSender)
             return true;
         if (sender instanceof OfflinePlayer && uuid.equals(((OfflinePlayer) sender).getUniqueId())) {
