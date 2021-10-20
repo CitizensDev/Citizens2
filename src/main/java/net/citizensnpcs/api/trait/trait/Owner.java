@@ -52,7 +52,7 @@ public class Owner extends Trait {
             return false;
         if (uuid == null && sender instanceof ConsoleCommandSender)
             return true;
-        if (sender instanceof OfflinePlayer && uuid.equals(((OfflinePlayer) sender).getUniqueId())) {
+        if (sender instanceof OfflinePlayer && (uuid != null && uuid.equals(((OfflinePlayer) sender).getUniqueId()))) {
             return true;
         }
         return sender.hasPermission("citizens.admin") || (uuid == null && sender.hasPermission("citizens.admin"));
