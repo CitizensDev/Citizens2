@@ -76,7 +76,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private PlayerlistTracker playerlistTracker;
     private final SkinPacketTracker skinTracker;
-
     private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
@@ -170,7 +169,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             public void run() {
                 ((WorldServer) world).removeEntity(EntityHumanNPC.this);
             }
-        }, 35); // give enough time for death and smoke animation
+        }, 15); // give enough time for death and smoke animation
     }
 
     @Override
@@ -319,10 +318,19 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         bb *= 0.98F;
         bd *= 0.98F;
         be *= 0.9F;
-        e(new Vec3D(this.bb, this.bc, this.bd)); // movement method
+        moveWithFallDamage(new Vec3D(this.bb, this.bc, this.bd)); // movement method
         NMS.setHeadYaw(getBukkitEntity(), yaw);
         if (jumpTicks > 0) {
             jumpTicks--;
+        }
+    }
+
+    private void moveWithFallDamage(Vec3D vec) {
+        double y = this.locY;
+
+        e(vec);
+        if (!npc.isProtected()) {
+            a(this.locY - y, onGround);
         }
     }
 
@@ -345,7 +353,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            e(new Vec3D(0, 0, 0));
+            moveWithFallDamage(new Vec3D(0, 0, 0));
         }
         Vec3D mot = getMot();
         if (Math.abs(mot.getX()) < EPSILON && Math.abs(mot.getY()) < EPSILON && Math.abs(mot.getZ()) < EPSILON) {

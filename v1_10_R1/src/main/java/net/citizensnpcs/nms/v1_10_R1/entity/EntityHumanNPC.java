@@ -71,7 +71,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private final SkinPacketTracker skinTracker;
-
     private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
@@ -152,7 +151,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             public void run() {
                 world.removeEntity(EntityHumanNPC.this);
             }
-        }, 35); // give enough time for death and smoke animation
+        }, 15); // give enough time for death and smoke animation
     }
 
     @Override
@@ -284,7 +283,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            g(0, 0);
+            moveWithFallDamage(0, 0);
         }
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
             motX = motY = motZ = 0;
@@ -351,10 +350,19 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         bf *= 0.98F;
         bg *= 0.98F;
         bh *= 0.9F;
-        g(bf, bg); // movement method
+        moveWithFallDamage(bf, bg); // movement method
         NMS.setHeadYaw(getBukkitEntity(), yaw);
         if (jumpTicks > 0) {
             jumpTicks--;
+        }
+    }
+
+    private void moveWithFallDamage(float mx, float my) {
+        double y = this.locY;
+
+        g(mx, my);
+        if (!npc.isProtected()) {
+            a(this.locY - y, onGround);
         }
     }
 
@@ -510,7 +518,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
     }
 
-    private static final float EPSILON = 0.005F;
-
+    private static final float EPSILON = 0.003F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }

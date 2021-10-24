@@ -348,10 +348,19 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
         aR *= 0.98F;
         aT *= 0.98F;
-        g(new Vec3D(this.aR, this.aS, this.aT)); // movement method
+        moveWithFallDamage(new Vec3D(this.aR, this.aS, this.aT)); // movement method
         NMS.setHeadYaw(getBukkitEntity(), yaw);
         if (jumpTicks > 0) {
             jumpTicks--;
+        }
+    }
+
+    private void moveWithFallDamage(Vec3D vec) {
+        double y = this.locY();
+
+        g(vec);
+        if (!npc.isProtected()) {
+            a(this.locY() - y, onGround);
         }
     }
 
@@ -374,7 +383,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            g(new Vec3D(0, 0, 0));
+            moveWithFallDamage(new Vec3D(0, 0, 0));
         }
         Vec3D mot = getMot();
         if (Math.abs(mot.getX()) < EPSILON && Math.abs(mot.getY()) < EPSILON && Math.abs(mot.getZ()) < EPSILON) {
@@ -584,6 +593,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private static final MethodHandle ATTRIBUTE_MAP = NMS.getGetter(AttributeMapBase.class, "d");
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getGetter(AttributeProvider.class, "a");
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeProvider.class, "a");
-    private static final float EPSILON = 0.005F;
+    private static final float EPSILON = 0.003F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }

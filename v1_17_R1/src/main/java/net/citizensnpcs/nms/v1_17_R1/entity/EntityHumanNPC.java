@@ -174,7 +174,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            travel(Vec3.ZERO);
+            moveWithFallDamage(Vec3.ZERO);
         }
 
         Vec3 mot = getDeltaMovement();
@@ -385,10 +385,18 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
         xxa *= 0.98F;
         zza *= 0.98F;
-        travel(new Vec3(this.xxa, this.yya, this.zza));
+        moveWithFallDamage(new Vec3(this.xxa, this.yya, this.zza));
         NMS.setHeadYaw(getBukkitEntity(), getYRot());
         if (jumpTicks > 0) {
             jumpTicks--;
+        }
+    }
+
+    private void moveWithFallDamage(Vec3 vec) {
+        double y = getY();
+        travel(vec);
+        if (!npc.isProtected()) {
+            doCheckFallDamage(getY() - y, onGround);
         }
     }
 
@@ -610,7 +618,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeSupplier.class, "a");
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
             AttributeSupplier.class);
-    private static final float EPSILON = 0.005F;
+    private static final float EPSILON = 0.003F;
     private static final MethodHandle GAMEMODE_SETTING = NMS.getFirstMethodHandle(ServerPlayerGameMode.class, true,
             GameType.class, GameType.class);
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);

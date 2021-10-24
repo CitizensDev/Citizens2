@@ -77,7 +77,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private final SkinPacketTracker skinTracker;
     private PlayerlistTrackerEntry trackerEntry;
-
     private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
@@ -323,10 +322,19 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         bh *= 0.98F;
         bj *= 0.98F;
         bk *= 0.9F;
-        a(bh, bi, bj); // movement method
+        moveWithFallDamage(bh, bi, bj); // movement method
         NMS.setHeadYaw(getBukkitEntity(), yaw);
         if (jumpTicks > 0) {
             jumpTicks--;
+        }
+    }
+
+    private void moveWithFallDamage(double mx, double my, double mz) {
+        double y = this.locY;
+
+        a(mx, my, mz);
+        if (!npc.isProtected()) {
+            a(this.locY - y, onGround);
         }
     }
 
@@ -341,7 +349,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
-            a(0, 0, 0);
+            moveWithFallDamage(0, 0, 0);
         }
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
             motX = motY = motZ = 0;
