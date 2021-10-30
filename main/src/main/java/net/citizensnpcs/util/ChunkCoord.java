@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 public class ChunkCoord {
     public final UUID worldUUID;
@@ -45,7 +46,8 @@ public class ChunkCoord {
     }
 
     public Chunk getChunk() {
-        return Bukkit.getWorld(worldUUID).getChunkAt(x, z);
+        World world = Bukkit.getWorld(worldUUID);
+        return world != null ? world.getChunkAt(x, z) : null;
     }
 
     @Override
