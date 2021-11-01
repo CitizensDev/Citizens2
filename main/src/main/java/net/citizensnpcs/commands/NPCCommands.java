@@ -343,7 +343,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | cost [cost]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | (exp|item)cost [cost]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
@@ -391,6 +391,9 @@ public class NPCCommands {
         } else if (args.getString(1).equalsIgnoreCase("cost")) {
             commands.setCost(args.getDouble(2));
             Messaging.sendTr(sender, Messages.COMMAND_COST_SET, args.getDouble(2));
+        } else if (args.getString(1).equalsIgnoreCase("expcost")) {
+            commands.setExperienceCost((float) args.getDouble(2));
+            Messaging.sendTr(sender, Messages.COMMAND_EXPERIENCE_COST_SET, args.getDouble(2));
         } else if (args.getString(1).equalsIgnoreCase("random")) {
             commands.setExecutionMode(
                     commands.getExecutionMode() == ExecutionMode.RANDOM ? ExecutionMode.LINEAR : ExecutionMode.RANDOM);

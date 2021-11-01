@@ -64,6 +64,8 @@ public class CommandTrait extends Trait {
     @Persist
     private ExecutionMode executionMode = ExecutionMode.LINEAR;
     @Persist
+    private float experienceCost = -1;
+    @Persist
     private final Map<String, Long> globalCooldowns = Maps.newHashMap();
     @Persist
     private List<ItemStack> itemRequirements = Lists.newArrayList();
@@ -96,6 +98,13 @@ public class CommandTrait extends Trait {
             } catch (NoClassDefFoundError e) {
                 Messaging.severe("Unable to find Vault when checking command cost - is it installed?");
             }
+        }
+        if (experienceCost > 0) {
+            if (player.getExp() < experienceCost) {
+                sendErrorMessage(player, CommandTraitMessages.MISSING_EXPERIENCE, null, experienceCost);
+                return false;
+            }
+            player.setExp(player.getExp() - experienceCost);
         }
         if (itemRequirements.size() > 0) {
             List<ItemStack> req = Lists.newArrayList(itemRequirements);
@@ -271,6 +280,10 @@ public class CommandTrait extends Trait {
         return executionMode;
     }
 
+    public float getExperienceCost() {
+        return experienceCost;
+    }
+
     private int getNewId() {
         int i = 0;
         while (commands.containsKey(String.valueOf(i))) {
@@ -312,6 +325,10 @@ public class CommandTrait extends Trait {
         this.executionMode = mode;
     }
 
+    public void setExperienceCost(float experienceCost) {
+        this.experienceCost = experienceCost;
+    }
+
     public void setTemporaryPermissions(List<String> permissions) {
         temporaryPermissions.clear();
         temporaryPermissions.addAll(permissions);
@@ -319,6 +336,7 @@ public class CommandTrait extends Trait {
 
     private enum CommandTraitMessages {
         MAXIMUM_TIMES_USED(Setting.NPC_COMMAND_MAXIMUM_TIMES_USED_MESSAGE),
+        MISSING_EXPERIENCE(Setting.NPC_COMMAND_NOT_ENOUGH_EXPERIENCE_MESSAGE),
         MISSING_ITEM(Setting.NPC_COMMAND_MISSING_ITEM_MESSAGE),
         MISSING_MONEY(Setting.NPC_COMMAND_NOT_ENOUGH_MONEY_MESSAGE),
         NO_PERMISSION(Setting.NPC_COMMAND_NO_PERMISSION_MESSAGE),
