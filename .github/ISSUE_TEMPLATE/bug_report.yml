@@ -77,6 +77,8 @@ body:
   - type: 'markdown'
     attributes:
       value: |-
+        ----
+        
         ### Section 4) Information
         Give a detailed explanation about your current issue.
         When possible, include steps to redproduce it reliably.
