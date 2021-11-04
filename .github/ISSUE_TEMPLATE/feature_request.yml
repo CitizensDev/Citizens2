@@ -18,7 +18,7 @@ body:
       label: 'I confirm that I have ...'
       description: 'Click the checkboxes to "check" them. Make sure you actually did what they mention.'
       options:
-        - label: '...tried the latest [Development Build]() to make sure my feature doesn''t exist already.'
+        - label: '...tried the latest [Development Build](https://wiki.citizensnpcs.co/API) to make sure my feature doesn''t exist already.'
           required: true
         - label: '...checked the Wiki for any possible information about my feature.'
           required: true
