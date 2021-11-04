@@ -35,30 +35,28 @@ body:
         ----
         
         ### Section 2) Log and Configuration files
-        Provide your server's latest log file and the configuration file (`config.yml`) of Citizens.
-        
-        When your problem is a Performance issue will you need to also include the `saves.yml` of Citizens.
+        Provide your server's latest log file, the configuration file (`config.yml`) and the `saves.yml` file of Citizens.
   - type: 'input'
     attributes:
       label: 'Log file'
-      description: 'Upload your server''s latest.log on pastebin or similar and share the URL.'
-      placeholder: 'https://pastebin.com/...'
+      description: 'Upload your server''s latest.log to https://paste.denizenscript.com/New/Log and paste the generated URL in the field below.'
+      placeholder: 'https://paste.denizenscript.com/View/...'
     validations:
       required: true
   - type: 'input'
     attributes:
       label: 'config.yml'
-      description: 'Upload the config.yml of Citizens on pastebin or similar and share the URL.'
-      placeholder: 'https://pastebin.com/...'
+      description: 'Upload the config.yml to https://paste.denizenscript.com/New/Log and paste the generated URL in the field below.'
+      placeholder: 'https://paste.denizenscript.com/View/...'
     validations:
       required: true
   - type: 'input'
     attributes:
       label: 'saves.yml'
-      description: |-
-        **ONLY REQUIRED FOR PERFOMANCE ISSUES!**
-        Upload the saves.yml of Citizens on pastebin or similar and share the URL.'
-      placeholder: 'https://pastebin.com/...'
+      description: 'Upload the saves.yml of Citizens to https://paste.denizenscript.com/New/Log and paste the generated URL in the field below.'
+      placeholder: 'https://paste.denizenscript.com/View/...'
+    validations:
+      required: true
   - type: 'markdown'
     attributes:
       value: |-
@@ -67,7 +65,7 @@ body:
         ### Section 3) Performance Report
         **This section is only required when having Performance issues!**
         
-        Include a report from a profiler such as Spark [[Download](https://spark.lucko.me/download)].
+        Include a report from a profiler such as Spark [[Download](https://www.spigotmc.org/resources/57242/)].
         Spigot Timings alone are NOT allowed, but can be included alongside another profiler report.
   - type: 'input'
     attributes:
@@ -81,7 +79,7 @@ body:
         
         ### Section 4) Information
         Give a detailed explanation about your current issue.
-        When possible, include steps to redproduce it reliably.
+        When possible, include steps to reproduce it reliably.
   - type: 'textarea'
     attributes:
       label: 'Description'
