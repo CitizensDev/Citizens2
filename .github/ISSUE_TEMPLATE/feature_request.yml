@@ -1,0 +1,58 @@
+name: Feature Request
+description: Suggest a new feature and/or improvement for Citizens.
+
+body:
+  - type: 'markdown'
+    attributes:
+      value: |-
+        ## DO NOT IGNORE
+        Please fill out all required fields the way they are described as.
+        **Not following the issue form will get it closed automatically!**
+        
+        ----
+        
+        ### Section 1) Checks
+        Make sure you've done the following checks before submitting a feature request.
+  - type: 'checkboxes'
+    attributes:
+      label: 'I confirm that I have ...'
+      description: 'Click the checkboxes to "check" them. Make sure you actually did what they mention.'
+      options:
+        - label: '...tried the latest [Development Build]() to make sure my feature doesn''t exist already.'
+          required: true
+        - label: '...checked the Wiki for any possible information about my feature.'
+          required: true
+        - label: '...checked other existing issues for my feature request.'
+          required: true
+  - type: 'markdown'
+    attributes:
+      value: |-
+        ----
+        
+        ### Section 2) Description and Code
+        Give a detailed description of why it is useful and possibly some code example.
+  - type: 'textarea'
+    attributes:
+      label: 'Description'
+      description: |-
+        Describe your new feature as detailed as possible and try to answer the following question with it:
+        
+        1. Why should it be added?
+        2. What are the benefits for others?
+        3. Are there existing alternatives you considered?
+      placeholder: 'Citizens should have ... to allow ...'
+    validations:
+      required: true
+  - type: 'textarea'
+    attributes:
+      label: 'Code Example'
+      description: |-
+        If possible, provide a possible Code example for how this could be implemented, or in case of a new API feature, how others could use it.
+        The text field will automatically render the provided text as Java Code.
+        
+        Leave blank if you don't have an example.
+      placeholder: |-
+        public void newAwesomeFeature() {
+            System.out.println("Awesome!");
+        }
+      render: java
