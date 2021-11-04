@@ -18,7 +18,7 @@ body:
       label: 'I confirm that I have ...'
       description: 'Click the checkboxes to "check" them. Make sure you actually did what they mention.'
       options:
-        - label: '...tried the latest [Development Build](https://wiki.citizensnpcs.co/API) to make sure my feature doesn''t exist already.'
+        - label: '...tried the latest [Development Build](https://ci.citizensnpcs.co/job/Citizens2/) to make sure my feature doesn''t exist already.'
           required: true
         - label: '...checked the Wiki for any possible information about my feature.'
           required: true
@@ -47,7 +47,7 @@ body:
     attributes:
       label: 'Code Example'
       description: |-
-        If possible, provide a possible Code example for how this could be implemented, or in case of a new API feature, how others could use it.
+        Feel free to share possible code-examples on how this feature may be implemented. This is completely optional.
         The text field will automatically render the provided text as Java Code.
         
         Leave blank if you don't have an example.
