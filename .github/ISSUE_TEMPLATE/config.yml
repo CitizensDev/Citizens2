@@ -1,4 +1,4 @@
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
   - name: Wiki
     about: 'Please visit the Citizens Wiki before reporting issues.'
@@ -7,7 +7,7 @@ contact_links:
     about: 'Documentation about the API of Citizens.'
     url: 'https://wiki.citizensnpcs.co/API'
   - name: Development Builds
-    about: 'Dev builds of Citizens. DO NOT USE ON PRODUCTION SERVERS!'
+    about: 'Dev builds of Citizens. Always make backups before updating.'
     url: 'https://ci.citizensnpcs.co/job/Citizens2/'
   - name: Denizen and Citizens Discord
     about: 'Ask questions here!'
