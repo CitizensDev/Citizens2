@@ -10,13 +10,17 @@ import io.netty.channel.EventLoop;
 import io.netty.util.Version;
 
 import java.net.SocketAddress;
+import java.util.Map;
 
 public class EmptyChannel extends AbstractChannel {
 
     private static boolean updatedNetty = false;
 
     static {
-        Version nettyVersion = Version.identify().get("netty-common");
+        Map<String, Version> versionMap = Version.identify();
+        Version nettyVersion = versionMap.get("netty-common");
+        if (nettyVersion == null) nettyVersion = versionMap.get("netty-all");
+
         if (nettyVersion != null) {
             String[] split = nettyVersion.artifactVersion().split("\\.");
             try {
