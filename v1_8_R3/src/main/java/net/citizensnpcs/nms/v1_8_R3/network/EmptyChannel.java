@@ -7,10 +7,35 @@ import io.netty.channel.ChannelMetadata;
 import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.DefaultChannelConfig;
 import io.netty.channel.EventLoop;
+import io.netty.util.Version;
 
 import java.net.SocketAddress;
+import java.util.Map;
 
 public class EmptyChannel extends AbstractChannel {
+
+    private static boolean updatedNetty = false;
+
+    static {
+        Map<String, Version> versionMap = Version.identify();
+        Version nettyVersion = versionMap.get("netty-common");
+        if (nettyVersion == null) nettyVersion = versionMap.get("netty-all");
+
+        if (nettyVersion != null) {
+            String[] split = nettyVersion.artifactVersion().split("\\.");
+            try {
+                int major = Integer.parseInt(split[0]);
+                int minor = Integer.parseInt(split[1]);
+                int revision = Integer.parseInt(split[2]);
+
+                if (major > 4 || minor > 1 || revision > 24) {
+                    updatedNetty = true;
+                }
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException ignored) {
+            }
+        }
+    }
+
     private final ChannelConfig config = new DefaultChannelConfig(this);
 
     public EmptyChannel(Channel parent) {
@@ -65,7 +90,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     public ChannelMetadata metadata() {
-        return null;
+        return updatedNetty ? new ChannelMetadata(true) : null;
     }
 
     @Override
