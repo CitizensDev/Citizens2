@@ -31,7 +31,10 @@ public class EmptyChannel extends AbstractChannel {
                 if (major > 4 || minor > 1 || revision > 24) {
                     updatedNetty = true;
                 }
-            } catch (NumberFormatException | ArrayIndexOutOfBoundsException ignored) {
+            }
+            catch (ArrayIndexOutOfBoundsException ignored) {
+            }
+            catch (NumberFormatException ignored) {
             }
         }
     }
