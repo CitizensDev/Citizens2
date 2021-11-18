@@ -76,7 +76,8 @@ public class NPCCommandSelector extends NumericPrompt {
         for (NPC npc : choices) {
             text += "\n    - " + npc.getId();
         }
-        return text;
+        Messaging.send((CommandSender) context.getForWhom(), text);
+        return "";
     }
 
     public static interface Callback {
