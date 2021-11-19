@@ -272,6 +272,21 @@ public class HologramTrait extends Trait {
         onDespawn();
         onSpawn();
     }
+    
+    /**
+     * Change the line instead of delete and creating new one
+     * 
+     * @param line the line number
+     * @param text the new text of line
+     */
+    public void updateLine(int line, String text) {
+    	if(line >= this.lineHolograms.size()) { // line not added
+    		setLine(line, text);
+    	} else {
+    		NPC npcLine = this.lineHolograms.get(line);
+    		npcLine.setName(text);
+    	}
+    }
 
     public enum HologramDirection {
         BOTTOM_UP,
