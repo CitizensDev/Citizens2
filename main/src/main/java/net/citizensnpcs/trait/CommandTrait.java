@@ -68,6 +68,8 @@ public class CommandTrait extends Trait {
     @Persist
     private final Map<String, Long> globalCooldowns = Maps.newHashMap();
     @Persist
+    private boolean hideErrorMessages;
+    @Persist
     private List<ItemStack> itemRequirements = Lists.newArrayList();
     @Persist
     private final List<String> temporaryPermissions = Lists.newArrayList();
@@ -296,12 +298,19 @@ public class CommandTrait extends Trait {
         return commands.containsKey(String.valueOf(id));
     }
 
+    public boolean isHideErrorMessages() {
+        return hideErrorMessages;
+    }
+
     public void removeCommandById(int id) {
         commands.remove(String.valueOf(id));
     }
 
     private void sendErrorMessage(Player player, CommandTraitMessages msg, Function<String, String> transform,
             Object... objects) {
+        if (hideErrorMessages) {
+            return;
+        }
         Set<CommandTraitMessages> sent = executionErrors.get(player.getUniqueId().toString());
         if (sent != null) {
             if (sent.contains(msg))
@@ -329,6 +338,10 @@ public class CommandTrait extends Trait {
         this.experienceCost = experienceCost;
     }
 
+    public void setHideErrorMessages(boolean hide) {
+        this.hideErrorMessages = hide;
+    }
+
     public void setTemporaryPermissions(List<String> permissions) {
         temporaryPermissions.clear();
         temporaryPermissions.addAll(permissions);
@@ -348,6 +361,11 @@ public class CommandTrait extends Trait {
         CommandTraitMessages(Setting setting) {
             this.setting = setting;
         }
+    }
+
+    public enum ErrorHandling {
+        ERROR_MESSAGE,
+        RUN_ANYWAY;
     }
 
     public enum ExecutionMode {

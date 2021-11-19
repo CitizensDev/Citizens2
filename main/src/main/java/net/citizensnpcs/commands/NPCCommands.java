@@ -394,6 +394,10 @@ public class NPCCommands {
         } else if (args.getString(1).equalsIgnoreCase("expcost")) {
             commands.setExperienceCost((float) args.getDouble(2));
             Messaging.sendTr(sender, Messages.COMMAND_EXPERIENCE_COST_SET, args.getDouble(2));
+        } else if (args.getString(1).equalsIgnoreCase("hideerrors")) {
+            commands.setHideErrorMessages(!commands.isHideErrorMessages());
+            Messaging.sendTr(sender, commands.isHideErrorMessages() ? Messages.COMMAND_HIDE_ERROR_MESSAGES_SET
+                    : Messages.COMMAND_HIDE_ERROR_MESSAGES_UNSET);
         } else if (args.getString(1).equalsIgnoreCase("random")) {
             commands.setExecutionMode(
                     commands.getExecutionMode() == ExecutionMode.RANDOM ? ExecutionMode.LINEAR : ExecutionMode.RANDOM);

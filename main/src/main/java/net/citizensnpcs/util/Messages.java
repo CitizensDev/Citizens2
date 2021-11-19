@@ -59,6 +59,8 @@ public class Messages {
     public static final String COMMAND_COST_SET = "citizens.commands.npc.command.cost-set";
     public static final String COMMAND_EXPERIENCE_COST_SET = "citizens.commands.npc.command.experience-cost-set";
     public static final String COMMAND_HELP_HEADER = "citizens.commands.help.header";
+    public static final String COMMAND_HIDE_ERROR_MESSAGES_SET = "citizens.commands.npc.command.hide-error-messages-set";
+    public static final String COMMAND_HIDE_ERROR_MESSAGES_UNSET = "citizens.commands.npc.command.hide-error-messages-unset";
     public static final String COMMAND_INVALID_MOBTYPE = "citizens.commands.invalid-mobtype";
     public static final String COMMAND_LEFT_HAND_HEADER = "citizens.commands.npc.command.left-hand-header";
     public static final String COMMAND_MISSING = "citizens.commands.help.command-missing";
