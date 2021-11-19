@@ -255,6 +255,10 @@ public class HologramTrait extends Trait {
             lines.add(text);
         } else {
             lines.set(idx, text);
+            if (idx < lineHolograms.size()) {
+                lineHolograms.get(idx).setName(Placeholders.replace(text, null, npc));
+                return;
+            }
         }
         onDespawn();
         onSpawn();
