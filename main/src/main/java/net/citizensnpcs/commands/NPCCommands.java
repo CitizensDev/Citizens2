@@ -666,11 +666,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "endercrystal -b",
+            usage = "endercrystal -b(ottom)",
             desc = "Edit endercrystal modifiers",
             modifiers = { "endercrystal" },
             min = 1,
             max = 1,
+            flags = "b",
             permission = "citizens.npc.endercrystal")
     @Requirements(ownership = true, selected = true, types = EntityType.ENDER_CRYSTAL)
     public void endercrystal(CommandContext args, Player sender, NPC npc) throws CommandException {
