@@ -28,6 +28,7 @@ import com.google.common.base.Splitter;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.npc.ai.NPCHolder;
 
@@ -114,6 +115,17 @@ public class Util {
         team.addEntry(name);
         npc.data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
         sendTeamPacketToOnlinePlayers(team, mode);
+    }
+
+    public static Location getCenterLocation(Block block) {
+        Location bloc = block.getLocation();
+        Location center = new Location(bloc.getWorld(), bloc.getBlockX() + 0.5, bloc.getBlockY(),
+                bloc.getBlockZ() + 0.5);
+        BoundingBox bb = NMS.getCollisionBox(block);
+        if (bb != null) {
+            center.setY(center.getY() + bb.maxY);
+        }
+        return center;
     }
 
     public static Scoreboard getDummyScoreboard() {

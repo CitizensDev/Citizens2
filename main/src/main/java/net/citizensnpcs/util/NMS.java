@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
@@ -77,6 +78,9 @@ public class NMS {
     }
 
     public static BoundingBox getCollisionBox(Block block) {
+        if (block.getType() == Material.AIR) {
+            return new BoundingBox(0, 0, 0, 0, 0, 0);
+        }
         return BRIDGE.getCollisionBox(block).add(block.getX(), block.getY(), block.getZ());
     }
 

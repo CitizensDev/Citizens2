@@ -134,8 +134,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
         }
-        Location currLoc = npc.getEntity().getLocation(NPC_LOCATION);
-        Vector destVector = new Vector(vector.getX() + 0.5, vector.getY(), vector.getZ() + 0.5);
+        Location loc = npc.getEntity().getLocation(NPC_LOCATION);
         /* Proper door movement - gets stuck on corners at times
 
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
@@ -147,9 +146,11 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 destVector.setZ(vector.getZ() + targetFace.getModZ());
             }
         }*/
-        double dX = destVector.getX() - currLoc.getX();
-        double dZ = destVector.getZ() - currLoc.getZ();
-        double dY = destVector.getY() - currLoc.getY();
+        Location dest = Util.getCenterLocation(
+                new Location(loc.getWorld(), vector.getX(), vector.getY(), vector.getZ()).getBlock());
+        double dX = dest.getX() - loc.getX();
+        double dZ = dest.getZ() - loc.getZ();
+        double dY = dest.getY() - loc.getY();
         double xzDistance = dX * dX + dZ * dZ;
         if ((dY * dY) < 1 && xzDistance <= params.distanceMargin()) {
             plan.update(npc);
@@ -160,23 +161,21 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             return false;
         }
         if (params.debug()) {
-            npc.getEntity().getWorld().playEffect(destVector.toLocation(npc.getEntity().getWorld()),
-                    Effect.ENDER_SIGNAL, 0);
+            npc.getEntity().getWorld().playEffect(dest, Effect.ENDER_SIGNAL, 0);
         }
         double distance = xzDistance + dY * dY;
 
         if (npc.getEntity() instanceof LivingEntity && !npc.getEntity().getType().name().contains("ARMOR_STAND")) {
-            NMS.setDestination(npc.getEntity(), destVector.getX(), destVector.getY(), destVector.getZ(),
-                    params.speed());
+            NMS.setDestination(npc.getEntity(), dest.getX(), dest.getY(), dest.getZ(), params.speed());
         } else {
-            Vector dir = destVector.subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
+            Vector dir = dest.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
             Block in = npc.getEntity().getLocation().getBlock();
             if (distance > 0 && dY >= 1 && xzDistance <= 2.75
                     || (dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrInLiquid(in))) {
                 dir.add(new Vector(0, 0.75, 0));
             }
             npc.getEntity().setVelocity(dir);
-            Util.faceLocation(npc.getEntity(), destVector.toLocation(npc.getEntity().getWorld()));
+            Util.faceLocation(npc.getEntity(), dest);
         }
         params.run();
         plan.run(npc);
