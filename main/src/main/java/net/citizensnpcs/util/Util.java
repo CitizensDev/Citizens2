@@ -122,7 +122,7 @@ public class Util {
         Location center = new Location(bloc.getWorld(), bloc.getBlockX() + 0.5, bloc.getBlockY(),
                 bloc.getBlockZ() + 0.5);
         BoundingBox bb = NMS.getCollisionBox(block);
-        if (bb != null) {
+        if (bb != null && bb.maxY < 0.6D) {
             center.setY(center.getY() + bb.maxY);
         }
         return center;
