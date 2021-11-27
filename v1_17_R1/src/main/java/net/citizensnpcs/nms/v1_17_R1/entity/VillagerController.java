@@ -46,7 +46,6 @@ public class VillagerController extends MobEntityController {
 
     public static class EntityVillagerNPC extends Villager implements NPCHolder {
         private boolean blockingATrade;
-        private boolean blockTrades = true;
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
 
@@ -145,10 +144,6 @@ public class VillagerController extends MobEntityController {
             return npc;
         }
 
-        public boolean isBlockingTrades() {
-            return blockTrades;
-        }
-
         @Override
         public boolean isLeashed() {
             if (npc == null)
@@ -173,7 +168,7 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public InteractionResult mobInteract(Player entityhuman, InteractionHand enumhand) {
-            if (npc != null && blockTrades) {
+            if (npc != null && npc.data().get(NPC.VILLAGER_BLOCK_TRADES, true)) {
                 blockingATrade = true;
                 MerchantOffers list = getOffers();
                 if (list != null) {
@@ -225,10 +220,6 @@ public class VillagerController extends MobEntityController {
         @Override
         public boolean save(CompoundTag save) {
             return npc == null ? super.save(save) : false;
-        }
-
-        public void setBlockTrades(boolean blocked) {
-            this.blockTrades = blocked;
         }
 
         @Override

@@ -16,7 +16,6 @@ import net.minecraft.world.entity.monster.Slime;
 public class PlayerMoveControl extends MoveControl {
     protected LivingEntity entity;
     private int jumpTicks;
-    private int keepMovingTicks;
     protected boolean moving;
     protected double speed;
     protected double tx;
@@ -91,7 +90,6 @@ public class PlayerMoveControl extends MoveControl {
         this.tz = d2;
         this.speed = d3;
         this.moving = true;
-        this.keepMovingTicks = 1;
     }
 
     private boolean shouldJump() {

@@ -48,7 +48,6 @@ public class VillagerController extends MobEntityController {
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
         private TreeMap<?, ?> behaviorMap;
         private boolean blockingATrade;
-        private boolean blockTrades = true;
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
         private BehaviorController<EntityVillager> previousBehaviorController;
@@ -85,7 +84,7 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public boolean a(EntityHuman entityhuman, EnumHand enumhand) {
-            if (npc != null && blockTrades) {
+            if (npc != null && npc.data().get(NPC.VILLAGER_BLOCK_TRADES, true)) {
                 blockingATrade = true;
                 List<MerchantRecipe> list = getOffers();
                 if (list != null) {
@@ -191,10 +190,6 @@ public class VillagerController extends MobEntityController {
             return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
         }
 
-        public boolean isBlockingTrades() {
-            return blockTrades;
-        }
-
         @Override
         public boolean isClimbing() {
             if (npc == null || !npc.isFlyable()) {
@@ -248,10 +243,6 @@ public class VillagerController extends MobEntityController {
             if (npc == null) {
                 super.onLightningStrike(entitylightning);
             }
-        }
-
-        public void setBlockTrades(boolean blocked) {
-            this.blockTrades = blocked;
         }
     }
 
