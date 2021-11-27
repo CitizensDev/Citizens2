@@ -25,4 +25,6 @@ public class BoundingBox {
         return new BoundingBox(bukkit.getMinX(), bukkit.getMinY(), bukkit.getMinZ(), bukkit.getMaxX(), bukkit.getMaxY(),
                 bukkit.getMaxZ());
     }
+
+    public static final BoundingBox EMPTY = new BoundingBox(0, 0, 0, 0, 0, 0);
 }

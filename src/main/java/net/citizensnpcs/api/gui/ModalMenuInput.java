@@ -16,6 +16,7 @@ public class ModalMenuInput {
 
     public static void captureInput(Player player, InventoryMenu menu, Consumer<String> input) {
         menu.close(player);
+        // TODO: this unregisters events incorrectly currently
         player.beginConversation(
                 new ConversationFactory(CitizensAPI.getPlugin()).addConversationAbandonedListener((evt) -> {
                     menu.present(player);

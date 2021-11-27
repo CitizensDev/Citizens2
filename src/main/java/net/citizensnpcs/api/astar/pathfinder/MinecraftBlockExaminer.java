@@ -263,7 +263,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     private static final Set<Material> CLIMBABLE = EnumSet.of(Material.LADDER, Material.VINE);
+
     private static final Set<Material> LIQUIDS = EnumSet.of(Material.WATER, Material.LAVA);
+    private static Location LOCATION_CACHE = new Location(null, 0, 0, 0);
     private static final Set<Material> NOT_JUMPABLE = EnumSet.of(Material.SPRUCE_FENCE, Material.BIRCH_FENCE,
             Material.JUNGLE_FENCE, Material.ACACIA_FENCE, Material.DARK_OAK_FENCE);
     private static final Set<Material> UNWALKABLE = EnumSet.of(Material.AIR, Material.CACTUS);
