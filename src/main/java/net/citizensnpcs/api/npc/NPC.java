@@ -480,4 +480,8 @@ public interface NPC extends Agent, Cloneable {
      * Whether to use Minecraft AI. Boolean.
      */
     public static final String USE_MINECRAFT_AI_METADATA = "minecraft-ai";
+    /**
+     * Whether to block Minecraft villager trades. Boolean defaults to true.
+     */
+    public static final String VILLAGER_BLOCK_TRADES = "villager-trades";
 }
