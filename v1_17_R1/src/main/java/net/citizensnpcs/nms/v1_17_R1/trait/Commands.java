@@ -590,7 +590,7 @@ public class Commands {
         if (args.hasValueFlag("profession")) {
             Profession parsed = Util.matchEnum(Profession.values(), args.getFlag("profession"));
             if (parsed == null) {
-                throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1),
+                throw new CommandException(Messages.INVALID_PROFESSION, args.getFlag("profession"),
                         Joiner.on(',').join(Profession.values()));
             }
             npc.getOrAddTrait(VillagerProfession.class).setProfession(parsed);

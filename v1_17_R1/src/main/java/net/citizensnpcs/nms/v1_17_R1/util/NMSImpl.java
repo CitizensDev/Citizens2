@@ -448,10 +448,7 @@ public class NMSImpl implements NMSBridge {
     public BoundingBox getCollisionBox(org.bukkit.block.Block block) {
         ServerLevel world = ((CraftWorld) block.getWorld()).getHandle();
         VoxelShape shape = ((CraftBlock) block).getNMS().getCollisionShape(world, ((CraftBlock) block).getPosition());
-        AABB aabb = shape.isEmpty()
-                ? ((CraftBlock) block).getNMS().getShape(world, ((CraftBlock) block).getPosition()).bounds()
-                : shape.bounds();
-        return aabb == null ? BoundingBox.convert(block.getBoundingBox()) : NMSBoundingBox.wrap(aabb);
+        return shape.isEmpty() ? new BoundingBox(0, 0, 0, 0, 0, 0) : NMSBoundingBox.wrap(shape.bounds());
     }
 
     private float getDragonYaw(Entity handle, double tX, double tZ) {

@@ -79,7 +79,7 @@ public class NMS {
 
     public static BoundingBox getCollisionBox(Block block) {
         if (block.getType() == Material.AIR) {
-            return new BoundingBox(0, 0, 0, 0, 0, 0);
+            return BoundingBox.EMPTY;
         }
         return BRIDGE.getCollisionBox(block).add(block.getX(), block.getY(), block.getZ());
     }
