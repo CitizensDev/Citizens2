@@ -127,8 +127,6 @@ public class SkinTrait extends Trait {
         if (timer-- > 0)
             return;
         timer = Setting.PLACEHOLDER_SKIN_UPDATE_FREQUENCY.asInt();
-        if (filledPlaceholder == null)
-            return;
         checkPlaceholder(true);
     }
 
