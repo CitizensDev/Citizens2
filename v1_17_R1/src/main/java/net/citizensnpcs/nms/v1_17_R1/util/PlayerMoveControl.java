@@ -111,7 +111,7 @@ public class PlayerMoveControl extends MoveControl {
             double dZ = this.tz - this.entity.getZ();
             double dY = this.ty - this.entity.getY();
             double dXZ = dX * dX + dZ * dZ;
-            if (dY * dY < 1.0 && dXZ < 0.005) {
+            if (dY * dY < 1.0 && dXZ < 0.0075) {
                 this.entity.zza = 0.0F;
                 return;
             }
