@@ -337,11 +337,6 @@ public class PlayerNavigation extends PathNavigation {
         return new Vec3(this.mob.getX(), getSurfaceY(), this.mob.getZ());
     }
 
-    @Override
-    public boolean hasDelayedRecomputation() {
-        return this.hasDelayedRecomputation;
-    }
-
     protected boolean hasValidPathType(BlockPathTypes var0) {
         if ((var0 == BlockPathTypes.WATER) || (var0 == BlockPathTypes.LAVA) || (var0 == BlockPathTypes.OPEN))
             return false;
@@ -420,17 +415,6 @@ public class PlayerNavigation extends PathNavigation {
     }
 
     @Override
-    public void recomputePath(BlockPos var0) {
-        if (this.path == null || this.path.isDone() || this.path.getNodeCount() == 0)
-            return;
-        Node var1 = this.path.getEndNode();
-        Vec3 var2 = new Vec3((var1.x + this.mob.getX()) / 2.0D, (var1.y + this.mob.getY()) / 2.0D,
-                (var1.z + this.mob.getZ()) / 2.0D);
-        if (var0.closerThan(var2, (this.path.getNodeCount() - this.path.getNextNodeIndex())))
-            recomputePath();
-    }
-
-    @Override
     public void resetMaxVisitedNodesMultiplier() {
         this.maxVisitedNodesMultiplier = 1.0F;
     }
@@ -471,6 +455,20 @@ public class PlayerNavigation extends PathNavigation {
     @Override
     public void setSpeedModifier(double var0) {
         this.speedModifier = var0;
+    }
+
+    @Override
+    public boolean shouldRecomputePath(BlockPos var0) {
+        if (this.hasDelayedRecomputation) {
+            return false;
+        } else if (this.path != null && !this.path.isDone() && this.path.getNodeCount() != 0) {
+            Node var1 = this.path.getEndNode();
+            Vec3 var2 = new Vec3((var1.x + this.mob.getX()) / 2.0D, (var1.y + this.mob.getY()) / 2.0D,
+                    (var1.z + this.mob.getZ()) / 2.0D);
+            return var0.closerThan(var2, this.path.getNodeCount() - this.path.getNextNodeIndex());
+        } else {
+            return false;
+        }
     }
 
     private boolean shouldTargetNextNodeInDirection(Vec3 var0) {
