@@ -10,9 +10,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.18-R0.1-SNAPSHOT</bukkit.version>
+		<bukkit.version>1.18.1-R0.1-SNAPSHOT</bukkit.version>
 		<powermock.version>1.4.12</powermock.version>
-		<placeholderapi.version>2.10.4</placeholderapi.version>
+		<placeholderapi.version>2.10.9</placeholderapi.version>
 		<worldguard.version>7.0.4</worldguard.version>
 		<build.number>Unknown</build.number>
 	</properties>
