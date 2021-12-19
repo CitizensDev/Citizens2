@@ -296,7 +296,7 @@ public class NMSImpl implements NMSBridge {
         Block type = CraftMagicNumbers.getBlock(block);
         BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ());
         AxisAlignedBB aabb = type.a(world, pos, world.getType(pos));
-        return new BoundingBox(aabb.a, aabb.b, aabb.c, aabb.d, aabb.e, aabb.f);
+        return aabb == null ? BoundingBox.EMPTY : new BoundingBox(aabb.a, aabb.b, aabb.c, aabb.d, aabb.e, aabb.f);
     }
 
     private float getDragonYaw(Entity handle, double tX, double tZ) {
