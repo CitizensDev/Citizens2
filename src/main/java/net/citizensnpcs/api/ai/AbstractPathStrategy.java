@@ -1,6 +1,5 @@
 package net.citizensnpcs.api.ai;
 
-import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 
 public abstract class AbstractPathStrategy implements PathStrategy {

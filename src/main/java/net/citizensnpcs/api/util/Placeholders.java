@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.util;
 
+import java.util.regex.Pattern;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -15,7 +17,7 @@ public class Placeholders {
             return text;
         }
         for (int i = 0; i < CITIZENS_PLACEHOLDERS.length; i++) {
-            text = text.replace(CITIZENS_PLACEHOLDERS[i], i == 0 ? Integer.toString(npc.getId())
+            text = CITIZENS_PLACEHOLDERS[i].matcher(text).replaceAll(i == 0 ? Integer.toString(npc.getId())
                     : i == 1 ? npc.getName() : npc.getOrAddTrait(Owner.class).getOwner());
         }
         return text;
@@ -27,12 +29,12 @@ public class Placeholders {
         }
         if (player instanceof Entity && ((Entity) player).isValid()) {
             for (int i = 0; i < PLAYER_WORLD_PLACEHOLDERS.length; i++) {
-                text = text.replace(PLAYER_WORLD_PLACEHOLDERS[i],
-                        i < 4 ? player.getName() : ((Entity) player).getWorld().getName());
+                text = PLAYER_WORLD_PLACEHOLDERS[i].matcher(text)
+                        .replaceAll(i < 4 ? player.getName() : ((Entity) player).getWorld().getName());
             }
         } else {
             for (int i = 0; i < PLAYER_PLACEHOLDERS.length; i++) {
-                text = text.replace(PLAYER_PLACEHOLDERS[i], player.getName());
+                text = PLAYER_WORLD_PLACEHOLDERS[i].matcher(text).replaceAll(player.getName());
             }
         }
         return setPlaceholderAPIPlaceholders(text, player);
@@ -50,8 +52,11 @@ public class Placeholders {
         }
     }
 
-    private static final String[] CITIZENS_PLACEHOLDERS = { "<id>", "<npc>", "<owner>" };
+    private static final Pattern[] CITIZENS_PLACEHOLDERS = { Pattern.compile("<id>"), Pattern.compile("<npc>"),
+            Pattern.compile("<owner>") };
     private static boolean PLACEHOLDERAPI_ENABLED = true;
-    private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", "@p", "%player%" };
-    private static final String[] PLAYER_WORLD_PLACEHOLDERS = { "<player>", "<p>", "@p", "%player%", "<world>" };
+    private static final Pattern[] PLAYER_PLACEHOLDERS = { Pattern.compile("<player>"), Pattern.compile("<p>"),
+            Pattern.compile("@p"), Pattern.compile("%player%") };
+    private static final Pattern[] PLAYER_WORLD_PLACEHOLDERS = { Pattern.compile("<player>"), Pattern.compile("<p>"),
+            Pattern.compile("@p"), Pattern.compile("%player%"), Pattern.compile("<world>") };
 }
