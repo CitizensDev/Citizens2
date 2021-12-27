@@ -9,7 +9,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -80,7 +79,6 @@ public class PlayerPathfinder extends PathFinder {
         var1.f = var1.h;
         this.openSet.clear();
         this.openSet.insert(var1);
-        ImmutableSet immutableSet = ImmutableSet.of();
         int var8 = 0;
         Set<Target> var9 = Sets.newHashSetWithExpectedSize(var6.size());
         int var10 = (int) (this.maxVisitedNodes * var5);

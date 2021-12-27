@@ -44,7 +44,7 @@ public class FallingBlockController extends AbstractEntityController {
         // TODO: how to incorporate this - probably delete?
         if (npc.data().has("falling-block-id") || npc.data().has(NPC.ITEM_ID_METADATA)) {
             id = CraftMagicNumbers.getBlock(Material.getMaterial(
-                    npc.data().<String> get(NPC.ITEM_ID_METADATA, npc.data().<String> get("falling-block-id"))));
+                    npc.data().<String> get(NPC.ITEM_ID_METADATA, npc.data().<String> get("falling-block-id")), false));
         }
         final EntityFallingBlockNPC handle = new EntityFallingBlockNPC(ws, npc, at.getX(), at.getY(), at.getZ(),
                 id.defaultBlockState());

@@ -1681,7 +1681,7 @@ public class NMSImpl implements NMSBridge {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
             return;
-        Material mat = Material.getMaterial(npc.data().get(NPC.MINECART_ITEM_METADATA, ""));
+        Material mat = Material.getMaterial(npc.data().get(NPC.MINECART_ITEM_METADATA, ""), false);
         int data = npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0); // TODO: migration for this
         int offset = npc.data().get(NPC.MINECART_OFFSET_METADATA, 0);
         minecart.setCustomDisplay(mat != null);

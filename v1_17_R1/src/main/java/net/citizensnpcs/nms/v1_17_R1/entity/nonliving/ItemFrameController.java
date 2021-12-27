@@ -117,6 +117,9 @@ public class ItemFrameController extends MobEntityController {
             if (npc.data().has(NPC.ITEM_ID_METADATA)) {
                 id = Material.getMaterial(npc.data().<String> get(NPC.ITEM_ID_METADATA));
             }
+            if (npc.data().has(NPC.ITEM_AMOUNT_METADATA)) {
+                getItem().setAmount(npc.data().get(NPC.ITEM_AMOUNT_METADATA));
+            }
             getItem().setType(id);
             getItem().setDurability((short) data);
         }

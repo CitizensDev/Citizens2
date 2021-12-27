@@ -9,9 +9,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -21,6 +23,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -52,6 +55,13 @@ public class CitizensNPCRegistry implements NPCRegistry {
     }
 
     @Override
+    public NPC createNPC(EntityType type, String name, Location loc) {
+        NPC npc = createNPC(type, name);
+        npc.spawn(loc, SpawnReason.PLUGIN);
+        return npc;
+    }
+
+    @Override
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
         Preconditions.checkNotNull(name, "name cannot be null");
         Preconditions.checkNotNull(type, "type cannot be null");
@@ -69,6 +79,20 @@ public class CitizensNPCRegistry implements NPCRegistry {
             npc.addTrait(LookClose.class);
         }
         npc.addTrait(MountTrait.class);
+        return npc;
+    }
+
+    @Override
+    public NPC createNPCUsingItem(EntityType type, String name, ItemStack item) {
+        NPC npc = createNPC(type, name);
+        if (type == EntityType.DROPPED_ITEM || type == EntityType.FALLING_BLOCK || type == EntityType.GLOW_ITEM_FRAME
+                || type == EntityType.ITEM_FRAME) {
+            npc.data().set(NPC.ITEM_ID_METADATA, item.getType().name());
+            npc.data().set(NPC.ITEM_DATA_METADATA, (int) item.getData().getData());
+            npc.data().set(NPC.ITEM_AMOUNT_METADATA, item.getAmount());
+        } else {
+            throw new UnsupportedOperationException("Not an item entity type");
+        }
         return npc;
     }
 

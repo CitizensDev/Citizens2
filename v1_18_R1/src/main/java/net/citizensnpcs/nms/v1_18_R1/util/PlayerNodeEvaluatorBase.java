@@ -11,7 +11,7 @@ import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 
 public abstract class PlayerNodeEvaluatorBase extends NodeEvaluator {
-    protected final Int2ObjectMap<Node> c = new Int2ObjectOpenHashMap();
+    protected final Int2ObjectMap<Node> c = new Int2ObjectOpenHashMap<Node>();
     protected boolean canFloat;
     protected boolean canOpenDoors;
     protected boolean canPassDoors;

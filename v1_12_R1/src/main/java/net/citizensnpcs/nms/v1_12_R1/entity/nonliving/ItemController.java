@@ -45,7 +45,8 @@ public class ItemController extends AbstractEntityController {
             Messaging.severe(npc.getId(), "invalid Material: converted to stone");
         }
         final EntityItemNPC handle = new EntityItemNPC(ws, npc, at.getX(), at.getY(), at.getZ(),
-                CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(id, 1, (short) data)));
+                CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(id,
+                        npc.data().get(NPC.ITEM_AMOUNT_METADATA, 1), (short) data)));
         return handle.getBukkitEntity();
     }
 

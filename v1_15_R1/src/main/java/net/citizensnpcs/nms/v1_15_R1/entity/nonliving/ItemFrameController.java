@@ -72,14 +72,6 @@ public class ItemFrameController extends MobEntityController {
         }
 
         @Override
-        public void h(double x, double y, double z) {
-            Vector vector = Util.callPushEvent(npc, x, y, z);
-            if (vector != null) {
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new ItemFrameNPC(this));
@@ -90,6 +82,14 @@ public class ItemFrameController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void h(double x, double y, double z) {
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
+                super.h(vector.getX(), vector.getY(), vector.getZ());
+            }
         }
 
         @Override
@@ -117,6 +117,9 @@ public class ItemFrameController extends MobEntityController {
             int data = npc.data().get(NPC.ITEM_DATA_METADATA, npc.data().get("falling-block-data", 0));
             if (npc.data().has(NPC.ITEM_ID_METADATA)) {
                 id = Material.getMaterial(npc.data().<String> get(NPC.ITEM_ID_METADATA));
+            }
+            if (npc.data().has(NPC.ITEM_AMOUNT_METADATA)) {
+                getItem().setAmount(npc.data().get(NPC.ITEM_AMOUNT_METADATA));
             }
             getItem().setType(id);
             getItem().setDurability((short) data);

@@ -118,6 +118,7 @@ public class GlowItemFrameController extends MobEntityController {
             if (npc.data().has(NPC.ITEM_ID_METADATA)) {
                 id = Material.getMaterial(npc.data().<String> get(NPC.ITEM_ID_METADATA));
             }
+            getItem().setAmount(npc.data().get(NPC.ITEM_AMOUNT_METADATA, 1));
             getItem().setType(id);
             getItem().setDurability((short) data);
         }

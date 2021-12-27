@@ -2,12 +2,16 @@ package net.citizensnpcs.trait;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -80,6 +84,21 @@ public class HologramTrait extends Trait {
                 getEntityHeight()
                         + (direction == HologramDirection.BOTTOM_UP ? heightOffset : getMaxHeight() - heightOffset),
                 0));
+        Matcher itemMatcher = ITEM_MATCHER.matcher(line);
+        if (itemMatcher.matches()) {
+            Material item = Material.matchMaterial(itemMatcher.group(1), false);
+            NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", new ItemStack(item, 1));
+            itemNPC.spawn(currentLoc);
+            ((ArmorStand) hologramNPC.getEntity()).addPassenger(itemNPC.getEntity());
+            itemNPC.addRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    if (!itemNPC.isSpawned() || !itemNPC.getEntity().isInsideVehicle()) {
+                        itemNPC.destroy();
+                    }
+                }
+            });
+        }
         return hologramNPC;
     }
 
@@ -221,6 +240,9 @@ public class HologramTrait extends Trait {
                 break;
             }
             String text = lines.get(i);
+            if (ITEM_MATCHER.matcher(text).matches()) {
+                text = null;
+            }
             if (text != null && !ChatColor.stripColor(Colorizer.parseColors(text)).isEmpty()) {
                 hologramNPC.setName(Placeholders.replace(text, null, npc));
                 hologramNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, true);
@@ -281,4 +303,6 @@ public class HologramTrait extends Trait {
         BOTTOM_UP,
         TOP_DOWN;
     }
+
+    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)>");
 }
