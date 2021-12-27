@@ -90,6 +90,11 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public void addRunnable(Runnable runnable) {
+        this.runnables.add(runnable);
+    }
+
+    @Override
     public void addTrait(Class<? extends Trait> clazz) {
         addTrait(getTraitFor(clazz));
     }
@@ -116,8 +121,9 @@ public abstract class AbstractNPC implements NPC {
         }
 
         if (trait.isRunImplemented()) {
-            if (replaced != null)
+            if (replaced != null) {
                 runnables.remove(replaced);
+            }
             runnables.add(trait);
         }
 

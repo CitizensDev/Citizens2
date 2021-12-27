@@ -2,8 +2,10 @@ package net.citizensnpcs.api.npc;
 
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.event.DespawnReason;
 
@@ -23,6 +25,19 @@ public interface NPCRegistry extends Iterable<NPC> {
     public NPC createNPC(EntityType type, String name);
 
     /**
+     * Creates an spawned {@link NPC} at the given location.
+     *
+     * @param type
+     *            {@link EntityType} to assign to the NPC
+     * @param name
+     *            Name to give the NPC
+     * @param loc
+     *            The location to spawn at
+     * @return Created NPC
+     */
+    public NPC createNPC(EntityType type, String name, Location loc);
+
+    /**
      * Creates an {@link NPC} with the given id. WARNING: may overwrite any existing NPC in the registry with the same
      * ID.
      *
@@ -34,7 +49,20 @@ public interface NPCRegistry extends Iterable<NPC> {
      *            The NPC name
      * @return The created NPC
      */
-    public NPC createNPC(EntityType type, UUID uuid, int id, String name);
+    public NPC createNPC(EntityType type, UUID uuid, int id, String name);;
+
+    /**
+     * Creates an despawned {@link NPC} using the given ItemStack to configure it if possible.
+     *
+     * @param type
+     *            {@link EntityType} to assign to the NPC
+     * @param name
+     *            Name to give the NPC
+     * @param item
+     *            ItemStack to configure with
+     * @return Created NPC
+     */
+    public NPC createNPCUsingItem(EntityType type, String name, ItemStack item);
 
     /**
      * Deregisters the {@link NPC} and removes all data about it from the data store.

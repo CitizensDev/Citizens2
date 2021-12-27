@@ -28,6 +28,14 @@ import net.citizensnpcs.api.util.DataKey;
  */
 public interface NPC extends Agent, Cloneable {
     /**
+     * Adds a {@link Runnable} that will run every tick. Note that removal is not yet supported.
+     *
+     * @param runnable
+     *            Runnable to be added
+     */
+    public void addRunnable(Runnable runnable);
+
+    /**
      * Adds a trait to this NPC. This will use the {@link TraitFactory} defined for this NPC to construct and attach a
      * trait using {@link #addTrait(Trait)}.
      *
@@ -392,11 +400,15 @@ public interface NPC extends Agent, Cloneable {
      */
     public static final String HURT_SOUND_METADATA = "hurt-sound";
     /**
+     * The Item amount. Integer.
+     */
+    public static final String ITEM_AMOUNT_METADATA = "item-type-amount";
+    /**
      * The Item data. Byte.
      */
     public static final String ITEM_DATA_METADATA = "item-type-data";
     /**
-     * The Item ID. Integer.
+     * The Item ID. String.
      */
     public static final String ITEM_ID_METADATA = "item-type-id";
     /**
