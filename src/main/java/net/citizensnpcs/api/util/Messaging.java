@@ -10,6 +10,7 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -21,6 +22,10 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class Messaging {
     private static class DebugFormatter extends Formatter {
@@ -94,6 +99,47 @@ public class Messaging {
         log(Level.INFO, Translator.translate(key, msg));
     }
 
+    private static void parseAndSendComponents(CommandSender sender, String message) {
+        ComponentBuilder builder = new ComponentBuilder("");
+        Matcher m = COMPONENT_MATCHER.matcher(message);
+        int end = 0;
+        while (m.find()) {
+            String text = m.group(1);
+            String type = m.group(2);
+            String command = m.group(3);
+            ClickEvent.Action action = null;
+            switch (type) {
+                case "url":
+                    action = ClickEvent.Action.OPEN_URL;
+                    break;
+                case "command":
+                    action = ClickEvent.Action.RUN_COMMAND;
+                    break;
+                case "suggest":
+                    action = ClickEvent.Action.SUGGEST_COMMAND;
+                    break;
+            }
+            builder.append(text);
+            end = m.end();
+            if (action != null) {
+                builder.underlined(true);
+                builder.event(new ClickEvent(action, command));
+            }
+            if (m.groupCount() > 3) {
+                builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(m.group(4).substring(1))));
+            } else {
+                builder.event((HoverEvent) null);
+            }
+        }
+        if (end - 1 < message.length()) {
+            builder.append(message.substring(end));
+            builder.event((ClickEvent) null);
+            builder.event((HoverEvent) null);
+            builder.underlined(false);
+        }
+        sender.spigot().sendMessage(builder.create());
+    }
+
     private static String prettify(String message) {
         String trimmed = message.trim();
         String messageColour = MESSAGE_COLOUR;
@@ -108,8 +154,8 @@ public class Messaging {
                 message = messageColour + message;
             }
         }
-        message = message.replace("[[", HIGHLIGHT_COLOUR);
-        message = message.replace("{{", ERROR_COLOUR);
+        message = HIGHLIGHT_MATCHER.matcher(message).replaceAll(HIGHLIGHT_COLOUR);
+        message = ERROR_MATCHER.matcher(message).replaceAll(ERROR_COLOUR);
         return CHAT_NEWLINE.matcher(message).replaceAll("<br>]]").replace("]]", messageColour);
     }
 
@@ -130,8 +176,20 @@ public class Messaging {
             rawMessage = Placeholders.replace(rawMessage, (Player) sender);
         }
         rawMessage = Colorizer.parseColors(rawMessage);
+        boolean hasComponents = SUPPORTS_COMPONENTS && rawMessage.contains("<<");
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
-            sender.sendMessage(prettify(message));
+            message = prettify(message);
+            if (hasComponents) {
+                try {
+                    parseAndSendComponents(sender, message);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                    SUPPORTS_COMPONENTS = false;
+                    sender.sendMessage(message);
+                }
+            } else {
+                sender.sendMessage(message);
+            }
         }
     }
 
@@ -164,12 +222,17 @@ public class Messaging {
 
     private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|\\n", Pattern.MULTILINE);
     private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
+    // <<example text:action():optional hover text>>
+    private static final Pattern COMPONENT_MATCHER = Pattern.compile("<<(.*?):([_a-zA-Z]+)\\((.*?)\\)(:.*?)?>>");
     private static boolean DEBUG = false;
     private static Logger DEBUG_LOGGER;
     private static String ERROR_COLOUR = ChatColor.RED.toString();
+    private static final Pattern ERROR_MATCHER = Pattern.compile("{{", Pattern.LITERAL);
     private static String HIGHLIGHT_COLOUR = ChatColor.YELLOW.toString();
+    private static final Pattern HIGHLIGHT_MATCHER = Pattern.compile("[[", Pattern.LITERAL);
     private static Logger LOGGER = Logger.getLogger("Citizens");
     private static String MESSAGE_COLOUR = ChatColor.GREEN.toString();
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
+    private static boolean SUPPORTS_COMPONENTS = true;
     private static final Pattern TRANSLATION_MATCHER = Pattern.compile("^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+\\.[a-zA-Z0-9.]+");
 }
