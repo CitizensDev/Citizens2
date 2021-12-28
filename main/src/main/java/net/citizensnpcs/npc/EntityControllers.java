@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import org.bukkit.entity.EntityType;
@@ -13,11 +14,11 @@ public class EntityControllers {
     }
 
     public static EntityController createForType(EntityType type) {
-        Class<? extends EntityController> controllerClass = TYPES.get(type);
-        if (controllerClass == null)
+        Constructor<? extends EntityController> constructor = TYPES.get(type);
+        if (constructor == null)
             throw new IllegalArgumentException("Unknown EntityType: " + type);
         try {
-            return controllerClass.newInstance();
+            return constructor.newInstance();
         } catch (Throwable ex) {
             Throwables.getRootCause(ex).printStackTrace();
             return null;
@@ -25,8 +26,17 @@ public class EntityControllers {
     }
 
     public static void setEntityControllerForType(EntityType type, Class<? extends EntityController> controller) {
-        TYPES.put(type, controller);
+        try {
+            Constructor<? extends EntityController> constructor = controller.getConstructor();
+            constructor.setAccessible(true);
+            TYPES.put(type, constructor);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static final Map<EntityType, Class<? extends EntityController>> TYPES = Maps.newEnumMap(EntityType.class);
+    private static final Map<EntityType, Constructor<? extends EntityController>> TYPES = Maps
+            .newEnumMap(EntityType.class);
 }

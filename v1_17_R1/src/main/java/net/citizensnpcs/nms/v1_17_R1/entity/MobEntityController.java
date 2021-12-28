@@ -17,11 +17,9 @@ import net.minecraft.world.level.Level;
 
 public abstract class MobEntityController extends AbstractEntityController {
     private final Class<?> clazz;
-    private final Constructor<?> constructor;
 
     protected MobEntityController(Class<?> clazz) {
         super(clazz);
-        this.constructor = getConstructor(clazz);
         this.clazz = clazz;
     }
 
@@ -44,7 +42,7 @@ public abstract class MobEntityController extends AbstractEntityController {
 
     private net.minecraft.world.entity.Entity createEntityFromClass(Object... args) {
         try {
-            return (net.minecraft.world.entity.Entity) constructor.newInstance(args);
+            return (net.minecraft.world.entity.Entity) getConstructor(clazz).newInstance(args);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;

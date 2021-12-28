@@ -49,6 +49,10 @@ public class CitizensNPCRegistry implements NPCRegistry {
         name = registryName;
     }
 
+    private CitizensNPC create(EntityType type, UUID uuid, int id, String name) {
+        return new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this);
+    }
+
     @Override
     public NPC createNPC(EntityType type, String name) {
         return createNPC(type, UUID.randomUUID(), generateUniqueId(), name);
@@ -65,7 +69,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
         Preconditions.checkNotNull(name, "name cannot be null");
         Preconditions.checkNotNull(type, "type cannot be null");
-        CitizensNPC npc = getByType(type, uuid, id, name);
+        CitizensNPC npc = create(type, uuid, id, name);
 
         if (npc == null)
             throw new IllegalStateException("Could not create NPC.");
@@ -146,10 +150,6 @@ public class CitizensNPCRegistry implements NPCRegistry {
         if (id < 0)
             throw new IllegalArgumentException("invalid id");
         return npcs.get(id);
-    }
-
-    private CitizensNPC getByType(EntityType type, UUID uuid, int id, String name) {
-        return new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this);
     }
 
     @Override
