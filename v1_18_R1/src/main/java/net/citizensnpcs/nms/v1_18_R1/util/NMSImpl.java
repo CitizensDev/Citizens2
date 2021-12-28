@@ -319,6 +319,13 @@ public class NMSImpl implements NMSBridge {
         } else if (!handle.level.players().contains(handle)) {
             ((List) handle.level.players()).add(handle);
         }
+
+        try {
+            CHUNKMAP_UPDATE_PLAYER_STATUS.invoke(((ServerLevel) handle.level).getChunkSource().chunkMap, handle,
+                    !remove);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         // PlayerUpdateTask.addOrRemove(entity, remove);
     }
 
@@ -1291,7 +1298,7 @@ public class NMSImpl implements NMSBridge {
                     throw new ReportedException(crashreport);
                 }
             }
-            boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get("removefromplayerlist",
+            boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get(NPC.REMOVE_FROM_PLAYERLIST_METADATA,
                     Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
             if (!entity.isAlive()) {
                 ((ServerLevel) entity.level).getChunkSource().removeEntity(entity);
@@ -1868,12 +1875,16 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cs");
+
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
+
     private static final MethodHandle BEHAVIOR_TREE_MAP = NMS.getGetter(Brain.class, "f");
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
+    private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
+            ServerPlayer.class, boolean.class);
     private static final Map<Class<?>, net.minecraft.world.entity.EntityType<?>> CITIZENS_ENTITY_TYPES = Maps
             .newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");

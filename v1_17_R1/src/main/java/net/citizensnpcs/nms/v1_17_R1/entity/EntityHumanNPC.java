@@ -285,7 +285,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public Component getTabListDisplayName() {
-        if (Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean()) {
+        if (npc.data().get(NPC.REMOVE_FROM_PLAYERLIST_METADATA, Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
             return new TextComponent("");
         }
         return super.getTabListDisplayName();

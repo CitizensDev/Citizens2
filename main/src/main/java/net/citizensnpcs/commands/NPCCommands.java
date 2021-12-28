@@ -1569,13 +1569,14 @@ public class NPCCommands {
             permission = "citizens.npc.playerlist")
     @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
     public void playerlist(CommandContext args, CommandSender sender, NPC npc) {
-        boolean remove = !npc.data().get("removefromplayerlist", Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
+        boolean remove = !npc.data().get(NPC.REMOVE_FROM_PLAYERLIST_METADATA,
+                Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
         if (args.hasFlag('a')) {
             remove = false;
         } else if (args.hasFlag('r')) {
             remove = true;
         }
-        npc.data().setPersistent("removefromplayerlist", remove);
+        npc.data().setPersistent(NPC.REMOVE_FROM_PLAYERLIST_METADATA, remove);
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getOrAddTrait(CurrentLocation.class).getLocation(), SpawnReason.RESPAWN);

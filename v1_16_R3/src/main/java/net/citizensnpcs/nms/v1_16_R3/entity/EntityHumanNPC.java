@@ -235,7 +235,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public IChatBaseComponent getPlayerListName() {
-        if (Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean()) {
+        if (npc.data().get(NPC.REMOVE_FROM_PLAYERLIST_METADATA, Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
             return new ChatComponentText("");
         }
         return super.getPlayerListName();

@@ -62,7 +62,7 @@ public class HumanController extends AbstractEntityController {
                 if (getBukkitEntity() == null || !getBukkitEntity().isValid()
                         || getBukkitEntity() != handle.getBukkitEntity())
                     return;
-                boolean removeFromPlayerList = npc.data().get("removefromplayerlist",
+                boolean removeFromPlayerList = npc.data().get(NPC.REMOVE_FROM_PLAYERLIST_METADATA,
                         Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
                 NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
             }
