@@ -2,13 +2,12 @@ package net.citizensnpcs.nms.v1_17_R1.entity;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.entity.Entity;
-
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
@@ -57,11 +56,12 @@ public abstract class MobEntityController extends AbstractEntityController {
         if (constructor != null)
             return constructor;
         try {
-            return clazz.getConstructor(EntityType.class, Level.class, NPC.class);
+            CONSTRUCTOR_CACHE.put(clazz, constructor = clazz.getConstructor(EntityType.class, Level.class, NPC.class));
+            return constructor;
         } catch (Exception ex) {
             throw new IllegalStateException("unable to find an entity constructor");
         }
     }
 
-    private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = Maps.newHashMap();
+    private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
 }

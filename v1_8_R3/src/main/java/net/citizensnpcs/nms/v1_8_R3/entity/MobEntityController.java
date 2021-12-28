@@ -3,13 +3,12 @@ package net.citizensnpcs.nms.v1_8_R3.entity;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Entity;
-
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.AbstractEntityController;
@@ -58,12 +57,13 @@ public abstract class MobEntityController extends AbstractEntityController {
         if (constructor != null)
             return constructor;
         try {
-            return clazz.getConstructor(World.class, NPC.class);
+            CONSTRUCTOR_CACHE.put(clazz, constructor = clazz.getConstructor(World.class, NPC.class));
+            return constructor;
         } catch (Exception ex) {
             throw new IllegalStateException("unable to find an entity constructor");
         }
     }
 
-    private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = Maps.newHashMap();
+    private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
     private static final Field UUID_FIELD = NMS.getField(net.minecraft.server.v1_8_R3.Entity.class, "uniqueID");
 }
