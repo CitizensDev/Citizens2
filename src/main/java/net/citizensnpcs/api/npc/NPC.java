@@ -460,6 +460,10 @@ public interface NPC extends Agent, Cloneable {
     @Deprecated
     public static final String PLAYER_SKIN_UUID_METADATA = "player-skin-name";
     /**
+     * Whether to remove players from the player list. Boolean defaults to true.
+     */
+    public static final String REMOVE_FROM_PLAYERLIST_METADATA = "removefromplayerlist";
+    /**
      * The Integer delay to respawn in ticks after death. Only works if non-zero.
      */
     public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
