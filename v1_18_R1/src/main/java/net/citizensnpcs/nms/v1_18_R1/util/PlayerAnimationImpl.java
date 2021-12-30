@@ -1,6 +1,5 @@
 package net.citizensnpcs.nms.v1_18_R1.util;
 
-import java.lang.invoke.MethodHandle;
 import java.util.EnumMap;
 
 import org.bukkit.entity.EntityType;
@@ -23,7 +22,6 @@ import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 
 public class PlayerAnimationImpl {
@@ -78,11 +76,7 @@ public class PlayerAnimationImpl {
                 }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
                 break;
             case SLEEP:
-                try {
-                    ENTITY_SETPOSE_METHOD.invoke(player, Pose.SLEEPING);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
+                player.setPose(Pose.SLEEPING);
                 break;
             case SNEAK:
                 player.getBukkitEntity().setSneaking(true);
@@ -108,11 +102,7 @@ public class PlayerAnimationImpl {
                 NMS.mount(player.getBukkitEntity(), null);
                 break;
             case STOP_SLEEPING:
-                try {
-                    ENTITY_SETPOSE_METHOD.invoke(player, Pose.STANDING);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
+                player.setPose(Pose.STANDING);
                 break;
             case STOP_SNEAKING:
                 player.getBukkitEntity().setSneaking(false);
@@ -139,8 +129,6 @@ public class PlayerAnimationImpl {
     }
 
     private static EnumMap<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);
-    private static final MethodHandle ENTITY_SETPOSE_METHOD = NMS.getMethodHandle(Entity.class, "setPose", true,
-            Pose.class);
     static {
         DEFAULTS.put(PlayerAnimation.ARM_SWING, 0);
         DEFAULTS.put(PlayerAnimation.HURT, 1);
