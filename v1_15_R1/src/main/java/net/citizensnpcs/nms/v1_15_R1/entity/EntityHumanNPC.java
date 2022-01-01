@@ -465,7 +465,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             }
             equipmentCache.put(slot, equipment);
         }
-        if (updateCounter++ <= Setting.PACKET_UPDATE_DELAY.asInt() && !itemChanged)
+        if (updateCounter++ <= npc.data().<Integer> get(NPC.Metadata.PACKET_UPDATE_DELAY,
+                Setting.PACKET_UPDATE_DELAY.asInt()) && !itemChanged)
             return;
         updateCounter = 0;
         Location current = getBukkitEntity().getLocation(packetLocationCache);

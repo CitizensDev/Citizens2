@@ -361,20 +361,21 @@ public class CitizensNPC extends AbstractNPC {
                 resetCachedCoord();
                 return;
             }
-            if (data().get(NPC.SWIMMING_METADATA, true)) {
+            if (data().get(NPC.Metadata.SWIMMING, true)) {
                 NMS.trySwim(getEntity());
             }
             navigator.run();
             if (SUPPORT_GLOWING) {
                 try {
-                    getEntity().setGlowing(data().get(NPC.GLOWING_METADATA, false));
+                    getEntity().setGlowing(data().get(NPC.Metadata.GLOWING, false));
                 } catch (NoSuchMethodError e) {
                     SUPPORT_GLOWING = false;
                 }
             }
 
             boolean isLiving = getEntity() instanceof LivingEntity;
-            if (updateCounter++ > Setting.PACKET_UPDATE_DELAY.asInt()) {
+            if (updateCounter++ > data().<Integer> get(NPC.Metadata.PACKET_UPDATE_DELAY,
+                    Setting.PACKET_UPDATE_DELAY.asInt())) {
                 if (Setting.KEEP_CHUNKS_LOADED.asBoolean()) {
                     ChunkCoord currentCoord = new ChunkCoord(getStoredLocation());
                     if (!currentCoord.equals(cachedCoord)) {
@@ -393,13 +394,12 @@ public class CitizensNPC extends AbstractNPC {
             updateCustomNameVisibility();
 
             if (isLiving) {
-                NMS.setKnockbackResistance((LivingEntity) getEntity(),
-                        data().get(NPC.DEFAULT_PROTECTED_METADATA, true) ? 1D : 0D);
+                NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
             }
 
             if (SUPPORT_SILENT && data().has(NPC.SILENT_METADATA)) {
                 try {
-                    getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.SILENT_METADATA).toString()));
+                    getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.Metadata.SILENT).toString()));
                 } catch (NoSuchMethodError e) {
                     SUPPORT_SILENT = false;
                 }
@@ -414,14 +414,14 @@ public class CitizensNPC extends AbstractNPC {
     private void updateCustomName() {
         boolean nameVisibility = false;
         if (!getEntity().isCustomNameVisible()
-                && !data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString().equals("hover")) {
+                && !data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString().equals("hover")) {
             getEntity().setCustomName("");
         } else if (!requiresNameHologram()) {
             nameVisibility = true;
             getEntity().setCustomName(getFullName());
         }
 
-        String teamName = data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+        String teamName = data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
         Team team = null;
         if (!(getEntity() instanceof Player) || teamName.length() == 0
                 || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
@@ -437,7 +437,7 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private void updateCustomNameVisibility() {
-        String nameplateVisible = data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+        String nameplateVisible = data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString();
         if (requiresNameHologram()) {
             nameplateVisible = "false";
         }
