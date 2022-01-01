@@ -31,6 +31,7 @@ import net.citizensnpcs.api.command.exception.CommandUsageException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
@@ -280,6 +281,13 @@ public class Commands {
         if (args.hasValueFlag("strength")) {
             trait.setStrength(Math.max(1, Math.min(5, args.getFlagInteger("strength"))));
             output += Messaging.tr(Messages.LLAMA_STRENGTH_SET, args.getFlagInteger("strength"));
+        }
+        if (args.hasFlag('c')) {
+            npc.getOrAddTrait(HorseModifiers.class).setCarryingChest(true);
+            output += Messaging.tr(Messages.HORSE_CHEST_SET) + " ";
+        } else if (args.hasFlag('b')) {
+            npc.getOrAddTrait(HorseModifiers.class).setCarryingChest(false);
+            output += Messaging.tr(Messages.HORSE_CHEST_UNSET) + " ";
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);

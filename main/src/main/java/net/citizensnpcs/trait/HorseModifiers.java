@@ -111,6 +111,8 @@ public class HorseModifiers extends Trait {
             horse.getInventory().setArmor(armor);
             horse.getInventory().setSaddle(saddle);
         }
+        if (CARRYING_CHEST_METHOD == null)
+            return;
         EntityType type = npc.getEntity().getType();
         if (type.name().equals("LLAMA") || type.name().equals("TRADER_LLAMA") || type.name().equals("DONKEY")
                 || type.name().equals("MULE")) {

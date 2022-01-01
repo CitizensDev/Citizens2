@@ -923,10 +923,10 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "horse|llama|donkey|mule (--color color) (--type type) (--style style) (-cb)",
+            usage = "horse|donkey|mule (--color color) (--type type) (--style style) (-cb)",
             desc = "Sets horse and horse-like entity modifiers",
             help = "Use the -c flag to make the NPC have a chest, or the -b flag to stop them from having a chest.",
-            modifiers = { "horse", "llama", "donkey", "mule" },
+            modifiers = { "horse", "donkey", "mule" },
             min = 1,
             max = 1,
             flags = "cb",
@@ -939,6 +939,7 @@ public class NPCCommands {
         }
         HorseModifiers horse = npc.getOrAddTrait(HorseModifiers.class);
         String output = "";
+
         if (args.hasFlag('c')) {
             horse.setCarryingChest(true);
             output += Messaging.tr(Messages.HORSE_CHEST_SET) + " ";
