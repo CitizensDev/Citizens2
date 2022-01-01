@@ -551,7 +551,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
         @Override
         public boolean canSee(org.bukkit.entity.Entity entity) {
-            if (entity.getType() == EntityType.ITEM_FRAME) {
+            if (entity != null && entity.getType() == EntityType.ITEM_FRAME) {
                 return false; // optimise for large maps in item frames
             }
             return super.canSee(entity);
