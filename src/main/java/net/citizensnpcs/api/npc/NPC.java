@@ -356,6 +356,168 @@ public interface NPC extends Agent, Cloneable {
      */
     public boolean useMinecraftAI();
 
+    public enum Metadata {
+        ALWAYS_USE_NAME_HOLOGRAM("always-use-name-hologram"),
+        /**
+         * The Minecraft ambient sound played. String - Minecraft sound name
+         */
+        AMBIENT_SOUND("ambient-sound"),
+        /**
+         * Whether the NPC is collidable with Players or not. Boolean.
+         */
+        COLLIDABLE("collidable"),
+        /**
+         * Whether the NPC can damage other Entities. Boolean.
+         */
+        DAMAGE_OTHERS("damage-others"),
+        /**
+         * The Minecraft sound played when the NPC dies. String - Minecraft sound name.
+         */
+        DEATH_SOUND("death-sound"),
+        /**
+         * Whether the NPC is 'protected' i.e. invulnerable to damage. Boolean.
+         */
+        DEFAULT_PROTECTED("protected"),
+        DISABLE_DEFAULT_STUCK_ACTION("disable-default-stuck-action"),
+        /**
+         * Whether the NPC drops its inventory after death. Boolean.
+         */
+        DROPS_ITEMS("drops-items"),
+        /**
+         * Whether the NPC is 'flyable' i.e. will fly when pathfinding. Boolean.
+         */
+        FLYABLE("flyable"),
+        /**
+         * Whether the NPC is currently glowing. Boolean.
+         */
+        GLOWING("glowing"),
+        /**
+         * The color to glow using Minecraft's scoreboard glowing feature. Should be a {@link ChatColor#name()}.
+         * DEPRECATED: use ScoreboardTrait instead
+         */
+        GLOWING_COLOR("glowing-color"),
+        /**
+         * The Minecraft sound to play when hurt. String - Minecraft sound name.
+         */
+        HURT_SOUND("hurt-sound"),
+        /**
+         * The Item amount. Integer.
+         */
+        ITEM_AMOUNT("item-type-amount"),
+        /**
+         * The Item data. Byte.
+         */
+        ITEM_DATA("item-type-data"),
+        /**
+         * The Item ID. String.
+         */
+        ITEM_ID("item-type-id"),
+        /**
+         * Whether to keep chunk loaded. Boolean.
+         */
+        KEEP_CHUNK_LOADED("keep-chunk-loaded"),
+        /**
+         * Whether the NPC is leashable. Boolean.
+         */
+        LEASH_PROTECTED("protected-leash"),
+        /**
+         * The Minecart item name.
+         */
+        MINECART_ITEM("minecart-item-name"),
+        /**
+         * The Minecart item data. Byte.
+         */
+        MINECART_ITEM_DATA("minecart-item-data"),
+        /**
+         * The Minecart item offset as defined by Minecraft. {@link Minecart#setDisplayBlockOffset(int)}
+         */
+        MINECART_OFFSET("minecart-item-offset"),
+        /**
+         * Whether the NPC's nameplate should be visible. Boolean.
+         */
+        NAMEPLATE_VISIBLE("nameplate-visible"),
+        /**
+         * The packet update delay. Integer defaults to setting value.
+         */
+        PACKET_UPDATE_DELAY("packet-update-delay"),
+        /**
+         * Whether to open doors while pathfinding. Boolean.
+         */
+        PATHFINDER_OPEN_DOORS("pathfinder-open-doors"),
+        /**
+         * @see SkinTrait
+         */
+        @Deprecated
+        PLAYER_SKIN_TEXTURE_PROPERTIES("player-skin-textures"),
+        /**
+         * @see SkinTrait
+         */
+        @Deprecated
+        PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN("player-skin-signature"),
+
+        /**
+         * @see SkinTrait
+         */
+        @Deprecated
+        PLAYER_SKIN_USE_LATEST("player-skin-use-latest-skin"),
+        /**
+         * @see SkinTrait
+         */
+        @Deprecated
+        PLAYER_SKIN_UUID("player-skin-name"),
+        /**
+         * Whether to remove players from the player list. Boolean defaults to true.
+         */
+        REMOVE_FROM_PLAYERLIST("removefromplayerlist"),
+        /**
+         * The Integer delay to respawn in ticks after death. Only works if non-zero.
+         */
+        RESPAWN_DELAY("respawn-delay"),
+        /**
+         * The fake NPC scoreboard team name because Minecraft requires a team name. Usually will be a random UUID in
+         * String form.
+         */
+        SCOREBOARD_FAKE_TEAM_NAME("fake-scoreboard-team-name"),
+        /**
+         * Whether to save / persist across server restarts. Boolean.
+         */
+        SHOULD_SAVE("should-save"),
+        /**
+         * Whether to suppress sounds. Boolean.
+         */
+        SILENT("silent-sounds"),
+        /**
+         * Whether to sneak. Boolean.
+         */
+        SNEAKING("citizens-sneaking"),
+        /**
+         * Whether to allow swimming. Boolean.
+         */
+        SWIMMING("swim"),
+        /**
+         * Whether to prevent NPC being targeted by hostile mobs. Boolean.
+         */
+        TARGETABLE("protected-target"),
+        /**
+         * Whether to use Minecraft AI. Boolean.
+         */
+        USE_MINECRAFT_AI("minecraft-ai"),
+        /**
+         * Whether to block Minecraft villager trades. Boolean defaults to true.
+         */
+        VILLAGER_BLOCK_TRADES("villager-trades");
+
+        private final String key;
+
+        Metadata(String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+    }
+
     public static final String ALWAYS_USE_NAME_HOLOGRAM_METADATA = "always-use-name-hologram";
     /**
      * The Minecraft ambient sound played. String - Minecraft sound name

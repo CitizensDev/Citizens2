@@ -21,6 +21,16 @@ public class SimpleMetadataStore implements MetadataStore {
     }
 
     @Override
+    public <T> T get(NPC.Metadata key) {
+        return get(key.getKey());
+    }
+
+    @Override
+    public <T> T get(NPC.Metadata key, T def) {
+        return get(key.getKey(), def);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         Preconditions.checkNotNull(key, "key cannot be null");
@@ -36,6 +46,11 @@ public class SimpleMetadataStore implements MetadataStore {
             return def;
         }
         return t;
+    }
+
+    @Override
+    public boolean has(NPC.Metadata key) {
+        return has(key.getKey());
     }
 
     @Override
@@ -73,6 +88,11 @@ public class SimpleMetadataStore implements MetadataStore {
     }
 
     @Override
+    public void set(NPC.Metadata key, Object data) {
+        set(key.getKey(), data);
+    }
+
+    @Override
     public void set(String key, Object data) {
         Preconditions.checkNotNull(key, "key cannot be null");
         if (data == null) {
@@ -80,6 +100,11 @@ public class SimpleMetadataStore implements MetadataStore {
         } else {
             metadata.put(key, new MetadataObject(data, false));
         }
+    }
+
+    @Override
+    public void setPersistent(NPC.Metadata key, Object data) {
+        setPersistent(key.getKey(), data);
     }
 
     @Override

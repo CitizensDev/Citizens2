@@ -13,6 +13,27 @@ public interface MetadataStore {
      *            The key to get metadata from
      * @return The metadata at the given key, or null if not found
      */
+    <T> T get(NPC.Metadata key);
+
+    /**
+     * Fetches metadata from the given key. Sets the default value provided via {@link #set(String, Object)} if the
+     * metadata is not already stored.
+     *
+     * @param key
+     *            The key to get metadata from
+     * @param def
+     *            The default value to return
+     * @return The metadata at the given key, or def if not found
+     */
+    <T> T get(NPC.Metadata key, T def);
+
+    /**
+     * Fetches metadata from the given key.
+     *
+     * @param key
+     *            The key to get metadata from
+     * @return The metadata at the given key, or null if not found
+     */
     <T> T get(String key);
 
     /**
@@ -26,6 +47,15 @@ public interface MetadataStore {
      * @return The metadata at the given key, or def if not found
      */
     <T> T get(String key, T def);
+
+    /**
+     * Returns whether the metadata exists.
+     *
+     * @param key
+     *            The metadata key
+     * @return Whether the metadata exists
+     */
+    boolean has(NPC.Metadata key);
 
     /**
      * Returns whether the metadata exists.
@@ -68,7 +98,27 @@ public interface MetadataStore {
      * @param data
      *            The data to store
      */
+    void set(NPC.Metadata key, Object data);
+
+    /**
+     * Stores data at the given key. Data will not persist.
+     *
+     * @param key
+     *            The metadata key
+     * @param data
+     *            The data to store
+     */
     void set(String key, Object data);
+
+    /**
+     * Stores data at the given key. Data will persist and must be a primitive type or {@link String}.
+     *
+     * @param key
+     *            The metadata key
+     * @param data
+     *            The data to store
+     */
+    void setPersistent(NPC.Metadata key, Object data);
 
     /**
      * Stores data at the given key. Data will persist and must be a primitive type or {@link String}.
