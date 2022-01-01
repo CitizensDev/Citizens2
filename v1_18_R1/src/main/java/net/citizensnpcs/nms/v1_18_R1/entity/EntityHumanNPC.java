@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -546,6 +547,14 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             this.npc = entity.npc;
             this.cserver = (CraftServer) Bukkit.getServer();
             npc.getOrAddTrait(Inventory.class);
+        }
+
+        @Override
+        public boolean canSee(org.bukkit.entity.Entity entity) {
+            if (entity.getType() == EntityType.ITEM_FRAME) {
+                return false; // optimise for large maps in item frames
+            }
+            return super.canSee(entity);
         }
 
         @Override
