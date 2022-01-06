@@ -34,8 +34,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         if (below == Material.SOUL_SAND || below == Material.ICE)
             return 1F;
         if (isLiquidOrInLiquid(source.getWorld().getBlockAt(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))) {
-            if (in == Material.LAVA)
+            if (in == Material.LAVA) {
                 return 2F;
+            }
             return 1F;
         }
         return 0F; // TODO: add light level-specific costs?

@@ -7,6 +7,11 @@ import net.citizensnpcs.api.util.DataKey;
  */
 public interface MetadataStore {
     /**
+     * Copies the metadata store.
+     */
+    MetadataStore clone();
+
+    /**
      * Fetches metadata from the given key.
      *
      * @param key
@@ -129,4 +134,10 @@ public interface MetadataStore {
      *            The data to store
      */
     void setPersistent(String key, Object data);
+
+    /**
+     *
+     * @return The number of elements in the store
+     */
+    public int size();
 }

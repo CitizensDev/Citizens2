@@ -6,6 +6,7 @@ import java.util.ListIterator;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
+import net.citizensnpcs.api.npc.MetadataStore;
 import net.citizensnpcs.api.npc.NPC;
 
 public interface PathPoint {
@@ -18,6 +19,13 @@ public interface PathPoint {
      * Returns a new PathPoint at a given Vector.
      */
     PathPoint createAtOffset(Vector vector);
+
+    /**
+     * Returns the {@link MetadataStore}, initialising it if not already present. This will be passed on to child nodes
+     * if nonempty.
+     *
+     */
+    MetadataStore data();
 
     /**
      * Gets the destination Vector

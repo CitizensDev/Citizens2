@@ -21,6 +21,13 @@ public class SimpleMetadataStore implements MetadataStore {
     }
 
     @Override
+    public MetadataStore clone() {
+        SimpleMetadataStore copy = new SimpleMetadataStore();
+        copy.metadata.putAll(metadata);
+        return copy;
+    }
+
+    @Override
     public <T> T get(NPC.Metadata key) {
         return get(key.getKey());
     }
@@ -112,6 +119,11 @@ public class SimpleMetadataStore implements MetadataStore {
         Preconditions.checkNotNull(key, "key cannot be null");
         checkPrimitive(data);
         metadata.put(key, new MetadataObject(data, true));
+    }
+
+    @Override
+    public int size() {
+        return metadata.size();
     }
 
     private static class MetadataObject {
