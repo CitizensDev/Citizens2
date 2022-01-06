@@ -37,6 +37,9 @@ public class ShopTrait extends Trait {
 
         public void display(Player sender) {
         }
+
+        public void displayEditor(Player sender) {
+        }
     }
 
     @Persist(value = "npcShops", namespace = "shopstrait")

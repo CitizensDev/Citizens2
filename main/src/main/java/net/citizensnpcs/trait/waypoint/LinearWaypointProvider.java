@@ -69,6 +69,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         this.npc = npc;
     }
 
+    public void addWaypoint(Waypoint waypoint) {
+        waypoints.add(waypoint);
+    }
+
     @Override
     public WaypointEditor createEditor(CommandSender sender, CommandContext args) {
         if (args.hasFlag('h')) {

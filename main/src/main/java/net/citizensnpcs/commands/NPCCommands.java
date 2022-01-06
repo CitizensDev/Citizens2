@@ -1946,7 +1946,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "shop (name) (editr)",
+            usage = "shop (name) (edit|show)",
             desc = "NPC shop edit/show",
             modifiers = { "shop" },
             min = 1,
@@ -1956,8 +1956,9 @@ public class NPCCommands {
         ShopTrait trait = npc.getOrAddTrait(ShopTrait.class);
         if (args.argsLength() > 1) {
             NPCShop shop = trait.getShop(args.getString(1));
-            if (args.getString(1).equalsIgnoreCase("edit")) {
-            } else if (args.getString(1).equalsIgnoreCase("show") && args.argsLength() == 3) {
+            if (args.getString(2).equalsIgnoreCase("edit")) {
+                shop.displayEditor(sender);
+            } else if (args.getString(2).equalsIgnoreCase("show") && args.argsLength() == 3) {
                 shop.display(sender);
             } else {
                 throw new CommandUsageException();
