@@ -29,7 +29,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     public VectorNode(VectorNode parent, Vector location, PathInfo info) {
         super(parent);
-        this.store = parent.store != null && parent.store.size() > 0 ? parent.store.clone() : null;
+        this.store = parent != null && parent.store != null && parent.store.size() > 0 ? parent.store.clone() : null;
         this.location = new Vector(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         this.info = info;
     }
