@@ -355,9 +355,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
     }
 
-    private void moveWithFallDamage(double mx, double my, double mz) {
+    private void moveWithFallDamage(float mx, float my, float mz) {
         double y = this.locY;
-
         a(mx, my, mz);
         if (!npc.isProtected()) {
             a(this.locY - y, onGround);
