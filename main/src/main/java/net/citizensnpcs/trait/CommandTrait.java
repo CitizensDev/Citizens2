@@ -102,11 +102,11 @@ public class CommandTrait extends Trait {
             }
         }
         if (experienceCost > 0) {
-            if (player.getExp() < experienceCost) {
+            if (player.getLevel() < experienceCost) {
                 sendErrorMessage(player, CommandTraitMessages.MISSING_EXPERIENCE, null, experienceCost);
                 return false;
             }
-            player.setExp(player.getExp() - experienceCost);
+            player.setLevel((int) (player.getLevel() - experienceCost));
         }
         if (itemRequirements.size() > 0) {
             List<ItemStack> req = Lists.newArrayList(itemRequirements);
