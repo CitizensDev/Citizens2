@@ -11,8 +11,6 @@ import com.google.common.collect.Lists;
 import net.citizensnpcs.api.astar.AStarNode;
 import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer.PassableState;
-import net.citizensnpcs.api.npc.MetadataStore;
-import net.citizensnpcs.api.npc.SimpleMetadataStore;
 
 public class VectorNode extends AStarNode implements PathPoint {
     private float blockCost = -1;
@@ -21,7 +19,6 @@ public class VectorNode extends AStarNode implements PathPoint {
     Vector location;
     Vector locationCache;
     List<Vector> pathVectors;
-    MetadataStore store;
 
     public VectorNode(VectorGoal goal, Location location, BlockSource source, BlockExaminer... examiners) {
         this(null, goal, location.toVector(), source, examiners);
@@ -29,7 +26,6 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     public VectorNode(VectorNode parent, Vector location, PathInfo info) {
         super(parent);
-        this.store = parent != null && parent.store != null && parent.store.size() > 0 ? parent.store.clone() : null;
         this.location = new Vector(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         this.info = info;
     }
@@ -55,11 +51,6 @@ public class VectorNode extends AStarNode implements PathPoint {
     @Override
     public VectorNode createAtOffset(Vector mod) {
         return new VectorNode(this, mod, info);
-    }
-
-    @Override
-    public MetadataStore data() {
-        return store == null ? (store = new SimpleMetadataStore()) : store;
     }
 
     public float distance(VectorNode to) {
@@ -132,12 +123,13 @@ public class VectorNode extends AStarNode implements PathPoint {
                     if (modY < 0 || modY > 255) {
                         continue;
                     }
-                    Vector mod = location.clone().add(new Vector(x, y, z));
+                    Vector mod = new Vector(location.getX() + x, modY, location.getZ() + z);
                     if (mod.equals(location))
                         continue;
                     if (x != 0 && z != 0) {
-                        if (!isPassable(point.createAtOffset(location.clone().add(new Vector(x, y, 0))))
-                                || !isPassable(point.createAtOffset(location.clone().add(new Vector(0, y, z))))) {
+                        if (!isPassable(point.createAtOffset(new Vector(location.getX() + x, modY, location.getZ())))
+                                || !isPassable(
+                                        point.createAtOffset(new Vector(location.getX(), modY, location.getZ() + z)))) {
                             continue;
                         }
                     }
