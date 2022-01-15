@@ -111,8 +111,8 @@ public class PlayerMoveControl extends MoveControl {
             double dZ = this.tz - this.entity.getZ();
             double dY = this.ty - this.entity.getY();
             double dXZ = dX * dX + dZ * dZ;
-            if (dY * dY < 1.0 && dXZ < 0.0075) {
-                this.entity.zza = 0.0F;
+            if (dY * dY < 1.0 && dXZ < 0.01) {
+                // this.entity.zza = 0.0F;
                 return;
             }
             float f = (float) (Mth.atan2(dZ, dX) * 57.2957763671875D) - 90.0F;

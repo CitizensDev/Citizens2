@@ -1,9 +1,12 @@
 package net.citizensnpcs.npc.ai;
 
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
+
+import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.astar.pathfinder.BlockSource;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
@@ -12,6 +15,7 @@ import net.citizensnpcs.api.astar.pathfinder.PathPoint;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 
 public class FallingExaminer implements NeighbourGeneratorBlockExaminer {
+    private final Map<PathPoint, Integer> fallen = Maps.newHashMap();
     private final int maxFallDistance;
 
     public FallingExaminer(int maxFallDistance) {
@@ -34,24 +38,23 @@ public class FallingExaminer implements NeighbourGeneratorBlockExaminer {
         Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
         Material in = source.getMaterialAt(pos);
         if (!MinecraftBlockExaminer.canStandOn(below) && MinecraftBlockExaminer.canStandIn(above, in)) {
-            if (!point.data().has("fallen")) {
+            Integer dist = fallen.get(point);
+            if (dist == null) {
                 neighbours.add(point);
-                point.data().set("fallen", 0);
-            } else if (point.data().<Integer> get("fallen") < maxFallDistance) {
-                point.data().set("fallen", point.data().get("fallen", 0) + 1);
-                neighbours.add(point.createAtOffset(new Vector(0, -1, 0)));
+                fallen.put(point, dist = 0);
+            } else if (dist < maxFallDistance) {
+                fallen.put(point, dist + 1);
+                neighbours.add(point.createAtOffset(new Vector(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ())));
             }
         } else {
-            if (point.data().has("fallen")) {
-                point.data().remove("fallen");
-            }
+            fallen.remove(point);
         }
         return neighbours;
     }
 
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
-        if (point.data().has("fallen")) {
+        if (fallen.containsKey(point)) {
             return PassableState.PASSABLE;
         }
         return PassableState.IGNORE;

@@ -196,8 +196,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             this.onGround = false;
         }
 
-        if (this.hurtTime > 0)
+        if (this.hurtTime > 0) {
             this.hurtTime--;
+        }
 
         if (isDeadOrDying()) {
             tickDeath();
@@ -208,6 +209,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         } else {
             this.lastHurtByPlayer = null;
         }
+
         if (this.lastHurtByMob != null) {
             if (!this.lastHurtByMob.isAlive()) {
                 setLastHurtByMob((LivingEntity) null);
@@ -215,6 +217,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 setLastHurtByMob((LivingEntity) null);
             }
         }
+
         tickEffects();
         this.animStepO = this.animStep;
         this.yBodyRotO = this.yBodyRot;
