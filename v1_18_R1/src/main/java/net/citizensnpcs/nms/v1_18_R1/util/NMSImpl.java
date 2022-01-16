@@ -33,6 +33,7 @@ import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftWither;
 import org.bukkit.craftbukkit.v1_18_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_18_R1.event.CraftPortalEvent;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -64,6 +65,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -271,6 +273,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.PathFinder;
+import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -1837,6 +1841,34 @@ public class NMSImpl implements NMSBridge {
         navigation.stop();
     }
 
+    public static Entity teleportAcrossWorld(Entity entity, ServerLevel worldserver, BlockPos location) {
+        if (FIND_DIMENSION_ENTRY_POINT == null || entity.isRemoved())
+            return null;
+        NPC npc = ((NPCHolder) entity).getNPC();
+        PortalInfo sds = null;
+        try {
+            sds = location == null ? (PortalInfo) FIND_DIMENSION_ENTRY_POINT.invoke(entity, worldserver)
+                    : new PortalInfo(new Vec3(location.getX(), location.getY(), location.getZ()), Vec3.ZERO,
+                            entity.getYRot(), entity.getXRot(), worldserver, (CraftPortalEvent) null);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        if (npc == null || sds == null)
+            return null;
+        npc.despawn(DespawnReason.PENDING_RESPAWN);
+        npc.spawn(new Location(worldserver.getWorld(), sds.pos.x, sds.pos.y, sds.pos.z, sds.yRot, sds.xRot));
+        Entity handle = ((CraftEntity) npc.getEntity()).getHandle();
+        handle.setDeltaMovement(sds.speed);
+        handle.portalCooldown = entity.portalCooldown;
+        try {
+            PORTAL_ENTRANCE_POS_SETTER.invoke(handle, PORTAL_ENTRANCE_POS_GETTER.invoke(entity));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        return handle;
+    }
+
     public static void updateAI(LivingEntity entity) {
         if (entity instanceof Mob) {
             Mob handle = (Mob) entity;
@@ -1875,12 +1907,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cs");
-
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
-
     private static final MethodHandle BEHAVIOR_TREE_MAP = NMS.getGetter(Brain.class, "f");
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
@@ -1896,6 +1926,8 @@ public class NMSImpl implements NMSBridge {
             int.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static MethodHandle ENTITY_REGISTRY_SETTER;
+    private static final MethodHandle FIND_DIMENSION_ENTRY_POINT = NMS.getFirstMethodHandleWithReturnType(Entity.class,
+            true, PortalInfo.class, ServerLevel.class);
     private static final MethodHandle FISHING_HOOK_LIFE = NMS.getSetter(FishingHook.class, "aq");
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle HEAD_HEIGHT = NMS.getSetter(Entity.class, "aZ");
@@ -1904,14 +1936,16 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(LivingEntity.class, "bo");
     private static final MethodHandle MAKE_REQUEST = NMS.getMethodHandle(YggdrasilAuthenticationService.class,
             "makeRequest", true, URL.class, Object.class, Class.class);
-    private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS.getMethodHandle(PathNavigation.class, "a",
-            true, int.class);
+    private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS
+            .getFirstMethodHandleWithReturnType(PathNavigation.class, true, PathFinder.class, int.class);
     private static MethodHandle NAVIGATION_PATH = NMS.getFirstGetter(PathNavigation.class, Path.class);
     private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFinalSetter(PathNavigation.class, "t");
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(ChunkMap.class, "L");
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(ChunkMap.class, "L");
+    private static MethodHandle PORTAL_ENTRANCE_POS_GETTER = NMS.getGetter(Entity.class, "aj");
+    private static MethodHandle PORTAL_ENTRANCE_POS_SETTER = NMS.getSetter(Entity.class, "aj");
     private static final MethodHandle PUFFERFISH_C = NMS.getSetter(Pufferfish.class, "bW");
     private static final MethodHandle PUFFERFISH_D = NMS.getSetter(Pufferfish.class, "bX");
     private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;

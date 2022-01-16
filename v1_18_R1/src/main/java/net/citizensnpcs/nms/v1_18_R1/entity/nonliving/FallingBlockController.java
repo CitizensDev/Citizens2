@@ -19,6 +19,7 @@ import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -116,6 +117,13 @@ public class FallingBlockController extends AbstractEntityController {
         @Override
         public boolean save(CompoundTag save) {
             return npc == null ? super.save(save) : false;
+        }
+
+        @Override
+        public Entity teleportTo(ServerLevel worldserver, BlockPos location) {
+            if (npc == null)
+                return super.teleportTo(worldserver, location);
+            return NMSImpl.teleportAcrossWorld(this, worldserver, location);
         }
 
         @Override

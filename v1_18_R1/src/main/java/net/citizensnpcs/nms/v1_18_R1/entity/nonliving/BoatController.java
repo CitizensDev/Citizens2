@@ -15,6 +15,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -148,6 +149,13 @@ public class BoatController extends MobEntityController {
                 }
             }
             return m;
+        }
+
+        @Override
+        public Entity teleportTo(ServerLevel worldserver, BlockPos location) {
+            if (npc == null)
+                return super.teleportTo(worldserver, location);
+            return NMSImpl.teleportAcrossWorld(this, worldserver, location);
         }
 
         @Override

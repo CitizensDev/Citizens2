@@ -198,6 +198,13 @@ public class CreeperController extends MobEntityController {
         }
 
         @Override
+        public Entity teleportTo(ServerLevel worldserver, BlockPos location) {
+            if (npc == null)
+                return super.teleportTo(worldserver, location);
+            return NMSImpl.teleportAcrossWorld(this, worldserver, location);
+        }
+
+        @Override
         public void thunderHit(ServerLevel worldserver, LightningBolt entitylightning) {
             if (npc == null || allowPowered) {
                 super.thunderHit(worldserver, entitylightning);

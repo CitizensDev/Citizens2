@@ -197,11 +197,18 @@ public class NMS {
     }
 
     public static MethodHandle getFirstMethodHandle(Class<?> clazz, boolean log, Class<?>... params) {
+        return getFirstMethodHandleWithReturnType(clazz, log, null, params);
+    }
+
+    public static MethodHandle getFirstMethodHandleWithReturnType(Class<?> clazz, boolean log, Class<?> returnType,
+            Class<?>... params) {
         if (clazz == null)
             return null;
         try {
             Method first = null;
             for (Method method : clazz.getDeclaredMethods()) {
+                if (returnType != null && !returnType.equals(method.getReturnType()))
+                    continue;
                 Class<?>[] paramTypes = method.getParameterTypes();
                 if (paramTypes.length == params.length) {
                     first = method;

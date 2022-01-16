@@ -17,6 +17,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -195,6 +196,13 @@ public class WolfController extends MobEntityController {
         @Override
         public boolean setTarget(LivingEntity entityliving, EntityTargetEvent.TargetReason reason, boolean fire) {
             return npc == null || this.equals(entityliving) ? super.setTarget(entityliving, reason, fire) : false;
+        }
+
+        @Override
+        public Entity teleportTo(ServerLevel worldserver, BlockPos location) {
+            if (npc == null)
+                return super.teleportTo(worldserver, location);
+            return NMSImpl.teleportAcrossWorld(this, worldserver, location);
         }
 
         @Override

@@ -231,7 +231,6 @@ public class CustomEntityRegistry extends DefaultedRegistry {
     private static final MethodHandle IREGISTRY_RESOURCE_KEY = NMS.getGetter(Registry.class, "c");
     private static final BiMap<EntityType, Class<?>> minecraftClassMap = HashBiMap.create();
     static {
-
         minecraftClassMap.put(EntityType.AREA_EFFECT_CLOUD, AreaEffectCloud.class);
         minecraftClassMap.put(EntityType.ARMOR_STAND, ArmorStand.class);
         minecraftClassMap.put(EntityType.ARROW, Arrow.class);

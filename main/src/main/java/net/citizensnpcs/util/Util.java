@@ -52,7 +52,7 @@ public class Util {
             return new Vector(x, y, z);
         }
         boolean allowed = !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)
-                || !npc.data().get(NPC.COLLIDABLE_METADATA, true);
+                || (npc.data().has(NPC.COLLIDABLE_METADATA) && npc.data().get(NPC.COLLIDABLE_METADATA, true));
         if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
             return allowed ? new Vector(x, y, z) : null;
         }

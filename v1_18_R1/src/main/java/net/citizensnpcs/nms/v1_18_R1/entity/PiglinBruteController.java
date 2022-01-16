@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_18_R1.entity;
 
-import java.util.TreeMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_18_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
@@ -17,6 +15,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -39,7 +38,6 @@ public class PiglinBruteController extends MobEntityController {
     }
 
     public static class EntityPiglinBruteNPC extends PiglinBrute implements NPCHolder {
-        private TreeMap<?, ?> behaviorMap;
         private final CitizensNPC npc;
 
         public EntityPiglinBruteNPC(EntityType<? extends PiglinBrute> types, Level level) {
@@ -179,6 +177,13 @@ public class PiglinBruteController extends MobEntityController {
         @Override
         public boolean save(CompoundTag save) {
             return npc == null ? super.save(save) : false;
+        }
+
+        @Override
+        public Entity teleportTo(ServerLevel worldserver, BlockPos location) {
+            if (npc == null)
+                return super.teleportTo(worldserver, location);
+            return NMSImpl.teleportAcrossWorld(this, worldserver, location);
         }
 
         @Override

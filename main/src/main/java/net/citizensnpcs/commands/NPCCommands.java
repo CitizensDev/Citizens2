@@ -329,13 +329,13 @@ public class NPCCommands {
             aliases = { "npc" },
             usage = "collidable",
             desc = "Toggles an NPC's collidability",
-            modifiers = { "collidable" },
+            modifiers = { "collidable", "pushable" },
             min = 1,
             max = 1,
             permission = "citizens.npc.collidable")
-    @Requirements(ownership = true, selected = true, types = { EntityType.PLAYER })
+    @Requirements(ownership = true, selected = true)
     public void collidable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        npc.data().setPersistent(NPC.COLLIDABLE_METADATA, !npc.data().get(NPC.COLLIDABLE_METADATA, true));
+        npc.data().setPersistent(NPC.COLLIDABLE_METADATA, !npc.data().get(NPC.COLLIDABLE_METADATA, false));
         Messaging.sendTr(sender,
                 npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
                 npc.getName());
