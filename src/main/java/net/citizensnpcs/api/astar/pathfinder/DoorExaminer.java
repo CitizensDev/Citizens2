@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Openable;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.material.MaterialData;
@@ -38,11 +39,7 @@ public class DoorExaminer implements BlockExaminer {
     static class DoorOpener implements PathCallback {
         boolean opened = false;
 
-        private void close(Block point) {
-            closeOpenable(point);
-        }
-
-        private void closeOpenable(Block point) {
+        private void close(NPC npc, Block point) {
             if (SpigotUtil.isUsing1_13API()) {
                 Openable open = (Openable) point.getBlockData();
                 if (!open.isOpen()) {
@@ -72,6 +69,7 @@ public class DoorExaminer implements BlockExaminer {
                     SUPPORTS_SOUNDS = false;
                 }
             }
+            tryArmSwing(npc);
         }
 
         @SuppressWarnings("deprecation")
@@ -129,22 +127,51 @@ public class DoorExaminer implements BlockExaminer {
                     SUPPORTS_SOUNDS = false;
                 }
             }
+            tryArmSwing(npc);
         }
 
         @Override
         public void run(NPC npc, Block point, ListIterator<Block> path) {
-            if (!MinecraftBlockExaminer.isDoor(point.getType()))
+            if (!MinecraftBlockExaminer.isDoor(point.getType()) || opened)
                 return;
-            if (npc.getStoredLocation().distanceSquared(point.getLocation().add(0.5, 0, 0.5)) > 4) {
-                if (opened) {
-                    close(point);
-                    opened = false;
-                }
+            double dist = npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5));
+            if (dist > 2)
                 return;
-            }
+
             open(npc, point);
+
+            if (!opened)
+                return;
+
+            // TODO: a more block-focused API for these things would be better (see LadderClimber)
+            npc.getNavigator().getLocalParameters().addRunCallback(new Runnable() {
+                boolean closed = false;
+
+                @Override
+                public void run() {
+                    if (closed)
+                        return;
+                    double dist = npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5));
+                    System.out.println(dist + " " + closed);
+                    if (dist > 1.8) {
+                        close(npc, point);
+                        closed = true;
+                    }
+                }
+            });
+        }
+
+        private void tryArmSwing(NPC npc) {
+            if (SUPPORTS_SWING_ANIMATION && npc.getEntity() instanceof LivingEntity) {
+                try {
+                    ((LivingEntity) npc.getEntity()).swingMainHand();
+                } catch (Exception ex) {
+                    SUPPORTS_SWING_ANIMATION = false;
+                }
+            }
         }
 
         private static boolean SUPPORTS_SOUNDS = true;
+        private static boolean SUPPORTS_SWING_ANIMATION = true;
     }
 }
