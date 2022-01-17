@@ -1192,26 +1192,47 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true)
     public void metadata(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String command = args.getString(1).toLowerCase();
+        String key = args.getString(2);
+        try {
+            key = NPC.Metadata.valueOf(key.toUpperCase()).getKey();
+        } catch (IllegalArgumentException e) {
+        }
         if (command.equals("set")) {
             if (args.argsLength() != 4)
                 throw new CommandException();
-            if (args.hasFlag('t')) {
-                npc.data().set(args.getString(2), args.getString(3));
-            } else {
-                npc.data().setPersistent(args.getString(2), args.getString(3));
+
+            Object metadata = args.getString(3);
+            if (metadata.equals("false") || metadata.equals("true")) {
+                metadata = Boolean.parseBoolean(args.getString(3));
             }
-            Messaging.sendTr(sender, Messages.METADATA_SET, args.getString(2), args.getString(3));
+            try {
+                metadata = Integer.parseInt(args.getString(3));
+            } catch (NumberFormatException nfe) {
+                try {
+                    metadata = Double.parseDouble(args.getString(3));
+                } catch (NumberFormatException nfe2) {
+                }
+            }
+
+            if (args.hasFlag('t')) {
+                npc.data().set(key, metadata);
+            } else {
+                npc.data().setPersistent(key, metadata);
+            }
+            Messaging.sendTr(sender, Messages.METADATA_SET, key, args.getString(3));
         } else if (command.equals("get")) {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
-            Messaging.send(sender, npc.data().get(args.getString(2), "null"));
+            Messaging.send(sender, npc.data().get(key, "null"));
         } else if (command.equals("remove")) {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
-            npc.data().remove(args.getString(2));
-            Messaging.sendTr(sender, Messages.METADATA_UNSET, args.getString(2));
+            npc.data().remove(key);
+            Messaging.sendTr(sender, Messages.METADATA_UNSET, key);
+        } else {
+            throw new CommandUsageException();
         }
     }
 
