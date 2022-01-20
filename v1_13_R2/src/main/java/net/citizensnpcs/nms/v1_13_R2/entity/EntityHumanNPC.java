@@ -303,7 +303,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean isCollidable() {
-        return npc == null ? super.isCollidable() : npc.data().get(NPC.COLLIDABLE_METADATA, true);
+        return npc == null ? super.isCollidable()
+                : npc.data().has(NPC.COLLIDABLE_METADATA) ? npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA)
+                        : !npc.isProtected();
     }
 
     public boolean isNavigating() {

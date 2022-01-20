@@ -1197,6 +1197,7 @@ public class NPCCommands {
             key = NPC.Metadata.valueOf(key.toUpperCase()).getKey();
         } catch (IllegalArgumentException e) {
         }
+
         if (command.equals("set")) {
             if (args.argsLength() != 4)
                 throw new CommandException();

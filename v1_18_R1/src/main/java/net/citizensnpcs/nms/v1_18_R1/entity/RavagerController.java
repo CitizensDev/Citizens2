@@ -55,6 +55,13 @@ public class RavagerController extends MobEntityController {
         }
 
         @Override
+        public boolean canBeControlledByRider() {
+            return (npc == null || npc.data().<Boolean> get(NPC.Metadata.USE_MINECRAFT_AI, false))
+                    ? super.canBeControlledByRider()
+                    : false;
+        }
+
+        @Override
         protected boolean canRide(Entity entity) {
             if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart)) {
                 return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);

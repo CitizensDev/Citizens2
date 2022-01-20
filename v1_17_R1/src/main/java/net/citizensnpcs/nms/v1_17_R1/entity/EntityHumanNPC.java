@@ -371,7 +371,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean isPushable() {
-        return npc == null ? super.isPushable() : npc.data().get(NPC.COLLIDABLE_METADATA, true);
+        return npc == null ? super.isPushable()
+                : npc.data().has(NPC.COLLIDABLE_METADATA) ? npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA)
+                        : !npc.isProtected();
     }
 
     private void moveOnCurrentHeading() {
