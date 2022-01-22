@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.mojang.datafixers.DataFixer;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_16_R3.Advancement;
 import net.minecraft.server.v1_16_R3.AdvancementDataPlayer;
@@ -17,7 +18,7 @@ import net.minecraft.server.v1_16_R3.PlayerList;
 public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
     public EmptyAdvancementDataPlayer(DataFixer datafixer, PlayerList playerlist,
             AdvancementDataWorld advancementdataworld, File file, EntityPlayer entityplayer) {
-        super(datafixer, playerlist, advancementdataworld, file, entityplayer);
+        super(datafixer, playerlist, advancementdataworld, CitizensAPI.getDataFolder(), entityplayer);
         this.b();
     }
 

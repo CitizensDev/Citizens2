@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.invoke.MethodHandle;
 import java.util.Set;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_14_R1.Advancement;
 import net.minecraft.server.v1_14_R1.AdvancementDataPlayer;
@@ -13,7 +14,7 @@ import net.minecraft.server.v1_14_R1.MinecraftServer;
 
 public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
     public EmptyAdvancementDataPlayer(MinecraftServer minecraftserver, File file, EntityPlayer entityplayer) {
-        super(minecraftserver, file, entityplayer);
+        super(minecraftserver, CitizensAPI.getDataFolder(), entityplayer);
         this.b();
     }
 
