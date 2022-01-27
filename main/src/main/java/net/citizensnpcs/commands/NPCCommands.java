@@ -1697,7 +1697,7 @@ public class NPCCommands {
         Profession parsed = Util.matchEnum(Profession.values(), profession.toUpperCase());
         if (parsed == null) {
             throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1),
-                    Joiner.on(',').join(Profession.values()));
+                    Util.listValuesPretty(Profession.values()));
         }
         npc.getOrAddTrait(VillagerProfession.class).setProfession(parsed);
         Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), profession);
@@ -1716,7 +1716,7 @@ public class NPCCommands {
         try {
             type = Rabbit.Type.valueOf(args.getString(1).toUpperCase());
         } catch (IllegalArgumentException ex) {
-            throw new CommandException(Messages.INVALID_RABBIT_TYPE, Joiner.on(',').join(Rabbit.Type.values()));
+            throw new CommandException(Messages.INVALID_RABBIT_TYPE, Util.listValuesPretty(Rabbit.Type.values()));
         }
         npc.getOrAddTrait(RabbitType.class).setType(type);
         Messaging.sendTr(sender, Messages.RABBIT_TYPE_SET, npc.getName(), type.name());

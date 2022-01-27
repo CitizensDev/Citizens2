@@ -51,7 +51,7 @@ public class Util {
         if (npc == null) {
             return new Vector(x, y, z);
         }
-        boolean allowed = !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)
+        boolean allowed = !npc.isProtected()
                 || (npc.data().has(NPC.COLLIDABLE_METADATA) && npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA));
         if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
             return allowed ? new Vector(x, y, z) : null;

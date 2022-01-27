@@ -18,7 +18,6 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class MCNavigationStrategy extends AbstractPathStrategy {
-    private Location centerLocation;
     private final Entity handle;
     private final MCNavigator navigator;
     private final NavigatorParameters parameters;
@@ -38,10 +37,10 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         if (!MinecraftBlockExaminer.canStandIn(dest.getBlock().getType())) {
             dest = MinecraftBlockExaminer.findValidLocationAbove(dest, 2);
         }
-        this.target = dest;
+        this.target = Util.getCenterLocation(dest.getBlock());
         this.parameters = params;
         handle = npc.getEntity();
-        this.navigator = NMS.getTargetNavigator(npc.getEntity(), dest, params);
+        this.navigator = NMS.getTargetNavigator(npc.getEntity(), target, params);
     }
 
     @Override
@@ -61,7 +60,6 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public void stop() {
-        centerLocation = null;
         navigator.stop();
     }
 
@@ -77,15 +75,12 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         }
         if (getCancelReason() != null)
             return true;
-        if (centerLocation == null) {
-            centerLocation = Util.getCenterLocation(target.getBlock());
-        }
         boolean wasFinished = navigator.update();
         parameters.run();
         Location loc = handle.getLocation(HANDLE_LOCATION);
-        double dX = centerLocation.getX() - loc.getX();
-        double dZ = centerLocation.getZ() - loc.getZ();
-        double dY = centerLocation.getY() - loc.getY();
+        double dX = target.getX() - loc.getX();
+        double dZ = target.getZ() - loc.getZ();
+        double dY = target.getY() - loc.getY();
         double xzDistance = dX * dX + dZ * dZ;
         if ((dY * dY) < 1 && xzDistance <= parameters.distanceMargin()) {
             stop();
