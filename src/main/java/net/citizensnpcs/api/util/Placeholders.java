@@ -49,7 +49,7 @@ public class Placeholders {
     }
 
     public static String replace(String text, OfflinePlayer player) {
-        if (player == null) {
+        if (player == null || !player.hasPlayedBefore()) {
             return setPlaceholderAPIPlaceholders(text, player);
         }
         if (player instanceof Entity && ((Entity) player).isValid()) {
