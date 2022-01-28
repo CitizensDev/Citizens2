@@ -245,7 +245,7 @@ public abstract class AbstractNPC implements NPC {
             trait = getTraitFor(clazz);
             addTrait(trait);
         }
-        return trait != null ? clazz.cast(trait) : null;
+        return clazz.cast(trait);
     }
 
     @Override
@@ -265,7 +265,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public <T extends Trait> T getTraitNullable(Class<T> clazz) {
-        return clazz.cast(traits.get(clazz)); // #cast allows null as value
+        return clazz.cast(traits.get(clazz));
     }
 
     @Override
@@ -280,8 +280,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        return prime + uuid.hashCode();
+        return 31 + uuid.hashCode();
     }
 
     @Override
