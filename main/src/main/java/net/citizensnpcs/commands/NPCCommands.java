@@ -742,7 +742,7 @@ public class NPCCommands {
         }
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
-        if (player == null) {
+        if (!player.hasPlayedBefore()) {
             NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
                 @Override
                 public void run(NPC followingNPC) throws CommandException {
@@ -1465,7 +1465,7 @@ public class NPCCommands {
         UUID uuid;
         if (args.getString(1).equalsIgnoreCase("SERVER")) {
             uuid = null;
-        } else if ((p = Bukkit.getOfflinePlayer(args.getString(1))) != null) {
+        } else if ((p = Bukkit.getOfflinePlayer(args.getString(1))).hasPlayedBefore()) {
             uuid = p.getUniqueId();
         } else {
             uuid = UUID.fromString(args.getString(1));
