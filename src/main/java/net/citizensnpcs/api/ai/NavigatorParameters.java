@@ -23,6 +23,7 @@ public class NavigatorParameters implements Cloneable {
     private List<NavigatorCallback> callbacks = Lists.newArrayList();
     private boolean debug;
     private AttackStrategy defaultStrategy;
+    private double destinationTeleportMargin = -1;
     private double distanceMargin = 2F;
     private List<BlockExaminer> examiners = Lists.newArrayList();
     private Function<Navigator, Location> lookAtFunction;
@@ -35,6 +36,7 @@ public class NavigatorParameters implements Cloneable {
     private float straightLineTargetingDistance;
     private StuckAction stuckAction;
     private int updatePathRate;
+
     private boolean useNewPathfinder;
 
     /**
@@ -235,11 +237,31 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
+     * @see #destinationTeleportMargin(double)
+     */
+    public double destinationTeleportMargin() {
+        return destinationTeleportMargin;
+    }
+
+    /**
+     * Sets the distance (in blocks) after which the NPC will directly teleport to the destination or -1 if disabled.
+     * For example, if the destination teleport margin was 1.5 and the NPC reached 1.5 blocks from the target it would
+     * instantly teleport to the target location.
+     *
+     * @param margin
+     *            Distance teleport margin
+     */
+    public NavigatorParameters destinationTeleportMargin(double margin) {
+        destinationTeleportMargin = margin;
+        return this;
+    }
+
+    /**
      * Returns the distance margin or leeway that the {@link Navigator} will be able to stop from the target
-     * destination. The margin will be measured against the block distance squared.
+     * destination. The margin will be measured against the block distance.
      *
      * For example: if the distance margin were 2, then the {@link Navigator} could stop moving towards the target when
-     * it is 2 blocks squared away from it.
+     * it is 2 blocks away from it.
      *
      * @return The distance margin
      */
@@ -338,8 +360,9 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets the path distance margin. This is how close the pathfinder should to the target when pathfinding. If you
-     * need to set how far the NPC should get away from the target, use {@link #distanceMargin(double)}.
+     * Sets the path distance margin. This is how close the pathfinder should pathfind to the target in blocks. If you
+     * need to set the cutoff distance before the NPC considers their path completed, use
+     * {@link #distanceMargin(double)}.
      *
      * @param distance
      *            The distance margin
