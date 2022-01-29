@@ -82,7 +82,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         double dZ = target.getZ() - loc.getZ();
         double dY = target.getY() - loc.getY();
         double xzDistance = dX * dX + dZ * dZ;
-        if ((dY * dY) < 1 && xzDistance <= parameters.distanceMargin()) {
+        if (Math.abs(dY) < 1 && Math.sqrt(xzDistance) <= parameters.distanceMargin()) {
             stop();
             return true;
         }

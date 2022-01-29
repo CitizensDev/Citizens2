@@ -42,7 +42,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private boolean canAttack() {
         BoundingBox handleBB = NMS.getBoundingBox(handle), targetBB = NMS.getBoundingBox(target);
         return attackTicks <= 0 && (handleBB.maxY > targetBB.minY && handleBB.minY < targetBB.maxY)
-                && closeEnough(distanceSquared()) && hasLineOfSight();
+                && closeEnough(distance()) && hasLineOfSight();
     }
 
     @Override
@@ -54,8 +54,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         return distance <= parameters.attackRange();
     }
 
-    private double distanceSquared() {
-        return handle.getLocation(HANDLE_LOCATION).distanceSquared(target.getLocation(TARGET_LOCATION));
+    private double distance() {
+        return handle.getLocation(HANDLE_LOCATION).distance(target.getLocation(TARGET_LOCATION));
     }
 
     @Override
@@ -118,7 +118,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (parameters.straightLineTargetingDistance() > 0 && !(targetNavigator instanceof StraightLineTargeter)) {
             targetNavigator = new StraightLineTargeter(targetNavigator);
         }
-        if (!aggro && distanceSquared() <= parameters.distanceMargin()) {
+        if (!aggro && distance() <= parameters.distanceMargin()) {
             stop();
             return false;
         } else if (updateCounter == -1 || updateCounter++ > parameters.updatePathRate()) {

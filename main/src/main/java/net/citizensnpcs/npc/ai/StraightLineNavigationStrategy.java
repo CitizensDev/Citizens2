@@ -65,19 +65,19 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
         }
         Vector destVector = npc.getStoredLocation().toVector()
                 .add(destination.toVector().subtract(npc.getStoredLocation().toVector()).normalize());
-        Location point = destVector.toLocation(destination.getWorld());
+        Location destLoc = destVector.toLocation(destination.getWorld());
         if (!npc.isFlyable() && destVector.getBlockY() > currLoc.getBlockY()) {
-            Block block = point.getBlock();
+            Block block = destLoc.getBlock();
             while (block.getY() > currLoc.getBlockY()
                     && !MinecraftBlockExaminer.canStandOn(block.getRelative(BlockFace.DOWN))) {
                 block = block.getRelative(BlockFace.DOWN);
                 if (block.getY() <= 0) {
-                    block = point.getBlock();
+                    block = destLoc.getBlock();
                     break;
                 }
             }
-            point = block.getLocation();
-            destVector = point.toVector();
+            destLoc = block.getLocation();
+            destVector = destLoc.toVector();
         }
         double dX = destVector.getX() - currLoc.getX();
         double dZ = destVector.getZ() - currLoc.getZ();
@@ -111,13 +111,13 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             NMS.setDestination(npc.getEntity(), destVector.getX(), destVector.getY(), destVector.getZ(),
                     params.speed());
         } else {
-            Vector dir = destVector.subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
-            Block in = npc.getEntity().getLocation().getBlock();
+            Vector dir = destVector.subtract(currLoc.toVector()).normalize().multiply(0.2);
+            Block in = currLoc.getBlock();
             if (distance > 0 && dY >= 1 && xzDistance <= 2.75
                     || (dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrInLiquid(in))) {
                 dir.add(new Vector(0, 0.75, 0));
             }
-            Util.faceLocation(npc.getEntity(), destVector.toLocation(npc.getEntity().getWorld()));
+            Util.faceLocation(npc.getEntity(), destLoc);
             npc.getEntity().setVelocity(dir);
         }
         params.run();

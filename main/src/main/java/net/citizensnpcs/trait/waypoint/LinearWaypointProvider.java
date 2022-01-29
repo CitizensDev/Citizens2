@@ -530,8 +530,8 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             this.selector = selector;
             Waypoint next = itr.next();
             final Location npcLoc = npc.getEntity().getLocation(cachedLocation);
-            if (npcLoc.getWorld() != next.getLocation().getWorld() || npcLoc.distanceSquared(next.getLocation()) < npc
-                    .getNavigator().getLocalParameters().distanceMargin()) {
+            if (npcLoc.getWorld() != next.getLocation().getWorld()
+                    || npcLoc.distance(next.getLocation()) < npc.getNavigator().getLocalParameters().distanceMargin()) {
                 return false;
             }
             currentDestination = next;

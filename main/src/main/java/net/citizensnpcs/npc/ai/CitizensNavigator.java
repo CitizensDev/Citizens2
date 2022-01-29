@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Iterables;
@@ -50,7 +51,8 @@ public class CitizensNavigator implements Navigator, Runnable {
             .pathDistanceMargin(Setting.DEFAULT_PATH_DISTANCE_MARGIN.asDouble())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt()).stuckAction(TeleportStuckAction.INSTANCE)
             .examiner(new MinecraftBlockExaminer()).useNewPathfinder(Setting.USE_NEW_PATHFINDER.asBoolean())
-            .straightLineTargetingDistance(Setting.DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE.asFloat());
+            .straightLineTargetingDistance(Setting.DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE.asFloat())
+            .destinationTeleportMargin(Setting.DEFAULT_DESTINATION_TELEPORT_MARGIN.asDouble());
     private PathStrategy executing;
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
@@ -129,6 +131,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (root.keyExists("distancemargin")) {
             defaultParams.distanceMargin(root.getDouble("distancemargin"));
         }
+        if (root.keyExists("destinationteleportmargin")) {
+            defaultParams.destinationTeleportMargin(root.getDouble("destinationteleportmargin"));
+        }
         if (root.keyExists("updatepathrate")) {
             defaultParams.updatePathRate(root.getInt("updatepathrate"));
         }
@@ -155,7 +160,8 @@ public class CitizensNavigator implements Navigator, Runnable {
         updateMountedStatus();
         if (!isNavigating() || !npc.isSpawned() || isPaused())
             return;
-        if (!npc.getStoredLocation().getWorld().equals(getTargetAsLocation().getWorld())
+        Location npcLoc = npc.getStoredLocation();
+        if (!npcLoc.getWorld().equals(getTargetAsLocation().getWorld())
                 || Math.pow(localParams.range(), 2) < npc.getStoredLocation().distanceSquared(getTargetAsLocation())) {
             stopNavigating(CancelReason.STUCK);
             return;
@@ -167,13 +173,19 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (localParams.lookAtFunction() != null) {
             Util.faceLocation(npc.getEntity(), localParams.lookAtFunction().apply(this), true, true);
             Entity entity = npc.getEntity().getPassenger();
-            Location npcLoc = npc.getEntity().getLocation();
+            npcLoc = npc.getEntity().getLocation();
             while (entity != null) {
                 Location loc = entity.getLocation(STATIONARY_LOCATION);
                 loc.setYaw(npcLoc.getYaw());
                 entity.teleport(loc);
                 entity = entity.getPassenger();
             }
+        }
+        if (localParams.destinationTeleportMargin() > 0
+                && npcLoc.distance(getTargetAsLocation()) < localParams.destinationTeleportMargin()) {
+            // TODO: easing?
+            npc.teleport(getTargetAsLocation(), TeleportCause.PLUGIN);
+            finished = true;
         }
         if (!finished) {
             return;
@@ -200,6 +212,11 @@ public class CitizensNavigator implements Navigator, Runnable {
             root.setInt("stationaryticks", defaultParams.stationaryTicks());
         } else {
             root.removeKey("stationaryticks");
+        }
+        if (defaultParams.destinationTeleportMargin() != Setting.DEFAULT_DESTINATION_TELEPORT_MARGIN.asDouble()) {
+            root.setDouble("destinationteleportmargin", defaultParams.destinationTeleportMargin());
+        } else {
+            root.removeKey("destinationteleportmargin");
         }
         if (defaultParams.distanceMargin() != Setting.DEFAULT_DISTANCE_MARGIN.asDouble()) {
             root.setDouble("distancemargin", defaultParams.distanceMargin());

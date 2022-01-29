@@ -136,7 +136,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location loc = npc.getEntity().getLocation(NPC_LOCATION);
         /* Proper door movement - gets stuck on corners at times
-
+        
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
@@ -152,7 +152,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double dZ = dest.getZ() - loc.getZ();
         double dY = dest.getY() - loc.getY();
         double xzDistance = dX * dX + dZ * dZ;
-        if ((dY * dY) < 1 && xzDistance <= params.distanceMargin()) {
+        if (Math.abs(dY) < 1 && Math.sqrt(xzDistance) <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
                 return true;
@@ -163,14 +163,13 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (params.debug()) {
             npc.getEntity().getWorld().playEffect(dest, Effect.ENDER_SIGNAL, 0);
         }
-        double distance = xzDistance + dY * dY;
 
         if (npc.getEntity() instanceof LivingEntity && !npc.getEntity().getType().name().contains("ARMOR_STAND")) {
             NMS.setDestination(npc.getEntity(), dest.getX(), dest.getY(), dest.getZ(), params.speed());
         } else {
             Vector dir = dest.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
             Block in = npc.getEntity().getLocation().getBlock();
-            if (distance > 0 && dY >= 1 && xzDistance <= 2.75
+            if ((dY >= 1 && Math.sqrt(xzDistance) <= 0.4)
                     || (dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrInLiquid(in))) {
                 dir.add(new Vector(0, 0.75, 0));
             }

@@ -131,7 +131,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
             return true;
         }
         Location current = npc.getEntity().getLocation(NPC_LOCATION);
-        if (current.toVector().distanceSquared(vector) <= parameters.distanceMargin()) {
+        if (current.toVector().distance(vector) <= parameters.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
                 return true;

@@ -110,12 +110,12 @@ public class PlayerMoveControl extends MoveControl {
             double dX = this.tx - this.entity.getX();
             double dZ = this.tz - this.entity.getZ();
             double dY = this.ty - this.entity.getY();
-            double dXZ = dX * dX + dZ * dZ;
-            if (dY * dY < 1.0 && dXZ < 0.01) {
+            double dXZ = Math.sqrt(dX * dX + dZ * dZ);
+            if (Math.abs(dY) < 1.0 && dXZ < 0.025) {
                 // this.entity.zza = 0.0F;
                 return;
             }
-            float f = (float) (Mth.atan2(dZ, dX) * 57.2957763671875D) - 90.0F;
+            float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
             this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
             NMS.setHeadYaw(entity.getBukkitEntity(), this.entity.getYRot());
             AttributeInstance speed = this.entity.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -123,7 +123,7 @@ public class PlayerMoveControl extends MoveControl {
             float movement = (float) (this.speed * speed.getValue());
             this.entity.setSpeed(movement);
             this.entity.zza = movement;
-            if (shouldJump() || (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 1.0D)) {
+            if (shouldJump() || (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 0.4D)) {
                 this.jumpTicks = jumpTicks();
                 this.jumpTicks /= 3;
                 if (this.entity instanceof EntityHumanNPC) {
