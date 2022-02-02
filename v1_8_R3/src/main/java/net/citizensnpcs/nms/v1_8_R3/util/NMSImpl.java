@@ -141,6 +141,7 @@ import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.ControllerJump;
+import net.minecraft.server.v1_8_R3.ControllerMove;
 import net.minecraft.server.v1_8_R3.CrashReport;
 import net.minecraft.server.v1_8_R3.CrashReportSystemDetails;
 import net.minecraft.server.v1_8_R3.DamageSource;
@@ -236,6 +237,20 @@ public class NMSImpl implements NMSBridge {
 
         if (fireAspectLevel > 0) {
             target.setOnFire(fireAspectLevel * 4);
+        }
+    }
+
+    @Override
+    public void cancelMoveDestination(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        if (handle instanceof EntityInsentient) {
+            try {
+                MOVE_CONTROLLER_MOVING.set(((EntityInsentient) handle).getControllerMove(), false);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        } else if (handle instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) handle).getControllerMove().f = false;
         }
     }
 
@@ -1434,6 +1449,7 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE,
             EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
             EntityType.GHAST);
+
     private static final float DEFAULT_SPEED = 1F;
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
@@ -1442,6 +1458,7 @@ public class NMSImpl implements NMSBridge {
     public static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
     private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "aY");
     private static Method MAKE_REQUEST;
+    private static Field MOVE_CONTROLLER_MOVING = NMS.getField(ControllerMove.class, "f");
     private static Field NAVIGATION_WORLD_FIELD = NMS.getField(NavigationAbstract.class, "c");
     public static Field NETWORK_ADDRESS = NMS.getField(NetworkManager.class, "l");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
@@ -1450,7 +1467,6 @@ public class NMSImpl implements NMSBridge {
     private static Field SKULL_PROFILE_FIELD;
     private static Field TEAM_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
-
     static {
         try {
             Field field = NMS.getField(EntityTypes.class, "f");

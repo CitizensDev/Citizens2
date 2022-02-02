@@ -246,6 +246,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.JumpControl;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.AbstractFish;
@@ -381,6 +382,20 @@ public class NMSImpl implements NMSBridge {
 
         EnchantmentHelper.doPostHurtEffects(handle, target);
         EnchantmentHelper.doPostDamageEffects(target, handle);
+    }
+
+    @Override
+    public void cancelMoveDestination(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        if (handle instanceof Mob) {
+            try {
+                MOVE_CONTROLLER_MOVING.invoke(((Mob) handle).getMoveControl(), null);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        } else if (handle instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) handle).getMoveControl().moving = false;
+        }
     }
 
     @Override
@@ -1880,6 +1895,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
+
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(Brain.class, "f");
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
@@ -1902,6 +1918,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(LivingEntity.class, "bn");
     private static final MethodHandle MAKE_REQUEST = NMS.getMethodHandle(YggdrasilAuthenticationService.class,
             "makeRequest", true, URL.class, Object.class, Class.class);
+    private static MethodHandle MOVE_CONTROLLER_MOVING = NMS.getSetter(MoveControl.class, "k");
     private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS.getMethodHandle(PathNavigation.class, "a",
             true, int.class);
     private static MethodHandle NAVIGATION_PATH = NMS.getGetter(PathNavigation.class, "c");

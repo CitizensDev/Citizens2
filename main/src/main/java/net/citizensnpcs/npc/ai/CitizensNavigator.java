@@ -235,6 +235,9 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public void setPaused(boolean paused) {
+        if (paused && isNavigating()) {
+            NMS.cancelMoveDestination(npc.getEntity());
+        }
         this.paused = paused;
     }
 

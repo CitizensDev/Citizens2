@@ -208,6 +208,7 @@ import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.BossBattleServer;
 import net.minecraft.server.v1_14_R1.ChunkProviderServer;
 import net.minecraft.server.v1_14_R1.ControllerJump;
+import net.minecraft.server.v1_14_R1.ControllerMove;
 import net.minecraft.server.v1_14_R1.CrashReport;
 import net.minecraft.server.v1_14_R1.CrashReportSystemDetails;
 import net.minecraft.server.v1_14_R1.DamageSource;
@@ -351,6 +352,20 @@ public class NMSImpl implements NMSBridge {
 
         if (fireAspectLevel > 0) {
             target.setOnFire(fireAspectLevel * 4);
+        }
+    }
+
+    @Override
+    public void cancelMoveDestination(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        if (handle instanceof EntityInsentient) {
+            try {
+                MOVE_CONTROLLER_MOVING.invoke(((EntityInsentient) handle).getControllerMove(), null);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        } else if (handle instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) handle).getControllerMove().f = false;
         }
     }
 
@@ -1843,6 +1858,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "c");
+
     private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
             "c", false, double.class, double.class, double.class);
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
@@ -1870,6 +1886,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(EntityLiving.class, "jumping");
     private static final MethodHandle MAKE_REQUEST = NMS.getMethodHandle(YggdrasilAuthenticationService.class,
             "makeRequest", true, URL.class, Object.class, Class.class);
+    private static MethodHandle MOVE_CONTROLLER_MOVING = NMS.getSetter(ControllerMove.class, "h");
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getSetter(NavigationAbstract.class, "b");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle PATHFINDING_RANGE = NMS.getGetter(NavigationAbstract.class, "p");

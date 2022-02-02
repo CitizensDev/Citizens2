@@ -248,6 +248,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.JumpControl;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.AbstractFish;
@@ -385,6 +386,20 @@ public class NMSImpl implements NMSBridge {
 
         EnchantmentHelper.doPostHurtEffects(handle, target);
         EnchantmentHelper.doPostDamageEffects(target, handle);
+    }
+
+    @Override
+    public void cancelMoveDestination(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        if (handle instanceof Mob) {
+            try {
+                MOVE_CONTROLLER_MOVING.invoke(((Mob) handle).getMoveControl(), null);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        } else if (handle instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) handle).getMoveControl().moving = false;
+        }
     }
 
     @Override
@@ -1936,6 +1951,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(LivingEntity.class, "bo");
     private static final MethodHandle MAKE_REQUEST = NMS.getMethodHandle(YggdrasilAuthenticationService.class,
             "makeRequest", true, URL.class, Object.class, Class.class);
+    private static MethodHandle MOVE_CONTROLLER_MOVING = NMS.getSetter(MoveControl.class, "k");
     private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS
             .getFirstMethodHandleWithReturnType(PathNavigation.class, true, PathFinder.class, int.class);
     private static MethodHandle NAVIGATION_PATH = NMS.getFirstGetter(PathNavigation.class, Path.class);
