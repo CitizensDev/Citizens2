@@ -209,7 +209,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         private void createWaypointMarkers() {
             for (int i = 0; i < waypoints.size(); i++) {
-                markers.createMarker(waypoints.get(i), waypoints.get(i).getLocation().clone().add(0, 1, 0));
+                markers.createMarker(waypoints.get(i), waypoints.get(i).getLocation());
             }
         }
 
