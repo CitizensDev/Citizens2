@@ -165,7 +165,10 @@ public class CommandTrait extends Trait {
 
     private String describe(NPCCommand command) {
         String output = "<br>    - [" + StringHelper.wrap(command.id) + "]: " + command.command + " ["
-                + StringHelper.wrap(command.cooldown + "s") + "]";
+                + StringHelper.wrap(command.cooldown) + "s]";
+        if (command.globalCooldown > 0) {
+            output += "[global " + StringHelper.wrap(command.globalCooldown) + "s]";
+        }
         if (command.op) {
             output += " -o";
         }
@@ -615,7 +618,7 @@ public class CommandTrait extends Trait {
                 lastUsed.remove(commandKey);
             }
             if (command.globalCooldown > 0 && trait.globalCooldowns.containsKey(commandKey)) {
-                long deadline = ((Number) trait.globalCooldowns.get(commandKey)).longValue() + command.cooldown;
+                long deadline = ((Number) trait.globalCooldowns.get(commandKey)).longValue() + command.globalCooldown;
                 if (currentTimeSec < deadline) {
                     long seconds = deadline - currentTimeSec;
                     trait.sendErrorMessage(player, CommandTraitMessages.ON_GLOBAL_COOLDOWN,
