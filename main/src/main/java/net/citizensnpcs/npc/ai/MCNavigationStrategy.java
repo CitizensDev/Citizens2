@@ -76,7 +76,6 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null)
             return true;
         boolean wasFinished = navigator.update();
-        parameters.run();
         Location loc = handle.getLocation(HANDLE_LOCATION);
         double dX = target.getX() - loc.getX();
         double dZ = target.getZ() - loc.getZ();

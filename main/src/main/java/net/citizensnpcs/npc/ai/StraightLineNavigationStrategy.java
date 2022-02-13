@@ -120,7 +120,6 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             Util.faceLocation(npc.getEntity(), destLoc);
             npc.getEntity().setVelocity(dir);
         }
-        params.run();
         return false;
     }
 

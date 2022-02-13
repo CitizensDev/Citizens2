@@ -161,8 +161,8 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (!isNavigating() || !npc.isSpawned() || isPaused())
             return;
         Location npcLoc = npc.getStoredLocation();
-        if (!npcLoc.getWorld().equals(getTargetAsLocation().getWorld())
-                || Math.pow(localParams.range(), 2) < npc.getStoredLocation().distanceSquared(getTargetAsLocation())) {
+        Location targetLoc = getTargetAsLocation();
+        if (!npcLoc.getWorld().equals(targetLoc.getWorld()) || localParams.range() < npcLoc.distance(targetLoc)) {
             stopNavigating(CancelReason.STUCK);
             return;
         }
@@ -170,6 +170,9 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
         updatePathfindingRange();
         boolean finished = executing.update();
+        if (!finished) {
+            localParams.run();
+        }
         if (localParams.lookAtFunction() != null) {
             Util.faceLocation(npc.getEntity(), localParams.lookAtFunction().apply(this), true, true);
             Entity entity = npc.getEntity().getPassenger();
@@ -182,9 +185,9 @@ public class CitizensNavigator implements Navigator, Runnable {
             }
         }
         if (localParams.destinationTeleportMargin() > 0
-                && npcLoc.distance(getTargetAsLocation()) < localParams.destinationTeleportMargin()) {
+                && npcLoc.distance(targetLoc) < localParams.destinationTeleportMargin()) {
             // TODO: easing?
-            npc.teleport(getTargetAsLocation(), TeleportCause.PLUGIN);
+            npc.teleport(targetLoc, TeleportCause.PLUGIN);
             finished = true;
         }
         if (!finished) {

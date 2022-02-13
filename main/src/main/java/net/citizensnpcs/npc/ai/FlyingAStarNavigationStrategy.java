@@ -181,7 +181,6 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
             NMS.setVerticalMovement(npc.getEntity(), 0.5);
             Util.faceLocation(npc.getEntity(), centeredDest.toLocation(npc.getEntity().getWorld()));
         }
-        parameters.run();
         plan.run(npc);
         return false;
     }
