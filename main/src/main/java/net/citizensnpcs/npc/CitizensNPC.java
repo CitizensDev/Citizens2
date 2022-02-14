@@ -49,6 +49,7 @@ import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
 
@@ -374,8 +375,8 @@ public class CitizensNPC extends AbstractNPC {
             }
 
             boolean isLiving = getEntity() instanceof LivingEntity;
-            if (updateCounter++ > data().<Integer> get(NPC.Metadata.PACKET_UPDATE_DELAY,
-                    Setting.PACKET_UPDATE_DELAY.asInt())) {
+            int packetUpdateDelay = data().get(NPC.Metadata.PACKET_UPDATE_DELAY, Setting.PACKET_UPDATE_DELAY.asInt());
+            if (updateCounter++ > packetUpdateDelay) {
                 if (Setting.KEEP_CHUNKS_LOADED.asBoolean()) {
                     ChunkCoord currentCoord = new ChunkCoord(getStoredLocation());
                     if (!currentCoord.equals(cachedCoord)) {
@@ -395,6 +396,9 @@ public class CitizensNPC extends AbstractNPC {
 
             if (isLiving) {
                 NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
+            }
+            if (isLiving && getEntity() instanceof Player) {
+                updateUsingItemState((Player) getEntity());
             }
 
             if (SUPPORT_SILENT && data().has(NPC.SILENT_METADATA)) {
@@ -456,6 +460,29 @@ public class CitizensNPC extends AbstractNPC {
         if (!hasTrait(Gravity.class)) {
             getOrAddTrait(Gravity.class).setEnabled(true);
         }
+    }
+
+    private void updateUsingItemState(Player player) {
+        boolean useItem = data().get(NPC.Metadata.USING_HELD_ITEM, false),
+                offhand = data().get(NPC.Metadata.USING_OFFHAND_ITEM, false);
+        int lastState = data().get("using-item-state", 0);
+        if (useItem) {
+            if (lastState != 1 || updateCounter == 0) {
+                NMS.playAnimation(PlayerAnimation.START_USE_MAINHAND_ITEM, player, 64);
+                lastState = 1;
+            }
+        } else if (offhand) {
+            if (lastState != 2 || updateCounter == 0) {
+                NMS.playAnimation(PlayerAnimation.START_USE_OFFHAND_ITEM, player, 64);
+                lastState = 2;
+            }
+        } else {
+            if (lastState != 0) {
+                NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
+                lastState = 0;
+            }
+        }
+        data().set("using-item-state", lastState);
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);

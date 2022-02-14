@@ -369,6 +369,8 @@ public class Messages {
     public static final String TEXT_EDITOR_SPEECH_BUBBLES_SET = "citizens.editors.text.speech-bubbles-set";
     public static final String TEXT_EDITOR_START_PROMPT = "citizens.editors.text.start-prompt";
     public static final String TO_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.to-not-found";
+    public static final String TOGGLED_USING_HELD_ITEM = "citizens.commands.npc.useitem.held-item-toggled";
+    public static final String TOGGLED_USING_OFFHAND_ITEM = "citizens.commands.npc.useitem.offhand-item-toggled";
     public static final String TPTO_SUCCESS = "citizens.commands.npc.tpto.success";
     public static final String TRAIT_LOAD_FAILED = "citizens.notifications.trait-load-failed";
     public static final String TRAIT_NOT_CONFIGURABLE = "citizens.commands.traitc.not-configurable";

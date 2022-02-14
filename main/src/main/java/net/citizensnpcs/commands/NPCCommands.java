@@ -2508,6 +2508,27 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "useitem (-o(ffhand))",
+            desc = "Sets an NPC to  be using their held items",
+            modifiers = { "useitem" },
+            min = 1,
+            max = 1,
+            flags = "o",
+            permission = "citizens.npc.useitem")
+    public void useitem(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        boolean offhand = args.hasFlag('o');
+        if (offhand) {
+            npc.data().set(NPC.Metadata.USING_OFFHAND_ITEM, !npc.data().get(NPC.Metadata.USING_OFFHAND_ITEM, false));
+            Messaging.sendTr(sender, Messages.TOGGLED_USING_OFFHAND_ITEM,
+                    npc.data().get(NPC.Metadata.USING_OFFHAND_ITEM));
+        } else {
+            npc.data().set(NPC.Metadata.USING_HELD_ITEM, !npc.data().get(NPC.Metadata.USING_HELD_ITEM, false));
+            Messaging.sendTr(sender, Messages.TOGGLED_USING_HELD_ITEM, npc.data().get(NPC.Metadata.USING_HELD_ITEM));
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "vulnerable (-t)",
             desc = "Toggles an NPC's vulnerability",
             modifiers = { "vulnerable" },
