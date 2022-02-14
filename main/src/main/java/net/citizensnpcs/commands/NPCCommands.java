@@ -816,8 +816,6 @@ public class NPCCommands {
     public void glowing(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("color")) {
             ChatColor chatColor = Util.matchEnum(ChatColor.values(), args.getFlag("color"));
-            if (!(npc.getEntity() instanceof Player))
-                throw new CommandException(Messages.GLOWING_COLOR_PLAYER_ONLY);
             npc.getOrAddTrait(ScoreboardTrait.class).setColor(chatColor);
             if (!npc.data().has(NPC.GLOWING_METADATA)) {
                 npc.data().setPersistent(NPC.GLOWING_METADATA, true);
@@ -2518,11 +2516,13 @@ public class NPCCommands {
     public void useitem(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean offhand = args.hasFlag('o');
         if (offhand) {
-            npc.data().set(NPC.Metadata.USING_OFFHAND_ITEM, !npc.data().get(NPC.Metadata.USING_OFFHAND_ITEM, false));
+            npc.data().setPersistent(NPC.Metadata.USING_OFFHAND_ITEM,
+                    !npc.data().get(NPC.Metadata.USING_OFFHAND_ITEM, false));
             Messaging.sendTr(sender, Messages.TOGGLED_USING_OFFHAND_ITEM,
                     npc.data().get(NPC.Metadata.USING_OFFHAND_ITEM));
         } else {
-            npc.data().set(NPC.Metadata.USING_HELD_ITEM, !npc.data().get(NPC.Metadata.USING_HELD_ITEM, false));
+            npc.data().setPersistent(NPC.Metadata.USING_HELD_ITEM,
+                    !npc.data().get(NPC.Metadata.USING_HELD_ITEM, false));
             Messaging.sendTr(sender, Messages.TOGGLED_USING_HELD_ITEM, npc.data().get(NPC.Metadata.USING_HELD_ITEM));
         }
     }

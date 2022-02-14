@@ -427,8 +427,7 @@ public class CitizensNPC extends AbstractNPC {
 
         String teamName = data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
         Team team = null;
-        if (!(getEntity() instanceof Player) || teamName.length() == 0
-                || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
+        if (teamName.length() == 0 || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
             return;
 
         if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
@@ -436,7 +435,6 @@ public class CitizensNPC extends AbstractNPC {
             data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
             return;
         }
-
         getOrAddTrait(ScoreboardTrait.class).apply(team, nameVisibility);
     }
 

@@ -402,10 +402,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
 
-        if (noDamageTicks > 0) {
-            --noDamageTicks;
-        }
-
         npc.update();
     }
 
