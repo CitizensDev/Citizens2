@@ -159,7 +159,7 @@ public class EventListen implements Listener {
             }
         };
         if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
-            new Exception().printStackTrace();
+            new Exception("CITIZENS CHUNK LOAD DEBUG " + new ChunkCoord(event.getChunk())).printStackTrace();
         }
         if (event instanceof Cancellable) {
             runnable.run();
@@ -202,7 +202,7 @@ public class EventListen implements Listener {
             }
         }
         if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
-            new Exception().printStackTrace();
+            new Exception("CITIZENS CHUNK UNLOAD DEBUG " + coord).printStackTrace();
         }
         if (loadChunk) {
             if (Messaging.isDebugging()) {

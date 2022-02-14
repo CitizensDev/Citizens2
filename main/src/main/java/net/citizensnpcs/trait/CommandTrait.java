@@ -84,7 +84,7 @@ public class CommandTrait extends Trait {
         return id;
     }
 
-    private boolean checkPreconditions(Player player, Hand hand) {
+    private boolean chargeCommandCosts(Player player, Hand hand) {
         if (cost > 0) {
             try {
                 RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager()
@@ -249,9 +249,11 @@ public class CommandTrait extends Trait {
                         if (info != null && !info.canUse(CommandTrait.this, player, command)) {
                             return;
                         }
-                        if (!charged && !checkPreconditions(player, hand)) {
+                        if (!charged) {
                             charged = true;
-                            return;
+                            if (!chargeCommandCosts(player, hand)) {
+                                return;
+                            }
                         }
                         PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
                         if (temporaryPermissions.size() > 0) {
