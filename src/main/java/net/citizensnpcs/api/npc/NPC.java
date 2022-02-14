@@ -503,6 +503,14 @@ public interface NPC extends Agent, Cloneable {
          */
         USE_MINECRAFT_AI("minecraft-ai"),
         /**
+         * Whether player is actively using held item. Boolean defaults to false.
+         */
+        USING_HELD_ITEM("using-held-item"),
+        /**
+         * Whether player is actively using offhand item. Boolean defaults to false.
+         */
+        USING_OFFHAND_ITEM("using-offhand-item"),
+        /**
          * Whether to block Minecraft villager trades. Boolean defaults to true.
          */
         VILLAGER_BLOCK_TRADES("villager-trades");

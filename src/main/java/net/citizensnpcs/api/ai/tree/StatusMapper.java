@@ -3,13 +3,13 @@ package net.citizensnpcs.api.ai.tree;
 import com.google.common.base.Supplier;
 
 /**
- * Wraps an {@link Behavior} and returns a supplied {@link BehaviorStatus} instead of the actual status.
+ * Wraps an {@link Behavior} and returns a supplied {@link BehaviorStatus} instead of the underlying status.
  */
-public class StatusCoercer extends BehaviorGoalAdapter {
+public class StatusMapper extends BehaviorGoalAdapter {
     private final Supplier<BehaviorStatus> to;
     private final Behavior wrapping;
 
-    private StatusCoercer(Behavior wrapping, Supplier<BehaviorStatus> to) {
+    private StatusMapper(Behavior wrapping, Supplier<BehaviorStatus> to) {
         this.wrapping = wrapping;
         this.to = to;
     }
@@ -29,7 +29,7 @@ public class StatusCoercer extends BehaviorGoalAdapter {
         return wrapping.shouldExecute();
     }
 
-    public static StatusCoercer coercing(Behavior wrapping, Supplier<BehaviorStatus> to) {
-        return new StatusCoercer(wrapping, to);
+    public static StatusMapper mapping(Behavior wrapping, Supplier<BehaviorStatus> to) {
+        return new StatusMapper(wrapping, to);
     }
 }
