@@ -23,6 +23,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -236,7 +237,13 @@ public class AxolotlController extends MobEntityController {
         @Override
         public void travel(Vec3 vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                super.travel(vec3d);
+                if (!npc.useMinecraftAI() && isInWater() && !npc.getNavigator().isNavigating()) {
+                    this.moveRelative(this.getSpeed(), vec3d);
+                    this.move(MoverType.SELF, this.getDeltaMovement());
+                    this.setDeltaMovement(this.getDeltaMovement().scale(0.9D));
+                } else {
+                    super.travel(vec3d);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }

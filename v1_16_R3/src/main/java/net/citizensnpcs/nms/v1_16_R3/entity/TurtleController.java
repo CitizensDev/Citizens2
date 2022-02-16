@@ -25,6 +25,7 @@ import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R3.EntityTurtle;
 import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.IBlockData;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.Navigation;
@@ -124,7 +125,13 @@ public class TurtleController extends MobEntityController {
         @Override
         public void g(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                super.g(vec3d);
+                if (!npc.useMinecraftAI() && isInWater() && !npc.getNavigator().isNavigating()) {
+                    this.a(0.01F, vec3d);
+                    this.move(EnumMoveType.SELF, this.getMot());
+                    this.setMot(this.getMot().a(0.9D));
+                } else {
+                    super.g(vec3d);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }

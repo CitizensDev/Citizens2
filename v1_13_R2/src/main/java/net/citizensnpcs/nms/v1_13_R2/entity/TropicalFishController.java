@@ -22,6 +22,7 @@ import net.minecraft.server.v1_13_R2.EntityHuman;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.EntityTropicalFish;
 import net.minecraft.server.v1_13_R2.EnumHand;
+import net.minecraft.server.v1_13_R2.EnumMoveType;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.ItemStack;
 import net.minecraft.server.v1_13_R2.Items;
@@ -76,7 +77,16 @@ public class TropicalFishController extends MobEntityController {
         @Override
         public void a(float f, float f1, float f2) {
             if (npc == null || !npc.isFlyable()) {
-                super.a(f, f1, f2);
+                if (!npc.useMinecraftAI() && isInWater() && !npc.getNavigator().isNavigating()) {
+                    this.a(f, f1, f2, 0.01F);
+                    this.move(EnumMoveType.SELF, this.motX, this.motY, this.motZ);
+                    this.motX *= 0.9D;
+                    this.motY *= 0.9D;
+                    this.motZ *= 0.9D;
+
+                } else {
+                    super.a(f, f1, f2);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }

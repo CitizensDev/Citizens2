@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.WaterMob;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -149,6 +150,11 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public boolean isSpawned() {
         return getEntity() != null && NMS.isValid(getEntity());
+    }
+
+    private boolean isWaterMob(Entity entity) {
+        return entity instanceof WaterMob || entity.getType().name().equals("TURTLE")
+                || entity.getType().name().equals("AXOLOTL");
     }
 
     @Override
@@ -362,7 +368,8 @@ public class CitizensNPC extends AbstractNPC {
                 resetCachedCoord();
                 return;
             }
-            if (data().get(NPC.Metadata.SWIMMING, true)) {
+            if (data().has(NPC.Metadata.SWIMMING) ? data().<Boolean> get(NPC.Metadata.SWIMMING)
+                    : !isWaterMob(getEntity())) {
                 NMS.trySwim(getEntity());
             }
             navigator.run();
@@ -397,6 +404,7 @@ public class CitizensNPC extends AbstractNPC {
             if (isLiving) {
                 NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
             }
+
             if (isLiving && getEntity() instanceof Player) {
                 updateUsingItemState((Player) getEntity());
             }

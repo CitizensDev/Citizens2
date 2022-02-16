@@ -336,56 +336,56 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void attack(org.bukkit.entity.LivingEntity attacker, org.bukkit.entity.LivingEntity btarget) {
-        LivingEntity handle = getHandle(attacker);
+        LivingEntity source = getHandle(attacker);
         LivingEntity target = getHandle(btarget);
-        if (handle instanceof ServerPlayer) {
-            ((ServerPlayer) handle).attack(target);
-            PlayerAnimation.ARM_SWING.play((Player) handle.getBukkitEntity());
+        if (source instanceof ServerPlayer) {
+            ((ServerPlayer) source).attack(target);
+            PlayerAnimation.ARM_SWING.play((Player) source.getBukkitEntity());
             return;
         }
-        if (handle instanceof Mob) {
-            ((Mob) handle).doHurtTarget(target);
+        if (source instanceof Mob) {
+            ((Mob) source).doHurtTarget(target);
             return;
         }
-        AttributeInstance attackDamage = handle.getAttribute(Attributes.ATTACK_DAMAGE);
+        AttributeInstance attackDamage = source.getAttribute(Attributes.ATTACK_DAMAGE);
         float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;
 
-        f += EnchantmentHelper.getDamageBonus(handle.getMainHandItem(), target.getMobType());
-        i += EnchantmentHelper.getKnockbackBonus(handle);
+        f += EnchantmentHelper.getDamageBonus(source.getMainHandItem(), target.getMobType());
+        i += EnchantmentHelper.getKnockbackBonus(source);
 
-        boolean flag = target.hurt(DamageSource.mobAttack(handle), f);
+        boolean flag = target.hurt(DamageSource.mobAttack(source), f);
 
         if (!flag)
             return;
 
         if (i > 0) {
-            target.knockback(-Math.sin(handle.getYRot() * Math.PI / 180.0F) * i * 0.5F, 0.1D,
-                    Math.cos(handle.getYRot() * Math.PI / 180.0F) * i * 0.5F);
-            handle.setDeltaMovement(handle.getDeltaMovement().multiply(0.6, 1, 0.6));
+            target.knockback(-Math.sin(source.getYRot() * Math.PI / 180.0F) * i * 0.5F, 0.1D,
+                    Math.cos(source.getYRot() * Math.PI / 180.0F) * i * 0.5F);
+            source.setDeltaMovement(source.getDeltaMovement().multiply(0.6, 1, 0.6));
         }
 
-        int fireAspectLevel = EnchantmentHelper.getFireAspect(handle);
+        int fireAspectLevel = EnchantmentHelper.getFireAspect(source);
         if (fireAspectLevel > 0) {
             target.setSecondsOnFire(fireAspectLevel * 4, false);
         }
 
         if (target instanceof ServerPlayer) {
             ServerPlayer entityhuman = (ServerPlayer) target;
-            ItemStack itemstack = handle.getMainHandItem();
+            ItemStack itemstack = source.getMainHandItem();
             ItemStack itemstack1 = entityhuman.isUsingItem() ? entityhuman.getUseItem() : ItemStack.EMPTY;
             if (!itemstack.isEmpty() && !itemstack1.isEmpty()
                     && itemstack.getItem() instanceof net.minecraft.world.item.AxeItem && itemstack1.is(Items.SHIELD)) {
-                float f2 = 0.25F + EnchantmentHelper.getBlockEfficiency(handle) * 0.05F;
+                float f2 = 0.25F + EnchantmentHelper.getBlockEfficiency(source) * 0.05F;
                 if (new Random().nextFloat() < f2) {
                     entityhuman.getCooldowns().addCooldown(Items.SHIELD, 100);
-                    handle.level.broadcastEntityEvent(entityhuman, (byte) 30);
+                    source.level.broadcastEntityEvent(entityhuman, (byte) 30);
                 }
             }
         }
 
-        EnchantmentHelper.doPostHurtEffects(handle, target);
-        EnchantmentHelper.doPostDamageEffects(target, handle);
+        EnchantmentHelper.doPostHurtEffects(source, target);
+        EnchantmentHelper.doPostDamageEffects(target, source);
     }
 
     @Override
@@ -704,7 +704,7 @@ public class NMSImpl implements NMSBridge {
     public TargetNavigator getTargetNavigator(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity target,
             NavigatorParameters parameters) {
         PathNavigation navigation = getNavigation(entity);
-        return navigation == null ? null : new NavigationFieldWrapper(navigation, target, parameters);
+        return navigation == null ? null : new MCTargetNavigator(navigation, target, parameters);
     }
 
     @Override
@@ -1393,12 +1393,12 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    private static class NavigationFieldWrapper implements TargetNavigator {
+    private static class MCTargetNavigator implements TargetNavigator {
         private final PathNavigation navigation;
         private final NavigatorParameters parameters;
         private final org.bukkit.entity.Entity target;
 
-        private NavigationFieldWrapper(PathNavigation navigation, org.bukkit.entity.Entity target,
+        private MCTargetNavigator(PathNavigation navigation, org.bukkit.entity.Entity target,
                 NavigatorParameters parameters) {
             this.navigation = navigation;
             this.target = target;
