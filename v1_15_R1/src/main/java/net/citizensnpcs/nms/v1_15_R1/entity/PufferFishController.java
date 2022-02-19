@@ -120,11 +120,6 @@ public class PufferFishController extends MobEntityController {
         }
 
         @Override
-        public boolean doAITick() {
-            return npc == null ? super.doAITick() : false;
-        }
-
-        @Override
         public void e(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(vec3d);

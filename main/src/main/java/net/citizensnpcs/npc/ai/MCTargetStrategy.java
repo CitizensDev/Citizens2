@@ -64,6 +64,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     @Override
+    public Location getCurrentDestination() {
+        return targetNavigator.getCurrentDestination();
+    }
+
+    @Override
     public Iterable<Vector> getPath() {
         return targetNavigator.getPath();
     }
@@ -148,6 +153,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         private PathStrategy strategy;
 
         @Override
+        public Location getCurrentDestination() {
+            return strategy.getCurrentDestination();
+        }
+
+        @Override
         public Iterable<Vector> getPath() {
             return strategy.getPath();
         }
@@ -210,6 +220,11 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         }
 
         @Override
+        public Location getCurrentDestination() {
+            return active.getCurrentDestination();
+        }
+
+        @Override
         public Iterable<Vector> getPath() {
             if (active != null) {
                 return active.getPath();
@@ -255,6 +270,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     public static interface TargetNavigator {
+        Location getCurrentDestination();
+
         Iterable<Vector> getPath();
 
         void setPath();

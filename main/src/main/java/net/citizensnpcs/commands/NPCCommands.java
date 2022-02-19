@@ -2344,8 +2344,8 @@ public class NPCCommands {
             permission = "citizens.npc.swim")
     public void swim(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean swim = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set"))
-                : !npc.data().get(NPC.SWIMMING_METADATA, true);
-        npc.data().setPersistent(NPC.SWIMMING_METADATA, swim);
+                : !npc.data().get(NPC.Metadata.SWIMMING, true);
+        npc.data().setPersistent(NPC.Metadata.SWIMMING, swim);
         Messaging.sendTr(sender, swim ? Messages.SWIMMING_SET : Messages.SWIMMING_UNSET, npc.getName());
     }
 

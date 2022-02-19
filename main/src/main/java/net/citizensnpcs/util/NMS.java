@@ -88,6 +88,10 @@ public class NMS {
         return BRIDGE.getCollisionBox(block).add(block.getX(), block.getY(), block.getZ());
     }
 
+    public static Location getDestination(Entity entity) {
+        return BRIDGE.getDestination(entity);
+    }
+
     public static Field getField(Class<?> clazz, String field) {
         return getField(clazz, field, true);
     }

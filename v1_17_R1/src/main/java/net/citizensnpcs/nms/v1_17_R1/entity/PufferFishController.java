@@ -174,11 +174,6 @@ public class PufferFishController extends MobEntityController {
         }
 
         @Override
-        public boolean isEffectiveAi() {
-            return npc == null ? super.isEffectiveAi() : false;
-        }
-
-        @Override
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();

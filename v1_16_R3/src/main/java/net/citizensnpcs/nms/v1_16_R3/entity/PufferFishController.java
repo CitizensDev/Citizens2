@@ -122,11 +122,6 @@ public class PufferFishController extends MobEntityController {
         }
 
         @Override
-        public boolean doAITick() {
-            return npc == null ? super.doAITick() : false;
-        }
-
-        @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
             if (npc == null) {
                 super.enderTeleportTo(d0, d1, d2);

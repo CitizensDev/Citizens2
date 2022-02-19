@@ -18,7 +18,7 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class MCNavigationStrategy extends AbstractPathStrategy {
-    private final Entity handle;
+    private final Entity entity;
     private final MCNavigator navigator;
     private final NavigatorParameters parameters;
     private final Location target;
@@ -28,7 +28,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         List<Vector> list = Lists.newArrayList(path);
         this.target = list.get(list.size() - 1).toLocation(npc.getStoredLocation().getWorld());
         this.parameters = params;
-        handle = npc.getEntity();
+        entity = npc.getEntity();
         this.navigator = NMS.getTargetNavigator(npc.getEntity(), list, params);
     }
 
@@ -39,8 +39,13 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         }
         this.target = Util.getCenterLocation(dest.getBlock());
         this.parameters = params;
-        handle = npc.getEntity();
+        entity = npc.getEntity();
         this.navigator = NMS.getTargetNavigator(npc.getEntity(), target, params);
+    }
+
+    @Override
+    public Location getCurrentDestination() {
+        return NMS.getDestination(entity);
     }
 
     @Override
@@ -76,7 +81,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null)
             return true;
         boolean wasFinished = navigator.update();
-        Location loc = handle.getLocation(HANDLE_LOCATION);
+        Location loc = entity.getLocation(HANDLE_LOCATION);
         double dX = target.getX() - loc.getX();
         double dZ = target.getZ() - loc.getZ();
         double dY = target.getY() - loc.getY();

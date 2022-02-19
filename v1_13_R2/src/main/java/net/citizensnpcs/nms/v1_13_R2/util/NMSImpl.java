@@ -406,6 +406,14 @@ public class NMSImpl implements NMSBridge {
         return shape.isEmpty() ? BoundingBox.EMPTY : NMSBoundingBox.wrap(shape.getBoundingBox());
     }
 
+    @Override
+    public Location getDestination(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        ControllerMove controller = handle instanceof EntityInsentient ? ((EntityInsentient) handle).getControllerMove()
+                : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) entity).getControllerMove() : null;
+        return new Location(entity.getWorld(), controller.d(), controller.e(), controller.f());
+    }
+
     private float getDragonYaw(Entity handle, double tX, double tZ) {
         if (handle.locZ > tZ)
             return (float) (-Math.toDegrees(Math.atan((handle.locX - tX) / (handle.locZ - tZ))));
@@ -626,7 +634,7 @@ public class NMSImpl implements NMSBridge {
     public TargetNavigator getTargetNavigator(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity target,
             NavigatorParameters parameters) {
         NavigationAbstract navigation = getNavigation(entity);
-        return navigation == null ? null : new NavigationFieldWrapper(navigation, target, parameters);
+        return navigation == null ? null : new NavigationFieldWrapper(entity, navigation, target, parameters);
     }
 
     @Override
@@ -1297,15 +1305,22 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static class NavigationFieldWrapper implements TargetNavigator {
+        private final org.bukkit.entity.Entity entity;
         private final NavigationAbstract navigation;
         private final NavigatorParameters parameters;
         private final org.bukkit.entity.Entity target;
 
-        private NavigationFieldWrapper(NavigationAbstract navigation, org.bukkit.entity.Entity target,
-                NavigatorParameters parameters) {
+        private NavigationFieldWrapper(org.bukkit.entity.Entity entity, NavigationAbstract navigation,
+                org.bukkit.entity.Entity target, NavigatorParameters parameters) {
+            this.entity = entity;
             this.navigation = navigation;
             this.target = target;
             this.parameters = parameters;
+        }
+
+        @Override
+        public Location getCurrentDestination() {
+            return NMS.getDestination(entity);
         }
 
         @Override
@@ -1330,7 +1345,7 @@ public class NMSImpl implements NMSBridge {
         @Override
         public void update() {
             updateNavigation(navigation);
-        }
+        };
     }
 
     private static class NavigationIterable implements Iterable<Vector> {

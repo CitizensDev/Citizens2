@@ -86,7 +86,6 @@ public class CommandTrait extends Trait {
 
     private boolean chargeCommandCosts(Player player, Hand hand) {
         if (cost > 0) {
-            System.out.println("XYZ");
             try {
                 RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager()
                         .getRegistration(Economy.class);
@@ -147,7 +146,7 @@ public class CommandTrait extends Trait {
         }
         String output = Util.prettyEnum(executionMode) + " ";
         if (cost > 0) {
-            output += "Cost: " + StringHelper.wrap(output);
+            output += "Cost: " + StringHelper.wrap(cost);
         }
         if (experienceCost > 0) {
             output += " XP cost: " + StringHelper.wrap(experienceCost);

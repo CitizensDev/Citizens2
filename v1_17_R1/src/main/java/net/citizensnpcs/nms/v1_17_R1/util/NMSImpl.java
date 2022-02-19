@@ -474,6 +474,15 @@ public class NMSImpl implements NMSBridge {
         return shape.isEmpty() ? BoundingBox.EMPTY : NMSBoundingBox.wrap(shape.bounds());
     }
 
+    @Override
+    public Location getDestination(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        MoveControl controller = handle instanceof Mob ? ((Mob) handle).getMoveControl()
+                : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) entity).getMoveControl() : null;
+        return new Location(entity.getWorld(), controller.getWantedX(), controller.getWantedY(),
+                controller.getWantedZ());
+    }
+
     private float getDragonYaw(Entity handle, double tX, double tZ) {
         if (handle.getZ() > tZ)
             return (float) (-Math.toDegrees(Math.atan((handle.getX() - tX) / (handle.getZ() - tZ))));
@@ -701,7 +710,7 @@ public class NMSImpl implements NMSBridge {
     public TargetNavigator getTargetNavigator(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity target,
             NavigatorParameters parameters) {
         PathNavigation navigation = getNavigation(entity);
-        return navigation == null ? null : new NavigationFieldWrapper(navigation, target, parameters);
+        return navigation == null ? null : new MCTargetNavigator(entity, navigation, target, parameters);
     }
 
     @Override
@@ -1409,16 +1418,23 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    private static class NavigationFieldWrapper implements TargetNavigator {
+    private static class MCTargetNavigator implements TargetNavigator {
+        private final org.bukkit.entity.Entity entity;
         private final PathNavigation navigation;
         private final NavigatorParameters parameters;
         private final org.bukkit.entity.Entity target;
 
-        private NavigationFieldWrapper(PathNavigation navigation, org.bukkit.entity.Entity target,
-                NavigatorParameters parameters) {
+        private MCTargetNavigator(org.bukkit.entity.Entity entity, PathNavigation navigation,
+                org.bukkit.entity.Entity target, NavigatorParameters parameters) {
+            this.entity = entity;
             this.navigation = navigation;
             this.target = target;
             this.parameters = parameters;
+        }
+
+        @Override
+        public Location getCurrentDestination() {
+            return NMS.getDestination(entity);
         }
 
         @Override

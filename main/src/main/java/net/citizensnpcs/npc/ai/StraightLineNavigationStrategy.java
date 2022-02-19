@@ -38,6 +38,11 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
     }
 
     @Override
+    public Location getCurrentDestination() {
+        return destination;
+    }
+
+    @Override
     public Iterable<Vector> getPath() {
         return null;
     }

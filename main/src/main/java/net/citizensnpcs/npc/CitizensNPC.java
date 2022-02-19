@@ -11,7 +11,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.WaterMob;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -26,6 +25,7 @@ import net.citizensnpcs.NPCNeedsRespawnEvent;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
@@ -150,11 +150,6 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public boolean isSpawned() {
         return getEntity() != null && NMS.isValid(getEntity());
-    }
-
-    private boolean isWaterMob(Entity entity) {
-        return entity instanceof WaterMob || entity.getType().name().equals("TURTLE")
-                || entity.getType().name().equals("AXOLOTL");
     }
 
     @Override
@@ -368,8 +363,15 @@ public class CitizensNPC extends AbstractNPC {
                 resetCachedCoord();
                 return;
             }
-            if (data().has(NPC.Metadata.SWIMMING) ? data().<Boolean> get(NPC.Metadata.SWIMMING)
-                    : !isWaterMob(getEntity())) {
+            if (navigator.isNavigating()) {
+                if (!data().has(NPC.Metadata.SWIMMING) || data().<Boolean> get(NPC.Metadata.SWIMMING)) {
+                    Location currentDest = navigator.getPathStrategy().getCurrentDestination();
+                    if (currentDest == null || currentDest.getY() > getStoredLocation().getY()) {
+                        NMS.trySwim(getEntity(), SwimmingExaminer.isWaterMob(getEntity()) ? 0.01F : 0.04F);
+                    }
+                }
+            } else if (data().has(NPC.Metadata.SWIMMING) ? data().<Boolean> get(NPC.Metadata.SWIMMING)
+                    : !SwimmingExaminer.isWaterMob(getEntity())) {
                 NMS.trySwim(getEntity());
             }
             navigator.run();

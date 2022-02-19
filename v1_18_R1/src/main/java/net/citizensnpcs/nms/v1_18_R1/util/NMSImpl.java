@@ -284,7 +284,6 @@ import net.minecraft.world.scores.PlayerTeam;
 
 @SuppressWarnings("unchecked")
 public class NMSImpl implements NMSBridge {
-
     public NMSImpl() {
         loadEntityTypes();
     }
@@ -479,6 +478,15 @@ public class NMSImpl implements NMSBridge {
         return shape.isEmpty() ? BoundingBox.EMPTY : NMSBoundingBox.wrap(shape.bounds());
     }
 
+    @Override
+    public Location getDestination(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        MoveControl controller = handle instanceof Mob ? ((Mob) handle).getMoveControl()
+                : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) entity).getMoveControl() : null;
+        return new Location(entity.getWorld(), controller.getWantedX(), controller.getWantedY(),
+                controller.getWantedZ());
+    }
+
     private float getDragonYaw(Entity handle, double tX, double tZ) {
         if (handle.getZ() > tZ)
             return (float) (-Math.toDegrees(Math.atan((handle.getX() - tX) / (handle.getZ() - tZ))));
@@ -638,8 +646,7 @@ public class NMSImpl implements NMSBridge {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         for (int i = 0; i < path.getNodeCount(); i++) {
                             Node pp = path.getNode(i);
-                            org.bukkit.block.Block block = new Vector(pp.x, pp.y, pp.z).toLocation(player.getWorld())
-                                    .getBlock();
+                            org.bukkit.block.Block block = player.getWorld().getBlockAt(pp.x, pp.y, pp.z);
                             player.sendBlockChange(block.getLocation(), block.getBlockData());
                         }
                     }
@@ -706,7 +713,7 @@ public class NMSImpl implements NMSBridge {
     public TargetNavigator getTargetNavigator(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity target,
             NavigatorParameters parameters) {
         PathNavigation navigation = getNavigation(entity);
-        return navigation == null ? null : new MCTargetNavigator(navigation, target, parameters);
+        return navigation == null ? null : new MCTargetNavigator(entity, navigation, target, parameters);
     }
 
     @Override
@@ -1415,15 +1422,22 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static class MCTargetNavigator implements TargetNavigator {
+        private final org.bukkit.entity.Entity entity;
         private final PathNavigation navigation;
         private final NavigatorParameters parameters;
         private final org.bukkit.entity.Entity target;
 
-        private MCTargetNavigator(PathNavigation navigation, org.bukkit.entity.Entity target,
-                NavigatorParameters parameters) {
+        private MCTargetNavigator(org.bukkit.entity.Entity entity, PathNavigation navigation,
+                org.bukkit.entity.Entity target, NavigatorParameters parameters) {
+            this.entity = entity;
             this.navigation = navigation;
             this.target = target;
             this.parameters = parameters;
+        }
+
+        @Override
+        public Location getCurrentDestination() {
+            return NMS.getDestination(entity);
         }
 
         @Override

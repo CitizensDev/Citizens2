@@ -53,6 +53,8 @@ public interface NMSBridge {
 
     public BoundingBox getCollisionBox(Block block);
 
+    public Location getDestination(Entity entity);
+
     public GameProfileRepository getGameProfileRepository();
 
     public float getHeadYaw(Entity entity);

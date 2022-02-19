@@ -314,6 +314,14 @@ public class NMSImpl implements NMSBridge {
         return aabb == null ? BoundingBox.EMPTY : new BoundingBox(aabb.a, aabb.b, aabb.c, aabb.d, aabb.e, aabb.f);
     }
 
+    @Override
+    public Location getDestination(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        ControllerMove controller = handle instanceof EntityInsentient ? ((EntityInsentient) handle).getControllerMove()
+                : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) entity).getControllerMove() : null;
+        return new Location(entity.getWorld(), controller.d(), controller.e(), controller.f());
+    }
+
     private float getDragonYaw(Entity handle, double tX, double tZ) {
         if (handle.locZ > tZ)
             return (float) (-Math.toDegrees(Math.atan((handle.locX - tX) / (handle.locZ - tZ))));
@@ -501,7 +509,7 @@ public class NMSImpl implements NMSBridge {
     public TargetNavigator getTargetNavigator(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity target,
             NavigatorParameters parameters) {
         NavigationAbstract navigation = getNavigation(entity);
-        return navigation == null ? null : new NavigationFieldWrapper(navigation, target, parameters);
+        return navigation == null ? null : new NavigationFieldWrapper(entity, navigation, target, parameters);
     }
 
     @Override
@@ -1125,15 +1133,22 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static class NavigationFieldWrapper implements TargetNavigator {
+        private final org.bukkit.entity.Entity entity;
         private final NavigationAbstract navigation;
         private final NavigatorParameters parameters;
         private final org.bukkit.entity.Entity target;
 
-        private NavigationFieldWrapper(NavigationAbstract navigation, org.bukkit.entity.Entity target,
-                NavigatorParameters parameters) {
+        private NavigationFieldWrapper(org.bukkit.entity.Entity entity, NavigationAbstract navigation,
+                org.bukkit.entity.Entity target, NavigatorParameters parameters) {
+            this.entity = entity;
             this.navigation = navigation;
             this.target = target;
             this.parameters = parameters;
+        }
+
+        @Override
+        public Location getCurrentDestination() {
+            return NMS.getDestination(entity);
         }
 
         @Override
@@ -1449,7 +1464,6 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE,
             EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
             EntityType.GHAST);
-
     private static final float DEFAULT_SPEED = 1F;
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;

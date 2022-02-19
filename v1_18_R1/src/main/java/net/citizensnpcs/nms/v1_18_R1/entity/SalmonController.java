@@ -229,7 +229,7 @@ public class SalmonController extends MobEntityController {
         @Override
         public void travel(Vec3 vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                if (!npc.useMinecraftAI() && isInWater() ) {
+                if (!npc.useMinecraftAI() && isInWater() && !npc.getNavigator().isNavigating()) {
                     this.moveRelative(0.01F, vec3d);
                     this.move(MoverType.SELF, this.getDeltaMovement());
                     this.setDeltaMovement(this.getDeltaMovement().scale(0.9D));
