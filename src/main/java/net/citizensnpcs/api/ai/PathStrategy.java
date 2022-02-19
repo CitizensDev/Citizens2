@@ -21,6 +21,12 @@ public interface PathStrategy {
     CancelReason getCancelReason();
 
     /**
+     *
+     * @return Gets the current movement destination
+     */
+    Location getCurrentDestination();
+
+    /**
      * @return A copy of the current path, if any
      */
     Iterable<Vector> getPath();

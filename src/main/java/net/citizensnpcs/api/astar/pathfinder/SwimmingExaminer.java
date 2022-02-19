@@ -1,6 +1,8 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Squid;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.util.Vector;
 
@@ -21,11 +23,12 @@ public class SwimmingExaminer implements BlockExaminer {
 
     @Override
     public float getCost(BlockSource source, PathPoint point) {
-        if (SpigotUtil.isUsing1_13API() && npc.getEntity() instanceof WaterMob) {
+        // penalise non water blocks for fish
+        if (isWaterMob(npc.getEntity())) {
             Vector vector = point.getVector();
             if (!MinecraftBlockExaminer.isLiquidOrInLiquid(
                     source.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ()))) {
-                return 0.5F;
+                return 1F;
             }
         }
         return 0;
@@ -38,23 +41,12 @@ public class SwimmingExaminer implements BlockExaminer {
                 source.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ()))) {
             return PassableState.IGNORE;
         }
-        if (SpigotUtil.isUsing1_13API() && npc.getEntity() instanceof WaterMob) {
+        if (isWaterMob(npc.getEntity())) {
             return PassableState.PASSABLE;
         }
-        Material above = source.getMaterialAt(vector.add(new Vector(0, 1, 0)));
-        PassableState canSwim = isSwimmableLiquid(above) || MinecraftBlockExaminer.canStandIn(above)
-                ? PassableState.PASSABLE
+        Material above = source.getMaterialAt(vector.clone().add(UP));
+        return isSwimmableLiquid(above) || MinecraftBlockExaminer.canStandIn(above) ? PassableState.PASSABLE
                 : PassableState.UNPASSABLE;
-        if (point.getParentPoint() == null) {
-            return canSwim;
-        }
-        if (vector.getBlockY() < point.getParentPoint().getVector().getBlockY()) {
-            if (!isSwimmableLiquid(source.getMaterialAt(point.getParentPoint().getVector()))) {
-                return canSwim;
-            }
-            return isSwimming() ? PassableState.UNPASSABLE : PassableState.PASSABLE;
-        }
-        return canSwim;
     }
 
     private boolean isSwimmableLiquid(Material material) {
@@ -65,11 +57,21 @@ public class SwimmingExaminer implements BlockExaminer {
                 || (!SpigotUtil.isUsing1_13API() && material == Material.valueOf("STATIONARY_WATER"));
     }
 
-    public boolean isSwimming() {
-        return npc.data().get(NPC.SWIMMING_METADATA, true);
+    public boolean isSwimmingUp() {
+        return npc.data().has(NPC.Metadata.SWIMMING) ? npc.data().<Boolean> get(NPC.Metadata.SWIMMING)
+                : !isWaterMob(npc.getEntity());
     }
 
     public void setCanSwimInLava(boolean canSwimInLava) {
         this.canSwimInLava = canSwimInLava;
     }
+
+    public static boolean isWaterMob(Entity entity) {
+        if (!SpigotUtil.isUsing1_13API())
+            return entity instanceof Squid;
+        return entity instanceof WaterMob || entity.getType().name().equals("TURTLE")
+                || entity.getType().name().equals("AXOLOTL");
+    }
+
+    private static final Vector UP = new Vector(0, 1, 0);
 }
