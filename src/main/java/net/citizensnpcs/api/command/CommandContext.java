@@ -211,24 +211,28 @@ public class CommandContext {
     public Location getSenderLocation() throws CommandException {
         if (location != null || sender == null)
             return location;
+        if (hasValueFlag("location")) {
+            return parseLocation(location, getFlag("location"));
+        }
         if (sender instanceof Player) {
             location = ((Player) sender).getLocation();
         } else if (sender instanceof BlockCommandSender) {
             location = ((BlockCommandSender) sender).getBlock().getLocation();
         }
-        if (hasValueFlag("location")) {
-            location = parseLocation(location, getFlag("location"));
-        }
         return location;
     }
 
-    public Location getSenderTargetBlockLocation() {
+    public Location getSenderTargetBlockLocation() throws CommandException {
         if (sender == null)
             return location;
-        if (sender instanceof Player)
+        if (hasValueFlag("location")) {
+            return parseLocation(location, getFlag("location"));
+        }
+        if (sender instanceof Player) {
             location = ((Player) sender).getTargetBlock((java.util.Set<org.bukkit.Material>) null, 50).getLocation();
-        else if (sender instanceof BlockCommandSender)
+        } else if (sender instanceof BlockCommandSender) {
             location = ((BlockCommandSender) sender).getBlock().getLocation();
+        }
         return location;
     }
 

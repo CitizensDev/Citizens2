@@ -60,6 +60,10 @@ public abstract class BlockBreaker extends BehaviorGoalAdapter {
             return this;
         }
 
+        public double radius() {
+            return radius;
+        }
+
         /**
          * @param radius
          *            The maximum radius to be from the target block. The NPC will attempt to pathfind towards the
@@ -68,10 +72,6 @@ public abstract class BlockBreaker extends BehaviorGoalAdapter {
         public BlockBreakerConfiguration radius(double radius) {
             this.radius = radius;
             return this;
-        }
-
-        public double radiusSquared() {
-            return Math.pow(radius, 2);
         }
     }
 
