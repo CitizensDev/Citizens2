@@ -8,4 +8,6 @@ import org.bukkit.command.CommandSender;
  */
 public interface NPCSelector {
     NPC getSelected(CommandSender sender);
+
+    void select(CommandSender sender, NPC npc);
 }
