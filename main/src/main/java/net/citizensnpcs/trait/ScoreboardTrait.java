@@ -34,12 +34,11 @@ public class ScoreboardTrait extends Trait {
     }
 
     public void apply(Team team, boolean nameVisibility) {
-        boolean changed = false;
         Set<String> newTags = new HashSet<String>(tags);
         if (SUPPORT_TAGS) {
             try {
                 if (!npc.getEntity().getScoreboardTags().equals(tags)) {
-                    changed = true;
+                    justSpawned = true;
                     for (Iterator<String> iterator = npc.getEntity().getScoreboardTags().iterator(); iterator
                             .hasNext();) {
                         String oldTag = iterator.next();
@@ -60,7 +59,7 @@ public class ScoreboardTrait extends Trait {
             try {
                 OptionStatus visibility = nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER;
                 if (visibility != team.getOption(Option.NAME_TAG_VISIBILITY)) {
-                    changed = true;
+                    justSpawned = true;
                 }
                 team.setOption(Option.NAME_TAG_VISIBILITY, visibility);
             } catch (NoSuchMethodError e) {
@@ -99,7 +98,7 @@ public class ScoreboardTrait extends Trait {
                             || (previousGlowingColor != null && color != previousGlowingColor)) {
                         team.setColor(color);
                         previousGlowingColor = color;
-                        changed = true;
+                        justSpawned = true;
                     }
                 } catch (NoSuchMethodError err) {
                     SUPPORT_GLOWING_COLOR = false;
@@ -110,11 +109,11 @@ public class ScoreboardTrait extends Trait {
                                 && !team.getPrefix().equals(previousGlowingColor.toString()))) {
                     team.setPrefix(color.toString());
                     previousGlowingColor = color;
-                    changed = true;
+                    justSpawned = true;
                 }
             }
         }
-        if (changed || justSpawned) {
+        if (justSpawned) {
             Util.sendTeamPacketToOnlinePlayers(team, 2);
             justSpawned = false;
         }
@@ -139,6 +138,7 @@ public class ScoreboardTrait extends Trait {
 
     public void setColor(ChatColor color) {
         this.color = color;
+        justSpawned = true;
     }
 
     private static boolean SUPPORT_COLLIDABLE_SETOPTION = true;

@@ -824,15 +824,15 @@ public class NPCCommands {
         if (args.hasValueFlag("color")) {
             ChatColor chatColor = Util.matchEnum(ChatColor.values(), args.getFlag("color"));
             npc.getOrAddTrait(ScoreboardTrait.class).setColor(chatColor);
-            if (!npc.data().has(NPC.GLOWING_METADATA)) {
-                npc.data().setPersistent(NPC.GLOWING_METADATA, true);
+            if (!npc.data().has(NPC.Metadata.GLOWING)) {
+                npc.data().setPersistent(NPC.Metadata.GLOWING, true);
             }
             Messaging.sendTr(sender, Messages.GLOWING_COLOR_SET, npc.getName(),
                     chatColor == null ? ChatColor.WHITE + "white" : chatColor + Util.prettyEnum(chatColor));
             return;
         }
-        npc.data().setPersistent(NPC.GLOWING_METADATA, !npc.data().get(NPC.GLOWING_METADATA, false));
-        boolean glowing = npc.data().get(NPC.GLOWING_METADATA);
+        npc.data().setPersistent(NPC.Metadata.GLOWING, !npc.data().get(NPC.Metadata.GLOWING, false));
+        boolean glowing = npc.data().get(NPC.Metadata.GLOWING);
         Messaging.sendTr(sender, glowing ? Messages.GLOWING_SET : Messages.GLOWING_UNSET, npc.getName());
     }
 
@@ -2553,11 +2553,12 @@ public class NPCCommands {
             npc.data().setPersistent(NPC.Metadata.USING_OFFHAND_ITEM,
                     !npc.data().get(NPC.Metadata.USING_OFFHAND_ITEM, false));
             Messaging.sendTr(sender, Messages.TOGGLED_USING_OFFHAND_ITEM,
-                    npc.data().get(NPC.Metadata.USING_OFFHAND_ITEM));
+                    Boolean.toString(npc.data().get(NPC.Metadata.USING_OFFHAND_ITEM)));
         } else {
             npc.data().setPersistent(NPC.Metadata.USING_HELD_ITEM,
                     !npc.data().get(NPC.Metadata.USING_HELD_ITEM, false));
-            Messaging.sendTr(sender, Messages.TOGGLED_USING_HELD_ITEM, npc.data().get(NPC.Metadata.USING_HELD_ITEM));
+            Messaging.sendTr(sender, Messages.TOGGLED_USING_HELD_ITEM,
+                    Boolean.toString(npc.data().get(NPC.Metadata.USING_HELD_ITEM)));
         }
     }
 

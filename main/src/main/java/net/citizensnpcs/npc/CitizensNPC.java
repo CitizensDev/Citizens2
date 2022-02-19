@@ -364,14 +364,13 @@ public class CitizensNPC extends AbstractNPC {
                 return;
             }
             if (navigator.isNavigating()) {
-                if (!data().has(NPC.Metadata.SWIMMING) || data().<Boolean> get(NPC.Metadata.SWIMMING)) {
+                if (data().get(NPC.Metadata.SWIMMING, true)) {
                     Location currentDest = navigator.getPathStrategy().getCurrentDestination();
                     if (currentDest == null || currentDest.getY() > getStoredLocation().getY()) {
                         NMS.trySwim(getEntity(), SwimmingExaminer.isWaterMob(getEntity()) ? 0.02F : 0.04F);
                     }
                 }
-            } else if (data().has(NPC.Metadata.SWIMMING) ? data().<Boolean> get(NPC.Metadata.SWIMMING)
-                    : !SwimmingExaminer.isWaterMob(getEntity())) {
+            } else if (data().<Boolean> get(NPC.Metadata.SWIMMING, !SwimmingExaminer.isWaterMob(getEntity()))) {
                 NMS.trySwim(getEntity());
             }
             navigator.run();
@@ -473,24 +472,15 @@ public class CitizensNPC extends AbstractNPC {
     private void updateUsingItemState(Player player) {
         boolean useItem = data().get(NPC.Metadata.USING_HELD_ITEM, false),
                 offhand = data().get(NPC.Metadata.USING_OFFHAND_ITEM, false);
-        int lastState = data().get("using-item-state", 0);
         if (useItem) {
-            if (lastState != 1 || updateCounter == 0) {
-                NMS.playAnimation(PlayerAnimation.START_USE_MAINHAND_ITEM, player, 64);
-                lastState = 1;
-            }
+            NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
+            NMS.playAnimation(PlayerAnimation.START_USE_MAINHAND_ITEM, player, 64);
         } else if (offhand) {
-            if (lastState != 2 || updateCounter == 0) {
-                NMS.playAnimation(PlayerAnimation.START_USE_OFFHAND_ITEM, player, 64);
-                lastState = 2;
-            }
+            NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
+            NMS.playAnimation(PlayerAnimation.START_USE_OFFHAND_ITEM, player, 64);
         } else {
-            if (lastState != 0) {
-                NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
-                lastState = 0;
-            }
+            NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
         }
-        data().set("using-item-state", lastState);
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
