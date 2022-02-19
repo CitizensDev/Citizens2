@@ -1980,7 +1980,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "shop (name) (edit|show)",
+            usage = "shop (edit|show) (name)",
             desc = "NPC shop edit/show",
             modifiers = { "shop" },
             min = 1,
@@ -1988,17 +1988,25 @@ public class NPCCommands {
             permission = "citizens.npc.shop")
     public void shop(CommandContext args, Player sender, NPC npc) throws CommandException {
         ShopTrait trait = npc.getOrAddTrait(ShopTrait.class);
+        NPCShop shop = trait.getDefaultShop();
         if (args.argsLength() > 1) {
-            NPCShop shop = trait.getShop(args.getString(1));
-            if (args.getString(2).equalsIgnoreCase("edit")) {
+            if (args.argsLength() == 3) {
+                if (args.getString(1).equalsIgnoreCase("edit")
+                        && !sender.hasPermission("citizens.npc.shop.edit." + args.getString(2).toLowerCase()))
+                    throw new NoPermissionsException();
+                shop = trait.getShop(args.getString(2).toLowerCase());
+            }
+            if (args.getString(1).equalsIgnoreCase("edit")) {
+                if (!sender.hasPermission("citizens.npc.shop.edit"))
+                    throw new NoPermissionsException();
                 shop.displayEditor(sender);
-            } else if (args.getString(2).equalsIgnoreCase("show") && args.argsLength() == 3) {
+            } else if (args.getString(1).equalsIgnoreCase("show")) {
                 shop.display(sender);
             } else {
                 throw new CommandUsageException();
             }
         } else {
-            trait.getDefaultShop().display(sender);
+            shop.display(sender);
         }
     }
 

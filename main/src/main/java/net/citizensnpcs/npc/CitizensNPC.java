@@ -427,8 +427,7 @@ public class CitizensNPC extends AbstractNPC {
     private void updateCustomName() {
         boolean nameVisibility = false;
         if (!getEntity().isCustomNameVisible()
-                && !data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString().equals("hover")) {
-            getEntity().setCustomName("");
+                && !data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString().equals("hover")) { 
         } else if (!requiresNameHologram()) {
             nameVisibility = true;
             getEntity().setCustomName(getFullName());
