@@ -183,8 +183,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
 
         if (navigating) {
-            if (!NMSImpl.isNavigationFinished(navigation)) {
-                NMSImpl.updateNavigation(navigation);
+            if (!navigation.isDone()) {
+                navigation.tick();
             }
             moveOnCurrentHeading();
         }

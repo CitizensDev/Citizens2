@@ -22,7 +22,7 @@ public class PlayerLookControl {
     }
 
     public void a() {
-        if (!NMSImpl.isNavigationFinished(this.a.getNavigation())) {
+        if (!this.a.getNavigation().isDone()) {
             // TODO: use Citizens AI?
             // this.a.yHeadRot = Mth.rotateIfNecessary(this.a.yHeadRot, this.a.yBodyRot, 75);
             return;

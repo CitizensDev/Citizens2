@@ -649,7 +649,7 @@ public class NMSImpl implements NMSBridge {
                         ((Mob) raw).setPathfindingMalus(BlockPathTypes.WATER, oldWater);
                     }
                 }
-                stopNavigation(navigation);
+                navigation.stop();
             }
 
             @Override
@@ -684,7 +684,7 @@ public class NMSImpl implements NMSBridge {
                     }
                     lastSpeed = params.speed();
                 }
-                if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
+                if (params.debug() && !navigation.isDone()) {
                     BlockData data = Material.DANDELION.createBlockData();
                     Path path = getPathEntity(navigation);
                     for (Player player : Bukkit.getOnlinePlayers()) {
@@ -695,7 +695,7 @@ public class NMSImpl implements NMSBridge {
                     }
                 }
                 navigation.setSpeedModifier(params.speed());
-                return NMSImpl.isNavigationFinished(navigation);
+                return navigation.isDone();
             }
         };
     }
@@ -1421,12 +1421,12 @@ public class NMSImpl implements NMSBridge {
 
         @Override
         public void stop() {
-            stopNavigation(navigation);
+            navigation.stop();
         }
 
         @Override
         public void update() {
-            updateNavigation(navigation);
+            navigation.tick();
         }
     }
 
@@ -1698,10 +1698,6 @@ public class NMSImpl implements NMSBridge {
         network.address = socketAddress;
     }
 
-    public static boolean isNavigationFinished(PathNavigation navigation) {
-        return navigation.isDone();
-    }
-
     @SuppressWarnings("deprecation")
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
@@ -1732,7 +1728,7 @@ public class NMSImpl implements NMSBridge {
         int i = 0;
         for (GoalSelector selector : goalSelectors) {
             try {
-                Collection list = selector.getAvailableGoals();
+                Collection<?> list = selector.getAvailableGoals();
                 list.clear();
 
                 Collection old = npc.data().get("selector" + i);
@@ -1852,10 +1848,6 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static void stopNavigation(PathNavigation navigation) {
-        navigation.stop();
-    }
-
     public static Entity teleportAcrossWorld(Entity entity, ServerLevel worldserver, BlockPos location) {
         if (FIND_DIMENSION_ENTRY_POINT == null || entity.isRemoved())
             return null;
@@ -1888,7 +1880,7 @@ public class NMSImpl implements NMSBridge {
         if (entity instanceof Mob) {
             Mob handle = (Mob) entity;
             handle.getSensing().tick();
-            NMSImpl.updateNavigation(handle.getNavigation());
+            handle.getNavigation().tick();
             handle.getMoveControl().tick();
             handle.getLookControl().tick();
             handle.getJumpControl().tick();
@@ -1915,10 +1907,6 @@ public class NMSImpl implements NMSBridge {
                 behaviorMap.clear();
             }
         }
-    }
-
-    public static void updateNavigation(PathNavigation navigation) {
-        navigation.tick();
     }
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cs");

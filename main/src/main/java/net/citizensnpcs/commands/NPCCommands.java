@@ -45,7 +45,9 @@ import org.json.simple.parser.JSONParser;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Citizens;
@@ -83,6 +85,9 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.commands.gui.NPCConfigurator;
+import net.citizensnpcs.commands.history.CommandHistoryItem;
+import net.citizensnpcs.commands.history.CreateNPCHistoryItem;
+import net.citizensnpcs.commands.history.RemoveNPCHistoryItem;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
@@ -131,12 +136,17 @@ import net.citizensnpcs.util.Util;
 
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
+    private final ListMultimap<UUID, CommandHistoryItem> history = ArrayListMultimap.create();
     private final NPCSelector selector;
     private final NPCRegistry temporaryRegistry;
 
     public NPCCommands(Citizens plugin) {
         selector = plugin.getNPCSelector();
         temporaryRegistry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
+    }
+
+    private void addCommandHistory(CommandSender sender, CommandHistoryItem item) {
+        history.put(sender instanceof Entity ? ((Entity) sender).getUniqueId() : null, item);
     }
 
     @Command(
@@ -378,7 +388,7 @@ public class NPCCommands {
         } else if (args.getString(1).equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
                 throw new CommandUsageException();
-            int id = args.getInteger(2);
+            int id = args.getInteger(2, -1);
             if (!commands.hasCommandId(id))
                 throw new CommandException(Messages.COMMAND_UNKNOWN_COMMAND_ID, id);
             commands.removeCommandById(id);
@@ -479,6 +489,7 @@ public class NPCCommands {
 
         Messaging.sendTr(sender, Messages.NPC_COPIED, npc.getName());
         selector.select(sender, copy);
+        addCommandHistory(sender, new CreateNPCHistoryItem(copy));
     }
 
     @Command(
@@ -615,6 +626,7 @@ public class NPCCommands {
             npc.getOrAddTrait(Age.class).setAge(age);
         }
         selector.select(sender, npc);
+        addCommandHistory(sender, new CreateNPCHistoryItem(npc));
         Messaging.send(sender, msg + '.');
     }
 
@@ -1734,6 +1746,7 @@ public class NPCCommands {
             Collection<NPC> npcs = Lists.newArrayList(CitizensAPI.getNPCRegistry());
             for (NPC o : npcs) {
                 if (o.getOrAddTrait(Owner.class).isOwnedBy(owner)) {
+                    addCommandHistory(sender, new RemoveNPCHistoryItem(o));
                     o.destroy(sender);
                 }
             }
@@ -1743,6 +1756,7 @@ public class NPCCommands {
         if (args.hasValueFlag("eid")) {
             Entity entity = Bukkit.getServer().getEntity(UUID.fromString(args.getFlag("eid")));
             if (entity != null && (npc = CitizensAPI.getNPCRegistry().getNPC(entity)) != null) {
+                addCommandHistory(sender, new RemoveNPCHistoryItem(npc));
                 npc.destroy(sender);
                 Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
                 return;
@@ -1755,7 +1769,10 @@ public class NPCCommands {
             if (args.getString(1).equalsIgnoreCase("all")) {
                 if (!sender.hasPermission("citizens.admin.remove.all") && !sender.hasPermission("citizens.admin"))
                     throw new NoPermissionsException();
-                CitizensAPI.getNPCRegistry().deregisterAll();
+                for (NPC rem : CitizensAPI.getNPCRegistry()) {
+                    addCommandHistory(sender, new RemoveNPCHistoryItem(rem));
+                    rem.destroy();
+                }
                 Messaging.sendTr(sender, Messages.REMOVED_ALL_NPCS);
                 return;
             } else {
@@ -1769,6 +1786,7 @@ public class NPCCommands {
                             throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
                         if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
                             throw new NoPermissionsException();
+                        addCommandHistory(sender, new RemoveNPCHistoryItem(npc));
                         npc.destroy(sender);
                         Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
                     }
@@ -1784,6 +1802,7 @@ public class NPCCommands {
             throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
         if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
             throw new NoPermissionsException();
+        addCommandHistory(sender, new RemoveNPCHistoryItem(npc));
         npc.destroy(sender);
         Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
     }
@@ -2502,6 +2521,36 @@ public class NPCCommands {
             throw new CommandException(Messages.INVALID_ENTITY_TYPE, args.getString(1));
         npc.setBukkitEntityType(type);
         Messaging.sendTr(sender, Messages.ENTITY_TYPE_SET, npc.getName(), args.getString(1));
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "undo (all)",
+            desc = "Undoes the last action (currently only create/remove supported)",
+            modifiers = { "undo" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.undo")
+    @Requirements
+    public void undo(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (args.argsLength() > 1 && args.getString(1).equals("all")) {
+            while (undoLastAction(sender)) {
+            }
+        } else if (undoLastAction(sender)) {
+            Messaging.sendTr(sender, Messages.UNDO_SUCCESSFUL);
+        } else {
+            Messaging.sendTr(sender, Messages.UNDO_UNSUCCESSFUL);
+        }
+    }
+
+    private boolean undoLastAction(CommandSender sender) {
+        UUID uuid = sender instanceof Entity ? ((Entity) sender).getUniqueId() : null;
+        List<CommandHistoryItem> hist = history.get(uuid);
+        if (hist.size() == 0)
+            return false;
+        CommandHistoryItem item = hist.remove(hist.size() - 1);
+        item.undo(sender, selector);
+        return true;
     }
 
     @Command(
