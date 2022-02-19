@@ -49,7 +49,6 @@ public class SimpleMetadataStore implements MetadataStore {
     public <T> T get(String key, T def) {
         T t = get(key);
         if (t == null) {
-            set(key, def);
             return def;
         }
         return t;

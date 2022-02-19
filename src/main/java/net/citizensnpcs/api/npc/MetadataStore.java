@@ -21,8 +21,7 @@ public interface MetadataStore {
     <T> T get(NPC.Metadata key);
 
     /**
-     * Fetches metadata from the given key. Sets the default value provided via {@link #set(String, Object)} if the
-     * metadata is not already stored.
+     * Fetches metadata from the given key.
      *
      * @param key
      *            The key to get metadata from
