@@ -342,6 +342,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             Vector velocity = npc.getEntity().getVelocity();
             velocity.setX(0).setY(0).setZ(0);
             npc.getEntity().setVelocity(velocity);
+            NMS.cancelMoveDestination(npc.getEntity());
         }
         if (!SUPPORT_CHUNK_TICKETS || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
             return;
