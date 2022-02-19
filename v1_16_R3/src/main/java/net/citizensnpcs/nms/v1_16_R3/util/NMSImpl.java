@@ -216,6 +216,7 @@ import net.minecraft.server.v1_16_R3.BossBattleServer;
 import net.minecraft.server.v1_16_R3.ChunkProviderServer;
 import net.minecraft.server.v1_16_R3.ControllerJump;
 import net.minecraft.server.v1_16_R3.ControllerMove;
+import net.minecraft.server.v1_16_R3.ControllerMoveFlying;
 import net.minecraft.server.v1_16_R3.CrashReport;
 import net.minecraft.server.v1_16_R3.CrashReportSystemDetails;
 import net.minecraft.server.v1_16_R3.DamageSource;
@@ -1191,7 +1192,27 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setNoGravity(org.bukkit.entity.Entity entity, boolean enabled) {
-        getHandle(entity).setNoGravity(enabled);
+        Entity handle = getHandle(entity);
+        handle.setNoGravity(enabled);
+        if (!(handle instanceof EntityInsentient) || !(entity instanceof NPCHolder))
+            return;
+        EntityInsentient mob = (EntityInsentient) handle;
+        NPC npc = ((NPCHolder) entity).getNPC();
+        if (!(mob.getControllerMove() instanceof ControllerMoveFlying) || npc.data().has("flying-nogravity-float"))
+            return;
+        try {
+            if (enabled) {
+                boolean old = (boolean) FLYING_MOVECONTROL_FLOAT_GETTER.invoke(mob.getControllerMove());
+                FLYING_MOVECONTROL_FLOAT_SETTER.invoke(mob.getControllerMove(), true);
+                npc.data().set("flying-nogravity-float", old);
+            } else {
+                FLYING_MOVECONTROL_FLOAT_SETTER.invoke(mob.getControllerMove(),
+                        npc.data().get("flying-nogravity-float"));
+                npc.data().remove("flying-nogravity-float");
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @Override
@@ -1890,8 +1911,10 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "e");
 
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
+
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(PlayerChunkMap.class, "a",
             true, EntityPlayer.class, boolean.class);
+
     private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
     private static MethodHandle CRAFTSOUND_GETSOUND = NMS.getMethodHandle(CraftSound.class, "getSound", false,
@@ -1905,6 +1928,10 @@ public class NMSImpl implements NMSBridge {
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static final MethodHandle FISHING_HOOK_HOOKED = NMS.getGetter(EntityFishingHook.class, "hooked");
     private static final MethodHandle FISHING_HOOK_HOOKED_SETTER = NMS.getSetter(EntityFishingHook.class, "hooked");
+    private static final MethodHandle FLYING_MOVECONTROL_FLOAT_GETTER = NMS.getFirstGetter(ControllerMoveFlying.class,
+            boolean.class);
+    private static final MethodHandle FLYING_MOVECONTROL_FLOAT_SETTER = NMS.getFirstSetter(ControllerMoveFlying.class,
+            boolean.class);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle GOAL_SET_FIELD = NMS.getGetter(PathfinderGoalSelector.class, "d");
     private static final MethodHandle HEAD_HEIGHT = NMS.getSetter(Entity.class, "headHeight");

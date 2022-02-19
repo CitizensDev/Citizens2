@@ -245,6 +245,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.control.JumpControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
@@ -1184,7 +1185,26 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setNoGravity(org.bukkit.entity.Entity entity, boolean enabled) {
-        getHandle(entity).setNoGravity(enabled);
+        Entity handle = getHandle(entity);
+        handle.setNoGravity(enabled);
+        if (!(handle instanceof Mob) || !(entity instanceof NPCHolder))
+            return;
+        Mob mob = (Mob) handle;
+        NPC npc = ((NPCHolder) entity).getNPC();
+        if (!(mob.getMoveControl() instanceof FlyingMoveControl) || npc.data().has("flying-nogravity-float"))
+            return;
+        try {
+            if (enabled) {
+                boolean old = (boolean) FLYING_MOVECONTROL_FLOAT_GETTER.invoke(mob.getMoveControl());
+                FLYING_MOVECONTROL_FLOAT_SETTER.invoke(mob.getMoveControl(), true);
+                npc.data().set("flying-nogravity-float", old);
+            } else {
+                FLYING_MOVECONTROL_FLOAT_SETTER.invoke(mob.getMoveControl(), npc.data().get("flying-nogravity-float"));
+                npc.data().remove("flying-nogravity-float");
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @Override
@@ -1885,7 +1905,9 @@ public class NMSImpl implements NMSBridge {
             EntityType.SHULKER, EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(Brain.class, "f");
+
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
+
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);
     private static final Map<Class<?>, net.minecraft.world.entity.EntityType<?>> CITIZENS_ENTITY_TYPES = Maps
@@ -1899,6 +1921,10 @@ public class NMSImpl implements NMSBridge {
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static MethodHandle ENTITY_REGISTRY_SETTER;
     private static final MethodHandle FISHING_HOOK_LIFE = NMS.getSetter(FishingHook.class, "ap");
+    private static final MethodHandle FLYING_MOVECONTROL_FLOAT_GETTER = NMS.getFirstGetter(FlyingMoveControl.class,
+            boolean.class);
+    private static final MethodHandle FLYING_MOVECONTROL_FLOAT_SETTER = NMS.getFirstSetter(FlyingMoveControl.class,
+            boolean.class);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle HEAD_HEIGHT = NMS.getSetter(Entity.class, "aX");
     private static final MethodHandle HEAD_HEIGHT_METHOD = NMS.getFirstMethodHandle(Entity.class, true, Pose.class,
