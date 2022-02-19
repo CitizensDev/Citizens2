@@ -427,7 +427,7 @@ public class CitizensNPC extends AbstractNPC {
     private void updateCustomName() {
         boolean nameVisibility = false;
         if (!getEntity().isCustomNameVisible()
-                && !data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString().equals("hover")) { 
+                && !data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString().equals("hover")) {
         } else if (!requiresNameHologram()) {
             nameVisibility = true;
             getEntity().setCustomName(getFullName());
@@ -471,14 +471,18 @@ public class CitizensNPC extends AbstractNPC {
     private void updateUsingItemState(Player player) {
         boolean useItem = data().get(NPC.Metadata.USING_HELD_ITEM, false),
                 offhand = data().get(NPC.Metadata.USING_OFFHAND_ITEM, false);
-        if (useItem) {
-            NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
-            NMS.playAnimation(PlayerAnimation.START_USE_MAINHAND_ITEM, player, 64);
-        } else if (offhand) {
-            NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
-            NMS.playAnimation(PlayerAnimation.START_USE_OFFHAND_ITEM, player, 64);
-        } else {
-            NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
+        if (!SUPPORT_USE_ITEM)
+            return;
+        try {
+            if (useItem) {
+                NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
+                NMS.playAnimation(PlayerAnimation.START_USE_MAINHAND_ITEM, player, 64);
+            } else if (offhand) {
+                NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
+                NMS.playAnimation(PlayerAnimation.START_USE_OFFHAND_ITEM, player, 64);
+            }
+        } catch (UnsupportedOperationException ex) {
+            SUPPORT_USE_ITEM = false;
         }
     }
 
@@ -487,4 +491,5 @@ public class CitizensNPC extends AbstractNPC {
     private static final String NPC_METADATA_MARKER = "NPC";
     private static boolean SUPPORT_GLOWING = true;
     private static boolean SUPPORT_SILENT = true;
+    private static boolean SUPPORT_USE_ITEM = true;
 }

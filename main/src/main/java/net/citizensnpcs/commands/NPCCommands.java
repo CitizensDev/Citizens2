@@ -69,6 +69,8 @@ import net.citizensnpcs.api.event.PlayerCloneNPCEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.gui.InventoryMenu;
+import net.citizensnpcs.api.npc.BlockBreaker;
+import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -289,7 +291,8 @@ public class NPCCommands {
             desc = "Edit armorstand properties",
             modifiers = { "armorstand" },
             min = 1,
-            max = 1)
+            max = 1,
+            permission = "citizens.npc.armorstand")
     @Requirements(selected = true, ownership = true, types = EntityType.ARMOR_STAND)
     public void armorstand(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         ArmorStandTrait trait = npc.getOrAddTrait(ArmorStandTrait.class);
@@ -308,6 +311,24 @@ public class NPCCommands {
         if (args.hasValueFlag("baseplate")) {
             trait.setHasBaseplate(Boolean.valueOf(args.getFlag("baseplate")));
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "breakblock --location [x,y,z] --radius [radius]",
+            desc = "Mine a block at the given location or cursor if not specified",
+            modifiers = { "breakblock" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.breakblock")
+    @Requirements(selected = true, ownership = true, livingEntity = true)
+    public void breakblock(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        BlockBreakerConfiguration cfg = new BlockBreakerConfiguration();
+        if (args.hasValueFlag("radius")) {
+            cfg.radius(args.getFlagDouble("radius"));
+        }
+        BlockBreaker breaker = npc.getBlockBreaker(args.getSenderTargetBlockLocation().getBlock(), cfg);
+        npc.getDefaultGoalController().addBehavior(breaker, 1);
     }
 
     @Command(

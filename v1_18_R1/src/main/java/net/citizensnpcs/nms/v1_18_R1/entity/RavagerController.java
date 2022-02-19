@@ -56,9 +56,7 @@ public class RavagerController extends MobEntityController {
 
         @Override
         public boolean canBeControlledByRider() {
-            return (npc == null || npc.data().<Boolean> get(NPC.Metadata.USE_MINECRAFT_AI, false))
-                    ? super.canBeControlledByRider()
-                    : false;
+            return (npc == null || npc.useMinecraftAI()) ? super.canBeControlledByRider() : false;
         }
 
         @Override

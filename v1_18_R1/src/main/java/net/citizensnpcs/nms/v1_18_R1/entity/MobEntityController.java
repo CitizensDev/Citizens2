@@ -37,6 +37,16 @@ public abstract class MobEntityController extends AbstractEntityController {
             entity.setOnGround(true);
         }
         entity.setUUID(npc.getUniqueId());
+
+        /*String name = npc.getFullName().length() > 16 ? npc.getFullName().substring(0, 16) : npc.getFullName();
+        String teamName = Util.getTeamName(npc.getUniqueId());
+        if (npc.requiresNameHologram()) {
+            name = teamName;
+        }
+        
+        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+            Util.generateTeamFor(npc, name, teamName);
+        }*/
         return entity.getBukkitEntity();
     }
 
