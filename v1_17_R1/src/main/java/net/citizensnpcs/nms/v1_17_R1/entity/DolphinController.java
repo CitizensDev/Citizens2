@@ -20,9 +20,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Dolphin;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -61,6 +60,8 @@ public class DolphinController extends MobEntityController {
                 NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 this.oldMoveController = this.moveControl;
                 this.moveControl = new MoveControl(this);
+                this.getAttribute(Attributes.MOVEMENT_SPEED)
+                        .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() / 10);
             }
         }
 
@@ -92,11 +93,6 @@ public class DolphinController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
-        }
-
-        @Override
-        protected PathNavigation createNavigation(Level world) {
-            return new GroundPathNavigation(this, world);
         }
 
         @Override
@@ -138,16 +134,6 @@ public class DolphinController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public boolean isInWater() {
-            return npc == null ? super.isInWater() : false;
-        }
-
-        @Override
-        public boolean isInWaterRainOrBubble() {
-            return npc == null ? super.isInWaterRainOrBubble() : true;
         }
 
         @Override
@@ -212,7 +198,9 @@ public class DolphinController extends MobEntityController {
         @Override
         public void travel(Vec3 vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                super.travel(vec3d);
+                if (!NMSImpl.moveFish(npc, this, vec3d)) {
+                    super.travel(vec3d);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }

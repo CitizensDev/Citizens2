@@ -10,7 +10,6 @@ import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R1.util.NMSImpl;
-import net.citizensnpcs.nms.v1_18_R1.util.PlayerMoveControl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
@@ -21,9 +20,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Dolphin;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -62,6 +60,8 @@ public class DolphinController extends MobEntityController {
                 NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 this.oldMoveController = this.moveControl;
                 this.moveControl = new MoveControl(this);
+                this.getAttribute(Attributes.MOVEMENT_SPEED)
+                        .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() / 10);
             }
         }
 
@@ -93,11 +93,6 @@ public class DolphinController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
-        }
-
-        @Override
-        protected PathNavigation createNavigation(Level world) {
-            return new GroundPathNavigation(this, world);
         }
 
         @Override
@@ -142,16 +137,6 @@ public class DolphinController extends MobEntityController {
         }
 
         @Override
-        public boolean isInWater() {
-            return npc == null ? super.isInWater() : false;
-        }
-
-        @Override
-        public boolean isInWaterRainOrBubble() {
-            return npc == null ? super.isInWaterRainOrBubble() : true;
-        }
-
-        @Override
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();
@@ -186,8 +171,9 @@ public class DolphinController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.push(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -211,7 +197,7 @@ public class DolphinController extends MobEntityController {
                     this.moveControl = this.oldMoveController;
                 }
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
-                    this.moveControl = new PlayerMoveControl(this);
+                    this.moveControl = new MoveControl(this);
                 }
                 npc.update();
             }
@@ -220,7 +206,9 @@ public class DolphinController extends MobEntityController {
         @Override
         public void travel(Vec3 vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                super.travel(vec3d);
+                if (!NMSImpl.moveFish(npc, this, vec3d)) {
+                    super.travel(vec3d);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }

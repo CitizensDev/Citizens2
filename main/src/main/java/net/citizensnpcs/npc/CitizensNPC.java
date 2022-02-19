@@ -367,7 +367,7 @@ public class CitizensNPC extends AbstractNPC {
                 if (!data().has(NPC.Metadata.SWIMMING) || data().<Boolean> get(NPC.Metadata.SWIMMING)) {
                     Location currentDest = navigator.getPathStrategy().getCurrentDestination();
                     if (currentDest == null || currentDest.getY() > getStoredLocation().getY()) {
-                        NMS.trySwim(getEntity(), SwimmingExaminer.isWaterMob(getEntity()) ? 0.01F : 0.04F);
+                        NMS.trySwim(getEntity(), SwimmingExaminer.isWaterMob(getEntity()) ? 0.02F : 0.04F);
                     }
                 }
             } else if (data().has(NPC.Metadata.SWIMMING) ? data().<Boolean> get(NPC.Metadata.SWIMMING)

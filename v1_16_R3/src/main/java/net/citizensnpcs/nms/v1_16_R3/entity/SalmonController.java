@@ -26,7 +26,6 @@ import net.minecraft.server.v1_16_R3.EntitySalmon;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumInteractionResult;
-import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.IBlockData;
 import net.minecraft.server.v1_16_R3.ItemStack;
 import net.minecraft.server.v1_16_R3.Items;
@@ -126,11 +125,7 @@ public class SalmonController extends MobEntityController {
         @Override
         public void g(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                if (!npc.useMinecraftAI() && isInWater() && !npc.getNavigator().isNavigating()) {
-                    this.a(0.01F, vec3d);
-                    this.move(EnumMoveType.SELF, this.getMot());
-                    this.setMot(this.getMot().a(0.9D));
-                } else {
+                if (!NMSImpl.moveFish(npc, this, vec3d)) {
                     super.g(vec3d);
                 }
             } else {

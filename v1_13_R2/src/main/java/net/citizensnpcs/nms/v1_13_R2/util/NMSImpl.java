@@ -219,6 +219,7 @@ import net.minecraft.server.v1_13_R2.EntityShulker;
 import net.minecraft.server.v1_13_R2.EntityTameableAnimal;
 import net.minecraft.server.v1_13_R2.EntityTracker;
 import net.minecraft.server.v1_13_R2.EntityTrackerEntry;
+import net.minecraft.server.v1_13_R2.EntityTurtle;
 import net.minecraft.server.v1_13_R2.EntityTypes;
 import net.minecraft.server.v1_13_R2.EntityWither;
 import net.minecraft.server.v1_13_R2.EnumMoveType;
@@ -1683,6 +1684,26 @@ public class NMSImpl implements NMSBridge {
             minecart.setDisplayBlock(Block.getByCombinedId(mat.getId()).getBlock().getBlockData());
         }
         minecart.setDisplayBlockOffset(offset);
+    }
+
+    public static boolean moveFish(NPC npc, EntityInsentient handle, float f, float f1, float f2) {
+        return moveFish(npc, handle, f1, f1, f2, -1);
+    }
+
+    public static boolean moveFish(NPC npc, EntityInsentient handle, float f, float f1, float f2, float speed) {
+        if (npc == null) {
+            return false;
+        }
+        if (!npc.useMinecraftAI() && handle.isInWater() && !npc.getNavigator().isNavigating()) {
+            handle.a(f, f1, f2, speed > 0 ? speed : handle instanceof EntityTurtle ? 0.1F : 0.01F);
+            handle.move(EnumMoveType.SELF, handle.motX, handle.motY, handle.motZ);
+            handle.motX *= 0.9D;
+            handle.motY *= 0.9D;
+            handle.motZ *= 0.9D;
+
+            return true;
+        }
+        return false;
     }
 
     public static void sendPacket(Player player, Packet<?> packet) {

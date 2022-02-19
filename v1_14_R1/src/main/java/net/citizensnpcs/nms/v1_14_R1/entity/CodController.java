@@ -23,7 +23,6 @@ import net.minecraft.server.v1_14_R1.EntityHuman;
 import net.minecraft.server.v1_14_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EnumHand;
-import net.minecraft.server.v1_14_R1.EnumMoveType;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.ItemStack;
 import net.minecraft.server.v1_14_R1.Items;
@@ -121,11 +120,7 @@ public class CodController extends MobEntityController {
         @Override
         public void e(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                if (!npc.useMinecraftAI() && isInWater() && !npc.getNavigator().isNavigating()) {
-                    this.a(0.01F, vec3d);
-                    this.move(EnumMoveType.SELF, this.getMot());
-                    this.setMot(this.getMot().a(0.9D));
-                } else {
+                if (!NMSImpl.moveFish(npc, this, vec3d)) {
                     super.e(vec3d);
                 }
             } else {

@@ -22,10 +22,9 @@ import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityDolphin;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityTypes;
+import net.minecraft.server.v1_15_R1.GenericAttributes;
 import net.minecraft.server.v1_15_R1.IBlockData;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
-import net.minecraft.server.v1_15_R1.Navigation;
-import net.minecraft.server.v1_15_R1.NavigationAbstract;
 import net.minecraft.server.v1_15_R1.SoundEffect;
 import net.minecraft.server.v1_15_R1.Vec3D;
 import net.minecraft.server.v1_15_R1.World;
@@ -69,6 +68,8 @@ public class DolphinController extends MobEntityController {
                 NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 this.oldMoveController = this.moveController;
                 this.moveController = new ControllerMove(this);
+                this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+                        .setValue(this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getBaseValue() / 10);
             }
         }
 
@@ -80,21 +81,11 @@ public class DolphinController extends MobEntityController {
         }
 
         @Override
-        public boolean ay() {
-            return npc == null ? super.ay() : true;
-        }
-
-        @Override
         public boolean b(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 return super.b(f, f1);
             }
             return false;
-        }
-
-        @Override
-        protected NavigationAbstract b(World world) {
-            return new Navigation(this, world);
         }
 
         @Override
@@ -121,7 +112,9 @@ public class DolphinController extends MobEntityController {
         @Override
         public void e(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                super.e(vec3d);
+                if (!NMSImpl.moveFish(npc, this, vec3d, dt())) {
+                    super.e(vec3d);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
@@ -183,11 +176,6 @@ public class DolphinController extends MobEntityController {
             } else {
                 return false;
             }
-        }
-
-        @Override
-        public boolean isInWater() {
-            return npc == null ? super.isInWater() : false;
         }
 
         @Override

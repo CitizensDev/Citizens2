@@ -19,6 +19,7 @@ import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityDolphin;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_13_R2.GenericAttributes;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
@@ -61,6 +62,8 @@ public class DolphinController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.clearGoals(goalSelector, targetSelector);
                 this.setNoAI(true);
+                this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+                        .setValue(this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() / 10);
             }
         }
 
@@ -74,7 +77,9 @@ public class DolphinController extends MobEntityController {
         @Override
         public void a(float f, float f1, float f2) {
             if (npc == null || !npc.isFlyable()) {
-                super.a(f, f1, f2);
+                if (!NMSImpl.moveFish(npc, this, f, f1, f2, cK())) {
+                    super.a(f, f1, f2);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }

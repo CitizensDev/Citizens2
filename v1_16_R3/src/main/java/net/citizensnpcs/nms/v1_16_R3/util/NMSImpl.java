@@ -247,6 +247,7 @@ import net.minecraft.server.v1_16_R3.EntityRabbit;
 import net.minecraft.server.v1_16_R3.EntityShulker;
 import net.minecraft.server.v1_16_R3.EntitySize;
 import net.minecraft.server.v1_16_R3.EntityTameableAnimal;
+import net.minecraft.server.v1_16_R3.EntityTurtle;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.EntityWither;
 import net.minecraft.server.v1_16_R3.EnumMoveType;
@@ -1745,6 +1746,23 @@ public class NMSImpl implements NMSBridge {
             minecart.setDisplayBlock(Block.getByCombinedId(mat.getId()).getBlock().getBlockData());
         }
         minecart.setDisplayBlockOffset(offset);
+    }
+
+    public static boolean moveFish(NPC npc, EntityInsentient handle, Vec3D vec3d) {
+        return moveFish(npc, handle, vec3d, -1);
+    }
+
+    public static boolean moveFish(NPC npc, EntityInsentient handle, Vec3D vec3d, float speed) {
+        if (npc == null) {
+            return false;
+        }
+        if (!npc.useMinecraftAI() && handle.isInWater() && !npc.getNavigator().isNavigating()) {
+            handle.a(speed > 0 ? speed : handle instanceof EntityTurtle ? 0.1F : 0.01F, vec3d);
+            handle.move(EnumMoveType.SELF, handle.getMot());
+            handle.setMot(handle.getMot().a(0.9));
+            return true;
+        }
+        return false;
     }
 
     public static void resetPuffTicks(EntityPufferFish fish) {

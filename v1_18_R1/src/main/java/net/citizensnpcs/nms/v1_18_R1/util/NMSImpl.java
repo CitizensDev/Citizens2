@@ -255,10 +255,13 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.AbstractSchoolingFish;
 import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.Dolphin;
 import net.minecraft.world.entity.animal.Panda;
 import net.minecraft.world.entity.animal.PolarBear;
 import net.minecraft.world.entity.animal.Pufferfish;
 import net.minecraft.world.entity.animal.Rabbit;
+import net.minecraft.world.entity.animal.Turtle;
+import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
@@ -1746,6 +1749,20 @@ public class NMSImpl implements NMSBridge {
             minecart.setDisplayBlockState(Registry.BLOCK.byId(mat.getId()).defaultBlockState());
         }
         minecart.setDisplayOffset(offset);
+    }
+
+    public static boolean moveFish(NPC npc, Mob handle, Vec3 vec3d) {
+        if (npc == null) {
+            return false;
+        }
+        if (!npc.useMinecraftAI() && handle.isInWater() && !npc.getNavigator().isNavigating()) {
+            handle.moveRelative((handle instanceof Dolphin || handle instanceof Axolotl) ? handle.getSpeed()
+                    : handle instanceof Turtle ? 0.1F : 0.01F, vec3d);
+            handle.move(MoverType.SELF, handle.getDeltaMovement());
+            handle.setDeltaMovement(handle.getDeltaMovement().scale(0.9));
+            return true;
+        }
+        return false;
     }
 
     public static void resetPuffTicks(Pufferfish fish) {

@@ -77,7 +77,9 @@ public class PufferFishController extends MobEntityController {
         @Override
         public void a(float f, float f1, float f2) {
             if (npc == null || !npc.isFlyable()) {
-                super.a(f, f1, f2);
+                if (!NMSImpl.moveFish(npc, this, f, f1, f2)) {
+                    super.a(f, f1, f2);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }

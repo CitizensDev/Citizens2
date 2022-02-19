@@ -22,11 +22,8 @@ import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityInsentient;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.EntityTurtle;
-import net.minecraft.server.v1_13_R2.EnumMoveType;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.Navigation;
-import net.minecraft.server.v1_13_R2.NavigationAbstract;
 import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.World;
 
@@ -67,27 +64,12 @@ public class TurtleController extends MobEntityController {
         @Override
         public void a(float f, float f1, float f2) {
             if (npc == null || !npc.isFlyable()) {
-                if (!npc.useMinecraftAI() && isInWater() && !npc.getNavigator().isNavigating()) {
-                    this.a(f, f1, f2, 0.01F);
-                    this.move(EnumMoveType.SELF, this.motX, this.motY, this.motZ);
-                    this.motX *= 0.9D;
-                    this.motY *= 0.9D;
-                    this.motZ *= 0.9D;
-
-                } else {
+                if (!NMSImpl.moveFish(npc, this, f, f1, f2)) {
                     super.a(f, f1, f2);
                 }
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }
-        }
-
-        @Override
-        protected NavigationAbstract b(World world) {
-            if (npc == null) {
-                return super.b(world);
-            }
-            return new Navigation(this, world);
         }
 
         @Override

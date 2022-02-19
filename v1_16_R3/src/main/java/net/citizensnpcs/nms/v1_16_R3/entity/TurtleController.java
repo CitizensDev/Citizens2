@@ -25,11 +25,8 @@ import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R3.EntityTurtle;
 import net.minecraft.server.v1_16_R3.EntityTypes;
-import net.minecraft.server.v1_16_R3.EnumMoveType;
 import net.minecraft.server.v1_16_R3.IBlockData;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
-import net.minecraft.server.v1_16_R3.Navigation;
-import net.minecraft.server.v1_16_R3.NavigationAbstract;
 import net.minecraft.server.v1_16_R3.SoundEffect;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.World;
@@ -81,14 +78,6 @@ public class TurtleController extends MobEntityController {
         }
 
         @Override
-        protected NavigationAbstract b(World world) {
-            if (npc == null) {
-                return super.b(world);
-            }
-            return new Navigation(this, world);
-        }
-
-        @Override
         public void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();
@@ -125,11 +114,7 @@ public class TurtleController extends MobEntityController {
         @Override
         public void g(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                if (!npc.useMinecraftAI() && isInWater() && !npc.getNavigator().isNavigating()) {
-                    this.a(0.01F, vec3d);
-                    this.move(EnumMoveType.SELF, this.getMot());
-                    this.setMot(this.getMot().a(0.9D));
-                } else {
+                if (!NMSImpl.moveFish(npc, this, vec3d)) {
                     super.g(vec3d);
                 }
             } else {

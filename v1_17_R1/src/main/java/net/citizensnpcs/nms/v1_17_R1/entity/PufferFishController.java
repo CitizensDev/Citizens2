@@ -24,6 +24,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.animal.Pufferfish;
@@ -244,7 +245,9 @@ public class PufferFishController extends MobEntityController {
         @Override
         public void travel(Vec3 vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                super.travel(vec3d);
+                if (!NMSImpl.moveFish(npc, this, vec3d)) {
+                    super.travel(vec3d);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }

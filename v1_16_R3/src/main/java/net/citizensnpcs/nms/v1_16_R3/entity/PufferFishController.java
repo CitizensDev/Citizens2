@@ -137,7 +137,9 @@ public class PufferFishController extends MobEntityController {
         @Override
         public void g(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
-                super.g(vec3d);
+                if (!NMSImpl.moveFish(npc, this, vec3d)) {
+                    super.g(vec3d);
+                }
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
