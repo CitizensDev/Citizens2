@@ -243,6 +243,9 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             tree.put(new long[] { waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
                     waypoint.getLocation().getBlockZ() }, waypoint);
         }
+        if (currentGoal != null) {
+            currentGoal.onProviderChanged();
+        }
     }
 
     @Override
@@ -262,6 +265,9 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     @Override
     public void setPaused(boolean paused) {
         this.paused = paused;
+        if (currentGoal != null) {
+            currentGoal.onProviderChanged();
+        }
     }
 
     /**
@@ -274,6 +280,15 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
     private class GuidedAIGoal implements Goal {
         private GuidedPlan plan;
+
+        public void onProviderChanged() {
+            if (plan != null) {
+                reset();
+                if (npc.getNavigator().isNavigating()) {
+                    npc.getNavigator().cancelNavigation();
+                }
+            }
+        }
 
         @Override
         public void reset() {
