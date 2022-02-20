@@ -2,6 +2,7 @@ package net.citizensnpcs.api.trait.trait;
 
 import java.util.Map;
 
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
@@ -28,6 +29,10 @@ public class Equipment extends Trait {
 
     public Equipment() {
         super("equipment");
+    }
+
+    private ItemStack clone(ItemStack item) {
+        return item == null || item.getType() == Material.AIR ? null : item.clone();
     }
 
     /**
@@ -141,6 +146,36 @@ public class Equipment extends Trait {
     }
 
     @Override
+    public void run() {
+        if (!npc.isSpawned())
+            return;
+        if (npc.getEntity() instanceof Enderman) {
+            Enderman enderman = (Enderman) npc.getEntity();
+            if (equipment[0] != null) {
+                if (SpigotUtil.isUsing1_13API()) {
+                    equipment[0] = new ItemStack(enderman.getCarriedBlock().getMaterial(), 1);
+                } else {
+                    equipment[0] = enderman.getCarriedMaterial().toItemStack(1);
+                }
+            }
+        } else {
+            EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
+            equipment[0] = clone(equip.getItemInMainHand());
+            equipment[1] = clone(equip.getHelmet());
+            equipment[2] = clone(equip.getChestplate());
+            equipment[3] = clone(equip.getLeggings());
+            equipment[4] = clone(equip.getBoots());
+            if (SUPPORT_OFFHAND) {
+                try {
+                    equipment[5] = clone(equip.getItemInOffHand());
+                } catch (NoSuchMethodError e) {
+                    SUPPORT_OFFHAND = false;
+                }
+            }
+        }
+    }
+
+    @Override
     public void save(DataKey key) {
         saveOrRemove(key.getRelative("hand"), equipment[0]);
         saveOrRemove(key.getRelative("helmet"), equipment[1]);
@@ -178,7 +213,7 @@ public class Equipment extends Trait {
     @SuppressWarnings("deprecation")
     public void set(int slot, ItemStack item) {
         if (item != null) {
-            item = item.clone();
+            item = item.getType() == Material.AIR ? null : item.clone();
         }
         equipment[slot] = item;
         if (slot == 0) {
@@ -213,9 +248,12 @@ public class Equipment extends Trait {
                     equip.setBoots(item);
                     break;
                 case 5:
-                    try {
-                        equip.setItemInOffHand(item);
-                    } catch (NoSuchMethodError e) {
+                    if (SUPPORT_OFFHAND) {
+                        try {
+                            equip.setItemInOffHand(item);
+                        } catch (NoSuchMethodError e) {
+                            SUPPORT_OFFHAND = false;
+                        }
                     }
                     break;
                 default:
@@ -255,4 +293,6 @@ public class Equipment extends Trait {
             return index;
         }
     }
+
+    private static boolean SUPPORT_OFFHAND = true;
 }
