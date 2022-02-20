@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
     public void addWaypoint(Waypoint waypoint) {
         waypoints.add(waypoint);
+        if (currentGoal != null) {
+            currentGoal.onProviderChanged();
+        }
     }
 
     @Override
@@ -176,7 +180,63 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
      */
     @Override
     public Iterable<Waypoint> waypoints() {
-        return waypoints;
+        return new AbstractList<Waypoint>() {
+            @Override
+            public void add(int index, Waypoint waypoint) {
+                waypoints.add(index, waypoint);
+                mod();
+            }
+
+            @Override
+            public boolean add(Waypoint waypoint) {
+                boolean val = waypoints.add(waypoint);
+                mod();
+                return val;
+            }
+
+            @Override
+            public void clear() {
+                waypoints.clear();
+                mod();
+            }
+
+            @Override
+            public Waypoint get(int index) {
+                return waypoints.get(index);
+            }
+
+            private void mod() {
+                if (currentGoal != null) {
+                    currentGoal.onProviderChanged();
+                }
+            }
+
+            @Override
+            public Waypoint remove(int index) {
+                Waypoint val = waypoints.remove(index);
+                mod();
+                return val;
+            }
+
+            @Override
+            public boolean remove(Object waypoint) {
+                boolean val = waypoints.remove(waypoint);
+                mod();
+                return val;
+            }
+
+            @Override
+            public Waypoint set(int index, Waypoint elem) {
+                Waypoint val = waypoints.set(index, elem);
+                mod();
+                return val;
+            }
+
+            @Override
+            public int size() {
+                return waypoints.size();
+            }
+        };
     }
 
     private final class LinearWaypointEditor extends WaypointEditor {
