@@ -113,15 +113,6 @@ public class EnderDragonController extends MobEntityController {
             return super.getBukkitEntity();
         }
 
-        private float getCorrectYaw(double tX, double tZ) {
-            if (locZ > tZ)
-                return (float) (-Math.toDegrees(Math.atan((locX - tX) / (locZ - tZ))));
-            if (locZ < tZ) {
-                return (float) (-Math.toDegrees(Math.atan((locX - tX) / (locZ - tZ)))) + 180.0F;
-            }
-            return yaw;
-        }
-
         @Override
         public NPC getNPC() {
             return npc;
@@ -159,10 +150,15 @@ public class EnderDragonController extends MobEntityController {
         public void movementTick() {
             if (npc != null) {
                 npc.update();
+                if (getRidingPassenger() != null) {
+                    yaw = getRidingPassenger().getBukkitYaw() - 180;
+                }
                 Vec3D mot = getMot();
                 if (mot.getX() != 0 || mot.getY() != 0 || mot.getZ() != 0) {
                     mot = mot.d(0.98, 0.98, 0.98);
-                    yaw = getCorrectYaw(locX + mot.getX(), locZ + mot.getZ());
+                    if (getRidingPassenger() == null) {
+                        yaw = Util.getDragonYaw(getBukkitEntity(), mot.x, mot.z);
+                    }
                     setPosition(locX + mot.getX(), locY + mot.getY(), locZ + mot.getZ());
                     setMot(mot);
                 }

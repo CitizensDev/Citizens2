@@ -64,10 +64,15 @@ public class EnderDragonController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
             if (npc != null && !npc.useMinecraftAI()) {
+                if (getFirstPassenger() != null) {
+                    setYRot(getFirstPassenger().getBukkitYaw() - 180);
+                }
                 Vec3 mot = getDeltaMovement();
                 if (mot.x != 0 || mot.y != 0 || mot.z != 0) {
                     mot = mot.multiply(0.98, 0.98, 0.98);
-                    setYRot(getCorrectYaw(getX() + mot.x, getZ() + mot.z));
+                    if (getFirstPassenger() == null) {
+                        setYRot(Util.getDragonYaw(getBukkitEntity(), mot.x, mot.z));
+                    }
                     setPos(getX() + mot.x, getY() + mot.y, getZ() + mot.z);
                     setDeltaMovement(mot);
                 }
@@ -115,15 +120,6 @@ public class EnderDragonController extends MobEntityController {
                 NMSImpl.setBukkitEntity(this, new EnderDragonNPC(this));
             }
             return super.getBukkitEntity();
-        }
-
-        private float getCorrectYaw(double tX, double tZ) {
-            if (getZ() > tZ)
-                return (float) (-Math.toDegrees(Math.atan((getX() - tX) / (getZ() - tZ))));
-            if (getZ() < tZ) {
-                return (float) (-Math.toDegrees(Math.atan((getX() - tX) / (getX() - tZ)))) + 180.0F;
-            }
-            return getYRot();
         }
 
         @Override

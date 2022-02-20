@@ -128,6 +128,20 @@ public class Util {
         return center;
     }
 
+    public static float getDragonYaw(Entity entity, double motX, double motZ) {
+        Location location = entity.getLocation(AT_LOCATION);
+        double x = location.getX();
+        double z = location.getZ();
+        double tX = x + motX;
+        double tZ = z + motZ;
+        if (z > tZ)
+            return (float) (-Math.toDegrees(Math.atan((x - tX) / (z - tZ))));
+        if (z < tZ) {
+            return (float) (-Math.toDegrees(Math.atan((x - tX) / (z - tZ)))) + 180.0F;
+        }
+        return location.getYaw();
+    }
+
     public static Scoreboard getDummyScoreboard() {
         return DUMMY_SCOREBOARD;
     }

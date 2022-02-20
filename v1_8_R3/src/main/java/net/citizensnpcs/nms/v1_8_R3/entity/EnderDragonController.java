@@ -57,13 +57,26 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
+        protected String bo() {
+            return NMSImpl.getSoundEffect(npc, super.bo(), NPC.HURT_SOUND_METADATA);
+        }
+
+        @Override
         protected String bp() {
             return NMSImpl.getSoundEffect(npc, super.bp(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
-        protected String bo() {
-            return NMSImpl.getSoundEffect(npc, super.bo(), NPC.HURT_SOUND_METADATA);
+        public boolean cc() {
+            if (npc == null)
+                return super.cc();
+            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+                return super.cc();
+            if (super.cc()) {
+                unleash(true, false); // clearLeash with client update
+            }
+            return false; // shouldLeash
         }
 
         @Override
@@ -78,6 +91,13 @@ public class EnderDragonController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        protected void D() {
+            if (npc == null) {
+                super.D();
+            }
         }
 
         @Override
@@ -100,24 +120,10 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
-        protected String z() {
-            return NMSImpl.getSoundEffect(npc, super.z(), NPC.AMBIENT_SOUND_METADATA);
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(bukkitEntity instanceof NPCHolder))
                 bukkitEntity = new EnderDragonNPC(this);
             return super.getBukkitEntity();
-        }
-
-        private float getCorrectYaw(double tX, double tZ) {
-            if (locZ > tZ)
-                return (float) (-Math.toDegrees(Math.atan((locX - tX) / (locZ - tZ))));
-            if (locZ < tZ) {
-                return (float) (-Math.toDegrees(Math.atan((locX - tX) / (locZ - tZ)))) + 180.0F;
-            }
-            return yaw;
         }
 
         @Override
@@ -126,39 +132,29 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
-        public boolean cc() {
-            if (npc == null)
-                return super.cc();
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
-            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.cc();
-            if (super.cc()) {
-                unleash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
-        }
-
-        @Override
-        protected void D() {
-            if (npc == null) {
-                super.D();
-            }
-        }
-
-        @Override
         public void m() {
             if (npc != null) {
                 npc.update();
+                if (getBukkitEntity().getPassenger() != null) {
+                    yaw = getBukkitEntity().getPassenger().getLocation().getYaw() - 180;
+                }
                 if (motX != 0 || motY != 0 || motZ != 0) {
                     motX *= 0.98;
                     motY *= 0.98;
                     motZ *= 0.98;
-                    yaw = getCorrectYaw(locX + motX, locZ + motZ);
+                    if (getBukkitEntity().getPassenger() == null) {
+                        yaw = Util.getDragonYaw(getBukkitEntity(), motX, motZ);
+                    }
                     setPosition(locX + motX, locY + motY, locZ + motZ);
                 }
             } else {
                 super.m();
             }
+        }
+
+        @Override
+        protected String z() {
+            return NMSImpl.getSoundEffect(npc, super.z(), NPC.AMBIENT_SOUND_METADATA);
         }
     }
 }

@@ -490,15 +490,6 @@ public class NMSImpl implements NMSBridge {
                 controller.getWantedZ());
     }
 
-    private float getDragonYaw(Entity handle, double tX, double tZ) {
-        if (handle.getZ() > tZ)
-            return (float) (-Math.toDegrees(Math.atan((handle.getX() - tX) / (handle.getZ() - tZ))));
-        if (handle.getZ() < tZ) {
-            return (float) (-Math.toDegrees(Math.atan((handle.getX() - tX) / (handle.getZ() - tZ)))) + 180.0F;
-        }
-        return handle.getYRot();
-    }
-
     @Override
     public GameProfileRepository getGameProfileRepository() {
         return ((CraftServer) Bukkit.getServer()).getServer().getProfileRepository();
@@ -937,7 +928,7 @@ public class NMSImpl implements NMSBridge {
             if (zDiff < 0.0)
                 yaw += Math.abs(180 - yaw) * 2;
             if (handle.getBukkitEntity().getType() == EntityType.ENDER_DRAGON) {
-                yaw = getDragonYaw(handle, to.getX(), to.getZ());
+                yaw = Util.getDragonYaw(handle.getBukkitEntity(), xDiff, zDiff);
             } else {
                 yaw = yaw - 90;
             }
