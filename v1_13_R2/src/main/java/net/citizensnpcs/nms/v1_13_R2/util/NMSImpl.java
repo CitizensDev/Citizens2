@@ -859,7 +859,8 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void look(org.bukkit.entity.Entity from, org.bukkit.entity.Entity to) {
         Entity handle = NMSImpl.getHandle(from), target = NMSImpl.getHandle(to);
-        if (BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())) {
+        if (BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
+                || (!(handle instanceof EntityInsentient) && !(handle instanceof EntityHumanNPC))) {
             if (to instanceof LivingEntity) {
                 look(from, ((LivingEntity) to).getEyeLocation(), false, true);
             } else {
