@@ -9,9 +9,11 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.entity.Entity;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
+import net.citizensnpcs.util.Util;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
@@ -37,6 +39,9 @@ public abstract class MobEntityController extends AbstractEntityController {
             entity.setOnGround(true);
         }
         entity.setUUID(npc.getUniqueId());
+        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+            Util.generateTeamFor(npc, npc.getUniqueId().toString(), Util.getTeamName(npc.getUniqueId()));
+        }
         return entity.getBukkitEntity();
     }
 

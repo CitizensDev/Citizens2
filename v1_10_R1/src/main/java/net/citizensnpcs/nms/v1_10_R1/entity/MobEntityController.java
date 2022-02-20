@@ -10,9 +10,11 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_10_R1.CraftWorld;
 import org.bukkit.entity.Entity;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.World;
 
 public abstract class MobEntityController extends AbstractEntityController {
@@ -39,6 +41,9 @@ public abstract class MobEntityController extends AbstractEntityController {
             UUID_FIELD.invoke(entity, npc.getUniqueId());
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+            Util.generateTeamFor(npc, npc.getUniqueId().toString(), Util.getTeamName(npc.getUniqueId()));
         }
         return entity.getBukkitEntity();
     }

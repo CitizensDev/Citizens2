@@ -463,7 +463,7 @@ public class NMSImpl implements NMSBridge {
     public Location getDestination(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         ControllerMove controller = handle instanceof EntityInsentient ? ((EntityInsentient) handle).getControllerMove()
-                : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) entity).getControllerMove() : null;
+                : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getControllerMove() : null;
         return new Location(entity.getWorld(), controller.d(), controller.e(), controller.f());
     }
 
@@ -1182,7 +1182,7 @@ public class NMSImpl implements NMSBridge {
                 boolean old = (boolean) FLYING_MOVECONTROL_FLOAT_GETTER.invoke(mob.getControllerMove());
                 FLYING_MOVECONTROL_FLOAT_SETTER.invoke(mob.getControllerMove(), true);
                 npc.data().set("flying-nogravity-float", old);
-            } else {
+            } else if (npc.data().has("flying-nogravity-float")) {
                 FLYING_MOVECONTROL_FLOAT_SETTER.invoke(mob.getControllerMove(),
                         npc.data().get("flying-nogravity-float"));
                 npc.data().remove("flying-nogravity-float");

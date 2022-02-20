@@ -9,7 +9,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -1759,11 +1758,10 @@ public class NPCCommands {
     public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("owner")) {
             String owner = args.getFlag("owner");
-            Collection<NPC> npcs = Lists.newArrayList(CitizensAPI.getNPCRegistry());
-            for (NPC o : npcs) {
-                if (o.getOrAddTrait(Owner.class).isOwnedBy(owner)) {
-                    history.add(sender, new RemoveNPCHistoryItem(o));
-                    o.destroy(sender);
+            for (NPC rem : Lists.newArrayList(CitizensAPI.getNPCRegistry())) {
+                if (rem.getOrAddTrait(Owner.class).isOwnedBy(owner)) {
+                    history.add(sender, new RemoveNPCHistoryItem(rem));
+                    rem.destroy(sender);
                 }
             }
             Messaging.sendTr(sender, Messages.NPCS_REMOVED);
@@ -1787,8 +1785,8 @@ public class NPCCommands {
                     throw new NoPermissionsException();
                 for (NPC rem : CitizensAPI.getNPCRegistry()) {
                     history.add(sender, new RemoveNPCHistoryItem(rem));
-                    rem.destroy();
                 }
+                CitizensAPI.getNPCRegistry().deregisterAll();
                 Messaging.sendTr(sender, Messages.REMOVED_ALL_NPCS);
                 return;
             } else {
