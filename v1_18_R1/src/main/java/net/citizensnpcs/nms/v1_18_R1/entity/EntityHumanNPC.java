@@ -218,6 +218,10 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             }
         }
 
+        if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
+            pushEntities();
+        }
+
         tickEffects();
         this.animStepO = this.animStep;
         this.yBodyRotO = this.yBodyRot;
@@ -375,9 +379,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean isPushable() {
-        return npc == null ? super.isPushable()
-                : npc.data().has(NPC.COLLIDABLE_METADATA) ? npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA)
-                        : !npc.isProtected();
+        return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA, !npc.isProtected());
     }
 
     private void moveOnCurrentHeading() {
@@ -509,8 +511,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     public void updateAI() {
         controllerMove.tick();
-        controllerLook.a();
-        controllerJump.b();
+        controllerLook.tick();
+        controllerJump.tick();
     }
 
     private void updatePackets(boolean navigating) {

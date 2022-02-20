@@ -72,7 +72,7 @@ public class ScoreboardTrait extends Trait {
         if (SUPPORT_COLLIDABLE_SETOPTION && npc.data().has(NPC.COLLIDABLE_METADATA)) {
             try {
                 team.setOption(Option.COLLISION_RULE,
-                        (boolean) npc.data().get(NPC.COLLIDABLE_METADATA) ? OptionStatus.ALWAYS : OptionStatus.NEVER);
+                        npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? OptionStatus.ALWAYS : OptionStatus.NEVER);
             } catch (NoSuchMethodError e) {
                 SUPPORT_COLLIDABLE_SETOPTION = false;
             } catch (NoClassDefFoundError e) {

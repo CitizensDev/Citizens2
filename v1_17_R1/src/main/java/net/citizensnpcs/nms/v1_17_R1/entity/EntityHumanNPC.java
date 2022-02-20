@@ -214,6 +214,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 setLastHurtByMob((LivingEntity) null);
             }
         }
+        if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
+            pushEntities();
+        }
         tickEffects();
         this.animStepO = this.animStep;
         this.yBodyRotO = this.yBodyRot;

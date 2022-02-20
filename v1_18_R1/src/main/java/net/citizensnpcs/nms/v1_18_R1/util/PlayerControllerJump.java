@@ -10,7 +10,7 @@ public class PlayerControllerJump {
         this.b = entityinsentient;
     }
 
-    public void b() {
+    public void tick() {
         this.b.setJumping(this.a);
         this.a = false;
     }

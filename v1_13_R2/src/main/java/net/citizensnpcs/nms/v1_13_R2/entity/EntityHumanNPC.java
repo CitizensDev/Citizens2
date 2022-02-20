@@ -368,6 +368,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (this.hurtTicks > 0) {
             this.hurtTicks -= 1;
         }
+        if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
+            cN();
+        }
         tickPotionEffects();
         this.bc = this.bb;
         this.aR = this.aQ;
