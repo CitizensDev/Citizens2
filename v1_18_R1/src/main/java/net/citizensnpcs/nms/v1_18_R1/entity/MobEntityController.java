@@ -12,6 +12,8 @@ import org.bukkit.entity.Entity;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R1.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
+import net.citizensnpcs.Settings;
+import net.citizensnpcs.util.Util;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
@@ -38,15 +40,9 @@ public abstract class MobEntityController extends AbstractEntityController {
         }
         entity.setUUID(npc.getUniqueId());
 
-        /*String name = npc.getFullName().length() > 16 ? npc.getFullName().substring(0, 16) : npc.getFullName();
-        String teamName = Util.getTeamName(npc.getUniqueId());
-        if (npc.requiresNameHologram()) {
-            name = teamName;
+        if (Settings.Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+            Util.generateTeamFor(npc, npc.getUniqueId().toString(), Util.getTeamName(npc.getUniqueId()));
         }
-        
-        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-            Util.generateTeamFor(npc, name, teamName);
-        }*/
         return entity.getBukkitEntity();
     }
 
