@@ -160,7 +160,7 @@ public class Equipment extends Trait {
             }
         } else {
             EntityEquipment equip = getEquipmentFromEntity(npc.getEntity());
-            equipment[0] = clone(equip.getItemInMainHand());
+            equipment[0] = clone(equip.getItemInHand());
             equipment[1] = clone(equip.getHelmet());
             equipment[2] = clone(equip.getChestplate());
             equipment[3] = clone(equip.getLeggings());
