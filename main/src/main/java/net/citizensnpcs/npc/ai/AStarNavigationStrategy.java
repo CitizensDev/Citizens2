@@ -141,7 +141,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location loc = npc.getEntity().getLocation(NPC_LOCATION);
         /* Proper door movement - gets stuck on corners at times
-        
+
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
@@ -151,8 +151,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 destVector.setZ(vector.getZ() + targetFace.getModZ());
             }
         }*/
-        Location dest = Util.getCenterLocation(
-                new Location(loc.getWorld(), vector.getX(), vector.getY(), vector.getZ()).getBlock());
+        Location dest = Util.getCenterLocation(vector.toLocation(loc.getWorld()).getBlock());
         double dX = dest.getX() - loc.getX();
         double dZ = dest.getZ() - loc.getZ();
         double dY = dest.getY() - loc.getY();

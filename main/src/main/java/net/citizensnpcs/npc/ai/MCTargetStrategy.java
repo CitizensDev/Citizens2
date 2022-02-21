@@ -154,6 +154,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         @Override
         public Location getCurrentDestination() {
+            if (strategy == null)
+                return null;
             return strategy.getCurrentDestination();
         }
 
@@ -221,6 +223,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         @Override
         public Location getCurrentDestination() {
+            if (active == null)
+                return null;
             return active.getCurrentDestination();
         }
 
