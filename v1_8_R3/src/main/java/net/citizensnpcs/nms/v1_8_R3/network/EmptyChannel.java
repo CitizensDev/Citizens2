@@ -19,7 +19,8 @@ public class EmptyChannel extends AbstractChannel {
     static {
         Map<String, Version> versionMap = Version.identify();
         Version nettyVersion = versionMap.get("netty-common");
-        if (nettyVersion == null) nettyVersion = versionMap.get("netty-all");
+        if (nettyVersion == null)
+            nettyVersion = versionMap.get("netty-all");
 
         if (nettyVersion != null) {
             String[] split = nettyVersion.artifactVersion().split("\\.");
@@ -31,10 +32,8 @@ public class EmptyChannel extends AbstractChannel {
                 if (major > 4 || minor > 1 || revision > 24) {
                     updatedNetty = true;
                 }
-            }
-            catch (ArrayIndexOutOfBoundsException ignored) {
-            }
-            catch (NumberFormatException ignored) {
+            } catch (ArrayIndexOutOfBoundsException ignored) {
+            } catch (NumberFormatException ignored) {
             }
         }
     }

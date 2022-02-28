@@ -30,7 +30,7 @@ public class VillagerProfession extends Trait {
     public void load(DataKey key) throws NPCLoadException {
         try {
             profession = Profession.valueOf(key.getString(""));
-            if (profession.name().equals("NORMAL")) {
+            if ("NORMAL".equals(profession.name())) {
                 profession = Profession.FARMER;
             }
         } catch (IllegalArgumentException ex) {
@@ -40,6 +40,8 @@ public class VillagerProfession extends Trait {
 
     @Override
     public void onSpawn() {
+        if (!npc.isSpawned())
+            return;
         if (npc.getEntity() instanceof Villager) {
             ((Villager) npc.getEntity()).setProfession(profession);
         } else if (npc.getEntity() instanceof ZombieVillager) {
@@ -53,15 +55,11 @@ public class VillagerProfession extends Trait {
     }
 
     public void setProfession(Profession profession) {
-        if (profession.name().equals("NORMAL")) {
+        if ("NORMAL".equals(profession.name())) {
             profession = Profession.FARMER;
         }
         this.profession = profession;
-        if (npc.getEntity() instanceof Villager) {
-            ((Villager) npc.getEntity()).setProfession(profession);
-        } else if (npc.getEntity() instanceof ZombieVillager) {
-            ((ZombieVillager) npc.getEntity()).setVillagerProfession(profession);
-        }
+        onSpawn();
     }
 
     @Override
