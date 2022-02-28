@@ -697,6 +697,7 @@ public class NMSImpl implements NMSBridge {
                         }
                     }
                 }
+
                 navigation.setSpeedModifier(params.speed());
                 return navigation.isDone();
             }
@@ -922,9 +923,10 @@ public class NMSImpl implements NMSBridge {
             double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
             double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
 
-            double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
-            double pitch = Math.toDegrees(Math.acos(yDiff / distanceY))
-                    - (handle.getBukkitEntity().getType() == EntityType.PHANTOM ? 45 : 90);
+            double yaw = distanceXZ == 0 ? 0 : Math.toDegrees(Math.acos(xDiff / distanceXZ));
+            double pitch = distanceY == 0 ? 0
+                    : Math.toDegrees(Math.acos(yDiff / distanceY))
+                            - (handle.getBukkitEntity().getType() == EntityType.PHANTOM ? 45 : 90);
             if (zDiff < 0.0)
                 yaw += Math.abs(180 - yaw) * 2;
             if (handle.getBukkitEntity().getType() == EntityType.ENDER_DRAGON) {

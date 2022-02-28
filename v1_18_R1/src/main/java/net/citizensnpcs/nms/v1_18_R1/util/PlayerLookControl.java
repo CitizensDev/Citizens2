@@ -21,53 +21,6 @@ public class PlayerLookControl {
         this.control = new PlayerBodyControl(this.a);
     }
 
-    public void tick() {
-        if (!this.a.getNavigation().isDone()) {
-            // TODO: use Citizens AI?
-            // this.a.yHeadRot = Mth.rotateIfNecessary(this.a.yHeadRot, this.a.yBodyRot, 75);
-            return;
-        }
-        if (this.b()) {
-            // this.a.setXRot(0.0F);
-        }
-        if (this.looking) {
-            this.looking = false;
-            this.a.setXRot(this.rotateTowards(this.a.getXRot(), this.g(), this.tpitch));
-            this.a.yHeadRot = this.rotateTowards(this.a.yHeadRot, this.h(), this.tyaw);
-            while (this.a.yHeadRot >= 180F) {
-                this.a.yHeadRot -= 360F;
-            }
-            while (this.a.yHeadRot < -180F) {
-                this.a.yHeadRot += 360F;
-            }
-            double d = this.a.yHeadRot - 40;
-            while (d >= 180F) {
-                d -= 360F;
-            }
-            while (d < -180F) {
-                d += 360F;
-            }
-            if (d > this.a.getYRot()) {
-                this.a.setYRot((float) d);
-            }
-            if (d != this.a.getYRot()) {
-                d = this.a.yHeadRot + 40;
-                while (d >= 180F) {
-                    d -= 360F;
-                }
-                while (d < -180F) {
-                    d += 360F;
-                }
-                if (d < this.a.getYRot()) {
-                    this.a.setYRot((float) d);
-                }
-            }
-            // this.a.setYRot(this.a(this.a.yHeadRot, this.h(), this.b));
-        } else {
-            // this.a.yHeadRot = rotateTowards(this.a.yHeadRot, this.a.yBodyRot, 10.0F);
-        }
-    }
-
     public void a(double var0, double var2, double var4) {
         this.a(var0, var2, var4, 10, 40);
     }
@@ -131,6 +84,53 @@ public class PlayerLookControl {
         float var3 = Mth.degreesDifference(var0, var1);
         float var4 = Mth.clamp(var3, -var2, var2);
         return var0 + var4;
+    }
+
+    public void tick() {
+        if (!this.a.getNavigation().isDone()) {
+            // TODO: use Citizens AI?
+            // this.a.yHeadRot = Mth.rotateIfNecessary(this.a.yHeadRot, this.a.yBodyRot, 75);
+            return;
+        }
+        if (this.b()) {
+            // this.a.setXRot(0.0F);
+        }
+        if (this.looking) {
+            this.looking = false;
+            this.a.setXRot(this.rotateTowards(this.a.getXRot(), this.g(), this.tpitch));
+            this.a.yHeadRot = this.rotateTowards(this.a.yHeadRot, this.h(), this.tyaw);
+            while (this.a.yHeadRot >= 180F) {
+                this.a.yHeadRot -= 360F;
+            }
+            while (this.a.yHeadRot < -180F) {
+                this.a.yHeadRot += 360F;
+            }
+            double d = this.a.yHeadRot - 40;
+            while (d >= 180F) {
+                d -= 360F;
+            }
+            while (d < -180F) {
+                d += 360F;
+            }
+            if (d > this.a.getYRot()) {
+                this.a.setYRot((float) d);
+            }
+            if (d != this.a.getYRot()) {
+                d = this.a.yHeadRot + 40;
+                while (d >= 180F) {
+                    d -= 360F;
+                }
+                while (d < -180F) {
+                    d += 360F;
+                }
+                if (d < this.a.getYRot()) {
+                    this.a.setYRot((float) d);
+                }
+            }
+            // this.a.setYRot(this.a(this.a.yHeadRot, this.h(), this.b));
+        } else {
+            // this.a.yHeadRot = rotateTowards(this.a.yHeadRot, this.a.yBodyRot, 10.0F);
+        }
     }
 
     private static double b(Entity var0) {

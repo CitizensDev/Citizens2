@@ -25,7 +25,6 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
@@ -134,7 +133,7 @@ public class PlayerNavigation extends PathNavigation {
     protected boolean canUpdatePath() {
         return (this.mob.isOnGround() || isInLiquid() || this.mob.isPassenger());
     }
-
+    /*
     private boolean canWalkAbove(int var0, int var1, int var2, int var3, int var4, int var5, Vec3 var6, double var7,
             double var9) {
         for (BlockPos var12 : BlockPos.betweenClosed(new BlockPos(var0, var1, var2),
@@ -148,7 +147,7 @@ public class PlayerNavigation extends PathNavigation {
         }
         return true;
     }
-
+    
     private boolean canWalkOn(int var0, int var1, int var2, int var3, int var4, int var5, Vec3 var6, double var7,
             double var9) {
         int var11 = var0 - var3 / 2;
@@ -176,7 +175,7 @@ public class PlayerNavigation extends PathNavigation {
             }
         }
         return true;
-    }
+    }*/
 
     @Override
     public Path createPath(BlockPos var0, int var1) {
