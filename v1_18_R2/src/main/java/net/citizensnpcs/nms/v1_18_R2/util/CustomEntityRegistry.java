@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -143,7 +144,8 @@ public class CustomEntityRegistry extends DefaultedRegistry {
     public CustomEntityRegistry(DefaultedRegistry<EntityType<?>> original) throws Throwable {
         super(original.getDefaultKey().getNamespace(),
                 (ResourceKey<Registry<EntityType<?>>>) IREGISTRY_RESOURCE_KEY.invoke(original),
-                (Lifecycle) IREGISTRY_LIFECYCLE.invoke(original), null);
+                (Lifecycle) IREGISTRY_LIFECYCLE.invoke(original),
+                (Function) IREGISTRY_CUSTOM_HOLDER_PROVDER.invoke(original));
         this.wrapped = original;
     }
 
@@ -224,6 +226,8 @@ public class CustomEntityRegistry extends DefaultedRegistry {
         entityIds.put(entityClass, entityId);
     }
 
+    private static final MethodHandle IREGISTRY_CUSTOM_HOLDER_PROVDER = NMS.getFirstGetter(MappedRegistry.class,
+            Function.class);
     private static final MethodHandle IREGISTRY_LIFECYCLE = NMS.getFirstGetter(Registry.class, Lifecycle.class);
     // replace regex
     // .*?> ([A-Z_]+).*?of\((.*?)::new.*?$

@@ -16,7 +16,9 @@ public class SneakTrait extends Trait {
     }
 
     private void apply() {
-        NMS.setSneaking(npc.getEntity(), sneaking);
+        if (npc.isSpawned()) {
+            NMS.setSneaking(npc.getEntity(), sneaking);
+        }
     }
 
     @Override
@@ -34,8 +36,6 @@ public class SneakTrait extends Trait {
 
     public void setSneaking(boolean sneak) {
         this.sneaking = sneak;
-        if (npc.isSpawned()) {
-            apply();
-        }
+        apply();
     }
 }

@@ -326,9 +326,6 @@ public class CitizensNPC extends AbstractNPC {
             if (getEntity() instanceof Player) {
                 NMS.replaceTrackerEntry((Player) getEntity());
                 PlayerUpdateTask.registerPlayer(getEntity());
-                if (!hasTrait(SneakTrait.class)) {
-                    addTrait(SneakTrait.class);
-                }
             }
         }
 
@@ -408,6 +405,9 @@ public class CitizensNPC extends AbstractNPC {
 
             if (isLiving && getEntity() instanceof Player) {
                 updateUsingItemState((Player) getEntity());
+                if (data().has(NPC.Metadata.SNEAKING) && !hasTrait(SneakTrait.class)) {
+                    addTrait(SneakTrait.class);
+                }
             }
 
             if (SUPPORT_SILENT && data().has(NPC.SILENT_METADATA)) {
