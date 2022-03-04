@@ -69,8 +69,8 @@ public class ShopTrait extends Trait {
         private String title;
     }
 
-    @Persist(value = "npcShops", namespace = "shopstrait")
+    @Persist(value = "npcShops", reify = true, namespace = "shopstrait")
     private static Map<String, NPCShop> NPC_SHOPS = Maps.newHashMap();
-    @Persist(value = "namedShops", namespace = "shopstrait")
+    @Persist(value = "namedShops", reify = true, namespace = "shopstrait")
     private static Map<String, NPCShop> SHOPS = Maps.newHashMap();
 }
