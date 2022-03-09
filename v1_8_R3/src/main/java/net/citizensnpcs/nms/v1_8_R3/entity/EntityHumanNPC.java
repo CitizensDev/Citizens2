@@ -118,18 +118,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
+        boolean damaged = super.damageEntity(damagesource, f);
+
         // knock back velocity is cancelled and sent to client for handling when
         // the entity is a player. there is no client so make this happen
         // manually.
-        boolean damaged = super.damageEntity(damagesource, f);
         if (damaged && velocityChanged) {
             velocityChanged = false;
-            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    EntityHumanNPC.this.velocityChanged = true;
-                }
-            });
         }
         return damaged;
     }
@@ -287,6 +282,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             super.l();
             return;
         }
+
         super.K();
         boolean navigating = npc.getNavigator().isNavigating();
         if (!navigating && getBukkitEntity() != null
