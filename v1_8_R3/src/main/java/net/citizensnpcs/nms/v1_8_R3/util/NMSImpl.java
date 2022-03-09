@@ -238,6 +238,14 @@ public class NMSImpl implements NMSBridge {
         if (fireAspectLevel > 0) {
             target.setOnFire(fireAspectLevel * 4);
         }
+
+        if (ENTITY_ATTACK_A != null) {
+            try {
+                ENTITY_ATTACK_A.invoke(handle, handle, target);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -1456,7 +1464,9 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE,
             EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
             EntityType.GHAST);
+
     private static final float DEFAULT_SPEED = 1F;
+    private static Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class, Entity.class);
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
