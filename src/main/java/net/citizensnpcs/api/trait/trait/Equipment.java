@@ -147,7 +147,7 @@ public class Equipment extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned())
+        if (!npc.isSpawned() || !(npc.getEntity() instanceof LivingEntity))
             return;
         if (npc.getEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getEntity();

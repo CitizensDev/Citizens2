@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
@@ -61,7 +62,9 @@ public class Inventory extends Trait {
         for (int i = 0; i < contents.length; i++) {
             this.contents[i] = contents[i];
             if (i == 0) {
-                npc.getOrAddTrait(Equipment.class).setItemInHand(contents[i]);
+                if (npc.getEntity() instanceof LivingEntity) {
+                    npc.getOrAddTrait(Equipment.class).setItemInHand(contents[i]);
+                }
             }
         }
         if (npc.getEntity() instanceof InventoryHolder) {
@@ -163,7 +166,7 @@ public class Inventory extends Trait {
         } else if (entity instanceof InventoryHolder) {
             contents = ((InventoryHolder) entity).getInventory().getContents();
         }
-        if (entity instanceof Player) {
+        if (entity instanceof LivingEntity) {
             npc.getOrAddTrait(Equipment.class).setItemInHand(contents[0]);
         }
     }
@@ -232,7 +235,7 @@ public class Inventory extends Trait {
         } else {
             throw new IndexOutOfBoundsException();
         }
-        if (slot == 0) {
+        if (slot == 0 && npc.getEntity() instanceof LivingEntity) {
             npc.getOrAddTrait(Equipment.class).setItemInHand(item);
         }
     }
