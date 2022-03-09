@@ -23,7 +23,14 @@ public class ChunkBlockSource extends CachingChunkBlockSource<Chunk> {
 
     @Override
     protected BoundingBox getCollisionBox(Chunk chunk, int x, int y, int z) {
-        return BoundingBox.convert(chunk.getBlock(x, y, z).getBoundingBox());
+        if (!SUPPORT_BOUNDING_BOX)
+            return null;
+        try {
+            return BoundingBox.convert(world.getBlockAt(x, y, z).getBoundingBox());
+        } catch (NoSuchMethodError e) {
+            SUPPORT_BOUNDING_BOX = false;
+            return null;
+        }
     }
 
     @Override
@@ -35,4 +42,6 @@ public class ChunkBlockSource extends CachingChunkBlockSource<Chunk> {
     protected Material getType(Chunk chunk, int x, int y, int z) {
         return chunk.getBlock(x, y, z).getType();
     }
+
+    private static boolean SUPPORT_BOUNDING_BOX = true;
 }

@@ -44,12 +44,20 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
     @Override
     public BoundingBox getCollisionBox(int x, int y, int z) {
         if (y > 255) {
-            return new BoundingBox(-1, -1, -1, 1, 1, 1);
+            return BoundingBox.EMPTY;
         }
         T chunk = getSpecific(x, z);
         if (chunk != null)
             return getCollisionBox(chunk, x & 15, y, z & 15);
-        return BoundingBox.convert(world.getBlockAt(x, y, z).getBoundingBox());
+        if (!SUPPORT_BOUNDING_BOX) {
+            return null;
+        }
+        try {
+            return BoundingBox.convert(world.getBlockAt(x, y, z).getBoundingBox());
+        } catch (NoSuchMethodError e) {
+            SUPPORT_BOUNDING_BOX = false;
+            return null;
+        }
     }
 
     protected abstract BoundingBox getCollisionBox(T chunk, int x, int y, int z);
@@ -127,4 +135,6 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
             return 31 * result + z;
         }
     }
+
+    private static boolean SUPPORT_BOUNDING_BOX = true;
 }
