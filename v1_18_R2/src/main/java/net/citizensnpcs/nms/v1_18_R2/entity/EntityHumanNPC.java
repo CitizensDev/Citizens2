@@ -61,7 +61,6 @@ import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
@@ -196,38 +195,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             this.onGround = false;
         }
 
-        if (this.hurtTime > 0) {
-            this.hurtTime--;
-        }
-
-        if (isDeadOrDying()) {
-            tickDeath();
-        }
-
-        if (this.lastHurtByPlayerTime > 0) {
-            this.lastHurtByPlayerTime--;
-        } else {
-            this.lastHurtByPlayer = null;
-        }
-
-        if (this.lastHurtByMob != null) {
-            if (!this.lastHurtByMob.isAlive()) {
-                setLastHurtByMob((LivingEntity) null);
-            } else if (this.tickCount - this.lastHurtByMobTimestamp > 100) {
-                setLastHurtByMob((LivingEntity) null);
-            }
-        }
-
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             pushEntities();
         }
-
-        tickEffects();
-        this.animStepO = this.animStep;
-        this.yBodyRotO = this.yBodyRot;
-        this.yHeadRotO = this.yHeadRot;
-        this.yRotO = getYRot();
-        this.xRotO = getXRot();
     }
 
     @Override

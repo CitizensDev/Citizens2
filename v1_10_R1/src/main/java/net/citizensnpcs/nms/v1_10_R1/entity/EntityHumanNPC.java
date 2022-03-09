@@ -281,6 +281,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             super.k_();
             return;
         }
+        super.U();
         boolean navigating = npc.getNavigator().isNavigating();
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
@@ -297,20 +298,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             moveOnCurrentHeading();
         }
         NMSImpl.updateAI(this);
-        this.aD = this.aE;
-        this.aK = this.aL;
-        if (this.hurtTicks > 0) {
-            this.hurtTicks -= 1;
-        }
+
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             cs();
         }
-        tickPotionEffects();
-        this.ba = this.aZ;
-        this.aP = this.aO;
-        this.aR = this.aQ;
-        this.lastYaw = this.yaw;
-        this.lastPitch = this.pitch;
     }
 
     @Override

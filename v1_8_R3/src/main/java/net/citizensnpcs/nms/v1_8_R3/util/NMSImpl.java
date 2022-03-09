@@ -213,6 +213,7 @@ public class NMSImpl implements NMSBridge {
             PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
             return;
         }
+
         AttributeInstance attackDamage = handle.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE);
         float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;

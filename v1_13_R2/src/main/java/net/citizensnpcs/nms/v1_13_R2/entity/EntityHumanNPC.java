@@ -363,20 +363,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             moveOnCurrentHeading();
         }
         NMSImpl.updateAI(this);
-        this.aF = this.aG;
-        this.aM = this.aN;
-        if (this.hurtTicks > 0) {
-            this.hurtTicks -= 1;
-        }
+
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             cN();
         }
-        tickPotionEffects();
-        this.bc = this.bb;
-        this.aR = this.aQ;
-        this.aT = this.aS;
-        this.lastYaw = this.yaw;
-        this.lastPitch = this.pitch;
     }
 
     public void setMoveDestination(double x, double y, double z, double speed) {
