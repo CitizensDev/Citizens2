@@ -139,11 +139,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void despawnNPCs(boolean save) {
-        for (NPCRegistry reg : Iterables.concat(Arrays.asList(npcRegistry), citizensBackedRegistries)) {
+        for (NPCRegistry registry : Iterables.concat(Arrays.asList(npcRegistry), citizensBackedRegistries)) {
+            if (registry == null)
+                continue;
             if (save) {
-                reg.saveToStore();
+                registry.saveToStore();
             }
-            reg.despawnNPCs(DespawnReason.RELOAD);
+            registry.despawnNPCs(DespawnReason.RELOAD);
         }
     }
 
