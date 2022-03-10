@@ -8,7 +8,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.monster.Slime;
@@ -17,7 +16,7 @@ public class PlayerMoveControl extends MoveControl {
     protected LivingEntity entity;
     private int jumpTicks;
     protected boolean moving;
-    protected double speed;
+    protected double speedMod;
     protected double tx;
     protected double ty;
     protected double tz;
@@ -33,7 +32,7 @@ public class PlayerMoveControl extends MoveControl {
 
     @Override
     public double getSpeedModifier() {
-        return this.speed;
+        return this.speedMod;
     }
 
     @Override
@@ -88,7 +87,7 @@ public class PlayerMoveControl extends MoveControl {
         this.tx = d0;
         this.ty = d1;
         this.tz = d2;
-        this.speed = d3;
+        this.speedMod = d3;
         this.moving = true;
     }
 
@@ -111,16 +110,14 @@ public class PlayerMoveControl extends MoveControl {
             double dZ = this.tz - this.entity.getZ();
             double dY = this.ty - this.entity.getY();
             double dXZ = Math.sqrt(dX * dX + dZ * dZ);
-            if (Math.abs(dY) < 1.0 && dXZ <= 0.025) {
+            if (Math.abs(dY) < 1.0 && dXZ <= 0.1) {
                 // this.entity.zza = 0.0F;
                 return;
             }
             float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
             this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
             NMS.setHeadYaw(entity.getBukkitEntity(), this.entity.getYRot());
-            AttributeInstance speed = this.entity.getAttribute(Attributes.MOVEMENT_SPEED);
-            speed.setBaseValue(0.3D * this.speed);
-            float movement = (float) (this.speed * speed.getValue());
+            float movement = (float) (this.speedMod * this.entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue());
             this.entity.setSpeed(movement);
             this.entity.zza = movement;
             if (shouldJump() || (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 0.4D)) {

@@ -318,6 +318,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             }
             range = getAttribute(Attributes.FOLLOW_RANGE);
         }
+        getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3D);
         range.setBaseValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
 
         controllerJump = new PlayerControllerJump(this);

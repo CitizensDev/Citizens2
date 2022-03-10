@@ -10,11 +10,11 @@ public class PlayerLookControl {
     private final EntityHumanNPC a;
     private final PlayerBodyControl control;
     protected boolean looking;
-    protected float tpitch;
     protected double tx;
     protected double ty;
-    protected float tyaw;
     protected double tz;
+    protected float xMaxRotAngle;
+    protected float yMaxRotSpeed;
 
     public PlayerLookControl(EntityHumanNPC entityinsentient) {
         this.a = entityinsentient;
@@ -33,8 +33,8 @@ public class PlayerLookControl {
         this.tx = var0;
         this.ty = var2;
         this.tz = var4;
-        this.tyaw = var6;
-        this.tpitch = var7;
+        this.yMaxRotSpeed = var6;
+        this.xMaxRotAngle = var7;
         this.looking = true;
     }
 
@@ -66,15 +66,15 @@ public class PlayerLookControl {
         return this.tz;
     }
 
-    protected float g() {
+    protected float getXRotD() {
         double var0 = this.tx - this.a.getX();
-        double var2 = this.ty - (this.a.getY() + this.a.getEyeY());
+        double var2 = this.ty - this.a.getEyeY();
         double var4 = this.tz - this.a.getZ();
         double var6 = Mth.sqrt((float) (var0 * var0 + var4 * var4));
         return (float) (-(Mth.atan2(var2, var6) * 57.2957763671875D));
     }
 
-    protected float h() {
+    protected float getYRotD() {
         double var0 = this.tx - this.a.getX();
         double var2 = this.tz - this.a.getZ();
         return (float) (Mth.atan2(var2, var0) * 57.2957763671875D) - 90.0F;
@@ -97,8 +97,8 @@ public class PlayerLookControl {
         }
         if (this.looking) {
             this.looking = false;
-            this.a.setXRot(this.rotateTowards(this.a.getXRot(), this.g(), this.tpitch));
-            this.a.yHeadRot = this.rotateTowards(this.a.yHeadRot, this.h(), this.tyaw);
+            this.a.setXRot(this.rotateTowards(this.a.getXRot(), this.getXRotD(), this.xMaxRotAngle));
+            this.a.yHeadRot = this.rotateTowards(this.a.yHeadRot, this.getYRotD(), this.yMaxRotSpeed);
             while (this.a.yHeadRot >= 180F) {
                 this.a.yHeadRot -= 360F;
             }

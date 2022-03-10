@@ -119,7 +119,6 @@ public class PlayerMoveControl extends MoveControl {
             this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
             NMS.setHeadYaw(entity.getBukkitEntity(), this.entity.getYRot());
             AttributeInstance speed = this.entity.getAttribute(Attributes.MOVEMENT_SPEED);
-            speed.setBaseValue(0.3D * this.speed);
             float movement = (float) (this.speed * speed.getValue());
             this.entity.setSpeed(movement);
             this.entity.zza = movement;
