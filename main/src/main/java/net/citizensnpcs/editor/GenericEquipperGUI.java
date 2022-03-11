@@ -36,7 +36,7 @@ import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
         filter = InventoryAction.UNKNOWN)
 @MenuSlot(
         slot = { 0, 1 },
-        compatMaterial = { "SHIELD", "AIR" },
+        compatMaterial = { "SHIELD", "BARRIER", "FIRE" },
         lore = "Place offhand item below",
         amount = 1,
         filter = InventoryAction.UNKNOWN)
