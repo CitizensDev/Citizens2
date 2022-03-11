@@ -253,11 +253,10 @@ public class InventoryMenu implements Listener, Runnable {
         if (page == null)
             return;
         Inventory clicked = event.getClickedInventory() != null ? event.getClickedInventory() : event.getInventory();
-        if (event.getInventory().equals(page.ctx.getInventory())
-                && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+        if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
             event.setCancelled(true);
             Inventory dest = event.getInventory() == event.getClickedInventory() ? event.getWhoClicked().getInventory()
-                    : event.getInventory();
+                    : page.ctx.getInventory();
             boolean toNPC = dest == page.ctx.getInventory();
             if ((event.getCursor() == null || event.getCursor().getType() == Material.AIR)) {
                 handleShiftClick(event, dest, toNPC);

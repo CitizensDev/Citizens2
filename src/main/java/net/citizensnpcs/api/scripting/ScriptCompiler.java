@@ -338,7 +338,7 @@ public class ScriptCompiler {
             INIT_APPLICATION_CLASS_LOADER.setAccessible(true);
             CLASSLOADER_OVERRIDE_ENABLED = true;
         } catch (Exception e) {
-            Messaging.debug("Unable to find Rhino classes - javascript scripts won't see non-CraftBukkit classes");
+            // Nashorn is preferred anyway
         }
     }
 }

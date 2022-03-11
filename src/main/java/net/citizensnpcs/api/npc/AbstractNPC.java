@@ -112,10 +112,11 @@ public abstract class AbstractNPC implements NPC {
 
         // if an existing trait is being replaced, we need to remove the
         // currently registered runnable to avoid conflicts
-        Trait replaced = traits.get(trait.getClass());
+        Class<? extends Trait> clazz = trait.getClass();
+        Trait replaced = traits.get(clazz);
 
         Bukkit.getPluginManager().registerEvents(trait, CitizensAPI.getPlugin());
-        traits.put(trait.getClass(), trait);
+        traits.put(clazz, trait);
         if (isSpawned()) {
             trait.onSpawn();
         }
