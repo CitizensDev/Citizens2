@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import org.bukkit.entity.Pig;
+import org.bukkit.entity.Steerable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
@@ -8,6 +9,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.util.Util;
 
 /**
  * Persists saddle metadata.
@@ -16,9 +18,9 @@ import net.citizensnpcs.api.trait.TraitName;
  */
 @TraitName("saddle")
 public class Saddle extends Trait implements Toggleable {
-    private boolean pig;
     @Persist("")
     private boolean saddle;
+    private boolean steerable;
 
     public Saddle() {
         super("saddle");
@@ -26,24 +28,27 @@ public class Saddle extends Trait implements Toggleable {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (pig && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
+        if (steerable && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked()))) {
             event.setCancelled(true);
+        }
     }
 
     @Override
     public void onSpawn() {
-        if (npc.getEntity() instanceof Pig) {
-            ((Pig) npc.getEntity()).setSaddle(saddle);
-            pig = true;
-        } else
-            pig = false;
+        if (Util.optionalEntitySet("PIG", "STRIDER").contains(npc.getEntity().getType())) {
+            steerable = true;
+            updateSaddleState();
+        } else {
+            steerable = false;
+        }
     }
 
     @Override
     public boolean toggle() {
         saddle = !saddle;
-        if (pig)
-            ((Pig) npc.getEntity()).setSaddle(saddle);
+        if (steerable) {
+            updateSaddleState();
+        }
         return saddle;
     }
 
@@ -52,7 +57,22 @@ public class Saddle extends Trait implements Toggleable {
         return "Saddle{" + saddle + "}";
     }
 
+    private void updateSaddleState() {
+        if (SUPPORT_STEERABLE) {
+            try {
+                ((Steerable) npc.getEntity()).setSaddle(saddle);
+            } catch (Throwable t) {
+                SUPPORT_STEERABLE = false;
+                ((Pig) npc.getEntity()).setSaddle(saddle);
+            }
+        } else {
+            ((Pig) npc.getEntity()).setSaddle(saddle);
+        }
+    }
+
     public boolean useSaddle() {
         return saddle;
     }
+
+    private static boolean SUPPORT_STEERABLE = true;
 }

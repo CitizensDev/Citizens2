@@ -100,7 +100,11 @@ public class EquipmentEditor extends Editor {
     private static final Map<EntityType, Equipper> EQUIPPERS = Maps.newEnumMap(EntityType.class);
 
     static {
-        EQUIPPER_GUIS.put(EntityType.PIG, PigEquipperGUI.class);
+        EQUIPPER_GUIS.put(EntityType.PIG, SteerableEquipperGUI.class);
+        try {
+            EQUIPPER_GUIS.put(EntityType.valueOf("STRIDER"), SteerableEquipperGUI.class);
+        } catch (IllegalArgumentException ex) {
+        }
         EQUIPPER_GUIS.put(EntityType.ENDERMAN, EndermanEquipperGUI.class);
         EQUIPPERS.put(EntityType.SHEEP, new SheepEquipper());
         EQUIPPERS.put(EntityType.HORSE, new HorseEquipper());

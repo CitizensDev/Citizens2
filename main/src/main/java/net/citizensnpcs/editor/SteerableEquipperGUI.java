@@ -33,7 +33,7 @@ import net.citizensnpcs.trait.Saddle;
                 compatMaterial = { "BARRIER", "FIRE" },
                 title = "<4>Unused") },
         value = "xxx")
-public class PigEquipperGUI extends InventoryMenuPage {
+public class SteerableEquipperGUI extends InventoryMenuPage {
     @InjectContext
     private NPC npc;
     @MenuSlot(slot = { 0, 1 })

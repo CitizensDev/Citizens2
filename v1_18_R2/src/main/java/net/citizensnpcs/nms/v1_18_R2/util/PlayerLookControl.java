@@ -68,7 +68,7 @@ public class PlayerLookControl {
 
     protected float getXRotD() {
         double var0 = this.tx - this.a.getX();
-        double var2 = this.ty - this.a.getEyeY();
+        double var2 = this.ty - (this.a.getY() + this.a.getEyeY());
         double var4 = this.tz - this.a.getZ();
         double var6 = Mth.sqrt((float) (var0 * var0 + var4 * var4));
         return (float) (-(Mth.atan2(var2, var6) * 57.2957763671875D));
