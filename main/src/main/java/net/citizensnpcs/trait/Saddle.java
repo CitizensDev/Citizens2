@@ -2,10 +2,7 @@ package net.citizensnpcs.trait;
 
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Steerable;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -24,13 +21,6 @@ public class Saddle extends Trait implements Toggleable {
 
     public Saddle() {
         super("saddle");
-    }
-
-    @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (steerable && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked()))) {
-            event.setCancelled(true);
-        }
     }
 
     @Override
