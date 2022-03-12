@@ -35,6 +35,8 @@ public class BoundingBoxExaminer implements BlockExaminer {
         if (!MinecraftBlockExaminer.canStandIn(up) && MinecraftBlockExaminer.canStandOn(down)) {
             BoundingBox above = source.getCollisionBox(pos.getBlockX(), pos.getBlockY() + 2, pos.getBlockZ());
             BoundingBox below = source.getCollisionBox(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
+            if (above == null || below == null)
+                return PassableState.IGNORE;
             float height = (float) (above.minY - below.maxY);
             if (height < this.height) {
                 return PassableState.UNPASSABLE;
