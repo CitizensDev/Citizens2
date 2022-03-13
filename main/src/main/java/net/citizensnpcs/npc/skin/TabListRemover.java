@@ -26,7 +26,8 @@ import net.citizensnpcs.util.NMS;
  * </p>
  */
 public class TabListRemover {
-    private final Map<UUID, PlayerEntry> pending = new HashMap<UUID, PlayerEntry>(Bukkit.getMaxPlayers() / 2);
+    private final Map<UUID, PlayerEntry> pending = new HashMap<UUID, PlayerEntry>(
+            Math.max(128, Math.min(1024, Bukkit.getMaxPlayers() / 2)));
 
     TabListRemover() {
         Bukkit.getScheduler().runTaskTimer(CitizensAPI.getPlugin(), new Sender(), 2, 2);
@@ -104,7 +105,7 @@ public class TabListRemover {
 
     private class PlayerEntry {
         Player player;
-        Set<SkinnableEntity> toRemove = new HashSet<SkinnableEntity>(25);
+        Set<SkinnableEntity> toRemove = new HashSet<SkinnableEntity>(30);
 
         PlayerEntry(Player player) {
             this.player = player;
