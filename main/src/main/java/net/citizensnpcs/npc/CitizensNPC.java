@@ -69,7 +69,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public boolean despawn(DespawnReason reason) {
         if (!isSpawned() && reason != DespawnReason.DEATH) {
-            Messaging.debug("Tried to despawn", getId(), "while already despawned, DespawnReason." + reason);
+            Messaging.debug("Tried to despawn", toString(), "while already despawned, DespawnReason." + reason);
             if (reason == DespawnReason.RELOAD) {
                 unloadEvents();
             }
@@ -81,7 +81,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() && reason != DespawnReason.DEATH) {
-            Messaging.debug("Couldn't despawn", getId(), "due to despawn event cancellation. Will load chunk.",
+            Messaging.debug("Couldn't despawn", toString(), "due to despawn event cancellation. Will load chunk.",
                     getEntity().isValid(), ", DespawnReason." + reason);
             return false;
         }
@@ -99,7 +99,7 @@ public class CitizensNPC extends AbstractNPC {
         for (Trait trait : new ArrayList<Trait>(traits.values())) {
             trait.onDespawn();
         }
-        Messaging.debug("Despawned", getId(), "DespawnReason." + reason);
+        Messaging.debug("Despawned", toString(), "DespawnReason." + reason);
         if (reason == DespawnReason.DEATH) {
             entityController.setEntity(null);
         } else {
@@ -161,7 +161,7 @@ public class CitizensNPC extends AbstractNPC {
             if (spawnLocation.getLocation() != null) {
                 spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
             } else {
-                Messaging.debug("Tried to spawn", getId(), "on load but world was null");
+                Messaging.debug("Tried to spawn", toString(), "on load but world was null");
             }
         }
 
@@ -240,11 +240,11 @@ public class CitizensNPC extends AbstractNPC {
         Preconditions.checkNotNull(at, "location cannot be null");
         Preconditions.checkNotNull(reason, "reason cannot be null");
         if (getEntity() != null) {
-            Messaging.debug("Tried to spawn", getId(), "while already spawned. SpawnReason." + reason);
+            Messaging.debug("Tried to spawn", toString(), "while already spawned. SpawnReason." + reason);
             return false;
         }
         if (at.getWorld() == null) {
-            Messaging.debug("Tried to spawn", getId(), "but the world was null. SpawnReason." + reason);
+            Messaging.debug("Tried to spawn", toString(), "but the world was null. SpawnReason." + reason);
             return false;
         }
         at = at.clone();
@@ -272,8 +272,8 @@ public class CitizensNPC extends AbstractNPC {
 
         if (!couldSpawn) {
             if (Messaging.isDebugging()) {
-                Messaging.debug("Retrying spawn of", getId(), "later, SpawnReason." + reason + ". Was loaded", loaded,
-                        "is loaded", Util.isLoaded(at));
+                Messaging.debug("Retrying spawn of", toString(), "later, SpawnReason." + reason + ". Was loaded",
+                        loaded, "is loaded", Util.isLoaded(at));
             }
             // we need to wait before trying to spawn
             entityController.remove();
@@ -300,7 +300,7 @@ public class CitizensNPC extends AbstractNPC {
 
         if (spawnEvent.isCancelled()) {
             entityController.remove();
-            Messaging.debug("Couldn't spawn", getId(), "SpawnReason." + reason + " due to event cancellation.");
+            Messaging.debug("Couldn't spawn", toString(), "SpawnReason." + reason + " due to event cancellation.");
             return false;
         }
 
@@ -337,7 +337,7 @@ public class CitizensNPC extends AbstractNPC {
         updateCustomNameVisibility();
         updateCustomName();
 
-        Messaging.debug("Spawned", getId(), "SpawnReason." + reason);
+        Messaging.debug("Spawned", toString(), "SpawnReason." + reason);
         return true;
     }
 
@@ -350,6 +350,11 @@ public class CitizensNPC extends AbstractNPC {
         if (isSpawned() && npcLoc.getWorld() == location.getWorld() && npcLoc.distanceSquared(location) < 1) {
             NMS.setHeadYaw(getEntity(), location.getYaw());
         }
+    }
+
+    @Override
+    public String toString() {
+        return getId() + "{" + getName() + ", " + getOrAddTrait(MobType.class).getType() + "}";
     }
 
     @Override

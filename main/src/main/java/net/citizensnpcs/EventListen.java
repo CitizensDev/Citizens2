@@ -151,15 +151,15 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
+        ChunkCoord coord = new ChunkCoord(event.getChunk());
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                ChunkCoord coord = new ChunkCoord(event.getChunk());
                 respawnAllFromCoord(coord, event);
             }
         };
-        if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
-            new Exception("CITIZENS CHUNK LOAD DEBUG " + new ChunkCoord(event.getChunk())).printStackTrace();
+        if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean() && toRespawn.containsKey(coord)) {
+            new Exception("CITIZENS CHUNK LOAD DEBUG " + coord).printStackTrace();
         }
         if (event instanceof Cancellable) {
             runnable.run();
@@ -185,7 +185,7 @@ public class EventListen implements Listener {
             if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
                 if (!(event instanceof Cancellable)) {
                     if (Messaging.isDebugging()) {
-                        Messaging.debug("Reloading chunk because", npc.getId(), "couldn't despawn");
+                        Messaging.debug("Reloading chunk because", npc, "couldn't despawn");
                     }
                     loadChunk = true;
                     toRespawn.put(coord, npc);
@@ -198,7 +198,7 @@ public class EventListen implements Listener {
             }
             toRespawn.put(coord, npc);
             if (Messaging.isDebugging()) {
-                Messaging.debug("Despawned id", npc.getId(), "due to chunk unload at", coord);
+                Messaging.debug("Despawned", npc, "due to chunk unload at", coord);
             }
         }
         if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
@@ -416,7 +416,7 @@ public class EventListen implements Listener {
         ChunkCoord coord = new ChunkCoord(event.getSpawnLocation());
         if (toRespawn.containsEntry(coord, event.getNPC()))
             return;
-        Messaging.debug("Stored", event.getNPC().getId(), "for respawn from NPCNeedsRespawnEvent");
+        Messaging.debug("Stored", event.getNPC(), "for respawn from NPCNeedsRespawnEvent");
         toRespawn.put(coord, event.getNPC());
     }
 
@@ -425,13 +425,13 @@ public class EventListen implements Listener {
         if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL
                 || event.getReason() == DespawnReason.RELOAD) {
             if (Messaging.isDebugging()) {
-                Messaging.debug("Preventing further respawns of", event.getNPC().getId(),
+                Messaging.debug("Preventing further respawns of", event.getNPC(),
                         "due to DespawnReason." + event.getReason());
             }
             toRespawn.values().remove(event.getNPC());
         } else if (Messaging.isDebugging()) {
-            Messaging.debug("Removing " + event.getNPC().getId() + " from skin tracker due to DespawnReason."
-                    + event.getReason().name());
+            Messaging.debug("Removing", event.getNPC(),
+                    "from skin tracker due to DespawnReason." + event.getReason().name());
         }
         skinUpdateTracker.onNPCDespawn(event.getNPC());
     }
@@ -445,7 +445,7 @@ public class EventListen implements Listener {
     public void onNPCSpawn(NPCSpawnEvent event) {
         skinUpdateTracker.onNPCSpawn(event.getNPC());
         if (Messaging.isDebugging()) {
-            Messaging.debug("Removing respawns of", event.getNPC().getId(), "due to SpawnReason." + event.getReason());
+            Messaging.debug("Removing respawns of", event.getNPC(), "due to SpawnReason." + event.getReason());
         }
         toRespawn.values().remove(event.getNPC());
     }
@@ -681,7 +681,7 @@ public class EventListen implements Listener {
             }
             if (npc.isSpawned()) {
                 toRespawn.put(new ChunkCoord(npc.getEntity().getLocation()), npc);
-                Messaging.debug("Despawned", npc.getId() + "due to world unload at", event.getWorld().getName());
+                Messaging.debug("Despawned", npc, "due to world unload at", event.getWorld().getName());
             }
         }
     }
@@ -695,13 +695,13 @@ public class EventListen implements Listener {
             NPC npc = ids.get(i);
             if (npc.getOwningRegistry().getById(npc.getId()) != npc) {
                 if (Messaging.isDebugging()) {
-                    Messaging.debug("Prevented deregistered NPC from respawning", npc.getId());
+                    Messaging.debug("Prevented deregistered NPC from respawning", npc);
                 }
                 continue;
             }
             if (npc.isSpawned()) {
                 if (Messaging.isDebugging()) {
-                    Messaging.debug("Can't respawn NPC", npc.getId(), ": already spawned");
+                    Messaging.debug("Can't respawn NPC", npc, ": already spawned");
                 }
                 continue;
             }
@@ -709,12 +709,12 @@ public class EventListen implements Listener {
             if (!success) {
                 ids.remove(i--);
                 if (Messaging.isDebugging()) {
-                    Messaging.debug("Couldn't respawn id", npc.getId(), "during", event, "at", coord);
+                    Messaging.debug("Couldn't respawn", npc, "during", event, "at", coord);
                 }
                 continue;
             }
             if (Messaging.isDebugging()) {
-                Messaging.debug("Spawned id", npc.getId(), "during", event, "at", coord);
+                Messaging.debug("Spawned", npc, "during", event, "at", coord);
             }
         }
         for (NPC npc : ids) {
@@ -726,7 +726,7 @@ public class EventListen implements Listener {
         Location spawn = npc.getOrAddTrait(CurrentLocation.class).getLocation();
         if (spawn == null) {
             if (Messaging.isDebugging()) {
-                Messaging.debug("Couldn't find a spawn location for despawned NPC id", npc.getId());
+                Messaging.debug("Couldn't find a spawn location for despawned NPC", npc);
             }
             return false;
         }
