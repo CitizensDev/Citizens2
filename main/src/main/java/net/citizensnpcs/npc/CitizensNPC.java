@@ -354,9 +354,10 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public String toString() {
-        return getId() + "{" + getName() + ", " + getOrAddTrait(MobType.class).getType() + "}";
+        EntityType mobType = hasTrait(MobType.class) ? getTraitNullable(MobType.class).getType() : null;
+        return getId() + "{" + getName() + ", " + mobType + "}";
     }
-
+    
     @Override
     public void update() {
         try {
