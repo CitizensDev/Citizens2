@@ -135,7 +135,7 @@ public class SkinPacketTracker {
                 double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
                 updateNearbyViewers(viewDistance);
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 20);
+        }.runTaskLater(CitizensAPI.getPlugin(), 15);
     }
 
     private void scheduleRemovePacket(final PlayerEntry entry) {

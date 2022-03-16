@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Preconditions;
@@ -69,7 +70,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public boolean despawn(DespawnReason reason) {
         if (!isSpawned() && reason != DespawnReason.DEATH) {
-            Messaging.debug("Tried to despawn", toString(), "while already despawned, DespawnReason." + reason);
+            Messaging.debug("Tried to despawn", this, "while already despawned, DespawnReason." + reason);
             if (reason == DespawnReason.RELOAD) {
                 unloadEvents();
             }
@@ -81,7 +82,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() && reason != DespawnReason.DEATH) {
-            Messaging.debug("Couldn't despawn", toString(), "due to despawn event cancellation. Will load chunk.",
+            Messaging.debug("Couldn't despawn", this, "due to despawn event cancellation. Will load chunk.",
                     getEntity().isValid(), ", DespawnReason." + reason);
             return false;
         }
@@ -99,7 +100,7 @@ public class CitizensNPC extends AbstractNPC {
         for (Trait trait : new ArrayList<Trait>(traits.values())) {
             trait.onDespawn();
         }
-        Messaging.debug("Despawned", toString(), "DespawnReason." + reason);
+        Messaging.debug("Despawned", this, "DespawnReason." + reason);
         if (reason == DespawnReason.DEATH) {
             entityController.setEntity(null);
         } else {
@@ -161,7 +162,7 @@ public class CitizensNPC extends AbstractNPC {
             if (spawnLocation.getLocation() != null) {
                 spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
             } else {
-                Messaging.debug("Tried to spawn", toString(), "on load but world was null");
+                Messaging.debug("Tried to spawn", this, "on load but world was null");
             }
         }
 
@@ -240,11 +241,11 @@ public class CitizensNPC extends AbstractNPC {
         Preconditions.checkNotNull(at, "location cannot be null");
         Preconditions.checkNotNull(reason, "reason cannot be null");
         if (getEntity() != null) {
-            Messaging.debug("Tried to spawn", toString(), "while already spawned. SpawnReason." + reason);
+            Messaging.debug("Tried to spawn", this, "while already spawned. SpawnReason." + reason);
             return false;
         }
         if (at.getWorld() == null) {
-            Messaging.debug("Tried to spawn", toString(), "but the world was null. SpawnReason." + reason);
+            Messaging.debug("Tried to spawn", this, "but the world was null. SpawnReason." + reason);
             return false;
         }
         at = at.clone();
@@ -272,72 +273,95 @@ public class CitizensNPC extends AbstractNPC {
 
         if (!couldSpawn) {
             if (Messaging.isDebugging()) {
-                Messaging.debug("Retrying spawn of", toString(), "later, SpawnReason." + reason + ". Was loaded",
-                        loaded, "is loaded", Util.isLoaded(at));
+                Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded", loaded,
+                        "is loaded", Util.isLoaded(at));
             }
             // we need to wait before trying to spawn
             entityController.remove();
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
         }
-
         // send skin packets, if applicable, before other NMS packets are sent
         SkinnableEntity skinnable = getEntity() instanceof SkinnableEntity ? ((SkinnableEntity) getEntity()) : null;
         if (skinnable != null) {
             skinnable.getSkinTracker().onSpawnNPC();
         }
+
         getEntity().teleport(at);
 
         NMS.setHeadYaw(getEntity(), at.getYaw());
         NMS.setBodyYaw(getEntity(), at.getYaw());
 
-        // Set the spawned state
-        getOrAddTrait(CurrentLocation.class).setLocation(at);
-        getOrAddTrait(Spawned.class).setSpawned(true);
+        final Location to = at;
+        BukkitRunnable postSpawn = new BukkitRunnable() {
+            private int timer;
 
-        NPCSpawnEvent spawnEvent = new NPCSpawnEvent(this, at, reason);
-        Bukkit.getPluginManager().callEvent(spawnEvent);
+            @Override
+            public void run() {
+                if (timer++ > 10) {
+                    cancel();
+                    return;
+                }
+                if (getEntity() == null || !getEntity().isValid())
+                    return;
 
-        if (spawnEvent.isCancelled()) {
-            entityController.remove();
-            Messaging.debug("Couldn't spawn", toString(), "SpawnReason." + reason + " due to event cancellation.");
-            return false;
-        }
+                // Set the spawned state
+                getOrAddTrait(CurrentLocation.class).setLocation(to);
+                getOrAddTrait(Spawned.class).setSpawned(true);
 
-        navigator.onSpawn();
+                NPCSpawnEvent spawnEvent = new NPCSpawnEvent(CitizensNPC.this, to, reason);
+                Bukkit.getPluginManager().callEvent(spawnEvent);
 
-        Collection<Trait> onSpawn = traits.values();
-        for (Trait trait : onSpawn.toArray(new Trait[onSpawn.size()])) {
-            try {
-                trait.onSpawn();
-            } catch (Throwable ex) {
-                Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
-                ex.printStackTrace();
+                if (spawnEvent.isCancelled()) {
+                    entityController.remove();
+                    Messaging.debug("Couldn't spawn", this, "SpawnReason." + reason, "due to event cancellation.");
+                    cancel();
+                    return;
+                }
+
+                navigator.onSpawn();
+
+                Collection<Trait> onSpawn = traits.values();
+                for (Trait trait : onSpawn.toArray(new Trait[onSpawn.size()])) {
+                    try {
+                        trait.onSpawn();
+                    } catch (Throwable ex) {
+                        Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
+                        ex.printStackTrace();
+                    }
+                }
+
+                if (getEntity() instanceof LivingEntity) {
+                    LivingEntity entity = (LivingEntity) getEntity();
+                    entity.setRemoveWhenFarAway(false);
+
+                    if (NMS.getStepHeight(entity) < 1) {
+                        NMS.setStepHeight(entity, 1);
+                    }
+                    if (getEntity() instanceof Player) {
+                        NMS.replaceTrackerEntry((Player) getEntity());
+                        PlayerUpdateTask.registerPlayer(getEntity());
+                    }
+                }
+
+                if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
+                    addTrait(HologramTrait.class);
+                }
+
+                updateFlyableState();
+                updateCustomNameVisibility();
+                updateCustomName();
+
+                Messaging.debug("Spawned", this, "SpawnReason." + reason);
+                cancel();
             }
+        };
+        if (isSpawned()) {
+            postSpawn.runTask(CitizensAPI.getPlugin());
+        } else {
+            postSpawn.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
         }
 
-        if (getEntity() instanceof LivingEntity) {
-            LivingEntity entity = (LivingEntity) getEntity();
-            entity.setRemoveWhenFarAway(false);
-
-            if (NMS.getStepHeight(entity) < 1) {
-                NMS.setStepHeight(entity, 1);
-            }
-            if (getEntity() instanceof Player) {
-                NMS.replaceTrackerEntry((Player) getEntity());
-                PlayerUpdateTask.registerPlayer(getEntity());
-            }
-        }
-
-        if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
-            addTrait(HologramTrait.class);
-        }
-
-        updateFlyableState();
-        updateCustomNameVisibility();
-        updateCustomName();
-
-        Messaging.debug("Spawned", toString(), "SpawnReason." + reason);
         return true;
     }
 
@@ -357,7 +381,7 @@ public class CitizensNPC extends AbstractNPC {
         EntityType mobType = hasTrait(MobType.class) ? getTraitNullable(MobType.class).getType() : null;
         return getId() + "{" + getName() + ", " + mobType + "}";
     }
-    
+
     @Override
     public void update() {
         try {
