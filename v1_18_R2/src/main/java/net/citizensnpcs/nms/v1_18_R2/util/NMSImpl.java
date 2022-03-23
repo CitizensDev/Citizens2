@@ -275,6 +275,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
@@ -453,7 +454,10 @@ public class NMSImpl implements NMSBridge {
             if (entity.getType() == EntityType.WITHER) {
                 bserver = ((WitherBoss) NMSImpl.getHandle(entity)).bossEvent;
             } else if (entity.getType() == EntityType.ENDER_DRAGON) {
-                bserver = ((EnderDragon) NMSImpl.getHandle(entity)).getDragonFight().dragonEvent;
+                EndDragonFight df = ((EnderDragon) NMSImpl.getHandle(entity)).getDragonFight();
+                if (df != null) {
+                    bserver = df.dragonEvent;
+                }
             }
         } catch (Throwable e) {
             e.printStackTrace();

@@ -173,7 +173,7 @@ public class HologramTrait extends Trait {
         if (!npc.isSpawned())
             return;
         lastNameplateVisible = Boolean
-                .parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString());
+                .parseBoolean(npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString());
         currentLoc = npc.getStoredLocation();
         if (npc.requiresNameHologram() && lastNameplateVisible) {
             nameNPC = createHologram(npc.getFullName(), 0);
@@ -205,7 +205,7 @@ public class HologramTrait extends Trait {
             currentLoc = npc.getStoredLocation();
         }
         boolean nameplateVisible = Boolean
-                .parseBoolean(npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString());
+                .parseBoolean(npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString());
         if (npc.requiresNameHologram()) {
             if (nameNPC != null && !nameplateVisible) {
                 nameNPC.destroy();
@@ -245,10 +245,10 @@ public class HologramTrait extends Trait {
             }
             if (text != null && !ChatColor.stripColor(Colorizer.parseColors(text)).isEmpty()) {
                 hologramNPC.setName(Placeholders.replace(text, null, npc));
-                hologramNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, true);
+                hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
             } else {
                 hologramNPC.setName("");
-                hologramNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+                hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, "hover");
             }
         }
     }

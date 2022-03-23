@@ -1408,13 +1408,13 @@ public class NPCCommands {
             permission = "citizens.npc.name")
     @Requirements(selected = true, ownership = true)
     public void name(CommandContext args, CommandSender sender, NPC npc) {
-        String old = npc.data().<Object> get(NPC.NAMEPLATE_VISIBLE_METADATA, true).toString();
+        String old = npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString();
         if (args.hasFlag('h')) {
             old = "hover";
         } else {
             old = old.equals("hover") ? "true" : "" + !Boolean.parseBoolean(old);
         }
-        npc.data().setPersistent(NPC.NAMEPLATE_VISIBLE_METADATA, old);
+        npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, old);
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_TOGGLED);
     }
 

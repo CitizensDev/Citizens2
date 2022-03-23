@@ -1,6 +1,6 @@
 package net.citizensnpcs.nms.v1_18_R2.util;
 
-import java.util.EnumMap;
+import java.util.Map;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -128,7 +128,7 @@ public class PlayerAnimationImpl {
         NMSImpl.sendPacketNearby(player.getBukkitEntity(), player.getBukkitEntity().getLocation(), packet, radius);
     }
 
-    private static EnumMap<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);
+    private static Map<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);
     static {
         DEFAULTS.put(PlayerAnimation.ARM_SWING, 0);
         DEFAULTS.put(PlayerAnimation.HURT, 1);
