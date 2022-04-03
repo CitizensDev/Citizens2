@@ -352,7 +352,7 @@ public class CitizensNPC extends AbstractNPC {
                 updateCustomNameVisibility();
                 updateCustomName();
 
-                Messaging.debug("Spawned", this, "SpawnReason." + reason);
+                Messaging.debug("Spawned", CitizensNPC.this, "SpawnReason." + reason);
                 cancel();
             }
         };
