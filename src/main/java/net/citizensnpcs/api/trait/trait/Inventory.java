@@ -166,9 +166,6 @@ public class Inventory extends Trait {
         } else if (entity instanceof InventoryHolder) {
             contents = ((InventoryHolder) entity).getInventory().getContents();
         }
-        if (entity instanceof LivingEntity) {
-            npc.getOrAddTrait(Equipment.class).setItemInHand(contents[0]);
-        }
     }
 
     /**
