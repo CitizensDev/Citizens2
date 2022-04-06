@@ -491,6 +491,10 @@ public interface NPC extends Agent, Cloneable {
          */
         SNEAKING("citizens-sneaking"),
         /**
+         * The initial no damage ticks on spawn, defaults to 20. Integer
+         */
+        SPAWN_NODAMAGE_TICKS("spawn-nodamage-ticks"),
+        /**
          * Whether to allow swimming. Boolean.
          */
         SWIMMING("swim"),
