@@ -92,6 +92,7 @@ public class Settings {
         DEFAULT_RANDOM_LOOK_DELAY("npc.default.look-close.random-look-delay", 60),
         DEFAULT_RANDOM_TALKER("npc.default.random-talker", false),
         DEFAULT_REALISTIC_LOOKING("npc.default.realistic-looking", false),
+        DEFAULT_SPAWN_NODAMAGE_TICKS("npc.default.spawn-nodamage-ticks", 20),
         DEFAULT_STATIONARY_TICKS("npc.default.stationary-ticks", -1),
         DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE("npc.pathfinding.straight-line-targeting-distance", 5),
         DEFAULT_TALK_CLOSE("npc.default.talk-close.enabled", false),

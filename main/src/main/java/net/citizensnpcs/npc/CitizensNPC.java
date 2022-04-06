@@ -342,6 +342,14 @@ public class CitizensNPC extends AbstractNPC {
                         NMS.replaceTrackerEntry((Player) getEntity());
                         PlayerUpdateTask.registerPlayer(getEntity());
                     }
+                    if (SUPPORT_NODAMAGE_TICKS && Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt() != 20) {
+                        try {
+                            entity.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
+                                    Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt()));
+                        } catch (NoSuchMethodError err) {
+                            SUPPORT_NODAMAGE_TICKS = false;
+                        }
+                    }
                 }
 
                 if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
@@ -517,9 +525,11 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
+
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
     private static final String NPC_METADATA_MARKER = "NPC";
     private static boolean SUPPORT_GLOWING = true;
+    private static boolean SUPPORT_NODAMAGE_TICKS = true;
     private static boolean SUPPORT_SILENT = true;
     private static boolean SUPPORT_USE_ITEM = true;
 }
