@@ -342,7 +342,8 @@ public class CitizensNPC extends AbstractNPC {
                         NMS.replaceTrackerEntry((Player) getEntity());
                         PlayerUpdateTask.registerPlayer(getEntity());
                     }
-                    if (SUPPORT_NODAMAGE_TICKS && Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt() != 20) {
+                    if (SUPPORT_NODAMAGE_TICKS && (data().has(NPC.Metadata.SPAWN_NODAMAGE_TICKS)
+                            || Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt() != 20)) {
                         try {
                             entity.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
                                     Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt()));

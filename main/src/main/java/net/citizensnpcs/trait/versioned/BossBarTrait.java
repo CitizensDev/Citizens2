@@ -38,6 +38,16 @@ public class BossBarTrait extends Trait {
         super("bossbar");
     }
 
+    private BossBar getBar() {
+        if (npc.isSpawned() && isBoss(npc.getEntity()))
+            return (BossBar) NMS.getBossBar(npc.getEntity());
+        if (barCache == null) {
+            barCache = Bukkit.getServer().createBossBar(npc.getFullName(), color, style,
+                    flags.toArray(new BarFlag[flags.size()]));
+        }
+        return barCache;
+    }
+
     public BarColor getColor() {
         return color;
     }
@@ -68,12 +78,19 @@ public class BossBarTrait extends Trait {
     }
 
     @Override
+    public void onDespawn() {
+        if (barCache != null) {
+            barCache.removeAll();
+            barCache.hide();
+            barCache = null;
+        }
+    }
+
+    @Override
     public void run() {
         if (!npc.isSpawned())
             return;
-        BossBar bar = isBoss(npc.getEntity()) ? (BossBar) NMS.getBossBar(npc.getEntity())
-                : barCache == null ? barCache = Bukkit.getServer().createBossBar(npc.getFullName(), color, style,
-                        flags.toArray(new BarFlag[flags.size()])) : barCache;
+        BossBar bar = getBar();
         if (bar == null) {
             return;
         }
