@@ -98,8 +98,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
                 @Override
                 public void run() {
-                    Material in = npc.getEntity().getLocation(dummy).getBlock().getType(),
-                            next = current.next().getType();
+                    Location loc = npc.getEntity().getLocation(dummy);
+                    Block dest = current.next();
+                    Material in = loc.getBlock().getType(), next = dest.getType();
                     current.previous();
                     if (isClimbable(in) || isScaffolding(next)) {
                         if (current.next().getY() > current.previous().getY()) {
@@ -107,8 +108,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                             if (sneakingForScaffolding) {
                                 npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = false);
                             }
-                        } else if (isScaffolding(in) || isScaffolding(next)) {
-                            npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = true);
+                        } else if ((isScaffolding(in) || isScaffolding(next))) {
+                            if (loc.distance(dest.getLocation().add(0.5, 1, 0.5)) < 0.4) {
+                                npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = true);
+                            }
                         }
                     } else if (sneakingForScaffolding) {
                         npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = false);
