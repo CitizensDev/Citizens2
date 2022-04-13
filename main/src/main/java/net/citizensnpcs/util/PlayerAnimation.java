@@ -8,6 +8,7 @@ public enum PlayerAnimation {
     CRIT,
     EAT_FOOD,
     HURT,
+    LEAVE_BED,
     MAGIC_CRIT,
     SIT,
     SLEEP,

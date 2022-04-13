@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.util.EulerAngle;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -118,6 +119,20 @@ public class ArmorStandTrait extends Trait {
         entity.setBasePlate(hasbaseplate);
         entity.setSmall(small);
         entity.setMarker(marker);
+    }
+
+    /**
+     * Configures the entity as an invisible point entity, e.g. for mounting NPCs on top, nameplates, etc.
+     */
+    public void setAsPointEntity() {
+        setGravity(false);
+        setHasArms(false);
+        setHasBaseplate(false);
+        setSmall(true);
+        setMarker(true);
+        setVisible(false);
+        npc.setProtected(true);
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
     }
 
     /**

@@ -42,16 +42,8 @@ public class PlayerAnimationImpl {
                     registry = CitizensAPI.createNamedNPCRegistry("PlayerAnimationImpl", new MemoryNPCDataStore());
                 }
                 final NPC holder = registry.createNPC(EntityType.ARMOR_STAND, "");
+                holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
                 holder.spawn(player.getBukkitEntity().getLocation());
-                ArmorStandTrait trait = holder.getOrAddTrait(ArmorStandTrait.class);
-                trait.setGravity(false);
-                trait.setHasArms(false);
-                trait.setHasBaseplate(false);
-                trait.setSmall(true);
-                trait.setMarker(true);
-                trait.setVisible(false);
-                holder.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-                holder.data().set(NPC.DEFAULT_PROTECTED_METADATA, true);
                 new BukkitRunnable() {
                     @Override
                     public void cancel() {

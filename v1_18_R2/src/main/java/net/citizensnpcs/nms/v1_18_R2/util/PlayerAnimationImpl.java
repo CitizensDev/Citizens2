@@ -40,16 +40,8 @@ public class PlayerAnimationImpl {
                     registry = CitizensAPI.createNamedNPCRegistry("PlayerAnimationImpl", new MemoryNPCDataStore());
                 }
                 final NPC holder = registry.createNPC(EntityType.ARMOR_STAND, "");
+                holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
                 holder.spawn(player.getBukkitEntity().getLocation());
-                ArmorStandTrait trait = holder.getOrAddTrait(ArmorStandTrait.class);
-                trait.setGravity(false);
-                trait.setHasArms(false);
-                trait.setHasBaseplate(false);
-                trait.setSmall(true);
-                trait.setMarker(true);
-                trait.setVisible(false);
-                holder.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-                holder.data().set(NPC.DEFAULT_PROTECTED_METADATA, true);
                 new BukkitRunnable() {
                     @Override
                     public void cancel() {
@@ -132,7 +124,7 @@ public class PlayerAnimationImpl {
     static {
         DEFAULTS.put(PlayerAnimation.ARM_SWING, 0);
         DEFAULTS.put(PlayerAnimation.HURT, 1);
-        DEFAULTS.put(PlayerAnimation.EAT_FOOD, 2);
+        DEFAULTS.put(PlayerAnimation.LEAVE_BED, 2);
         DEFAULTS.put(PlayerAnimation.ARM_SWING_OFFHAND, 3);
         DEFAULTS.put(PlayerAnimation.CRIT, 4);
         DEFAULTS.put(PlayerAnimation.MAGIC_CRIT, 5);

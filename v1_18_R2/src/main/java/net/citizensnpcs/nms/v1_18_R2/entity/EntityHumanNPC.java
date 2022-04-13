@@ -275,6 +275,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         // the entity is a player. there is no client so make this happen
         // manually.
         boolean damaged = super.hurt(damagesource, f);
+
         if (damaged && hurtMarked) {
             hurtMarked = false;
             Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {

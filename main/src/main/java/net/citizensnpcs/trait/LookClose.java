@@ -41,7 +41,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     @Persist
     private int randomLookDelay = Setting.DEFAULT_RANDOM_LOOK_DELAY.asInt();
     @Persist
-    private float[] randomPitchRange = { -10, 0 };
+    private float[] randomPitchRange = { 0, 0 };
     @Persist
     private float[] randomYawRange = { 0, 360 };
     private double range = Setting.DEFAULT_LOOK_CLOSE_RANGE.asDouble();
