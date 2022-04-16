@@ -1147,26 +1147,39 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "lookclose --(random|r)look [true|false] --(random|r)pitchrange [min,max] --(random|r)yawrange [min,max]",
+            usage = "lookclose --range [range] (-r[ealistic looking]) --(random|r)look [true|false] --(random|r)pitchrange [min,max] --(random|r)yawrange [min,max]",
             desc = "Toggle whether a NPC will look when a player is near",
             modifiers = { "lookclose", "look", "rotate" },
             min = 1,
             max = 1,
+            flags = "r",
             permission = "citizens.npc.lookclose")
     public void lookClose(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean toggle = true;
+        LookClose trait = npc.getOrAddTrait(LookClose.class);
         if (args.hasAnyValueFlag("randomlook", "rlook")) {
             boolean enableRandomLook = Boolean.parseBoolean(args.getFlag("randomlook", args.getFlag("rlook")));
-            npc.getOrAddTrait(LookClose.class).setRandomLook(enableRandomLook);
+            trait.setRandomLook(enableRandomLook);
             Messaging.sendTr(sender,
                     enableRandomLook ? Messages.LOOKCLOSE_RANDOM_SET : Messages.LOOKCLOSE_RANDOM_STOPPED,
                     npc.getName());
             toggle = false;
         }
+        if (args.hasValueFlag("range")) {
+            trait.setRange(args.getFlagDouble("range"));
+            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANGE_SET, args.getFlagDouble("range"));
+            toggle = false;
+        }
+        if (args.hasFlag('r')) {
+            trait.setRealisticLooking(!trait.useRealisticLooking());
+            Messaging.sendTr(sender, trait.useRealisticLooking() ? Messages.LOOKCLOSE_REALISTIC_LOOK_SET
+                    : Messages.LOOKCLOSE_REALISTIC_LOOK_UNSET, npc.getName());
+            toggle = false;
+        }
         if (args.hasAnyValueFlag("randomlookdelay", "rlookdelay")) {
             int delay = Integer.parseInt(args.getFlag("randomlookdelay", args.getFlag("rlookdelay")));
             delay = Math.max(1, delay);
-            npc.getOrAddTrait(LookClose.class).setRandomLookDelay(delay);
+            trait.setRandomLookDelay(delay);
             Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_DELAY_SET, npc.getName(), delay);
             toggle = false;
         }
@@ -1177,7 +1190,7 @@ public class NPCCommands {
                 float min = Float.parseFloat(parts[0]), max = Float.parseFloat(parts[1]);
                 if (min > max)
                     throw new IllegalArgumentException();
-                npc.getOrAddTrait(LookClose.class).setRandomLookPitchRange(min, max);
+                trait.setRandomLookPitchRange(min, max);
             } catch (Exception e) {
                 throw new CommandException(Messaging.tr(Messages.ERROR_SETTING_LOOKCLOSE_RANGE, flag));
             }
@@ -1191,7 +1204,7 @@ public class NPCCommands {
                 float min = Float.parseFloat(parts[0]), max = Float.parseFloat(parts[1]);
                 if (min > max)
                     throw new IllegalArgumentException();
-                npc.getOrAddTrait(LookClose.class).setRandomLookYawRange(min, max);
+                trait.setRandomLookYawRange(min, max);
             } catch (Exception e) {
                 throw new CommandException(Messaging.tr(Messages.ERROR_SETTING_LOOKCLOSE_RANGE, flag));
             }
@@ -1199,8 +1212,7 @@ public class NPCCommands {
             toggle = false;
         }
         if (toggle) {
-            Messaging.sendTr(sender,
-                    npc.getOrAddTrait(LookClose.class).toggle() ? Messages.LOOKCLOSE_SET : Messages.LOOKCLOSE_STOPPED,
+            Messaging.sendTr(sender, trait.toggle() ? Messages.LOOKCLOSE_SET : Messages.LOOKCLOSE_STOPPED,
                     npc.getName());
         }
     }

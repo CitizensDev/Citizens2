@@ -221,6 +221,9 @@ public class Messages {
     public static final String LOOKCLOSE_RANDOM_SET = "citizens.commands.npc.lookclose.random-set";
     public static final String LOOKCLOSE_RANDOM_STOPPED = "citizens.commands.npc.lookclose.random-stopped";
     public static final String LOOKCLOSE_RANDOM_YAW_RANGE_SET = "citizens.commands.npc.lookclose.random-yaw-range-set";
+    public static final String LOOKCLOSE_RANGE_SET = "citizens.commands.npc.lookclose.range-set";
+    public static final String LOOKCLOSE_REALISTIC_LOOK_SET = "citizens.commands.npc.lookclose.rl-set";
+    public static final String LOOKCLOSE_REALISTIC_LOOK_UNSET = "citizens.commands.npc.lookclose.rl-unset";
     public static final String LOOKCLOSE_SET = "citizens.commands.npc.lookclose.set";
     public static final String LOOKCLOSE_STOPPED = "citizens.commands.npc.lookclose.stopped";
     public static final String METADATA_SET = "citizens.commands.npc.metadata.set";
