@@ -135,6 +135,11 @@ public class ArmorStandTrait extends Trait {
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
     }
 
+    public void setAsPointEntityWithName() {
+        setAsPointEntity();
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, true);
+    }
+
     /**
      * @see ArmorStand#setGravity(boolean)
      */

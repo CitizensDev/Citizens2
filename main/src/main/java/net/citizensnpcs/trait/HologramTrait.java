@@ -73,8 +73,7 @@ public class HologramTrait extends Trait {
     private NPC createHologram(String line, double heightOffset) {
         NPC hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
         hologramNPC.addTrait(new ClickRedirectTrait(npc));
-        hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, true);
+        hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsPointEntityWithName();
         hologramNPC.spawn(currentLoc.clone().add(0,
                 getEntityHeight()
                         + (direction == HologramDirection.BOTTOM_UP ? heightOffset : getMaxHeight() - heightOffset),
