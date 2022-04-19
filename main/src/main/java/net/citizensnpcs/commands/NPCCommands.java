@@ -130,6 +130,7 @@ import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
@@ -1616,6 +1617,25 @@ public class NPCCommands {
         loc.setY(args.getDouble(2));
         loc.setZ(args.getDouble(3));
         npc.getNavigator().setTarget(loc);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "panimate [animation]",
+            desc = "Plays a player animation",
+            modifiers = { "panimate" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.panimate")
+    @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
+    public void playerAnimate(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        PlayerAnimation animation = Util.matchEnum(PlayerAnimation.values(), args.getString(1));
+        if (animation == null) {
+            Messaging.sendErrorTr(sender, Messages.UNKNOWN_PLAYER_ANIMATION,
+                    Util.listValuesPretty(PlayerAnimation.values()));
+            return;
+        }
+        animation.play((Player) npc.getEntity(), 64);
     }
 
     @Command(
