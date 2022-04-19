@@ -84,10 +84,10 @@ public class SkinUpdateTracker {
             double deltaX = skinLoc.getX() - playerLoc.getX();
             double deltaZ = skinLoc.getZ() - playerLoc.getZ();
             double angle = Math.atan2(deltaX, deltaZ);
-            float skinYaw = Util.clampYaw(-(float) Math.toDegrees(angle));
-            float playerYaw = Util.clampYaw(playerLoc.getYaw());
-            float upperBound = Util.clampYaw(playerYaw + FIELD_OF_VIEW);
-            float lowerBound = Util.clampYaw(playerYaw - FIELD_OF_VIEW);
+            float skinYaw = Util.clamp(-(float) Math.toDegrees(angle));
+            float playerYaw = Util.clamp(playerLoc.getYaw());
+            float upperBound = Util.clamp(playerYaw + FIELD_OF_VIEW);
+            float lowerBound = Util.clamp(playerYaw - FIELD_OF_VIEW);
             if (upperBound == -180.0 && playerYaw > 0) {
                 upperBound = 0;
             }
@@ -404,10 +404,10 @@ public class SkinUpdateTracker {
             player.getLocation(this.location);
             if (rotationCount < 3) {
                 float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
-                float yaw = Util.clampYaw(this.location.getYaw());
+                float yaw = Util.clamp(this.location.getYaw());
                 this.startYaw = yaw;
-                this.upperBound = Util.clampYaw(yaw + rotationDegrees);
-                this.lowerBound = Util.clampYaw(yaw - rotationDegrees);
+                this.upperBound = Util.clamp(yaw + rotationDegrees);
+                this.lowerBound = Util.clamp(yaw - rotationDegrees);
                 if (upperBound == -180.0 && startYaw > 0) {
                     upperBound = 0;
                 }
@@ -423,7 +423,7 @@ public class SkinUpdateTracker {
             }
 
             if (rotationCount < 3) {
-                float yaw = Util.clampYaw(currentLoc.getYaw());
+                float yaw = Util.clamp(currentLoc.getYaw());
                 boolean hasRotated;
                 if (startYaw - 90 < -180 || startYaw + 90 > 180) {
                     hasRotated = yaw > lowerBound && yaw < upperBound;

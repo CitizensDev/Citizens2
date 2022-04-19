@@ -4,10 +4,8 @@ import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,12 +31,7 @@ import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.npc.ai.NPCHolder;
 
 public class Util {
-    // Static class for small (emphasis small) utility methods
     private Util() {
-    }
-
-    public static void assumePose(Entity entity, float yaw, float pitch) {
-        NMS.look(entity, yaw, pitch);
     }
 
     public static void callCollisionEvent(NPC npc, Entity entity) {
@@ -65,15 +58,18 @@ public class Util {
         return !event.isCancelled() ? event.getCollisionVector() : null;
     }
 
-    public static float clampYaw(float yaw) {
-        while (yaw < -180.0F) {
-            yaw += 360.0F;
+    /**
+     * Clamps the rotation angle to [-180, 180]
+     */
+    public static float clamp(float angle) {
+        while (angle < -180.0F) {
+            angle += 360.0F;
         }
 
-        while (yaw >= 180.0F) {
-            yaw -= 360.0F;
+        while (angle >= 180.0F) {
+            angle -= 360.0F;
         }
-        return yaw;
+        return angle;
     }
 
     public static void face(Entity entity, float yaw, float pitch) {
@@ -82,13 +78,13 @@ public class Util {
         faceLocation(entity, entity.getLocation(AT_LOCATION).clone().add(vector));
     }
 
-    public static void faceEntity(Entity entity, Entity at) {
-        if (at == null || entity == null || entity.getWorld() != at.getWorld())
+    public static void faceEntity(Entity entity, Entity to) {
+        if (to == null || entity == null || entity.getWorld() != to.getWorld())
             return;
-        if (at instanceof LivingEntity) {
-            NMS.look(entity, at);
+        if (to instanceof LivingEntity) {
+            NMS.look(entity, to);
         } else {
-            faceLocation(entity, at.getLocation(AT_LOCATION));
+            faceLocation(entity, to.getLocation(AT_LOCATION));
         }
     }
 
@@ -124,7 +120,7 @@ public class Util {
     }
 
     public static Location getCenterLocation(Block block) {
-        Location bloc = block.getLocation();
+        Location bloc = block.getLocation(AT_LOCATION);
         Location center = new Location(bloc.getWorld(), bloc.getBlockX() + 0.5, bloc.getBlockY(),
                 bloc.getBlockZ() + 0.5);
         BoundingBox bb = NMS.getCollisionBox(block);
@@ -134,6 +130,9 @@ public class Util {
         return center;
     }
 
+    /**
+     * Returns the yaw to face along the given velocity (corrected for dragon yaw i.e. facing backwards)
+     */
     public static float getDragonYaw(Entity entity, double motX, double motZ) {
         Location location = entity.getLocation(AT_LOCATION);
         double x = location.getX();
@@ -250,7 +249,7 @@ public class Util {
             return false;
         if (current.getWorld() != target.getWorld())
             return false;
-        return current.distanceSquared(target) <= Math.pow(range, 2);
+        return current.distance(target) <= range;
     }
 
     public static EntityType matchEntityType(String toMatch) {
@@ -343,52 +342,11 @@ public class Util {
         }
     }
 
-    public static String[] splitPlayerName(String coloredName) {
-        String name = coloredName, prefix = null, suffix = null;
-        if (coloredName.length() > 16) {
-            if (coloredName.length() >= 30) {
-                prefix = coloredName.substring(0, 16);
-                int len = 30;
-                name = coloredName.substring(16, 30);
-                String prefixColors = ChatColor.getLastColors(prefix);
-                if (prefixColors.isEmpty()) {
-                    if (NON_ALPHABET_MATCHER.matcher(name).matches()) {
-                        if (coloredName.length() >= 32) {
-                            len = 32;
-                            name = coloredName.substring(16, 32);
-                        } else if (coloredName.length() == 31) {
-                            len = 31;
-                            name = coloredName.substring(16, 31);
-                        }
-                    } else {
-                        prefixColors = ChatColor.RESET.toString();
-                    }
-                } else if (prefixColors.length() > 2) {
-                    prefixColors = prefixColors.substring(prefixColors.length() - 2);
-                }
-                name = prefixColors + name;
-                suffix = coloredName.substring(len);
-            } else {
-                prefix = coloredName.substring(0, coloredName.length() - 16);
-                name = coloredName.substring(prefix.length());
-                if (prefix.endsWith(String.valueOf(ChatColor.COLOR_CHAR))) {
-                    prefix = prefix.substring(0, prefix.length() - 1);
-                    name = ChatColor.COLOR_CHAR + name;
-                }
-                String prefixColors = ChatColor.getLastColors(prefix);
-                if (prefixColors.isEmpty() && !NON_ALPHABET_MATCHER.matcher(name).matches()) {
-                    prefixColors = ChatColor.RESET.toString();
-                } else if (prefixColors.length() > 2) {
-                    prefixColors = prefixColors.substring(prefixColors.length() - 2);
-                }
-                name = prefixColors + name;
-                if (name.length() > 16) {
-                    suffix = name.substring(16);
-                    name = name.substring(0, 16);
-                }
-            }
-        }
-        return new String[] { name, prefix, suffix };
+    /**
+     * Sets the entity's yaw and pitch directly including head yaw.
+     */
+    public static void setRotation(Entity entity, float yaw, float pitch) {
+        NMS.look(entity, yaw, pitch);
     }
 
     public static void updateNPCTeams(Player toUpdate, int mode) {
@@ -407,5 +365,4 @@ public class Util {
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static String MINECRAFT_REVISION;
-    private static final Pattern NON_ALPHABET_MATCHER = Pattern.compile(".*[^A-Za-z0-9_].*");
 }
