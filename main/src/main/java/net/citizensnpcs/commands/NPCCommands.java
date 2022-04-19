@@ -1802,7 +1802,7 @@ public class NPCCommands {
         if (args.hasValueFlag("world")) {
             String world = args.getFlag("world");
             for (NPC rem : Lists.newArrayList(CitizensAPI.getNPCRegistry())) {
-                Location loc = npc.getStoredLocation();
+                Location loc = rem.getStoredLocation();
                 if (loc != null && loc.getWorld() != null && (loc.getWorld().getUID().toString().equals(world)
                         || loc.getWorld().getName().equalsIgnoreCase(world))) {
                     history.add(sender, new RemoveNPCHistoryItem(rem));
