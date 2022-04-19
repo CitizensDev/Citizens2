@@ -290,8 +290,8 @@ public class Skin {
         }
 
         if (!profile.getName().toLowerCase().equals(skinName)) {
-            throw new IllegalArgumentException(
-                    "GameProfile name (" + profile.getName() + ") and " + "skin name (" + skinName + ") do not match.");
+            Messaging.debug("GameProfile name (" + profile.getName() + ") and " + "skin name (" + skinName
+                    + ") do not match. Has the user renamed recently?");
         }
 
         skinId = profile.getId();
