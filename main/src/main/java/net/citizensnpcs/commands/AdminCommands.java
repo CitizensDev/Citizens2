@@ -30,9 +30,8 @@ public class AdminCommands {
     public void citizens(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.send(sender, StringHelper.wrapHeader("<e>Citizens v" + plugin.getDescription().getVersion()));
         Messaging.send(sender, "     <7>-- <c>Author: fullwall");
-        Messaging.send(sender, "     <7>-- <c>Source Code: http://github.com/CitizensDev");
         Messaging.send(sender, "     <7>-- <c>Website: " + plugin.getDescription().getWebsite());
-        Messaging.send(sender, "     <7>-- <c>Report an issue: http://github.com/CitizensDev/Citizens2/issues");
+        Messaging.send(sender, "     <7>-- <c>Support: https://discord.gg/Q6pZGSR");
     }
 
     @Command(

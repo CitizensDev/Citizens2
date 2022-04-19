@@ -1761,7 +1761,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "remove|rem (all|id|name| --owner [owner] | --eid [entity uuid])",
+            usage = "remove|rem (all|id|name| --owner [owner] | --eid [entity uuid] | --world [world])",
             desc = "Remove a NPC",
             modifiers = { "remove", "rem" },
             min = 1,
@@ -1772,6 +1772,19 @@ public class NPCCommands {
             String owner = args.getFlag("owner");
             for (NPC rem : Lists.newArrayList(CitizensAPI.getNPCRegistry())) {
                 if (rem.getOrAddTrait(Owner.class).isOwnedBy(owner)) {
+                    history.add(sender, new RemoveNPCHistoryItem(rem));
+                    rem.destroy(sender);
+                }
+            }
+            Messaging.sendTr(sender, Messages.NPCS_REMOVED);
+            return;
+        }
+        if (args.hasValueFlag("world")) {
+            String world = args.getFlag("world");
+            for (NPC rem : Lists.newArrayList(CitizensAPI.getNPCRegistry())) {
+                Location loc = npc.getStoredLocation();
+                if (loc != null && loc.getWorld() != null && (loc.getWorld().getUID().toString().equals(world)
+                        || loc.getWorld().getName().equalsIgnoreCase(world))) {
                     history.add(sender, new RemoveNPCHistoryItem(rem));
                     rem.destroy(sender);
                 }
