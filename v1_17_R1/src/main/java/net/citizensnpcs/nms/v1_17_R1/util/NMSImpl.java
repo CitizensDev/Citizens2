@@ -903,7 +903,7 @@ public class NMSImpl implements NMSBridge {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null)
             return;
-        yaw = Util.clampYaw(yaw);
+        yaw = Util.clamp(yaw);
         handle.setYRot(yaw);
         setHeadYaw(entity, yaw);
         handle.setXRot(pitch);
@@ -1167,7 +1167,7 @@ public class NMSImpl implements NMSBridge {
         if (!(entity instanceof org.bukkit.entity.LivingEntity))
             return;
         LivingEntity handle = (LivingEntity) getHandle(entity);
-        yaw = Util.clampYaw(yaw);
+        yaw = Util.clamp(yaw);
         handle.yBodyRotO = yaw;
         if (!(handle instanceof net.minecraft.world.entity.player.Player)) {
             handle.setYBodyRot(yaw);
