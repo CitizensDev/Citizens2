@@ -76,6 +76,12 @@ public class Util {
         return yaw;
     }
 
+    public static void face(Entity entity, float yaw, float pitch) {
+        Vector vector = new Vector(Math.cos(yaw) * Math.cos(pitch), Math.sin(pitch), Math.sin(yaw) * Math.cos(pitch))
+                .normalize();
+        faceLocation(entity, entity.getLocation(AT_LOCATION).clone().add(vector));
+    }
+
     public static void faceEntity(Entity entity, Entity at) {
         if (at == null || entity == null || entity.getWorld() != at.getWorld())
             return;

@@ -132,10 +132,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         return lookingAt;
     }
 
-    private boolean isEqual(float[] array) {
-        return Math.abs(array[0] - array[1]) < 0.001;
-    }
-
     private boolean isInvisible(Player player) {
         return player.getGameMode() == GameMode.SPECTATOR || player.hasPotionEffect(PotionEffectType.INVISIBILITY)
                 || isPluginVanished(player) || !canSee(player);
@@ -189,28 +185,37 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
                 : rand.doubles(randomPitchRange[0], randomPitchRange[1]).iterator().next().floatValue();
         float yaw = isEqual(randomYawRange) ? randomYawRange[0]
                 : rand.doubles(randomYawRange[0], randomYawRange[1]).iterator().next().floatValue();
-        Util.assumePose(npc.getEntity(), yaw, pitch);
+        Util.face(npc.getEntity(), yaw, pitch);
     }
 
     @Override
     public void run() {
-        if (!enabled || !npc.isSpawned()) {
+        if (!npc.isSpawned())
             return;
+
+        if (enableRandomLook) {
+            if (!npc.getNavigator().isNavigating() && lookingAt == null && t <= 0) {
+                randomLook();
+                t = randomLookDelay;
+            } else {
+                t--;
+            }
         }
-        if (npc.getNavigator().isNavigating() && disableWhileNavigating()) {
+        if (!enabled)
             return;
-        }
+
+        if (npc.getNavigator().isNavigating() && disableWhileNavigating())
+            return;
+
         npc.getEntity().getLocation(NPC_LOCATION);
         if (tryInvalidateTarget()) {
             findNewTarget();
         }
+
         if (npc.getNavigator().isNavigating()) {
             npc.getNavigator().setPaused(lookingAt != null);
-        } else if (lookingAt == null && enableRandomLook && t <= 0) {
-            randomLook();
-            t = randomLookDelay;
         }
-        t--;
+
         if (lookingAt == null)
             return;
         Util.faceEntity(npc.getEntity(), lookingAt);
@@ -296,6 +301,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     public boolean useRealisticLooking() {
         return realisticLooking;
+    }
+
+    private static boolean isEqual(float[] array) {
+        return Math.abs(array[0] - array[1]) < 0.001;
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);

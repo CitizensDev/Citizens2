@@ -1147,7 +1147,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "lookclose --range [range] (-r[ealistic looking]) --(random|r)look [true|false] --(random|r)pitchrange [min,max] --(random|r)yawrange [min,max]",
+            usage = "lookclose --range [range] -r[ealistic looking] --(random|r)look [true|false] --(random|r)pitchrange [min,max] --(random|r)yawrange [min,max]",
             desc = "Toggle whether a NPC will look when a player is near",
             modifiers = { "lookclose", "look", "rotate" },
             min = 1,
