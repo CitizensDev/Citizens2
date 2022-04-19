@@ -598,7 +598,10 @@ public class NMS {
     }
 
     public static void shutdown() {
-        BRIDGE.shutdown();
+        if (BRIDGE != null) {
+            BRIDGE.shutdown();
+            BRIDGE = null;
+        }
     }
 
     public static boolean tick(Entity next) {
