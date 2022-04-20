@@ -412,7 +412,9 @@ public class InventoryMenu implements Listener, Runnable {
 
     private void transition(InventoryMenuInfo info, InventoryMenuPage instance, Map<String, Object> context) {
         if (page != null) {
-            context.putAll(page.ctx.data());
+            for (Map.Entry<String, Object> entry : page.ctx.data().entrySet()) {
+                context.putIfAbsent(entry.getKey(), entry.getValue());
+            }
             page.ctx.data().clear();
             stack.add(page);
         }
@@ -425,12 +427,12 @@ public class InventoryMenu implements Listener, Runnable {
         }
         int size = getInventorySize(type, dim);
         Inventory inventory;
+        String title = Colorizer.parseColors(Messaging.tryTranslate(
+                context.containsKey("title") ? (String) context.get("title") : info.menuAnnotation.title()));
         if (type == InventoryType.CHEST || type == null) {
-            inventory = Bukkit.createInventory(null, size,
-                    Colorizer.parseColors(Messaging.tryTranslate(info.menuAnnotation.title())));
+            inventory = Bukkit.createInventory(null, size, title);
         } else {
-            inventory = Bukkit.createInventory(null, type,
-                    Colorizer.parseColors(Messaging.tryTranslate(info.menuAnnotation.title())));
+            inventory = Bukkit.createInventory(null, type, title);
         }
         List<InventoryMenuTransition> transitions = Lists.newArrayList();
         InventoryMenuSlot[] slots = new InventoryMenuSlot[inventory.getSize()];

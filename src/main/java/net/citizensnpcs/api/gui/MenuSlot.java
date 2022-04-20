@@ -7,7 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryAction;
 
 /**
  * Defines a slot with a certain item. Can be linked to a {@link InventoryMenuSlot} or simply at the class level.
@@ -26,11 +25,6 @@ public @interface MenuSlot {
      * name} e.g. {"SHIELD", "AIR"}
      */
     String[] compatMaterial() default {};
-
-    /**
-     * Whitelist the allowed actions (empty = all allowed).
-     */
-    InventoryAction[] filter() default {};
 
     /**
      * The lore of the inventory item, newline-delimited.

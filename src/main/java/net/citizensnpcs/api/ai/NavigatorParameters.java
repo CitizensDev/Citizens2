@@ -84,7 +84,7 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * @see #attackRange(double)
-     * @return The attack range, in blocks squared
+     * @return The attack range, in blocks
      */
     public double attackRange() {
         return attackRange;
@@ -96,7 +96,7 @@ public class NavigatorParameters implements Cloneable {
      * valid to attack.
      *
      * @param range
-     *            The new attack range, in blocks squared
+     *            The new attack range, in blocks
      */
     public NavigatorParameters attackRange(double range) {
         this.attackRange = range;

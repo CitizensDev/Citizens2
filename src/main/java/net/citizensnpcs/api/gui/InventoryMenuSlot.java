@@ -25,7 +25,7 @@ import net.citizensnpcs.api.util.Messaging;
  * Represents a single inventory slot in a {@link InventoryMenu}.
  */
 public class InventoryMenuSlot {
-    private Set<InventoryAction> actionFilter = EnumSet.allOf(InventoryAction.class);
+    private Set<InventoryAction> actionFilter;
     private final List<Consumer<CitizensInventoryClickEvent>> handlers = Lists.newArrayList();
     private final int index;
     private final Inventory inventory;
@@ -110,11 +110,11 @@ public class InventoryMenuSlot {
             }
         }
         inventory.setItem(index, defaultItem);
-        setFilter(Arrays.asList(data.filter()));
     }
 
     void onClick(CitizensInventoryClickEvent event) {
-        if (!actionFilter.contains(event.getAction())) {
+        if ((actionFilter == null && handlers.isEmpty())
+                || (actionFilter != null && !actionFilter.contains(event.getAction()))) {
             event.setCancelled(true);
             event.setResult(Result.DENY);
         }
