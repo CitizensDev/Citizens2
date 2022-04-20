@@ -1558,25 +1558,25 @@ public class NPCCommands {
             double distance = Double.parseDouble(args.getFlag("distance-margin"));
             if (distance < 0)
                 throw new CommandUsageException();
-            npc.getNavigator().getDefaultParameters().distanceMargin(Math.pow(distance, 2));
+            npc.getNavigator().getDefaultParameters().distanceMargin(distance);
             output += Messaging.tr(Messages.PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET, npc.getName(), distance);
 
         }
-        if (args.hasValueFlag("path-distance-margin")) {
-            double distance = Double.parseDouble(args.getFlag("path-distance-margin"));
+        if (args.hasAnyValueFlag("path-distance-margin", "pdm")) {
+            double distance = Double.parseDouble(args.getFlag("path-distance-margin", args.getFlag("pdm")));
             if (distance < 0)
                 throw new CommandUsageException();
-            npc.getNavigator().getDefaultParameters().pathDistanceMargin(Math.pow(distance, 2));
+            npc.getNavigator().getDefaultParameters().pathDistanceMargin(distance);
             output += Messaging.tr(Messages.PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET, npc.getName(), distance);
         }
         if (args.hasValueFlag("attack-range")) {
             double range = Double.parseDouble(args.getFlag("attack-range"));
             if (range < 0)
                 throw new CommandUsageException();
-            npc.getNavigator().getDefaultParameters().attackRange(Math.pow(range, 2));
+            npc.getNavigator().getDefaultParameters().attackRange(range);
             output += Messaging.tr(Messages.PATHFINDING_OPTIONS_ATTACK_RANGE_SET, npc.getName(), range);
         }
-        if (args.hasValueFlag("use-new-finder")) {
+        if (args.hasAnyValueFlag("use-new-finder", "unf")) {
             String raw = args.getFlag("use-new-finder", args.getFlag("unf"));
             boolean use = Boolean.parseBoolean(raw);
             npc.getNavigator().getDefaultParameters().useNewPathfinder(use);

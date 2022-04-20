@@ -231,6 +231,11 @@ public class CitizensNavigator implements Navigator, Runnable {
         } else {
             root.removeKey("updatepathrate");
         }
+        if (defaultParams.useNewPathfinder() != Setting.USE_NEW_PATHFINDER.asBoolean()) {
+            root.setBoolean("usenewpathfinder", defaultParams.useNewPathfinder());
+        } else {
+            root.removeKey("usenewpathfinder");
+        }
         root.setDouble("speedmodifier", defaultParams.speedModifier());
         root.setBoolean("avoidwater", defaultParams.avoidWater());
         root.setBoolean("usedefaultstuckaction", defaultParams.stuckAction() == TeleportStuckAction.INSTANCE);

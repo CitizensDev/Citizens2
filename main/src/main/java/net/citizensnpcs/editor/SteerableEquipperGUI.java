@@ -19,19 +19,10 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.Saddle;
 
 @Menu(title = "NPC Equipment", type = InventoryType.HOPPER, dimensions = { 0, 5 })
-@MenuSlot(
-        slot = { 0, 0 },
-        material = Material.SADDLE,
-        amount = 1,
-        lore = "Place a saddle here ->",
-        filter = InventoryAction.UNKNOWN)
+@MenuSlot(slot = { 0, 0 }, material = Material.SADDLE, amount = 1, lore = "Place a saddle here ->")
 @MenuPattern(
         offset = { 0, 2 },
-        slots = { @MenuSlot(
-                filter = InventoryAction.UNKNOWN,
-                pat = 'x',
-                compatMaterial = { "BARRIER", "FIRE" },
-                title = "<4>Unused") },
+        slots = { @MenuSlot(pat = 'x', compatMaterial = { "BARRIER", "FIRE" }, title = "<4>Unused") },
         value = "xxx")
 public class SteerableEquipperGUI extends InventoryMenuPage {
     @InjectContext
