@@ -21,15 +21,15 @@ import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 
 @Menu(title = "NPC Equipment", type = InventoryType.CHEST, dimensions = { 2, 5 })
-@MenuSlot(slot = { 0, 2 }, material = Material.DIAMOND_HELMET, amount = 1, lore = "Place a helmet below")
-@MenuSlot(slot = { 0, 4 }, material = Material.DIAMOND_LEGGINGS, lore = "Place leggings below", amount = 1)
 @MenuSlot(
         slot = { 0, 1 },
         compatMaterial = { "SHIELD", "BARRIER", "FIRE" },
         lore = "Place offhand item below",
         amount = 1)
 @MenuSlot(slot = { 0, 0 }, material = Material.DIAMOND_SWORD, lore = "Place in hand item below", amount = 1)
+@MenuSlot(slot = { 0, 2 }, material = Material.DIAMOND_HELMET, lore = "Place helmet below", amount = 1)
 @MenuSlot(slot = { 0, 3 }, material = Material.DIAMOND_CHESTPLATE, lore = "Place chestplate below", amount = 1)
+@MenuSlot(slot = { 0, 4 }, material = Material.DIAMOND_LEGGINGS, lore = "Place leggings below", amount = 1)
 @MenuSlot(slot = { 0, 5 }, material = Material.DIAMOND_BOOTS, lore = "Place boots below", amount = 1)
 @MenuPattern(
         offset = { 0, 6 },

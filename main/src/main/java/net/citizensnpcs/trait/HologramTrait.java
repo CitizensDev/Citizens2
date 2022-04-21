@@ -37,6 +37,7 @@ public class HologramTrait extends Trait {
     private Location currentLoc;
     @Persist
     private HologramDirection direction = HologramDirection.BOTTOM_UP;
+    private double lastEntityHeight = 0;
     private boolean lastNameplateVisible;
     @Persist
     private double lineHeight = -1;
@@ -93,6 +94,7 @@ public class HologramTrait extends Trait {
                 }
             });
         }
+        lastEntityHeight = getEntityHeight();
         return hologramNPC;
     }
 
@@ -209,11 +211,13 @@ public class HologramTrait extends Trait {
             }
         }
         boolean update = currentLoc.getWorld() != npc.getStoredLocation().getWorld()
-                || currentLoc.distance(npc.getStoredLocation()) >= 0.001 || lastNameplateVisible != nameplateVisible;
+                || currentLoc.distance(npc.getStoredLocation()) >= 0.001 || lastNameplateVisible != nameplateVisible
+                || (lastEntityHeight - getEntityHeight()) >= 0.05;
         lastNameplateVisible = nameplateVisible;
 
         if (update) {
             currentLoc = npc.getStoredLocation();
+            lastEntityHeight = getEntityHeight();
         }
         if (nameNPC != null && nameNPC.isSpawned()) {
             if (update) {
