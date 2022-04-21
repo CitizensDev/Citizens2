@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.WeakHashMap;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -284,23 +285,6 @@ public class InventoryMenu implements Listener, Runnable {
             return;
         }
         page.page.onClick(slot, event);
-        for (Invokable<ClickHandler> invokable : page.clickHandlers) {
-            int idx = posToIndex(page.dim, invokable.data.slot());
-            if (event.getSlot() != idx)
-                continue;
-            if (acceptFilter(event.getAction(), invokable.data.filter())) {
-                try {
-                    // TODO: optional args?
-                    invokable.method.invoke(page.page, slot, ev);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            } else {
-                event.setCancelled(true);
-                event.setResult(Result.DENY);
-                return;
-            }
-        }
         for (InventoryMenuTransition transition : page.transitions) {
             Class<? extends InventoryMenuPage> next = transition.accept(slot);
             if (next != null) {
@@ -459,9 +443,31 @@ public class InventoryMenu implements Listener, Runnable {
             page.patterns[i] = pattern;
         }
         page.transitions = transitions.toArray(new InventoryMenuTransition[transitions.size()]);
-        page.clickHandlers = info.clickHandlers;
         info.inject(page.page, page.ctx.data());
         page.page.initialise(page.ctx);
+        for (Invokable<ClickHandler> invokable : info.clickHandlers) {
+            int idx = posToIndex(page.dim, invokable.data.slot());
+            InventoryMenuSlot slot = page.ctx.getSlot(idx);
+            slot.addClickHandler(new Consumer<CitizensInventoryClickEvent>() {
+                @Override
+                public void accept(CitizensInventoryClickEvent event) {
+                    if (event.getSlot() != idx)
+                        return;
+                    if (acceptFilter(event.getAction(), invokable.data.filter())) {
+                        try {
+                            // TODO: optional args?
+                            invokable.method.invoke(page.page, slot, event);
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        event.setCancelled(true);
+                        event.setResult(Result.DENY);
+                        return;
+                    }
+                }
+            });
+        }
         transitionViewersToInventory(inventory);
     }
 
@@ -652,7 +658,6 @@ public class InventoryMenu implements Listener, Runnable {
     }
 
     private static class PageContext {
-        private Invokable<ClickHandler>[] clickHandlers;
         private MenuContext ctx;
         public int[] dim;
         private InventoryMenuPage page;
