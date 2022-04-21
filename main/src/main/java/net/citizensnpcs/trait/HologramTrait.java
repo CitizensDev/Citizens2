@@ -212,7 +212,7 @@ public class HologramTrait extends Trait {
         }
         boolean update = currentLoc.getWorld() != npc.getStoredLocation().getWorld()
                 || currentLoc.distance(npc.getStoredLocation()) >= 0.001 || lastNameplateVisible != nameplateVisible
-                || (lastEntityHeight - getEntityHeight()) >= 0.05;
+                || Math.abs(lastEntityHeight - getEntityHeight()) >= 0.05;
         lastNameplateVisible = nameplateVisible;
 
         if (update) {
