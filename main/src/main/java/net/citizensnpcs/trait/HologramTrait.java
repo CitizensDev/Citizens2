@@ -197,9 +197,11 @@ public class HologramTrait extends Trait {
             onDespawn();
             return;
         }
+
         if (currentLoc == null) {
             currentLoc = npc.getStoredLocation();
         }
+
         boolean nameplateVisible = Boolean
                 .parseBoolean(npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString());
         if (npc.requiresNameHologram()) {
@@ -210,6 +212,7 @@ public class HologramTrait extends Trait {
                 nameNPC = createHologram(npc.getFullName(), 0);
             }
         }
+
         boolean update = currentLoc.getWorld() != npc.getStoredLocation().getWorld()
                 || currentLoc.distance(npc.getStoredLocation()) >= 0.001 || lastNameplateVisible != nameplateVisible
                 || Math.abs(lastEntityHeight - getEntityHeight()) >= 0.05;
@@ -219,28 +222,34 @@ public class HologramTrait extends Trait {
             currentLoc = npc.getStoredLocation();
             lastEntityHeight = getEntityHeight();
         }
+
         if (nameNPC != null && nameNPC.isSpawned()) {
             if (update) {
                 nameNPC.teleport(currentLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
             }
             nameNPC.setName(npc.getFullName());
         }
+
         for (int i = 0; i < lineHolograms.size(); i++) {
             NPC hologramNPC = lineHolograms.get(i);
             if (!hologramNPC.isSpawned())
                 continue;
+
             if (update) {
                 hologramNPC.teleport(currentLoc.clone().add(0, getEntityHeight() + getHeight(i), 0),
                         TeleportCause.PLUGIN);
             }
+
             if (i >= lines.size()) {
                 Messaging.severe("More hologram NPCs than lines for ID", npc.getId(), "lines", lines);
                 break;
             }
+
             String text = lines.get(i);
             if (ITEM_MATCHER.matcher(text).matches()) {
                 text = null;
             }
+
             if (text != null && !ChatColor.stripColor(Colorizer.parseColors(text)).isEmpty()) {
                 hologramNPC.setName(Placeholders.replace(text, null, npc));
                 hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
@@ -280,6 +289,7 @@ public class HologramTrait extends Trait {
                 return;
             }
         }
+
         onDespawn();
         onSpawn();
     }

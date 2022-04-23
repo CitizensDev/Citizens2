@@ -488,22 +488,23 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     private void updatePackets(boolean navigating) {
-        updateCounter++;
+        if (updateCounter++ <= npc.data().<Integer> get(NPC.Metadata.PACKET_UPDATE_DELAY,
+                Setting.PACKET_UPDATE_DELAY.asInt()))
+            return;
+        updateCounter = 0;
         boolean itemChanged = false;
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack equipment = getItemBySlot(slot);
             ItemStack cache = equipmentCache.get(slot);
             if (!(cache == null && equipment == null)
                     && (cache == null ^ equipment == null || !ItemStack.isSame(cache, equipment))) {
+                System.out.println("item changed " + cache + " " + equipment);
                 itemChanged = true;
             }
             equipmentCache.put(slot, equipment);
         }
-        if (updateCounter++ <= npc.data().<Integer> get(NPC.Metadata.PACKET_UPDATE_DELAY,
-                Setting.PACKET_UPDATE_DELAY.asInt()) && !itemChanged)
+        if (!itemChanged)
             return;
-
-        updateCounter = 0;
         Location current = getBukkitEntity().getLocation(packetLocationCache);
         List<Pair<EquipmentSlot, ItemStack>> vals = Lists.newArrayList();
         for (EquipmentSlot slot : EquipmentSlot.values()) {

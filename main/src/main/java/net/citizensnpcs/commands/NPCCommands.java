@@ -165,16 +165,17 @@ public class NPCCommands {
             Messaging.sendTr(sender, trait.toggle() ? Messages.AGE_LOCKED : Messages.AGE_UNLOCKED);
         }
         if (args.argsLength() <= 1) {
-            if (!toggleLock)
+            if (!toggleLock) {
                 trait.describe(sender);
+            }
             return;
         }
         int age = 0;
         try {
             age = args.getInteger(1);
-            if (age > 0) {
+            if (age > 0)
                 throw new CommandException(Messages.INVALID_AGE);
-            }
+
             Messaging.sendTr(sender, Messages.AGE_SET_NORMAL, npc.getName(), age);
         } catch (NumberFormatException ex) {
             if (args.getString(1).equalsIgnoreCase("baby")) {
@@ -535,12 +536,14 @@ public class NPCCommands {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             name = name.substring(0, nameLength);
         }
+
         if (name.length() == 0)
             throw new CommandException();
 
         if (!sender.hasPermission("citizens.npc.create.*") && !sender.hasPermission("citizens.npc.createall")
                 && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase().replace("_", "")))
             throw new NoPermissionsException();
+
         NPCRegistry registry = CitizensAPI.getNPCRegistry();
         if (args.hasValueFlag("registry")) {
             registry = CitizensAPI.getNamedNPCRegistry(args.getFlag("registry"));
@@ -554,14 +557,14 @@ public class NPCCommands {
         }
 
         npc = registry.createNPC(type, name);
-        String msg = "You created [[" + npc.getName() + "]] (ID [[" + npc.getId() + "]])";
+        String msg = "Created [[" + npc.getName() + "]] (ID [[" + npc.getId() + "]])";
 
         int age = 0;
         if (args.hasFlag('b')) {
-            if (!Ageable.class.isAssignableFrom(type.getEntityClass()))
+            if (!Ageable.class.isAssignableFrom(type.getEntityClass())) {
                 Messaging.sendErrorTr(sender, Messages.MOBTYPE_CANNOT_BE_AGED,
                         type.name().toLowerCase().replace("_", "-"));
-            else {
+            } else {
                 age = -24000;
                 msg += " as a baby";
             }

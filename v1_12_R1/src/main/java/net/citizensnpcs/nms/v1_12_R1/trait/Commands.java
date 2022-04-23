@@ -35,7 +35,7 @@ import net.citizensnpcs.util.Util;
 public class Commands {
     @Command(
             aliases = { "npc" },
-            usage = "bossbar --style [style] --color [color] --title [title] --visible [visible] --flags [flags]",
+            usage = "bossbar --style [style] --color [color] --title [title] --visible [visible] --flags [flags] --track [health | placeholder]",
             desc = "Edit bossbar properties",
             modifiers = { "bossbar" },
             min = 1,
@@ -54,6 +54,9 @@ public class Commands {
             if (color != null) {
                 trait.setColor(color);
             }
+        }
+        if (args.hasValueFlag("track")) {
+            trait.setTrackVariable(args.getFlag("track"));
         }
         if (args.hasValueFlag("title")) {
             trait.setTitle(Colorizer.parseColors(args.getFlag("title")));
