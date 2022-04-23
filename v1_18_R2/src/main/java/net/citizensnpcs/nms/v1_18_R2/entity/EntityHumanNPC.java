@@ -498,7 +498,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             ItemStack cache = equipmentCache.get(slot);
             if (!(cache == null && equipment == null)
                     && (cache == null ^ equipment == null || !ItemStack.isSame(cache, equipment))) {
-                System.out.println("item changed " + cache + " " + equipment);
                 itemChanged = true;
             }
             equipmentCache.put(slot, equipment);
