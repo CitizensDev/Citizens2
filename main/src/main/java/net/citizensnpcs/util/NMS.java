@@ -553,6 +553,10 @@ public class NMS {
         BRIDGE.setPeekShulker(entity, peek);
     }
 
+    public static void setPitch(Entity entity, float pitch) {
+        BRIDGE.setPitch(entity, pitch);
+    }
+
     public static void setPolarBearRearing(Entity entity, boolean rearing) {
         BRIDGE.setPolarBearRearing(entity, rearing);
     }

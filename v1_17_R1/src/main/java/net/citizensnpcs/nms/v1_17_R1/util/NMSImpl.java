@@ -1226,6 +1226,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPitch(org.bukkit.entity.Entity entity, float pitch) {
+        getHandle(entity).setXRot(pitch);
+    }
+
+    @Override
     public void setPolarBearRearing(org.bukkit.entity.Entity entity, boolean rearing) {
         ((PolarBear) getHandle(entity)).setStanding(rearing);
     }

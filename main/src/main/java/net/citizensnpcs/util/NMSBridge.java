@@ -155,6 +155,8 @@ public interface NMSBridge {
 
     public void setPeekShulker(Entity entity, int peek);
 
+    public void setPitch(Entity entity, float pitch);
+
     public void setPolarBearRearing(Entity entity, boolean rearing);
 
     public void setProfile(SkullMeta meta, GameProfile profile);

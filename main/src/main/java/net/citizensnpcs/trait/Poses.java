@@ -62,7 +62,7 @@ public class Poses extends Trait {
 
     private void assumePose(float yaw, float pitch) {
         if (!npc.isSpawned()) {
-            npc.spawn(npc.getOrAddTrait(CurrentLocation.class).getLocation(), SpawnReason.COMMAND);
+            npc.spawn(npc.getStoredLocation(), SpawnReason.COMMAND);
         }
         Util.setRotation(npc.getEntity(), yaw, pitch);
     }
@@ -127,12 +127,14 @@ public class Poses extends Trait {
 
     @Override
     public void run() {
-        if (!hasPose(defaultPose))
+        if (!hasPose(defaultPose) || npc.getNavigator().isNavigating())
             return;
-        if (!npc.getNavigator().isNavigating()
-                && (!npc.hasTrait(LookClose.class) || !npc.getOrAddTrait(LookClose.class).canSeeTarget())) {
-            assumePose(defaultPose);
+        if (npc.hasTrait(LookClose.class)) {
+            LookClose trait = npc.getOrAddTrait(LookClose.class);
+            if (trait.isEnabled() && trait.canSeeTarget())
+                return;
         }
+        assumePose(defaultPose);
     }
 
     @Override

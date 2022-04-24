@@ -1671,8 +1671,8 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pose (--save [name] (-d)|--assume [name]|--remove [name]|--default [name]) (-a)",
-            desc = "Changes/Saves/Lists NPC's head pose(s)",
+            usage = "pose (--save [name] (-d) | --mirror [name] (-d) | --assume [name] | --remove [name] | --default [name]) (-a)",
+            desc = "Manage NPC poses",
             flags = "ad",
             modifiers = { "pose" },
             min = 1,
@@ -1687,14 +1687,28 @@ public class NPCCommands {
             if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
 
-            if (trait.addPose(args.getFlag("save"), args.getSenderLocation(), args.hasFlag('d'))) {
+            if (trait.addPose(args.getFlag("save"), npc.getStoredLocation(), args.hasFlag('d'))) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
-            } else
+            } else {
                 throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("save"));
+            }
+        } else if (args.hasValueFlag("mirror")) {
+            if (args.getFlag("mirror").isEmpty())
+                throw new CommandException(Messages.INVALID_POSE_NAME);
+
+            if (args.getSenderLocation() == null)
+                throw new ServerCommandException();
+
+            if (trait.addPose(args.getFlag("mirror"), npc.getStoredLocation(), args.hasFlag('d'))) {
+                Messaging.sendTr(sender, Messages.POSE_ADDED);
+            } else {
+                throw new CommandException(Messages.POSE_ALREADY_EXISTS, args.getFlag("mirror"));
+            }
         } else if (args.hasValueFlag("default")) {
             String pose = args.getFlag("default");
             if (!trait.hasPose(pose))
                 throw new CommandException(Messages.POSE_MISSING, pose);
+
             trait.setDefaultPose(pose);
             Messaging.sendTr(sender, Messages.DEFAULT_POSE_SET, pose);
         } else if (args.hasValueFlag("assume")) {
@@ -1704,6 +1718,7 @@ public class NPCCommands {
 
             if (!trait.hasPose(pose))
                 throw new CommandException(Messages.POSE_MISSING, pose);
+
             trait.assumePose(pose);
         } else if (args.hasValueFlag("remove")) {
             if (args.getFlag("remove").isEmpty())
@@ -1720,8 +1735,7 @@ public class NPCCommands {
             return;
         if (args.getSenderLocation() == null)
             throw new ServerCommandException();
-        Location location = args.getSenderLocation();
-        trait.assumePose(location);
+        trait.assumePose(args.getSenderLocation());
     }
 
     @Command(

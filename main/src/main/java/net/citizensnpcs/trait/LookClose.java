@@ -102,6 +102,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             min = dist;
             lookingAt = player;
         }
+        
         if (old != lookingAt) {
             NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, old, lookingAt);
             Bukkit.getPluginManager().callEvent(event);
@@ -130,6 +131,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
     public Player getTarget() {
         return lookingAt;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     private boolean isInvisible(Player player) {
@@ -218,6 +223,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
 
         if (lookingAt == null)
             return;
+
         Util.faceEntity(npc.getEntity(), lookingAt);
         if (npc.getEntity().getType().name().equals("SHULKER")) {
             boolean wasSilent = npc.getEntity().isSilent();
