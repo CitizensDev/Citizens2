@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,16 +60,15 @@ public class HologramTrait extends Trait {
      */
     public void addLine(String text) {
         lines.add(text);
-        onDespawn();
-        onSpawn();
+        reloadLineHolograms();
     }
 
     /**
      * Clears all hologram lines
      */
     public void clear() {
-        onDespawn();
         lines.clear();
+        reloadLineHolograms();
     }
 
     private NPC createHologram(String line, double heightOffset) {
@@ -132,7 +132,7 @@ public class HologramTrait extends Trait {
      * @return the hologram lines, in bottom-up order
      */
     public List<String> getLines() {
-        return lines;
+        return Collections.unmodifiableList(lines);
     }
 
     private double getMaxHeight() {
@@ -174,6 +174,21 @@ public class HologramTrait extends Trait {
         if (npc.requiresNameHologram() && lastNameplateVisible) {
             nameNPC = createHologram(npc.getFullName(), 0);
         }
+
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            lineHolograms.add(createHologram(Placeholders.replace(line, null, npc), getHeight(i)));
+        }
+    }
+
+    private void reloadLineHolograms() {
+        for (NPC npc : lineHolograms) {
+            npc.destroy();
+        }
+        lineHolograms.clear();
+
+        if (!npc.isSpawned())
+            return;
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             lineHolograms.add(createHologram(Placeholders.replace(line, null, npc), getHeight(i)));
@@ -186,9 +201,12 @@ public class HologramTrait extends Trait {
      * @param idx
      */
     public void removeLine(int idx) {
+        if (idx < 0 || idx >= lines.size())
+            return;
+
         lines.remove(idx);
-        onDespawn();
-        onSpawn();
+
+        reloadLineHolograms();
     }
 
     @Override
@@ -267,8 +285,8 @@ public class HologramTrait extends Trait {
      */
     public void setDirection(HologramDirection direction) {
         this.direction = direction;
-        onDespawn();
-        onSpawn();
+
+        reloadLineHolograms();
     }
 
     /**
@@ -281,17 +299,17 @@ public class HologramTrait extends Trait {
      */
     public void setLine(int idx, String text) {
         if (idx == lines.size()) {
-            lines.add(text);
-        } else {
-            lines.set(idx, text);
-            if (idx < lineHolograms.size()) {
-                lineHolograms.get(idx).setName(Placeholders.replace(text, null, npc));
-                return;
-            }
+            addLine(text);
+            return;
         }
 
-        onDespawn();
-        onSpawn();
+        lines.set(idx, text);
+        if (idx < lineHolograms.size()) {
+            lineHolograms.get(idx).setName(Placeholders.replace(text, null, npc));
+            return;
+        }
+
+        reloadLineHolograms();
     }
 
     /**
@@ -303,8 +321,8 @@ public class HologramTrait extends Trait {
      */
     public void setLineHeight(double height) {
         lineHeight = height;
-        onDespawn();
-        onSpawn();
+
+        reloadLineHolograms();
     }
 
     public enum HologramDirection {

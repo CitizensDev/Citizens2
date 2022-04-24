@@ -26,7 +26,6 @@ import net.citizensnpcs.nms.v1_8_R3.network.EmptyNetworkManager;
 import net.citizensnpcs.nms.v1_8_R3.network.EmptySocket;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
 import net.citizensnpcs.nms.v1_8_R3.util.PlayerControllerJump;
-import net.citizensnpcs.nms.v1_8_R3.util.PlayerControllerLook;
 import net.citizensnpcs.nms.v1_8_R3.util.PlayerControllerMove;
 import net.citizensnpcs.nms.v1_8_R3.util.PlayerNavigation;
 import net.citizensnpcs.nms.v1_8_R3.util.PlayerlistTrackerEntry;
@@ -43,7 +42,6 @@ import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.DamageSource;
 import net.minecraft.server.v1_8_R3.DataWatcher;
-import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EnumProtocolDirection;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
@@ -59,7 +57,6 @@ import net.minecraft.server.v1_8_R3.WorldSettings;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
     private PlayerControllerJump controllerJump;
-    private PlayerControllerLook controllerLook;
     private PlayerControllerMove controllerMove;
     private final TIntObjectHashMap<ItemStack> equipmentCache = new TIntObjectHashMap<ItemStack>();
     private int jumpTicks = 0;
@@ -254,7 +251,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
 
         controllerJump = new PlayerControllerJump(this);
-        controllerLook = new PlayerControllerLook(this);
         controllerMove = new PlayerControllerMove(this);
         navigation = new PlayerNavigation(this, world);
         invulnerableTicks = 0;
@@ -363,14 +359,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(skinName, signature, data);
     }
 
-    public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
-        controllerLook.a(target, yawOffset, renderOffset);
-    }
-
-    public void setTargetLook(Location target) {
-        controllerLook.a(target.getX(), target.getY(), target.getZ(), 10, 40);
-    }
-
     public void setTracked(PlayerlistTrackerEntry trackerEntry) {
         this.trackerEntry = trackerEntry;
     }
@@ -394,7 +382,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     public void updateAI() {
         controllerMove.c();
-        controllerLook.a();
         controllerJump.b();
     }
 

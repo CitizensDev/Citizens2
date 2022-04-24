@@ -34,7 +34,6 @@ import net.citizensnpcs.nms.v1_17_R1.util.EmptyAdvancementDataPlayer;
 import net.citizensnpcs.nms.v1_17_R1.util.EmptyServerStatsCounter;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
 import net.citizensnpcs.nms.v1_17_R1.util.PlayerControllerJump;
-import net.citizensnpcs.nms.v1_17_R1.util.PlayerLookControl;
 import net.citizensnpcs.nms.v1_17_R1.util.PlayerMoveControl;
 import net.citizensnpcs.nms.v1_17_R1.util.PlayerNavigation;
 import net.citizensnpcs.nms.v1_17_R1.util.PlayerlistTracker;
@@ -74,7 +73,6 @@ import net.minecraft.world.phys.Vec3;
 
 public class EntityHumanNPC extends ServerPlayer implements NPCHolder, SkinnableEntity {
     private PlayerControllerJump controllerJump;
-    private PlayerLookControl controllerLook;
     private PlayerMoveControl controllerMove;
     private final Map<EquipmentSlot, ItemStack> equipmentCache = Maps.newEnumMap(EquipmentSlot.class);
     private int jumpTicks = 0;
@@ -322,7 +320,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         range.setBaseValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
 
         controllerJump = new PlayerControllerJump(this);
-        controllerLook = new PlayerLookControl(this);
         controllerMove = new PlayerMoveControl(this);
         navigation = new PlayerNavigation(this, level);
         this.invulnerableTime = 0;
@@ -445,14 +442,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(skinName, signature, data);
     }
 
-    public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
-        controllerLook.a(target, yawOffset, renderOffset);
-    }
-
-    public void setTargetLook(Location target) {
-        controllerLook.a(target.getX(), target.getY(), target.getZ());
-    }
-
     public void setTracked(PlayerlistTracker tracker) {
         this.playerlistTracker = tracker;
     }
@@ -484,7 +473,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     public void updateAI() {
         controllerMove.tick();
-        controllerLook.a();
         controllerJump.b();
     }
 

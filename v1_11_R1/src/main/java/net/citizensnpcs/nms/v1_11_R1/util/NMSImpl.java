@@ -158,6 +158,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.LlamaTrait;
 import net.citizensnpcs.trait.versioned.PolarBearTrait;
@@ -800,7 +801,7 @@ public class NMSImpl implements NMSBridge {
                 ((EntityLiving) handle).aP += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).setTargetLook(to);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
         }
     }
 
@@ -824,7 +825,7 @@ public class NMSImpl implements NMSBridge {
                 ((EntityLiving) handle).aP += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).setTargetLook(target, 10F, 40F);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
         }
     }
 

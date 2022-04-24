@@ -1,5 +1,8 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.util.NMS;
@@ -7,12 +10,12 @@ import net.citizensnpcs.util.Util;
 
 @TraitName("rotationtrait")
 public class RotationTrait extends Trait {
+    protected float maxPitchRotationPerTick = 10;
+    protected float maxYawRotationPerTick = 40;
     protected boolean rotating;
     protected double tx;
     protected double ty;
     protected double tz;
-    protected float xMaxRotAngle = 10;
-    protected float yMaxRotSpeed = 40;
 
     public RotationTrait() {
         super("rotationtrait");
@@ -20,10 +23,6 @@ public class RotationTrait extends Trait {
 
     private double getEyeY() {
         return NMS.getHeight(npc.getEntity());
-    }
-
-    private double getX() {
-        return npc.getStoredLocation().getX();
     }
 
     protected float getTargetPitchDifference() {
@@ -34,16 +33,33 @@ public class RotationTrait extends Trait {
         return (float) -Math.toDegrees(Math.atan2(dy, diag));
     }
 
-    private double getY() {
-        return npc.getStoredLocation().getY();
-    }
-
     protected float getTargetYawDifference() {
         return (float) Math.toDegrees(Math.atan2(tz - getZ(), tx - getX())) - 90.0F;
     }
 
+    private double getX() {
+        return npc.getStoredLocation().getX();
+    }
+
+    private double getY() {
+        return npc.getStoredLocation().getY();
+    }
+
     private double getZ() {
         return npc.getStoredLocation().getZ();
+    }
+
+    public void rotateToFace(Entity target) {
+        Location loc = target.getLocation();
+        loc.setY(loc.getY() + NMS.getHeight(target));
+        rotateToFace(loc);
+    }
+
+    public void rotateToFace(Location target) {
+        this.tx = target.getX();
+        this.ty = target.getY();
+        this.tz = target.getZ();
+        this.rotating = true;
     }
 
     protected float rotateTowards(float target, float current, float maxRotPerTick) {
@@ -62,8 +78,8 @@ public class RotationTrait extends Trait {
         }
         if (this.rotating) {
             this.rotating = false;
-            NMS.setHeadYaw(npc.getEntity(),
-                    Util.clamp(rotateTowards(NMS.getHeadYaw(npc.getEntity()), getTargetYawDifference(), this.yMaxRotSpeed)));
+            NMS.setHeadYaw(npc.getEntity(), Util.clamp(rotateTowards(NMS.getHeadYaw(npc.getEntity()),
+                    getTargetYawDifference(), this.maxYawRotationPerTick)));
             float d = Util.clamp(NMS.getHeadYaw(npc.getEntity()) - 40);
             if (d > NMS.getYaw(npc.getEntity())) {
                 NMS.setBodyYaw(npc.getEntity(), d);
@@ -80,8 +96,8 @@ public class RotationTrait extends Trait {
                     NMS.setBodyYaw(npc.getEntity(), d);
                 }
             }
-            NMS.setPitch(npc.getEntity(),
-                    rotateTowards(npc.getStoredLocation().getPitch(), getTargetPitchDifference(), this.xMaxRotAngle));
+            NMS.setPitch(npc.getEntity(), rotateTowards(npc.getStoredLocation().getPitch(), getTargetPitchDifference(),
+                    this.maxPitchRotationPerTick));
         }
     }
 
