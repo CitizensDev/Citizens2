@@ -42,7 +42,7 @@ import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
-import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.SmoothRotationTrait;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.ScriptTrait;
@@ -89,7 +89,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Poses.class));
         registerTrait(TraitInfo.create(Powered.class));
         registerTrait(TraitInfo.create(RabbitType.class));
-        registerTrait(TraitInfo.create(RotationTrait.class));
+        registerTrait(TraitInfo.create(SmoothRotationTrait.class));
         registerTrait(TraitInfo.create(Saddle.class));
         registerTrait(TraitInfo.create(ScoreboardTrait.class));
         registerTrait(TraitInfo.create(ScriptTrait.class));
