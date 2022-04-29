@@ -94,7 +94,7 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
             int tickDifference = currentTick - startDigTick;
             float damage = getDamage(tickDifference);
             if (damage >= 1F) {
-                entity.getWorld().getBlockAt(x, y, z).breakNaturally(getItemStack());
+                configuration.blockBreaker().accept(entity.getWorld().getBlockAt(x, y, z), getItemStack());
                 return BehaviorStatus.SUCCESS;
             }
             int modifiedDamage = (int) (damage * 10.0F);
