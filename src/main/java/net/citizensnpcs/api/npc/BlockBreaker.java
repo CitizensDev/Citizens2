@@ -1,6 +1,10 @@
 package net.citizensnpcs.api.npc;
 
+import java.util.function.BiConsumer;
+
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
@@ -15,10 +19,24 @@ import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
  */
 public abstract class BlockBreaker extends BehaviorGoalAdapter {
     public static class BlockBreakerConfiguration {
+        private BiConsumer<Block, ItemStack> blockBreaker = (block, item) -> block.breakNaturally(item);
         private Runnable callback;
         private org.bukkit.inventory.ItemStack itemStack;
         private float modifier = 1;
         private double radius = 0;
+
+        public BiConsumer<Block, ItemStack> blockBreaker() {
+            return blockBreaker;
+        }
+
+        /**
+         * @param breaker
+         *            The function that actually breaks the block. By default, this will call
+         *            {@link Block#breakNaturally(ItemStack)}
+         */
+        public void blockBreaker(BiConsumer<Block, ItemStack> breaker) {
+            blockBreaker = breaker;
+        }
 
         public float blockStrengthModifier() {
             return modifier;
