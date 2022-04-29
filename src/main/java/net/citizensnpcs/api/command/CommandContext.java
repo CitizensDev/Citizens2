@@ -176,6 +176,19 @@ public class CommandContext {
         return flags;
     }
 
+    public int getFlagTicks(String ch) throws NumberFormatException {
+        return parseTicks(valueFlags.get(ch));
+    }
+
+    public int getFlagTicks(String ch, int def) throws NumberFormatException {
+        final String value = valueFlags.get(ch);
+        if (value == null) {
+            return def;
+        }
+
+        return parseTicks(value);
+    }
+
     public int getInteger(int index) throws NumberFormatException {
         return Integer.parseInt(args[index + 1]);
     }
@@ -250,6 +263,10 @@ public class CommandContext {
         return index + 1 < args.length ? args[index + 1] : def;
     }
 
+    public int getTicks(int index) throws NumberFormatException {
+        return parseTicks(args[index + 1]);
+    }
+
     public Map<String, String> getValueFlags() {
         return valueFlags;
     }
@@ -281,6 +298,28 @@ public class CommandContext {
 
     public boolean matches(String command) {
         return args[0].equalsIgnoreCase(command);
+    }
+
+    public int parseTicks(String dur) {
+        dur = dur.trim();
+        char last = Character.toLowerCase(dur.charAt(dur.length() - 1));
+        if (Character.isDigit(last)) {
+            return Integer.parseInt(dur);
+        }
+        int factor = 1;
+        if (last == 's') {
+            factor = 20;
+        }
+        if (last == 'm') {
+            factor = 20 * 60;
+        }
+        if (last == 'h') {
+            factor = 20 * 60 * 60;
+        }
+        if (last == 'd') {
+            factor = 20 * 60 * 60 * 24;
+        }
+        return (int) Math.ceil(Double.parseDouble(dur.substring(0, dur.length() - 1)) * factor);
     }
 
     public static Location parseLocation(Location currentLocation, String flag) throws CommandException {
