@@ -300,6 +300,7 @@ public class CitizensNPC extends AbstractNPC {
             public void run() {
                 if (timer++ > 10) {
                     cancel();
+                    Messaging.debug("Couldn't spawn", CitizensNPC.this, "entity not added to world");
                     return;
                 }
                 if (getEntity() == null || !getEntity().isValid())
@@ -314,7 +315,8 @@ public class CitizensNPC extends AbstractNPC {
 
                 if (spawnEvent.isCancelled()) {
                     entityController.remove();
-                    Messaging.debug("Couldn't spawn", this, "SpawnReason." + reason, "due to event cancellation.");
+                    Messaging.debug("Couldn't spawn", CitizensNPC.this, "SpawnReason." + reason,
+                            "due to event cancellation.");
                     cancel();
                     return;
                 }

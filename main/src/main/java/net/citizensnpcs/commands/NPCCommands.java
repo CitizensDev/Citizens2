@@ -391,11 +391,16 @@ public class NPCCommands {
             if (args.hasValueFlag("permissions")) {
                 perms.addAll(Arrays.asList(args.getFlag("permissions").split(",")));
             }
-            int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
-                    .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o'))
-                    .cooldown(args.getFlagInteger("cooldown", 0)).globalCooldown(args.getFlagInteger("gcooldown", 0))
-                    .n(args.getFlagInteger("n", -1)).delay(args.getFlagInteger("delay", 0)));
-            Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
+            try {
+                int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
+                        .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o'))
+                        .cooldown(args.getFlagInteger("cooldown", 0))
+                        .globalCooldown(args.getFlagInteger("gcooldown", 0)).n(args.getFlagInteger("n", -1))
+                        .delay(args.getFlagTicks("delay", 0)));
+                Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
+            } catch (NumberFormatException ex) {
+                throw new CommandException(CommandMessages.INVALID_NUMBER);
+            }
         } else if (args.getString(1).equalsIgnoreCase("sequential")) {
             commands.setExecutionMode(commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? ExecutionMode.LINEAR
                     : ExecutionMode.SEQUENTIAL);
@@ -455,6 +460,7 @@ public class NPCCommands {
         if (!npc.hasTrait(Controllable.class)) {
             npc.addTrait(new Controllable(false));
         }
+
         Controllable trait = npc.getOrAddTrait(Controllable.class);
         boolean enabled = trait.toggle();
         if (args.hasFlag('y')) {
@@ -462,6 +468,7 @@ public class NPCCommands {
         } else if (args.hasFlag('n')) {
             enabled = trait.setEnabled(false);
         }
+
         trait.setOwnerRequired(args.hasFlag('o'));
         String key = enabled ? Messages.CONTROLLABLE_SET : Messages.CONTROLLABLE_REMOVED;
         Messaging.sendTr(sender, key, npc.getName());
@@ -1187,7 +1194,7 @@ public class NPCCommands {
             toggle = false;
         }
         if (args.hasAnyValueFlag("randomlookdelay", "rlookdelay")) {
-            int delay = Integer.parseInt(args.getFlag("randomlookdelay", args.getFlag("rlookdelay")));
+            int delay = args.getFlagTicks("randomlookdelay", args.getFlagTicks("rlookdelay", 1));
             delay = Math.max(1, delay);
             trait.setRandomLookDelay(delay);
             Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_DELAY_SET, npc.getName(), delay);
@@ -1911,15 +1918,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "respawn [delay in ticks]",
-            desc = "Sets an NPC's respawn delay in ticks",
+            usage = "respawn [delay]",
+            desc = "Sets an NPC's respawn delay",
             modifiers = { "respawn" },
             min = 1,
             max = 2,
             permission = "citizens.npc.respawn")
     public void respawn(CommandContext args, CommandSender sender, NPC npc) {
         if (args.argsLength() > 1) {
-            int delay = args.getInteger(1);
+            int delay = args.getTicks(1);
             npc.data().setPersistent(NPC.RESPAWN_DELAY_METADATA, delay);
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, delay);
         } else {

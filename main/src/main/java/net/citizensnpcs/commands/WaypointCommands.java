@@ -52,12 +52,11 @@ public class WaypointCommands {
         Messaging.sendTr(sender, Messages.WAYPOINT_ADDED, Util.prettyPrintLocation(loc), index);
     }
 
-    // TODO: refactor into a policy style system
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "disableteleport",
-            desc = "Disables teleportation when stuck (temporary command)",
-            modifiers = { "disableteleport" },
+            desc = "Disables teleportation when stuck",
+            modifiers = { "disableteleport", "dt" },
             min = 1,
             max = 1,
             permission = "citizens.waypoints.disableteleport")
@@ -90,7 +89,7 @@ public class WaypointCommands {
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "opendoors",
             desc = "Enables opening doors when pathfinding",
-            modifiers = { "opendoors" },
+            modifiers = { "opendoors", "od" },
             min = 1,
             max = 1,
             permission = "citizens.waypoints.opendoors")

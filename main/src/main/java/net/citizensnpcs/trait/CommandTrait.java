@@ -65,12 +65,12 @@ public class CommandTrait extends Trait {
     private ExecutionMode executionMode = ExecutionMode.LINEAR;
     @Persist
     private float experienceCost = -1;
-    @Persist
+    @Persist(valueType = Long.class)
     private final Map<String, Long> globalCooldowns = Maps.newHashMap();
     @Persist
     private boolean hideErrorMessages;
     @Persist
-    private List<ItemStack> itemRequirements = Lists.newArrayList();
+    private final List<ItemStack> itemRequirements = Lists.newArrayList();
     @Persist
     private final List<String> temporaryPermissions = Lists.newArrayList();
 
@@ -144,7 +144,7 @@ public class CommandTrait extends Trait {
                 right.add(command);
             }
         }
-        String output = Util.prettyEnum(executionMode) + " ";
+        String output = executionMode + " ";
         if (cost > 0) {
             output += "Cost: " + StringHelper.wrap(cost);
         }
@@ -383,6 +383,11 @@ public class CommandTrait extends Trait {
         LINEAR,
         RANDOM,
         SEQUENTIAL;
+
+        @Override
+        public String toString() {
+            return name().charAt(1) + name().substring(1).toLowerCase();
+        }
     }
 
     public static enum Hand {
@@ -427,7 +432,8 @@ public class CommandTrait extends Trait {
                     requirements.add(stack);
                 }
             }
-            this.trait.itemRequirements = requirements;
+            this.trait.itemRequirements.clear();
+            this.trait.itemRequirements.addAll(requirements);
         }
     }
 
@@ -499,7 +505,7 @@ public class CommandTrait extends Trait {
         String command;
         int cooldown;
         int delay;
-        private int globalCooldown;
+        int globalCooldown;
         Hand hand;
         int n = -1;
         boolean op;
@@ -643,18 +649,19 @@ public class CommandTrait extends Trait {
             if (command.cooldown > 0) {
                 lastUsed.put(commandKey, currentTimeSec);
             }
-            if (command.n > 0) {
-                nUsed.put(commandKey, previouslyUsed + 1);
-            }
             if (command.globalCooldown > 0) {
                 trait.globalCooldowns.put(commandKey, currentTimeSec);
+            }
+            if (command.n > 0) {
+                nUsed.put(commandKey, previouslyUsed + 1);
             }
             lastUsedId = command.id;
             return true;
         }
 
         public static boolean requiresTracking(NPCCommand command) {
-            return command.cooldown > 0 || command.n > 0 || (command.perms != null && command.perms.size() > 0);
+            return command.globalCooldown > 0 || command.cooldown > 0 || command.n > 0
+                    || (command.perms != null && command.perms.size() > 0);
         }
     }
 
