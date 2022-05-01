@@ -92,10 +92,10 @@ public class TraitCommands {
 
     @Command(
             aliases = { "trait", "tr" },
-            usage = "remove [trait name]...",
+            usage = "remove [trait names]...",
             desc = "Removes traits on the NPC",
             modifiers = { "remove", "rem", "r" },
-            min = 1,
+            min = 2,
             permission = "citizens.npc.trait")
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         List<String> removed = Lists.newArrayList();
