@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Citizens;
+import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
@@ -61,9 +62,15 @@ public class WaypointCommands {
             max = 1,
             permission = "citizens.waypoints.disableteleport")
     public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        npc.getNavigator().getDefaultParameters().stuckAction(null);
-        npc.data().setPersistent(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA, true);
-        Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_DISABLED);
+        npc.data().setPersistent(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA,
+                !npc.data().get(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA, false));
+        if (npc.data().get(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA, false)) {
+            npc.getNavigator().getDefaultParameters().stuckAction(null);
+            Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_DISABLED, npc.getName());
+        } else {
+            npc.getNavigator().getDefaultParameters().stuckAction(TeleportStuckAction.INSTANCE);
+            Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_ENABLED, npc.getName());
+        }
     }
 
     @Command(
