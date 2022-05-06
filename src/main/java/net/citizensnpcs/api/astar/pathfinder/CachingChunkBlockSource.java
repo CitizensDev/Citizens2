@@ -44,7 +44,7 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
 
     @Override
     public BoundingBox getCollisionBox(int x, int y, int z) {
-        if (y > SpigotUtil.getMaxBlockY()) {
+        if (!SpigotUtil.checkYSafe(y, world)) {
             return BoundingBox.EMPTY;
         }
         T chunk = getSpecific(x, z);
@@ -67,7 +67,7 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
 
     @Override
     public Material getMaterialAt(int x, int y, int z) {
-        if (y > SpigotUtil.getMaxBlockY()) {
+        if (!SpigotUtil.checkYSafe(y, world)) {
             return Material.AIR;
         }
         T chunk = getSpecific(x, z);

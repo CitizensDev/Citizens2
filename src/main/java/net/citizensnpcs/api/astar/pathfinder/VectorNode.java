@@ -121,7 +121,7 @@ public class VectorNode extends AStarNode implements PathPoint {
                     if (x == 0 && y == 0 && z == 0)
                         continue;
                     int modY = location.getBlockY() + y;
-                    if (modY <= SpigotUtil.getMinBlockY() || modY > SpigotUtil.getMaxBlockY()) {
+                    if (!SpigotUtil.checkYSafe(modY, source.getWorld())) {
                         continue;
                     }
                     Vector mod = new Vector(location.getX() + x, modY, location.getZ() + z);

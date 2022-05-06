@@ -1,21 +1,25 @@
 package net.citizensnpcs.api.util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 
 public class SpigotUtil {
-    public static int getMaxBlockY() {
-        return 255;
+    public static boolean checkYSafe(double y, World world) {
+        if (!SUPPORT_WORLD_HEIGHT || world == null) {
+            return y >= 0 && y <= 255;
+        }
+        try {
+            return y >= world.getMinHeight() && y <= world.getMaxHeight();
+        } catch (Throwable t) {
+            SUPPORT_WORLD_HEIGHT = false;
+            return y >= 0 && y <= 255;
+        }
     }
 
     public static int getMaxNameLength(EntityType type) {
         return isUsing1_13API() ? 256 : 64;
-    }
-
-    public static int getMinBlockY() {
-        int[] version = getVersion();
-        return version[0] >= 1 && version[1] >= 18 ? -64 : 0;
     }
 
     private static int[] getVersion() {
@@ -45,5 +49,6 @@ public class SpigotUtil {
     }
 
     private static int[] BUKKIT_VERSION = null;
+    private static boolean SUPPORT_WORLD_HEIGHT = true;
     private static Boolean using1_13API;
 }
