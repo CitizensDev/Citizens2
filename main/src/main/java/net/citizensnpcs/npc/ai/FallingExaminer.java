@@ -13,6 +13,7 @@ import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.NeighbourGeneratorBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 public class FallingExaminer implements NeighbourGeneratorBlockExaminer {
     private final Map<PathPoint, Integer> fallen = Maps.newHashMap();
@@ -31,7 +32,7 @@ public class FallingExaminer implements NeighbourGeneratorBlockExaminer {
     public List<PathPoint> getNeighbours(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
         List<PathPoint> neighbours = ((VectorNode) point).getNeighbours(source, point);
-        if (pos.getBlockY() <= 1)
+        if (pos.getBlockY() <= SpigotUtil.getMinBlockY() + 1)
             return neighbours;
 
         Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());

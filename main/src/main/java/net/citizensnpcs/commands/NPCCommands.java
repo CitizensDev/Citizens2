@@ -28,6 +28,7 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
@@ -1019,6 +1020,18 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "hurt [damage]",
+            desc = "Damages the NPC",
+            modifiers = { "hurt" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.hurt")
+    public void hurt(CommandContext args, Player sender, NPC npc) {
+        ((Damageable) npc.getEntity()).damage(args.getInteger(1));
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "id",
             desc = "Sends the selected NPC's ID to the sender",
             modifiers = { "id" },
@@ -1621,17 +1634,27 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathto [x] [y] [z]",
+            usage = "pathto me | here | cursor | [x] [y] [z]",
             desc = "Starts pathfinding to a certain location",
             modifiers = { "pathto" },
-            min = 4,
+            min = 2,
             max = 4,
             permission = "citizens.npc.pathto")
-    public void pathto(CommandContext args, CommandSender sender, NPC npc) {
+    public void pathto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Location loc = npc.getStoredLocation();
-        loc.setX(args.getDouble(1));
-        loc.setY(args.getDouble(2));
-        loc.setZ(args.getDouble(3));
+        if (args.argsLength() == 2) {
+            if ((args.getString(1).equalsIgnoreCase("me") || args.getString(1).equalsIgnoreCase("here"))) {
+                loc = args.getSenderLocation();
+            } else if (args.getString(1).equalsIgnoreCase("cursor")) {
+                loc = ((Player) sender).getTargetBlockExact(32).getLocation();
+            } else {
+                throw new CommandUsageException();
+            }
+        } else {
+            loc.setX(args.getDouble(1));
+            loc.setY(args.getDouble(2));
+            loc.setZ(args.getDouble(3));
+        }
         npc.getNavigator().setTarget(loc);
     }
 
