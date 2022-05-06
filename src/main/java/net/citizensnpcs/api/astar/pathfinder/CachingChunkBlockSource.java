@@ -9,6 +9,7 @@ import org.bukkit.World;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.util.BoundingBox;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 public abstract class CachingChunkBlockSource<T> extends BlockSource {
     private final Map<ChunkCoord, ChunkCache> chunkCache = Maps.newHashMap();
@@ -43,7 +44,7 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
 
     @Override
     public BoundingBox getCollisionBox(int x, int y, int z) {
-        if (y > 255) {
+        if (y > SpigotUtil.getMaxBlockY()) {
             return BoundingBox.EMPTY;
         }
         T chunk = getSpecific(x, z);
@@ -66,7 +67,7 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
 
     @Override
     public Material getMaterialAt(int x, int y, int z) {
-        if (y > 255) {
+        if (y > SpigotUtil.getMaxBlockY()) {
             return Material.AIR;
         }
         T chunk = getSpecific(x, z);

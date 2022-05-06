@@ -210,8 +210,9 @@ public class CommandContext {
     public String getJoinedStrings(int initialIndex, char delimiter) {
         initialIndex = initialIndex + 1;
         StringBuilder buffer = new StringBuilder(args[initialIndex]);
-        for (int i = initialIndex + 1; i < args.length; i++)
+        for (int i = initialIndex + 1; i < args.length; i++) {
             buffer.append(delimiter).append(args[i]);
+        }
         return buffer.toString().trim();
     }
 

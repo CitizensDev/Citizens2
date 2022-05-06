@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import net.citizensnpcs.api.astar.AStarNode;
 import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer.PassableState;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 public class VectorNode extends AStarNode implements PathPoint {
     private float blockCost = -1;
@@ -120,7 +121,7 @@ public class VectorNode extends AStarNode implements PathPoint {
                     if (x == 0 && y == 0 && z == 0)
                         continue;
                     int modY = location.getBlockY() + y;
-                    if (modY < 0 || modY > 255) {
+                    if (modY <= SpigotUtil.getMinBlockY() || modY > SpigotUtil.getMaxBlockY()) {
                         continue;
                     }
                     Vector mod = new Vector(location.getX() + x, modY, location.getZ() + z);

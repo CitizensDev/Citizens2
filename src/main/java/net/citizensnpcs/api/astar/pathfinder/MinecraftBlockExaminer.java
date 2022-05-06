@@ -49,7 +49,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
-        if (pos.getBlockY() <= 0 || pos.getBlockY() >= 255) {
+        if (pos.getBlockY() <= SpigotUtil.getMinBlockY() || pos.getBlockY() >= SpigotUtil.getMaxBlockY()) {
             return PassableState.UNPASSABLE;
         }
         Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
