@@ -32,7 +32,7 @@ public class FallingExaminer implements NeighbourGeneratorBlockExaminer {
     public List<PathPoint> getNeighbours(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
         List<PathPoint> neighbours = ((VectorNode) point).getNeighbours(source, point);
-        if (pos.getBlockY() <= SpigotUtil.getMinBlockY() + 1)
+        if (!SpigotUtil.checkYSafe(pos.getBlockY() + 1, source.getWorld()))
             return neighbours;
 
         Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
