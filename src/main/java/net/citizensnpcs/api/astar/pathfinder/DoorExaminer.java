@@ -152,7 +152,6 @@ public class DoorExaminer implements BlockExaminer {
                     if (closed)
                         return;
                     double dist = npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5));
-                    System.out.println(dist + " " + closed);
                     if (dist > 1.8) {
                         close(npc, point);
                         closed = true;
