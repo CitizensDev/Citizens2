@@ -515,7 +515,8 @@ public class EventListen implements Listener {
         if (npc == null) {
             return;
         }
-        if (npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+        boolean leashProtected = npc.isProtected();
+        if (npc.data().get(NPC.LEASH_PROTECTED_METADATA, leashProtected)) {
             event.setCancelled(true);
         }
     }

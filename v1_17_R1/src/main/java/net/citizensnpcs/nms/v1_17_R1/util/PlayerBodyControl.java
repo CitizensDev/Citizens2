@@ -23,7 +23,6 @@ public class PlayerBodyControl {
         }
         if (e())
             if (Math.abs(this.mob.yHeadRot - this.lastStableYHeadRot) > 15.0F) {
-                System.out.println("BIG DX");
                 this.lastStableYHeadRot = 0;
                 this.lastStableYHeadRot = this.mob.yHeadRot;
                 rotateBodyIfNecessary();

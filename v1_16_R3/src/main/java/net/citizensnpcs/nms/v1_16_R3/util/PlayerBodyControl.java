@@ -23,7 +23,6 @@ public class PlayerBodyControl {
         }
         if (e())
             if (Math.abs(this.a.aC - this.c) > 15.0F) {
-                System.out.println("BIG DX");
                 this.b = 0;
                 this.c = this.a.aC;
                 b();
