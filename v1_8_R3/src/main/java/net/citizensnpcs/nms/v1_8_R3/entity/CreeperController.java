@@ -101,8 +101,9 @@ public class CreeperController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override

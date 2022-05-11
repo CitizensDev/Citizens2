@@ -100,6 +100,7 @@ import net.citizensnpcs.nms.v1_8_R3.entity.WitherController;
 import net.citizensnpcs.nms.v1_8_R3.entity.WolfController;
 import net.citizensnpcs.nms.v1_8_R3.entity.ZombieController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.ArmorStandController;
+import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.ArrowController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.BoatController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.EggController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.EnderCrystalController;
@@ -571,6 +572,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     private void loadEntityTypes() {
+        EntityControllers.setEntityControllerForType(EntityType.ARROW, ArrowController.class);
         EntityControllers.setEntityControllerForType(EntityType.ARMOR_STAND, ArmorStandController.class);
         EntityControllers.setEntityControllerForType(EntityType.BAT, BatController.class);
         EntityControllers.setEntityControllerForType(EntityType.BLAZE, BlazeController.class);
