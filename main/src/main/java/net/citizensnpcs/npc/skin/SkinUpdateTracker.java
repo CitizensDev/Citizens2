@@ -383,7 +383,7 @@ public class SkinUpdateTracker {
     // Tracks player location and yaw to determine when the player should be updated
     // with nearby skins.
     private class PlayerTracker {
-        final Set<SkinnableEntity> fovVisibleSkins = new HashSet<SkinnableEntity>(20);
+        final Set<SkinnableEntity> fovVisibleSkins = new HashSet<SkinnableEntity>(10);
         boolean hasMoved;
         final Location location = new Location(null, 0, 0, 0);
         float lowerBound;
@@ -452,8 +452,7 @@ public class SkinUpdateTracker {
             }
 
             // update every time a player moves a certain distance
-            double distance = currentLoc.distanceSquared(this.location);
-            if (distance > MOVEMENT_SKIN_UPDATE_DISTANCE) {
+            if (currentLoc.distance(this.location) > MOVEMENT_SKIN_UPDATE_DISTANCE) {
                 reset(player);
                 return true;
             } else {
@@ -474,6 +473,6 @@ public class SkinUpdateTracker {
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final float FIELD_OF_VIEW = 70f;
-    private static final int MOVEMENT_SKIN_UPDATE_DISTANCE = 50 * 50;
+    private static final int MOVEMENT_SKIN_UPDATE_DISTANCE = 25;
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }

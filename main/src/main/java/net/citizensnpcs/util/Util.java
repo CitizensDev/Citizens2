@@ -65,7 +65,6 @@ public class Util {
         while (angle < -180.0F) {
             angle += 360.0F;
         }
-
         while (angle >= 180.0F) {
             angle -= 360.0F;
         }
