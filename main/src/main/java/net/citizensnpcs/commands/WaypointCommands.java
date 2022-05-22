@@ -110,21 +110,17 @@ public class WaypointCommands {
 
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
-            usage = "provider [provider name] (-d)",
+            usage = "provider [provider name]",
             desc = "Sets the current waypoint provider",
             modifiers = { "provider" },
             min = 1,
             max = 2,
-            flags = "d",
             permission = "citizens.waypoints.provider")
     public void provider(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Waypoints waypoints = npc.getOrAddTrait(Waypoints.class);
         if (args.argsLength() == 1) {
-            if (args.hasFlag('d')) {
-                waypoints.describeProviders(sender);
-            } else {
-                Messaging.sendTr(sender, Messages.CURRENT_WAYPOINT_PROVIDER, waypoints.getCurrentProviderName());
-            }
+            Messaging.sendTr(sender, Messages.CURRENT_WAYPOINT_PROVIDER, waypoints.getCurrentProviderName());
+            waypoints.describeProviders(sender);
             return;
         }
         if (sender instanceof Player && Editor.hasEditor(((Player) sender))) {

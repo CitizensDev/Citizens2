@@ -28,6 +28,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Util;
 
 /**
@@ -328,6 +329,10 @@ public class SkinUpdateTracker {
             public void run() {
                 List<SkinnableEntity> visible = getNearbyNPCs(player, reset, false);
                 for (SkinnableEntity skinnable : visible) {
+                    if (Messaging.isDebugging()) {
+                        Messaging.debug("Sending skin from", skinnable.getBukkitEntity(), "to", player, "(" + delay,
+                                reset + ")");
+                    }
                     skinnable.getSkinTracker().updateViewer(player);
                 }
             }

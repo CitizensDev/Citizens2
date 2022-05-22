@@ -238,7 +238,7 @@ public class EventListen implements Listener {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
         if (npc == null)
             return;
-        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+        event.setCancelled(npc.isProtected());
         if (event instanceof EntityCombustByEntityEvent) {
             Bukkit.getPluginManager().callEvent(new NPCCombustByEntityEvent((EntityCombustByEntityEvent) event, npc));
         } else if (event instanceof EntityCombustByBlockEvent) {
@@ -256,13 +256,13 @@ public class EventListen implements Listener {
                 npc = CitizensAPI.getNPCRegistry().getNPC(((EntityDamageByEntityEvent) event).getDamager());
                 if (npc == null)
                     return;
-                event.setCancelled(!npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true));
+                event.setCancelled(!npc.isProtected());
                 NPCDamageEntityEvent damageEvent = new NPCDamageEntityEvent(npc, (EntityDamageByEntityEvent) event);
                 Bukkit.getPluginManager().callEvent(damageEvent);
             }
             return;
         }
-        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+        event.setCancelled(npc.isProtected());
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, (EntityDamageByEntityEvent) event);
             Bukkit.getPluginManager().callEvent(damageEvent);
@@ -341,8 +341,7 @@ public class EventListen implements Listener {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getTarget());
         if (npc == null)
             return;
-        event.setCancelled(
-                !npc.data().get(NPC.TARGETABLE_METADATA, !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)));
+        event.setCancelled(!npc.data().get(NPC.TARGETABLE_METADATA, !npc.isProtected()));
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
