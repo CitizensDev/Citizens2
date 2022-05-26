@@ -122,6 +122,7 @@ import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.MinecartTNTController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.PaintingController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.SmallFireballController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.SnowballController;
+import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.SplashPotionController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.TNTPrimedController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.ThrownExpBottleController;
 import net.citizensnpcs.nms.v1_8_R3.entity.nonliving.WitherSkullController;
@@ -612,6 +613,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.PAINTING, PaintingController.class);
         EntityControllers.setEntityControllerForType(EntityType.PIG, PigController.class);
         EntityControllers.setEntityControllerForType(EntityType.PIG_ZOMBIE, PigZombieController.class);
+        EntityControllers.setEntityControllerForType(EntityType.SPLASH_POTION, SplashPotionController.class);
         EntityControllers.setEntityControllerForType(EntityType.PLAYER, HumanController.class);
         EntityControllers.setEntityControllerForType(EntityType.RABBIT, RabbitController.class);
         EntityControllers.setEntityControllerForType(EntityType.SHEEP, SheepController.class);
