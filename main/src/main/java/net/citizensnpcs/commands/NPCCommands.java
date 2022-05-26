@@ -877,8 +877,8 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.gravity")
     public void gravity(CommandContext args, CommandSender sender, NPC npc) {
-        boolean enabled = npc.getOrAddTrait(Gravity.class).toggle();
-        String key = !enabled ? Messages.GRAVITY_ENABLED : Messages.GRAVITY_DISABLED;
+        boolean nogravity = npc.getOrAddTrait(Gravity.class).toggle();
+        String key = !nogravity ? Messages.GRAVITY_ENABLED : Messages.GRAVITY_DISABLED;
         Messaging.sendTr(sender, key, npc.getName());
     }
 

@@ -149,7 +149,7 @@ public interface NMSBridge {
 
     public void setNavigationTarget(Entity handle, Entity target, float speed);
 
-    public void setNoGravity(Entity entity, boolean enabled);
+    public void setNoGravity(Entity entity, boolean nogravity);
 
     public void setPandaSitting(Entity entity, boolean sitting);
 

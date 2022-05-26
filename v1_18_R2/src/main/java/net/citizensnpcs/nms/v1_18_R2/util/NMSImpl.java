@@ -1200,9 +1200,9 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setNoGravity(org.bukkit.entity.Entity entity, boolean enabled) {
+    public void setNoGravity(org.bukkit.entity.Entity entity, boolean nogravity) {
         Entity handle = getHandle(entity);
-        handle.setNoGravity(enabled);
+        handle.setNoGravity(nogravity);
         if (!(handle instanceof Mob) || !(entity instanceof NPCHolder))
             return;
         Mob mob = (Mob) handle;
@@ -1210,7 +1210,7 @@ public class NMSImpl implements NMSBridge {
         if (!(mob.getMoveControl() instanceof FlyingMoveControl) || npc.data().has("flying-nogravity-float"))
             return;
         try {
-            if (enabled) {
+            if (nogravity) {
                 boolean old = (boolean) FLYING_MOVECONTROL_FLOAT_GETTER.invoke(mob.getMoveControl());
                 FLYING_MOVECONTROL_FLOAT_SETTER.invoke(mob.getMoveControl(), true);
                 npc.data().set("flying-nogravity-float", old);
