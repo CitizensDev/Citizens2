@@ -58,7 +58,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public Location getCurrentDestination() {
-        return vector != null ? vector.toLocation(npc.getEntity().getWorld()) : null;
+        return vector != null ? vector.toLocation(npc.getEntity().getWorld()) : target.clone();
     }
 
     @Override

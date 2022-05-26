@@ -45,7 +45,8 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public Location getCurrentDestination() {
-        return NMS.getDestination(entity);
+        Location dest = NMS.getDestination(entity);
+        return dest != null ? dest : target.clone();
     }
 
     @Override
