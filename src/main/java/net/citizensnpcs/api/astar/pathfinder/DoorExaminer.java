@@ -68,7 +68,7 @@ public class DoorExaminer implements BlockExaminer {
                             ? (point.getType() == Material.IRON_DOOR ? Sound.BLOCK_IRON_DOOR_CLOSE
                                     : Sound.BLOCK_WOODEN_DOOR_CLOSE)
                             : Sound.BLOCK_FENCE_GATE_CLOSE;
-                    point.getWorld().playSound(point.getLocation(), sound, 10, 1);
+                    point.getWorld().playSound(point.getLocation(), sound, 2, 1);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     SUPPORTS_SOUNDS = false;
@@ -146,7 +146,7 @@ public class DoorExaminer implements BlockExaminer {
                             ? (point.getType() == Material.IRON_DOOR ? Sound.BLOCK_IRON_DOOR_OPEN
                                     : Sound.BLOCK_WOODEN_DOOR_OPEN)
                             : Sound.BLOCK_FENCE_GATE_OPEN;
-                    point.getWorld().playSound(point.getLocation(), sound, 10, 1);
+                    point.getWorld().playSound(point.getLocation(), sound, 2, 1);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     SUPPORTS_SOUNDS = false;
