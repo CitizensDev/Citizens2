@@ -54,11 +54,23 @@ public interface PathPoint {
 
     public static interface PathCallback {
         /**
-         * A callback that is run every tick while the path is being executed.
+         * Run once the specificed point is reached.
          *
          * @param npc
+         *            The NPC
          * @param point
-         *            The current target path
+         *            The point that was reached
+         */
+        default void onReached(NPC npc, Block point) {
+        };
+
+        /**
+         * Run every tick when moving towards a specific block.
+         *
+         * @param npc
+         *            The NPC
+         * @param point
+         *            The point
          * @param path
          *            The future path destinations as blocks
          */

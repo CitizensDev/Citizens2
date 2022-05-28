@@ -108,6 +108,7 @@ public class Path implements Plan {
         if (isComplete()) {
             return;
         }
+        path[index].onComplete((NPC) agent);
         ++index;
     }
 
@@ -118,6 +119,16 @@ public class Path implements Plan {
         private PathEntry(Vector vector, List<PathCallback> callbacks) {
             this.vector = vector;
             this.callbacks = callbacks;
+        }
+
+        public void onComplete(NPC npc) {
+            if (callbacks == null)
+                return;
+            Block current = npc.getEntity().getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(),
+                    vector.getBlockZ());
+            for (PathCallback callback : callbacks) {
+                callback.onReached(npc, current);
+            }
         }
 
         public void run(final NPC npc) {

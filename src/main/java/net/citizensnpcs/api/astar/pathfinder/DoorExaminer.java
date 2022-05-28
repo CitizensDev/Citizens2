@@ -3,6 +3,7 @@ package net.citizensnpcs.api.astar.pathfinder;
 import java.util.ListIterator;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -13,7 +14,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.material.MaterialData;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.event.NPCOpenDoorEvent;
 import net.citizensnpcs.api.event.NPCOpenGateEvent;
@@ -37,7 +40,7 @@ public class DoorExaminer implements BlockExaminer {
     }
 
     static class DoorOpener implements PathCallback {
-        boolean opened = false;
+        private boolean opened;
 
         private void close(NPC npc, Block point) {
             if (SpigotUtil.isUsing1_13API()) {
@@ -47,6 +50,7 @@ public class DoorExaminer implements BlockExaminer {
                 }
                 open.setOpen(false);
                 point.setBlockData(open);
+                point.getState().update();
             } else {
                 point = getCorrectDoor(point);
                 BlockState state = point.getState();
@@ -66,6 +70,7 @@ public class DoorExaminer implements BlockExaminer {
                             : Sound.BLOCK_FENCE_GATE_CLOSE;
                     point.getWorld().playSound(point.getLocation(), sound, 10, 1);
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     SUPPORTS_SOUNDS = false;
                 }
             }
@@ -83,6 +88,26 @@ public class DoorExaminer implements BlockExaminer {
             return bottom ? point : point.getRelative(BlockFace.DOWN);
         }
 
+        @Override
+        public void onReached(NPC npc, Block point) {
+            Location centreDoor = point.getLocation().add(0.5, 0, 0.5);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (!npc.getNavigator().isNavigating()) {
+                        cancel();
+                        return;
+                    }
+
+                    double dist = npc.getStoredLocation().distance(centreDoor);
+                    if (dist > 1.8) {
+                        close(npc, point);
+                        cancel();
+                    }
+                }
+            }.runTaskTimer(CitizensAPI.getPlugin(), 5, 1);
+        }
+
         private void open(NPC npc, Block point) {
             if (SpigotUtil.isUsing1_13API()) {
                 Openable open = (Openable) point.getBlockData();
@@ -97,7 +122,7 @@ public class DoorExaminer implements BlockExaminer {
                 }
                 open.setOpen(true);
                 point.setBlockData(open);
-                opened = true;
+                point.getState().update();
             } else {
                 point = getCorrectDoor(point);
                 BlockState state = point.getState();
@@ -114,7 +139,6 @@ public class DoorExaminer implements BlockExaminer {
                 open.setOpen(true);
                 state.setData((MaterialData) open);
                 state.update();
-                opened = true;
             }
             if (SUPPORTS_SOUNDS) {
                 try {
@@ -124,6 +148,7 @@ public class DoorExaminer implements BlockExaminer {
                             : Sound.BLOCK_FENCE_GATE_OPEN;
                     point.getWorld().playSound(point.getLocation(), sound, 10, 1);
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     SUPPORTS_SOUNDS = false;
                 }
             }
@@ -134,30 +159,10 @@ public class DoorExaminer implements BlockExaminer {
         public void run(NPC npc, Block point, ListIterator<Block> path) {
             if (!MinecraftBlockExaminer.isDoor(point.getType()) || opened)
                 return;
-            double dist = npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5));
-            if (dist > 2)
+            if (npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5)) > 2.5)
                 return;
-
             open(npc, point);
-
-            if (!opened)
-                return;
-
-            // TODO: a more block-focused API for these things would be better (see LadderClimber)
-            npc.getNavigator().getLocalParameters().addRunCallback(new Runnable() {
-                boolean closed = false;
-
-                @Override
-                public void run() {
-                    if (closed)
-                        return;
-                    double dist = npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5));
-                    if (dist > 1.8) {
-                        close(npc, point);
-                        closed = true;
-                    }
-                }
-            });
+            opened = true;
         }
 
         private void tryArmSwing(NPC npc) {
