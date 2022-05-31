@@ -52,6 +52,7 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandMessages;
@@ -330,7 +331,7 @@ public class NPCCommands {
             cfg.radius(args.getFlagDouble("radius"));
         }
         BlockBreaker breaker = npc.getBlockBreaker(args.getSenderTargetBlockLocation().getBlock(), cfg);
-        npc.getDefaultGoalController().addBehavior(breaker, 1);
+        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
     }
 
     @Command(
