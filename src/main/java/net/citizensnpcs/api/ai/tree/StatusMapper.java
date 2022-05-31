@@ -32,4 +32,31 @@ public class StatusMapper extends BehaviorGoalAdapter {
     public static StatusMapper mapping(Behavior wrapping, Supplier<BehaviorStatus> to) {
         return new StatusMapper(wrapping, to);
     }
+
+    public static Behavior singleUse(Behavior base) {
+        return new Behavior() {
+
+            @Override
+            public void reset() {
+                base.reset();
+            }
+
+            @Override
+            public BehaviorStatus run() {
+                BehaviorStatus status = base.run();
+                switch (status) {
+                    case FAILURE:
+                    case SUCCESS:
+                        return BehaviorStatus.RESET_AND_REMOVE;
+                    default:
+                        return status;
+                }
+            }
+
+            @Override
+            public boolean shouldExecute() {
+                return base.shouldExecute();
+            }
+        };
+    }
 }
