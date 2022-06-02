@@ -144,7 +144,7 @@ public class CommandTrait extends Trait {
                 right.add(command);
             }
         }
-        String output = executionMode + " ";
+        String output = "";
         if (cost > 0) {
             output += "Cost: " + StringHelper.wrap(cost);
         }
@@ -165,7 +165,10 @@ public class CommandTrait extends Trait {
         }
         if (output.isEmpty()) {
             output = Messaging.tr(Messages.COMMAND_NO_COMMANDS_ADDED);
+        } else {
+            output = executionMode + " " + output;
         }
+
         Messaging.send(sender, output);
     }
 
@@ -386,7 +389,7 @@ public class CommandTrait extends Trait {
 
         @Override
         public String toString() {
-            return name().charAt(1) + name().substring(1).toLowerCase();
+            return name().charAt(0) + name().substring(1).toLowerCase();
         }
     }
 
