@@ -256,7 +256,7 @@ public class EventListen implements Listener {
                 npc = CitizensAPI.getNPCRegistry().getNPC(((EntityDamageByEntityEvent) event).getDamager());
                 if (npc == null)
                     return;
-                event.setCancelled(!npc.isProtected());
+                event.setCancelled(!npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true));
                 NPCDamageEntityEvent damageEvent = new NPCDamageEntityEvent(npc, (EntityDamageByEntityEvent) event);
                 Bukkit.getPluginManager().callEvent(damageEvent);
             }
