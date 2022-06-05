@@ -102,7 +102,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             min = dist;
             lookingAt = player;
         }
-        
+
         if (old != lookingAt) {
             NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, old, lookingAt);
             Bukkit.getPluginManager().callEvent(event);

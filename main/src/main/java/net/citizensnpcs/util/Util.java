@@ -72,8 +72,9 @@ public class Util {
     }
 
     public static void face(Entity entity, float yaw, float pitch) {
-        Vector vector = new Vector(Math.cos(yaw) * Math.cos(pitch), Math.sin(pitch), Math.sin(yaw) * Math.cos(pitch))
-                .normalize();
+        double pitchCos = Math.cos(Math.toRadians(pitch));
+        Vector vector = new Vector(Math.sin(Math.toRadians(yaw)) * -pitchCos, -Math.sin(Math.toRadians(pitch)),
+                Math.cos(Math.toRadians(yaw)) * pitchCos).normalize();
         faceLocation(entity, entity.getLocation(AT_LOCATION).clone().add(vector));
     }
 

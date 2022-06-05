@@ -372,7 +372,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | (exp|item)cost [cost]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --(g)cooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | (exp|item)cost [cost]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown|--gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
@@ -1178,7 +1178,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "lookclose --range [range] -r[ealistic looking] --(random|r)look [true|false] --(random|r)pitchrange [min,max] --(random|r)yawrange [min,max]",
+            usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --randompitchrange [min,max] --randomyawrange [min,max]",
             desc = "Toggle whether a NPC will look when a player is near",
             modifiers = { "lookclose", "look", "rotate" },
             min = 1,
