@@ -5,13 +5,12 @@
 
 	<groupId>net.citizensnpcs</groupId>
 	<artifactId>citizensapi</artifactId>
-	<version>2.0.29-SNAPSHOT</version>
+	<version>2.0.30-SNAPSHOT</version>
 	<name>CitizensAPI</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<bukkit.version>1.18.2-R0.1-SNAPSHOT</bukkit.version>
-		<powermock.version>1.4.12</powermock.version>
+		<bukkit.version>1.19-R0.1-SNAPSHOT</bukkit.version> 
 		<placeholderapi.version>2.10.9</placeholderapi.version>
 		<worldguard.version>7.0.4</worldguard.version>
 		<build.number>Unknown</build.number>
@@ -34,23 +33,11 @@
 			<artifactId>spigot-api</artifactId>
 			<version>${bukkit.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>ch.ethz.globis.phtree</groupId>
 			<artifactId>phtree</artifactId>
-			<version>2.3.0</version>
+			<version>2.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>me.clip</groupId>
