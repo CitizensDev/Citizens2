@@ -426,8 +426,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 Economy economy = provider.getProvider();
                 Bukkit.getPluginManager().registerEvents(new PaymentListener(economy), this);
             }
+            Messaging.logTr(Messages.LOADED_ECONOMY);
         } catch (NoClassDefFoundError e) {
-            Messaging.logTr(Messages.ERROR_LOADING_ECONOMY);
         }
     }
 

@@ -116,8 +116,8 @@ public class NMS {
         return getFinalSetter(clazz, field, true);
     }
 
-    public static MethodHandle getFinalSetter(Class<?> clazz, String field, boolean log) {
-        Field f;
+    public static MethodHandle getFinalSetter(Class<?> clazz, String fieldName, boolean log) {
+        Field field;
         if (MODIFIERS_FIELD == null) {
             if (UNSAFE == null) {
                 try {
@@ -125,52 +125,52 @@ public class NMS {
                 } catch (Exception e) {
                     e.printStackTrace();
                     if (log) {
-                        Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+                        Messaging.logTr(Messages.ERROR_GETTING_FIELD, fieldName, e.getLocalizedMessage());
                     }
                     return null;
                 }
-                UNSAFE_STATIC_FIELD_OFFSET = NMS
-                        .getMethodHandle(UNSAFE.getClass(), "staticFieldOffset", true, Field.class).bindTo(UNSAFE);
-                UNSAFE_FIELD_OFFSET = NMS.getMethodHandle(UNSAFE.getClass(), "objectFieldOffset", true, Field.class)
+                UNSAFE_STATIC_FIELD_OFFSET = getMethodHandle(UNSAFE.getClass(), "staticFieldOffset", true, Field.class)
                         .bindTo(UNSAFE);
-                UNSAFE_PUT_OBJECT = NMS
-                        .getMethodHandle(UNSAFE.getClass(), "putObject", true, Object.class, long.class, Object.class)
+                UNSAFE_FIELD_OFFSET = getMethodHandle(UNSAFE.getClass(), "objectFieldOffset", true, Field.class)
                         .bindTo(UNSAFE);
+                UNSAFE_PUT_OBJECT = getMethodHandle(UNSAFE.getClass(), "putObject", true, Object.class, long.class,
+                        Object.class).bindTo(UNSAFE);
             }
-            f = NMS.getField(clazz, field, log);
-            if (f == null) {
+            field = NMS.getField(clazz, fieldName, log);
+            if (field == null) {
                 return null;
             }
             try {
-                boolean isStatic = Modifier.isStatic(f.getModifiers());
-                long offset = (long) (isStatic ? UNSAFE_STATIC_FIELD_OFFSET.invoke(f) : UNSAFE_FIELD_OFFSET.invoke(f));
+                boolean isStatic = Modifier.isStatic(field.getModifiers());
+                long offset = (long) (isStatic ? UNSAFE_STATIC_FIELD_OFFSET.invoke(field)
+                        : UNSAFE_FIELD_OFFSET.invoke(field));
                 return isStatic ? MethodHandles.insertArguments(UNSAFE_PUT_OBJECT, 0, clazz, offset)
                         : MethodHandles.insertArguments(UNSAFE_PUT_OBJECT, 1, offset);
             } catch (Throwable t) {
                 t.printStackTrace();
                 if (log) {
-                    Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, t.getLocalizedMessage());
+                    Messaging.logTr(Messages.ERROR_GETTING_FIELD, fieldName, t.getLocalizedMessage());
                 }
                 return null;
             }
         }
-        f = getField(clazz, field, log);
-        if (f == null) {
+        field = getField(clazz, fieldName, log);
+        if (field == null) {
             return null;
         }
         try {
-            MODIFIERS_FIELD.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+            MODIFIERS_FIELD.setInt(field, field.getModifiers() & ~Modifier.FINAL);
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+                Messaging.logTr(Messages.ERROR_GETTING_FIELD, fieldName, e.getLocalizedMessage());
             }
             return null;
         }
         try {
-            return LOOKUP.unreflectSetter(f);
+            return LOOKUP.unreflectSetter(field);
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+                Messaging.logTr(Messages.ERROR_GETTING_FIELD, fieldName, e.getLocalizedMessage());
             }
         }
         return null;
@@ -402,6 +402,7 @@ public class NMS {
             }
             ADD_OPENS.invoke(GET_MODULE.invoke(from), from.getPackage().getName(), GET_MODULE.invoke(to));
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
