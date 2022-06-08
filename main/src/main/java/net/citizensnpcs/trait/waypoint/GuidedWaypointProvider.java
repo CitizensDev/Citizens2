@@ -297,7 +297,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public void run(GoalSelector selector) {
-            if (plan.isComplete()) {
+            if (plan == null || plan.isComplete()) {
                 selector.finish();
                 return;
             }

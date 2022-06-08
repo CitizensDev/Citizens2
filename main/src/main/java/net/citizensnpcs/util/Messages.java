@@ -134,6 +134,7 @@ public class Messages {
     public static final String FOX_SLEEPING_SET = "citizens.commands.npc.fox.sleeping-set";
     public static final String FOX_SLEEPING_UNSET = "citizens.commands.npc.fox.sleeping-unset";
     public static final String FOX_TYPE_SET = "citizens.commands.npc.fox.fox-type-set";
+    public static final String FROG_VARIANT_SET = "citizens.commands.npc.frog.variant-set";
     public static final String FROM_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.from-not-found";
     public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
     public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";
@@ -174,6 +175,7 @@ public class Messages {
     public static final String INVALID_CAT_TYPE = "citizens.commands.npc.cat.invalid-type";
     public static final String INVALID_ENTITY_TYPE = "citizens.commands.npc.type.invalid";
     public static final String INVALID_FOX_TYPE = "citizens.commands.npc.fox.invalid-fox-type";
+    public static final String INVALID_FROG_VARIANT = "citizens.commands.npc.frog.invalid-variant";
     public static final String INVALID_HORSE_COLOR = "citizens.commands.npc.horse.invalid-color";
     public static final String INVALID_HORSE_STYLE = "citizens.commands.npc.horse.invalid-style";
     public static final String INVALID_HORSE_VARIANT = "citizens.commands.npc.horse.invalid-variant";
@@ -252,6 +254,7 @@ public class Messages {
     public static final String NPC_CREATE_INVALID_MOBTYPE = "citizens.commands.npc.create.invalid-mobtype";
     public static final String NPC_CREATE_MISSING_MOBTYPE = "citizens.commands.npc.create.mobtype-missing";
     public static final String NPC_DESPAWNED = "citizens.commands.npc.despawn.despawned";
+    public static final String NPC_GOAT_HORNS_SET = "citizens.commands.npc.goat.horns-set";
     public static final String NPC_NAME_TOO_LONG = "citizens.commands.npc.create.npc-name-too-long";
     public static final String NPC_NOT_CONTROLLABLE = "citizens.commands.npc.controllable.not-controllable";
     public static final String NPC_NOT_FOUND = "citizens.notifications.npc-not-found";
