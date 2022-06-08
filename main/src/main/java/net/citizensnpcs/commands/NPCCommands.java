@@ -159,7 +159,8 @@ public class NPCCommands {
             max = 2,
             permission = "citizens.npc.age")
     public void age(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if (!npc.isSpawned() || (!(npc.getEntity() instanceof Ageable) && !(npc.getEntity() instanceof Zombie)))
+        if (!npc.isSpawned() || (!(npc.getEntity() instanceof Ageable) && !(npc.getEntity() instanceof Zombie)
+                && !npc.getEntity().getType().name().equals("TADPOLE")))
             throw new CommandException(Messages.MOBTYPE_CANNOT_BE_AGED, npc.getName());
         Age trait = npc.getOrAddTrait(Age.class);
         boolean toggleLock = args.hasFlag('l');
@@ -570,13 +571,8 @@ public class NPCCommands {
 
         int age = 0;
         if (args.hasFlag('b')) {
-            if (!Ageable.class.isAssignableFrom(type.getEntityClass())) {
-                Messaging.sendErrorTr(sender, Messages.MOBTYPE_CANNOT_BE_AGED,
-                        type.name().toLowerCase().replace("_", "-"));
-            } else {
-                age = -24000;
-                msg += " as a baby";
-            }
+            age = -24000;
+            msg += " as a baby";
         }
         if (args.hasFlag('s')) {
             npc.data().set(NPC.SILENT_METADATA, true);
@@ -649,10 +645,8 @@ public class NPCCommands {
             msg += " with templates " + builder.toString();
         }
 
-        // Set age after entity spawns
-        if (npc.getEntity() instanceof Ageable) {
-            npc.getOrAddTrait(Age.class).setAge(age);
-        }
+        npc.getOrAddTrait(Age.class).setAge(age);
+
         selector.select(sender, npc);
         history.add(sender, new CreateNPCHistoryItem(npc));
         Messaging.send(sender, msg + '.');
