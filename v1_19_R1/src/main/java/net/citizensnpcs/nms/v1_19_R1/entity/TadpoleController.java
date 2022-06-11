@@ -108,7 +108,6 @@ public class TadpoleController extends MobEntityController {
         @Override
         public void customServerAiStep() {
             if (npc != null) {
-                NMSImpl.setNotInSchool(this);
                 NMSImpl.updateMinecraftAIState(npc, this);
                 if (npc.useMinecraftAI() && this.moveControl != this.oldMoveController) {
                     this.moveControl = this.oldMoveController;

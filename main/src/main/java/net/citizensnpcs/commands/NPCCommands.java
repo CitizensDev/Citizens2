@@ -2471,14 +2471,18 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "target [name|UUID] (-a[ggressive])",
+            usage = "target [name|UUID] (-a[ggressive]) (-c[ancel])",
             desc = "Target a given entity",
             modifiers = { "target" },
-            flags = "a",
+            flags = "ac",
             min = 1,
             max = 2,
             permission = "citizens.npc.target")
     public void target(CommandContext args, Player sender, NPC npc) {
+        if (args.hasFlag('c')) {
+            npc.getNavigator().cancelNavigation();
+            return;
+        }
         Entity toTarget = args.argsLength() < 2 ? sender : Bukkit.getPlayer(args.getString(1));
         if (toTarget == null) {
             toTarget = Bukkit.getEntity(UUID.fromString(args.getString(1)));

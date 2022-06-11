@@ -51,6 +51,7 @@ public class FrogController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 NMSImpl.clearGoals(npc, goalSelector, targetSelector);
+                croakAnimationState.start(1);
             }
         }
 

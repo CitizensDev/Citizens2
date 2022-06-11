@@ -15,6 +15,7 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -642,14 +643,13 @@ public class EventListen implements Listener {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getVehicle());
         NPC rider = CitizensAPI.getNPCRegistry().getNPC(event.getEntered());
         if (npc == null) {
-            if (rider != null && rider.isProtected()
-                    && (event.getVehicle().getType() == EntityType.BOAT || event.getVehicle() instanceof Minecart)) {
+            if (rider != null && rider.isProtected() && (event.getVehicle().getType().name().contains("BOAT")
+                    || event.getVehicle() instanceof Minecart)) {
                 event.setCancelled(true);
             }
             return;
         }
-        if ((Util.isHorse(npc.getEntity().getType()) || npc.getEntity().getType() == EntityType.BOAT
-                || npc.getEntity().getType() == EntityType.PIG || npc.getEntity() instanceof Minecart)
+        if (npc.getEntity() instanceof Vehicle
                 && (!npc.hasTrait(Controllable.class) || !npc.getTraitNullable(Controllable.class).isEnabled())) {
             event.setCancelled(true);
         }

@@ -264,7 +264,7 @@ public class Commands {
 
     @Command(
             aliases = { "npc" },
-            usage = "frog (--variant variant)",
+            usage = "frog (--variant variant) (--target [target])",
             desc = "Sets frog modifiers",
             modifiers = { "frog" },
             min = 1,
@@ -294,6 +294,7 @@ public class Commands {
             usage = "goat -l(eft) -r(ight) -n(either) -b(oth) horn",
             desc = "Sets goat modifiers",
             modifiers = { "goat" },
+            flags = "lrnb",
             min = 1,
             max = 1,
             permission = "citizens.npc.goat")
@@ -313,6 +314,8 @@ public class Commands {
         if (args.hasFlag('n')) {
             left = right = false;
         }
+        trait.setLeftHorn(left);
+        trait.setRightHorn(right);
         String output = Messaging.tr(Messages.NPC_GOAT_HORNS_SET, npc.getName(), left, right);
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
