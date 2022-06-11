@@ -299,10 +299,12 @@ public class CitizensNPC extends AbstractNPC {
             @Override
             public void run() {
                 if (timer++ > 10) {
-                    cancel();
                     Messaging.debug("Couldn't spawn", CitizensNPC.this, "entity not added to world");
+                    entityController.remove();
+                    cancel();
                     return;
                 }
+
                 if (getEntity() == null || !getEntity().isValid())
                     return;
 
@@ -314,9 +316,9 @@ public class CitizensNPC extends AbstractNPC {
                 Bukkit.getPluginManager().callEvent(spawnEvent);
 
                 if (spawnEvent.isCancelled()) {
-                    entityController.remove();
                     Messaging.debug("Couldn't spawn", CitizensNPC.this, "SpawnReason." + reason,
                             "due to event cancellation.");
+                    entityController.remove();
                     cancel();
                     return;
                 }
