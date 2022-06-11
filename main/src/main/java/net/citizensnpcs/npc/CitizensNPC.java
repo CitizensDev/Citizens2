@@ -302,6 +302,7 @@ public class CitizensNPC extends AbstractNPC {
                     Messaging.debug("Couldn't spawn", CitizensNPC.this, "entity not added to world");
                     entityController.remove();
                     cancel();
+                    Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(CitizensNPC.this, to));
                     return;
                 }
 

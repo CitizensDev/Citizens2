@@ -41,6 +41,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
@@ -214,7 +215,9 @@ import net.minecraft.server.v1_16_R3.BehaviorController;
 import net.minecraft.server.v1_16_R3.Block;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.BossBattleServer;
+import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.ChunkProviderServer;
+import net.minecraft.server.v1_16_R3.Container;
 import net.minecraft.server.v1_16_R3.ControllerJump;
 import net.minecraft.server.v1_16_R3.ControllerMove;
 import net.minecraft.server.v1_16_R3.ControllerMoveFlying;
@@ -263,6 +266,7 @@ import net.minecraft.server.v1_16_R3.NavigationAbstract;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_16_R3.PacketPlayOutOpenWindow;
 import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_16_R3.PathEntity;
@@ -1381,6 +1385,15 @@ public class NMSImpl implements NMSBridge {
         if (RANDOM.nextFloat() < 0.8F && handle.isInWater()) {
             handle.setMot(handle.getMot().getX(), handle.getMot().getY() + power, handle.getMot().getZ());
         }
+    }
+
+    @Override
+    public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+        EntityPlayer handle = (EntityPlayer) getHandle(player);
+        Container active = handle.activeContainer;
+        handle.playerConnection.sendPacket(
+                new PacketPlayOutOpenWindow(active.windowId, active.getType(), new ChatComponentText(newTitle)));
+        player.updateInventory();
     }
 
     @Override

@@ -40,6 +40,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
@@ -226,7 +227,10 @@ import net.minecraft.ReportedException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -278,6 +282,7 @@ import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -1400,6 +1405,15 @@ public class NMSImpl implements NMSBridge {
             handle.setDeltaMovement(handle.getDeltaMovement().x, handle.getDeltaMovement().y + power,
                     handle.getDeltaMovement().z);
         }
+    }
+
+    @Override
+    public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+        ServerPlayer handle = (ServerPlayer) getHandle(player);
+        InventoryMenu active = handle.inventoryMenu;
+        handle.connection.send(new ClientboundOpenScreenPacket(active.containerId, active.getType(),
+                MutableComponent.create(new LiteralContents(""))));
+        player.updateInventory();
     }
 
     @Override

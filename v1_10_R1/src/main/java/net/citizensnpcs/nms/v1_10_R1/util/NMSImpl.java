@@ -39,6 +39,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
@@ -160,6 +162,8 @@ import net.minecraft.server.v1_10_R1.AxisAlignedBB;
 import net.minecraft.server.v1_10_R1.Block;
 import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.BossBattleServer;
+import net.minecraft.server.v1_10_R1.ChatComponentText;
+import net.minecraft.server.v1_10_R1.Container;
 import net.minecraft.server.v1_10_R1.ControllerJump;
 import net.minecraft.server.v1_10_R1.ControllerMove;
 import net.minecraft.server.v1_10_R1.CrashReport;
@@ -194,6 +198,7 @@ import net.minecraft.server.v1_10_R1.NavigationAbstract;
 import net.minecraft.server.v1_10_R1.NetworkManager;
 import net.minecraft.server.v1_10_R1.Packet;
 import net.minecraft.server.v1_10_R1.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_10_R1.PacketPlayOutOpenWindow;
 import net.minecraft.server.v1_10_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_10_R1.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_10_R1.PathEntity;
@@ -1149,6 +1154,17 @@ public class NMSImpl implements NMSBridge {
         if (RANDOM.nextFloat() < 0.8F && (handle.ak() || handle.ao())) {
             handle.motY += power;
         }
+    }
+
+    @Override
+    public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+        EntityPlayer handle = (EntityPlayer) getHandle(player);
+        Container active = handle.activeContainer;
+        InventoryType type = view.getTopInventory().getType();
+        Packet<?> packet = new PacketPlayOutOpenWindow(active.windowId, "minecraft:" + type.name().toLowerCase(),
+                new ChatComponentText(newTitle), view.getTopInventory().getSize());
+        handle.playerConnection.sendPacket(packet);
+        player.updateInventory();
     }
 
     @Override

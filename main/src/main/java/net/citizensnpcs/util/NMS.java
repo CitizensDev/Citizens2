@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
@@ -618,6 +619,10 @@ public class NMS {
 
     public static void trySwim(org.bukkit.entity.Entity entity, float power) {
         BRIDGE.trySwim(entity, power);
+    }
+
+    public static void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+        BRIDGE.updateInventoryTitle(player, view, newTitle);
     }
 
     public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {

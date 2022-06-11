@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
@@ -48,6 +47,8 @@ public class ShopTrait extends Trait {
         @Persist(reify = true)
         private final List<NPCShopPage> pages = Lists.newArrayList();
         @Persist
+        private String requiredPermission;
+        @Persist
         private final ShopType type = ShopType.VIEW;
 
         private NPCShop(String name) {
@@ -55,18 +56,31 @@ public class ShopTrait extends Trait {
         }
 
         public void display(Player sender) {
+            if (requiredPermission != null && !sender.hasPermission(requiredPermission))
+                return;
         }
 
         public void displayEditor(Player sender) {
-            InventoryMenu.create(new NPCShopEditor(this)).present(sender);
+            InventoryMenu.createSelfRegistered(new NPCShopEditor(this)).present(sender);
         }
 
         public String getName() {
             return name;
         }
+
+        public String getRequiredPermission() {
+            return requiredPermission;
+        }
+
+        public void setPermission(String permission) {
+            this.requiredPermission = permission;
+            if (requiredPermission != null && requiredPermission.isEmpty()) {
+                requiredPermission = null;
+            }
+        }
     }
 
-    @Menu(title = "NPC Equipment", type = InventoryType.HOPPER, dimensions = { 0, 5 })
+    @Menu(title = "NPC Shop Editor", type = InventoryType.HOPPER, dimensions = { 0, 5 })
     @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, lore = "Edit shop type")
     @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1, lore = "Edit shop permission")
     public static class NPCShopEditor extends InventoryMenuPage {
@@ -82,13 +96,16 @@ public class ShopTrait extends Trait {
             this.ctx = ctx;
         }
 
-        @ClickHandler(slot = { 0, 2 }, filter = { InventoryAction.PICKUP_ALL, InventoryAction.PICKUP_ONE })
+        @ClickHandler(slot = { 0, 2 })
         public void onPermissionChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            ctx.getMenu().transition(new InputMenu());
+            event.setCancelled(true);
+            ctx.getMenu()
+                    .transition(InputMenu.setter(() -> shop.getRequiredPermission(), (p) -> shop.setPermission(p)));
         }
 
-        @ClickHandler(slot = { 0, 0 }, filter = { InventoryAction.PICKUP_ALL, InventoryAction.PICKUP_ONE })
+        @ClickHandler(slot = { 0, 0 })
         public void onShopTypeChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            event.setCancelled(true);
         }
     }
 

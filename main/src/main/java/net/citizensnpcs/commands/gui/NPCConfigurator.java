@@ -4,20 +4,18 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
+import net.citizensnpcs.api.gui.InputMenu;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.gui.InventoryMenuSlot;
 import net.citizensnpcs.api.gui.Menu;
 import net.citizensnpcs.api.gui.MenuContext;
-import net.citizensnpcs.api.gui.ModalMenuInput;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Util;
 
 @Menu(title = "Configure NPC", type = InventoryType.CHEST, dimensions = { 5, 9 })
@@ -74,9 +72,8 @@ public class NPCConfigurator extends InventoryMenuPage {
         SLOT_MAP.put(0, new ConfiguratorInfo(Util.getFallbackMaterial("OAK_SIGN", "SIGN"), (evt) -> {
             evt.slot.setDescription("Edit NPC name\n" + evt.npc.getName());
             if (evt.event != null) {
-                Messaging.send(evt.event.getWhoClicked(), "Type new NPC name or [[exit]]");
-                ModalMenuInput.captureInput((Player) evt.event.getWhoClicked(), evt.ctx.getMenu(),
-                        (input) -> evt.npc.setName(input));
+                evt.ctx.getMenu()
+                        .transition(InputMenu.setter(() -> evt.npc.getName(), (input) -> evt.npc.setName(input)));
             }
         }));
 

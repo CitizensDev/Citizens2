@@ -36,6 +36,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
@@ -143,6 +145,8 @@ import net.minecraft.server.v1_8_R3.AttributeInstance;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.ChatComponentText;
+import net.minecraft.server.v1_8_R3.Container;
 import net.minecraft.server.v1_8_R3.ControllerJump;
 import net.minecraft.server.v1_8_R3.ControllerMove;
 import net.minecraft.server.v1_8_R3.CrashReport;
@@ -170,6 +174,7 @@ import net.minecraft.server.v1_8_R3.NavigationAbstract;
 import net.minecraft.server.v1_8_R3.NetworkManager;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
+import net.minecraft.server.v1_8_R3.PacketPlayOutOpenWindow;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_8_R3.PathEntity;
@@ -1103,6 +1108,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+        EntityPlayer handle = (EntityPlayer) getHandle(player);
+        Container active = handle.activeContainer;
+        InventoryType type = view.getTopInventory().getType();
+        Packet<?> packet = new PacketPlayOutOpenWindow(active.windowId, "minecraft:" + type.name().toLowerCase(),
+                new ChatComponentText(newTitle), view.getTopInventory().getSize());
+        handle.playerConnection.sendPacket(packet);
+        player.updateInventory();
+    }
+
+    @Override
     public void updateNavigationWorld(org.bukkit.entity.Entity entity, World world) {
         if (NAVIGATION_WORLD_FIELD == null)
             return;
@@ -1404,7 +1420,7 @@ public class NMSImpl implements NMSBridge {
     public static void sendPacket(Player player, Packet<?> packet) {
         if (packet == null)
             return;
-        ((EntityPlayer) NMSImpl.getHandle(player)).playerConnection.sendPacket(packet);
+        ((EntityPlayer) getHandle(player)).playerConnection.sendPacket(packet);
     }
 
     public static void sendPacketNearby(Player from, Location location, Packet<?> packet) {
@@ -1475,7 +1491,6 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE,
             EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
             EntityType.GHAST);
-
     private static final float DEFAULT_SPEED = 1F;
     private static Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class, Entity.class);
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;

@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
@@ -186,6 +187,8 @@ public interface NMSBridge {
     public void trySwim(Entity entity);
 
     public void trySwim(Entity entity, float power);
+
+    public void updateInventoryTitle(Player player, InventoryView view, String newTitle);
 
     public void updateNavigationWorld(Entity entity, World world);
 

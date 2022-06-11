@@ -20,7 +20,7 @@ import net.citizensnpcs.trait.waypoint.triggers.WaypointTriggerRegistry;
 import net.citizensnpcs.util.Messages;
 
 /**
- * Represents a {@link Location} with a number of {@link WaypointTriggers} that activate on reaching the location.
+ * Represents a {@link Location} with a number of {@link WaypointTrigger}s that activate on reaching the location.
  */
 public class Waypoint implements Locatable {
     @Persist(required = true)

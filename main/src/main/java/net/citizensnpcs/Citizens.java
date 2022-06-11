@@ -12,7 +12,10 @@ import java.util.concurrent.Callable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -27,6 +30,7 @@ import com.mojang.authlib.properties.Property;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
+import net.citizensnpcs.api.InventoryHelper;
 import net.citizensnpcs.api.SkullMetaProvider;
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.command.CommandContext;
@@ -79,6 +83,16 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private boolean enabled;
+    private final InventoryHelper inventoryHelper = new InventoryHelper() {
+        @Override
+        public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+            if (view.getTopInventory().getType() == InventoryType.CRAFTING
+                    || view.getTopInventory().getType() == InventoryType.CREATIVE
+                    || view.getTopInventory().getType() == InventoryType.PLAYER)
+                return;
+            NMS.updateInventoryTitle(player, view, newTitle);
+        }
+    };
     private CitizensNPCRegistry npcRegistry;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
@@ -187,6 +201,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public net.citizensnpcs.api.npc.NPCSelector getDefaultNPCSelector() {
         return selector;
+    }
+
+    @Override
+    public InventoryHelper getInventoryHelper() {
+        return inventoryHelper;
     }
 
     @Override
