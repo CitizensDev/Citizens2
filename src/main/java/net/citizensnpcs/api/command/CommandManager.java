@@ -177,7 +177,7 @@ public class CommandManager implements TabCompleter {
      * A safe version of <code>execute</code> which catches and logs all errors that occur. Returns whether the command
      * handler should print usage or not.
      *
-     * @see #execute(Command, String[], CommandSender, Object...)
+     * @see #execute(org.bukkit.command.Command, String[], CommandSender, Object...)
      * @return Whether further usage should be printed
      */
     public boolean executeSafe(org.bukkit.command.Command command, String[] args, CommandSender sender,

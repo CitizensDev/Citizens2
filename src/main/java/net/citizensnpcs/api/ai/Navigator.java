@@ -107,7 +107,8 @@ public interface Navigator {
     void setTarget(Entity target, boolean aggressive, Function<NavigatorParameters, PathStrategy> strategy);
 
     /**
-     * Sets the current navigation using a list of {@link Vector}s which will be followed in turn.
+     * Sets the current navigation using a list of {@link Vector}s which will be moved between sequentially using the
+     * Citizens movement logic <em>without</em> pathfinding.
      *
      * @param path
      *            The path
@@ -115,7 +116,8 @@ public interface Navigator {
     void setTarget(Iterable<Vector> path);
 
     /**
-     * Sets the current navigation to a {@link Location} destination.
+     * Sets the current navigation to a list of {@link Vector}s which will be moved between sequentially using the
+     * Citizens movement logic <em>without</em> pathfinding.
      *
      * @param target
      *            The destination
