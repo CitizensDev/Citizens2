@@ -84,6 +84,10 @@ public final class CitizensAPI {
         return getImplementation().getOwningClassLoader();
     }
 
+    public static InventoryHelper getInventoryHelper() {
+        return getImplementation().getInventoryHelper();
+    }
+
     /**
      * Retrieves the {@link NPCRegistry} previously created via {@link #createNamedNPCRegistry(String, NPCDataStore)}
      * with the given name, or null if not found.

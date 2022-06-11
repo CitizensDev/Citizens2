@@ -41,6 +41,8 @@ public interface CitizensPlugin extends Plugin {
      */
     public NPCSelector getDefaultNPCSelector();
 
+    public InventoryHelper getInventoryHelper();
+
     /**
      *
      * @param name

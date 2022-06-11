@@ -197,6 +197,8 @@ public class InventoryMenu implements Listener, Runnable {
     }
 
     private void handleShiftClick(InventoryClickEvent event, Inventory dest, boolean toNPC) {
+        if (event.getCurrentItem() == null)
+            return;
         int amount = event.getCurrentItem().getAmount();
         ItemStack merging = new ItemStack(event.getCurrentItem().clone());
         ItemStack[] contents = dest.getContents();
@@ -259,10 +261,11 @@ public class InventoryMenu implements Listener, Runnable {
             Inventory dest = event.getInventory() == event.getClickedInventory() ? event.getWhoClicked().getInventory()
                     : page.ctx.getInventory();
             boolean toNPC = dest == page.ctx.getInventory();
-            if ((event.getCursor() == null || event.getCursor().getType() == Material.AIR)) {
+            if (false) {
+                // TODO
                 handleShiftClick(event, dest, toNPC);
-                return;
             }
+            return;
         }
         if (!clicked.equals(page.ctx.getInventory()))
             return;
@@ -372,6 +375,12 @@ public class InventoryMenu implements Listener, Runnable {
     @Override
     public void run() {
         page.page.run();
+    }
+
+    public void setTitle(String newTitle) {
+        for (InventoryView view : views) {
+            CitizensAPI.getInventoryHelper().updateInventoryTitle((Player) view.getPlayer(), view, newTitle);
+        }
     }
 
     /**
@@ -516,7 +525,9 @@ public class InventoryMenu implements Listener, Runnable {
             view.close();
             if (!view.getPlayer().isValid() || inventory == null)
                 continue;
-            views.add(view.getPlayer().openInventory(inventory));
+            InventoryView newview = view.getPlayer().openInventory(inventory);
+            // TODO: fix anvil inventory
+            views.add(newview);
         }
     }
 
@@ -558,6 +569,8 @@ public class InventoryMenu implements Listener, Runnable {
         }
 
         public InventoryMenuPage createInstance() {
+            if (constructor == null)
+                throw new RuntimeException("no constructor provided");
             try {
                 return constructor.newInstance();
             } catch (Exception e) {
@@ -675,6 +688,7 @@ public class InventoryMenu implements Listener, Runnable {
             Constructor<? extends InventoryMenuPage> found = clazz.getDeclaredConstructor();
             found.setAccessible(true);
             info.constructor = found;
+        } catch (NoSuchMethodException e2) {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
