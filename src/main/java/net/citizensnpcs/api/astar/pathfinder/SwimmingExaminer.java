@@ -70,7 +70,7 @@ public class SwimmingExaminer implements BlockExaminer {
         if (!SpigotUtil.isUsing1_13API())
             return entity instanceof Squid;
         return entity instanceof WaterMob || entity.getType().name().equals("TURTLE")
-                || entity.getType().name().equals("AXOLOTL");
+                || entity.getType().name().equals("FROG") || entity.getType().name().equals("AXOLOTL");
     }
 
     private static final Vector UP = new Vector(0, 1, 0);
