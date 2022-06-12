@@ -33,12 +33,15 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftWither;
 import org.bukkit.craftbukkit.v1_17_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftInventoryAnvil;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftInventoryView;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
@@ -65,6 +68,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.gui.ForwardingInventory;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -236,6 +240,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -271,6 +276,8 @@ import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -992,6 +999,42 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public InventoryView openAnvilInventory(Player player, Inventory anvil, String title) {
+        ServerPlayer handle = (ServerPlayer) getHandle(player);
+        final AnvilMenu container = new AnvilMenu(handle.nextContainerCounter(), handle.getInventory(),
+                ContainerLevelAccess.create(handle.level, new BlockPos(0, 0, 0))) {
+            private CraftInventoryView bukkitEntity;
+
+            @Override
+            public void createResult() {
+                super.createResult();
+                cost.set(0);
+            }
+
+            @Override
+            public CraftInventoryView getBukkitView() {
+                if (this.bukkitEntity != null) {
+                    return this.bukkitEntity;
+                } else {
+                    this.bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(),
+                            new CitizensInventoryAnvil(this.access.getLocation(), this.inputSlots, this.resultSlots,
+                                    this, anvil),
+                            this);
+                    return this.bukkitEntity;
+                }
+            }
+        };
+        container.getBukkitView().setItem(0, anvil.getItem(0));
+        container.getBukkitView().setItem(1, anvil.getItem(1));
+        container.checkReachable = false;
+        handle.connection.send(
+                new ClientboundOpenScreenPacket(container.containerId, container.getType(), new TextComponent(title)));
+        handle.containerMenu = container;
+        handle.initMenu(container);
+        return container.getBukkitView();
+    }
+
+    @Override
     public void openHorseScreen(Tameable horse, Player equipper) {
         LivingEntity handle = NMSImpl.getHandle(horse);
         ServerPlayer equipperHandle = (ServerPlayer) NMSImpl.getHandle(equipper);
@@ -1433,6 +1476,27 @@ public class NMSImpl implements NMSBridge {
             NAVIGATION_PATHFINDER.invoke(navigation, NAVIGATION_CREATE_PATHFINDER.invoke(navigation, mc));
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+    }
+
+    private static class CitizensInventoryAnvil extends CraftInventoryAnvil implements ForwardingInventory {
+        private final Inventory wrapped;
+
+        public CitizensInventoryAnvil(Location location, Container inventory, Container resultInventory,
+                AnvilMenu container, Inventory wrapped) {
+            super(location, inventory, resultInventory, container);
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public Inventory getWrapped() {
+            return wrapped;
+        }
+
+        @Override
+        public void setItem(int slot, org.bukkit.inventory.ItemStack item) {
+            super.setItem(slot, item);
+            wrapped.setItem(slot, item);
         }
     }
 
@@ -1955,7 +2019,6 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(Brain.class, "f");
 
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
-
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);
     private static final Map<Class<?>, net.minecraft.world.entity.EntityType<?>> CITIZENS_ENTITY_TYPES = Maps

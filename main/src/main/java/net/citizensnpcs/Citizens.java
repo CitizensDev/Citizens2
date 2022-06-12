@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
@@ -84,6 +85,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private Settings config;
     private boolean enabled;
     private final InventoryHelper inventoryHelper = new InventoryHelper() {
+        @Override
+        public InventoryView openAnvilInventory(Player player, Inventory inventory, String title) {
+            return NMS.openAnvilInventory(player, inventory, title);
+        }
+
         @Override
         public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
             if (view.getTopInventory().getType() == InventoryType.CRAFTING

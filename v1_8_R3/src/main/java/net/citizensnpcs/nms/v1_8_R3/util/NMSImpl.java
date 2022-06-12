@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_8_R3.util;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.SocketAddress;
@@ -27,6 +28,8 @@ import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftWither;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventoryAnvil;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
@@ -37,6 +40,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
@@ -61,6 +65,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.gui.ForwardingInventory;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -146,7 +151,9 @@ import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
+import net.minecraft.server.v1_8_R3.ChatMessage;
 import net.minecraft.server.v1_8_R3.Container;
+import net.minecraft.server.v1_8_R3.ContainerAnvil;
 import net.minecraft.server.v1_8_R3.ControllerJump;
 import net.minecraft.server.v1_8_R3.ControllerMove;
 import net.minecraft.server.v1_8_R3.CrashReport;
@@ -168,6 +175,7 @@ import net.minecraft.server.v1_8_R3.EntityTrackerEntry;
 import net.minecraft.server.v1_8_R3.EntityTypes;
 import net.minecraft.server.v1_8_R3.EntityWither;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.IInventory;
 import net.minecraft.server.v1_8_R3.MathHelper;
 import net.minecraft.server.v1_8_R3.Navigation;
 import net.minecraft.server.v1_8_R3.NavigationAbstract;
@@ -731,6 +739,52 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public InventoryView openAnvilInventory(final Player player, final Inventory anvil, String title) {
+        EntityPlayer handle = (EntityPlayer) getHandle(player);
+        final ContainerAnvil container = new ContainerAnvil(handle.inventory, handle.world, new BlockPosition(0, 0, 0),
+                handle) {
+            private CraftInventoryView bukkitEntity;
+
+            @Override
+            public boolean a(EntityHuman entityhuman) {
+                return true;
+            }
+
+            @Override
+            public void b(EntityHuman entityhuman) {
+            }
+
+            @Override
+            public CraftInventoryView getBukkitView() {
+                if (this.bukkitEntity != null) {
+                    return this.bukkitEntity;
+                } else {
+                    try {
+                        this.bukkitEntity = new CraftInventoryView(player,
+                                new CitizensInventoryAnvil(new Location(player.getWorld(), 0, 0, 0),
+                                        (IInventory) REPAIR_INVENTORY.invoke(this),
+                                        (IInventory) RESULT_INVENTORY.invoke(this), this, anvil),
+                                this);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        return super.getBukkitView();
+                    }
+                    return this.bukkitEntity;
+                }
+            }
+        };
+        container.windowId = handle.nextContainerCounter();
+        container.getBukkitView().setItem(0, anvil.getItem(0));
+        container.getBukkitView().setItem(1, anvil.getItem(1));
+        container.checkReachable = false;
+        container.addSlotListener(handle);
+        handle.playerConnection
+                .sendPacket(new PacketPlayOutOpenWindow(container.windowId, "minecraft:anvil", new ChatMessage(title)));
+        handle.activeContainer = container;
+        return container.getBukkitView();
+    }
+
+    @Override
     public void openHorseScreen(Tameable horse, Player equipper) {
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) horse);
         EntityLiving equipperHandle = NMSImpl.getHandle(equipper);
@@ -1159,6 +1213,27 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    private static class CitizensInventoryAnvil extends CraftInventoryAnvil implements ForwardingInventory {
+        private final Inventory wrapped;
+
+        public CitizensInventoryAnvil(Location location, IInventory inventory, IInventory resultInventory,
+                ContainerAnvil container, Inventory wrapped) {
+            super(inventory, resultInventory);
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public Inventory getWrapped() {
+            return wrapped;
+        }
+
+        @Override
+        public void setItem(int slot, org.bukkit.inventory.ItemStack item) {
+            super.setItem(slot, item);
+            wrapped.setItem(slot, item);
+        }
+    }
+
     private static class NavigationFieldWrapper implements TargetNavigator {
         private final org.bukkit.entity.Entity entity;
         private final NavigationAbstract navigation;
@@ -1491,7 +1566,9 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE,
             EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
             EntityType.GHAST);
+
     private static final float DEFAULT_SPEED = 1F;
+
     private static Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class, Entity.class);
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
@@ -1506,6 +1583,8 @@ public class NMSImpl implements NMSBridge {
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "a");
     private static final Random RANDOM = Util.getFastRandom();
+    private static final MethodHandle REPAIR_INVENTORY = NMS.getGetter(ContainerAnvil.class, "g");
+    private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "h");
     private static Field SKULL_PROFILE_FIELD;
     private static Field TEAM_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");

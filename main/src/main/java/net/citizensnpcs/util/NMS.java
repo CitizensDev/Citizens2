@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
@@ -452,6 +453,10 @@ public class NMS {
 
     public static void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
         BRIDGE.mount(entity, passenger);
+    }
+
+    public static InventoryView openAnvilInventory(Player player, Inventory inventory, String title) {
+        return BRIDGE.openAnvilInventory(player, inventory, title);
     }
 
     public static void openHorseScreen(Tameable horse, Player equipper) {

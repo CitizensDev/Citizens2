@@ -31,6 +31,8 @@ import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftWither;
 import org.bukkit.craftbukkit.v1_10_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftInventoryAnvil;
+import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftInventoryView;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
@@ -40,6 +42,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
@@ -65,6 +68,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.gui.ForwardingInventory;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -163,7 +167,9 @@ import net.minecraft.server.v1_10_R1.Block;
 import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.BossBattleServer;
 import net.minecraft.server.v1_10_R1.ChatComponentText;
+import net.minecraft.server.v1_10_R1.ChatMessage;
 import net.minecraft.server.v1_10_R1.Container;
+import net.minecraft.server.v1_10_R1.ContainerAnvil;
 import net.minecraft.server.v1_10_R1.ControllerJump;
 import net.minecraft.server.v1_10_R1.ControllerMove;
 import net.minecraft.server.v1_10_R1.CrashReport;
@@ -191,6 +197,7 @@ import net.minecraft.server.v1_10_R1.EntityTrackerEntry;
 import net.minecraft.server.v1_10_R1.EntityTypes;
 import net.minecraft.server.v1_10_R1.EntityWither;
 import net.minecraft.server.v1_10_R1.GenericAttributes;
+import net.minecraft.server.v1_10_R1.IInventory;
 import net.minecraft.server.v1_10_R1.MathHelper;
 import net.minecraft.server.v1_10_R1.MinecraftKey;
 import net.minecraft.server.v1_10_R1.MobEffects;
@@ -787,6 +794,52 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public InventoryView openAnvilInventory(Player player, Inventory anvil, String title) {
+        EntityPlayer handle = (EntityPlayer) getHandle(player);
+        final ContainerAnvil container = new ContainerAnvil(handle.inventory, handle.world, new BlockPosition(0, 0, 0),
+                handle) {
+            private CraftInventoryView bukkitEntity;
+
+            @Override
+            public boolean a(EntityHuman entityhuman) {
+                return true;
+            }
+
+            @Override
+            public void b(EntityHuman entityhuman) {
+            }
+
+            @Override
+            public CraftInventoryView getBukkitView() {
+                if (this.bukkitEntity != null) {
+                    return this.bukkitEntity;
+                } else {
+                    try {
+                        this.bukkitEntity = new CraftInventoryView(player,
+                                new CitizensInventoryAnvil(new Location(player.getWorld(), 0, 0, 0),
+                                        (IInventory) REPAIR_INVENTORY.invoke(this),
+                                        (IInventory) RESULT_INVENTORY.invoke(this), anvil),
+                                this);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        return super.getBukkitView();
+                    }
+                    return this.bukkitEntity;
+                }
+            }
+        };
+        container.windowId = handle.nextContainerCounter();
+        container.getBukkitView().setItem(0, anvil.getItem(0));
+        container.getBukkitView().setItem(1, anvil.getItem(1));
+        container.checkReachable = false;
+        container.addSlotListener(handle);
+        handle.playerConnection
+                .sendPacket(new PacketPlayOutOpenWindow(container.windowId, "minecraft:anvil", new ChatMessage(title)));
+        handle.activeContainer = container;
+        return container.getBukkitView();
+    }
+
+    @Override
     public void openHorseScreen(Tameable horse, Player equipper) {
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) horse);
         EntityLiving equipperHandle = NMSImpl.getHandle(equipper);
@@ -1208,6 +1261,27 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    private static class CitizensInventoryAnvil extends CraftInventoryAnvil implements ForwardingInventory {
+        private final Inventory wrapped;
+
+        public CitizensInventoryAnvil(Location location, IInventory inventory, IInventory resultInventory,
+                Inventory wrapped) {
+            super(location, inventory, resultInventory);
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public Inventory getWrapped() {
+            return wrapped;
+        }
+
+        @Override
+        public void setItem(int slot, org.bukkit.inventory.ItemStack item) {
+            super.setItem(slot, item);
+            wrapped.setItem(slot, item);
+        }
+    }
+
     private static class NavigationFieldWrapper implements TargetNavigator {
         private final org.bukkit.entity.Entity entity;
         private final NavigationAbstract navigation;
@@ -1608,6 +1682,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.HORSE, EntityType.GHAST);
 
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
+
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c");
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bK");
@@ -1625,9 +1700,12 @@ public class NMSImpl implements NMSBridge {
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "f");
     private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bx");
     private static final Random RANDOM = Util.getFastRandom();
+    private static final MethodHandle REPAIR_INVENTORY = NMS.getGetter(ContainerAnvil.class, "g");
+    private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "h");
     private static Field SKULL_PROFILE_FIELD;
     private static MethodHandle TEAM_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bG");
 
     static {

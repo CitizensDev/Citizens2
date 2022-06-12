@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
@@ -107,6 +108,8 @@ public interface NMSBridge {
     public void look(Entity entity, Location to, boolean headOnly, boolean immediate);
 
     public void mount(Entity entity, Entity passenger);
+
+    InventoryView openAnvilInventory(Player player, Inventory anvil, String title);
 
     public void openHorseScreen(Tameable horse, Player equipper);
 
