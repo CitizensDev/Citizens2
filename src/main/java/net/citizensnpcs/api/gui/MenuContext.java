@@ -15,13 +15,16 @@ public class MenuContext implements SlotSource {
     private final Inventory inventory;
     private final InventoryMenu menu;
     private final InventoryMenuSlot[] slots;
+    private String title;
 
-    public MenuContext(InventoryMenu menu, InventoryMenuSlot[] slots, Inventory inventory) {
-        this(menu, slots, inventory, Collections.emptyMap());
+    public MenuContext(InventoryMenu menu, InventoryMenuSlot[] slots, Inventory inventory, String title) {
+        this(menu, slots, inventory, title, Collections.emptyMap());
     }
 
-    public MenuContext(InventoryMenu menu, InventoryMenuSlot[] slots, Inventory inventory, Map<String, Object> data) {
+    public MenuContext(InventoryMenu menu, InventoryMenuSlot[] slots, Inventory inventory, String title,
+            Map<String, Object> data) {
         this.inventory = inventory;
+        this.title = title;
         this.slots = slots;
         this.menu = menu;
         this.data.putAll(data);
@@ -45,5 +48,14 @@ public class MenuContext implements SlotSource {
             return slots[i] = new InventoryMenuSlot(this, i);
         }
         return slots[i];
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        this.menu.updateTitle(title);
     }
 }

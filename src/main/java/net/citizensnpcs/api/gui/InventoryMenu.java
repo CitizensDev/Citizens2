@@ -18,6 +18,7 @@ import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -261,14 +262,14 @@ public class InventoryMenu implements Listener, Runnable {
             Inventory dest = event.getInventory() == event.getClickedInventory() ? event.getWhoClicked().getInventory()
                     : page.ctx.getInventory();
             boolean toNPC = dest == page.ctx.getInventory();
-            if (false) {
-                // TODO
-                handleShiftClick(event, dest, toNPC);
-            }
+            handleShiftClick(event, dest, toNPC);
             return;
         }
-        if (!clicked.equals(page.ctx.getInventory()))
+
+        if (!clicked.equals(page.ctx.getInventory()) && (!(clicked instanceof ForwardingInventory)
+                || !((ForwardingInventory) clicked).getWrapped().equals(page.ctx.getInventory()))) {
             return;
+        }
         switch (event.getAction()) {
             case COLLECT_TO_CURSOR:
                 event.setCancelled(true);
@@ -310,6 +311,14 @@ public class InventoryMenu implements Listener, Runnable {
         // TODO: should this be supported
         if (page != null && event.getInventory() == page.ctx.getInventory()) {
             event.setCancelled(true);
+        }
+    }
+
+    private InventoryView openInventory(HumanEntity player, Inventory inventory, String title) {
+        if (inventory.getType() == InventoryType.ANVIL) {
+            return CitizensAPI.getInventoryHelper().openAnvilInventory((Player) player, inventory, title);
+        } else {
+            return player.openInventory(inventory);
         }
     }
 
@@ -368,19 +377,12 @@ public class InventoryMenu implements Listener, Runnable {
      * all players and the inventory is shared.
      */
     public void present(Player player) {
-        InventoryView view = player.openInventory(page.ctx.getInventory());
-        views.add(view);
+        views.add(openInventory(player, page.ctx.getInventory(), page.ctx.getTitle()));
     }
 
     @Override
     public void run() {
         page.page.run();
-    }
-
-    public void setTitle(String newTitle) {
-        for (InventoryView view : views) {
-            CitizensAPI.getInventoryHelper().updateInventoryTitle((Player) view.getPlayer(), view, newTitle);
-        }
     }
 
     /**
@@ -431,7 +433,7 @@ public class InventoryMenu implements Listener, Runnable {
         InventoryMenuSlot[] slots = new InventoryMenuSlot[inventory.getSize()];
         page.patterns = new InventoryMenuPattern[info.patterns.length];
         page.dim = dim;
-        page.ctx = new MenuContext(this, slots, inventory, context);
+        page.ctx = new MenuContext(this, slots, inventory, title, context);
         for (int i = 0; i < info.slots.length; i++) {
             Bindable<MenuSlot> slotInfo = info.slots[i];
             int pos = posToIndex(dim, slotInfo.data.slot());
@@ -525,9 +527,13 @@ public class InventoryMenu implements Listener, Runnable {
             view.close();
             if (!view.getPlayer().isValid() || inventory == null)
                 continue;
-            InventoryView newview = view.getPlayer().openInventory(inventory);
-            // TODO: fix anvil inventory
-            views.add(newview);
+            views.add(openInventory(view.getPlayer(), inventory, page.ctx.getTitle()));
+        }
+    }
+
+    void updateTitle(String newTitle) {
+        for (InventoryView view : views) {
+            CitizensAPI.getInventoryHelper().updateInventoryTitle((Player) view.getPlayer(), view, newTitle);
         }
     }
 
