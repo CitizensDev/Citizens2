@@ -414,25 +414,28 @@ public class InventoryMenu implements Listener, Runnable {
             stack.add(page);
         }
         page = new PageContext();
-        int[] dim = info.menuAnnotation.dimensions();
-        InventoryType type = info.menuAnnotation.type();
         page.page = instance;
-        if (instance.getInventoryType() != null) {
-            type = instance.getInventoryType();
-        }
-        int size = getInventorySize(type, dim);
-        Inventory inventory;
+        Inventory inventory = instance.createInventory();
+        int[] dim = info.menuAnnotation.dimensions();
+        int size;
+        InventoryType type;
         String title = Colorizer.parseColors(Messaging.tryTranslate(
                 context.containsKey("title") ? (String) context.get("title") : info.menuAnnotation.title()));
-        if (type == InventoryType.CHEST || type == null) {
-            inventory = Bukkit.createInventory(null, size, title);
+        if (inventory == null) {
+            type = info.menuAnnotation.type();
+            size = getInventorySize(type, dim);
+            if (type == InventoryType.CHEST || type == null) {
+                inventory = Bukkit.createInventory(null, size, title);
+            } else {
+                inventory = Bukkit.createInventory(null, type, title);
+            }
         } else {
-            inventory = Bukkit.createInventory(null, type, title);
+            type = inventory.getType();
+            size = getInventorySize(type, dim);
         }
         List<InventoryMenuTransition> transitions = Lists.newArrayList();
         InventoryMenuSlot[] slots = new InventoryMenuSlot[inventory.getSize()];
         page.patterns = new InventoryMenuPattern[info.patterns.length];
-        page.dim = dim;
         page.ctx = new MenuContext(this, slots, inventory, title, context);
         for (int i = 0; i < info.slots.length; i++) {
             Bindable<MenuSlot> slotInfo = info.slots[i];
@@ -457,7 +460,7 @@ public class InventoryMenu implements Listener, Runnable {
         info.inject(page.page, page.ctx.data());
         page.page.initialise(page.ctx);
         for (Invokable<ClickHandler> invokable : info.clickHandlers) {
-            int idx = posToIndex(page.dim, invokable.data.slot());
+            int idx = posToIndex(dim, invokable.data.slot());
             InventoryMenuSlot slot = page.ctx.getSlot(idx);
             slot.addClickHandler(new Consumer<CitizensInventoryClickEvent>() {
                 @Override
@@ -678,7 +681,6 @@ public class InventoryMenu implements Listener, Runnable {
 
     private static class PageContext {
         private MenuContext ctx;
-        public int[] dim;
         private InventoryMenuPage page;
         private InventoryMenuPattern[] patterns;
         private InventoryMenuTransition[] transitions;
