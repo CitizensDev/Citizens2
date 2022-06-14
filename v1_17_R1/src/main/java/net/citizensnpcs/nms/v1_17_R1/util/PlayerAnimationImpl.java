@@ -15,6 +15,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.network.protocol.Packet;
@@ -33,6 +34,10 @@ public class PlayerAnimationImpl {
         }
         switch (animation) {
             case SIT:
+                if (player instanceof NPCHolder) {
+                    ((NPCHolder) player).getNPC().getOrAddTrait(SitTrait.class).setSitting(true);
+                    return;
+                }
                 player.getBukkitEntity().setMetadata("citizens.sitting",
                         new FixedMetadataValue(CitizensAPI.getPlugin(), true));
                 NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("PlayerAnimationImpl");
@@ -54,10 +59,6 @@ public class PlayerAnimationImpl {
                         if (player.isRemoved() || !player.valid
                                 || !player.getBukkitEntity().hasMetadata("citizens.sitting")
                                 || !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
-                            cancel();
-                            return;
-                        }
-                        if (player instanceof NPCHolder && !((NPCHolder) player).getNPC().isSpawned()) {
                             cancel();
                             return;
                         }
@@ -89,6 +90,10 @@ public class PlayerAnimationImpl {
                         player, radius);
                 break;
             case STOP_SITTING:
+                if (player instanceof NPCHolder) {
+                    ((NPCHolder) player).getNPC().getOrAddTrait(SitTrait.class).setSitting(false);
+                    return;
+                }
                 player.getBukkitEntity().setMetadata("citizens.sitting",
                         new FixedMetadataValue(CitizensAPI.getPlugin(), false));
                 NMS.mount(player.getBukkitEntity(), null);
