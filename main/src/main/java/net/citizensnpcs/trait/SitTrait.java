@@ -35,7 +35,7 @@ public class SitTrait extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned()) {
+        if (!npc.isSpawned() || !sitting) {
             return;
         }
         if (holder == null) {
@@ -54,5 +54,8 @@ public class SitTrait extends Trait {
 
     public void setSitting(boolean val) {
         this.sitting = val;
+        if (!sitting) {
+            onDespawn();
+        }
     }
 }
