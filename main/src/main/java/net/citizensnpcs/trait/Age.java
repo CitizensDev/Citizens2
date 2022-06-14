@@ -53,7 +53,7 @@ public class Age extends Trait implements Toggleable {
         } else if (npc.getEntity() instanceof Zombie) {
             ((Zombie) npc.getEntity()).setBaby(age < 0);
             ageable = null;
-        } else if (npc.getEntity().getType().name().equals("TADPOLE")) {
+        } else if (npc.isSpawned() && npc.getEntity().getType().name().equals("TADPOLE")) {
             ((Tadpole) npc.getEntity()).setAge(age);
             ageable = null;
         } else {

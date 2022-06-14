@@ -13,7 +13,8 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
 import net.citizensnpcs.api.gui.ClickHandler;
-import net.citizensnpcs.api.gui.InputMenu;
+import net.citizensnpcs.api.gui.InputMenus;
+import net.citizensnpcs.api.gui.InputMenus.Choice;
 import net.citizensnpcs.api.gui.InventoryMenu;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.gui.InventoryMenuSlot;
@@ -49,7 +50,7 @@ public class ShopTrait extends Trait {
         @Persist
         private String requiredPermission;
         @Persist
-        private final ShopType type = ShopType.VIEW;
+        private ShopType type = ShopType.VIEW;
 
         private NPCShop(String name) {
             this.name = name;
@@ -99,13 +100,19 @@ public class ShopTrait extends Trait {
         @ClickHandler(slot = { 0, 2 })
         public void onPermissionChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
-            ctx.getMenu()
-                    .transition(InputMenu.setter(() -> shop.getRequiredPermission(), (p) -> shop.setPermission(p)));
+            ctx.getMenu().transition(
+                    InputMenus.stringSetter(() -> shop.getRequiredPermission(), (p) -> shop.setPermission(p)));
         }
 
         @ClickHandler(slot = { 0, 0 })
         public void onShopTypeChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
+            ctx.getMenu().transition(InputMenus.<ShopType> picker("Edit shop type", (chosen) -> {
+                shop.type = chosen.getValue();
+            }, Choice.of(ShopType.BUY, Material.DIAMOND, "Players buy items", shop.type == ShopType.BUY),
+                    Choice.of(ShopType.SELL, Material.EMERALD, "Players sell items", shop.type == ShopType.SELL),
+                    Choice.of(ShopType.VIEW, Material.ENDER_EYE, "Players view items only",
+                            shop.type == ShopType.VIEW)));
         }
     }
 

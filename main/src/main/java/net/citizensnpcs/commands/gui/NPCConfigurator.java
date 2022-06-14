@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
-import net.citizensnpcs.api.gui.InputMenu;
+import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.gui.InventoryMenuSlot;
 import net.citizensnpcs.api.gui.Menu;
@@ -72,8 +72,8 @@ public class NPCConfigurator extends InventoryMenuPage {
         SLOT_MAP.put(0, new ConfiguratorInfo(Util.getFallbackMaterial("OAK_SIGN", "SIGN"), (evt) -> {
             evt.slot.setDescription("Edit NPC name\n" + evt.npc.getName());
             if (evt.event != null) {
-                evt.ctx.getMenu()
-                        .transition(InputMenu.setter(() -> evt.npc.getName(), (input) -> evt.npc.setName(input)));
+                evt.ctx.getMenu().transition(
+                        InputMenus.stringSetter(() -> evt.npc.getName(), (input) -> evt.npc.setName(input)));
             }
         }));
 
