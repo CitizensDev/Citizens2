@@ -17,10 +17,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.allay.Allay;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
@@ -149,6 +152,13 @@ public class AllayController extends MobEntityController {
                 dropLeash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
+        }
+
+        @Override
+        protected InteractionResult mobInteract(Player var0, InteractionHand var1) {
+            if (npc != null && npc.isProtected())
+                return InteractionResult.FAIL;
+            return super.mobInteract(var0, var1);
         }
 
         @Override
