@@ -92,7 +92,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             ProfilePublicKey ppk, NPC npc) {
         super(minecraftServer, world, gameProfile, ppk);
         this.npc = (CitizensNPC) npc;
-
         if (npc != null) {
             skinTracker = new SkinPacketTracker(this);
             try {

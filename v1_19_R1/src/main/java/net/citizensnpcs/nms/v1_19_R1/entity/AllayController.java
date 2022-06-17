@@ -62,6 +62,13 @@ public class AllayController extends MobEntityController {
         }
 
         @Override
+        public boolean canPickUpLoot() {
+            if (npc != null && npc.isProtected())
+                return false;
+            return super.canPickUpLoot();
+        }
+
+        @Override
         protected boolean canRide(Entity entity) {
             if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart)) {
                 return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
