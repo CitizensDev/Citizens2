@@ -22,7 +22,8 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
 
     private net.minecraft.server.v1_16_R3.ItemStack getCurrentItem() {
         return configuration.item() != null ? CraftItemStack.asNMSCopy(configuration.item())
-                : entity instanceof EntityLiving ? ((EntityLiving) entity).getEquipment(EnumItemSlot.MAINHAND) : null;
+                : getHandle() instanceof EntityLiving ? ((EntityLiving) getHandle()).getEquipment(EnumItemSlot.MAINHAND)
+                        : null;
     }
 
     @Override

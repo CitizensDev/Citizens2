@@ -20,7 +20,7 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
 
     private ItemStack getCurrentItem() {
         return configuration.item() != null ? CraftItemStack.asNMSCopy(configuration.item())
-                : entity instanceof EntityLiving ? ((EntityLiving) entity).getEquipment(0) : null;
+                : getHandle() instanceof EntityLiving ? ((EntityLiving) getHandle()).getEquipment(0) : null;
     }
 
     @Override
