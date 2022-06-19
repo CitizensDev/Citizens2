@@ -44,8 +44,8 @@ public class FlyingBlockExaminer implements NeighbourGeneratorBlockExaminer {
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
-        Block above = source.getBlock(pos.clone().add(UP));
-        Block in = source.getBlock(pos);
+        Block above = source.getBlockAt(pos.clone().add(UP));
+        Block in = source.getBlockAt(pos);
         if (MinecraftBlockExaminer.isLiquid(above.getType(), in.getType())) {
             return PassableState.UNPASSABLE;
         }

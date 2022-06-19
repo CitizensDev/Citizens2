@@ -8,11 +8,11 @@ import org.bukkit.util.Vector;
 import net.citizensnpcs.api.util.BoundingBox;
 
 public abstract class BlockSource {
-    public Block getBlock(int x, int y, int z) {
+    public Block getBlockAt(int x, int y, int z) {
         return getWorld().getBlockAt(x, y, z);
     }
 
-    public Block getBlock(Vector position) {
+    public Block getBlockAt(Vector position) {
         return getWorld().getBlockAt(position.getBlockX(), position.getBlockY(), position.getBlockZ());
     }
 

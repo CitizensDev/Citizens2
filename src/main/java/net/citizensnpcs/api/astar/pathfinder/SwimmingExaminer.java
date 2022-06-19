@@ -45,7 +45,7 @@ public class SwimmingExaminer implements BlockExaminer {
         if (isWaterMob(npc.getEntity())) {
             return PassableState.PASSABLE;
         }
-        Block block = source.getBlock(vector.clone().add(UP));
+        Block block = source.getBlockAt(vector.clone().add(UP));
         return isSwimmableLiquid(block.getType()) || MinecraftBlockExaminer.canStandIn(block) ? PassableState.PASSABLE
                 : PassableState.UNPASSABLE;
     }

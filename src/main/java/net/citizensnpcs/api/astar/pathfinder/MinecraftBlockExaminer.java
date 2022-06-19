@@ -53,9 +53,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         if (!SpigotUtil.checkYSafe(pos.getBlockY(), source.getWorld())) {
             return PassableState.UNPASSABLE;
         }
-        Block above = source.getBlock(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
+        Block above = source.getBlockAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
         Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
-        Block in = source.getBlock(pos);
+        Block in = source.getBlockAt(pos);
         boolean canStand = canStandOn(below) || isLiquid(in.getType(), below) || isClimbable(below);
         if (!canStand) {
             return PassableState.UNPASSABLE;
