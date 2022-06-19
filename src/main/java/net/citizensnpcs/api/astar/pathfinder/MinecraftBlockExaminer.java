@@ -12,6 +12,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
@@ -138,10 +139,15 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         boolean passable = true;
         for (Block block : blocks) {
             passable &= !block.getType().isSolid();
-            if (block.getType().name().contains("_SLAB")) {
-                Slab slab = (Slab) block.getBlockData();
-                if (slab.getType() != Slab.Type.BOTTOM) {
-                    passable = false;
+            if (SpigotUtil.isUsing1_13API()) {
+                if (block.getBlockData() instanceof Slab) {
+                    Slab slab = (Slab) block.getBlockData();
+                    if (slab.getType() != Slab.Type.BOTTOM) {
+                        passable = false;
+                    }
+                } else if (block.getBlockData() instanceof TrapDoor) {
+                    TrapDoor trapdoor = (TrapDoor) block.getBlockData();
+                    passable &= trapdoor.isOpen();
                 }
             }
         }
@@ -159,6 +165,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     public static boolean canStandOn(Block block) {
         Block up = block.getRelative(BlockFace.UP);
         boolean standable = canStandOn(block.getType());
+        if (SpigotUtil.isUsing1_13API() && block.getBlockData() instanceof TrapDoor) {
+            TrapDoor trapdoor = (TrapDoor) block.getBlockData();
+            standable = !trapdoor.isOpen();
+        }
         return standable && canStandIn(up, up.getRelative(BlockFace.UP));
     }
 
