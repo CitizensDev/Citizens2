@@ -2,11 +2,20 @@ package net.citizensnpcs.api.astar.pathfinder;
 
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.util.BoundingBox;
 
 public abstract class BlockSource {
+    public Block getBlock(int x, int y, int z) {
+        return getWorld().getBlockAt(x, y, z);
+    }
+
+    public Block getBlock(Vector position) {
+        return getWorld().getBlockAt(position.getBlockX(), position.getBlockY(), position.getBlockZ());
+    }
+
     public abstract BoundingBox getCollisionBox(int x, int y, int z);
 
     public BoundingBox getCollisionBox(Vector pos) {

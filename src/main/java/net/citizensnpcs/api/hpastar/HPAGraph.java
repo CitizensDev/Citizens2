@@ -8,7 +8,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -213,10 +212,7 @@ public class HPAGraph {
         if (y == 0) {
             return false;
         }
-        Material in = blockSource.getMaterialAt(x, y, z), on = blockSource.getMaterialAt(x, y - 1, z),
-                above = blockSource.getMaterialAt(x, y + 1, z);
-        return MinecraftBlockExaminer.canStandOn(on) && MinecraftBlockExaminer.canStandIn(in)
-                && MinecraftBlockExaminer.canStandIn(above);
+        return MinecraftBlockExaminer.canStandOn(blockSource.getWorld().getBlockAt(x, y - 1, z));
     }
 
     private static int BASE_CLUSTER_SIZE = (int) (2 * Math.pow(2, 3));

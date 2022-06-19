@@ -13,34 +13,26 @@ public class TeleportStuckAction implements StuckAction {
         // singleton
     }
 
-    private boolean canStand(Block block) {
-        return MinecraftBlockExaminer.canStandIn(block.getType())
-                && MinecraftBlockExaminer.canStandIn(block.getRelative(BlockFace.UP).getType());
-    }
-
     @Override
     public boolean run(NPC npc, Navigator navigator) {
         if (!npc.isSpawned())
             return false;
         Location base = navigator.getTargetAsLocation();
-        if (base == null || npc.getEntity().getWorld() == base.getWorld()
-                && npc.getEntity().getLocation(CACHE_LOC).distanceSquared(base) <= RANGE)
+        if (base == null || base.getWorld() != npc.getEntity().getWorld())
             return true;
-        Block block = base.getBlock();
+        Block block = base.getBlock().getRelative(BlockFace.DOWN);
         int iterations = 0;
-        while (!canStand(block)) {
+        while (!MinecraftBlockExaminer.canStandOn(block)) {
             if (iterations++ >= MAX_ITERATIONS) {
-                block = base.getBlock();
+                block = base.getBlock().getRelative(BlockFace.DOWN);
                 break;
             }
             block = block.getRelative(BlockFace.UP);
         }
-        npc.teleport(block.getLocation(), TeleportCause.PLUGIN);
+        npc.teleport(block.getRelative(BlockFace.UP).getLocation(), TeleportCause.PLUGIN);
         return false;
     }
 
-    private static final Location CACHE_LOC = new Location(null, 0, 0, 0);
     public static TeleportStuckAction INSTANCE = new TeleportStuckAction();
     private static final int MAX_ITERATIONS = 10;
-    private static final double RANGE = 10;
 }

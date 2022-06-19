@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Squid;
 import org.bukkit.entity.WaterMob;
@@ -44,8 +45,8 @@ public class SwimmingExaminer implements BlockExaminer {
         if (isWaterMob(npc.getEntity())) {
             return PassableState.PASSABLE;
         }
-        Material above = source.getMaterialAt(vector.clone().add(UP));
-        return isSwimmableLiquid(above) || MinecraftBlockExaminer.canStandIn(above) ? PassableState.PASSABLE
+        Block block = source.getBlock(vector.clone().add(UP));
+        return isSwimmableLiquid(block.getType()) || MinecraftBlockExaminer.canStandIn(block) ? PassableState.PASSABLE
                 : PassableState.UNPASSABLE;
     }
 

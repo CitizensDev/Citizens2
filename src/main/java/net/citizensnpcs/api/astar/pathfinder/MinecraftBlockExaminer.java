@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
@@ -52,14 +53,14 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         if (!SpigotUtil.checkYSafe(pos.getBlockY(), source.getWorld())) {
             return PassableState.UNPASSABLE;
         }
-        Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
+        Block above = source.getBlock(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
         Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
-        Material in = source.getMaterialAt(pos);
-        boolean canStand = canStandOn(below) || isLiquid(in, below) || isClimbable(below);
+        Block in = source.getBlock(pos);
+        boolean canStand = canStandOn(below) || isLiquid(in.getType(), below) || isClimbable(below);
         if (!canStand) {
             return PassableState.UNPASSABLE;
         }
-        if (isClimbable(in) && (isClimbable(above) || isClimbable(below))) {
+        if (isClimbable(in.getType()) && (isClimbable(above.getType()) || isClimbable(below))) {
             point.addCallback(new LadderClimber());
         } else if (!canStandIn(above) || !canStandIn(in)) {
             return PassableState.UNPASSABLE;
@@ -133,6 +134,20 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         return !NOT_JUMPABLE.contains(mat);
     }
 
+    public static boolean canStandIn(Block... blocks) {
+        boolean passable = true;
+        for (Block block : blocks) {
+            passable &= !block.getType().isSolid();
+            if (block.getType().name().contains("_SLAB")) {
+                Slab slab = (Slab) block.getBlockData();
+                if (slab.getType() != Slab.Type.BOTTOM) {
+                    passable = false;
+                }
+            }
+        }
+        return passable;
+    }
+
     public static boolean canStandIn(Material... mat) {
         boolean passable = true;
         for (Material m : mat) {
@@ -143,8 +158,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     public static boolean canStandOn(Block block) {
         Block up = block.getRelative(BlockFace.UP);
-        return canStandOn(block.getType()) && canStandIn(up.getType())
-                && canStandIn(up.getRelative(BlockFace.UP).getType());
+        boolean standable = canStandOn(block.getType());
+        return standable && canStandIn(up, up.getRelative(BlockFace.UP));
     }
 
     public static boolean canStandOn(Material mat) {
@@ -170,7 +185,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 continue;
             }
             Block block = base.getWorld().getBlockAt(x, y, z);
-            if (MinecraftBlockExaminer.canStandOn(block)) {
+            if (canStandOn(block)) {
                 if (filter != null && !filter.apply(block)) {
                     continue;
                 }
@@ -190,9 +205,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                     if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4)) {
                         continue;
                     }
-                    Block relative = base.getRelative(x, y, z);
-                    if (canStandOn(relative.getRelative(BlockFace.DOWN))) {
-                        return relative.getLocation();
+                    Block offset = base.getRelative(x, y, z);
+                    if (canStandOn(offset.getRelative(BlockFace.DOWN))) {
+                        return offset.getLocation();
                     }
                 }
             }
@@ -262,11 +277,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             SUPPORT_WATERLOGGED = false;
             return false;
         }
-    }
-
-    public static boolean validPosition(Block in) {
-        return canStandIn(in.getType()) && canStandIn(in.getRelative(BlockFace.UP).getType())
-                && canStandOn(in.getRelative(BlockFace.DOWN).getType());
     }
 
     private static final Set<Material> CLIMBABLE = EnumSet.of(Material.LADDER, Material.VINE);
