@@ -195,11 +195,13 @@ public class CommandManager implements TabCompleter {
             } catch (UnhandledCommandException ex) {
                 return false;
             } catch (WrappedCommandException ex) {
-                throw ex.getCause();
+                if (ex.getCause() instanceof NumberFormatException) {
+                    Messaging.sendErrorTr(sender, CommandMessages.INVALID_NUMBER);
+                } else {
+                    throw ex.getCause();
+                }
             } catch (CommandException ex) {
                 Messaging.sendError(sender, ex.getMessage());
-            } catch (NumberFormatException ex) {
-                Messaging.sendErrorTr(sender, CommandMessages.INVALID_NUMBER);
             }
         } catch (Throwable ex) {
             ex.printStackTrace();

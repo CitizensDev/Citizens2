@@ -36,7 +36,6 @@ public class NavigatorParameters implements Cloneable {
     private float straightLineTargetingDistance;
     private StuckAction stuckAction;
     private int updatePathRate;
-
     private boolean useNewPathfinder;
 
     /**
