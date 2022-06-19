@@ -34,7 +34,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
 
     MCNavigationStrategy(final NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
-        if (!MinecraftBlockExaminer.canStandIn(dest.getBlock().getType())) {
+        if (!MinecraftBlockExaminer.canStandIn(dest.getBlock())) {
             dest = MinecraftBlockExaminer.findValidLocationAbove(dest, 2);
         }
         this.target = Util.getCenterLocation(dest.getBlock());

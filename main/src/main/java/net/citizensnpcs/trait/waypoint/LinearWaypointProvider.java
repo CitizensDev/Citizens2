@@ -679,7 +679,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         public boolean verify(World world, Iterable<Vector> cached) {
             for (Vector vector : cached) {
                 if (!MinecraftBlockExaminer
-                        .validPosition(world.getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ()))) {
+                        .canStandOn(world.getBlockAt(vector.getBlockX(), vector.getBlockY() - 1, vector.getBlockZ()))) {
                     return false;
                 }
             }

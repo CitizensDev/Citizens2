@@ -3,7 +3,6 @@ package net.citizensnpcs.npc.ai;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Maps;
@@ -35,10 +34,8 @@ public class FallingExaminer implements NeighbourGeneratorBlockExaminer {
         if (!SpigotUtil.checkYSafe(pos.getBlockY() + 1, source.getWorld()))
             return neighbours;
 
-        Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
-        Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
-        Material in = source.getMaterialAt(pos);
-        if (!MinecraftBlockExaminer.canStandOn(below) && MinecraftBlockExaminer.canStandIn(above, in)) {
+        if (!MinecraftBlockExaminer
+                .canStandOn(source.getBlockAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ()))) {
             Integer dist = fallen.get(point);
             if (dist == null) {
                 neighbours.add(point);
