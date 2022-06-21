@@ -84,6 +84,7 @@ public class PlayerMoveControl extends MoveControl {
 
     @Override
     public void setWantedPosition(double d0, double d1, double d2, double d3) {
+        System.out.println("set pos: " + d0 + " " + d2);
         this.tx = d0;
         this.ty = d1;
         this.tz = d2;
@@ -110,13 +111,15 @@ public class PlayerMoveControl extends MoveControl {
             double dZ = this.tz - this.entity.getZ();
             double dY = this.ty - this.entity.getY();
             double dXZ = Math.sqrt(dX * dX + dZ * dZ);
-            if (Math.abs(dY) < 1.0 && dXZ < 0.09) {
+            if (Math.abs(dY) < 1.0 && dXZ < 0.01) {
                 // this.entity.zza = 0.0F;
                 return;
             }
-            float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
-            this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
-            NMS.setHeadYaw(entity.getBukkitEntity(), this.entity.getYRot());
+            if (dXZ > 0.4) {
+                float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
+                this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
+                NMS.setHeadYaw(entity.getBukkitEntity(), this.entity.getYRot());
+            }
             float movement = (float) (this.speedMod * this.entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue());
             this.entity.setSpeed(movement);
             this.entity.zza = movement;
