@@ -71,19 +71,24 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
             return BehaviorStatus.SUCCESS;
         }
         currentTick = (int) (System.currentTimeMillis() / 50);
-        if (configuration.radius() > 0 && distance() >= configuration.radius()) {
-            startDigTick = currentTick;
-            if (entity instanceof NPCHolder) {
-                NPC npc = ((NPCHolder) entity).getNPC();
-                if (npc != null && !npc.getNavigator().isNavigating()) {
-                    npc.getNavigator().setTarget(location);
-                    npc.getNavigator().getLocalParameters().pathDistanceMargin(
-                            Math.max(1, npc.getNavigator().getLocalParameters().pathDistanceMargin()));
-                    npc.getNavigator().getLocalParameters().distanceMargin(Math.max(configuration.radius() - 1, 0.75));
-                    setTarget = true;
+        if (configuration.radius() > 0) {
+            if (distance() >= configuration.radius()) {
+                startDigTick = currentTick;
+                if (entity instanceof NPCHolder) {
+                    NPC npc = ((NPCHolder) entity).getNPC();
+                    if (npc != null && !npc.getNavigator().isNavigating()) {
+                        npc.getNavigator().setTarget(location);
+                        npc.getNavigator().getLocalParameters().pathDistanceMargin(
+                                Math.max(1, npc.getNavigator().getLocalParameters().pathDistanceMargin()));
+                        npc.getNavigator().getLocalParameters()
+                                .distanceMargin(Math.max(configuration.radius() - 1, 0.75));
+                        setTarget = true;
+                    }
+                } else if (NMS.getDestination(entity) == null) {
+                    NMS.setDestination(entity, x, y, z, 1);
                 }
+                return BehaviorStatus.RUNNING;
             }
-            return BehaviorStatus.RUNNING;
         }
         Util.faceLocation(entity, location);
         if (entity instanceof Player && currentTick % 5 == 0) {

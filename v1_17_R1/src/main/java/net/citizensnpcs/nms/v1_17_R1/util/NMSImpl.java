@@ -498,6 +498,9 @@ public class NMSImpl implements NMSBridge {
         Entity handle = getHandle(entity);
         MoveControl controller = handle instanceof Mob ? ((Mob) handle).getMoveControl()
                 : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getMoveControl() : null;
+        if (controller == null || !controller.hasWanted()) {
+            return null;
+        }
         return new Location(entity.getWorld(), controller.getWantedX(), controller.getWantedY(),
                 controller.getWantedZ());
     }

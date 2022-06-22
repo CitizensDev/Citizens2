@@ -84,7 +84,6 @@ public class PlayerMoveControl extends MoveControl {
 
     @Override
     public void setWantedPosition(double d0, double d1, double d2, double d3) {
-        System.out.println("set pos: " + d0 + " " + d2);
         this.tx = d0;
         this.ty = d1;
         this.tz = d2;
