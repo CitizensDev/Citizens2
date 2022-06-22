@@ -35,6 +35,20 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
         this.configuration = config;
     }
 
+    private void cancelNavigation() {
+        if (setTarget) {
+            if (entity instanceof NPCHolder) {
+                NPC npc = ((NPCHolder) entity).getNPC();
+                if (npc != null && npc.getNavigator().isNavigating()) {
+                    npc.getNavigator().cancelNavigation();
+                }
+            } else {
+                NMS.cancelMoveDestination(entity);
+            }
+        }
+        setTarget = false;
+    }
+
     private double distance() {
         return entity.getLocation().distance(Util.getCenterLocation(location.getBlock()));
     }
@@ -48,13 +62,7 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
 
     @Override
     public void reset() {
-        if (setTarget && entity instanceof NPCHolder) {
-            NPC npc = ((NPCHolder) entity).getNPC();
-            if (npc != null && npc.getNavigator().isNavigating()) {
-                npc.getNavigator().cancelNavigation();
-            }
-        }
-        setTarget = false;
+        cancelNavigation();
         if (configuration.callback() != null) {
             configuration.callback().run();
         }
@@ -86,8 +94,11 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
                     }
                 } else if (NMS.getDestination(entity) == null) {
                     NMS.setDestination(entity, x, y, z, 1);
+                    setTarget = true;
                 }
                 return BehaviorStatus.RUNNING;
+            } else if (setTarget) {
+                cancelNavigation();
             }
         }
         Util.faceLocation(entity, location);
