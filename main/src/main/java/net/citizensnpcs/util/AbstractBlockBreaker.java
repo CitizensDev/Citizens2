@@ -36,8 +36,7 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
     }
 
     private double distance() {
-        Location loc = entity.getLocation();
-        return Math.sqrt(Math.pow(loc.getX() - x, 2) + Math.pow(loc.getZ() - z, 2));
+        return entity.getLocation().distance(Util.getCenterLocation(location.getBlock()));
     }
 
     protected abstract float getDamage(int tickDifference);
@@ -78,7 +77,7 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
                 NPC npc = ((NPCHolder) entity).getNPC();
                 if (npc != null && !npc.getNavigator().isNavigating()) {
                     npc.getNavigator().setTarget(location.clone().add(0, 1, 0));
-                    npc.getNavigator().getLocalParameters().distanceMargin(configuration.radius() - 1);
+                    npc.getNavigator().getLocalParameters().distanceMargin(Math.max(configuration.radius() - 1, 0.5));
                     setTarget = true;
                 }
             }
@@ -112,5 +111,4 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
     public boolean shouldExecute() {
         return !entity.getWorld().getBlockAt(x, y, z).isEmpty();
     }
-
 }
