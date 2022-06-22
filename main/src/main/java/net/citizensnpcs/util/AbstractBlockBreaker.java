@@ -76,8 +76,10 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
             if (entity instanceof NPCHolder) {
                 NPC npc = ((NPCHolder) entity).getNPC();
                 if (npc != null && !npc.getNavigator().isNavigating()) {
-                    npc.getNavigator().setTarget(location.clone().add(0, 1, 0));
-                    npc.getNavigator().getLocalParameters().distanceMargin(Math.max(configuration.radius() - 1, 0.5));
+                    npc.getNavigator().setTarget(location);
+                    npc.getNavigator().getLocalParameters().pathDistanceMargin(
+                            Math.max(1, npc.getNavigator().getLocalParameters().pathDistanceMargin()));
+                    npc.getNavigator().getLocalParameters().distanceMargin(Math.max(configuration.radius() - 1, 0.75));
                     setTarget = true;
                 }
             }
