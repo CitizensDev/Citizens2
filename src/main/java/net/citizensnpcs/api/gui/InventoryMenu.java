@@ -285,10 +285,10 @@ public class InventoryMenu implements Listener, Runnable {
         CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(event, pickupAmount);
         slot.onClick(ev);
         pickupAmount = -1;
+        page.page.onClick(slot, event);
         if (event.isCancelled()) {
             return;
         }
-        page.page.onClick(slot, event);
         for (InventoryMenuTransition transition : page.transitions) {
             Class<? extends InventoryMenuPage> next = transition.accept(slot);
             if (next != null) {
