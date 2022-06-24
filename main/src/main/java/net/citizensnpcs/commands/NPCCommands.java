@@ -2285,7 +2285,7 @@ public class NPCCommands {
             min = 1,
             max = 1,
             permission = "citizens.npc.sound")
-    @Requirements(selected = true, ownership = true, livingEntity = true, excludedTypes = { EntityType.PLAYER })
+    @Requirements(selected = true, ownership = true, livingEntity = true)
     public void sound(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         String ambientSound = npc.data().get(NPC.AMBIENT_SOUND_METADATA);
         String deathSound = npc.data().get(NPC.DEATH_SOUND_METADATA);

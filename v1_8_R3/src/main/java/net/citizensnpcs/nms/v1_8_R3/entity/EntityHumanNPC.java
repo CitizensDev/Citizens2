@@ -104,6 +104,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    protected String bo() {
+        return NMSImpl.getSoundEffect(npc, super.bo(), NPC.HURT_SOUND_METADATA);
+    }
+
+    @Override
+    protected String bp() {
+        return NMSImpl.getSoundEffect(npc, super.bp(), NPC.DEATH_SOUND_METADATA);
+    }
+
+    @Override
     public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.

@@ -102,6 +102,9 @@ public class DropsTrait extends Trait {
 
         @Override
         public void onClick(InventoryMenuSlot slot, InventoryClickEvent event) {
+            if (slot.getCurrentItem() != null && slot.getCurrentItem().getType().name().equals("BARRIER"))
+                return;
+            event.setCancelled(false);
             if (event.getAction().name().contains("PICKUP")) {
                 chances.remove(event.getSlot());
             } else if (event.getAction().name().contains("PLACE")) {

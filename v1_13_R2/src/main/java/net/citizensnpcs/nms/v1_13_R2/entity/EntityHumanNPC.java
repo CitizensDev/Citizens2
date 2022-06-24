@@ -61,6 +61,7 @@ import net.minecraft.server.v1_13_R2.Packet;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_13_R2.PathType;
 import net.minecraft.server.v1_13_R2.PlayerInteractManager;
+import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.WorldServer;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
@@ -137,6 +138,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (npc != null) {
             Util.callCollisionEvent(npc, entity.getBukkitEntity());
         }
+    }
+
+    @Override
+    protected SoundEffect cs() {
+        return NMSImpl.getSoundEffect(npc, super.cs(), NPC.DEATH_SOUND_METADATA);
+    }
+
+    @Override
+    protected SoundEffect d(DamageSource damagesource) {
+        return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
     }
 
     @Override

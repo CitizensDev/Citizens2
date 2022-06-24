@@ -55,6 +55,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -215,6 +216,16 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     public PlayerControllerJump getControllerJump() {
         return controllerJump;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return NMSImpl.getSoundEffect(npc, super.getDeathSound(), NPC.DEATH_SOUND_METADATA);
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesource) {
+        return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.HURT_SOUND_METADATA);
     }
 
     public PlayerMoveControl getMoveControl() {

@@ -61,6 +61,7 @@ import net.minecraft.server.v1_12_R1.Packet;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_12_R1.PathType;
 import net.minecraft.server.v1_12_R1.PlayerInteractManager;
+import net.minecraft.server.v1_12_R1.SoundEffect;
 import net.minecraft.server.v1_12_R1.WorldServer;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
@@ -140,6 +141,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    protected SoundEffect cf() {
+        return NMSImpl.getSoundEffect(npc, super.cf(), NPC.DEATH_SOUND_METADATA);
+    }
+
+    @Override
     public void collide(net.minecraft.server.v1_12_R1.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
@@ -147,6 +153,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (npc != null) {
             Util.callCollisionEvent(npc, entity.getBukkitEntity());
         }
+    }
+
+    @Override
+    protected SoundEffect d(DamageSource damagesource) {
+        return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
     }
 
     @Override

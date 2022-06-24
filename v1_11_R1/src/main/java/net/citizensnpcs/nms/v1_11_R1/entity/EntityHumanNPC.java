@@ -57,6 +57,7 @@ import net.minecraft.server.v1_11_R1.Packet;
 import net.minecraft.server.v1_11_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_11_R1.PathType;
 import net.minecraft.server.v1_11_R1.PlayerInteractManager;
+import net.minecraft.server.v1_11_R1.SoundEffect;
 import net.minecraft.server.v1_11_R1.WorldServer;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
@@ -124,6 +125,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         updatePackets(navigating);
 
         npc.update();
+    }
+
+    @Override
+    protected SoundEffect bW() {
+        return NMSImpl.getSoundEffect(npc, super.bW(), NPC.DEATH_SOUND_METADATA);
+    }
+
+    @Override
+    protected SoundEffect bX() {
+        return NMSImpl.getSoundEffect(npc, super.bX(), NPC.HURT_SOUND_METADATA);
     }
 
     @Override
