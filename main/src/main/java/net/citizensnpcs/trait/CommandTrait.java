@@ -474,7 +474,7 @@ public class CommandTrait extends Trait {
             if (command.startsWith("say")) {
                 cmd = "npc speak " + command.replaceFirst("say", "").trim() + " --target <p>";
             }
-            if ((command.startsWith("npc") || command.startsWith("waypoints") || command.startsWith("wp"))
+            if ((command.startsWith("npc ") || command.startsWith("waypoints ") || command.startsWith("wp "))
                     && !command.contains("--id <id>")) {
                 cmd += " --id <id>";
             }
