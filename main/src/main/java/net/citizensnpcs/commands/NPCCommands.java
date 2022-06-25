@@ -2399,8 +2399,8 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "speak message to speak --target npcid|player_name --type vocal_type",
-            desc = "Uses the NPCs SpeechController to talk",
+            usage = "speak [message] --target [npcid|player name] (--type vocal_type)",
+            desc = "Says a message from the NPC",
             modifiers = { "speak" },
             min = 2,
             permission = "citizens.npc.speak")

@@ -470,7 +470,15 @@ public class CommandTrait extends Trait {
         }
 
         public void run(NPC npc, Player clicker) {
-            String interpolatedCommand = Placeholders.replace(command, clicker, npc);
+            String cmd = command;
+            if (command.startsWith("say")) {
+                cmd = "npc speak " + command.replaceFirst("say", "").trim() + " --target <p>";
+            }
+            if ((command.startsWith("npc") || command.startsWith("waypoints") || command.startsWith("wp"))
+                    && !command.contains("--id <id>")) {
+                cmd += " --id <id>";
+            }
+            String interpolatedCommand = Placeholders.replace(cmd, clicker, npc);
             if (Messaging.isDebugging()) {
                 Messaging.debug(
                         "Running command " + interpolatedCommand + " on NPC " + npc.getId() + " clicker " + clicker);
