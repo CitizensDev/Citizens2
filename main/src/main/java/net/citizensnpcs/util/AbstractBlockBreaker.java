@@ -49,15 +49,18 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
         setTarget = false;
     }
 
-    private double distance() {
-        return entity.getLocation().distance(Util.getCenterLocation(location.getBlock()));
-    }
-
     protected abstract float getDamage(int tickDifference);
 
     protected ItemStack getItemStack() {
         return configuration.item() != null ? configuration.item()
                 : entity instanceof LivingEntity ? ((LivingEntity) entity).getEquipment().getItemInHand() : null;
+    }
+
+    private boolean inRange() {
+        Location center = Util.getCenterLocation(location.getBlock());
+        Location loc = entity.getLocation();
+        double xz = Math.sqrt(Math.pow(center.getX() - loc.getX(), 2) + Math.pow(center.getZ() - loc.getZ(), 2));
+        return xz <= configuration.radius() && Math.abs(center.getY() - loc.getY()) <= 3;
     }
 
     @Override
@@ -80,7 +83,7 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
         }
         currentTick = (int) (System.currentTimeMillis() / 50);
         if (configuration.radius() > 0) {
-            if (distance() >= configuration.radius()) {
+            if (!inRange()) {
                 startDigTick = currentTick;
                 if (entity instanceof NPCHolder) {
                     NPC npc = ((NPCHolder) entity).getNPC();
