@@ -31,9 +31,19 @@ public class TextBasePrompt extends StringPrompt {
             text.add(Joiner.on(' ').join(Arrays.copyOfRange(parts, 1, parts.length)));
             return this;
         } else if (input.equalsIgnoreCase("edit")) {
-            return new TextEditStartPrompt(text);
+            int index = Integer.parseInt(parts[1]);
+            if (!text.hasIndex(index)) {
+                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_INDEX, index);
+            } else {
+                text.edit(index, Joiner.on(' ').join(Arrays.copyOfRange(parts, 2, parts.length)));
+            }
         } else if (input.equalsIgnoreCase("remove")) {
-            return new TextRemovePrompt(text);
+            int index = Integer.parseInt(parts[1]);
+            if (!text.hasIndex(index)) {
+                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_INDEX);
+            } else {
+                text.remove(index);
+            }
         } else if (input.equalsIgnoreCase("delay")) {
             try {
                 int delay = Integer.parseInt(parts[1]);
@@ -45,13 +55,13 @@ public class TextBasePrompt extends StringPrompt {
                 Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_DELAY);
             }
         } else if (input.equalsIgnoreCase("random")) {
-            Messaging.sendTr(sender, Messages.TEXT_EDITOR_RANDOM_TALKER_SET, text.toggleRandomTalker());
+            text.toggleRandomTalker();
         } else if (original.trim().equalsIgnoreCase("realistic looking")) {
-            Messaging.sendTr(sender, Messages.TEXT_EDITOR_REALISTIC_LOOKING_SET, text.toggleRealisticLooking());
+            text.toggleRealisticLooking();
         } else if (original.trim().equalsIgnoreCase("speech bubbles")) {
-            Messaging.sendTr(sender, Messages.TEXT_EDITOR_SPEECH_BUBBLES_SET, text.toggleSpeechBubbles());
+            text.toggleSpeechBubbles();
         } else if (input.equalsIgnoreCase("close") || original.trim().equalsIgnoreCase("talk close")) {
-            Messaging.sendTr(sender, Messages.TEXT_EDITOR_CLOSE_TALKER_SET, text.toggle());
+            text.toggleTalkClose();
         } else if (input.equalsIgnoreCase("range")) {
             try {
                 double range = Math.min(Math.max(0, Double.parseDouble(parts[1])), Setting.MAX_TEXT_RANGE.asDouble());
@@ -69,25 +79,38 @@ public class TextBasePrompt extends StringPrompt {
             } else {
                 Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_MISSING_ITEM_PATTERN);
             }
-        } else if (input.equalsIgnoreCase("help")) {
-            context.setSessionData("said-text", false);
-            Messaging.send(sender, getPromptText(context));
+        } else if (input.equalsIgnoreCase("page")) {
+            try {
+                int page = Integer.parseInt(parts[1]);
+                if (!text.hasPage(page)) {
+                    Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
+                }
+                context.setSessionData("page", page);
+                return this;
+            } catch (NumberFormatException e) {
+                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
+            }
         } else {
             Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_EDIT_TYPE);
+            return this;
         }
 
+        Messaging.send(sender, getPromptText(context));
         return this;
+    }
+
+    private String colorToggleableText(boolean enabled) {
+        return (enabled ? ChatColor.GREEN : ChatColor.RED).toString();
     }
 
     @Override
     public String getPromptText(ConversationContext context) {
-        if (Boolean.TRUE == context.getSessionData("said-text")) {
-            text.sendPage(((Player) context.getForWhom()), 1);
-        } else {
-            Messaging.send((Player) context.getForWhom(), Messaging.tr(Messages.TEXT_EDITOR_START_PROMPT));
-            text.sendPage(((Player) context.getForWhom()), 1);
-            context.setSessionData("said-text", Boolean.TRUE);
-        }
+        Messaging.send((Player) context.getForWhom(),
+                Messaging.tr(Messages.TEXT_EDITOR_START_PROMPT, colorToggleableText(text.shouldTalkClose()),
+                        colorToggleableText(text.isRandomTalker()), colorToggleableText(text.useSpeechBubbles()),
+                        colorToggleableText(text.useRealisticLooking())));
+        int page = context.getSessionData("page") == null ? 1 : (int) context.getSessionData("page");
+        text.sendPage(((Player) context.getForWhom()), page);
         return "";
     }
 }

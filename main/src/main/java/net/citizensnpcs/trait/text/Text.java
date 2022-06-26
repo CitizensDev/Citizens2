@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.GameMode;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
@@ -32,7 +33,6 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.HologramTrait;
-import net.citizensnpcs.trait.Toggleable;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
@@ -40,7 +40,7 @@ import net.citizensnpcs.util.Util;
  * Persists text metadata, i.e. text that will be said by an NPC on certain triggers.
  */
 @TraitName("text")
-public class Text extends Trait implements Runnable, Toggleable, Listener, ConversationAbandonedListener {
+public class Text extends Trait implements Runnable, Listener, ConversationAbandonedListener {
     private int bubbleTicks;
     private final Map<UUID, Long> cooldowns = Maps.newHashMap();
     private int currentIndex;
@@ -138,6 +138,14 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         return index >= 0 && text.size() > index;
     }
 
+    boolean hasPage(int page) {
+        return new Paginator(text.size()).hasPage(page);
+    }
+
+    public boolean isRandomTalker() {
+        return randomTalker;
+    }
+
     @Override
     public void load(DataKey key) throws NPCLoadException {
         text.clear();
@@ -230,11 +238,11 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         }
     }
 
-    boolean sendPage(Player player, int page) {
-        Paginator paginator = new Paginator().header("Current Texts");
+    boolean sendPage(CommandSender player, int page) {
+        Paginator paginator = new Paginator().header("Current Texts").enablePageSwitcher();
         for (int i = 0; i < text.size(); i++)
-            paginator.addLine("<a>" + i + " <7>- <e>" + text.get(i));
-
+            paginator.addLine("<a>" + text.get(i) + " (<<&eedit:suggest(edit " + i + " )>>) (<<&c-:command(remove " + i
+                    + "):Remove this text>>)");
         return paginator.sendPage(player, page);
     }
 
@@ -303,12 +311,9 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         return talkClose;
     }
 
-    /**
-     * Toggles talking to nearby Players.
-     */
-    @Override
+    @Deprecated
     public boolean toggle() {
-        return (talkClose = !talkClose);
+        return toggleTalkClose();
     }
 
     /**
@@ -333,6 +338,21 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
             clearBubble();
         }
         return (speechBubbles = !speechBubbles);
+    }
+
+    /**
+     * Toggles talking to nearby Players.
+     */
+    public boolean toggleTalkClose() {
+        return (talkClose = !talkClose);
+    }
+
+    public boolean useRealisticLooking() {
+        return realisticLooker;
+    }
+
+    public boolean useSpeechBubbles() {
+        return speechBubbles;
     }
 
     private static Random RANDOM = Util.getFastRandom();
