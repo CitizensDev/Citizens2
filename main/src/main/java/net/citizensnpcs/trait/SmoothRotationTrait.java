@@ -79,7 +79,7 @@ public class SmoothRotationTrait extends Trait {
     @Override
     public void run() {
         if (!npc.isSpawned() || npc.getNavigator().isNavigating()) {
-            // npc.yHeadRot = Mth.rotateIfNecessary(npc.yHeadRot, npc.yBodyRot, 75);
+            // npc.yHeadRot = rotateIfNecessary(npc.yHeadRot, npc.yBodyRot, 75);
             return;
         }
         if (!globalSession.hasTarget()) {
@@ -103,7 +103,7 @@ public class SmoothRotationTrait extends Trait {
         defaultPitch = pitch;
     }
 
-    public static class EntityRotation {
+    private static class EntityRotation {
         public float bodyYaw, headYaw, pitch;
 
         public EntityRotation(Entity entity) {
@@ -200,7 +200,7 @@ public class SmoothRotationTrait extends Trait {
 
     public class SmoothRotationSession {
         private final RotationParams params;
-        private int t;
+        private int t = -1;
         private double tx, ty, tz;
 
         public SmoothRotationSession(RotationParams params) {
