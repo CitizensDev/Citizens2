@@ -153,6 +153,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         randomTalker = key.getBoolean("random-talker", randomTalker);
         range = key.getDouble("range", range);
         delay = key.getInt("delay", delay);
+        speechBubbles = key.getBoolean("speech-bubbles", speechBubbles);
         itemInHandPattern = key.getString("talkitem", itemInHandPattern);
     }
 
@@ -222,6 +223,7 @@ public class Text extends Trait implements Runnable, Toggleable, Listener, Conve
         key.setBoolean("realistic-looking", realisticLooker);
         key.setDouble("range", range);
         key.setString("talkitem", itemInHandPattern);
+        key.setBoolean("speech-bubbles", speechBubbles);
         key.removeKey("text");
         for (int i = 0; i < text.size(); i++) {
             key.setString("text." + String.valueOf(i), text.get(i));
