@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -9,6 +10,20 @@ public class Paginator {
     private boolean console;
     private String header;
     private final List<String> lines = new ArrayList<String>();
+    private boolean pageSwitcher;
+
+    public Paginator() {
+    }
+
+    public Paginator(Collection<String> lines) {
+        this.lines.addAll(lines);
+    }
+
+    public Paginator(int initialLinesOfText) {
+        for (int i = 0; i < initialLinesOfText; i++) {
+            lines.add("");
+        }
+    }
 
     public void addLine(String line) {
         lines.add(line);
@@ -16,6 +31,11 @@ public class Paginator {
 
     public Paginator console(boolean console) {
         this.console = console;
+        return this;
+    }
+
+    public Paginator enablePageSwitcher() {
+        pageSwitcher = true;
         return this;
     }
 
@@ -29,7 +49,16 @@ public class Paginator {
         int startIndex = linesPerPage * page - linesPerPage;
         int endIndex = page * linesPerPage;
 
-        String text = header == null ? "" : wrapHeader("[[" + header + " <f>" + page + "/" + pages);
+        String pageDisplay = page + "/" + pages;
+        if (pageSwitcher) {
+            if (page > 1) {
+                pageDisplay = "<<<f>< :command(page " + (page - 1) + "):Previous page>><f>" + pageDisplay;
+            }
+            if (pages > 1 && page != pages) {
+                pageDisplay = pageDisplay + "<<<f> >:command(page " + (page + 1) + "):Next page>>";
+            }
+        }
+        String text = header == null ? "" : wrapHeader("[[" + header + " <f>" + pageDisplay);
 
         if (lines.size() < endIndex)
             endIndex = lines.size();
@@ -37,6 +66,15 @@ public class Paginator {
             text += "\n" + line;
         }
         return text;
+    }
+
+    public boolean hasPage(int page) {
+        int linesPerPage = console ? 200 : LINES_PER_PAGE;
+        int pages = (int) (Math.ceil((double) lines.size() / linesPerPage) == 0 ? 1
+                : Math.ceil((double) lines.size() / linesPerPage));
+        if (page <= 0 || page > pages)
+            return false;
+        return true;
     }
 
     public Paginator header(String header) {

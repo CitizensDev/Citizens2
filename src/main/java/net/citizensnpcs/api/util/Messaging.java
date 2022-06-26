@@ -25,6 +25,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class Messaging {
@@ -104,6 +105,9 @@ public class Messaging {
         Matcher m = COMPONENT_MATCHER.matcher(message);
         int end = 0;
         while (m.find()) {
+            if (m.start() != end) {
+                builder.append(MESSAGE_COLOUR + message.substring(end, m.start()));
+            }
             String text = m.group(1);
             String type = m.group(2);
             String command = m.group(3);
@@ -119,20 +123,23 @@ public class Messaging {
                     action = ClickEvent.Action.SUGGEST_COMMAND;
                     break;
             }
-            builder.append(text);
-            end = m.end();
             if (action != null) {
-                builder.underlined(true);
-                builder.event(new ClickEvent(action, command));
+                text = MESSAGE_COLOUR + ChatColor.UNDERLINE + text;
             }
-            if (m.groupCount() > 3) {
+            TextComponent tc = new TextComponent(text);
+            if (action != null) {
+                tc.setClickEvent(new ClickEvent(action, command));
+            }
+            builder.append(tc);
+            end = m.end();
+            if (m.groupCount() > 3 && m.group(4) != null) {
                 builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(m.group(4).substring(1))));
             } else {
                 builder.event((HoverEvent) null);
             }
         }
         if (end - 1 < message.length()) {
-            builder.append(message.substring(end));
+            builder.append(MESSAGE_COLOUR + message.substring(end));
             builder.event((ClickEvent) null);
             builder.event((HoverEvent) null);
             builder.underlined(false);
