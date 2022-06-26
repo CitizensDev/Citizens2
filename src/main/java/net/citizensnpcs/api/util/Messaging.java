@@ -183,16 +183,38 @@ public class Messaging {
             rawMessage = Placeholders.replace(rawMessage, (Player) sender);
         }
         rawMessage = Colorizer.parseColors(rawMessage);
-        boolean hasComponents = SUPPORTS_COMPONENTS && rawMessage.contains("<<");
+        boolean hasComponents = rawMessage.contains("<<");
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
             message = prettify(message);
             if (hasComponents) {
-                try {
-                    parseAndSendComponents(sender, message);
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                    SUPPORTS_COMPONENTS = false;
-                    sender.sendMessage(message);
+                if (SUPPORTS_COMPONENTS) {
+                    try {
+                        parseAndSendComponents(sender, message);
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                        SUPPORTS_COMPONENTS = false;
+                        sender.sendMessage(message);
+                    }
+                } else {
+                    StringBuilder builder = new StringBuilder("");
+                    Matcher m = COMPONENT_MATCHER.matcher(message);
+                    int end = 0;
+                    while (m.find()) {
+                        if (m.start() != end) {
+                            builder.append(MESSAGE_COLOUR + message.substring(end, m.start()));
+                        }
+                        String text = m.group(1);
+                        String command = m.group(3);
+                        if (m.groupCount() > 3 && m.group(4) != null) {
+                            text = m.group(4).substring(1);
+                        }
+                        String res = text + " (" + MESSAGE_COLOUR + ChatColor.UNDERLINE + command + ")";
+                        builder.append(res);
+                    }
+                    if (end - 1 < message.length()) {
+                        builder.append(MESSAGE_COLOUR + message.substring(end));
+                    }
+                    sender.sendMessage(builder.toString());
                 }
             } else {
                 sender.sendMessage(message);
