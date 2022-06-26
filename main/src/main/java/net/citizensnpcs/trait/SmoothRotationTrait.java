@@ -28,6 +28,9 @@ public class SmoothRotationTrait extends Trait {
         return NMS.getHeight(npc.getEntity());
     }
 
+    /**
+     * @return The global rotation parameters
+     */
     public RotationParams getGlobalParameters() {
         return globalParameters;
     }
@@ -44,20 +47,33 @@ public class SmoothRotationTrait extends Trait {
         return npc.getStoredLocation().getZ();
     }
 
+    /**
+     * Rotates to face target entity
+     *
+     * @param target
+     *            The target entity to face
+     */
     public void rotateToFace(Entity target) {
         Location loc = target.getLocation();
         loc.setY(loc.getY() + NMS.getHeight(target));
         rotateToFace(loc);
     }
 
+    /**
+     * Rotates to face target location
+     *
+     * @param target
+     *            The target location to face
+     */
     public void rotateToFace(Location target) {
         this.globalSession.setTarget(target);
     }
 
     public void rotateToHave(float yaw, float pitch) {
-        Vector vector = new Vector(Math.cos(yaw) * Math.cos(pitch), Math.sin(pitch), Math.sin(yaw) * Math.cos(pitch))
-                .normalize();
-        rotateToFace(npc.getEntity().getLocation().clone().add(vector));
+        double pitchCos = Math.cos(Math.toRadians(pitch));
+        Vector vector = new Vector(Math.sin(Math.toRadians(yaw)) * -pitchCos, -Math.sin(Math.toRadians(pitch)),
+                Math.cos(Math.toRadians(yaw)) * pitchCos).normalize();
+        rotateToFace(npc.getStoredLocation().clone().add(vector));
     }
 
     @Override
@@ -77,6 +93,12 @@ public class SmoothRotationTrait extends Trait {
         rot.apply(npc.getEntity());
     }
 
+    /**
+     * Sets default pitch when not looking at anything
+     *
+     * @param pitch
+     *            The default pitch
+     */
     public void setDefaultPitch(float pitch) {
         defaultPitch = pitch;
     }
