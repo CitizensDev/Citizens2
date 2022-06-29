@@ -313,8 +313,8 @@ public class WanderWaypointProvider
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = WanderGoal.createWithNPCAndRangeAndTreeAndFallbackAndRegion(npc, xrange, yrange,
-                    WanderWaypointProvider.this, WanderWaypointProvider.this, getWorldGuardRegion());
+            currentGoal = WanderGoal.builder(npc).xrange(xrange).yrange(yrange).fallback(this).tree(this)
+                    .worldguardRegion(getWorldGuardRegion()).build();
             currentGoal.setDelay(delay);
         }
         Iterator<GoalEntry> itr = npc.getDefaultGoalController().iterator();
