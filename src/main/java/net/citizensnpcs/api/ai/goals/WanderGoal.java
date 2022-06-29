@@ -140,44 +140,68 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         this.paused = false;
     }
 
-    public static WanderGoal createWithNPC(NPC npc) {
-        return createWithNPCAndRange(npc, 10, 2);
+    public static class Builder {
+        private Function<NPC, Location> fallback;
+        private final NPC npc;
+        private Supplier<PhTreeSolid<Boolean>> tree;
+        private Object worldguardRegion;
+        private int xrange;
+        private int yrange;
+
+        private Builder(NPC npc) {
+            this.npc = npc;
+            this.xrange = 10;
+            this.yrange = 2;
+            this.tree = null;
+            this.fallback = null;
+            this.worldguardRegion = null;
+        }
+
+        public WanderGoal build() {
+            return new WanderGoal(npc, xrange, yrange, tree, fallback, worldguardRegion);
+        }
+
+        public Builder fallback(Function<NPC, Location> fallback) {
+            this.fallback = fallback;
+            return this;
+        }
+
+        public Builder regionCentres(Supplier<Iterable<Location>> supplier) {
+            this.tree = () -> {
+                PhTreeSolid<Boolean> tree = PhTreeSolid.create(3);
+                for (Location loc : supplier.get()) {
+                    long[] lower = { loc.getBlockX() - xrange, loc.getBlockY() - yrange, loc.getBlockZ() - xrange };
+                    long[] upper = { loc.getBlockX() + xrange, loc.getBlockY() + yrange, loc.getBlockZ() + xrange };
+                    tree.put(lower, upper, true);
+                }
+                return tree;
+            };
+            return this;
+        }
+
+        public Builder tree(Supplier<PhTreeSolid<Boolean>> supplier) {
+            this.tree = supplier;
+            return this;
+        }
+
+        public Builder worldguardRegion(Object worldguardRegion) {
+            this.worldguardRegion = worldguardRegion;
+            return this;
+        }
+
+        public Builder xrange(int xrange) {
+            this.xrange = xrange;
+            return this;
+        }
+
+        public Builder yrange(int yrange) {
+            this.yrange = yrange;
+            return this;
+        }
     }
 
-    public static WanderGoal createWithNPCAndRange(NPC npc, int xrange, int yrange) {
-        return createWithNPCAndRangeAndTree(npc, xrange, yrange, null);
-    }
-
-    public static WanderGoal createWithNPCAndRangeAndTree(NPC npc, int xrange, int yrange,
-            Supplier<PhTreeSolid<Boolean>> tree) {
-        return createWithNPCAndRangeAndTreeAndFallback(npc, xrange, yrange, tree, null);
-    }
-
-    public static WanderGoal createWithNPCAndRangeAndTreeAndFallback(NPC npc, int xrange, int yrange,
-            Supplier<PhTreeSolid<Boolean>> tree, Function<NPC, Location> fallback) {
-        return new WanderGoal(npc, xrange, yrange, tree, fallback, null);
-    }
-
-    /**
-     * The full builder method.
-     *
-     * @param npc
-     *            the NPC to wander
-     * @param xrange
-     *            x/z range, in blocks
-     * @param yrange
-     *            y range, in blocks
-     * @param tree
-     *            an optional {@link PhTreeSolid} supplier to allow only wandering within a certain {@link PhTreeSolid}
-     * @param fallback
-     *            an optional fallback location
-     * @param worldguardRegion
-     *            the optional region
-     * @return the built goal
-     */
-    public static WanderGoal createWithNPCAndRangeAndTreeAndFallbackAndRegion(NPC npc, int xrange, int yrange,
-            Supplier<PhTreeSolid<Boolean>> tree, Function<NPC, Location> fallback, Object worldguardRegion) {
-        return new WanderGoal(npc, xrange, yrange, tree, fallback, worldguardRegion);
+    public static Builder builder(NPC npc) {
+        return new Builder(npc);
     }
 
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
