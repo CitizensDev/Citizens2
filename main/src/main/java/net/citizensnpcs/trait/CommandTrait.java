@@ -474,8 +474,8 @@ public class CommandTrait extends Trait {
             if (command.startsWith("say")) {
                 cmd = "npc speak " + command.replaceFirst("say", "").trim() + " --target <p>";
             }
-            if ((command.startsWith("npc ") || command.startsWith("waypoints ") || command.startsWith("wp "))
-                    && !command.contains("--id ")) {
+            if ((cmd.startsWith("npc ") || cmd.startsWith("waypoints ") || cmd.startsWith("wp "))
+                    && !cmd.contains("--id ")) {
                 cmd += " --id <id>";
             }
             String interpolatedCommand = Placeholders.replace(cmd, clicker, npc);
