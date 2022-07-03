@@ -110,6 +110,7 @@ public class Settings {
         DISABLE_LOOKCLOSE_WHILE_NAVIGATING("npc.default.look-close.disable-while-navigating", true),
         DISABLE_MC_NAVIGATION_FALLBACK("npc.pathfinding.disable-mc-fallback-navigation", true),
         DISABLE_TABLIST("npc.tablist.disable", true),
+        ENTITY_SPAWN_WAIT_TICKS("general.entity-spawn-wait-ticks", 10),
         ERROR_COLOUR("general.color-scheme.message-error", "<c>"),
         FOLLOW_ACROSS_WORLDS("npc.follow.teleport-across-worlds", true),
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<e>"),

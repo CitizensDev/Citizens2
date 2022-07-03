@@ -298,7 +298,7 @@ public class CitizensNPC extends AbstractNPC {
 
             @Override
             public void run() {
-                if (timer++ > 10) {
+                if (timer++ > Setting.ENTITY_SPAWN_WAIT_TICKS.asInt()) {
                     Messaging.debug("Couldn't spawn", CitizensNPC.this, "entity not added to world");
                     entityController.remove();
                     cancel();
