@@ -91,9 +91,10 @@ public class EndermiteController extends MobEntityController {
         @Override
         public void customServerAiStep() {
             super.customServerAiStep();
-            if (npc != null)
+            if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
-            npc.update();
+                npc.update();
+            }
         }
 
         @Override

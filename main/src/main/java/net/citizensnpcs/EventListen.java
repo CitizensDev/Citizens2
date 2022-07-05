@@ -613,7 +613,7 @@ public class EventListen implements Listener {
         if (npc == null) {
             return;
         }
-        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+        event.setCancelled(npc.isProtected());
 
         NPCVehicleDamageEvent damageEvent = new NPCVehicleDamageEvent(npc, event);
         Bukkit.getPluginManager().callEvent(damageEvent);
@@ -635,7 +635,7 @@ public class EventListen implements Listener {
         if (npc == null) {
             return;
         }
-        event.setCancelled(npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+        event.setCancelled(npc.isProtected());
     }
 
     @EventHandler(ignoreCancelled = true)

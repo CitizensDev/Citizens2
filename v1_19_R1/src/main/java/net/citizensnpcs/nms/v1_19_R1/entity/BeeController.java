@@ -77,10 +77,9 @@ public class BeeController extends MobEntityController {
                 super.customServerAiStep();
             } else {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (!npc.useMinecraftAI()) {
-                    NMSImpl.updateAI(this);
+                if (npc.useMinecraftAI()) {
+                    super.customServerAiStep();
                 }
-                NMSImpl.updateAI(this);
                 npc.update();
             }
         }

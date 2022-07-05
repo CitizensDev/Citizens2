@@ -183,8 +183,9 @@ public class EndermiteController extends MobEntityController {
         @Override
         public void mobTick() {
             super.mobTick();
-            if (npc != null)
+            if (npc != null) {
                 npc.update();
+            }
         }
 
         @Override

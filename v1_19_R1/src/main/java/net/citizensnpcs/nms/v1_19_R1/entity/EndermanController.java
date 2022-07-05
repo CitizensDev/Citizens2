@@ -95,10 +95,6 @@ public class EndermanController extends MobEntityController {
         public void customServerAiStep() {
             super.customServerAiStep();
             if (npc != null) {
-                try {
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }

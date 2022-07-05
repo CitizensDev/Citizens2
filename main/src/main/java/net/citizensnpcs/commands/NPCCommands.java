@@ -2494,15 +2494,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "targetable",
+            usage = "targetable (-t(emporary))",
             desc = "Toggles an NPC's targetability",
             modifiers = { "targetable" },
             min = 1,
             max = 1,
+            flags = "t",
             permission = "citizens.npc.targetable")
     public void targetable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean targetable = !npc.data().get(NPC.TARGETABLE_METADATA,
-                npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true));
+        boolean targetable = !npc.data().get(NPC.TARGETABLE_METADATA, npc.isProtected());
         if (args.hasFlag('t')) {
             npc.data().set(NPC.TARGETABLE_METADATA, targetable);
         } else {
@@ -2688,7 +2688,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "vulnerable (-t)",
+            usage = "vulnerable (-t(emporary))",
             desc = "Toggles an NPC's vulnerability",
             modifiers = { "vulnerable" },
             min = 1,
@@ -2696,7 +2696,7 @@ public class NPCCommands {
             flags = "t",
             permission = "citizens.npc.vulnerable")
     public void vulnerable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean vulnerable = !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+        boolean vulnerable = !npc.isProtected();
         if (args.hasFlag('t')) {
             npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
         } else {

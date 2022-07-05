@@ -76,8 +76,8 @@ public class BatController extends MobEntityController {
                 super.customServerAiStep();
             } else {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (!npc.useMinecraftAI()) {
-                    NMSImpl.updateAI(this);
+                if (npc.useMinecraftAI()) {
+                    super.customServerAiStep();
                 }
                 npc.update();
             }

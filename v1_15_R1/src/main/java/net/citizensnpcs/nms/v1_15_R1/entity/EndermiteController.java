@@ -184,9 +184,10 @@ public class EndermiteController extends MobEntityController {
         @Override
         public void mobTick() {
             super.mobTick();
-            if (npc != null)
+            if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
-            npc.update();
+                npc.update();
+            }
         }
 
         @Override

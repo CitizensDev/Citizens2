@@ -69,10 +69,7 @@ public class GhastController extends MobEntityController {
         public void customServerAiStep() {
             if (npc != null) {
                 npc.update();
-                NMSImpl.updateMinecraftAIState(npc, this);
-                if (!npc.useMinecraftAI()) {
-                    NMSImpl.updateAI(this);
-                }
+                NMSImpl.updateMinecraftAIState(npc, this); 
             }
             super.customServerAiStep();
         }

@@ -154,8 +154,8 @@ public class BatController extends MobEntityController {
                 super.mobTick();
             } else {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (!npc.useMinecraftAI()) {
-                    NMSImpl.updateAI(this);
+                if (npc.useMinecraftAI()) {
+                    super.mobTick();
                 }
                 npc.update();
             }
