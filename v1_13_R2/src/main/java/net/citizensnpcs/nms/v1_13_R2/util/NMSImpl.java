@@ -1161,6 +1161,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPiglinDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+    }
+
+    @Override
     public void setPitch(org.bukkit.entity.Entity entity, float pitch) {
         getHandle(entity).pitch = pitch;
     }
@@ -1890,7 +1894,6 @@ public class NMSImpl implements NMSBridge {
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
 
     private static final float DEFAULT_SPEED = 1F;
-
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bR");
     private static DataWatcherObject<Boolean> ENDERMAN_ANGRY;
@@ -1913,6 +1916,7 @@ public class NMSImpl implements NMSBridge {
     private static Field SKULL_PROFILE_FIELD;
     private static MethodHandle TEAM_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bL", false);
 
     static {

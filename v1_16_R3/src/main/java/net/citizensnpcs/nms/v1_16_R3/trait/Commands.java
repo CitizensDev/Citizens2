@@ -41,6 +41,7 @@ import net.citizensnpcs.trait.versioned.MushroomCowTrait;
 import net.citizensnpcs.trait.versioned.PandaTrait;
 import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
+import net.citizensnpcs.trait.versioned.PiglinTrait;
 import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
@@ -380,6 +381,30 @@ public class Commands {
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
         } else {
+            throw new CommandUsageException();
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "piglin (--dancing [true|false])",
+            desc = "Sets piglin modifiers.",
+            modifiers = { "piglin" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.piglin")
+    @Requirements(selected = true, ownership = true, types = { EntityType.PIGLIN })
+    public void piglin(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        PiglinTrait trait = npc.getOrAddTrait(PiglinTrait.class);
+        boolean hasArg = false;
+        if (args.hasValueFlag("dancing")) {
+            boolean dancing = Boolean.valueOf(args.getFlag("dancing"));
+            trait.setDancing(dancing);
+            Messaging.sendTr(sender, dancing ? Messages.PIGLIN_DANCING_SET : Messages.PIGLIN_DANCING_UNSET,
+                    npc.getName());
+            hasArg = true;
+        }
+        if (!hasArg) {
             throw new CommandUsageException();
         }
     }

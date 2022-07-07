@@ -27,6 +27,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.nms.v1_16_R3.network.EmptyNetHandler;
 import net.citizensnpcs.nms.v1_16_R3.network.EmptyNetworkManager;
 import net.citizensnpcs.nms.v1_16_R3.network.EmptySocket;
@@ -391,7 +392,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         boolean navigating = npc.getNavigator().isNavigating();
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
-                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))) {
+                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))
+                && SpigotUtil.checkYSafe(locY(), getBukkitEntity().getWorld())) {
             moveWithFallDamage(new Vec3D(0, 0, 0));
         }
         Vec3D mot = getMot();

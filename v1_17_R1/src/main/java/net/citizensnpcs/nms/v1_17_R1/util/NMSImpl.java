@@ -205,6 +205,7 @@ import net.citizensnpcs.trait.versioned.MushroomCowTrait;
 import net.citizensnpcs.trait.versioned.PandaTrait;
 import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
+import net.citizensnpcs.trait.versioned.PiglinTrait;
 import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
@@ -274,6 +275,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.inventory.AnvilMenu;
@@ -784,6 +786,7 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PandaTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PiglinTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PolarBearTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
@@ -1274,6 +1277,13 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
         ((Shulker) getHandle(shulker)).setRawPeekAmount(peek);
+    }
+
+    @Override
+    public void setPiglinDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+        if (!(getHandle(entity) instanceof Piglin))
+            return;
+        ((Piglin) getHandle(entity)).setDancing(dancing);
     }
 
     @Override

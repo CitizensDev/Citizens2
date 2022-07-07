@@ -287,6 +287,8 @@ public class Messages {
     public static final String PATHFINDING_OPTIONS_USE_NEW_FINDER = "citizens.commands.npc.pathopt.use-new-finder";
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
     public static final String PHANTOM_STATE_SET = "citizens.commands.npc.phantom.phantom-set";
+    public static final String PIGLIN_DANCING_SET = "citizens.commands.npc.piglin.dancing-set";
+    public static final String PIGLIN_DANCING_UNSET = "citizens.commands.npc.piglin.dancing-unset";
     public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
     public static final String POLAR_BEAR_REARING = "citizens.commands.npc.polarbear.rearing-set";
     public static final String POLAR_BEAR_STOPPED_REARING = "citizens.commands.npc.polarbear.rearing-unset";

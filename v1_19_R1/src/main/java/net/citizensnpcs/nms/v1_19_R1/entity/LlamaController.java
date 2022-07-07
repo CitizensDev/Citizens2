@@ -17,6 +17,7 @@ import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.PositionImpl;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
@@ -208,7 +209,7 @@ public class LlamaController extends MobEntityController {
         }
 
         @Override
-        public Entity teleportTo(ServerLevel worldserver, BlockPos location) {
+        public Entity teleportTo(ServerLevel worldserver, PositionImpl location) {
             if (npc == null)
                 return super.teleportTo(worldserver, location);
             return NMSImpl.teleportAcrossWorld(this, worldserver, location);

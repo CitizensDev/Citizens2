@@ -1253,6 +1253,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPiglinDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+    }
+
+    @Override
     public void setPitch(org.bukkit.entity.Entity entity, float pitch) {
         getHandle(entity).pitch = pitch;
     }
@@ -2058,7 +2062,6 @@ public class NMSImpl implements NMSBridge {
             true, EntityPlayer.class, boolean.class);
 
     private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
-
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
     private static final MethodHandle ENDERDRAGON_BATTLE_FIELD = NMS.getGetter(EntityEnderDragon.class, "bN");
@@ -2101,6 +2104,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SET_POSE = NMS.getMethodHandle(Entity.class, "setPose", true, EntityPose.class);
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
+
     private static Field SKULL_PROFILE_FIELD;
 
     private static MethodHandle TEAM_FIELD;

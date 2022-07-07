@@ -1012,6 +1012,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPiglinDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+    }
+
+    @Override
     public void setPitch(org.bukkit.entity.Entity entity, float pitch) {
         getHandle(entity).pitch = pitch;
     }
@@ -1571,7 +1575,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.GHAST);
 
     private static final float DEFAULT_SPEED = 1F;
-
     private static Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class, Entity.class);
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;

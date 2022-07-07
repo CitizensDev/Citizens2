@@ -1220,6 +1220,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setPiglinDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+    }
+
+    @Override
     public void setPitch(org.bukkit.entity.Entity entity, float pitch) {
         getHandle(entity).pitch = pitch;
     }
@@ -1979,7 +1983,6 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
             "c", false, double.class, double.class, double.class);
-
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(PlayerChunkMap.class, "a",
             true, EntityPlayer.class, boolean.class);
@@ -2023,6 +2026,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "resultInventory");
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
+
     private static Field SKULL_PROFILE_FIELD;
 
     private static MethodHandle TEAM_FIELD;

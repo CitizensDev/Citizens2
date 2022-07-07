@@ -16,6 +16,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.PositionImpl;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -231,7 +232,7 @@ public class PufferFishController extends MobEntityController {
         }
 
         @Override
-        public Entity teleportTo(ServerLevel worldserver, BlockPos location) {
+        public Entity teleportTo(ServerLevel worldserver, PositionImpl location) {
             if (npc == null)
                 return super.teleportTo(worldserver, location);
             return NMSImpl.teleportAcrossWorld(this, worldserver, location);

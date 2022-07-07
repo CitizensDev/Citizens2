@@ -559,6 +559,10 @@ public class NMS {
         BRIDGE.setPeekShulker(entity, peek);
     }
 
+    public static void setPiglinDancing(Entity entity, boolean dancing) {
+        BRIDGE.setPiglinDancing(entity, dancing);
+    }
+
     public static void setPitch(Entity entity, float pitch) {
         BRIDGE.setPitch(entity, pitch);
     }

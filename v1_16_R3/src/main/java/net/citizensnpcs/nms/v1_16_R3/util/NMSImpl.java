@@ -39,6 +39,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Piglin;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wither;
@@ -201,6 +202,7 @@ import net.citizensnpcs.trait.versioned.MushroomCowTrait;
 import net.citizensnpcs.trait.versioned.PandaTrait;
 import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
+import net.citizensnpcs.trait.versioned.PiglinTrait;
 import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
@@ -250,6 +252,7 @@ import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R3.EntityPanda;
+import net.minecraft.server.v1_16_R3.EntityPiglin;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EntityPolarBear;
 import net.minecraft.server.v1_16_R3.EntityPose;
@@ -781,6 +784,7 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MushroomCowTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PandaTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PiglinTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PolarBearTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
@@ -1276,6 +1280,13 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
         ((EntityShulker) getHandle(shulker)).a(peek);
+    }
+
+    @Override
+    public void setPiglinDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+        if (!(getHandle(entity) instanceof Piglin))
+            return;
+        ((EntityPiglin) getHandle(entity)).u(dancing);
     }
 
     @Override

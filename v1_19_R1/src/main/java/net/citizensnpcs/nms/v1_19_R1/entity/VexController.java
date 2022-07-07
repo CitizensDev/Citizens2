@@ -13,7 +13,7 @@ import net.citizensnpcs.nms.v1_19_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.PositionImpl;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -154,7 +154,7 @@ public class VexController extends MobEntityController {
         }
 
         @Override
-        public Entity teleportTo(ServerLevel worldserver, BlockPos location) {
+        public Entity teleportTo(ServerLevel worldserver, PositionImpl location) {
             if (npc == null)
                 return super.teleportTo(worldserver, location);
             return NMSImpl.teleportAcrossWorld(this, worldserver, location);

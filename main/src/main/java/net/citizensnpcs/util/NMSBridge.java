@@ -159,6 +159,8 @@ public interface NMSBridge {
 
     public void setPeekShulker(Entity entity, int peek);
 
+    public void setPiglinDancing(Entity entity, boolean dancing);
+
     public void setPitch(Entity entity, float pitch);
 
     public void setPolarBearRearing(Entity entity, boolean rearing);

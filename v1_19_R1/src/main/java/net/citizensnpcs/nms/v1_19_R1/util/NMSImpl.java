@@ -214,6 +214,7 @@ import net.citizensnpcs.trait.versioned.MushroomCowTrait;
 import net.citizensnpcs.trait.versioned.PandaTrait;
 import net.citizensnpcs.trait.versioned.ParrotTrait;
 import net.citizensnpcs.trait.versioned.PhantomTrait;
+import net.citizensnpcs.trait.versioned.PiglinTrait;
 import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.PufferFishTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
@@ -229,6 +230,7 @@ import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.PositionImpl;
 import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.MutableComponent;
@@ -285,6 +287,7 @@ import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.inventory.AnvilMenu;
@@ -798,6 +801,7 @@ public class NMSImpl implements NMSBridge {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MushroomCowTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PandaTrait.class));
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PiglinTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PolarBearTrait.class));
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
@@ -1296,6 +1300,13 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
         ((Shulker) getHandle(shulker)).setRawPeekAmount(peek);
+    }
+
+    @Override
+    public void setPiglinDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+        if (!(getHandle(entity) instanceof Piglin))
+            return;
+        ((Piglin) getHandle(entity)).setDancing(dancing);
     }
 
     @Override
@@ -2009,15 +2020,15 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static Entity teleportAcrossWorld(Entity entity, ServerLevel worldserver, BlockPos location) {
+    public static Entity teleportAcrossWorld(Entity entity, ServerLevel worldserver, PositionImpl location) {
         if (FIND_DIMENSION_ENTRY_POINT == null || entity.isRemoved())
             return null;
         NPC npc = ((NPCHolder) entity).getNPC();
         PortalInfo sds = null;
         try {
             sds = location == null ? (PortalInfo) FIND_DIMENSION_ENTRY_POINT.invoke(entity, worldserver)
-                    : new PortalInfo(new Vec3(location.getX(), location.getY(), location.getZ()), Vec3.ZERO,
-                            entity.getYRot(), entity.getXRot(), worldserver, (CraftPortalEvent) null);
+                    : new PortalInfo(new Vec3(location.x(), location.y(), location.z()), Vec3.ZERO, entity.getYRot(),
+                            entity.getXRot(), worldserver, (CraftPortalEvent) null);
         } catch (Throwable e) {
             e.printStackTrace();
         }
