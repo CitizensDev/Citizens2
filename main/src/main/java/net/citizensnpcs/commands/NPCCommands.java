@@ -1838,8 +1838,12 @@ public class NPCCommands {
     public void remove(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
         if (args.hasValueFlag("owner")) {
             String owner = args.getFlag("owner");
+            Player playerOwner = Bukkit.getPlayerExact(owner);
             for (NPC rem : Lists.newArrayList(CitizensAPI.getNPCRegistry())) {
-                if (rem.getOrAddTrait(Owner.class).isOwnedBy(owner)) {
+                if (playerOwner != null && rem.getOrAddTrait(Owner.class).isOwnedBy(playerOwner)) {
+                    history.add(sender, new RemoveNPCHistoryItem(rem));
+                    rem.destroy(sender);
+                } else if (rem.getOrAddTrait(Owner.class).isOwnedBy(owner)) {
                     history.add(sender, new RemoveNPCHistoryItem(rem));
                     rem.destroy(sender);
                 }
