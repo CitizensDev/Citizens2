@@ -86,7 +86,9 @@ public class Inventory extends Trait {
 
     @Override
     public void onDespawn() {
-        saveContents(npc.getEntity());
+        if (npc.getEntity() instanceof InventoryHolder) {
+            contents = ((InventoryHolder) npc.getEntity()).getInventory().getContents();
+        }
     }
 
     @Override
