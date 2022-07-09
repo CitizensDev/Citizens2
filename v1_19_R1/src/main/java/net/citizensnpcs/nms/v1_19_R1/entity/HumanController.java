@@ -69,7 +69,6 @@ public class HumanController extends AbstractEntityController {
         }, 20);
 
         handle.getBukkitEntity().setSleepingIgnored(true);
-
         return handle.getBukkitEntity();
     }
 

@@ -3,10 +3,9 @@ package net.citizensnpcs.util;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-/*
- * Pose object which holds yaw/pitch of the head with a name to identify.
+/**
+ * A named head yaw/pitch
  */
-
 public class Pose {
     private final String name;
     private final float pitch;

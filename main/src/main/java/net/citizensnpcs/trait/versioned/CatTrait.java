@@ -1,13 +1,24 @@
 package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.DyeColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Cat;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ocelot.Type;
 
+import net.citizensnpcs.api.command.Command;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Requirements;
+import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.command.exception.CommandUsageException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 
 @TraitName("cattrait")
 public class CatTrait extends Trait {
@@ -71,6 +82,55 @@ public class CatTrait extends Trait {
             case SIAMESE_CAT:
                 this.type = Cat.Type.SIAMESE;
                 break;
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "cat (-s/-n/-l) --type type --ccolor collar color",
+            desc = "Sets cat modifiers",
+            modifiers = { "cat" },
+            min = 1,
+            max = 1,
+            flags = "snl",
+            permission = "citizens.npc.cat")
+    @Requirements(selected = true, ownership = true, types = EntityType.CAT)
+    public static void cat(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        CatTrait trait = npc.getOrAddTrait(CatTrait.class);
+        String output = "";
+        if (args.hasValueFlag("type")) {
+            Cat.Type type = Util.matchEnum(Cat.Type.values(), args.getFlag("type"));
+            if (type == null) {
+                throw new CommandUsageException(Messages.INVALID_CAT_TYPE, Util.listValuesPretty(Cat.Type.values()));
+            }
+            trait.setType(type);
+            output += ' ' + Messaging.tr(Messages.CAT_TYPE_SET, args.getFlag("type"));
+        }
+        if (args.hasValueFlag("ccolor")) {
+            DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("ccolor"));
+            if (color == null) {
+                throw new CommandUsageException(Messages.INVALID_CAT_COLLAR_COLOR,
+                        Util.listValuesPretty(DyeColor.values()));
+            }
+            trait.setCollarColor(color);
+            output += ' ' + Messaging.tr(Messages.CAT_COLLAR_COLOR_SET, args.getFlag("ccolor"));
+        }
+        if (args.hasFlag('s')) {
+            trait.setSitting(true);
+            output += ' ' + Messaging.tr(Messages.CAT_STARTED_SITTING, npc.getName());
+        } else if (args.hasFlag('n')) {
+            trait.setSitting(false);
+            output += ' ' + Messaging.tr(Messages.CAT_STOPPED_SITTING, npc.getName());
+        }
+        if (args.hasFlag('l')) {
+            trait.setLyingDown(!trait.isLyingDown());
+            output += ' ' + Messaging.tr(trait.isLyingDown() ? Messages.CAT_STARTED_LYING : Messages.CAT_STOPPED_LYING,
+                    npc.getName());
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output.trim());
+        } else {
+            throw new CommandUsageException();
         }
     }
 }

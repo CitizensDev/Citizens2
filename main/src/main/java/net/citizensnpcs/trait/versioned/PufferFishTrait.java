@@ -1,8 +1,18 @@
 package net.citizensnpcs.trait.versioned;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
+
+import net.citizensnpcs.api.command.Command;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Requirements;
+import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 
 @TraitName("pufferfishtrait")
 public class PufferFishTrait extends Trait {
@@ -19,5 +29,27 @@ public class PufferFishTrait extends Trait {
 
     public void setPuffState(int state) {
         this.puffState = state;
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "pufferfish (--state state)",
+            desc = "Sets pufferfish modifiers",
+            modifiers = { "pufferfish" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.pufferfish")
+    @Requirements(selected = true, ownership = true, types = EntityType.PUFFERFISH)
+    public static void pufferfish(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        PufferFishTrait trait = npc.getOrAddTrait(PufferFishTrait.class);
+        String output = "";
+        if (args.hasValueFlag("state")) {
+            int state = Math.min(Math.max(args.getFlagInteger("state"), 0), 3);
+            trait.setPuffState(state);
+            output += Messaging.tr(Messages.PUFFERFISH_STATE_SET, state);
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output);
+        }
     }
 }

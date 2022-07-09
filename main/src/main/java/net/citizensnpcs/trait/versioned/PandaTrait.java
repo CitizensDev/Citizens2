@@ -1,11 +1,22 @@
 package net.citizensnpcs.trait.versioned;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Panda;
 
+import net.citizensnpcs.api.command.Command;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Requirements;
+import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.command.exception.CommandUsageException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 
 @TraitName("pandatrait")
 public class PandaTrait extends Trait {
@@ -58,6 +69,48 @@ public class PandaTrait extends Trait {
 
     public boolean toggleSitting() {
         return sitting = !sitting;
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "panda --gene (main gene) --hgene (hidden gene) -s(itting)",
+            desc = "Sets panda modifiers",
+            modifiers = { "panda" },
+            flags = "s",
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.panda")
+    @Requirements(selected = true, ownership = true, types = EntityType.PANDA)
+    public static void panda(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        PandaTrait trait = npc.getOrAddTrait(PandaTrait.class);
+        String output = "";
+        if (args.hasValueFlag("gene")) {
+            Panda.Gene gene = Util.matchEnum(Panda.Gene.values(), args.getFlag("gene"));
+            if (gene == null) {
+                throw new CommandUsageException(Messages.INVALID_PANDA_GENE,
+                        Util.listValuesPretty(Panda.Gene.values()));
+            }
+            trait.setMainGene(gene);
+            output += ' ' + Messaging.tr(Messages.PANDA_MAIN_GENE_SET, args.getFlag("gene"));
+        }
+        if (args.hasValueFlag("hgene")) {
+            Panda.Gene gene = Util.matchEnum(Panda.Gene.values(), args.getFlag("hgene"));
+            if (gene == null) {
+                throw new CommandUsageException(Messages.INVALID_PANDA_GENE,
+                        Util.listValuesPretty(Panda.Gene.values()));
+            }
+            trait.setHiddenGene(gene);
+            output += ' ' + Messaging.tr(Messages.PANDA_HIDDEN_GENE_SET, args.getFlag("hgene"));
+        }
+        if (args.hasFlag('s')) {
+            boolean isSitting = trait.toggleSitting();
+            output += ' ' + Messaging.tr(isSitting ? Messages.PANDA_SITTING : Messages.PANDA_STOPPED_SITTING);
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output.trim());
+        } else {
+            throw new CommandUsageException();
+        }
     }
 
 }

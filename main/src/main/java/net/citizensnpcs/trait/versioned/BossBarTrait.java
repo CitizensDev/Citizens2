@@ -9,19 +9,28 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.command.Command;
+import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Requirements;
+import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 
 @TraitName("bossbar")
 public class BossBarTrait extends Trait {
@@ -177,6 +186,49 @@ public class BossBarTrait extends Trait {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "bossbar --style [style] --color [color] --title [title] --visible [visible] --flags [flags] --track [health | placeholder]",
+            desc = "Edit bossbar properties",
+            modifiers = { "bossbar" },
+            min = 1,
+            max = 1)
+    @Requirements(selected = true, ownership = true)
+    public static void bossbar(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        BossBarTrait trait = npc.getOrAddTrait(BossBarTrait.class);
+        if (args.hasValueFlag("style")) {
+            BarStyle style = Util.matchEnum(BarStyle.values(), args.getFlag("style"));
+            if (style != null) {
+                trait.setStyle(style);
+            }
+        }
+        if (args.hasValueFlag("color")) {
+            BarColor color = Util.matchEnum(BarColor.values(), args.getFlag("color"));
+            if (color != null) {
+                trait.setColor(color);
+            }
+        }
+        if (args.hasValueFlag("track")) {
+            trait.setTrackVariable(args.getFlag("track"));
+        }
+        if (args.hasValueFlag("title")) {
+            trait.setTitle(Colorizer.parseColors(args.getFlag("title")));
+        }
+        if (args.hasValueFlag("visible")) {
+            trait.setVisible(Boolean.parseBoolean(args.getFlag("visible")));
+        }
+        if (args.hasValueFlag("flags")) {
+            List<BarFlag> flags = Lists.newArrayList();
+            for (String s : Splitter.on(',').omitEmptyStrings().trimResults().split(args.getFlag("flags"))) {
+                BarFlag flag = Util.matchEnum(BarFlag.values(), s);
+                if (flag != null) {
+                    flags.add(flag);
+                }
+            }
+            trait.setFlags(flags);
+        }
     }
 
     private static boolean SUPPORT_ATTRIBUTES = true;

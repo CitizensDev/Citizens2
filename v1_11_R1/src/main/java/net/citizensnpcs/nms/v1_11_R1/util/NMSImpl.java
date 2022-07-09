@@ -72,6 +72,7 @@ import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Messaging;
@@ -158,7 +159,6 @@ import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.WitherSkullController;
 import net.citizensnpcs.nms.v1_11_R1.network.EmptyChannel;
-import net.citizensnpcs.nms.v1_11_R1.trait.Commands;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -665,12 +665,11 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LlamaTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SnowmanTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PolarBearTrait.class));
-        manager.register(Commands.class);
+        registerTraitWithCommand(manager, BossBarTrait.class);
+        registerTraitWithCommand(manager, LlamaTrait.class);
+        registerTraitWithCommand(manager, PolarBearTrait.class);
+        registerTraitWithCommand(manager, ShulkerTrait.class);
+        registerTraitWithCommand(manager, SnowmanTrait.class);
     }
 
     private void loadEntityTypes() {
@@ -934,6 +933,11 @@ public class NMSImpl implements NMSBridge {
             return;
         }
         throw new IllegalArgumentException("unable to find valid entity superclass for class " + clazz.toString());
+    }
+
+    private void registerTraitWithCommand(CommandManager manager, Class<? extends Trait> clazz) {
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(clazz));
+        manager.register(clazz);
     }
 
     @Override

@@ -75,6 +75,7 @@ import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Messaging;
@@ -195,7 +196,6 @@ import net.citizensnpcs.nms.v1_19_R1.entity.nonliving.ThrownTridentController;
 import net.citizensnpcs.nms.v1_19_R1.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.nms.v1_19_R1.entity.nonliving.WitherSkullController;
 import net.citizensnpcs.nms.v1_19_R1.network.EmptyChannel;
-import net.citizensnpcs.nms.v1_19_R1.trait.Commands;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -790,26 +790,25 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(AxolotlTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BeeTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(BossBarTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(CatTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FoxTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(FrogTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GoatTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(LlamaTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MushroomCowTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ParrotTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PandaTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PiglinTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PhantomTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PolarBearTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PufferFishTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(ShulkerTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SnowmanTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TropicalFishTrait.class));
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(VillagerTrait.class));
-        manager.register(Commands.class);
+        registerTraitWithCommand(manager, AxolotlTrait.class);
+        registerTraitWithCommand(manager, BeeTrait.class);
+        registerTraitWithCommand(manager, BossBarTrait.class);
+        registerTraitWithCommand(manager, CatTrait.class);
+        registerTraitWithCommand(manager, FoxTrait.class);
+        registerTraitWithCommand(manager, FrogTrait.class);
+        registerTraitWithCommand(manager, GoatTrait.class);
+        registerTraitWithCommand(manager, LlamaTrait.class);
+        registerTraitWithCommand(manager, MushroomCowTrait.class);
+        registerTraitWithCommand(manager, ParrotTrait.class);
+        registerTraitWithCommand(manager, PandaTrait.class);
+        registerTraitWithCommand(manager, PiglinTrait.class);
+        registerTraitWithCommand(manager, PhantomTrait.class);
+        registerTraitWithCommand(manager, PolarBearTrait.class);
+        registerTraitWithCommand(manager, PufferFishTrait.class);
+        registerTraitWithCommand(manager, ShulkerTrait.class);
+        registerTraitWithCommand(manager, SnowmanTrait.class);
+        registerTraitWithCommand(manager, TropicalFishTrait.class);
+        registerTraitWithCommand(manager, VillagerTrait.class);
     }
 
     private void loadEntityTypes() {
@@ -1102,6 +1101,11 @@ public class NMSImpl implements NMSBridge {
             return;
         }
         throw new IllegalArgumentException("unable to find valid entity superclass for class " + clazz.toString());
+    }
+
+    private void registerTraitWithCommand(CommandManager manager, Class<? extends Trait> clazz) {
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(clazz));
+        manager.register(clazz);
     }
 
     @Override
