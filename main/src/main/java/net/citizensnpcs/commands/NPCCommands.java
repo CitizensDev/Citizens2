@@ -277,8 +277,9 @@ public class NPCCommands {
             }
 
             int page = args.getInteger(1, 1);
-            if (!paginator.sendPage(sender, page))
-                throw new CommandException(Messages.COMMAND_PAGE_MISSING);
+            if (!paginator.sendPage(sender, page)) {
+                throw new CommandException(Messages.COMMAND_PAGE_MISSING, page);
+            }
         }
 
         // Assume Player's position
@@ -1156,18 +1157,20 @@ public class NPCCommands {
             }
         }
 
-        Paginator paginator = new Paginator().header("NPCs").console(sender instanceof ConsoleCommandSender);
-        paginator.addLine("<e><o>ID  <a><o>Name");
-        for (int i = 0; i < npcs.size(); i += 2) {
-            String line = "<e>" + npcs.get(i).getId() + "<a>  " + npcs.get(i).getName();
-            if (npcs.size() >= i + 2)
-                line += "      " + "<e>" + npcs.get(i + 1).getId() + "<a>  " + npcs.get(i + 1).getName();
+        Paginator paginator = new Paginator().header("NPCs").console(sender instanceof ConsoleCommandSender)
+                .enablePageSwitcher('/' + args.getRawCommand() + " --page $page");
+        for (int i = 0; i < npcs.size(); i++) {
+            int id = npcs.get(i).getId();
+            String line = StringHelper.wrap(id) + " " + npcs.get(i).getName() + " (<<[[tp:command(/npc tp --id " + id
+                    + "):Teleport to this NPC>>) (<<[[summon:command(/npc tph --id " + id
+                    + "):Teleport NPC to me>> (<<<c>-:command(/npc remove " + id + "):Remove this NPC>>)";
             paginator.addLine(line);
         }
 
-        int page = args.getInteger(1, 1);
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException(Messages.COMMAND_PAGE_MISSING);
+        int page = args.getFlagInteger("page", args.getInteger(1, 1));
+        if (!paginator.sendPage(sender, page)) {
+            throw new CommandException(Messages.COMMAND_PAGE_MISSING, page);
+        }
     }
 
     @Command(
@@ -1869,7 +1872,7 @@ public class NPCCommands {
             if (entity != null && (npc = CitizensAPI.getNPCRegistry().getNPC(entity)) != null) {
                 history.add(sender, new RemoveNPCHistoryItem(npc));
                 npc.destroy(sender);
-                Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
+                Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName(), npc.getId());
                 return;
             } else {
                 Messaging.sendErrorTr(sender, Messages.NPC_NOT_FOUND);
@@ -1899,7 +1902,7 @@ public class NPCCommands {
                             throw new NoPermissionsException();
                         history.add(sender, new RemoveNPCHistoryItem(npc));
                         npc.destroy(sender);
-                        Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
+                        Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName(), npc.getId());
                     }
                 };
                 NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
@@ -1915,7 +1918,7 @@ public class NPCCommands {
             throw new NoPermissionsException();
         history.add(sender, new RemoveNPCHistoryItem(npc));
         npc.destroy(sender);
-        Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName());
+        Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName(), npc.getId());
     }
 
     @Command(

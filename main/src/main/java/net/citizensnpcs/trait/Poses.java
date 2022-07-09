@@ -94,8 +94,9 @@ public class Poses extends Trait {
             i++;
         }
 
-        if (!paginator.sendPage(sender, page))
-            throw new CommandException(Messages.COMMAND_PAGE_MISSING);
+        if (!paginator.sendPage(sender, page)) {
+            throw new CommandException(Messages.COMMAND_PAGE_MISSING, page);
+        }
     }
 
     public Pose getPose(String name) {

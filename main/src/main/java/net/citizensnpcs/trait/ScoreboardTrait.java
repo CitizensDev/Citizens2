@@ -71,8 +71,12 @@ public class ScoreboardTrait extends Trait {
 
         if (SUPPORT_COLLIDABLE_SETOPTION && npc.data().has(NPC.COLLIDABLE_METADATA)) {
             try {
-                team.setOption(Option.COLLISION_RULE,
-                        npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? OptionStatus.ALWAYS : OptionStatus.NEVER);
+                OptionStatus collide = npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? OptionStatus.ALWAYS
+                        : OptionStatus.NEVER;
+                if (collide != team.getOption(Option.COLLISION_RULE)) {
+                    justSpawned = true;
+                }
+                team.setOption(Option.COLLISION_RULE, collide);
             } catch (NoSuchMethodError e) {
                 SUPPORT_COLLIDABLE_SETOPTION = false;
             } catch (NoClassDefFoundError e) {
@@ -88,6 +92,7 @@ public class ScoreboardTrait extends Trait {
             color = ChatColor.valueOf(npc.data().get(NPC.GLOWING_COLOR_METADATA));
             npc.data().remove(NPC.GLOWING_COLOR_METADATA);
         }
+
         if (color != null) {
             if (SUPPORT_GLOWING_COLOR && Util.getMinecraftRevision().contains("1_12_R1")) {
                 SUPPORT_GLOWING_COLOR = false;
