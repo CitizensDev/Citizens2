@@ -10,6 +10,7 @@ public class Paginator {
     private boolean console;
     private String header;
     private final List<String> lines = new ArrayList<String>();
+    private String pageCommand;
     private boolean pageSwitcher;
 
     public Paginator() {
@@ -36,6 +37,13 @@ public class Paginator {
 
     public Paginator enablePageSwitcher() {
         pageSwitcher = true;
+        pageCommand = "page $page";
+        return this;
+    }
+
+    public Paginator enablePageSwitcher(String command) {
+        pageSwitcher = true;
+        pageCommand = command;
         return this;
     }
 
@@ -52,10 +60,12 @@ public class Paginator {
         String pageDisplay = page + "/" + pages;
         if (pageSwitcher) {
             if (page > 1) {
-                pageDisplay = "<<<f>< :command(page " + (page - 1) + "):Previous page>><f>" + pageDisplay;
+                pageDisplay = "<<<f>< :command(" + pageCommand.replace("$page", "" + (page - 1))
+                        + "):Previous page>><f>" + pageDisplay;
             }
             if (pages > 1 && page != pages) {
-                pageDisplay = pageDisplay + "<<<f> >:command(page " + (page + 1) + "):Next page>>";
+                pageDisplay = pageDisplay + "<<<f> >:command(" + pageCommand.replace("$page", "" + (page + 1))
+                        + "):Next page>>";
             }
         }
         String text = header == null ? "" : wrapHeader("[[" + header + " <f>" + pageDisplay);

@@ -31,6 +31,7 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -42,11 +43,15 @@ public class CommandContext {
     protected String[] args;
     protected final Set<Character> flags = new HashSet<Character>();
     private Location location = null;
+    private final String[] rawArgs;
     private final CommandSender sender;
     protected final Map<String, String> valueFlags = Maps.newHashMap();
 
     public CommandContext(CommandSender sender, String[] args) {
         this.sender = sender;
+        this.rawArgs = new String[args.length];
+        System.arraycopy(args, 0, rawArgs, 0, args.length);
+
         int i = 1;
         for (; i < args.length; i++) {
             // initial pass for quotes
@@ -222,6 +227,10 @@ public class CommandContext {
         return slice;
     }
 
+    public String getRawCommand() {
+        return Joiner.on(' ').join(rawArgs);
+    }
+
     public Location getSenderLocation() throws CommandException {
         if (location != null || sender == null)
             return location;
@@ -368,5 +377,6 @@ public class CommandContext {
 
     private static final Pattern FLAG = Pattern.compile("^-[a-zA-Z]+$");
     private static final Splitter LOCATION_SPLITTER = Splitter.on(Pattern.compile("[,:]")).omitEmptyStrings();
+
     private static final Pattern VALUE_FLAG = Pattern.compile("^--[a-zA-Z0-9-]+$");
 }
