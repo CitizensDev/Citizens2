@@ -37,6 +37,8 @@ public class ScoreboardTrait extends Trait {
 
     public void apply(boolean nameVisibility) {
         Team team = getTeam();
+        if (team == null)
+            return;
 
         if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             team.unregister();
