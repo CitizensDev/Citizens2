@@ -150,6 +150,7 @@ public class Settings {
         PLACEHOLDER_SKIN_UPDATE_FREQUENCY("npc.skins.placeholder-update-frequency-ticks", 5 * 60 * 20),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
+        SCOREBOARD_SEND_TICKS("npc.scoreboard-teams.packet-send-ticks", 1),
         SELECTION_ITEM("npc.selection.item", "stick"),
         SELECTION_MESSAGE("npc.selection.message", "Selected [[<npc>]] (ID <id>)."),
         SERVER_OWNS_NPCS("npc.server-ownership", false),
@@ -164,7 +165,7 @@ public class Settings {
         TELEPORT_DELAY("npc.teleport-delay", -1),
         USE_BOAT_CONTROLS("npc.controllable.use-boat-controls", true),
         USE_NEW_PATHFINDER("npc.pathfinding.use-new-finder", false),
-        USE_SCOREBOARD_TEAMS("npc.player-scoreboard-teams.enable", true),
+        USE_SCOREBOARD_TEAMS("npc.scoreboard-teams.enable", true),
         WARN_ON_RELOAD("general.reload-warning-enabled", true);
 
         protected String path;

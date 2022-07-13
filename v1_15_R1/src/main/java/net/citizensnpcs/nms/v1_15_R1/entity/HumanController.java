@@ -85,9 +85,6 @@ public class HumanController extends AbstractEntityController {
     public void remove() {
         Player entity = getBukkitEntity();
         if (entity != null) {
-            if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-                Util.removeTeamFor(NMS.getNPC(entity), entity.getName());
-            }
             NMS.removeFromWorld(entity);
             SkinnableEntity npc = entity instanceof SkinnableEntity ? (SkinnableEntity) entity : null;
             npc.getSkinTracker().onRemoveNPC();

@@ -117,7 +117,7 @@ public class EventListen implements Listener {
         this.skinUpdateTracker = new SkinUpdateTracker(registries);
     }
 
-    private void checkCreationEvent(CommandSenderCreateNPCEvent event) {
+    private void checkCreationEvent(CommandSenderCreateNPCEvent event) { 
         if (event.getCreator().hasPermission("citizens.admin.avoid-limits"))
             return;
         int limit = Setting.DEFAULT_NPC_LIMIT.asInt();

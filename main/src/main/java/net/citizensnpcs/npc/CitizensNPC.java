@@ -15,7 +15,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Team;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -477,17 +476,9 @@ public class CitizensNPC extends AbstractNPC {
             getEntity().setCustomName(getFullName());
         }
 
-        String teamName = data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
-        Team team = null;
-        if (teamName.length() == 0 || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
-            return;
-
-        if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-            team.unregister();
-            data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-            return;
+        if (data().has(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME)) {
+            getOrAddTrait(ScoreboardTrait.class).apply(nameVisibility);
         }
-        getOrAddTrait(ScoreboardTrait.class).apply(team, nameVisibility);
     }
 
     private void updateCustomNameVisibility() {
