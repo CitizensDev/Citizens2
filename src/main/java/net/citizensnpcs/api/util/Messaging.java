@@ -191,11 +191,10 @@ public class Messaging {
                     try {
                         parseAndSendComponents(sender, message);
                     } catch (Throwable t) {
-                        t.printStackTrace();
                         SUPPORTS_COMPONENTS = false;
-                        sender.sendMessage(message);
                     }
-                } else {
+                }
+                if (!SUPPORTS_COMPONENTS) {
                     StringBuilder builder = new StringBuilder("");
                     Matcher m = COMPONENT_MATCHER.matcher(message);
                     int end = 0;
@@ -220,6 +219,7 @@ public class Messaging {
                 sender.sendMessage(message);
             }
         }
+
     }
 
     public static void sendTr(CommandSender sender, String key, Object... msg) {
