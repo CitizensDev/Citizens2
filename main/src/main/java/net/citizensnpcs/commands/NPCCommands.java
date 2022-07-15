@@ -39,6 +39,7 @@ import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -655,6 +656,33 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "debug -p(aths) -n(avigation)",
+            desc = "Display debugging information",
+            modifiers = { "debug" },
+            min = 1,
+            max = 1,
+            flags = "pn",
+            permission = "citizens.npc.debug")
+    @Requirements(ownership = true, selected = true)
+    public void debug(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (args.hasFlag('p')) {
+            npc.getNavigator().getDefaultParameters().debug(!npc.getNavigator().getDefaultParameters().debug());
+            Messaging.send(sender, "Path debugging set to " + npc.getNavigator().getDefaultParameters().debug());
+        } else if (args.hasFlag('n')) {
+            String output = "Use new finder " + npc.getNavigator().getDefaultParameters().useNewPathfinder();
+            output += "Distance margin " + npc.getNavigator().getDefaultParameters().distanceMargin() + "(path margin "
+                    + npc.getNavigator().getDefaultParameters().pathDistanceMargin() + ")<br>";
+            output += "Teleport if below " + npc.getNavigator().getDefaultParameters().destinationTeleportMargin()
+                    + " blocks<br>";
+            output += "Range " + npc.getNavigator().getDefaultParameters().range() + "<br>";
+            output += "Stuck action " + npc.getNavigator().getDefaultParameters().stuckAction() + "<br>";
+            output += "Speed " + npc.getNavigator().getDefaultParameters().speed() + "<br>";
+            Messaging.send(sender, output);
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "despawn (id)",
             desc = "Despawn a NPC",
             modifiers = { "despawn" },
@@ -1075,7 +1103,7 @@ public class NPCCommands {
                 ((org.bukkit.entity.Item) npc.getEntity()).getItemStack().setType(mat);
                 break;
             case ITEM_FRAME:
-                ((ItemFrame) npc.getEntity()).getItem().setType(mat);
+                ((ItemFrame) npc.getEntity()).setItem(new ItemStack(mat, 1));
                 break;
             default:
                 break;

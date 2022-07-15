@@ -185,7 +185,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             }
         }
         if (localParams.destinationTeleportMargin() > 0
-                && npcLoc.distance(targetLoc) < localParams.destinationTeleportMargin()) {
+                && npcLoc.distance(targetLoc) <= localParams.destinationTeleportMargin()) {
             // TODO: easing?
             npc.teleport(targetLoc, TeleportCause.PLUGIN);
             finished = true;

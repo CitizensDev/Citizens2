@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftItemFrame;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.DespawnReason;
@@ -113,16 +114,11 @@ public class ItemFrameController extends MobEntityController {
         public ItemFrameNPC(EntityItemFrameNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
-            Material id = Material.STONE;
-            int data = npc.data().get(NPC.ITEM_DATA_METADATA, npc.data().get("falling-block-data", 0));
-            if (npc.data().has(NPC.ITEM_ID_METADATA)) {
-                id = Material.getMaterial(npc.data().<String> get(NPC.ITEM_ID_METADATA));
-            }
-            if (npc.data().has(NPC.ITEM_AMOUNT_METADATA)) {
-                getItem().setAmount(npc.data().get(NPC.ITEM_AMOUNT_METADATA));
-            }
-            getItem().setType(id);
-            getItem().setDurability((short) data);
+            int amount = npc.data().get(NPC.ITEM_AMOUNT_METADATA, 1);
+            Material material = Material.getMaterial(npc.data().<String> get(NPC.ITEM_ID_METADATA, "STONE"), false);
+            Number durability = npc.data().<Number> get(NPC.ITEM_DATA_METADATA,
+                    npc.data().<Number> get("falling-block-data", (short) 0));
+            setItem(new ItemStack(material, amount, durability.shortValue()));
         }
 
         @Override

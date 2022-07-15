@@ -72,7 +72,8 @@ public class SkinTrait extends Trait {
      * @return The skin name if set, or null (i.e. using the NPC's name)
      */
     public String getSkinName() {
-        return filledPlaceholder != null && skinName != null ? filledPlaceholder : skinName;
+        return filledPlaceholder != null && skinName != null ? filledPlaceholder
+                : skinName == null ? skinName : skinName.toLowerCase();
     }
 
     /**
@@ -170,14 +171,8 @@ public class SkinTrait extends Trait {
     }
 
     private void setSkinNameInternal(String name) {
-        skinName = ChatColor.stripColor(name.toLowerCase());
+        skinName = ChatColor.stripColor(name);
         checkPlaceholder(false);
-        String filled = ChatColor.stripColor(Placeholders.replace(skinName, null, npc).toLowerCase());
-        if (!filled.equalsIgnoreCase(skinName)) {
-            filledPlaceholder = filled;
-        } else {
-            filledPlaceholder = null;
-        }
     }
 
     /**
