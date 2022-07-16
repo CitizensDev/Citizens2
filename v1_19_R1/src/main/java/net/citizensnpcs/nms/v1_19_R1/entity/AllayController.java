@@ -6,6 +6,10 @@ import org.bukkit.craftbukkit.v1_19_R1.entity.CraftAllay;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.util.Vector;
 
+import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Pair;
+
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R1.util.ForwardingNPCHolder;
@@ -16,6 +20,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.PositionImpl;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
@@ -23,6 +28,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
@@ -60,13 +66,6 @@ public class AllayController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.clearGoals(npc, goalSelector, targetSelector);
             }
-        }
-
-        @Override
-        public boolean canPickUpLoot() {
-            if (npc != null && npc.isProtected())
-                return false;
-            return super.canPickUpLoot();
         }
 
         @Override
@@ -164,8 +163,15 @@ public class AllayController extends MobEntityController {
 
         @Override
         protected InteractionResult mobInteract(Player var0, InteractionHand var1) {
-            if (npc != null && npc.isProtected())
+            if (npc != null && npc.isProtected()) {
+                // prevent clientside prediction
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    NMSImpl.sendPacketNearby(null, getBukkitEntity().getLocation(),
+                            new ClientboundSetEquipmentPacket(getId(), Lists.newArrayList(
+                                    Pair.of(EquipmentSlot.MAINHAND, this.getItemInHand(InteractionHand.MAIN_HAND)))));
+                });
                 return InteractionResult.FAIL;
+            }
             return super.mobInteract(var0, var1);
         }
 

@@ -507,13 +507,12 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
         if (!itemChanged)
             return;
-        Location current = getBukkitEntity().getLocation(packetLocationCache);
         List<Pair<EquipmentSlot, ItemStack>> vals = Lists.newArrayList();
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             vals.add(new Pair<EquipmentSlot, ItemStack>(slot, getItemBySlot(slot)));
         }
         Packet<?>[] packets = { new ClientboundSetEquipmentPacket(getId(), vals) };
-        NMSImpl.sendPacketsNearby(getBukkitEntity(), current, packets);
+        NMSImpl.sendPacketsNearby(getBukkitEntity(), getBukkitEntity().getLocation(packetLocationCache), packets);
     }
 
     public void updatePathfindingRange(float pathfindingRange) {

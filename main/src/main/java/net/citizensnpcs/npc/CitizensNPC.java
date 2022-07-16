@@ -444,6 +444,13 @@ public class CitizensNPC extends AbstractNPC {
 
             if (isLiving) {
                 NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
+                if (isProtected() && SUPPORT_PICKUP_ITEMS) {
+                    try {
+                        ((LivingEntity) getEntity()).setCanPickupItems(false);
+                    } catch (Throwable t) {
+                        SUPPORT_PICKUP_ITEMS = false;
+                    }
+                }
             }
 
             if (isLiving && getEntity() instanceof Player) {
@@ -522,11 +529,11 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
-
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
     private static final String NPC_METADATA_MARKER = "NPC";
     private static boolean SUPPORT_GLOWING = true;
     private static boolean SUPPORT_NODAMAGE_TICKS = true;
+    private static boolean SUPPORT_PICKUP_ITEMS = true;
     private static boolean SUPPORT_SILENT = true;
     private static boolean SUPPORT_USE_ITEM = true;
 }
