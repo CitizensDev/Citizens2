@@ -1318,13 +1318,13 @@ public class NPCCommands {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
-            Messaging.send(sender, npc.data().get(key, "null"));
+            sender.sendMessage(npc.data().get(key, "null"));
         } else if (command.equals("remove")) {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
             npc.data().remove(key);
-            Messaging.sendTr(sender, Messages.METADATA_UNSET, key);
+            Messaging.sendTr(sender, Messages.METADATA_UNSET, key, npc.getName());
         } else {
             throw new CommandUsageException();
         }

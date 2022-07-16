@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCCommandDispatchEvent;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
+import net.citizensnpcs.api.gui.InventoryMenuSlot;
 import net.citizensnpcs.api.gui.Menu;
 import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.npc.NPC;
@@ -194,7 +196,7 @@ public class CommandTrait extends Trait {
             return;
         }
         Runnable task = new Runnable() {
-            boolean charged = false;
+            Boolean charged = null;
 
             @Override
             public void run() {
@@ -240,7 +242,7 @@ public class CommandTrait extends Trait {
                         }
                     }
                     runCommand(player, command);
-                    if (executionMode == ExecutionMode.SEQUENTIAL) {
+                    if (executionMode == ExecutionMode.SEQUENTIAL || charged == false) {
                         break;
                     }
                 }
@@ -258,11 +260,12 @@ public class CommandTrait extends Trait {
                         if (info != null && !info.canUse(CommandTrait.this, player, command)) {
                             return;
                         }
-                        if (!charged) {
-                            charged = true;
+                        if (charged == null) {
                             if (!chargeCommandCosts(player, hand)) {
+                                charged = false;
                                 return;
                             }
+                            charged = true;
                         }
                         PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
                         if (temporaryPermissions.size() > 0) {
@@ -377,11 +380,6 @@ public class CommandTrait extends Trait {
         }
     }
 
-    public enum ErrorHandling {
-        ERROR_MESSAGE,
-        RUN_ANYWAY;
-    }
-
     public enum ExecutionMode {
         LINEAR,
         RANDOM,
@@ -418,6 +416,11 @@ public class CommandTrait extends Trait {
             for (ItemStack stack : trait.itemRequirements) {
                 inventory.addItem(stack.clone());
             }
+        }
+
+        @Override
+        public void onClick(InventoryMenuSlot slot, InventoryClickEvent event) {
+            event.setCancelled(false);
         }
 
         @Override
