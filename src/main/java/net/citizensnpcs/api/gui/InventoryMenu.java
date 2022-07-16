@@ -65,10 +65,13 @@ import net.citizensnpcs.api.util.Messaging;
  */
 public class InventoryMenu implements Listener, Runnable {
     private final List<Runnable> closeCallbacks = Lists.newArrayList();
-    private boolean manualClose;
+    private boolean closingViews;
+    private boolean delayViewerChanges;
     private PageContext page;
     private int pickupAmount = -1;
+    private HumanEntity singleViewer;
     private final Queue<PageContext> stack = Queues.newArrayDeque();
+    private boolean transitioning;
     private Collection<InventoryView> views = Lists.newArrayList();
 
     public InventoryMenu(InventoryMenuInfo info, InventoryMenuPage instance) {
@@ -97,29 +100,33 @@ public class InventoryMenu implements Listener, Runnable {
      */
     public void close() {
         HandlerList.unregisterAll(this);
-        manualClose = true;
-        for (InventoryView view : views) {
-            page.page.onClose(view.getPlayer());
-            view.close();
-        }
-        views.clear();
-        manualClose = false;
+        closingViews = true;
+        runViewerModifier(() -> {
+            for (InventoryView view : views) {
+                page.page.onClose(view.getPlayer());
+                view.close();
+            }
+            views.clear();
+            closingViews = false;
+        });
     }
 
     /**
      * Closes the GUI for just a specific Player.
      */
-    public void close(Player player) {
-        Iterator<InventoryView> itr = views.iterator();
-        manualClose = true;
-        while (itr.hasNext()) {
-            InventoryView view = itr.next();
-            if (view.getPlayer() == player) {
-                view.close();
-                itr.remove();
+    public void close(HumanEntity entity) {
+        closingViews = true;
+        runViewerModifier(() -> {
+            Iterator<InventoryView> itr = views.iterator();
+            while (itr.hasNext()) {
+                InventoryView view = itr.next();
+                if (view.getPlayer() == entity) {
+                    view.close();
+                    itr.remove();
+                }
             }
-        }
-        manualClose = false;
+            closingViews = false;
+        });
     }
 
     private InventoryMenuSlot createSlot(int pos, MenuSlot slotInfo) {
@@ -197,6 +204,48 @@ public class InventoryMenu implements Listener, Runnable {
         }
     }
 
+    private void handleClick(InventoryClickEvent event) {
+        Inventory clicked = event.getClickedInventory() != null ? event.getClickedInventory() : event.getInventory();
+        if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+            event.setCancelled(true);
+            Inventory dest = event.getInventory() == event.getClickedInventory() ? event.getWhoClicked().getInventory()
+                    : page.ctx.getInventory();
+            boolean toNPC = dest == page.ctx.getInventory();
+            handleShiftClick(event, dest, toNPC);
+            return;
+        }
+
+        if (!isOurInventory(clicked)) {
+            return;
+        }
+        switch (event.getAction()) {
+            case COLLECT_TO_CURSOR:
+                event.setCancelled(true);
+            case NOTHING:
+            case UNKNOWN:
+            case DROP_ONE_CURSOR:
+            case DROP_ALL_CURSOR:
+                return;
+            default:
+                break;
+        }
+        InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
+        CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(event, pickupAmount);
+        slot.onClick(ev);
+        pickupAmount = -1;
+        page.page.onClick(slot, event);
+        if (event.isCancelled()) {
+            return;
+        }
+        for (InventoryMenuTransition transition : page.transitions) {
+            Class<? extends InventoryMenuPage> next = transition.accept(slot);
+            if (next != null) {
+                transition(next);
+                break;
+            }
+        }
+    }
+
     private void handleShiftClick(InventoryClickEvent event, Inventory dest, boolean toNPC) {
         if (event.getCurrentItem() == null)
             return;
@@ -252,64 +301,35 @@ public class InventoryMenu implements Listener, Runnable {
         }
     }
 
+    private boolean isOurInventory(Inventory other) {
+        if (other instanceof ForwardingInventory
+                && ((ForwardingInventory) other).getWrapped().equals(page.ctx.getInventory()))
+            return true;
+        return other.equals(page.ctx.getInventory());
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (page == null)
+        if (page == null || transitioning || closingViews)
             return;
-        Inventory clicked = event.getClickedInventory() != null ? event.getClickedInventory() : event.getInventory();
-        if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-            event.setCancelled(true);
-            Inventory dest = event.getInventory() == event.getClickedInventory() ? event.getWhoClicked().getInventory()
-                    : page.ctx.getInventory();
-            boolean toNPC = dest == page.ctx.getInventory();
-            handleShiftClick(event, dest, toNPC);
-            return;
-        }
-
-        if (!clicked.equals(page.ctx.getInventory()) && (!(clicked instanceof ForwardingInventory)
-                || !((ForwardingInventory) clicked).getWrapped().equals(page.ctx.getInventory()))) {
-            return;
-        }
-        switch (event.getAction()) {
-            case COLLECT_TO_CURSOR:
-                event.setCancelled(true);
-            case NOTHING:
-            case UNKNOWN:
-            case DROP_ONE_CURSOR:
-            case DROP_ALL_CURSOR:
-                return;
-            default:
-                break;
-        }
-        InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
-        CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(event, pickupAmount);
-        slot.onClick(ev);
-        pickupAmount = -1;
-        page.page.onClick(slot, event);
-        if (event.isCancelled()) {
-            return;
-        }
-        for (InventoryMenuTransition transition : page.transitions) {
-            Class<? extends InventoryMenuPage> next = transition.accept(slot);
-            if (next != null) {
-                transition(next);
-                break;
-            }
-        }
+        delayViewerChanges = true;
+        handleClick(event);
+        delayViewerChanges = false;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (page == null || !event.getInventory().equals(page.ctx.getInventory()) || manualClose)
+        if (page == null || !isOurInventory(event.getInventory()) || closingViews)
             return;
-        page.page.onClose(event.getPlayer());
+        delayViewerChanges = true;
         transitionBack();
+        delayViewerChanges = false;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryDrag(InventoryDragEvent event) {
-        // TODO: should this be supported
-        if (page != null && event.getInventory() == page.ctx.getInventory()) {
+        // TODO: support dragging?
+        if (page != null && isOurInventory(event.getInventory())) {
             event.setCancelled(true);
         }
     }
@@ -376,13 +396,23 @@ public class InventoryMenu implements Listener, Runnable {
      * Display the menu to the given player. Multiple players can be shown the same menu, but transitions will affect
      * all players and the inventory is shared.
      */
-    public void present(Player player) {
+    public void present(HumanEntity player) {
         views.add(openInventory(player, page.ctx.getInventory(), page.ctx.getTitle()));
     }
 
     @Override
     public void run() {
+        if (page == null || transitioning)
+            return;
         page.page.run();
+    }
+
+    private void runViewerModifier(Runnable run) {
+        if (delayViewerChanges) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), run);
+        } else {
+            run.run();
+        }
     }
 
     /**
@@ -509,6 +539,9 @@ public class InventoryMenu implements Listener, Runnable {
     public void transitionBack() {
         if (page == null)
             return;
+        for (InventoryView view : views) {
+            page.page.onClose(view.getPlayer());
+        }
         Map<String, Object> data = page.ctx.data();
         page = stack.poll();
         if (page != null) {
@@ -524,14 +557,20 @@ public class InventoryMenu implements Listener, Runnable {
     }
 
     private void transitionViewersToInventory(Inventory inventory) {
-        Collection<InventoryView> old = views;
-        views = Lists.newArrayListWithExpectedSize(old.size());
-        for (InventoryView view : old) {
-            view.close();
-            if (!view.getPlayer().isValid() || inventory == null)
-                continue;
-            views.add(openInventory(view.getPlayer(), inventory, page.ctx.getTitle()));
-        }
+        if (views.size() == 0)
+            return;
+        transitioning = true;
+        runViewerModifier(() -> {
+            Collection<InventoryView> old = views;
+            views = Lists.newArrayListWithExpectedSize(old.size());
+            for (InventoryView view : old) {
+                view.close();
+                if (!view.getPlayer().isValid() || inventory == null)
+                    continue;
+                views.add(openInventory(view.getPlayer(), inventory, page.ctx.getTitle()));
+            }
+            transitioning = false;
+        });
     }
 
     void updateTitle(String newTitle) {
