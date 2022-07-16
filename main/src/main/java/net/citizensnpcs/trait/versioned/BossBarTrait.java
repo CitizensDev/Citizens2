@@ -135,13 +135,13 @@ public class BossBarTrait extends Trait {
                 }
             }
         }
-        bar.setStyle(style);
+        bar.setTitle(title);
         bar.setVisible(visible);
+        if (style != null) {
+            bar.setStyle(style);
+        }
         if (color != null) {
             bar.setColor(color);
-        }
-        if (title != null) {
-            bar.setTitle(title);
         }
         for (BarFlag flag : BarFlag.values()) {
             bar.removeFlag(flag);

@@ -443,7 +443,7 @@ public class NPCCommands {
         } else if (args.getString(1).equalsIgnoreCase("itemcost")) {
             if (!(sender instanceof Player))
                 throw new CommandException(Messages.COMMAND_MUST_BE_INGAME);
-            InventoryMenu.create(new ItemRequirementGUI(commands)).present(((Player) sender));
+            InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands)).present(((Player) sender));
         } else {
             throw new CommandUsageException();
         }

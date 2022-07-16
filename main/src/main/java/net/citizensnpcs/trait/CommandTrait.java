@@ -402,7 +402,6 @@ public class CommandTrait extends Trait {
     @Menu(title = "Drag items for requirements", type = InventoryType.CHEST, dimensions = { 5, 9 })
     public static class ItemRequirementGUI extends InventoryMenuPage {
         private Inventory inventory;
-        private int taskId;
         private CommandTrait trait;
 
         private ItemRequirementGUI() {
@@ -415,7 +414,6 @@ public class CommandTrait extends Trait {
 
         @Override
         public void initialise(MenuContext ctx) {
-            this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(CitizensAPI.getPlugin(), this, 0, 1);
             this.inventory = ctx.getInventory();
             for (ItemStack stack : trait.itemRequirements) {
                 inventory.addItem(stack.clone());
@@ -424,11 +422,6 @@ public class CommandTrait extends Trait {
 
         @Override
         public void onClose(HumanEntity player) {
-            Bukkit.getScheduler().cancelTask(taskId);
-        }
-
-        @Override
-        public void run() {
             List<ItemStack> requirements = Lists.newArrayList();
             for (ItemStack stack : inventory.getContents()) {
                 if (stack != null && stack.getType() != Material.AIR) {
