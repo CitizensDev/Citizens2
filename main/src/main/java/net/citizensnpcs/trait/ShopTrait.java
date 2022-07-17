@@ -29,6 +29,8 @@ import net.citizensnpcs.api.gui.MenuSlot;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.Colorizer;
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * Shop trait for NPC GUI shops.
@@ -188,9 +190,6 @@ public class ShopTrait extends Trait {
     }
 
     @Menu(title = "NPC Shop Editor", type = InventoryType.HOPPER, dimensions = { 0, 5 })
-    @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, lore = "Edit shop type")
-    @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1, lore = "Edit shop permission")
-    @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, lore = "Edit shop items")
     public static class NPCShopEditor extends InventoryMenuPage {
         private MenuContext ctx;
         private final NPCShop shop;
@@ -204,19 +203,19 @@ public class ShopTrait extends Trait {
             this.ctx = ctx;
         }
 
-        @ClickHandler(slot = { 0, 4 })
+        @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, lore = "Edit shop items")
         public void onEditItems(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             ctx.getMenu().transition(new NPCShopContentsEditor(shop));
         }
 
-        @ClickHandler(slot = { 0, 2 })
+        @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1, lore = "Edit shop permission")
         public void onPermissionChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             ctx.getMenu().transition(InputMenus.stringSetter(shop::getRequiredPermission, shop::setPermission));
         }
 
-        @ClickHandler(slot = { 0, 0 })
+        @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, lore = "Edit shop type")
         public void onShopTypeChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             ctx.getMenu().transition(InputMenus.<ShopType> picker("Edit shop type", chosen -> {
@@ -245,17 +244,17 @@ public class ShopTrait extends Trait {
     }
 
     @Menu(title = "NPC Shop Item Editor", type = InventoryType.CHEST, dimensions = { 5, 9 })
-    @MenuSlot(slot = { 0, 4 }, material = Material.DISPENSER, amount = 1, title = "Display item")
+    @MenuSlot(slot = { 0, 4 }, material = Material.DISPENSER, amount = 1, title = "Place display item below")
     public static class NPCShopItemEditor extends InventoryMenuPage {
         private final Consumer<NPCShopItem> consumer;
         private MenuContext ctx;
         private final NPCShopItem modified;
         private NPCShopItem original;
 
-        public NPCShopItemEditor(NPCShopItem item, Consumer<NPCShopItem> ret) {
+        public NPCShopItemEditor(NPCShopItem item, Consumer<NPCShopItem> consumer) {
             this.original = item;
             this.modified = original.clone();
-            this.consumer = ret;
+            this.consumer = consumer;
         }
 
         @Override
@@ -266,7 +265,6 @@ public class ShopTrait extends Trait {
             }
         }
 
-        @ClickHandler(slot = { 4, 3 })
         @MenuSlot(slot = { 4, 3 }, material = Material.REDSTONE_BLOCK, amount = 1, title = "Cancel")
         public void onCancel(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
@@ -275,40 +273,35 @@ public class ShopTrait extends Trait {
 
         @Override
         public void onClose(HumanEntity who) {
-            if (original.display == null) {
+            if (original != null && original.display == null) {
                 original = null;
             }
             consumer.accept(original);
         }
 
         @MenuSlot(slot = { 0, 3 }, material = Material.BOOK, amount = 1, title = "Set description")
-        @ClickHandler(slot = { 0, 3 })
         public void onEditDescription(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
-            if (modified.display != null) {
-                ctx.getMenu()
-                        .transition(InputMenus.stringSetter(
-                                () -> Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore()),
-                                description -> {
-                                    ItemMeta meta = modified.display.getItemMeta();
-                                    meta.setLore(Lists.newArrayList(Splitter.on("<br>").split(description)));
-                                    modified.display.setItemMeta(meta);
-                                }));
-            }
+            if (modified.display == null)
+                return;
+            ctx.getMenu().transition(InputMenus.stringSetter(
+                    () -> Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore()), description -> {
+                        ItemMeta meta = modified.display.getItemMeta();
+                        meta.setLore(Lists.newArrayList(Splitter.on("<br>").split(Colorizer.parseColors(description))));
+                        modified.display.setItemMeta(meta);
+                    }));
         }
 
         @MenuSlot(slot = { 0, 5 }, material = Material.FEATHER, amount = 1, title = "Set name")
-        @ClickHandler(slot = { 0, 5 })
         public void onEditName(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
-            if (modified.display != null) {
-                ctx.getMenu()
-                        .transition(InputMenus.stringSetter(modified.display.getItemMeta()::getDisplayName, name -> {
-                            ItemMeta meta = modified.display.getItemMeta();
-                            meta.setDisplayName(name);
-                            modified.display.setItemMeta(meta);
-                        }));
-            }
+            if (modified.display == null)
+                return;
+            ctx.getMenu().transition(InputMenus.stringSetter(modified.display.getItemMeta()::getDisplayName, name -> {
+                ItemMeta meta = modified.display.getItemMeta();
+                meta.setDisplayName(ChatColor.RESET + Colorizer.parseColors(name));
+                modified.display.setItemMeta(meta);
+            }));
         }
 
         @ClickHandler(slot = { 1, 4 })
@@ -323,7 +316,6 @@ public class ShopTrait extends Trait {
             }
         }
 
-        @ClickHandler(slot = { 4, 4 })
         @MenuSlot(slot = { 4, 4 }, material = Material.TNT, amount = 1, lore = "<c>Remove")
         public void onRemove(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             original = null;
@@ -331,7 +323,6 @@ public class ShopTrait extends Trait {
             ctx.getMenu().transitionBack();
         }
 
-        @ClickHandler(slot = { 4, 5 })
         @MenuSlot(slot = { 4, 5 }, material = Material.EMERALD_BLOCK, amount = 1, lore = "Save")
         public void onSave(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             original = modified;
@@ -362,7 +353,6 @@ public class ShopTrait extends Trait {
             this.page = page;
         }
 
-        @ClickHandler(slot = { 0, 4 })
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1)
         public void editPageTitle(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
@@ -377,7 +367,6 @@ public class ShopTrait extends Trait {
             ctx.getSlot(4).setDescription("Set page title<br>Currently: " + page.title);
         }
 
-        @ClickHandler(slot = { 4, 3 })
         @MenuSlot(slot = { 4, 4 }, material = Material.TNT, amount = 1, title = "<c>Remove page")
         public void removePage(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
