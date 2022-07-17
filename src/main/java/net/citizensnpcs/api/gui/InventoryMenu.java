@@ -447,12 +447,12 @@ public class InventoryMenu implements Listener, Runnable {
         }
         page = new PageContext();
         page.page = instance;
-        Inventory inventory = instance.createInventory();
         int[] dim = info.menuAnnotation.dimensions();
         int size;
         InventoryType type;
         String title = Colorizer.parseColors(Messaging.tryTranslate(
                 context.containsKey("title") ? (String) context.get("title") : info.menuAnnotation.title()));
+        Inventory inventory = instance.createInventory(title);
         if (inventory == null) {
             type = info.menuAnnotation.type();
             size = getInventorySize(type, dim);
@@ -672,6 +672,28 @@ public class InventoryMenu implements Listener, Runnable {
                 for (ClickHandler handler : method.getAnnotationsByType(ClickHandler.class)) {
                     try {
                         invokables.add(new Invokable<ClickHandler>(handler, LOOKUP.unreflect(method)));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+                for (MenuSlot slot : method.getAnnotationsByType(MenuSlot.class)) {
+                    try {
+                        invokables.add(new Invokable<ClickHandler>(new ClickHandler() {
+                            @Override
+                            public Class<? extends Annotation> annotationType() {
+                                return ClickHandler.class;
+                            }
+
+                            @Override
+                            public InventoryAction[] filter() {
+                                return new InventoryAction[] {};
+                            }
+
+                            @Override
+                            public int[] slot() {
+                                return slot.slot();
+                            }
+                        }, LOOKUP.unreflect(method)));
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }

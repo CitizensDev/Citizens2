@@ -95,11 +95,11 @@ public class InputMenus {
         }
 
         @Override
-        public Inventory createInventory() {
+        public Inventory createInventory(String title) {
             if (choices.length <= 3) {
-                return Bukkit.createInventory(null, InventoryType.HOPPER, title);
+                return Bukkit.createInventory(null, InventoryType.HOPPER, this.title);
             } else {
-                return Bukkit.createInventory(null, Math.min(54, choices.length / 5 * 9 + 9), title);
+                return Bukkit.createInventory(null, Math.min(54, choices.length / 5 * 9 + 9), this.title);
             }
         }
 

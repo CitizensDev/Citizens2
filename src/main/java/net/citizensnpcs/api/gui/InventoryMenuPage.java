@@ -11,7 +11,7 @@ import org.bukkit.inventory.Inventory;
  * @see InventoryMenu
  */
 public abstract class InventoryMenuPage implements Runnable {
-    public Inventory createInventory() {
+    public Inventory createInventory(String title) {
         return null;
     }
 
