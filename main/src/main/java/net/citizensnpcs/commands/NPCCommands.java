@@ -442,7 +442,7 @@ public class NPCCommands {
                     : Messages.COMMANDS_RANDOM_UNSET);
         } else if (args.getString(1).equalsIgnoreCase("itemcost")) {
             if (!(sender instanceof Player))
-                throw new CommandException(Messages.COMMAND_MUST_BE_INGAME);
+                throw new CommandException(CommandMessages.MUST_BE_INGAME);
             InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands)).present(((Player) sender));
         } else {
             throw new CommandUsageException();
@@ -704,7 +704,7 @@ public class NPCCommands {
         };
         if (npc == null || args.argsLength() == 2) {
             if (args.argsLength() < 2) {
-                throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
+                throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
             }
             NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
                     args.getString(1));
@@ -810,10 +810,10 @@ public class NPCCommands {
                 @Override
                 public void run(NPC followingNPC) throws CommandException {
                     if (followingNPC == null)
-                        throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
+                        throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
                     if (!(sender instanceof ConsoleCommandSender)
                             && !followingNPC.getOrAddTrait(Owner.class).isOwnedBy(sender))
-                        throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
+                        throw new CommandException(CommandMessages.MUST_BE_OWNER);
                     if (followingNPC.getEntity() instanceof Player) {
                         boolean following = followingNPC.getOrAddTrait(FollowTrait.class)
                                 .toggle((Player) followingNPC.getEntity(), protect);
@@ -1922,10 +1922,10 @@ public class NPCCommands {
                     @Override
                     public void run(NPC npc) throws CommandException {
                         if (npc == null)
-                            throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
+                            throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
                         if (!(sender instanceof ConsoleCommandSender)
                                 && !npc.getOrAddTrait(Owner.class).isOwnedBy(sender))
-                            throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
+                            throw new CommandException(CommandMessages.MUST_BE_OWNER);
                         if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
                             throw new NoPermissionsException();
                         history.add(sender, new RemoveNPCHistoryItem(npc));
@@ -1939,9 +1939,9 @@ public class NPCCommands {
             }
         }
         if (npc == null)
-            throw new CommandException(Messages.COMMAND_MUST_HAVE_SELECTED);
+            throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
         if (!(sender instanceof ConsoleCommandSender) && !npc.getOrAddTrait(Owner.class).isOwnedBy(sender))
-            throw new CommandException(Messages.COMMAND_MUST_BE_OWNER);
+            throw new CommandException(CommandMessages.MUST_BE_OWNER);
         if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
             throw new NoPermissionsException();
         history.add(sender, new RemoveNPCHistoryItem(npc));

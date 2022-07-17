@@ -1,18 +1,19 @@
 package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.Llama.Color;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.Messages;
@@ -62,8 +63,10 @@ public class LlamaTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.llama")
-    @Requirements(selected = true, ownership = true, types = { EntityType.LLAMA, EntityType.TRADER_LLAMA })
+    @Requirements(selected = true, ownership = true)
     public static void llama(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (npc.getOrAddTrait(MobType.class).getType().name().contains("LLAMA"))
+            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE);
         LlamaTrait trait = npc.getOrAddTrait(LlamaTrait.class);
         String output = "";
         if (args.hasValueFlag("color") || args.hasValueFlag("colour")) {

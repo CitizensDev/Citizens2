@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -17,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.gui.InventoryMenu;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
@@ -59,7 +57,6 @@ public class DropsTrait extends Trait {
     public static class DropsGUI extends InventoryMenuPage {
         private final Map<Integer, Double> chances = Maps.newHashMap();
         private Inventory inventory;
-        private int taskId;
         private DropsTrait trait;
 
         private DropsGUI() {
@@ -72,7 +69,6 @@ public class DropsTrait extends Trait {
 
         @Override
         public void initialise(MenuContext ctx) {
-            this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(CitizensAPI.getPlugin(), this, 0, 1);
             this.inventory = ctx.getInventory();
             int k = 0;
             for (int i = 1; i < 5; i += 2) {
@@ -114,11 +110,6 @@ public class DropsTrait extends Trait {
 
         @Override
         public void onClose(HumanEntity player) {
-            Bukkit.getScheduler().cancelTask(taskId);
-        }
-
-        @Override
-        public void run() {
             List<ItemDrop> drops = Lists.newArrayList();
             for (int i = 0; i < 5; i += 2) {
                 for (int j = 0; j < 9; j++) {

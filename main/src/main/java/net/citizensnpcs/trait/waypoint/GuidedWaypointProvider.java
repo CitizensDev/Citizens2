@@ -35,6 +35,7 @@ import net.citizensnpcs.api.astar.AStarNode;
 import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.util.DataKey;
@@ -81,7 +82,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     @Override
     public WaypointEditor createEditor(final CommandSender sender, CommandContext args) {
         if (!(sender instanceof Player)) {
-            Messaging.sendErrorTr(sender, Messages.COMMAND_MUST_BE_INGAME);
+            Messaging.sendErrorTr(sender, CommandMessages.MUST_BE_INGAME);
             return null;
         }
         final Player player = (Player) sender;

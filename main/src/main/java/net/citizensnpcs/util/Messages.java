@@ -64,19 +64,12 @@ public class Messages {
     public static final String COMMAND_INVALID_MOBTYPE = "citizens.commands.invalid-mobtype";
     public static final String COMMAND_LEFT_HAND_HEADER = "citizens.commands.npc.command.left-hand-header";
     public static final String COMMAND_MISSING = "citizens.commands.help.command-missing";
-    public static final String COMMAND_MUST_BE_INGAME = "citizens.commands.requirements.must-be-ingame";
-    public static final String COMMAND_MUST_BE_OWNER = "citizens.commands.requirements.must-be-owner";
-    public static final String COMMAND_MUST_HAVE_SELECTED = "citizens.commands.requirements.must-have-selected";
     public static final String COMMAND_NO_COMMANDS_ADDED = "citizens.commands.npc.command.none-added";
     public static final String COMMAND_PAGE_MISSING = "citizens.commands.page-missing";
     public static final String COMMAND_REMOVED = "citizens.commands.npc.command.command-removed";
-    public static final String COMMAND_REPORT_ERROR = "citizens.commands.console-error";
-    public static final String COMMAND_REQUIREMENTS_INVALID_MOB_TYPE = "citizens.commands.requirements.disallowed-mobtype";
     public static final String COMMAND_RIGHT_HAND_HEADER = "citizens.commands.npc.command.right-hand-header";
     public static final String COMMAND_SAVE_HELP = "citizens.commands.citizens.save.help";
     public static final String COMMAND_TEMPORARY_PERMISSIONS_SET = "citizens.commands.npc.command.temporary-permissions-set";
-    public static final String COMMAND_TOO_FEW_ARGUMENTS = "citizens.commands.requirements.too-few-arguments";
-    public static final String COMMAND_TOO_MANY_ARGUMENTS = "citizens.commands.requirements.too-many-arguments";
     public static final String COMMAND_UNKNOWN_COMMAND_ID = "citizens.commands.npc.command.unknown-id";
     public static final String COMMANDS_RANDOM_SET = "citizens.commands.npc.commands.random-set";
     public static final String COMMANDS_RANDOM_UNSET = "citizens.commands.npc.commands.random-unset";
@@ -109,14 +102,9 @@ public class Messages {
     public static final String ERROR_GETTING_METHOD = "citizens.nms-errors.getting-method";
     public static final String ERROR_INITALISING_SUB_PLUGIN = "citizens.sub-plugins.error-on-load";
     public static final String ERROR_RESTORING_GOALS = "citizens.nms-errors.restoring-goals";
-    public static final String ERROR_SETTING_ENTITY_PERSISTENT = "citizens.nms-errors.error-setting-persistent";
     public static final String ERROR_SETTING_LOOKCLOSE_RANGE = "citizens.commands.npc.lookclose.error-random-range";
     public static final String ERROR_SETTING_SKIN_URL = "citizens.commands.npc.skin.error-setting-url";
-    public static final String ERROR_SPAWNING_CUSTOM_ENTITY = "citizens.nms-errors.spawning-custom-entity";
-    public static final String ERROR_STOPPING_NETWORK_THREADS = "citizens.nms-errors.stopping-network-threads";
     public static final String ERROR_UPDATING_NAVIGATION_WORLD = "citizens.nms-errors.updating-navigation-world";
-    public static final String ERROR_UPDATING_PATHFINDING_RANGE = "citizens.nms-errors.updating-pathfinding-range";
-    public static final String ERROR_UPDATING_SPEED = "citizens.nms-errors.updating-land-modifier";
     public static final String EXCEPTION_UPDATING_NPC = "citizens.notifications.exception-updating-npc";
     public static final String FAILED_LOAD_SAVES = "citizens.saves.load-failed";
     public static final String FAILED_TO_MOUNT_NPC = "citizens.commands.npc.mount.failed";
@@ -353,7 +341,6 @@ public class Messages {
     public static final String TEXT_EDITOR_ADD_PROMPT = "citizens.editors.text.add-prompt";
     public static final String TEXT_EDITOR_ADDED_ENTRY = "citizens.editors.text.added-entry";
     public static final String TEXT_EDITOR_BEGIN = "citizens.editors.text.begin";
-    public static final String TEXT_EDITOR_CLOSE_TALKER_SET = "citizens.editors.text.close-talker-set";
     public static final String TEXT_EDITOR_DELAY_SET = "citizens.editors.text.delay-set";
     public static final String TEXT_EDITOR_END = "citizens.editors.text.end";
     public static final String TEXT_EDITOR_INVALID_DELAY = "citizens.editors.text.invalid-delay";
@@ -362,12 +349,8 @@ public class Messages {
     public static final String TEXT_EDITOR_INVALID_PAGE = "citizens.editors.text.invalid-page";
     public static final String TEXT_EDITOR_INVALID_RANGE = "citizens.editors.text.invalid-range";
     public static final String TEXT_EDITOR_MISSING_ITEM_PATTERN = "citizens.editors.text.missing-item-set-pattern";
-    public static final String TEXT_EDITOR_PAGE_PROMPT = "citizens.editors.text.change-page-prompt";
-    public static final String TEXT_EDITOR_RANDOM_TALKER_SET = "citizens.editors.text.random-talker-set";
     public static final String TEXT_EDITOR_RANGE_SET = "citizens.editors.text.range-set";
-    public static final String TEXT_EDITOR_REALISTIC_LOOKING_SET = "citizens.editors.text.realistic-looking-set";
     public static final String TEXT_EDITOR_SET_ITEM = "citizens.editors.text.talk-item-set";
-    public static final String TEXT_EDITOR_SPEECH_BUBBLES_SET = "citizens.editors.text.speech-bubbles-set";
     public static final String TEXT_EDITOR_START_PROMPT = "citizens.editors.text.start-prompt";
     public static final String TO_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.to-not-found";
     public static final String TOGGLED_USING_HELD_ITEM = "citizens.commands.npc.useitem.held-item-toggled";
@@ -427,10 +410,4 @@ public class Messages {
     public static final String WAYPOINT_TRIGGER_TELEPORT_PROMPT = "citizens.editors.waypoints.triggers.teleport.prompt";
     public static final String WOLF_TRAIT_UPDATED = "citizens.commands.wolf.traits-updated";
     public static final String WORLD_NOT_FOUND = "citizens.commands.errors.missing-world";
-    public static final String WRITING_DEFAULT_SETTING = "citizens.settings.writing-default";
-    public static final String ZOMBIE_BABY_SET = "citizens.commands.npc.zombiemod.baby-set";
-    public static final String ZOMBIE_BABY_UNSET = "citizens.commands.npc.zombiemod.baby-unset";
-    public static final String ZOMBIE_VILLAGER_PROFESSION_SET = "citizens.commands.npc.zombiemod.villager-profession-set";
-    public static final String ZOMBIE_VILLAGER_SET = "citizens.commands.npc.zombiemod.villager-set";
-    public static final String ZOMBIE_VILLAGER_UNSET = "citizens.commands.npc.zombiemod.villager-unset";
 }

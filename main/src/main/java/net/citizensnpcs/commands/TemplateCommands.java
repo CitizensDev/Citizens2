@@ -4,10 +4,18 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.command.CommandSender;
+
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
@@ -15,13 +23,6 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.npc.Template.TemplateBuilder;
 import net.citizensnpcs.util.Messages;
-
-import org.bukkit.command.CommandSender;
-
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 @Requirements(selected = true, ownership = true)
 public class TemplateCommands {
@@ -43,7 +44,7 @@ public class TemplateCommands {
         int appliedCount = 0;
         if (args.argsLength() == 2) {
             if (npc == null)
-                throw new CommandException(Messaging.tr(Messages.COMMAND_MUST_HAVE_SELECTED));
+                throw new CommandException(Messaging.tr(CommandMessages.MUST_HAVE_SELECTED));
             template.apply(npc);
             appliedCount++;
         } else {

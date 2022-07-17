@@ -36,6 +36,7 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
@@ -114,7 +115,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             cachePaths = !cachePaths;
             return null;
         } else if (!(sender instanceof Player)) {
-            Messaging.sendErrorTr(sender, Messages.COMMAND_MUST_BE_INGAME);
+            Messaging.sendErrorTr(sender, CommandMessages.MUST_BE_INGAME);
             return null;
         }
         return new LinearWaypointEditor((Player) sender);
