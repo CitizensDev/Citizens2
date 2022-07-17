@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * Represents a single inventory slot in a {@link InventoryMenu}.
@@ -43,6 +44,12 @@ public class InventoryMenuSlot {
      */
     public void addClickHandler(Consumer<CitizensInventoryClickEvent> func) {
         handlers.add(func);
+    }
+
+    public void clear() {
+        handlers.clear();
+        actionFilter = null;
+        setItemStack(null);
     }
 
     @Override
@@ -100,8 +107,8 @@ public class InventoryMenuSlot {
             if (meta != null) {
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                 if (!data.lore().equals("EMPTY")) {
-                    meta.setLore(
-                            Arrays.asList(Colorizer.parseColors(Messaging.tryTranslate(data.lore())).split("\\n|\n")));
+                    meta.setLore(Arrays
+                            .asList(Colorizer.parseColors(Messaging.tryTranslate(data.lore())).split("\\n|\n|<br>")));
                 }
                 if (!data.title().equals("EMPTY")) {
                     meta.setDisplayName(Colorizer.parseColors(Messaging.tryTranslate(data.title())));
@@ -118,7 +125,7 @@ public class InventoryMenuSlot {
             event.setCancelled(true);
             event.setResult(Result.DENY);
         }
-        for (Consumer<CitizensInventoryClickEvent> runnable : handlers) {
+        for (Consumer<CitizensInventoryClickEvent> runnable : Lists.newArrayList(handlers)) {
             runnable.accept(event);
         }
     }
@@ -126,7 +133,9 @@ public class InventoryMenuSlot {
     public void setDescription(String description) {
         ItemStack item = inventory.getItem(index);
         ItemMeta meta = item.getItemMeta();
-        meta.setLore(Arrays.asList(Colorizer.parseColors(description).split("\n")));
+        List<String> list = Arrays.asList(Colorizer.parseColors(description).split("\\n|\n|<br>"));
+        meta.setDisplayName(ChatColor.RESET + list.get(0));
+        meta.setLore(list.subList(1, list.size()));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(meta);
         inventory.setItem(index, item);
@@ -153,11 +162,18 @@ public class InventoryMenuSlot {
         inventory.setItem(index, stack);
     }
 
-    public void setItemStack(ItemStack item, String description) {
-        ItemMeta meta = item.getItemMeta();
-        meta.setLore(Arrays.asList(Colorizer.parseColors(description).split("\n")));
+    public void setItemStack(ItemStack stack, String name) {
+        setItemStack(stack, name, null);
+    }
+
+    public void setItemStack(ItemStack stack, String name, String description) {
+        ItemMeta meta = stack.getItemMeta();
+        meta.setDisplayName(ChatColor.RESET + Colorizer.parseColors(name));
+        if (description != null) {
+            meta.setLore(Arrays.asList(Colorizer.parseColors(description).split("\n")));
+        }
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        item.setItemMeta(meta);
-        inventory.setItem(index, item);
+        stack.setItemMeta(meta);
+        inventory.setItem(index, stack);
     }
 }

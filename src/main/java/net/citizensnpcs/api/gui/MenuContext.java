@@ -30,6 +30,16 @@ public class MenuContext implements SlotSource {
         this.data.putAll(data);
     }
 
+    public void clearSlots() {
+        for (int i = 0; i < slots.length; i++) {
+            InventoryMenuSlot slot = slots[i];
+            if (slot != null) {
+                slot.clear();
+            }
+            slots[i] = null;
+        }
+    }
+
     public Map<String, Object> data() {
         return data;
     }

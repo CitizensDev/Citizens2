@@ -90,22 +90,24 @@ public class DoorExaminer implements BlockExaminer {
 
         @Override
         public void onReached(NPC npc, Block point) {
-            Location centreDoor = point.getLocation().add(0.5, 0, 0.5);
+            Location doorCentre = point.getLocation().add(0.5, 0, 0.5);
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     if (!npc.getNavigator().isNavigating()) {
+                        if (opened && npc.getStoredLocation().distance(doorCentre) <= 1.8) {
+                            close(npc, point);
+                        }
                         cancel();
                         return;
                     }
 
-                    double dist = npc.getStoredLocation().distance(centreDoor);
-                    if (dist > 1.8) {
+                    if (npc.getStoredLocation().distance(doorCentre) > 1.8) {
                         close(npc, point);
                         cancel();
                     }
                 }
-            }.runTaskTimer(CitizensAPI.getPlugin(), 5, 1);
+            }.runTaskTimer(CitizensAPI.getPlugin(), 3, 1);
         }
 
         private void open(NPC npc, Block point) {
@@ -157,7 +159,8 @@ public class DoorExaminer implements BlockExaminer {
 
         @Override
         public void run(NPC npc, Block point, ListIterator<Block> path) {
-            if (!MinecraftBlockExaminer.isDoor(point.getType()) || opened)
+            if ((!MinecraftBlockExaminer.isDoor(point.getType()) && !MinecraftBlockExaminer.isGate(point.getType()))
+                    || opened)
                 return;
             if (npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5)) > 2.5)
                 return;

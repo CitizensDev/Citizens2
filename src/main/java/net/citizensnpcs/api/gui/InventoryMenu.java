@@ -9,10 +9,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
@@ -69,8 +69,7 @@ public class InventoryMenu implements Listener, Runnable {
     private boolean delayViewerChanges;
     private PageContext page;
     private int pickupAmount = -1;
-    private HumanEntity singleViewer;
-    private final Queue<PageContext> stack = Queues.newArrayDeque();
+    private final Deque<PageContext> stack = Queues.newArrayDeque();
     private boolean transitioning;
     private Collection<InventoryView> views = Lists.newArrayList();
 
@@ -103,7 +102,9 @@ public class InventoryMenu implements Listener, Runnable {
         closingViews = true;
         runViewerModifier(() -> {
             for (InventoryView view : views) {
-                page.page.onClose(view.getPlayer());
+                if (page != null) {
+                    page.page.onClose(view.getPlayer());
+                }
                 view.close();
             }
             views.clear();
@@ -221,7 +222,6 @@ public class InventoryMenu implements Listener, Runnable {
         switch (event.getAction()) {
             case COLLECT_TO_CURSOR:
                 event.setCancelled(true);
-            case NOTHING:
             case UNKNOWN:
             case DROP_ONE_CURSOR:
             case DROP_ALL_CURSOR:
@@ -229,6 +229,8 @@ public class InventoryMenu implements Listener, Runnable {
             default:
                 break;
         }
+        if (event.getSlot() < 0)
+            return;
         InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
         CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(event, pickupAmount);
         slot.onClick(ev);
@@ -441,7 +443,7 @@ public class InventoryMenu implements Listener, Runnable {
                 context.putIfAbsent(entry.getKey(), entry.getValue());
             }
             page.ctx.data().clear();
-            stack.add(page);
+            stack.addLast(page);
         }
         page = new PageContext();
         page.page = instance;
@@ -543,9 +545,10 @@ public class InventoryMenu implements Listener, Runnable {
             page.page.onClose(view.getPlayer());
         }
         Map<String, Object> data = page.ctx.data();
-        page = stack.poll();
+        page = stack.pollLast();
         if (page != null) {
             page.ctx.data().putAll(data);
+            page.page.initialise(page.ctx);
         }
         data.clear();
         transitionViewersToInventory(page == null ? null : page.ctx.getInventory());
