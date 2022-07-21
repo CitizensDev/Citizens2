@@ -445,16 +445,20 @@ public interface NPC extends Agent, Cloneable {
          */
         PATHFINDER_OPEN_DOORS("pathfinder-open-doors"),
         /**
+         * Whether to pick up items. Boolean defaults to isProtected().
+         */
+        PICKUP_ITEMS("pickup-items"),
+        /**
          * @see SkinTrait
          */
         @Deprecated
         PLAYER_SKIN_TEXTURE_PROPERTIES("player-skin-textures"),
+
         /**
          * @see SkinTrait
          */
         @Deprecated
         PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN("player-skin-signature"),
-
         /**
          * @see SkinTrait
          */

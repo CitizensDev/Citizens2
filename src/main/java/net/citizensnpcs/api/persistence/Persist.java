@@ -21,6 +21,12 @@ public @interface Persist {
     Class<?> collectionType() default Collection.class;
 
     /**
+     * The specific value type to use when deserialising values from storage. Most useful when using specific number
+     * types e.g. Long, Byte, Short but storing as Integer.
+     */
+    Class<?> keyType() default String.class;
+
+    /**
      * If using global/static persistence, must be non-empty.
      */
     String namespace() default "";

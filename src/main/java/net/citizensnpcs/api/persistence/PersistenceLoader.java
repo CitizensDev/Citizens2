@@ -114,6 +114,12 @@ public class PersistenceLoader {
         private static final Object NULL = new Object();
     }
 
+    public static <T> PersisterRegistry<T> createRegistry(Class<?> base) {
+        PersisterRegistry<T> registry = new PersisterRegistry<T>();
+        registries.put(base, registry);
+        return registry;
+    }
+
     private static String createRelativeKey(String key, int ext) {
         return createRelativeKey(key, Integer.toString(ext));
     }
@@ -165,13 +171,13 @@ public class PersistenceLoader {
                 deserialiseCollection(set, root, field);
             value = set;
         } else if (Map.class.isAssignableFrom(type)) {
-            Map<String, Object> map;
+            Map<Object, Object> map;
             if (Map.class.isAssignableFrom(collectionType)) {
-                map = (Map<String, Object>) collectionType.newInstance();
+                map = (Map<Object, Object>) collectionType.newInstance();
             } else {
                 boolean hasConcreteType = oldValue != null && Map.class.isAssignableFrom(oldValue.getClass())
                         && !oldValue.getClass().isInterface();
-                map = (Map<String, Object>) (hasConcreteType ? oldValue : Maps.newHashMap());
+                map = (Map<Object, Object>) (hasConcreteType ? oldValue : Maps.newHashMap());
             }
             deserialiseMap(map, root, field);
             value = map;
@@ -289,12 +295,40 @@ public class PersistenceLoader {
         return deserialised;
     }
 
-    private static void deserialiseMap(Map<String, Object> map, DataKey root, PersistField field) {
+    private static void deserialiseMap(Map<Object, Object> map, DataKey root, PersistField field) {
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
             Object loaded = deserialiseCollectionValue(field, subKey, field.persistAnnotation.valueType());
             if (loaded == null)
                 continue;
-            map.put(subKey.name(), loaded);
+            Object key = subKey.name();
+            Class<?> type = field.persistAnnotation.keyType();
+            if (type != String.class) {
+                if (type.isPrimitive() || Primitives.isWrapperType(type)) {
+                    if (type == Long.class) {
+                        key = Long.parseLong(String.valueOf(key));
+                    }
+                    if (type == Byte.class) {
+                        key = Byte.parseByte(String.valueOf(key));
+                    }
+                    if (type == Short.class) {
+                        key = Short.parseShort(String.valueOf(key));
+                    }
+                    if (type == Float.class) {
+                        key = Float.parseFloat(String.valueOf(key));
+                    }
+                    if (type == Double.class) {
+                        key = Double.parseDouble(String.valueOf(key));
+                    }
+                    if (type == Integer.class) {
+                        key = Integer.parseInt(String.valueOf(key));
+                    }
+                } else if (type == UUID.class) {
+                    key = UUID.fromString(String.valueOf(key));
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+            }
+            map.put(key, loaded);
         }
     }
 
@@ -333,6 +367,8 @@ public class PersistenceLoader {
         DelegatePersistence delegate = field.getAnnotation(DelegatePersistence.class);
         Persister<?> persister;
         if (delegate == null) {
+            if (registries.containsKey(fallback))
+                return registries.get(fallback);
             return loadedDelegates.get(persistRedirects.get(fallback));
         }
         persister = loadedDelegates.get(delegate.value());
@@ -494,10 +530,10 @@ public class PersistenceLoader {
             }
         } else if (Map.class.isAssignableFrom(field.getType())) {
             @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) fieldValue;
+            Map<Object, Object> map = (Map<Object, Object>) fieldValue;
             root.removeKey(field.key);
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                String key = createRelativeKey(field.key, entry.getKey());
+            for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                String key = createRelativeKey(field.key, String.valueOf(entry.getKey()));
                 serialiseValue(field, root.getRelative(key), entry.getValue());
             }
         } else if (float[].class.isAssignableFrom(field.getType())) {
@@ -538,6 +574,7 @@ public class PersistenceLoader {
     }
 
     private static final Map<Class<?>, PersistField[]> fieldCache = new WeakHashMap<Class<?>, PersistField[]>();
+
     private static final Map<Class<? extends Persister<?>>, Persister<?>> loadedDelegates = new WeakHashMap<Class<? extends Persister<?>>, Persister<?>>();
     private static final Exception loadException = new Exception() {
         @SuppressWarnings("unused")
@@ -547,6 +584,7 @@ public class PersistenceLoader {
         private static final long serialVersionUID = -4245839150826112365L;
     };
     private static final Map<Class<?>, Class<? extends Persister<?>>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister<?>>>();
+    private static final Map<Class<?>, PersisterRegistry<?>> registries = new WeakHashMap<Class<?>, PersisterRegistry<?>>();
 
     static {
         registerPersistDelegate(Location.class, LocationPersister.class);
