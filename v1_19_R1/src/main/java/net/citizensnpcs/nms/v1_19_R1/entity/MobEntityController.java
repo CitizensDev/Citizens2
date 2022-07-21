@@ -15,6 +15,7 @@ import net.citizensnpcs.nms.v1_19_R1.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.Util;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 
 public abstract class MobEntityController extends AbstractEntityController {
@@ -30,6 +31,9 @@ public abstract class MobEntityController extends AbstractEntityController {
         EntityType<?> type = NMSImpl.getEntityType(clazz);
         net.minecraft.world.entity.Entity entity = createEntityFromClass(type, ((CraftWorld) at.getWorld()).getHandle(),
                 npc);
+        if (entity instanceof Mob) {
+            NMSImpl.clearGoals(npc, ((Mob) entity).goalSelector, ((Mob) entity).targetSelector);
+        }
         entity.absMoveTo(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
 
         // entity.onGround isn't updated right away - we approximate here so

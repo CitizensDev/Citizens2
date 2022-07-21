@@ -49,9 +49,6 @@ public class SnowmanController extends MobEntityController {
         public EntitySnowmanNPC(EntityType<? extends SnowGolem> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

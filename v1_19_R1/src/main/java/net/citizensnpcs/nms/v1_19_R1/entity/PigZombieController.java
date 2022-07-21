@@ -49,9 +49,6 @@ public class PigZombieController extends MobEntityController {
         public EntityPigZombieNPC(EntityType<? extends ZombifiedPiglin> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

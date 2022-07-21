@@ -48,9 +48,6 @@ public class SkeletonController extends MobEntityController {
         public EntitySkeletonNPC(EntityType<? extends Skeleton> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

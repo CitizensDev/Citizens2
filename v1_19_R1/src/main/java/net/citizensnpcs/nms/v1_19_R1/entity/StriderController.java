@@ -48,9 +48,6 @@ public class StriderController extends MobEntityController {
         public EntityStriderNPC(EntityType<? extends Strider> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

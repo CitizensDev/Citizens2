@@ -58,7 +58,6 @@ public class PhantomController extends MobEntityController {
             super(types, level);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 setNoAi(true);
                 this.oldMoveController = this.moveControl;
                 this.oldLookController = this.lookControl;

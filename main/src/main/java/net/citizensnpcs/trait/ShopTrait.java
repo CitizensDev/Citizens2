@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -17,6 +19,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
 import net.citizensnpcs.api.gui.ClickHandler;
 import net.citizensnpcs.api.gui.InputMenus;
@@ -69,10 +72,15 @@ public class ShopTrait extends Trait {
         public void display(Player sender) {
             if (viewPermission != null && !sender.hasPermission(viewPermission))
                 return;
+            if (pages.size() == 0) {
+                sender.sendMessage(ChatColor.RED + "Empty shop");
+                return;
+            }
+            InventoryMenu.createSelfRegistered(new NPCShopViewer(this)).present(sender);
         }
 
         public void displayEditor(Player sender) {
-            InventoryMenu.createSelfRegistered(new NPCShopEditor(this)).present(sender);
+            InventoryMenu.createSelfRegistered(new NPCShopSettings(this)).present(sender);
         }
 
         public String getName() {
@@ -174,7 +182,7 @@ public class ShopTrait extends Trait {
             edit.setItemStack(new ItemStack(Material.BOOK), "Edit page");
             edit.addClickHandler(evt -> {
                 evt.setCancelled(true);
-                ctx.getMenu().transition(new NPCShopPageEditor(shop.getOrCreatePage(page)));
+                ctx.getMenu().transition(new NPCShopPageSettings(shop.getOrCreatePage(page)));
             });
         }
 
@@ -187,44 +195,6 @@ public class ShopTrait extends Trait {
                 page = Math.max(page - 1, 0);
             }
             changePage(page);
-        }
-    }
-
-    @Menu(title = "NPC Shop Editor", type = InventoryType.HOPPER, dimensions = { 0, 5 })
-    public static class NPCShopEditor extends InventoryMenuPage {
-        private MenuContext ctx;
-        private final NPCShop shop;
-
-        public NPCShopEditor(NPCShop shop) {
-            this.shop = shop;
-        }
-
-        @Override
-        public void initialise(MenuContext ctx) {
-            this.ctx = ctx;
-        }
-
-        @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, lore = "Edit shop items")
-        public void onEditItems(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
-            ctx.getMenu().transition(new NPCShopContentsEditor(shop));
-        }
-
-        @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1, lore = "Edit shop permission")
-        public void onPermissionChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
-            ctx.getMenu().transition(InputMenus.stringSetter(shop::getRequiredPermission, shop::setPermission));
-        }
-
-        @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, lore = "Edit shop type")
-        public void onShopTypeChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
-            ctx.getMenu().transition(InputMenus.<ShopType> picker("Edit shop type", chosen -> {
-                shop.type = chosen.getValue();
-            }, Choice.<ShopType> of(ShopType.BUY, Material.DIAMOND, "Players buy items", shop.type == ShopType.BUY),
-                    Choice.of(ShopType.SELL, Material.EMERALD, "Players sell items", shop.type == ShopType.SELL),
-                    Choice.of(ShopType.COMMAND, Material.ENDER_EYE, "Clicks trigger commands only",
-                            shop.type == ShopType.COMMAND)));
         }
     }
 
@@ -243,6 +213,9 @@ public class ShopTrait extends Trait {
             } catch (CloneNotSupportedException e) {
                 throw new Error(e);
             }
+        }
+
+        public void onClick(NPCShop shop, CitizensInventoryClickEvent event) {
         }
     }
 
@@ -319,14 +292,14 @@ public class ShopTrait extends Trait {
             }
         }
 
-        @MenuSlot(slot = { 4, 4 }, material = Material.TNT, amount = 1, lore = "<c>Remove")
+        @MenuSlot(slot = { 4, 4 }, material = Material.TNT, amount = 1, title = "<c>Remove")
         public void onRemove(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             original = null;
             event.setCancelled(true);
             ctx.getMenu().transitionBack();
         }
 
-        @MenuSlot(slot = { 4, 5 }, material = Material.EMERALD_BLOCK, amount = 1, lore = "Save")
+        @MenuSlot(slot = { 4, 5 }, material = Material.EMERALD_BLOCK, amount = 1, title = "Save")
         public void onSave(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             original = modified;
             event.setCancelled(true);
@@ -360,11 +333,11 @@ public class ShopTrait extends Trait {
     }
 
     @Menu(title = "NPC Shop Page Editor", type = InventoryType.CHEST, dimensions = { 5, 9 })
-    public static class NPCShopPageEditor extends InventoryMenuPage {
+    public static class NPCShopPageSettings extends InventoryMenuPage {
         private MenuContext ctx;
         private final NPCShopPage page;
 
-        public NPCShopPageEditor(NPCShopPage page) {
+        public NPCShopPageSettings(NPCShopPage page) {
             this.page = page;
         }
 
@@ -387,6 +360,121 @@ public class ShopTrait extends Trait {
             event.setCancelled(true);
             ctx.data().put("removePage", page.index);
             ctx.getMenu().transitionBack();
+        }
+    }
+
+    @Menu(title = "NPC Shop Editor", type = InventoryType.CHEST, dimensions = { 1, 9 })
+    public static class NPCShopSettings extends InventoryMenuPage {
+        private MenuContext ctx;
+        private final NPCShop shop;
+
+        public NPCShopSettings(NPCShop shop) {
+            this.shop = shop;
+        }
+
+        @Override
+        public void initialise(MenuContext ctx) {
+            this.ctx = ctx;
+        }
+
+        @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "Edit shop items")
+        public void onEditItems(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            event.setCancelled(true);
+            ctx.getMenu().transition(new NPCShopContentsEditor(shop));
+        }
+
+        @MenuSlot(slot = { 0, 8 }, material = Material.CHEST, amount = 1, title = "Open shop")
+        public void onOpenShop(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            event.setCancelled(true);
+            ctx.getMenu().transition(new NPCShopViewer(shop));
+        }
+
+        @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1, title = "Edit shop permission")
+        public void onPermissionChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            event.setCancelled(true);
+            ctx.getMenu().transition(InputMenus.stringSetter(shop::getRequiredPermission, shop::setPermission));
+        }
+
+        @MenuSlot(slot = { 0, 6 }, material = Material.NAME_TAG, amount = 1, title = "Edit shop title")
+        public void onSetTitle(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            event.setCancelled(true);
+            ctx.getMenu().transition(InputMenus.stringSetter(() -> shop.title, newTitle -> {
+                shop.title = newTitle.isEmpty() ? null : newTitle;
+            }));
+        }
+
+        @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, title = "Edit shop type")
+        public void onShopTypeChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            event.setCancelled(true);
+            ctx.getMenu().transition(InputMenus.<ShopType> picker("Edit shop type", chosen -> {
+                shop.type = chosen.getValue();
+            }, Choice.<ShopType> of(ShopType.BUY, Material.DIAMOND, "Players buy items", shop.type == ShopType.BUY),
+                    Choice.of(ShopType.SELL, Material.EMERALD, "Players sell items", shop.type == ShopType.SELL),
+                    Choice.of(ShopType.COMMAND, Material.ENDER_EYE, "Clicks trigger commands only",
+                            shop.type == ShopType.COMMAND)));
+        }
+    }
+
+    @Menu(title = "Shop", type = InventoryType.CHEST, dimensions = { 5, 9 })
+    public static class NPCShopViewer extends InventoryMenuPage {
+        private MenuContext ctx;
+        private int currentPage = 0;
+        private final NPCShop shop;
+
+        public NPCShopViewer(NPCShop shop) {
+            this.shop = shop;
+        }
+
+        public void changePage(int newPage) {
+            this.currentPage = newPage;
+            NPCShopPage page = shop.pages.get(currentPage);
+            if (page.title != null && !page.title.isEmpty()) {
+                Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
+                    ctx.setTitle(page.title);
+                }, 1);
+            }
+            for (int i = 0; i < ctx.getInventory().getSize(); i++) {
+                ctx.getSlot(i).clear();
+                NPCShopItem item = page.getItem(i);
+                if (item == null)
+                    continue;
+
+                ctx.getSlot(i).setItemStack(item.display);
+                ctx.getSlot(i).addClickHandler(evt -> {
+                    evt.setCancelled(true);
+                    item.onClick(shop, evt);
+                });
+            }
+            InventoryMenuSlot prev = ctx.getSlot(4 * 9 + 3);
+            InventoryMenuSlot next = ctx.getSlot(4 * 9 + 5);
+            prev.clear();
+            if (currentPage > 0) {
+                prev.setItemStack(new ItemStack(Material.FEATHER, 1), "Previous page (" + (currentPage) + ")");
+                prev.addClickHandler(evt -> {
+                    evt.setCancelled(true);
+                    changePage(currentPage - 1);
+                });
+            }
+
+            next.clear();
+            if (currentPage + 1 < shop.pages.size()) {
+                next.setItemStack(new ItemStack(Material.FEATHER, 1), "Next page (" + (currentPage + 1) + ")");
+                next.addClickHandler(evt -> {
+                    evt.setCancelled(true);
+                    changePage(currentPage + 1);
+                });
+            }
+        }
+
+        @Override
+        public Inventory createInventory(String title) {
+            return Bukkit.createInventory(null, 45, shop.title == null || shop.title.isEmpty() ? "Shop" : shop.title);
+        }
+
+        @Override
+        public void initialise(MenuContext ctx) {
+            this.ctx = ctx;
+            changePage(currentPage);
         }
     }
 

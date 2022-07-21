@@ -54,9 +54,6 @@ public class EndermiteController extends MobEntityController {
         public EntityEndermiteNPC(EntityType<? extends Endermite> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

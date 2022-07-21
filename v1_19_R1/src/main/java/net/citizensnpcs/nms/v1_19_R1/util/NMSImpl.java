@@ -292,7 +292,6 @@ import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -1493,7 +1492,20 @@ public class NMSImpl implements NMSBridge {
                 menuType = MenuType.CARTOGRAPHY_TABLE;
                 break;
             case CHEST:
-                menuType = MenuType.GENERIC_9x5;
+                int sz = view.getTopInventory().getSize();
+                if (sz > 45) {
+                    menuType = MenuType.GENERIC_9x6;
+                } else if (sz > 36) {
+                    menuType = MenuType.GENERIC_9x5;
+                } else if (sz > 27) {
+                    menuType = MenuType.GENERIC_9x4;
+                } else if (sz > 18) {
+                    menuType = MenuType.GENERIC_9x3;
+                } else if (sz > 9) {
+                    menuType = MenuType.GENERIC_9x2;
+                } else {
+                    menuType = MenuType.GENERIC_9x1;
+                }
                 break;
             case COMPOSTER:
                 break;
@@ -1545,8 +1557,7 @@ public class NMSImpl implements NMSBridge {
                 menuType = MenuType.CRAFTING;
                 break;
         }
-        InventoryMenu active = handle.inventoryMenu;
-        handle.connection.send(new ClientboundOpenScreenPacket(active.containerId, menuType,
+        handle.connection.send(new ClientboundOpenScreenPacket(handle.inventoryMenu.containerId, menuType,
                 MutableComponent.create(new LiteralContents(newTitle))));
         player.updateInventory();
     }

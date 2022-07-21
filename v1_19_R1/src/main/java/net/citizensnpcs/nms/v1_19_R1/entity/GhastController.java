@@ -45,9 +45,6 @@ public class GhastController extends MobEntityController {
         public EntityGhastNPC(EntityType<? extends Ghast> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override
@@ -69,7 +66,7 @@ public class GhastController extends MobEntityController {
         public void customServerAiStep() {
             if (npc != null) {
                 npc.update();
-                NMSImpl.updateMinecraftAIState(npc, this); 
+                NMSImpl.updateMinecraftAIState(npc, this);
             }
             super.customServerAiStep();
         }
