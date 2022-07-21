@@ -227,6 +227,7 @@ import net.minecraft.server.v1_16_R3.ChunkProviderServer;
 import net.minecraft.server.v1_16_R3.Container;
 import net.minecraft.server.v1_16_R3.ContainerAccess;
 import net.minecraft.server.v1_16_R3.ContainerAnvil;
+import net.minecraft.server.v1_16_R3.Containers;
 import net.minecraft.server.v1_16_R3.ControllerJump;
 import net.minecraft.server.v1_16_R3.ControllerMove;
 import net.minecraft.server.v1_16_R3.ControllerMoveFlying;
@@ -1452,9 +1453,93 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
         EntityPlayer handle = (EntityPlayer) getHandle(player);
+        Containers<?> menuType = null;
+        switch (view.getTopInventory().getType()) {
+            case ANVIL:
+                menuType = Containers.ANVIL;
+                break;
+            case BARREL:
+                menuType = Containers.GENERIC_9X3;
+                break;
+            case BEACON:
+                menuType = Containers.BEACON;
+                break;
+            case BLAST_FURNACE:
+                menuType = Containers.BLAST_FURNACE;
+                break;
+            case BREWING:
+                menuType = Containers.BREWING_STAND;
+                break;
+            case CARTOGRAPHY:
+                menuType = Containers.CARTOGRAPHY_TABLE;
+                break;
+            case CHEST:
+                int sz = view.getTopInventory().getSize();
+                if (sz > 45) {
+                    menuType = Containers.GENERIC_9X6;
+                } else if (sz > 36) {
+                    menuType = Containers.GENERIC_9X5;
+                } else if (sz > 27) {
+                    menuType = Containers.GENERIC_9X4;
+                } else if (sz > 18) {
+                    menuType = Containers.GENERIC_9X3;
+                } else if (sz > 9) {
+                    menuType = Containers.GENERIC_9X2;
+                } else {
+                    menuType = Containers.GENERIC_9X1;
+                }
+                break;
+            case PLAYER:
+            case CRAFTING:
+            case CREATIVE:
+                return;
+            case DISPENSER:
+            case DROPPER:
+                menuType = Containers.GENERIC_3X3;
+                break;
+            case ENCHANTING:
+                menuType = Containers.ENCHANTMENT;
+                break;
+            case ENDER_CHEST:
+                menuType = Containers.GENERIC_9X3;
+                break;
+            case FURNACE:
+                menuType = Containers.FURNACE;
+                break;
+            case GRINDSTONE:
+                menuType = Containers.GRINDSTONE;
+                break;
+            case HOPPER:
+                menuType = Containers.HOPPER;
+                break;
+            case LECTERN:
+                menuType = Containers.LECTERN;
+                break;
+            case LOOM:
+                menuType = Containers.LOOM;
+                break;
+            case MERCHANT:
+                menuType = Containers.MERCHANT;
+                break;
+            case SHULKER_BOX:
+                menuType = Containers.SHULKER_BOX;
+                break;
+            case SMITHING:
+                menuType = Containers.SMITHING;
+                break;
+            case SMOKER:
+                menuType = Containers.SMOKER;
+                break;
+            case STONECUTTER:
+                menuType = Containers.STONECUTTER;
+                break;
+            case WORKBENCH:
+                menuType = Containers.CRAFTING;
+                break;
+        }
         Container active = handle.activeContainer;
-        handle.playerConnection.sendPacket(
-                new PacketPlayOutOpenWindow(active.windowId, active.getType(), new ChatComponentText(newTitle)));
+        handle.playerConnection
+                .sendPacket(new PacketPlayOutOpenWindow(active.windowId, menuType, new ChatComponentText(newTitle)));
         player.updateInventory();
     }
 

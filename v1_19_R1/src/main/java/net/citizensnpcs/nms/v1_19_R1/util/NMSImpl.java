@@ -1557,7 +1557,7 @@ public class NMSImpl implements NMSBridge {
                 menuType = MenuType.CRAFTING;
                 break;
         }
-        handle.connection.send(new ClientboundOpenScreenPacket(handle.inventoryMenu.containerId, menuType,
+        handle.connection.send(new ClientboundOpenScreenPacket(handle.containerMenu.containerId, menuType,
                 MutableComponent.create(new LiteralContents(newTitle))));
         player.updateInventory();
     }

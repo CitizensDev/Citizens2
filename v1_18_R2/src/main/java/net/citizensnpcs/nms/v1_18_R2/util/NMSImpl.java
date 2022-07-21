@@ -222,7 +222,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
-import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
@@ -284,7 +283,7 @@ import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -1456,9 +1455,94 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
         ServerPlayer handle = (ServerPlayer) getHandle(player);
-        InventoryMenu active = handle.inventoryMenu;
-        handle.connection.send(
-                new ClientboundOpenScreenPacket(active.containerId, active.getType(), new TextComponent(newTitle)));
+        MenuType<?> menuType = null;
+        switch (view.getTopInventory().getType()) {
+            case ANVIL:
+                menuType = MenuType.ANVIL;
+                break;
+            case BARREL:
+                menuType = MenuType.GENERIC_9x3;
+                break;
+            case BEACON:
+                menuType = MenuType.BEACON;
+                break;
+            case BLAST_FURNACE:
+                menuType = MenuType.BLAST_FURNACE;
+                break;
+            case BREWING:
+                menuType = MenuType.BREWING_STAND;
+                break;
+            case CARTOGRAPHY:
+                menuType = MenuType.CARTOGRAPHY_TABLE;
+                break;
+            case CHEST:
+                int sz = view.getTopInventory().getSize();
+                if (sz > 45) {
+                    menuType = MenuType.GENERIC_9x6;
+                } else if (sz > 36) {
+                    menuType = MenuType.GENERIC_9x5;
+                } else if (sz > 27) {
+                    menuType = MenuType.GENERIC_9x4;
+                } else if (sz > 18) {
+                    menuType = MenuType.GENERIC_9x3;
+                } else if (sz > 9) {
+                    menuType = MenuType.GENERIC_9x2;
+                } else {
+                    menuType = MenuType.GENERIC_9x1;
+                }
+                break;
+            case COMPOSTER:
+                break;
+            case PLAYER:
+            case CRAFTING:
+            case CREATIVE:
+                return;
+            case DISPENSER:
+            case DROPPER:
+                menuType = MenuType.GENERIC_3x3;
+                break;
+            case ENCHANTING:
+                menuType = MenuType.ENCHANTMENT;
+                break;
+            case ENDER_CHEST:
+                menuType = MenuType.GENERIC_9x3;
+                break;
+            case FURNACE:
+                menuType = MenuType.FURNACE;
+                break;
+            case GRINDSTONE:
+                menuType = MenuType.GRINDSTONE;
+                break;
+            case HOPPER:
+                menuType = MenuType.HOPPER;
+                break;
+            case LECTERN:
+                menuType = MenuType.LECTERN;
+                break;
+            case LOOM:
+                menuType = MenuType.LOOM;
+                break;
+            case MERCHANT:
+                menuType = MenuType.MERCHANT;
+                break;
+            case SHULKER_BOX:
+                menuType = MenuType.SHULKER_BOX;
+                break;
+            case SMITHING:
+                menuType = MenuType.SMITHING;
+                break;
+            case SMOKER:
+                menuType = MenuType.SMOKER;
+                break;
+            case STONECUTTER:
+                menuType = MenuType.STONECUTTER;
+                break;
+            case WORKBENCH:
+                menuType = MenuType.CRAFTING;
+                break;
+        }
+        handle.connection.send(new ClientboundOpenScreenPacket(handle.containerMenu.containerId, menuType,
+                new TextComponent(newTitle)));
         player.updateInventory();
     }
 
