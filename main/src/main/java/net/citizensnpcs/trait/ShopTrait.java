@@ -31,6 +31,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.trait.shop.NPCShopAction;
 
 /**
  * Shop trait for NPC GUI shops.
@@ -50,7 +51,7 @@ public class ShopTrait extends Trait {
     }
 
     public static class NPCShop {
-        @Persist
+        @Persist(value = "")
         private final String name;
         @Persist(reify = true)
         private final List<NPCShopPage> pages = Lists.newArrayList();
@@ -123,7 +124,7 @@ public class ShopTrait extends Trait {
             NPCShopPage sp = shop.getOrCreatePage(page);
             for (int i = 0; i < ctx.getInventory().getSize(); i++) {
                 ctx.getSlot(i).clear();
-                NPCShopItem item = sp.items.get(i);
+                NPCShopItem item = sp.getItem(i);
                 final int idx = i;
                 ctx.getSlot(i).addClickHandler(evt -> {
                     ctx.clearSlots();
@@ -137,9 +138,9 @@ public class ShopTrait extends Trait {
 
                     ctx.getMenu().transition(new NPCShopItemEditor(display, modified -> {
                         if (modified == null) {
-                            sp.items.remove(idx);
+                            sp.removeItem(idx);
                         } else {
-                            sp.items.put(idx, modified);
+                            sp.setItem(idx, modified);
                         }
                     }));
                 });
@@ -229,9 +230,11 @@ public class ShopTrait extends Trait {
 
     public static class NPCShopItem implements Cloneable {
         @Persist
-        private int cost;
+        private List<NPCShopAction> cost;
         @Persist
         private ItemStack display;
+        @Persist
+        private List<NPCShopAction> result;
 
         @Override
         public NPCShopItem clone() {
@@ -334,13 +337,25 @@ public class ShopTrait extends Trait {
     public static class NPCShopPage {
         @Persist("")
         private int index;
-        @Persist(reify = true)
+        @Persist(keyType = Integer.class, reify = true)
         private final Map<Integer, NPCShopItem> items = Maps.newHashMap();
         @Persist
         private String title;
 
         public NPCShopPage(int page) {
             this.index = page;
+        }
+
+        public NPCShopItem getItem(int idx) {
+            return items.get(idx);
+        }
+
+        public void removeItem(int idx) {
+            items.remove(idx);
+        }
+
+        public void setItem(int idx, NPCShopItem modified) {
+            items.put(idx, modified);
         }
     }
 
@@ -383,6 +398,6 @@ public class ShopTrait extends Trait {
 
     @Persist(value = "npcShops", reify = true, namespace = "shopstrait")
     private static Map<String, NPCShop> NPC_SHOPS = Maps.newHashMap();
-    @Persist(value = "namedShops", reify = true, namespace = "shopstrait")
+    @Persist(value = "globalShops", reify = true, namespace = "shopstrait")
     private static Map<String, NPCShop> SHOPS = Maps.newHashMap();
 }

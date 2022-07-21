@@ -360,9 +360,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
 
-        if (Setting.NPC_COST.asDouble() > 0) {
-            setupEconomy();
-        }
+        setupEconomy();
 
         registerCommands();
         enableSubPlugins();

@@ -444,9 +444,10 @@ public class CitizensNPC extends AbstractNPC {
 
             if (isLiving) {
                 NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
-                if (isProtected() && SUPPORT_PICKUP_ITEMS) {
+                if (SUPPORT_PICKUP_ITEMS) {
                     try {
-                        ((LivingEntity) getEntity()).setCanPickupItems(false);
+                        ((LivingEntity) getEntity())
+                                .setCanPickupItems(data().get(NPC.Metadata.PICKUP_ITEMS, !isProtected()));
                     } catch (Throwable t) {
                         SUPPORT_PICKUP_ITEMS = false;
                     }

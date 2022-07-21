@@ -1686,6 +1686,23 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "pickupitems (--set [true|false])",
+            desc = "Allow NPC to pick up items",
+            modifiers = { "pickupitems" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.pickupitems")
+    public void pickupitems(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        boolean pickup = !npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected());
+        if (args.hasValueFlag("set")) {
+            pickup = Boolean.parseBoolean(args.getFlag("set").toLowerCase());
+        }
+        npc.data().set(NPC.Metadata.PICKUP_ITEMS, pickup);
+        Messaging.send(sender, pickup ? Messages.PICKUP_ITEMS_SET : Messages.PICKUP_ITEMS_UNSET, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "panimate [animation]",
             desc = "Plays a player animation",
             modifiers = { "panimate" },

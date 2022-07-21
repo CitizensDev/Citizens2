@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -55,11 +56,11 @@ import net.milkbowl.vault.economy.Economy;
 
 @TraitName("commandtrait")
 public class CommandTrait extends Trait {
-    @Persist
+    @Persist(keyType = Integer.class)
     @DelegatePersistence(NPCCommandPersister.class)
-    private final Map<String, NPCCommand> commands = Maps.newHashMap();
-    @Persist(reify = true)
-    private final Map<String, PlayerNPCCommand> cooldowns = Maps.newHashMap();
+    private final Map<Integer, NPCCommand> commands = Maps.newHashMap();
+    @Persist(keyType = UUID.class, reify = true)
+    private final Map<UUID, PlayerNPCCommand> cooldowns = Maps.newHashMap();
     @Persist
     private double cost = -1;
     private final Map<String, Set<CommandTraitMessages>> executionErrors = Maps.newHashMap();
@@ -82,7 +83,7 @@ public class CommandTrait extends Trait {
 
     public int addCommand(NPCCommandBuilder builder) {
         int id = getNewId();
-        commands.put(String.valueOf(id), builder.build(id));
+        commands.put(id, builder.build(id));
         return id;
     }
 
@@ -228,7 +229,7 @@ public class CommandTrait extends Trait {
                 }
                 for (NPCCommand command : commandList) {
                     if (executionMode == ExecutionMode.SEQUENTIAL) {
-                        PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
+                        PlayerNPCCommand info = cooldowns.get(player.getUniqueId());
                         if (info != null && info.lastUsedHand != hand) {
                             info.lastUsedHand = hand;
                             info.lastUsedId = -1;
@@ -252,10 +253,10 @@ public class CommandTrait extends Trait {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        PlayerNPCCommand info = cooldowns.get(player.getUniqueId().toString());
+                        PlayerNPCCommand info = cooldowns.get(player.getUniqueId());
                         if (info == null && (executionMode == ExecutionMode.SEQUENTIAL
                                 || PlayerNPCCommand.requiresTracking(command))) {
-                            cooldowns.put(player.getUniqueId().toString(), info = new PlayerNPCCommand());
+                            cooldowns.put(player.getUniqueId(), info = new PlayerNPCCommand());
                         }
                         if (info != null && !info.canUse(CommandTrait.this, player, command)) {
                             return;
@@ -305,14 +306,14 @@ public class CommandTrait extends Trait {
 
     private int getNewId() {
         int i = 0;
-        while (commands.containsKey(String.valueOf(i))) {
+        while (commands.containsKey(i)) {
             i++;
         }
         return i;
     }
 
     public boolean hasCommandId(int id) {
-        return commands.containsKey(String.valueOf(id));
+        return commands.containsKey(id);
     }
 
     public boolean isHideErrorMessages() {
@@ -320,7 +321,7 @@ public class CommandTrait extends Trait {
     }
 
     public void removeCommandById(int id) {
-        commands.remove(String.valueOf(id));
+        commands.remove(id);
     }
 
     private void sendErrorMessage(Player player, CommandTraitMessages msg, Function<String, String> transform,
