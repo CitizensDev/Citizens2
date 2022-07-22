@@ -346,8 +346,8 @@ public class CitizensNPC extends AbstractNPC {
                         NMS.replaceTrackerEntry((Player) getEntity());
                         PlayerUpdateTask.registerPlayer(getEntity());
                     }
-                    if (SUPPORT_NODAMAGE_TICKS && (data().has(NPC.Metadata.SPAWN_NODAMAGE_TICKS)
-                            || Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt() != 20)) {
+                    if (SUPPORT_NODAMAGE_TICKS && (Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt() != 20
+                            || data().has(NPC.Metadata.SPAWN_NODAMAGE_TICKS))) {
                         try {
                             entity.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
                                     Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt()));
@@ -411,7 +411,10 @@ public class CitizensNPC extends AbstractNPC {
                     }
                 }
             } else if (data().<Boolean> get(NPC.Metadata.SWIMMING, !SwimmingExaminer.isWaterMob(getEntity()))) {
-                NMS.trySwim(getEntity());
+                Gravity trait = getTraitNullable(Gravity.class);
+                if (trait == null || trait.hasGravity()) {
+                    NMS.trySwim(getEntity());
+                }
             }
             navigator.run();
             if (SUPPORT_GLOWING) {
