@@ -62,7 +62,6 @@ public class HorseDonkeyController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
                 ((Donkey) getBukkitEntity()).setDomestication(((Donkey) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }

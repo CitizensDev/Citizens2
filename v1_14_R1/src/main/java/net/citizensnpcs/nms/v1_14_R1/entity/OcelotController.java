@@ -48,9 +48,6 @@ public class OcelotController extends MobEntityController {
         public EntityOcelotNPC(EntityTypes<? extends EntityOcelot> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

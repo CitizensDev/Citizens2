@@ -47,9 +47,6 @@ public class WitchController extends MobEntityController {
         public EntityWitchNPC(EntityTypes<? extends EntityWitch> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

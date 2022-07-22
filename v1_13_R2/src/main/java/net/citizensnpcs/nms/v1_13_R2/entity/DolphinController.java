@@ -60,7 +60,6 @@ public class DolphinController extends MobEntityController {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
                 this.setNoAI(true);
                 this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
                         .setValue(this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() / 10);

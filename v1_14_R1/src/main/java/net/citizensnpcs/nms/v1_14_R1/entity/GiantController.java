@@ -46,9 +46,6 @@ public class GiantController extends MobEntityController {
         public EntityGiantNPC(EntityTypes<? extends EntityGiantZombie> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

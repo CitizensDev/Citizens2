@@ -40,9 +40,6 @@ public class GuardianController extends MobEntityController {
         public EntityGuardianNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.nms.v1_15_R1.util.PlayerControllerMove;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -39,17 +40,9 @@ public class DolphinController extends MobEntityController {
         return (Dolphin) super.getBukkitEntity();
     }
 
-    public static class DolphinNPC extends CraftDolphin implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class DolphinNPC extends CraftDolphin implements ForwardingNPCHolder {
         public DolphinNPC(EntityDolphinNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 
@@ -65,7 +58,6 @@ public class DolphinController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 this.oldMoveController = this.moveController;
                 this.moveController = new ControllerMove(this);
                 this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)

@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -60,7 +61,6 @@ public class TraderLlamaController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 ((TraderLlama) getBukkitEntity())
                         .setDomestication(((TraderLlama) getBukkitEntity()).getMaxDomestication());
             }
@@ -225,17 +225,9 @@ public class TraderLlamaController extends MobEntityController {
         private static final MethodHandle bF = NMS.getSetter(EntityLlamaTrader.class, "bF");
     }
 
-    public static class TraderLlamaNPC extends CraftTraderLlama implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class TraderLlamaNPC extends CraftTraderLlama implements ForwardingNPCHolder {
         public TraderLlamaNPC(EntityTraderLlamaNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

@@ -53,9 +53,6 @@ public class MushroomCowController extends MobEntityController {
         public EntityMushroomCowNPC(EntityTypes<? extends EntityMushroomCow> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

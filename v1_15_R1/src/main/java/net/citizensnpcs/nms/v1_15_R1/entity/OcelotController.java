@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -49,9 +50,6 @@ public class OcelotController extends MobEntityController {
         public EntityOcelotNPC(EntityTypes<? extends EntityOcelot> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override
@@ -205,17 +203,9 @@ public class OcelotController extends MobEntityController {
         }
     }
 
-    public static class OcelotNPC extends CraftOcelot implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class OcelotNPC extends CraftOcelot implements ForwardingNPCHolder {
         public OcelotNPC(EntityOcelotNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

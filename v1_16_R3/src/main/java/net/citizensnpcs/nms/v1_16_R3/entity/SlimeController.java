@@ -53,7 +53,6 @@ public class SlimeController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 setSize(3, true);
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 this.oldMoveController = this.moveController;
                 this.moveController = new PlayerControllerMove(this);
             }

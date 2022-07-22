@@ -41,9 +41,6 @@ public class ShulkerController extends MobEntityController {
         public EntityShulkerNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

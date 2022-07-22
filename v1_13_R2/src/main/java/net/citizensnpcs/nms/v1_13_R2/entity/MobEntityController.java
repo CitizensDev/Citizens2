@@ -12,9 +12,11 @@ import org.bukkit.entity.Entity;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_13_R2.EntityInsentient;
 import net.minecraft.server.v1_13_R2.World;
 
 public abstract class MobEntityController extends AbstractEntityController {
@@ -29,6 +31,9 @@ public abstract class MobEntityController extends AbstractEntityController {
     protected Entity createEntity(Location at, NPC npc) {
         net.minecraft.server.v1_13_R2.Entity entity = createEntityFromClass(((CraftWorld) at.getWorld()).getHandle(),
                 npc);
+        if (entity instanceof EntityInsentient) {
+            NMSImpl.clearGoals(((EntityInsentient) entity).goalSelector, ((EntityInsentient) entity).targetSelector);
+        }
         entity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
 
         // entity.onGround isn't updated right away - we approximate here so

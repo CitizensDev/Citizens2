@@ -47,9 +47,6 @@ public class EvokerController extends MobEntityController {
         public EntityEvokerNPC(EntityTypes<? extends EntityEvoker> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

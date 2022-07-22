@@ -47,9 +47,6 @@ public class ZoglinController extends MobEntityController {
         public EntityZoglinNPC(EntityTypes<? extends EntityZoglin> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

@@ -47,9 +47,6 @@ public class ParrotController extends MobEntityController {
         public EntityParrotNPC(EntityTypes<? extends EntityParrot> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

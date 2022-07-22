@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.nms.v1_15_R1.util.PlayerControllerMove;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -52,7 +53,6 @@ public class MagmaCubeController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 setSize(3, true);
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 this.oldMoveController = this.moveController;
                 this.moveController = new PlayerControllerMove(this);
             }
@@ -214,17 +214,9 @@ public class MagmaCubeController extends MobEntityController {
         }
     }
 
-    public static class MagmaCubeNPC extends CraftMagmaCube implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class MagmaCubeNPC extends CraftMagmaCube implements ForwardingNPCHolder {
         public MagmaCubeNPC(EntityMagmaCubeNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

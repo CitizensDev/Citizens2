@@ -50,7 +50,6 @@ public class TurtleController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
                 this.moveController = new ControllerMove(this);
                 this.bt = new EmptyControllerJump(this);
             }

@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -62,7 +63,6 @@ public class HorseMuleController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 ((Mule) getBukkitEntity()).setDomestication(((Mule) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
@@ -242,17 +242,10 @@ public class HorseMuleController extends MobEntityController {
         }
     }
 
-    public static class HorseMuleNPC extends CraftMule implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class HorseMuleNPC extends CraftMule implements ForwardingNPCHolder {
         public HorseMuleNPC(EntityHorseMuleNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
 
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

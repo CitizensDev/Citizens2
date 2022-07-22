@@ -52,9 +52,6 @@ public class BlazeController extends MobEntityController {
         public EntityBlazeNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

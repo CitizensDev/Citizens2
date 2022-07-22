@@ -4,11 +4,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftWitch;
-import org.bukkit.entity.Witch;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -32,8 +32,8 @@ public class WitchController extends MobEntityController {
     }
 
     @Override
-    public Witch getBukkitEntity() {
-        return (Witch) super.getBukkitEntity();
+    public org.bukkit.entity.Witch getBukkitEntity() {
+        return (org.bukkit.entity.Witch) super.getBukkitEntity();
     }
 
     public static class EntityWitchNPC extends EntityWitch implements NPCHolder {
@@ -46,9 +46,6 @@ public class WitchController extends MobEntityController {
         public EntityWitchNPC(EntityTypes<? extends EntityWitch> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override
@@ -194,17 +191,9 @@ public class WitchController extends MobEntityController {
         }
     }
 
-    public static class WitchNPC extends CraftWitch implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class WitchNPC extends CraftWitch implements ForwardingNPCHolder {
         public WitchNPC(EntityWitchNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

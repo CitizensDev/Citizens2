@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -48,9 +49,6 @@ public class RavagerController extends MobEntityController {
         public EntityRavagerNPC(EntityTypes<? extends EntityRavager> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override
@@ -198,17 +196,9 @@ public class RavagerController extends MobEntityController {
         }
     }
 
-    public static class RavagerNPC extends CraftRavager implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class RavagerNPC extends CraftRavager implements ForwardingNPCHolder {
         public RavagerNPC(EntityRavagerNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -33,17 +34,9 @@ public class BlazeController extends MobEntityController {
         return (Blaze) super.getBukkitEntity();
     }
 
-    public static class BlazeNPC extends CraftBlaze implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class BlazeNPC extends CraftBlaze implements ForwardingNPCHolder {
         public BlazeNPC(EntityBlazeNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 
@@ -57,9 +50,6 @@ public class BlazeController extends MobEntityController {
         public EntityBlazeNPC(EntityTypes<? extends EntityBlaze> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

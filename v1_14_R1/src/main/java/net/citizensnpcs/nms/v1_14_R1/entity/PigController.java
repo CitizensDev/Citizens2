@@ -49,9 +49,6 @@ public class PigController extends MobEntityController {
         public EntityPigNPC(EntityTypes<? extends EntityPig> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

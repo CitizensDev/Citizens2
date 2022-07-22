@@ -59,7 +59,6 @@ public class LlamaController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 ((Llama) getBukkitEntity()).setDomestication(((Llama) getBukkitEntity()).getMaxDomestication());
             }
         }

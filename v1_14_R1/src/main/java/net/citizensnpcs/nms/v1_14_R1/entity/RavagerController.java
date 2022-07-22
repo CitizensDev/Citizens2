@@ -48,10 +48,6 @@ public class RavagerController extends MobEntityController {
         public EntityRavagerNPC(EntityTypes<? extends EntityRavager> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-
-            }
         }
 
         @Override

@@ -41,9 +41,6 @@ public class SilverfishController extends MobEntityController {
         public EntitySilverfishNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override
@@ -54,13 +51,17 @@ public class SilverfishController extends MobEntityController {
         }
 
         @Override
-        protected SoundEffect cf() {
-            return NMSImpl.getSoundEffect(npc, super.cf(), NPC.DEATH_SOUND_METADATA);
+        public void a(float f, float f1, float f2) {
+            if (npc == null || !npc.isFlyable()) {
+                super.a(f, f1, f2);
+            } else {
+                NMSImpl.flyingMoveLogic(this, f, f1, f2);
+            }
         }
 
         @Override
-        protected SoundEffect d(DamageSource damagesource) {
-            return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
+        protected SoundEffect cf() {
+            return NMSImpl.getSoundEffect(npc, super.cf(), NPC.DEATH_SOUND_METADATA);
         }
 
         @Override
@@ -70,6 +71,11 @@ public class SilverfishController extends MobEntityController {
             super.collide(entity);
             if (npc != null)
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+        }
+
+        @Override
+        protected SoundEffect d(DamageSource damagesource) {
+            return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.HURT_SOUND_METADATA);
         }
 
         @Override
@@ -100,15 +106,6 @@ public class SilverfishController extends MobEntityController {
             Vector vector = Util.callPushEvent(npc, x, y, z);
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
-            }
-        }
-
-        @Override
-        public void a(float f, float f1, float f2) {
-            if (npc == null || !npc.isFlyable()) {
-                super.a(f, f1, f2);
-            } else {
-                NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }
         }
 

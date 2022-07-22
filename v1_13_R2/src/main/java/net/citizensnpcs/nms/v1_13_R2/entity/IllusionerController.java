@@ -44,9 +44,6 @@ public class IllusionerController extends MobEntityController {
         public EntityIllusionerNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

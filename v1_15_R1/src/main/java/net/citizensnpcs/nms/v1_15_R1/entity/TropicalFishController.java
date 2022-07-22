@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.nms.v1_15_R1.util.PlayerControllerMove;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -54,7 +55,6 @@ public class TropicalFishController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 this.oldMoveController = this.moveController;
                 this.moveController = new ControllerMove(this);
             }
@@ -230,17 +230,9 @@ public class TropicalFishController extends MobEntityController {
         }
     }
 
-    public static class TropicalFishNPC extends CraftTropicalFish implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class TropicalFishNPC extends CraftTropicalFish implements ForwardingNPCHolder {
         public TropicalFishNPC(EntityTropicalFishNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

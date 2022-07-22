@@ -62,7 +62,6 @@ public class HorseZombieController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
                 ((ZombieHorse) getBukkitEntity())
                         .setDomestication(((ZombieHorse) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();

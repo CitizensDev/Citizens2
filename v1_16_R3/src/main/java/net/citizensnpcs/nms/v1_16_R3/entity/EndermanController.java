@@ -53,9 +53,6 @@ public class EndermanController extends MobEntityController {
         public EntityEndermanNPC(EntityTypes<? extends EntityEnderman> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

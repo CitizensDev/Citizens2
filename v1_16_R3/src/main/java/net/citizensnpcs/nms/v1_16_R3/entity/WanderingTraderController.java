@@ -59,9 +59,6 @@ public class WanderingTraderController extends MobEntityController {
         public EntityWanderingTraderNPC(EntityTypes<? extends EntityVillagerTrader> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

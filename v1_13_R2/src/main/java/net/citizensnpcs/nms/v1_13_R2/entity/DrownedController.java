@@ -58,9 +58,6 @@ public class DrownedController extends MobEntityController {
         public EntityDrownedNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

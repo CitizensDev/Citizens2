@@ -16,6 +16,7 @@ import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_14_R1.EntityInsentient;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.World;
 
@@ -32,6 +33,9 @@ public abstract class MobEntityController extends AbstractEntityController {
         EntityTypes<?> type = NMSImpl.getEntityType(clazz);
         net.minecraft.server.v1_14_R1.Entity entity = createEntityFromClass(type,
                 ((CraftWorld) at.getWorld()).getHandle(), npc);
+        if (entity instanceof EntityInsentient) {
+            NMSImpl.clearGoals(((EntityInsentient) entity).goalSelector, ((EntityInsentient) entity).targetSelector);
+        }
         entity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
 
         // entity.onGround isn't updated right away - we approximate here so

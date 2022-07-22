@@ -58,7 +58,6 @@ public class HorseMuleController extends MobEntityController {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
                 ((Mule) getBukkitEntity()).setDomestication(((Mule) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }

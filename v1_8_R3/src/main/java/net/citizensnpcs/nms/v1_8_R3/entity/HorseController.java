@@ -49,7 +49,6 @@ public class HorseController extends MobEntityController {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
                 ((Horse) getBukkitEntity()).setDomestication(((Horse) getBukkitEntity()).getMaxDomestication());
             }
         }

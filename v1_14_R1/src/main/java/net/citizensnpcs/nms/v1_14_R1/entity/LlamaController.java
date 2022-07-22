@@ -48,7 +48,6 @@ public class LlamaController extends MobEntityController {
 
     public static class EntityLlamaNPC extends EntityLlama implements NPCHolder {
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityLlamaNPC(EntityTypes<? extends EntityLlama> types, World world) {
@@ -59,7 +58,6 @@ public class LlamaController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
                 ((Llama) getBukkitEntity()).setDomestication(((Llama) getBukkitEntity()).getMaxDomestication());
             }
         }

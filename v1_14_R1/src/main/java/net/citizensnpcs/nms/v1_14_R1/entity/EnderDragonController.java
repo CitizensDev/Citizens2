@@ -58,9 +58,6 @@ public class EnderDragonController extends MobEntityController {
         public EntityEnderDragonNPC(EntityTypes<? extends EntityEnderDragon> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

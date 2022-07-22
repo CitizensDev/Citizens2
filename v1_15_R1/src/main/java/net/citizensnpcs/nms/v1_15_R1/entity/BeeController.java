@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -33,17 +34,9 @@ public class BeeController extends MobEntityController {
         return (Bee) super.getBukkitEntity();
     }
 
-    public static class BeeNPC extends CraftBee implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class BeeNPC extends CraftBee implements ForwardingNPCHolder {
         public BeeNPC(EntityBeeNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 
@@ -57,9 +50,6 @@ public class BeeController extends MobEntityController {
         public EntityBeeNPC(EntityTypes<? extends EntityBee> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

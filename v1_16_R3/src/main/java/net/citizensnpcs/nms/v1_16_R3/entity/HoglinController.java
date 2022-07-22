@@ -47,9 +47,6 @@ public class HoglinController extends MobEntityController {
         public EntityHoglinNPC(EntityTypes<? extends EntityHoglin> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

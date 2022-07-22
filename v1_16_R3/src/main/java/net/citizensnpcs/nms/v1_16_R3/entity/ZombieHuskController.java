@@ -47,9 +47,6 @@ public class ZombieHuskController extends MobEntityController {
         public EntityZombieHuskNPC(EntityTypes<? extends EntityZombieHusk> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -46,9 +47,6 @@ public class SkeletonStrayController extends MobEntityController {
         public EntityStrayNPC(EntityTypes<? extends EntitySkeletonStray> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override
@@ -194,17 +192,9 @@ public class SkeletonStrayController extends MobEntityController {
         }
     }
 
-    public static class StrayNPC extends CraftStray implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class StrayNPC extends CraftStray implements ForwardingNPCHolder {
         public StrayNPC(EntityStrayNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

@@ -51,7 +51,6 @@ public class BatController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 setFlying(false);
             }
         }

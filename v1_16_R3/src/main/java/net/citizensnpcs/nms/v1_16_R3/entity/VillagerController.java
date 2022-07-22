@@ -60,7 +60,6 @@ public class VillagerController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.3);
             }
         }

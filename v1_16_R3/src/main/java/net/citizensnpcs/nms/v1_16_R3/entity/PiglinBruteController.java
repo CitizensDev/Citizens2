@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
-import java.util.TreeMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
@@ -16,7 +14,6 @@ import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_16_R3.BehaviorController;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.Entity;
@@ -41,9 +38,7 @@ public class PiglinBruteController extends MobEntityController {
     }
 
     public static class EntityPiglinBruteNPC extends EntityPiglinBrute implements NPCHolder {
-        private TreeMap<?, ?> behaviorMap;
         private final CitizensNPC npc;
-        private BehaviorController<EntityPiglinBrute> previousBehaviorController;
 
         public EntityPiglinBruteNPC(EntityTypes<? extends EntityPiglinBrute> types, World world) {
             this(types, world, null);
@@ -52,9 +47,6 @@ public class PiglinBruteController extends MobEntityController {
         public EntityPiglinBruteNPC(EntityTypes<? extends EntityPiglinBrute> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

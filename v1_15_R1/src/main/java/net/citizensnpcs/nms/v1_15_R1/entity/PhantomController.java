@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.nms.v1_15_R1.util.PlayerControllerMove;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -53,7 +54,6 @@ public class PhantomController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 setNoAI(true);
                 this.oldMoveController = this.moveController;
                 this.oldLookController = this.lookController;
@@ -230,17 +230,9 @@ public class PhantomController extends MobEntityController {
         }
     }
 
-    public static class PhantomNPC extends CraftPhantom implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class PhantomNPC extends CraftPhantom implements ForwardingNPCHolder {
         public PhantomNPC(EntityPhantomNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

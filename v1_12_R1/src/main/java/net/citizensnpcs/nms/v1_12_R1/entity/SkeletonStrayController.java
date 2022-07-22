@@ -41,9 +41,6 @@ public class SkeletonStrayController extends MobEntityController {
         public EntityStrayNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

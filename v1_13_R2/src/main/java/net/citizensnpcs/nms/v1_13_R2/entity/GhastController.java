@@ -42,9 +42,6 @@ public class GhastController extends MobEntityController {
         public EntityGhastNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(goalSelector, targetSelector);
-            }
         }
 
         @Override

@@ -47,9 +47,6 @@ public class SkeletonWitherController extends MobEntityController {
         public EntitySkeletonWitherNPC(EntityTypes<? extends EntitySkeletonWither> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override
