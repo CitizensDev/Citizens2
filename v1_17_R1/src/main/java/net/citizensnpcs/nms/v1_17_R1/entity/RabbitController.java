@@ -51,9 +51,6 @@ public class RabbitController extends MobEntityController {
         public EntityRabbitNPC(EntityType<? extends Rabbit> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

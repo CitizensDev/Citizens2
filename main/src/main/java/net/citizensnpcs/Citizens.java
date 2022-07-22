@@ -312,8 +312,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onDisable() {
-        if (!enabled)
+        if (!enabled) {
             return;
+        }
         Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
         Editor.leaveAll();
         despawnNPCs(saveOnDisable);

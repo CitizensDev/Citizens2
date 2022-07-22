@@ -86,6 +86,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private PlayerlistTracker playerlistTracker;
+    private boolean setBukkitEntity;
     private final SkinPacketTracker skinTracker;
     private EmptyServerStatsCounter statsCache;
     private int updateCounter = 0;
@@ -213,8 +214,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public CraftPlayer getBukkitEntity() {
-        if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+        if (npc != null && !setBukkitEntity) {
             NMSImpl.setBukkitEntity(this, new PlayerNPC(this));
+            setBukkitEntity = true;
         }
         return super.getBukkitEntity();
     }
@@ -520,13 +522,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder, SkinnableEntity {
-        private final CraftServer cserver;
         private final CitizensNPC npc;
 
         private PlayerNPC(EntityHumanNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
-            this.cserver = (CraftServer) Bukkit.getServer();
             npc.getOrAddTrait(Inventory.class);
         }
 
@@ -550,7 +550,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
         @Override
         public List<MetadataValue> getMetadata(String metadataKey) {
-            return cserver.getEntityMetadata().getMetadata(this, metadataKey);
+            return ((CraftServer) Bukkit.getServer()).getEntityMetadata().getMetadata(this, metadataKey);
         }
 
         @Override
@@ -570,17 +570,17 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
         @Override
         public boolean hasMetadata(String metadataKey) {
-            return cserver.getEntityMetadata().hasMetadata(this, metadataKey);
+            return ((CraftServer) Bukkit.getServer()).getEntityMetadata().hasMetadata(this, metadataKey);
         }
 
         @Override
         public void removeMetadata(String metadataKey, Plugin owningPlugin) {
-            cserver.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
+            ((CraftServer) Bukkit.getServer()).getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
         }
 
         @Override
         public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
-            cserver.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
+            ((CraftServer) Bukkit.getServer()).getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
         }
 
         @Override

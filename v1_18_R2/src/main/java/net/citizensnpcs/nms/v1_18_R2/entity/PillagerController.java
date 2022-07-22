@@ -49,9 +49,6 @@ public class PillagerController extends MobEntityController {
         public EntityPillagerNPC(EntityType<? extends Pillager> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

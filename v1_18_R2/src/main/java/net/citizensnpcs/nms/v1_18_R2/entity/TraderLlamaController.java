@@ -59,7 +59,6 @@ public class TraderLlamaController extends MobEntityController {
             super(types, level);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 ((org.bukkit.entity.TraderLlama) getBukkitEntity())
                         .setDomestication(((org.bukkit.entity.TraderLlama) getBukkitEntity()).getMaxDomestication());
             }

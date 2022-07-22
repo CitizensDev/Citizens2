@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_17_R1.entity;
 
-import java.util.TreeMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
@@ -39,7 +37,6 @@ public class PiglinBruteController extends MobEntityController {
     }
 
     public static class EntityPiglinBruteNPC extends PiglinBrute implements NPCHolder {
-        private TreeMap<?, ?> behaviorMap;
         private final CitizensNPC npc;
 
         public EntityPiglinBruteNPC(EntityType<? extends PiglinBrute> types, Level level) {
@@ -49,9 +46,6 @@ public class PiglinBruteController extends MobEntityController {
         public EntityPiglinBruteNPC(EntityType<? extends PiglinBrute> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

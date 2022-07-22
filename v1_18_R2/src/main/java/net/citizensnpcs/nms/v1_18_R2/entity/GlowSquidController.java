@@ -47,9 +47,6 @@ public class GlowSquidController extends MobEntityController {
         public EntityGlowSquidNPC(EntityType<? extends GlowSquid> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

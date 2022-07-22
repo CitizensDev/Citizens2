@@ -52,7 +52,6 @@ public class MagmaCubeController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 setSize(3, true);
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 this.oldMoveController = this.moveControl;
                 this.moveControl = new PlayerMoveControl(this);
             }

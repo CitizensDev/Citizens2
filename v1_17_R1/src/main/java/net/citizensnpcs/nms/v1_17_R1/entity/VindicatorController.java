@@ -49,9 +49,6 @@ public class VindicatorController extends MobEntityController {
         public EntityVindicatorNPC(EntityType<? extends Vindicator> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

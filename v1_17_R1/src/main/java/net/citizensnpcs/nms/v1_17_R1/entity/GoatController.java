@@ -48,9 +48,6 @@ public class GoatController extends MobEntityController {
         public EntityGoatNPC(EntityType<? extends Goat> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

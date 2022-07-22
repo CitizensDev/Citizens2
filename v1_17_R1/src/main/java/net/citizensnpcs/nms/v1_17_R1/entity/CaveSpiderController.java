@@ -52,9 +52,6 @@ public class CaveSpiderController extends MobEntityController {
         public EntityCaveSpiderNPC(EntityType<? extends CaveSpider> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

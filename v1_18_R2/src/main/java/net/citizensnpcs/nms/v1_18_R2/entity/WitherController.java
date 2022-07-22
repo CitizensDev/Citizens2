@@ -45,9 +45,6 @@ public class WitherController extends MobEntityController {
         public EntityWitherNPC(EntityType<? extends WitherBoss> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-            if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
-            }
         }
 
         @Override

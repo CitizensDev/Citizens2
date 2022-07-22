@@ -57,7 +57,6 @@ public class DolphinController extends MobEntityController {
             super(types, level);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
                 this.oldMoveController = this.moveControl;
                 this.moveControl = new MoveControl(this);
                 this.getAttribute(Attributes.MOVEMENT_SPEED)
