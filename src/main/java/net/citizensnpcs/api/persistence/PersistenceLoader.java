@@ -28,10 +28,10 @@ import com.google.common.primitives.Primitives;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
- * The main registry for managing reflective, recursive {@link net.citizensnpcs.api.npc.NPC} persistence.
+ * Performs reflective persistence of objects into {@link DataKey}s. {@link Persist} annotations are used to mark fields
+ * for annotation.
  *
  * @see Persist
- * @see #registerPersistDelegate(Class, Class)
  */
 public class PersistenceLoader {
     private static class GenericPersister implements Persister<Object> {

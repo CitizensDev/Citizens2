@@ -7,8 +7,14 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.util.DataKey;
 
+/**
+ * A stringly-typed registry that loads and saves its types using {@link PersistenceLoader} and {@link DataKey}s.
+ **/
 public class PersisterRegistry<T> implements Persister<T> {
     private final Map<String, WeakReference<Class<? extends T>>> registry = Maps.newHashMap();
+
+    PersisterRegistry() {
+    }
 
     @Override
     public T create(DataKey root) {

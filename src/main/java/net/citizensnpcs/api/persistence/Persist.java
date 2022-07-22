@@ -9,7 +9,7 @@ import java.util.Collection;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
- * Tells the {@link PersistenceLoader} to persist this field by saving and loading it into {@link DataKey}s.
+ * A marker annotation for {@link PersistenceLoader} to persist a field by saving and loading it into {@link DataKey}s.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -21,8 +21,8 @@ public @interface Persist {
     Class<?> collectionType() default Collection.class;
 
     /**
-     * The specific value type to use when deserialising values from storage. Most useful when using specific number
-     * types e.g. Long, Byte, Short but storing as Integer.
+     * The specific key type to use when deserialising Map keys from storage. Only supports primitive values and UUIDs
+     * currently.
      */
     Class<?> keyType() default String.class;
 
@@ -43,11 +43,11 @@ public @interface Persist {
     boolean required() default false;
 
     /**
-     * The save key to use when saving. If not present, the field name will be used instead.
+     * The DataKey path to use when saving. If not present, the field name will be used instead.
      *
      * <ul>
      * <li><code>@Persist</code> -> root key + field name</li>
-     * <li><code>@Persist("")</code> -> root key + "" (or simply root key)</li>
+     * <li><code>@Persist("")</code> -> root key + "" (i.e. just the root key)</li>
      * <li><code>@Persist("sub")</code> root key + "sub"</li>
      * </ul>
      */
