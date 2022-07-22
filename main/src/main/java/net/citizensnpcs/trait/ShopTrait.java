@@ -255,7 +255,7 @@ public class ShopTrait extends Trait {
             consumer.accept(original);
         }
 
-        @MenuSlot(slot = { 0, 3 }, material = Material.BOOK, amount = 1, title = "Set description")
+        @MenuSlot(slot = { 1, 5 }, material = Material.BOOK, amount = 1, title = "Set description")
         public void onEditDescription(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             if (modified.display == null)
@@ -268,7 +268,7 @@ public class ShopTrait extends Trait {
                     }));
         }
 
-        @MenuSlot(slot = { 0, 5 }, material = Material.FEATHER, amount = 1, title = "Set name")
+        @MenuSlot(slot = { 1, 3 }, material = Material.FEATHER, amount = 1, title = "Set name")
         public void onEditName(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             if (modified.display == null)
@@ -375,18 +375,19 @@ public class ShopTrait extends Trait {
         @Override
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
+            if (shop.pages.size() > 0) {
+                ctx.getSlot(8).setItemStack(new ItemStack(Material.CHEST, 1), "Open shop");
+                ctx.getSlot(8).addClickHandler(evt -> {
+                    evt.setCancelled(true);
+                    ctx.getMenu().transition(new NPCShopViewer(shop));
+                });
+            }
         }
 
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "Edit shop items")
         public void onEditItems(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             ctx.getMenu().transition(new NPCShopContentsEditor(shop));
-        }
-
-        @MenuSlot(slot = { 0, 8 }, material = Material.CHEST, amount = 1, title = "Open shop")
-        public void onOpenShop(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
-            ctx.getMenu().transition(new NPCShopViewer(shop));
         }
 
         @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1, title = "Edit shop permission")
