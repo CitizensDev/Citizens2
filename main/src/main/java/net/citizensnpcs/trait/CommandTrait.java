@@ -243,7 +243,7 @@ public class CommandTrait extends Trait {
                         }
                     }
                     runCommand(player, command);
-                    if (executionMode == ExecutionMode.SEQUENTIAL || charged == false) {
+                    if (executionMode == ExecutionMode.SEQUENTIAL || (charged != null && charged == false)) {
                         break;
                     }
                 }

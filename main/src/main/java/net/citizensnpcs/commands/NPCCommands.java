@@ -2082,6 +2082,8 @@ public class NPCCommands {
         };
         NPCRegistry registry = args.hasValueFlag("registry") ? CitizensAPI.getNamedNPCRegistry(args.getFlag("registry"))
                 : CitizensAPI.getNPCRegistry();
+        if (registry == null)
+            throw new CommandException(Messages.UNKNOWN_NPC_REGISTRY, args.getFlag("registry"));
         if (args.argsLength() <= 1) {
             if (!(sender instanceof Player))
                 throw new ServerCommandException();

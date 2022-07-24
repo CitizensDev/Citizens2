@@ -222,7 +222,7 @@ public class ShopTrait extends Trait {
     @Menu(title = "NPC Shop Item Editor", type = InventoryType.CHEST, dimensions = { 5, 9 })
     @MenuSlot(slot = { 0, 4 }, material = Material.DISPENSER, amount = 1, title = "Place display item below")
     public static class NPCShopItemEditor extends InventoryMenuPage {
-        private final Consumer<NPCShopItem> consumer;
+        private final Consumer<NPCShopItem> callback;
         private MenuContext ctx;
         private final NPCShopItem modified;
         private NPCShopItem original;
@@ -230,7 +230,7 @@ public class ShopTrait extends Trait {
         public NPCShopItemEditor(NPCShopItem item, Consumer<NPCShopItem> consumer) {
             this.original = item;
             this.modified = original.clone();
-            this.consumer = consumer;
+            this.callback = consumer;
         }
 
         @Override
@@ -252,7 +252,7 @@ public class ShopTrait extends Trait {
             if (original != null && original.display == null) {
                 original = null;
             }
-            consumer.accept(original);
+            callback.accept(original);
         }
 
         @MenuSlot(slot = { 1, 5 }, material = Material.BOOK, amount = 1, title = "Set description")

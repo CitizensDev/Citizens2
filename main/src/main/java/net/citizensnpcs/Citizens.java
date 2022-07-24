@@ -530,7 +530,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private class CitizensLoadTask implements Runnable {
-
         @Override
         public void run() {
             saves.loadInto(npcRegistry);

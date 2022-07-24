@@ -375,6 +375,7 @@ public class Messages {
     public static final String UNDO_UNSUCCESSFUL = "citizens.commands.npc.undo.unsuccessful";
     public static final String UNKNOWN_COMMAND = "citizens.commands.unknown-command";
     public static final String UNKNOWN_MATERIAL = "citizens.commands.npc.item.unknown-material";
+    public static final String UNKNOWN_NPC_REGISTRY = "citizens.commands.errors.unknown-registry";
     public static final String UNKNOWN_PLAYER_ANIMATION = "citizens.commands.npc.panimate.unknown-animation";
     public static final String USING_MINECRAFT_AI = "citizens.commands.npc.ai.started";
     public static final String VILLAGER_LEVEL_SET = "citizens.commands.npc.villager.level-set";
