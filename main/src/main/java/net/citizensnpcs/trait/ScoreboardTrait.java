@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
@@ -22,6 +24,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
 
 @TraitName("scoreboardtrait")
@@ -138,16 +141,16 @@ public class ScoreboardTrait extends Trait {
             }
         }
 
-        for (Player player : npc.getEntity().getWorld().getPlayers()) {
-            if (player instanceof NPCHolder)
-                continue;
-            if (SENT_TEAMS.containsEntry(player.getUniqueId(), team.getName())) {
-                if (changed) {
+        if (changed) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player instanceof NPCHolder)
+                    continue;
+                if (SENT_TEAMS.containsEntry(player.getUniqueId(), team.getName())) {
                     NMS.sendTeamPacket(player, team, 2);
+                } else {
+                    NMS.sendTeamPacket(player, team, 0);
+                    SENT_TEAMS.put(player.getUniqueId(), team.getName());
                 }
-            } else {
-                NMS.sendTeamPacket(player, team, 0);
-                SENT_TEAMS.put(player.getUniqueId(), team.getName());
             }
         }
     }
@@ -175,12 +178,31 @@ public class ScoreboardTrait extends Trait {
                 npc.getEntity() instanceof Player ? npc.getEntity().getName() : npc.getUniqueId().toString());
     }
 
+    @Override
+    public void onSpawn() {
+        changed = true;
+    }
+
     public void removeTag(String tag) {
         tags.remove(tag);
     }
 
     public void setColor(ChatColor color) {
         this.color = color;
+    }
+
+    public static void onPlayerJoin(PlayerJoinEvent event) {
+        for (Player npcPlayer : PlayerUpdateTask.getCurrentPlayerNPCs()) {
+            NPC npc = ((NPCHolder) npcPlayer).getNPC();
+
+            String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+            Team team = null;
+            if (teamName.length() == 0 || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
+                continue;
+
+            NMS.sendTeamPacket(event.getPlayer(), team, 0);
+            SENT_TEAMS.put(event.getPlayer().getUniqueId(), team.getName());
+        }
     }
 
     public static void onPlayerQuit(PlayerQuitEvent event) {

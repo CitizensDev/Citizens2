@@ -504,6 +504,8 @@ public class EventListen implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         skinUpdateTracker.updatePlayer(event.getPlayer(), Setting.INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY_TICKS.asInt(),
                 true);
+
+        ScoreboardTrait.onPlayerJoin(event);
     }
 
     @EventHandler(ignoreCancelled = true)

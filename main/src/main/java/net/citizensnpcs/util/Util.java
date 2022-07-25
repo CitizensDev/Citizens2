@@ -28,7 +28,6 @@ import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.SpigotUtil;
-import net.citizensnpcs.npc.ai.NPCHolder;
 
 public class Util {
     private Util() {
@@ -348,19 +347,6 @@ public class Util {
      */
     public static void setRotation(Entity entity, float yaw, float pitch) {
         NMS.look(entity, yaw, pitch);
-    }
-
-    public static void updateNPCTeams(Player toUpdate, int mode) {
-        for (Player player : PlayerUpdateTask.getRegisteredPlayerNPCs()) {
-            NPC npc = ((NPCHolder) player).getNPC();
-
-            String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
-            Team team = null;
-            if (teamName.length() == 0 || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
-                continue;
-
-            NMS.sendTeamPacket(toUpdate, team, mode);
-        }
     }
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
