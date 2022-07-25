@@ -16,6 +16,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.MinecraftServer;
@@ -45,7 +46,7 @@ public class HumanController extends AbstractEntityController {
         }
 
         if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-            Util.generateTeamFor(npc, name, teamName);
+            npc.getOrAddTrait(ScoreboardTrait.class).createTeam(teamName);
         }
 
         final GameProfile profile = new GameProfile(uuid, name);

@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
@@ -99,23 +98,6 @@ public class Util {
         if (to == null || entity.getWorld() != to.getWorld())
             return;
         NMS.look(entity, to, headOnly, immediate);
-    }
-
-    public static void generateTeamFor(NPC npc, String name, String teamName) {
-        Scoreboard scoreboard = getDummyScoreboard();
-        Team team = scoreboard.getTeam(teamName);
-        int mode = 2;
-        if (team == null) {
-            team = scoreboard.registerNewTeam(teamName);
-            if (npc.requiresNameHologram()
-                    || npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString().equals("false")) {
-                NMS.setTeamNameTagVisible(team, false);
-            }
-            mode = 0;
-        }
-        team.addEntry(name);
-        npc.data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
-        sendTeamPacketToOnlinePlayers(team, mode);
     }
 
     public static Location getCenterLocation(Block block) {
@@ -312,34 +294,6 @@ public class Util {
     public static String prettyPrintLocation(Location to) {
         return String.format("%s at %d, %d, %d (%d, %d)", to.getWorld().getName(), to.getBlockX(), to.getBlockY(),
                 to.getBlockZ(), (int) to.getYaw(), (int) to.getPitch());
-    }
-
-    public static void removeTeamFor(NPC npc, String name) {
-        String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
-        if (teamName.isEmpty())
-            return;
-        Team team = getDummyScoreboard().getTeam(teamName);
-        npc.data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
-        if (team == null)
-            return;
-        if (team.hasEntry(name)) {
-            if (team.getSize() == 1) {
-                sendTeamPacketToOnlinePlayers(team, 1);
-                team.unregister();
-            } else {
-                team.removeEntry(name);
-            }
-        }
-    }
-
-    /**
-     * @param mode
-     *            0 for create, 1 for remove, 2 for update
-     */
-    public static void sendTeamPacketToOnlinePlayers(Team team, int mode) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            NMS.sendTeamPacket(player, team, mode);
-        }
     }
 
     /**

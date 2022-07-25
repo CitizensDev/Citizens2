@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
@@ -45,7 +46,73 @@ public class ScoreboardTrait extends Trait {
         tags.add(tag);
     }
 
-    public void apply(boolean nameVisibility) {
+    public void createTeam(String entityName) {
+        String teamName = Util.getTeamName(npc.getUniqueId());
+        npc.data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
+        Scoreboard scoreboard = Util.getDummyScoreboard();
+        Team team = scoreboard.getTeam(teamName);
+        if (team == null) {
+            team = scoreboard.registerNewTeam(teamName);
+        }
+        team.addEntry(entityName);
+    }
+
+    public ChatColor getColor() {
+        return color;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    private Team getTeam() {
+        String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
+        if (teamName.isEmpty())
+            return null;
+        return Util.getDummyScoreboard().getTeam(teamName);
+    }
+
+    @Override
+    public void onDespawn() {
+        if (npc.getEntity() == null)
+            return;
+        String name = npc.getEntity() instanceof Player ? npc.getEntity().getName() : npc.getUniqueId().toString();
+        String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+        if (teamName.isEmpty())
+            return;
+        Team team = Util.getDummyScoreboard().getTeam(teamName);
+        npc.data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+        if (team == null)
+            return;
+        if (team.hasEntry(name)) {
+            if (team.getSize() == 1) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    NMS.sendTeamPacket(player, team, 1);
+                }
+                team.unregister();
+            } else {
+                team.removeEntry(name);
+            }
+        }
+    }
+
+    @Override
+    public void onSpawn() {
+        changed = true;
+    }
+
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    }
+
+    public void setColor(ChatColor color) {
+        this.color = color;
+    }
+
+    public void update() {
+        String forceVisible = npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString();
+        boolean nameVisibility = !npc.requiresNameHologram()
+                && (forceVisible.equals("true") || forceVisible.equals("hover"));
         Team team = getTeam();
         if (team == null)
             return;
@@ -153,42 +220,6 @@ public class ScoreboardTrait extends Trait {
                 }
             }
         }
-    }
-
-    public ChatColor getColor() {
-        return color;
-    }
-
-    public Set<String> getTags() {
-        return tags;
-    }
-
-    private Team getTeam() {
-        String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
-        if (teamName.isEmpty())
-            return null;
-        return Util.getDummyScoreboard().getTeam(teamName);
-    }
-
-    @Override
-    public void onDespawn() {
-        if (npc.getEntity() == null)
-            return;
-        Util.removeTeamFor(npc,
-                npc.getEntity() instanceof Player ? npc.getEntity().getName() : npc.getUniqueId().toString());
-    }
-
-    @Override
-    public void onSpawn() {
-        changed = true;
-    }
-
-    public void removeTag(String tag) {
-        tags.remove(tag);
-    }
-
-    public void setColor(ChatColor color) {
-        this.color = color;
     }
 
     public static void onPlayerJoin(PlayerJoinEvent event) {

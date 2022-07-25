@@ -14,8 +14,8 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
+import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.EntityInsentient;
 import net.minecraft.server.v1_13_R2.World;
 
@@ -48,7 +48,7 @@ public abstract class MobEntityController extends AbstractEntityController {
             e.printStackTrace();
         }
         if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-            Util.generateTeamFor(npc, npc.getUniqueId().toString(), Util.getTeamName(npc.getUniqueId()));
+            npc.getOrAddTrait(ScoreboardTrait.class).createTeam(npc.getUniqueId().toString());
         }
         return entity.getBukkitEntity();
     }

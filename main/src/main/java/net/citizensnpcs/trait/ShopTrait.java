@@ -219,7 +219,7 @@ public class ShopTrait extends Trait {
         }
     }
 
-    @Menu(title = "NPC Shop Item Editor", type = InventoryType.CHEST, dimensions = { 5, 9 })
+    @Menu(title = "NPC Shop Item Editor", type = InventoryType.CHEST, dimensions = { 6, 9 })
     @MenuSlot(slot = { 0, 4 }, material = Material.DISPENSER, amount = 1, title = "Place display item below")
     public static class NPCShopItemEditor extends InventoryMenuPage {
         private final Consumer<NPCShopItem> callback;

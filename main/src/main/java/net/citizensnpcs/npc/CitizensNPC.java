@@ -479,16 +479,8 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private void updateCustomName() {
-        boolean nameVisibility = false;
-        if (!getEntity().isCustomNameVisible()
-                && !data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString().equals("hover")) {
-        } else if (!requiresNameHologram()) {
-            nameVisibility = true;
-            getEntity().setCustomName(getFullName());
-        }
-
         if (data().has(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME)) {
-            getOrAddTrait(ScoreboardTrait.class).apply(nameVisibility);
+            getOrAddTrait(ScoreboardTrait.class).update();
         }
     }
 
@@ -496,6 +488,9 @@ public class CitizensNPC extends AbstractNPC {
         String nameplateVisible = data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString();
         if (requiresNameHologram()) {
             nameplateVisible = "false";
+        }
+        if (nameplateVisible.equals("true") || nameplateVisible.equals("hover")) {
+            getEntity().setCustomName(getFullName());
         }
         getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
     }
