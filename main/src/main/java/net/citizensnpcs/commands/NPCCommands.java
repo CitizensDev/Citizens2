@@ -669,14 +669,14 @@ public class NPCCommands {
             npc.getNavigator().getDefaultParameters().debug(!npc.getNavigator().getDefaultParameters().debug());
             Messaging.send(sender, "Path debugging set to " + npc.getNavigator().getDefaultParameters().debug());
         } else if (args.hasFlag('n')) {
-            String output = "Use new finder " + npc.getNavigator().getDefaultParameters().useNewPathfinder();
-            output += "Distance margin " + npc.getNavigator().getDefaultParameters().distanceMargin() + "(path margin "
-                    + npc.getNavigator().getDefaultParameters().pathDistanceMargin() + ")<br>";
+            String output = "Use new finder [[" + npc.getNavigator().getDefaultParameters().useNewPathfinder();
+            output += "]] distance margin [[" + npc.getNavigator().getDefaultParameters().distanceMargin()
+                    + "]] (path margin [[" + npc.getNavigator().getDefaultParameters().pathDistanceMargin() + "]])<br>";
             output += "Teleport if below " + npc.getNavigator().getDefaultParameters().destinationTeleportMargin()
                     + " blocks<br>";
-            output += "Range " + npc.getNavigator().getDefaultParameters().range() + "<br>";
-            output += "Stuck action " + npc.getNavigator().getDefaultParameters().stuckAction() + "<br>";
-            output += "Speed " + npc.getNavigator().getDefaultParameters().speed() + "<br>";
+            output += "Range [[" + npc.getNavigator().getDefaultParameters().range() + "]] speed [["
+                    + npc.getNavigator().getDefaultParameters().speed() + "]]<br>";
+            output += "Stuck action [[" + npc.getNavigator().getDefaultParameters().stuckAction() + "]]<br>";
             Messaging.send(sender, output);
         }
     }

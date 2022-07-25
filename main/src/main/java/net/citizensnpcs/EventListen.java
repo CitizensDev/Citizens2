@@ -102,6 +102,7 @@ import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -117,7 +118,7 @@ public class EventListen implements Listener {
         this.skinUpdateTracker = new SkinUpdateTracker(registries);
     }
 
-    private void checkCreationEvent(CommandSenderCreateNPCEvent event) { 
+    private void checkCreationEvent(CommandSenderCreateNPCEvent event) {
         if (event.getCreator().hasPermission("citizens.admin.avoid-limits"))
             return;
         int limit = Setting.DEFAULT_NPC_LIMIT.asInt();
@@ -503,10 +504,6 @@ public class EventListen implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         skinUpdateTracker.updatePlayer(event.getPlayer(), Setting.INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY_TICKS.asInt(),
                 true);
-
-        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-            Util.updateNPCTeams(event.getPlayer(), 0);
-        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -538,6 +535,7 @@ public class EventListen implements Listener {
             }
         }
         skinUpdateTracker.removePlayer(event.getPlayer().getUniqueId());
+        ScoreboardTrait.onPlayerQuit(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

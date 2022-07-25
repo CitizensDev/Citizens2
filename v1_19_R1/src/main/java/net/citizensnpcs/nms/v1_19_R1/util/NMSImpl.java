@@ -1937,6 +1937,19 @@ public class NMSImpl implements NMSBridge {
         network.address = socketAddress;
     }
 
+    public static boolean isLeashed(Mob entity, boolean superLeashed) {
+        NPC npc = ((NPCHolder) entity).getNPC();
+        if (npc == null)
+            return superLeashed;
+        boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+        if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+            return superLeashed;
+        if (superLeashed) {
+            entity.dropLeash(true, false); // clearLeash with client update
+        }
+        return false; // shouldLeash
+    }
+
     @SuppressWarnings("deprecation")
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();

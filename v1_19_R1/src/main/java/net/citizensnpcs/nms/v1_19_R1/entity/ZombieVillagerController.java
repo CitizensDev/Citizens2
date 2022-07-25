@@ -132,15 +132,7 @@ public class ZombieVillagerController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            if (npc == null)
-                return super.isLeashed();
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
-            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
-                return super.isLeashed();
-            if (super.isLeashed()) {
-                dropLeash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
+            return NMSImpl.isLeashed(this, super.isLeashed());
         }
 
         @Override
@@ -165,8 +157,9 @@ public class ZombieVillagerController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.push(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override

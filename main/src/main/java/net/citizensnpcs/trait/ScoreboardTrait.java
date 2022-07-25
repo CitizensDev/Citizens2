@@ -3,27 +3,34 @@ package net.citizensnpcs.trait;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 @TraitName("scoreboardtrait")
 public class ScoreboardTrait extends Trait {
+    private boolean changed;
     @Persist
     private ChatColor color;
-    private int justSpawned;
     private ChatColor previousGlowingColor;
+
     @Persist
     private final Set<String> tags = new HashSet<String>();
 
@@ -50,7 +57,7 @@ public class ScoreboardTrait extends Trait {
         if (SUPPORT_TAGS) {
             try {
                 if (!npc.getEntity().getScoreboardTags().equals(tags)) {
-                    justSpawned = Setting.SCOREBOARD_SEND_TICKS.asInt();
+                    changed = true;
                     for (Iterator<String> iterator = npc.getEntity().getScoreboardTags().iterator(); iterator
                             .hasNext();) {
                         String oldTag = iterator.next();
@@ -71,7 +78,7 @@ public class ScoreboardTrait extends Trait {
             try {
                 OptionStatus visibility = nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER;
                 if (visibility != team.getOption(Option.NAME_TAG_VISIBILITY)) {
-                    justSpawned = Setting.SCOREBOARD_SEND_TICKS.asInt();
+                    changed = true;
                 }
                 team.setOption(Option.NAME_TAG_VISIBILITY, visibility);
             } catch (NoSuchMethodError e) {
@@ -86,7 +93,7 @@ public class ScoreboardTrait extends Trait {
                 OptionStatus collide = npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? OptionStatus.ALWAYS
                         : OptionStatus.NEVER;
                 if (collide != team.getOption(Option.COLLISION_RULE)) {
-                    justSpawned = Setting.SCOREBOARD_SEND_TICKS.asInt();
+                    changed = true;
                 }
                 team.setOption(Option.COLLISION_RULE, collide);
             } catch (NoSuchMethodError e) {
@@ -115,7 +122,7 @@ public class ScoreboardTrait extends Trait {
                             || (previousGlowingColor != null && color != previousGlowingColor)) {
                         team.setColor(color);
                         previousGlowingColor = color;
-                        justSpawned = Setting.SCOREBOARD_SEND_TICKS.asInt();
+                        changed = true;
                     }
                 } catch (NoSuchMethodError err) {
                     SUPPORT_GLOWING_COLOR = false;
@@ -126,13 +133,22 @@ public class ScoreboardTrait extends Trait {
                                 && !team.getPrefix().equals(previousGlowingColor.toString()))) {
                     team.setPrefix(color.toString());
                     previousGlowingColor = color;
-                    justSpawned = Setting.SCOREBOARD_SEND_TICKS.asInt();
+                    changed = true;
                 }
             }
         }
-        if (justSpawned > 0) {
-            Util.sendTeamPacketToOnlinePlayers(team, 2);
-            justSpawned--;
+
+        for (Player player : npc.getEntity().getWorld().getPlayers()) {
+            if (player instanceof NPCHolder)
+                continue;
+            if (SENT_TEAMS.containsEntry(player.getUniqueId(), team.getName())) {
+                if (changed) {
+                    NMS.sendTeamPacket(player, team, 2);
+                }
+            } else {
+                NMS.sendTeamPacket(player, team, 0);
+                SENT_TEAMS.put(player.getUniqueId(), team.getName());
+            }
         }
     }
 
@@ -159,11 +175,6 @@ public class ScoreboardTrait extends Trait {
                 npc.getEntity() instanceof Player ? npc.getEntity().getName() : npc.getUniqueId().toString());
     }
 
-    @Override
-    public void onSpawn() {
-        justSpawned = Setting.SCOREBOARD_SEND_TICKS.asInt();
-    }
-
     public void removeTag(String tag) {
         tags.remove(tag);
     }
@@ -172,6 +183,11 @@ public class ScoreboardTrait extends Trait {
         this.color = color;
     }
 
+    public static void onPlayerQuit(PlayerQuitEvent event) {
+        SENT_TEAMS.removeAll(event.getPlayer().getUniqueId());
+    }
+
+    private static SetMultimap<UUID, String> SENT_TEAMS = HashMultimap.create();
     private static boolean SUPPORT_COLLIDABLE_SETOPTION = true;
     private static boolean SUPPORT_GLOWING_COLOR = true;
     private static boolean SUPPORT_TAGS = true;

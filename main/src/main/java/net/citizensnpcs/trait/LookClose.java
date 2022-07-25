@@ -87,7 +87,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
      * Finds a new look-close target
      */
     public void findNewTarget() {
-        double min = range * range;
+        double min = range;
         Player old = lookingAt;
         for (Entity entity : npc.getEntity().getNearbyEntities(range, range, range)) {
             if (!(entity instanceof Player))
@@ -96,7 +96,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             Location location = player.getLocation(CACHE_LOCATION);
             if (location.getWorld() != NPC_LOCATION.getWorld())
                 continue;
-            double dist = location.distanceSquared(NPC_LOCATION);
+            double dist = location.distance(NPC_LOCATION);
             if (dist > min || CitizensAPI.getNPCRegistry().getNPC(entity) != null || isInvisible(player))
                 continue;
             min = dist;
