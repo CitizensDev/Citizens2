@@ -33,6 +33,11 @@ public class TeleportStuckAction implements StuckAction {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "TeleportStuckAction";
+    }
+
     public static TeleportStuckAction INSTANCE = new TeleportStuckAction();
     private static final int MAX_ITERATIONS = 10;
 }

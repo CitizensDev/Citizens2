@@ -34,10 +34,10 @@ import net.citizensnpcs.api.util.DataKey;
  * @see Persist
  */
 public class PersistenceLoader {
-    private static class GenericPersister implements Persister<Object> {
+    private static class PersistenceLoaderPersister implements Persister<Object> {
         private final Class<?> clazz;
 
-        private GenericPersister(Class<?> clazz) {
+        private PersistenceLoaderPersister(Class<?> clazz) {
             this.clazz = clazz;
         }
 
@@ -68,7 +68,7 @@ public class PersistenceLoader {
                 int index = Map.class.isAssignableFrom(field.getType()) ? 1 : 0;
                 fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[index];
             }
-            this.delegate = persistAnnotation.reify() ? new GenericPersister(fallback) : getDelegate(field, fallback);
+            this.delegate = persistAnnotation.reify() ? new PersistenceLoaderPersister(fallback) : getDelegate(field, fallback);
         }
 
         @SuppressWarnings("unchecked")
