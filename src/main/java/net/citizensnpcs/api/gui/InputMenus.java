@@ -109,7 +109,7 @@ public class InputMenus {
                 final Choice<T> choice = choices[i];
                 final InventoryMenuSlot slot = ctx.getSlot(i * 2);
                 slot.setItemStack(choice.createDisplayItem());
-                slot.addClickHandler((evt) -> {
+                slot.setClickHandler((evt) -> {
                     evt.setCancelled(true);
                     boolean newState = !choice.isActive();
                     switch (type) {
@@ -145,9 +145,9 @@ public class InputMenus {
     private static class StringInputMenu extends InventoryMenuPage {
         private final Function<String, Boolean> callback;
         private MenuContext ctx;
-        private final Supplier<String> initialValue;
         @MenuSlot(slot = { 0, 0 }, material = Material.PAPER, amount = 1)
-        private InventoryMenuSlot slot;
+        private InventoryMenuSlot from;
+        private final Supplier<String> initialValue;
 
         public StringInputMenu(Supplier<String> initialValue, Function<String, Boolean> callback) {
             this.initialValue = initialValue;
@@ -163,7 +163,7 @@ public class InputMenus {
         @Override
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
-            ItemStack item = slot.getCurrentItem();
+            ItemStack item = from.getCurrentItem();
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(initialValue.get());
             item.setItemMeta(meta);

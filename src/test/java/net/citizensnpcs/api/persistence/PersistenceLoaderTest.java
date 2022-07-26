@@ -9,6 +9,7 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -128,6 +129,14 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void testLists() {
+        ListTest load = new ListTest();
+        yamlRoot.setRaw("test", Arrays.asList("one", "two", "three"));
+        PersistenceLoader.load(load, yamlRoot);
+        assertThat(load.test, equalTo(Arrays.asList("one", "two", "three")));
+    }
+
+    @Test
     public void testMapReload() {
         root.setBoolean("enabled.trig1", true);
         TestMap stored = PersistenceLoader.load(TestMap.class, root);
@@ -181,6 +190,11 @@ public class PersistenceLoaderTest {
     public static class InferenceTest {
         @Persist
         public Map<String, Integer> map = new ConcurrentHashMap<String, Integer>();
+    }
+
+    public static class ListTest {
+        @Persist
+        private List<String> test;
     }
 
     public static class LongLoadSaveTest {

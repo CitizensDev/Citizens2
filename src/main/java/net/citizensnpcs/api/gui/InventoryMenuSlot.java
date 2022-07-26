@@ -130,6 +130,11 @@ public class InventoryMenuSlot {
         }
     }
 
+    public void setClickHandler(Consumer<CitizensInventoryClickEvent> handler) {
+        handlers.clear();
+        handlers.add(handler);
+    }
+
     public void setDescription(String description) {
         ItemStack item = inventory.getItem(index);
         ItemMeta meta = item.getItemMeta();
