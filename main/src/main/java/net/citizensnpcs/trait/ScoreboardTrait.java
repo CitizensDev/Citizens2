@@ -19,13 +19,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
 
 @TraitName("scoreboardtrait")
@@ -210,7 +209,7 @@ public class ScoreboardTrait extends Trait {
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player instanceof NPCHolder)
+            if (player.hasMetadata("NPC"))
                 continue;
             if (SENT_TEAMS.containsEntry(player.getUniqueId(), team.getName())) {
                 NMS.sendTeamPacket(player, team, 2);
@@ -222,14 +221,13 @@ public class ScoreboardTrait extends Trait {
     }
 
     public static void onPlayerJoin(PlayerJoinEvent event) {
-        for (Player npcPlayer : PlayerUpdateTask.getCurrentPlayerNPCs()) {
-            NPC npc = ((NPCHolder) npcPlayer).getNPC();
-
-            String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
-            Team team = null;
-            if (teamName.length() == 0 || (team = Util.getDummyScoreboard().getTeam(teamName)) == null)
+        for (NPC npc : CitizensAPI.getNPCRegistry()) {
+            ScoreboardTrait trait = npc.getTraitNullable(ScoreboardTrait.class);
+            if (trait == null)
                 continue;
-
+            Team team = trait.getTeam();
+            if (team == null || SENT_TEAMS.containsEntry(event.getPlayer().getUniqueId(), team.getName()))
+                continue;
             NMS.sendTeamPacket(event.getPlayer(), team, 0);
             SENT_TEAMS.put(event.getPlayer().getUniqueId(), team.getName());
         }

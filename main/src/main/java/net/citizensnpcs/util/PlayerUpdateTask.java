@@ -75,10 +75,6 @@ public class PlayerUpdateTask extends BukkitRunnable {
         PLAYERS_PENDING_REMOVE.add(entity);
     }
 
-    public static Iterable<Player> getCurrentPlayerNPCs() {
-        return PLAYERS.values();
-    }
-
     public static void registerPlayer(org.bukkit.entity.Entity entity) {
         PLAYERS_PENDING_REMOVE.remove(entity);
         PLAYERS_PENDING_ADD.add(entity);

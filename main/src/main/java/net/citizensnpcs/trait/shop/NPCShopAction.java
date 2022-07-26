@@ -12,15 +12,19 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
+import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.persistence.PersisterRegistry;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.trait.shop.NPCShopAction.ItemAction.ItemActionGUI;
 import net.citizensnpcs.trait.shop.NPCShopAction.MoneyAction.MoneyActionGUI;
 import net.citizensnpcs.trait.shop.NPCShopAction.PermissionAction.PermissionActionGUI;
@@ -38,9 +42,9 @@ public abstract class NPCShopAction implements Cloneable {
         }
     }
 
-    public abstract PendingAction grant(Entity entity);
+    public abstract Transaction grant(Entity entity);
 
-    public abstract PendingAction take(Entity entity);
+    public abstract Transaction take(Entity entity);
 
     public static interface GUI {
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback);
@@ -66,20 +70,30 @@ public abstract class NPCShopAction implements Cloneable {
         }
 
         @Override
-        public PendingAction grant(Entity entity) {
-            return PendingAction.create(() -> {
-                return true;
+        public Transaction grant(Entity entity) {
+            if (!(entity instanceof InventoryHolder))
+                return Transaction.fail();
+            Inventory source = ((InventoryHolder) entity).getInventory();
+            return Transaction.create(() -> {
+                return source.all(Material.AIR).size() > items.size();
             }, () -> {
+                source.addItem(items.toArray(new ItemStack[items.size()]));
             }, () -> {
+                source.removeItem(items.toArray(new ItemStack[items.size()]));
             });
         }
 
         @Override
-        public PendingAction take(Entity entity) {
-            return PendingAction.create(() -> {
-                return true;
+        public Transaction take(Entity entity) {
+            if (!(entity instanceof InventoryHolder))
+                return Transaction.fail();
+            Inventory source = ((InventoryHolder) entity).getInventory();
+            return Transaction.create(() -> {
+                return source.all(Material.AIR).size() > items.size();
             }, () -> {
+                source.removeItem(items.toArray(new ItemStack[items.size()]));
             }, () -> {
+                source.addItem(items.toArray(new ItemStack[items.size()]));
             });
         }
 
@@ -109,12 +123,12 @@ public abstract class NPCShopAction implements Cloneable {
         }
 
         @Override
-        public PendingAction grant(Entity entity) {
+        public Transaction grant(Entity entity) {
             if (!(entity instanceof OfflinePlayer))
-                return PendingAction.fail();
+                return Transaction.fail();
             Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
             OfflinePlayer player = (OfflinePlayer) entity;
-            return PendingAction.create(() -> {
+            return Transaction.create(() -> {
                 return true;
             }, () -> {
                 economy.depositPlayer(player, money);
@@ -124,12 +138,12 @@ public abstract class NPCShopAction implements Cloneable {
         }
 
         @Override
-        public PendingAction take(Entity entity) {
+        public Transaction take(Entity entity) {
             if (!(entity instanceof OfflinePlayer))
-                return PendingAction.fail();
+                return Transaction.fail();
             Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
             OfflinePlayer player = (OfflinePlayer) entity;
-            return PendingAction.create(() -> {
+            return Transaction.create(() -> {
                 return economy.has(player, money);
             }, () -> {
                 economy.withdrawPlayer(player, money);
@@ -180,40 +194,6 @@ public abstract class NPCShopAction implements Cloneable {
         }
     }
 
-    public static class PendingAction {
-        private final Runnable execute;
-        private final Supplier<Boolean> possible;
-        private final Runnable rollback;
-
-        public PendingAction(Supplier<Boolean> isPossible, Runnable execute, Runnable rollback) {
-            this.possible = isPossible;
-            this.execute = execute;
-            this.rollback = rollback;
-        }
-
-        public boolean isPossible() {
-            return possible.get();
-        }
-
-        public void rollback() {
-            rollback.run();
-        }
-
-        public void run() {
-            execute.run();
-        }
-
-        public static PendingAction create(Supplier<Boolean> isPossible, Runnable execute, Runnable rollback) {
-            return new PendingAction(isPossible, execute, rollback);
-        }
-
-        public static PendingAction fail() {
-            return new PendingAction(() -> false, () -> {
-            }, () -> {
-            });
-        }
-    }
-
     public static class PermissionAction extends NPCShopAction {
         @Persist
         public List<String> permissions = Lists.newArrayList();
@@ -226,46 +206,63 @@ public abstract class NPCShopAction implements Cloneable {
         }
 
         @Override
-        public PendingAction grant(Entity entity) {
+        public Transaction grant(Entity entity) {
             if (!(entity instanceof Player))
-                return PendingAction.fail();
+                return Transaction.fail();
             Player player = (Player) entity;
             Permission perm = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
-            return PendingAction.create(() -> {
+            return Transaction.create(() -> {
                 return true;
             }, () -> {
                 for (String permission : permissions) {
-                    perm.playerAdd(player, permission);
+                    perm.playerAdd(player, Placeholders.replace(permission, player));
                 }
             }, () -> {
                 for (String permission : permissions) {
-                    perm.playerRemove(player, permission);
+                    perm.playerRemove(player, Placeholders.replace(permission, player));
                 }
             });
         }
 
         @Override
-        public PendingAction take(Entity entity) {
+        public Transaction take(Entity entity) {
             if (!(entity instanceof Player))
-                return PendingAction.fail();
+                return Transaction.fail();
             Player player = (Player) entity;
             Permission perm = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
-            return PendingAction.create(() -> {
+            return Transaction.create(() -> {
                 for (String permission : permissions) {
-                    if (!perm.playerHas(player, permission)) {
+                    if (!perm.playerHas(player, Placeholders.replace(permission, player))) {
                         return false;
                     }
                 }
                 return true;
             }, () -> {
                 for (String permission : permissions) {
-                    perm.playerRemove(player, permission);
+                    perm.playerRemove(player, Placeholders.replace(permission, player));
                 }
             }, () -> {
                 for (String permission : permissions) {
-                    perm.playerAdd(player, permission);
+                    perm.playerAdd(player, Placeholders.replace(permission, player));
                 }
             });
+        }
+
+        public static class PermissionActionEditor extends InventoryMenuPage {
+            private NPCShopAction base;
+            private Consumer<NPCShopAction> callback;
+
+            public PermissionActionEditor() {
+            }
+
+            public PermissionActionEditor(NPCShopAction base, Consumer<NPCShopAction> callback) {
+                this.base = base;
+                this.callback = callback;
+            }
+
+            @Override
+            public void initialise(MenuContext ctx) {
+            }
         }
 
         public static class PermissionActionGUI implements GUI {
@@ -273,7 +270,7 @@ public abstract class NPCShopAction implements Cloneable {
 
             @Override
             public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
-                return null;
+                return new PermissionActionEditor(previous, callback);
             }
 
             @Override
@@ -295,6 +292,40 @@ public abstract class NPCShopAction implements Cloneable {
             public boolean manages(NPCShopAction action) {
                 return action instanceof PermissionAction;
             }
+        }
+    }
+
+    public static class Transaction {
+        private final Runnable execute;
+        private final Supplier<Boolean> possible;
+        private final Runnable rollback;
+
+        public Transaction(Supplier<Boolean> isPossible, Runnable execute, Runnable rollback) {
+            this.possible = isPossible;
+            this.execute = execute;
+            this.rollback = rollback;
+        }
+
+        public boolean isPossible() {
+            return possible.get();
+        }
+
+        public void rollback() {
+            rollback.run();
+        }
+
+        public void run() {
+            execute.run();
+        }
+
+        public static Transaction create(Supplier<Boolean> isPossible, Runnable execute, Runnable rollback) {
+            return new Transaction(isPossible, execute, rollback);
+        }
+
+        public static Transaction fail() {
+            return new Transaction(() -> false, () -> {
+            }, () -> {
+            });
         }
     }
 
