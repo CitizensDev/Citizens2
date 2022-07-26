@@ -901,6 +901,11 @@ public class NMSImpl implements NMSBridge {
             private CraftInventoryView bukkitEntity;
 
             @Override
+            protected void a(EntityHuman entityhuman, net.minecraft.server.v1_13_R2.World world,
+                    IInventory iinventory) {
+            }
+
+            @Override
             public void d() {
                 super.d();
                 levelCost = 0;

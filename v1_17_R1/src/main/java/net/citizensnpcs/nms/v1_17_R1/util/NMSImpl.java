@@ -1011,6 +1011,10 @@ public class NMSImpl implements NMSBridge {
             private CraftInventoryView bukkitEntity;
 
             @Override
+            protected void clearContainer(net.minecraft.world.entity.player.Player entityhuman, Container iinventory) {
+            }
+
+            @Override
             public void createResult() {
                 super.createResult();
                 cost.set(0);

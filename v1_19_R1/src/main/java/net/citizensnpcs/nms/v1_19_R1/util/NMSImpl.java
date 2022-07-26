@@ -1034,6 +1034,10 @@ public class NMSImpl implements NMSBridge {
             private CraftInventoryView bukkitEntity;
 
             @Override
+            protected void clearContainer(net.minecraft.world.entity.player.Player entityhuman, Container iinventory) {
+            }
+
+            @Override
             public void createResult() {
                 super.createResult();
                 cost.set(0);
@@ -1041,15 +1045,13 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public CraftInventoryView getBukkitView() {
-                if (this.bukkitEntity != null) {
-                    return this.bukkitEntity;
-                } else {
+                if (this.bukkitEntity == null) {
                     this.bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(),
                             new CitizensInventoryAnvil(this.access.getLocation(), this.inputSlots, this.resultSlots,
                                     this, anvil),
                             this);
-                    return this.bukkitEntity;
                 }
+                return this.bukkitEntity;
             }
         };
         container.getBukkitView().setItem(0, anvil.getItem(0));
