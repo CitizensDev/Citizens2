@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -28,6 +29,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -324,6 +326,14 @@ public class CommandTrait extends Trait {
         commands.remove(id);
     }
 
+    @Override
+    public void save(DataKey key) {
+        Collection<NPCCommand> commands = this.commands.values();
+        for (PlayerNPCCommand playerCommand : cooldowns.values()) {
+            playerCommand.prune(globalCooldowns, commands);
+        }
+    }
+
     private void sendErrorMessage(Player player, CommandTraitMessages msg, Function<String, String> transform,
             Object... objects) {
         if (hideErrorMessages) {
@@ -445,6 +455,7 @@ public class CommandTrait extends Trait {
         int globalCooldown;
         Hand hand;
         int id;
+        String key;
         int n;
         boolean op;
         List<String> perms;
@@ -464,6 +475,12 @@ public class CommandTrait extends Trait {
             this.globalCooldown = globalCooldown;
             List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().splitToList(command);
             this.bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
+        }
+
+        public String getEncodedKey() {
+            if (key != null)
+                return key;
+            return key = BaseEncoding.base64().encode(command.getBytes());
         }
 
         public void run(NPC npc, Player clicker) {
@@ -628,7 +645,7 @@ public class CommandTrait extends Trait {
                 }
             }
             long currentTimeSec = System.currentTimeMillis() / 1000;
-            String commandKey = BaseEncoding.base64().encode(command.command.getBytes());
+            String commandKey = command.getEncodedKey();
             if (lastUsed.containsKey(commandKey)) {
                 long deadline = ((Number) lastUsed.get(commandKey)).longValue() + command.cooldown;
                 if (currentTimeSec < deadline) {
@@ -665,6 +682,34 @@ public class CommandTrait extends Trait {
             }
             lastUsedId = command.id;
             return true;
+        }
+
+        public void prune(Map<String, Long> globalCooldowns, Collection<NPCCommand> commands) {
+            long currentTimeSec = System.currentTimeMillis() / 1000;
+            Set<String> commandKeys = Sets.newHashSet();
+            for (NPCCommand command : commands) {
+                String commandKey = command.getEncodedKey();
+                commandKeys.add(commandKey);
+                Number number = lastUsed.get(commandKey);
+                if (number != null && number.longValue() + command.cooldown <= currentTimeSec) {
+                    lastUsed.remove(commandKey);
+                }
+                if (globalCooldowns != null) {
+                    number = globalCooldowns.get(commandKey);
+                    if (number != null && number.longValue() + command.globalCooldown <= currentTimeSec) {
+                        globalCooldowns.remove(commandKey);
+                    }
+                }
+            }
+            for (String key : Sets.difference(Sets.newHashSet(lastUsed.keySet()), commandKeys)) {
+                lastUsed.remove(key);
+                nUsed.remove(key);
+            }
+            if (globalCooldowns != null) {
+                for (String key : Sets.difference(Sets.newHashSet(globalCooldowns.keySet()), commandKeys)) {
+                    globalCooldowns.remove(key);
+                }
+            }
         }
 
         public static boolean requiresTracking(NPCCommand command) {

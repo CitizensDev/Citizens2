@@ -73,7 +73,7 @@ public class AdminCommands {
             permission = "citizens.admin")
     public void save(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.sendTr(sender, Messages.CITIZENS_SAVING);
-        plugin.storeNPCs(args);
+        plugin.storeNPCs(args.hasFlag('a'));
         Messaging.sendTr(sender, Messages.CITIZENS_SAVED);
     }
 }

@@ -1,5 +1,6 @@
 package net.citizensnpcs.util;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
@@ -16,6 +17,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
@@ -26,7 +30,9 @@ import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
+import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.SpigotUtil;
+import net.md_5.bungee.api.ChatColor;
 
 public class Util {
     private Util() {
@@ -67,6 +73,22 @@ public class Util {
             angle -= 360.0F;
         }
         return angle;
+    }
+
+    public static ItemStack createItem(Material mat, String name) {
+        return createItem(mat, name, null);
+    }
+
+    public static ItemStack createItem(Material mat, String name, String description) {
+        ItemStack stack = new ItemStack(mat, 1);
+        ItemMeta meta = stack.getItemMeta();
+        meta.setDisplayName(ChatColor.RESET + Colorizer.parseColors(name));
+        if (description != null) {
+            meta.setLore(Arrays.asList(Colorizer.parseColors(description).split("\n")));
+        }
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        stack.setItemMeta(meta);
+        return stack;
     }
 
     public static void face(Entity entity, float yaw, float pitch) {

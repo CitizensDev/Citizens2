@@ -34,7 +34,6 @@ import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.InventoryHelper;
 import net.citizensnpcs.api.SkullMetaProvider;
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
-import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.CommandManager.CommandInfo;
 import net.citizensnpcs.api.command.Injector;
@@ -71,6 +70,7 @@ import net.citizensnpcs.npc.ai.speech.Chat;
 import net.citizensnpcs.npc.ai.speech.CitizensSpeechFactory;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
+import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerUpdateTask;
@@ -103,6 +103,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
     private NPCSelector selector;
+    private Storage shops;
     private final SkullMetaProvider skullMetaProvider = new SkullMetaProvider() {
         @Override
         public String getTexture(SkullMeta meta) {
@@ -305,8 +306,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     public void onDependentPluginDisable() {
-        storeNPCs();
-        saves.saveToDiskImmediate();
+        storeNPCs(false);
         saveOnDisable = false;
     }
 
@@ -347,7 +347,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         registerScriptHelpers();
 
         saves = createStorage(getDataFolder());
-        if (saves == null) {
+        shops = new YamlStorage(new File(getDataFolder(), "shops.yml"));
+        if (saves == null || !shops.load()) {
             Messaging.severeTr(Messages.FAILED_LOAD_SAVES);
             Bukkit.getPluginManager().disablePlugin(this);
             return;
@@ -419,6 +420,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         saves.reloadFromSource();
         saves.loadInto(npcRegistry);
+
+        shops.load();
+        ShopTrait.loadShops(shops.getKey(""));
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
@@ -504,17 +508,21 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     public void storeNPCs() {
+        storeNPCs(false);
+    }
+
+    public void storeNPCs(boolean async) {
         if (saves == null)
             return;
         saves.storeAll(npcRegistry);
-    }
-
-    public void storeNPCs(CommandContext args) {
-        storeNPCs();
-        boolean async = args.hasFlag('a');
+        ShopTrait.saveShops(shops.getKey(""));
         if (async) {
             saves.saveToDisk();
+            new Thread(() -> {
+                shops.save();
+            }).start();
         } else {
+            shops.save();
             saves.saveToDiskImmediate();
         }
     }
@@ -536,6 +544,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
             startMetrics();
             scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
+            shops.load();
+            ShopTrait.loadShops(shops.getKey(""));
             Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
             enabled = true;
@@ -545,8 +555,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private class CitizensSaveTask implements Runnable {
         @Override
         public void run() {
-            storeNPCs();
-            saves.saveToDisk();
+            storeNPCs(false);
         }
     }
 }

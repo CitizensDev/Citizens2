@@ -90,7 +90,8 @@ public class FoxTrait extends Trait {
         if (args.hasValueFlag("type")) {
             Fox.Type type = Util.matchEnum(Fox.Type.values(), args.getFlag("type"));
             if (type == null) {
-                throw new CommandUsageException(Messages.INVALID_FOX_TYPE, Util.listValuesPretty(Fox.Type.values()));
+                throw new CommandUsageException(
+                        Messaging.tr(Messages.INVALID_FOX_TYPE, Util.listValuesPretty(Fox.Type.values())), null);
             }
             trait.setType(type);
             output += ' ' + Messaging.tr(Messages.FOX_TYPE_SET, args.getFlag("type"));

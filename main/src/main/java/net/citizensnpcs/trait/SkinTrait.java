@@ -95,7 +95,6 @@ public class SkinTrait extends Trait {
             textureRaw = npc.data().get(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA);
             npc.data().remove(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA);
             update = true;
-
         }
         if (npc.data().has(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA)) {
             signature = npc.data().get(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA);

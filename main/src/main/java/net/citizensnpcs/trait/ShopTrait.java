@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,15 +27,20 @@ import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InputMenus.Choice;
 import net.citizensnpcs.api.gui.InventoryMenu;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
+import net.citizensnpcs.api.gui.InventoryMenuPattern;
 import net.citizensnpcs.api.gui.InventoryMenuSlot;
 import net.citizensnpcs.api.gui.Menu;
 import net.citizensnpcs.api.gui.MenuContext;
+import net.citizensnpcs.api.gui.MenuPattern;
 import net.citizensnpcs.api.gui.MenuSlot;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.trait.shop.NPCShopAction;
+import net.citizensnpcs.trait.shop.NPCShopAction.GUI;
 
 /**
  * Shop trait for NPC GUI shops.
@@ -46,11 +52,11 @@ public class ShopTrait extends Trait {
     }
 
     public NPCShop getDefaultShop() {
-        return NPC_SHOPS.computeIfAbsent(npc.getUniqueId().toString(), NPCShop::new);
+        return StoredShops.NPC_SHOPS.computeIfAbsent(npc.getUniqueId().toString(), NPCShop::new);
     }
 
     public NPCShop getShop(String name) {
-        return SHOPS.computeIfAbsent(name, NPCShop::new);
+        return StoredShops.GLOBAL_SHOPS.computeIfAbsent(name, NPCShop::new);
     }
 
     public static class NPCShop {
@@ -200,11 +206,36 @@ public class ShopTrait extends Trait {
 
     public static class NPCShopItem implements Cloneable {
         @Persist
-        private List<NPCShopAction> cost;
+        private final List<NPCShopAction> cost = Lists.newArrayList();
         @Persist
         private ItemStack display;
         @Persist
-        private List<NPCShopAction> result;
+        private final List<NPCShopAction> result = Lists.newArrayList();
+
+        private void changeAction(List<NPCShopAction> source, Function<NPCShopAction, Boolean> filter,
+                NPCShopAction delta) {
+            for (int i = 0; i < source.size(); i++) {
+                if (filter.apply(source.get(i))) {
+                    if (delta == null) {
+                        source.remove(i);
+                    } else {
+                        source.set(i, delta);
+                    }
+                    return;
+                }
+            }
+            if (delta != null) {
+                source.add(delta);
+            }
+        }
+
+        public void changeCost(Function<NPCShopAction, Boolean> filter, NPCShopAction cost) {
+            changeAction(this.cost, filter, cost);
+        }
+
+        public void changeResult(Function<NPCShopAction, Boolean> filter, NPCShopAction result) {
+            changeAction(this.result, filter, result);
+        }
 
         @Override
         public NPCShopItem clone() {
@@ -220,9 +251,19 @@ public class ShopTrait extends Trait {
     }
 
     @Menu(title = "NPC Shop Item Editor", type = InventoryType.CHEST, dimensions = { 6, 9 })
-    @MenuSlot(slot = { 0, 4 }, material = Material.DISPENSER, amount = 1, title = "Place display item below")
+    @MenuSlot(slot = { 3, 4 }, material = Material.DISPENSER, amount = 1, title = "<f>Place display item below")
     public static class NPCShopItemEditor extends InventoryMenuPage {
+        @MenuPattern(
+                offset = { 0, 0 },
+                slots = { @MenuSlot(pat = 'x', material = Material.AIR) },
+                value = "x x\n x \nx x")
+        private InventoryMenuPattern actionItems;
         private final Consumer<NPCShopItem> callback;
+        @MenuPattern(
+                offset = { 0, 6 },
+                slots = { @MenuSlot(pat = 'x', material = Material.AIR) },
+                value = "x x\n x \nx x")
+        private InventoryMenuPattern costItems;
         private MenuContext ctx;
         private final NPCShopItem modified;
         private NPCShopItem original;
@@ -239,9 +280,34 @@ public class ShopTrait extends Trait {
             if (modified.display != null) {
                 ctx.getSlot(9 + 4).setItemStack(modified.display);
             }
+            int pos = 0;
+            for (GUI template : NPCShopAction.getGUIs()) {
+                ItemStack item = template.createMenuItem();
+                if (item == null)
+                    continue;
+                costItems.getSlots().get(pos).setItemStack(item);
+                costItems.getSlots().get(pos).addClickHandler(event -> {
+                    event.setCancelled(true);
+                    ctx.getMenu()
+                            .transition(template.createEditor(
+                                    modified.cost.stream().filter(template::manages).findFirst().orElse(null),
+                                    cost -> modified.changeCost(template::manages, cost)));
+                });
+
+                actionItems.getSlots().get(pos).setItemStack(item);
+                actionItems.getSlots().get(pos).addClickHandler(event -> {
+                    event.setCancelled(true);
+                    ctx.getMenu()
+                            .transition(template.createEditor(
+                                    modified.result.stream().filter(template::manages).findFirst().orElse(null),
+                                    result -> modified.changeResult(template::manages, result)));
+                });
+
+                pos++;
+            }
         }
 
-        @MenuSlot(slot = { 4, 3 }, material = Material.REDSTONE_BLOCK, amount = 1, title = "Cancel")
+        @MenuSlot(slot = { 5, 3 }, material = Material.REDSTONE_BLOCK, amount = 1, title = "<7>Cancel")
         public void onCancel(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             ctx.getMenu().transitionBack();
@@ -255,20 +321,23 @@ public class ShopTrait extends Trait {
             callback.accept(original);
         }
 
-        @MenuSlot(slot = { 1, 5 }, material = Material.BOOK, amount = 1, title = "Set description")
+        @MenuSlot(slot = { 4, 5 }, material = Material.BOOK, amount = 1, title = "<f>Set description")
         public void onEditDescription(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             if (modified.display == null)
                 return;
-            ctx.getMenu().transition(InputMenus.stringSetter(
-                    () -> Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore()), description -> {
-                        ItemMeta meta = modified.display.getItemMeta();
-                        meta.setLore(Lists.newArrayList(Splitter.on("<br>").split(Colorizer.parseColors(description))));
-                        modified.display.setItemMeta(meta);
-                    }));
+            ctx.getMenu()
+                    .transition(InputMenus.stringSetter(() -> modified.display.getItemMeta().hasLore()
+                            ? Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore())
+                            : "", description -> {
+                                ItemMeta meta = modified.display.getItemMeta();
+                                meta.setLore(Lists
+                                        .newArrayList(Splitter.on("<br>").split(Colorizer.parseColors(description))));
+                                modified.display.setItemMeta(meta);
+                            }));
         }
 
-        @MenuSlot(slot = { 1, 3 }, material = Material.FEATHER, amount = 1, title = "Set name")
+        @MenuSlot(slot = { 4, 3 }, material = Material.FEATHER, amount = 1, title = "<f>Set name")
         public void onEditName(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             if (modified.display == null)
@@ -280,7 +349,7 @@ public class ShopTrait extends Trait {
             }));
         }
 
-        @ClickHandler(slot = { 1, 4 })
+        @ClickHandler(slot = { 4, 4 })
         public void onModifyDisplayItem(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             if (event.getCursor() != null) {
@@ -292,14 +361,14 @@ public class ShopTrait extends Trait {
             }
         }
 
-        @MenuSlot(slot = { 4, 4 }, material = Material.TNT, amount = 1, title = "<c>Remove")
+        @MenuSlot(slot = { 5, 4 }, material = Material.TNT, amount = 1, title = "<c>Remove")
         public void onRemove(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             original = null;
             event.setCancelled(true);
             ctx.getMenu().transitionBack();
         }
 
-        @MenuSlot(slot = { 4, 5 }, material = Material.EMERALD_BLOCK, amount = 1, title = "Save")
+        @MenuSlot(slot = { 5, 5 }, material = Material.EMERALD_BLOCK, amount = 1, title = "<a>Save")
         public void onSave(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             original = modified;
             event.setCancelled(true);
@@ -485,8 +554,20 @@ public class ShopTrait extends Trait {
         SELL;
     }
 
-    @Persist(value = "npcShops", reify = true, namespace = "shopstrait")
-    private static Map<String, NPCShop> NPC_SHOPS = Maps.newHashMap();
-    @Persist(value = "globalShops", reify = true, namespace = "shopstrait")
-    private static Map<String, NPCShop> SHOPS = Maps.newHashMap();
+    private static class StoredShops {
+        @Persist(value = "global", reify = true)
+        private static Map<String, NPCShop> GLOBAL_SHOPS = Maps.newHashMap();
+        @Persist(value = "npc", reify = true)
+        private static Map<String, NPCShop> NPC_SHOPS = Maps.newHashMap();
+    }
+
+    public static void loadShops(DataKey root) {
+        SAVED = PersistenceLoader.load(StoredShops.class, root);
+    }
+
+    public static void saveShops(DataKey root) {
+        PersistenceLoader.save(SAVED, root);
+    }
+
+    private static StoredShops SAVED = new StoredShops();
 }

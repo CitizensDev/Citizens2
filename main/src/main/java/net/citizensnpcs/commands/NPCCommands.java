@@ -1191,7 +1191,7 @@ public class NPCCommands {
             int id = npcs.get(i).getId();
             String line = StringHelper.wrap(id) + " " + npcs.get(i).getName() + " (<<[[tp:command(/npc tp --id " + id
                     + "):Teleport to this NPC>>) (<<[[summon:command(/npc tph --id " + id
-                    + "):Teleport NPC to me>> (<<<c>-:command(/npc remove " + id + "):Remove this NPC>>)";
+                    + "):Teleport NPC to me>>) (<<<c>-:command(/npc remove " + id + "):Remove this NPC>>)";
             paginator.addLine(line);
         }
 
@@ -2567,17 +2567,22 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "tp",
-            desc = "Teleport to a NPC",
+            usage = "tp (-e(xact))",
+            desc = "Teleport in front of an NPC",
             modifiers = { "tp", "teleport" },
             min = 1,
             max = 1,
+            flags = "e",
             permission = "citizens.npc.tp")
     public void tp(CommandContext args, Player player, NPC npc) {
         Location to = npc.getOrAddTrait(CurrentLocation.class).getLocation();
         if (to == null) {
             Messaging.sendError(player, Messages.TELEPORT_NPC_LOCATION_NOT_FOUND);
             return;
+        }
+        if (!args.hasFlag('e')) {
+            to = to.clone().add(to.getDirection().setY(0));
+            to.setDirection(to.getDirection().multiply(-1)).setPitch(0);
         }
         player.teleport(to, TeleportCause.COMMAND);
         Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());

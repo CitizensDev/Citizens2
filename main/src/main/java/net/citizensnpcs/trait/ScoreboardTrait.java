@@ -87,6 +87,7 @@ public class ScoreboardTrait extends Trait {
         if (team.hasEntry(name)) {
             if (team.getSize() == 1) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    SENT_TEAMS.remove(player.getUniqueId(), team.getName());
                     NMS.sendTeamPacket(player, team, 1);
                 }
                 team.unregister();
