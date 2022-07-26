@@ -123,7 +123,7 @@ public abstract class NPCShopAction implements Cloneable {
                     if (i < base.items.size()) {
                         slot.setItemStack(base.items.get(i).clone());
                     }
-                    slot.addClickHandler(event -> {
+                    slot.setClickHandler(event -> {
                         event.setCancelled(true);
                         event.setCurrentItem(event.getCursorNonNull());
                     });
@@ -315,7 +315,7 @@ public abstract class NPCShopAction implements Cloneable {
                         ctx.getSlot(i).setItemStack(new ItemStack(Material.FEATHER), "<f>Set permission",
                                 "Right click to remove\nCurrently: " + base.permissions.get(i));
                     }
-                    ctx.getSlot(i).addClickHandler(event -> {
+                    ctx.getSlot(i).setClickHandler(event -> {
                         if (event.isRightClick()) {
                             if (idx < base.permissions.size()) {
                                 base.permissions.remove(idx);

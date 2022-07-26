@@ -36,7 +36,7 @@ public class NPCConfigurator extends InventoryMenuPage {
             ConfiguratorInfo info = entry.getValue();
             InventoryMenuSlot slot = ctx.getSlot(entry.getKey());
             slot.setItemStack(new ItemStack(info.material, 1));
-            slot.addClickHandler((evt) -> {
+            slot.setClickHandler((evt) -> {
                 info.clickHandler.accept(new ConfiguratorEvent(ctx, npc, slot, evt));
             });
             info.clickHandler.accept(new ConfiguratorEvent(ctx, npc, slot, null));

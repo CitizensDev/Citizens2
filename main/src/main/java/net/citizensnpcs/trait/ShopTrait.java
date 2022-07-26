@@ -141,7 +141,7 @@ public class ShopTrait extends Trait {
                 ctx.getSlot(i).clear();
                 NPCShopItem item = sp.getItem(i);
                 final int idx = i;
-                ctx.getSlot(i).addClickHandler(evt -> {
+                ctx.getSlot(i).setClickHandler(evt -> {
                     ctx.clearSlots();
                     NPCShopItem display = item;
                     if (display == null) {
@@ -171,23 +171,21 @@ public class ShopTrait extends Trait {
             prev.clear();
             if (page > 0) {
                 prev.setItemStack(new ItemStack(Material.FEATHER, 1), "Previous page (" + (page) + ")");
-                prev.addClickHandler(evt -> {
+                prev.setClickHandler(evt -> {
                     evt.setCancelled(true);
                     changePage(page - 1);
                 });
             }
 
-            next.clear();
             next.setItemStack(new ItemStack(Material.FEATHER, 1),
                     page + 1 >= shop.pages.size() ? "New page" : "Next page (" + (page + 1) + ")");
-            next.addClickHandler(evt -> {
+            next.setClickHandler(evt -> {
                 evt.setCancelled(true);
                 changePage(page + 1);
             });
 
-            edit.clear();
             edit.setItemStack(new ItemStack(Material.BOOK), "Edit page");
-            edit.addClickHandler(evt -> {
+            edit.setClickHandler(evt -> {
                 evt.setCancelled(true);
                 ctx.getMenu().transition(new NPCShopPageSettings(shop.getOrCreatePage(page)));
             });
@@ -309,9 +307,9 @@ public class ShopTrait extends Trait {
                 ItemStack item = template.createMenuItem();
                 if (item == null)
                     continue;
-                costItems.getSlots().get(pos).clear();
+
                 costItems.getSlots().get(pos).setItemStack(item);
-                costItems.getSlots().get(pos).addClickHandler(event -> {
+                costItems.getSlots().get(pos).setClickHandler(event -> {
                     event.setCancelled(true);
                     ctx.getMenu()
                             .transition(template.createEditor(
@@ -319,7 +317,6 @@ public class ShopTrait extends Trait {
                                     cost -> modified.changeCost(template::manages, cost)));
                 });
 
-                actionItems.getSlots().get(pos).clear();
                 actionItems.getSlots().get(pos).setItemStack(item);
                 actionItems.getSlots().get(pos).addClickHandler(event -> {
                     event.setCancelled(true);
@@ -473,7 +470,7 @@ public class ShopTrait extends Trait {
             ctx.getSlot(8).clear();
             if (shop.pages.size() > 0) {
                 ctx.getSlot(8).setItemStack(new ItemStack(Material.CHEST, 1), "Open shop");
-                ctx.getSlot(8).addClickHandler(evt -> {
+                ctx.getSlot(8).setClickHandler(evt -> {
                     evt.setCancelled(true);
                     ctx.getMenu().transition(new NPCShopViewer(shop));
                 });
@@ -537,7 +534,7 @@ public class ShopTrait extends Trait {
                     continue;
 
                 ctx.getSlot(i).setItemStack(item.display);
-                ctx.getSlot(i).addClickHandler(evt -> {
+                ctx.getSlot(i).setClickHandler(evt -> {
                     evt.setCancelled(true);
                     item.onClick(shop, evt);
                 });
@@ -547,7 +544,7 @@ public class ShopTrait extends Trait {
             prev.clear();
             if (currentPage > 0) {
                 prev.setItemStack(new ItemStack(Material.FEATHER, 1), "Previous page (" + (currentPage) + ")");
-                prev.addClickHandler(evt -> {
+                prev.setClickHandler(evt -> {
                     evt.setCancelled(true);
                     changePage(currentPage - 1);
                 });
@@ -556,7 +553,7 @@ public class ShopTrait extends Trait {
             next.clear();
             if (currentPage + 1 < shop.pages.size()) {
                 next.setItemStack(new ItemStack(Material.FEATHER, 1), "Next page (" + (currentPage + 1) + ")");
-                next.addClickHandler(evt -> {
+                next.setClickHandler(evt -> {
                     evt.setCancelled(true);
                     changePage(currentPage + 1);
                 });
