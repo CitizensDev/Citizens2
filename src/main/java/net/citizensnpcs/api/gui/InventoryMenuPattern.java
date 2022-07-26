@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.gui;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * The concrete instance of a {@link MenuPattern}. Defines a (possibly multiline) pattern with bound slots/transitions
@@ -8,11 +8,11 @@ import java.util.Collection;
  */
 public class InventoryMenuPattern {
     private final MenuPattern info;
-    private final Collection<InventoryMenuSlot> slots;
-    private final Collection<InventoryMenuTransition> transitions;
+    private final List<InventoryMenuSlot> slots;
+    private final List<InventoryMenuTransition> transitions;
 
-    public InventoryMenuPattern(MenuPattern info, Collection<InventoryMenuSlot> slots,
-            Collection<InventoryMenuTransition> transitions) {
+    public InventoryMenuPattern(MenuPattern info, List<InventoryMenuSlot> slots,
+            List<InventoryMenuTransition> transitions) {
         this.info = info;
         this.slots = slots;
         this.transitions = transitions;
@@ -28,7 +28,7 @@ public class InventoryMenuPattern {
     /**
      * @return The set of {@link InventoryMenuSlot}s that this pattern refers to.
      */
-    public Collection<InventoryMenuSlot> getSlots() {
+    public List<InventoryMenuSlot> getSlots() {
         return slots;
     }
 
@@ -36,7 +36,7 @@ public class InventoryMenuPattern {
      *
      * @return The set of {@link InventoryMenuTransition}s that this pattern refers to.
      */
-    public Collection<InventoryMenuTransition> getTransitions() {
+    public List<InventoryMenuTransition> getTransitions() {
         return transitions;
     }
 }

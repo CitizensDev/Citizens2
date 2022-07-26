@@ -67,12 +67,9 @@ public class SimpleNPCDataStore implements NPCDataStore {
 
     @Override
     public void saveToDisk() {
-        new Thread() {
-            @Override
-            public void run() {
-                root.save();
-            }
-        }.start();
+        new Thread(() -> {
+            root.save();
+        }).start();
     }
 
     @Override

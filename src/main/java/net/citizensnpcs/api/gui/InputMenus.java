@@ -174,8 +174,6 @@ public class InputMenus {
             evt.setCancelled(true);
             if (callback.apply(slot.getCurrentItem().getItemMeta().getDisplayName())) {
                 ctx.getMenu().transitionBack();
-            } else {
-                evt.setCancelled(true);
             }
         }
     }

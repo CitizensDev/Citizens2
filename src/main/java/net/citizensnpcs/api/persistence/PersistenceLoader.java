@@ -2,7 +2,6 @@ package net.citizensnpcs.api.persistence;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -68,7 +67,8 @@ public class PersistenceLoader {
                 int index = Map.class.isAssignableFrom(field.getType()) ? 1 : 0;
                 fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[index];
             }
-            this.delegate = persistAnnotation.reify() ? new PersistenceLoaderPersister(fallback) : getDelegate(field, fallback);
+            this.delegate = persistAnnotation.reify() ? new PersistenceLoaderPersister(fallback)
+                    : getDelegate(field, fallback);
         }
 
         @SuppressWarnings("unchecked")
@@ -86,10 +86,7 @@ public class PersistenceLoader {
         }
 
         public DataKey getDataKey(DataKey root) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                if (persistAnnotation.namespace().isEmpty()) {
-                    throw new IllegalArgumentException("Missing @Persist namespace for " + field);
-                }
+            if (!persistAnnotation.namespace().isEmpty()) {
                 return root.getFromRoot("global." + persistAnnotation.namespace());
             }
             return root;

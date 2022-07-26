@@ -3,6 +3,7 @@ package net.citizensnpcs.api.persistence;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.util.DataKey;
@@ -27,6 +28,10 @@ public class PersisterRegistry<T> implements Persister<T> {
 
     public void register(String type, Class<? extends T> clazz) {
         registry.put(type, new WeakReference<Class<? extends T>>(clazz));
+    }
+
+    public Iterable<Class<? extends T>> registeredTypes() {
+        return Iterables.transform(registry.values(), ref -> ref.get());
     }
 
     @Override

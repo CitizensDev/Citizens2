@@ -236,12 +236,14 @@ public class InventoryMenu implements Listener, Runnable {
         slot.onClick(ev);
         pickupAmount = -1;
         page.page.onClick(slot, event);
+
         if (event.isCancelled()) {
             return;
         }
         for (InventoryMenuTransition transition : page.transitions) {
             Class<? extends InventoryMenuPage> next = transition.accept(slot);
             if (next != null) {
+                event.setCancelled(true);
                 transition(next);
                 break;
             }
@@ -356,8 +358,8 @@ public class InventoryMenu implements Listener, Runnable {
             transitionMap.put(transition.pat(), transition);
         }
 
-        Collection<InventoryMenuSlot> patternSlots = Lists.newArrayList();
-        Collection<InventoryMenuTransition> patternTransitions = Lists.newArrayList();
+        List<InventoryMenuSlot> patternSlots = Lists.newArrayList();
+        List<InventoryMenuTransition> patternTransitions = Lists.newArrayList();
         int row = 0;
         int col = 0;
         for (int i = 0; i < pattern.length(); i++) {
