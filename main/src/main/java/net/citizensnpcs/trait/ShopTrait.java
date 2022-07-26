@@ -309,6 +309,7 @@ public class ShopTrait extends Trait {
                 ItemStack item = template.createMenuItem();
                 if (item == null)
                     continue;
+                costItems.getSlots().get(pos).clear();
                 costItems.getSlots().get(pos).setItemStack(item);
                 costItems.getSlots().get(pos).addClickHandler(event -> {
                     event.setCancelled(true);
@@ -318,6 +319,7 @@ public class ShopTrait extends Trait {
                                     cost -> modified.changeCost(template::manages, cost)));
                 });
 
+                actionItems.getSlots().get(pos).clear();
                 actionItems.getSlots().get(pos).setItemStack(item);
                 actionItems.getSlots().get(pos).addClickHandler(event -> {
                     event.setCancelled(true);
@@ -468,6 +470,7 @@ public class ShopTrait extends Trait {
         @Override
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
+            ctx.getSlot(8).clear();
             if (shop.pages.size() > 0) {
                 ctx.getSlot(8).setItemStack(new ItemStack(Material.CHEST, 1), "Open shop");
                 ctx.getSlot(8).addClickHandler(evt -> {

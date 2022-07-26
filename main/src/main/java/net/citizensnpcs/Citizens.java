@@ -361,6 +361,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         speechFactory.register(Chat.class, "chat");
 
         Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new CitizensPlaceholders(selector).register();
+        }
 
         setupEconomy();
 

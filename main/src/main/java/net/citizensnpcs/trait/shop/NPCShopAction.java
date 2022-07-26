@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -20,6 +21,8 @@ import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
+import net.citizensnpcs.api.gui.InventoryMenuSlot;
+import net.citizensnpcs.api.gui.Menu;
 import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
@@ -97,10 +100,52 @@ public abstract class NPCShopAction implements Cloneable {
             });
         }
 
+        @Menu(title = "Item editor", dimensions = { 3, 9 })
+        public static class ItemActionEditor extends InventoryMenuPage {
+            private ItemAction base;
+            private Consumer<NPCShopAction> callback;
+            private MenuContext ctx;
+
+            public ItemActionEditor() {
+            }
+
+            public ItemActionEditor(ItemAction base, Consumer<NPCShopAction> callback) {
+                this.base = base;
+                this.callback = callback;
+            }
+
+            @Override
+            public void initialise(MenuContext ctx) {
+                this.ctx = ctx;
+                for (int i = 0; i < 3 * 9; i++) {
+                    InventoryMenuSlot slot = ctx.getSlot(i);
+                    slot.clear();
+                    if (i < base.items.size()) {
+                        slot.setItemStack(base.items.get(i).clone());
+                    }
+                    slot.addClickHandler(event -> {
+                        event.setCancelled(true);
+                        event.setCurrentItem(event.getCursorNonNull());
+                    });
+                }
+            }
+
+            @Override
+            public void onClose(HumanEntity player) {
+                List<ItemStack> items = Lists.newArrayList();
+                for (int i = 0; i < 3 * 9; i++) {
+                    if (ctx.getSlot(i).getCurrentItem() != null) {
+                        items.add(ctx.getSlot(i).getCurrentItem().clone());
+                    }
+                }
+                callback.accept(items.isEmpty() ? null : new ItemAction(items));
+            }
+        }
+
         public static class ItemActionGUI implements GUI {
             @Override
             public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
-                return null;
+                return new ItemActionEditor(previous == null ? new ItemAction() : null, callback);
             }
 
             @Override
@@ -248,20 +293,57 @@ public abstract class NPCShopAction implements Cloneable {
             });
         }
 
+        @Menu(title = "Permissions editor", dimensions = { 3, 9 })
         public static class PermissionActionEditor extends InventoryMenuPage {
-            private NPCShopAction base;
+            private PermissionAction base;
             private Consumer<NPCShopAction> callback;
 
             public PermissionActionEditor() {
             }
 
-            public PermissionActionEditor(NPCShopAction base, Consumer<NPCShopAction> callback) {
+            public PermissionActionEditor(PermissionAction base, Consumer<NPCShopAction> callback) {
                 this.base = base;
                 this.callback = callback;
             }
 
             @Override
             public void initialise(MenuContext ctx) {
+                for (int i = 0; i < 3 * 9; i++) {
+                    final int idx = i;
+                    ctx.getSlot(i).clear();
+                    if (i < base.permissions.size()) {
+                        ctx.getSlot(i).setItemStack(new ItemStack(Material.FEATHER), "<f>Set permission",
+                                "Right click to remove\nCurrently: " + base.permissions.get(i));
+                    }
+                    ctx.getSlot(i).addClickHandler(event -> {
+                        if (event.isRightClick()) {
+                            if (idx < base.permissions.size()) {
+                                base.permissions.remove(idx);
+                                ctx.getSlot(idx).setItemStack(null);
+                            }
+                            return;
+                        }
+                        ctx.getMenu().transition(InputMenus.stringSetter(
+                                () -> idx < base.permissions.size() ? base.permissions.get(idx) : "", (res) -> {
+                                    if (res == null) {
+                                        if (idx < base.permissions.size()) {
+                                            base.permissions.remove(idx);
+                                        }
+                                        return;
+                                    }
+                                    if (idx < base.permissions.size()) {
+                                        base.permissions.set(idx, res);
+                                    } else {
+                                        base.permissions.add(res);
+                                    }
+                                }));
+                    });
+                }
+            }
+
+            @Override
+            public void onClose(HumanEntity player) {
+                callback.accept(base.permissions.isEmpty() ? null : base);
             }
         }
 
@@ -270,7 +352,8 @@ public abstract class NPCShopAction implements Cloneable {
 
             @Override
             public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
-                return new PermissionActionEditor(previous, callback);
+                return new PermissionActionEditor(
+                        previous == null ? new PermissionAction() : (PermissionAction) previous, callback);
             }
 
             @Override

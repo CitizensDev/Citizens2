@@ -38,6 +38,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
     public NPCSelector(Plugin plugin) {
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
+
     }
 
     @Override
@@ -116,6 +117,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         }
     }
 
+    @Override
     public void select(CommandSender sender, NPC npc) {
         // Remove existing selection if any
         List<String> selectors = npc.data().get("selectors");
