@@ -209,16 +209,14 @@ public class ScoreboardTrait extends Trait {
             }
         }
 
-        if (changed) {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player instanceof NPCHolder)
-                    continue;
-                if (SENT_TEAMS.containsEntry(player.getUniqueId(), team.getName())) {
-                    NMS.sendTeamPacket(player, team, 2);
-                } else {
-                    NMS.sendTeamPacket(player, team, 0);
-                    SENT_TEAMS.put(player.getUniqueId(), team.getName());
-                }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player instanceof NPCHolder)
+                continue;
+            if (SENT_TEAMS.containsEntry(player.getUniqueId(), team.getName())) {
+                NMS.sendTeamPacket(player, team, 2);
+            } else {
+                NMS.sendTeamPacket(player, team, 0);
+                SENT_TEAMS.put(player.getUniqueId(), team.getName());
             }
         }
     }

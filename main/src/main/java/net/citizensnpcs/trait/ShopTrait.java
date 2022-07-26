@@ -41,6 +41,7 @@ import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.trait.shop.NPCShopAction;
 import net.citizensnpcs.trait.shop.NPCShopAction.GUI;
+import net.citizensnpcs.trait.shop.NPCShopAction.PendingAction;
 
 /**
  * Shop trait for NPC GUI shops.
@@ -246,7 +247,30 @@ public class ShopTrait extends Trait {
             }
         }
 
+        public boolean execute(List<NPCShopAction> actions, Function<NPCShopAction, PendingAction> func) {
+            List<PendingAction> pending = Lists.newArrayList();
+            boolean success = true;
+            for (NPCShopAction action : actions) {
+                PendingAction take = func.apply(action);
+                if (!take.isPossible()) {
+                    pending.forEach(a -> a.rollback());
+                    success = false;
+                    break;
+                } else {
+                    take.run();
+                    pending.add(take);
+                }
+            }
+            return success;
+        }
+
         public void onClick(NPCShop shop, CitizensInventoryClickEvent event) {
+            if (shop.type != ShopType.COMMAND) {
+                /* boolean success = execute(cost, action -> action.transfer(npc.getEntity(), event.getWhoClicked()));
+                if (success) {
+                    execute(result, action -> action.transfer(event.getWhoClicked(), npc.getEntity()));
+                }*/
+            }
         }
     }
 
