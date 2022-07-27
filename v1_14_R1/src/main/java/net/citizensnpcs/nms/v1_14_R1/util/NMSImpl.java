@@ -1163,6 +1163,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setAllayDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+    }
+
+    @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).yaw = yaw;
     }
@@ -2071,7 +2075,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "c");
-
     private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
             "c", false, double.class, double.class, double.class);
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
@@ -2116,6 +2119,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle REPAIR_INVENTORY = NMS.getGetter(ContainerAnvil.class, "repairInventory");
     private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "resultInventory");
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
+
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
 
     private static Field SKULL_PROFILE_FIELD;

@@ -1205,6 +1205,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setAllayDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+    }
+
+    @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).yaw = yaw;
     }
@@ -2128,7 +2132,6 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "e");
 
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
-
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(PlayerChunkMap.class, "a",
             true, EntityPlayer.class, boolean.class);
     private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
@@ -2172,6 +2175,7 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
+
     private static Field SKULL_PROFILE_FIELD;
 
     private static MethodHandle SOUNDEFFECT_KEY = NMS.getGetter(SoundEffect.class, "b");

@@ -1201,6 +1201,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setAllayDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+    }
+
+    @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).setYRot(yaw);
     }
@@ -2123,7 +2127,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.SHULKER, EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(Brain.class, "f");
-
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);

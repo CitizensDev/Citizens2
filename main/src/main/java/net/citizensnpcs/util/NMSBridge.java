@@ -139,6 +139,8 @@ public interface NMSBridge {
 
     public void sendTeamPacket(Player recipient, Team team, int mode);
 
+    public void setAllayDancing(Entity entity, boolean dancing);
+
     public void setBodyYaw(Entity entity, float yaw);
 
     public void setDestination(Entity entity, double x, double y, double z, float speed);

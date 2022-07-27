@@ -1104,6 +1104,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setAllayDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+    }
+
+    @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).yaw = yaw;
     }
@@ -1901,7 +1905,6 @@ public class NMSImpl implements NMSBridge {
             double.class, double.class, double.class);
 
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
-
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bR");
@@ -1924,6 +1927,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "resultInventory");
     private static Field SKULL_PROFILE_FIELD;
     private static MethodHandle TEAM_FIELD;
+
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
 
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bL", false);

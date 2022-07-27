@@ -515,6 +515,10 @@ public class NMS {
         BRIDGE.sendTeamPacket(recipient, team, mode);
     }
 
+    public static void setAllayDancing(Entity entity, boolean dancing) {
+        BRIDGE.setAllayDancing(entity, dancing);
+    }
+
     public static void setBodyYaw(Entity entity, float yaw) {
         BRIDGE.setBodyYaw(entity, yaw);
     }

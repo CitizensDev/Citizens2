@@ -202,6 +202,7 @@ import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.SmoothRotationTrait;
+import net.citizensnpcs.trait.versioned.AllayTrait;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
@@ -280,6 +281,7 @@ import net.minecraft.world.entity.animal.PolarBear;
 import net.minecraft.world.entity.animal.Pufferfish;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.animal.Turtle;
+import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -790,6 +792,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        registerTraitWithCommand(manager, AllayTrait.class);
         registerTraitWithCommand(manager, AxolotlTrait.class);
         registerTraitWithCommand(manager, BeeTrait.class);
         registerTraitWithCommand(manager, BossBarTrait.class);
@@ -1219,6 +1222,12 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void setAllayDancing(org.bukkit.entity.Entity entity, boolean dancing) {
+        Allay allay = (Allay) getHandle(entity);
+        allay.setDancing(dancing);
     }
 
     @Override

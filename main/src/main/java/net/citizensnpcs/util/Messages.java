@@ -9,6 +9,8 @@ public class Messages {
     public static final String AGE_SET_NORMAL = "citizens.commands.npc.age.set-normal";
     public static final String AGE_TRAIT_DESCRIPTION = "citizens.traits.age-description";
     public static final String AGE_UNLOCKED = "citizens.commands.npc.age.unlocked";
+    public static final String ALLAY_DANCING_SET = "citizens.commands.npc.allay.dancing-set";
+    public static final String ALLAY_DANCING_UNSET = "citizens.commands.npc.allay.dancing-unset";
     public static final String ALREADY_IN_EDITOR = "citizens.editors.already-in-editor";
     public static final String ALREADY_OWNER = "citizens.commands.npc.owner.already-owner";
     public static final String ANCHOR_ADDED = "citizens.commands.npc.anchor.added";
