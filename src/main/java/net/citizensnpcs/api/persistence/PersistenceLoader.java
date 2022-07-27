@@ -25,6 +25,7 @@ import com.google.common.collect.Sets;
 import com.google.common.primitives.Primitives;
 
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 
 /**
  * Performs reflective persistence of objects into {@link DataKey}s. {@link Persist} annotations are used to mark fields
@@ -205,8 +206,11 @@ public class PersistenceLoader {
             for (int i = 0; i < ints.size(); i++) {
                 ((int[]) value)[i] = ints.get(i);
             }
-        } else
+        } else if (field.key.equals("$key")) {
+            value = int.class.isAssignableFrom(type) ? Integer.parseInt(root.name()) : root.name();
+        } else {
             value = deserialiseValue(field, root.getRelative(field.key));
+        }
         if (value == null && field.isRequired())
             throw loadException;
         if (type.isPrimitive() || Primitives.isWrapperType(type)) {
@@ -441,6 +445,7 @@ public class PersistenceLoader {
                 }
             }
         } catch (Exception e) {
+            Messaging.severe("Error creating instance for " + clazz + " using " + root);
             e.printStackTrace();
         }
         if (instance == null)
@@ -554,6 +559,8 @@ public class PersistenceLoader {
                 String key = createRelativeKey(field.key, i);
                 serialiseValue(field, root.getRelative(key), ints[i]);
             }
+        } else if (field.key.equals("$key")) {
+            return;
         } else {
             serialiseValue(field, root.getRelative(field.key), fieldValue);
         }

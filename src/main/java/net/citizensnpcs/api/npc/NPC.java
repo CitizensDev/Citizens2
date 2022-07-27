@@ -618,26 +618,6 @@ public interface NPC extends Agent, Cloneable {
      */
     public static final String PATHFINDER_OPEN_DOORS_METADATA = "pathfinder-open-doors";
     /**
-     * @see SkinTrait
-     */
-    @Deprecated
-    public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA = "player-skin-textures";
-    /**
-     * @see SkinTrait
-     */
-    @Deprecated
-    public static final String PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA = "player-skin-signature";
-    /**
-     * @see SkinTrait
-     */
-    @Deprecated
-    public static final String PLAYER_SKIN_USE_LATEST = "player-skin-use-latest-skin";
-    /**
-     * @see SkinTrait
-     */
-    @Deprecated
-    public static final String PLAYER_SKIN_UUID_METADATA = "player-skin-name";
-    /**
      * Whether to remove players from the player list. Boolean defaults to true.
      */
     public static final String REMOVE_FROM_PLAYERLIST_METADATA = "removefromplayerlist";

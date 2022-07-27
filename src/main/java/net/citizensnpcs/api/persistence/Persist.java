@@ -43,12 +43,13 @@ public @interface Persist {
     boolean required() default false;
 
     /**
-     * The DataKey path to use when saving. If not present, the field name will be used instead.
+     * The DataKey path to use when saving/loading. If not present, the field name will be used instead.
      *
      * <ul>
      * <li><code>@Persist</code> -> root key + field name</li>
      * <li><code>@Persist("")</code> -> root key + "" (i.e. just the root key)</li>
      * <li><code>@Persist("sub")</code> root key + "sub"</li>
+     * <li><code>@Persist("$key")</code> loads the root key, does not save</li>
      * </ul>
      */
     String value() default "UNINITIALISED";

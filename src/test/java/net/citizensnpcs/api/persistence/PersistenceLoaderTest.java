@@ -122,9 +122,17 @@ public class PersistenceLoaderTest {
     @Test
     public void staticPersistence() {
         StaticPersistenceTest.abc = "a";
+        StaticPersistenceTest.cba = "b";
+        StaticPersistenceTest.MAP.put("test", "value");
         PersistenceLoader.save(new StaticPersistenceTest(), root);
+        assertThat(root.getString("test2"), equalTo("b"));
+        assertThat(root.getString("map.test"), equalTo("value"));
         assertThat(root.getString("global.test.abc"), equalTo("a"));
         root.setString("global.test.abc", "test");
+        root.setString("test2", "test");
+        root.setString("map.test", "value2");
+        assertThat(PersistenceLoader.load(StaticPersistenceTest.class, root).MAP.get("test"), equalTo("value2"));
+        assertThat(PersistenceLoader.load(StaticPersistenceTest.class, root).cba, equalTo("test"));
         assertThat(PersistenceLoader.load(StaticPersistenceTest.class, root).abc, equalTo("test"));
     }
 
@@ -142,6 +150,14 @@ public class PersistenceLoaderTest {
         TestMap stored = PersistenceLoader.load(TestMap.class, root);
         PersistenceLoader.save(stored, root);
         assertThat(PersistenceLoader.load(TestMap.class, root).enabled.get("trig1"), equalTo(true));
+    }
+
+    @Test
+    public void testReifiedLists() {
+        ReifiedListTest load = new ReifiedListTest();
+        load.test = Arrays.asList(new ReifiedListValue(0), new ReifiedListValue(2));
+        PersistenceLoader.save(load, root);
+        load = PersistenceLoader.load(load, root);
     }
 
     @Test
@@ -202,6 +218,23 @@ public class PersistenceLoaderTest {
         public long term = 0;
     }
 
+    public static class ReifiedListTest {
+        @Persist(reify = true)
+        private List<ReifiedListValue> test;
+    }
+
+    public static class ReifiedListValue {
+        @Persist(value = "$index")
+        private int index;
+
+        public ReifiedListValue() {
+        }
+
+        public ReifiedListValue(int i) {
+            this.index = i;
+        }
+    }
+
     public static class RequiredTest {
         @Persist(required = true)
         private int requiredInteger;
@@ -238,6 +271,12 @@ public class PersistenceLoaderTest {
     private static class StaticPersistenceTest {
         @Persist(namespace = "test")
         private static String abc;
+
+        @Persist(value = "test2")
+        private static String cba;
+
+        @Persist(value = "map")
+        private static Map<String, String> MAP = new HashMap<>();
     }
 
     public static class Superclass {

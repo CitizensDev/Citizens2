@@ -309,7 +309,8 @@ public class ItemStorage {
     public static ItemStack loadItemStack(DataKey root) {
         Material material = null;
         if (root.keyExists("type_key")) {
-            NamespacedKey key = new NamespacedKey(root.getString("type_namespace"), root.getString("type_key"));
+            NamespacedKey key = new NamespacedKey(root.getString("type_namespace", "minecraft"),
+                    root.getString("type_key"));
             material = Material.getMaterial(key.getKey().toUpperCase(), false);
         } else {
             String raw = root.getString("type", root.getString("id"));
@@ -346,13 +347,22 @@ public class ItemStorage {
         }
         migrateForSave(key);
         if (SpigotUtil.isUsing1_13API()) {
-            key.setString("type_namespace", item.getType().getKey().getNamespace());
+            if (!item.getType().getKey().getNamespace().equals("minecraft")) {
+                key.setString("type_namespace", item.getType().getKey().getNamespace());
+            } else {
+                key.removeKey("type_namespace");
+            }
             key.setString("type_key", item.getType().getKey().getKey());
         } else {
             key.setString("type", item.getType().name());
         }
         key.setInt("amount", item.getAmount());
-        key.setInt("durability", item.getDurability());
+        if (item.getDurability() != 0) {
+            key.setInt("durability", item.getDurability());
+        } else {
+            key.removeKey("durability");
+        }
+
         if (!SpigotUtil.isUsing1_13API() && item.getData() != null) {
             key.setInt("mdata", item.getData().getData());
         } else {
