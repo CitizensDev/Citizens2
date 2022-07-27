@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -89,6 +90,13 @@ public class Util {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         stack.setItemMeta(meta);
         return stack;
+    }
+
+    public static ItemStack editTitle(ItemStack item, Function<String, String> transform) {
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(transform.apply(meta.hasDisplayName() ? meta.getDisplayName() : ""));
+        item.setItemMeta(meta);
+        return item;
     }
 
     public static void face(Entity entity, float yaw, float pitch) {

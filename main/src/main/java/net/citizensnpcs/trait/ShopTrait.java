@@ -39,9 +39,16 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.trait.shop.ItemAction;
+import net.citizensnpcs.trait.shop.ItemAction.ItemActionGUI;
+import net.citizensnpcs.trait.shop.MoneyAction;
+import net.citizensnpcs.trait.shop.MoneyAction.MoneyActionGUI;
 import net.citizensnpcs.trait.shop.NPCShopAction;
 import net.citizensnpcs.trait.shop.NPCShopAction.GUI;
 import net.citizensnpcs.trait.shop.NPCShopAction.Transaction;
+import net.citizensnpcs.trait.shop.PermissionAction;
+import net.citizensnpcs.trait.shop.PermissionAction.PermissionActionGUI;
+import net.citizensnpcs.util.Util;
 
 /**
  * Shop trait for NPC GUI shops.
@@ -62,7 +69,7 @@ public class ShopTrait extends Trait {
 
     public static class NPCShop {
         @Persist(value = "")
-        private final String name;
+        private String name;
         @Persist(reify = true)
         private final List<NPCShopPage> pages = Lists.newArrayList();
         @Persist
@@ -71,6 +78,9 @@ public class ShopTrait extends Trait {
         private ShopType type = ShopType.COMMAND;
         @Persist
         private String viewPermission;
+
+        private NPCShop() {
+        }
 
         private NPCShop(String name) {
             this.name = name;
@@ -276,13 +286,13 @@ public class ShopTrait extends Trait {
     @MenuSlot(slot = { 3, 4 }, material = Material.DISPENSER, amount = 1, title = "<f>Place display item below")
     public static class NPCShopItemEditor extends InventoryMenuPage {
         @MenuPattern(
-                offset = { 0, 0 },
+                offset = { 0, 6 },
                 slots = { @MenuSlot(pat = 'x', material = Material.AIR) },
                 value = "x x\n x \nx x")
         private InventoryMenuPattern actionItems;
         private final Consumer<NPCShopItem> callback;
         @MenuPattern(
-                offset = { 0, 6 },
+                offset = { 0, 0 },
                 slots = { @MenuSlot(pat = 'x', material = Material.AIR) },
                 value = "x x\n x \nx x")
         private InventoryMenuPattern costItems;
@@ -300,30 +310,29 @@ public class ShopTrait extends Trait {
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
             if (modified.display != null) {
-                ctx.getSlot(9 + 4).setItemStack(modified.display);
+                ctx.getSlot(9 * 4 + 4).setItemStack(modified.display);
             }
             int pos = 0;
             for (GUI template : NPCShopAction.getGUIs()) {
-                ItemStack item = template.createMenuItem();
-                if (item == null)
+                if (template.createMenuItem(null) == null)
                     continue;
 
-                costItems.getSlots().get(pos).setItemStack(item);
+                NPCShopAction oldCost = modified.cost.stream().filter(template::manages).findFirst().orElse(null);
+                costItems.getSlots().get(pos)
+                        .setItemStack(Util.editTitle(template.createMenuItem(oldCost), title -> title + " Cost"));
                 costItems.getSlots().get(pos).setClickHandler(event -> {
                     event.setCancelled(true);
-                    ctx.getMenu()
-                            .transition(template.createEditor(
-                                    modified.cost.stream().filter(template::manages).findFirst().orElse(null),
-                                    cost -> modified.changeCost(template::manages, cost)));
+                    ctx.getMenu().transition(
+                            template.createEditor(oldCost, cost -> modified.changeCost(template::manages, cost)));
                 });
 
-                actionItems.getSlots().get(pos).setItemStack(item);
-                actionItems.getSlots().get(pos).addClickHandler(event -> {
+                NPCShopAction oldResult = modified.result.stream().filter(template::manages).findFirst().orElse(null);
+                actionItems.getSlots().get(pos)
+                        .setItemStack(Util.editTitle(template.createMenuItem(oldResult), title -> title + " Result"));
+                actionItems.getSlots().get(pos).setClickHandler(event -> {
                     event.setCancelled(true);
-                    ctx.getMenu()
-                            .transition(template.createEditor(
-                                    modified.result.stream().filter(template::manages).findFirst().orElse(null),
-                                    result -> modified.changeResult(template::manages, result)));
+                    ctx.getMenu().transition(template.createEditor(oldResult,
+                            result -> modified.changeResult(template::manages, result)));
                 });
 
                 pos++;
@@ -400,12 +409,15 @@ public class ShopTrait extends Trait {
     }
 
     public static class NPCShopPage {
-        @Persist("")
+        @Persist("$key")
         private int index;
         @Persist(keyType = Integer.class, reify = true)
         private final Map<Integer, NPCShopItem> items = Maps.newHashMap();
         @Persist
         private String title;
+
+        private NPCShopPage() {
+        }
 
         public NPCShopPage(int page) {
             this.index = page;
@@ -475,21 +487,23 @@ public class ShopTrait extends Trait {
                     ctx.getMenu().transition(new NPCShopViewer(shop));
                 });
             }
+            ctx.getSlot(2).setDescription("<f>Edit shop view permission<br>" + shop.getRequiredPermission());
+            ctx.getSlot(6).setDescription("<f>Edit shop title<br>" + shop.title);
         }
 
-        @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "Edit shop items")
+        @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
         public void onEditItems(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             ctx.getMenu().transition(new NPCShopContentsEditor(shop));
         }
 
-        @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1, title = "Edit shop permission")
+        @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1)
         public void onPermissionChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             ctx.getMenu().transition(InputMenus.stringSetter(shop::getRequiredPermission, shop::setPermission));
         }
 
-        @MenuSlot(slot = { 0, 6 }, material = Material.NAME_TAG, amount = 1, title = "Edit shop title")
+        @MenuSlot(slot = { 0, 6 }, material = Material.NAME_TAG, amount = 1)
         public void onSetTitle(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             ctx.getMenu().transition(InputMenus.stringSetter(() -> shop.title, newTitle -> {
@@ -497,7 +511,7 @@ public class ShopTrait extends Trait {
             }));
         }
 
-        @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, title = "Edit shop type")
+        @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, title = "<f>Edit shop type")
         public void onShopTypeChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             ctx.getMenu().transition(InputMenus.<ShopType> picker("Edit shop type", chosen -> {
@@ -594,4 +608,9 @@ public class ShopTrait extends Trait {
     }
 
     private static StoredShops SAVED = new StoredShops();
+    static {
+        NPCShopAction.register(ItemAction.class, "items", new ItemActionGUI());
+        NPCShopAction.register(PermissionAction.class, "permissions", new PermissionActionGUI());
+        NPCShopAction.register(MoneyAction.class, "money", new MoneyActionGUI());
+    }
 }

@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -88,33 +87,6 @@ public class SkinTrait extends Trait {
         checkPlaceholder(false);
     }
 
-    @SuppressWarnings("deprecation")
-    private void migrate() {
-        boolean update = false;
-        if (npc.data().has(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA)) {
-            textureRaw = npc.data().get(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA);
-            npc.data().remove(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_METADATA);
-            update = true;
-        }
-        if (npc.data().has(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA)) {
-            signature = npc.data().get(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA);
-            npc.data().remove(NPC.PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN_METADATA);
-            update = true;
-        }
-        if (npc.data().has(NPC.PLAYER_SKIN_UUID_METADATA)) {
-            this.skinName = npc.data().get(NPC.PLAYER_SKIN_UUID_METADATA);
-            npc.data().remove(NPC.PLAYER_SKIN_UUID_METADATA);
-            update = true;
-        }
-        if (npc.data().has(NPC.PLAYER_SKIN_USE_LATEST)) {
-            this.updateSkins = npc.data().get(NPC.PLAYER_SKIN_USE_LATEST);
-            npc.data().remove(NPC.PLAYER_SKIN_USE_LATEST);
-        }
-        if (update) {
-            onSkinChange(false);
-        }
-    }
-
     private void onSkinChange(boolean forceUpdate) {
         if (npc.isSpawned() && npc.getEntity() instanceof SkinnableEntity) {
             ((SkinnableEntity) npc.getEntity()).getSkinTracker().notifySkinChange(forceUpdate);
@@ -123,7 +95,6 @@ public class SkinTrait extends Trait {
 
     @Override
     public void run() {
-        migrate();
         if (timer-- > 0)
             return;
         timer = Setting.PLACEHOLDER_SKIN_UPDATE_FREQUENCY.asInt();
