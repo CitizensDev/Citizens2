@@ -97,14 +97,11 @@ public interface Navigator {
     void setTarget(Entity target, boolean aggressive);
 
     /**
-     * Sets the current navigation to an entity target.
+     * Sets the current navigation to the specified strategy.
      *
-     * @param target
-     *            The {@link Entity} to path towards
-     * @param aggressive
-     *            Whether to attack the target when close enough
+     * @param strategy
      */
-    void setTarget(Entity target, boolean aggressive, Function<NavigatorParameters, PathStrategy> strategy);
+    void setTarget(Function<NavigatorParameters, PathStrategy> strategy);
 
     /**
      * Sets the current navigation using a list of {@link Vector}s which will be moved between sequentially using the
@@ -116,27 +113,10 @@ public interface Navigator {
     void setTarget(Iterable<Vector> path);
 
     /**
-     * Sets the current navigation to a list of {@link Vector}s which will be moved between sequentially using the
-     * Citizens movement logic <em>without</em> pathfinding.
-     *
-     * @param target
-     *            The destination
-     */
-    void setTarget(Iterable<Vector> path, Function<NavigatorParameters, PathStrategy> strategy);
-
-    /**
      * Sets the current navigation to a {@link Location} destination.
      *
      * @param target
      *            The destination
      */
     void setTarget(Location target);
-
-    /**
-     * Sets the current navigation to a {@link Location} destination.
-     *
-     * @param target
-     *            The destination
-     */
-    void setTarget(Location target, Function<NavigatorParameters, PathStrategy> strategy);
 }
