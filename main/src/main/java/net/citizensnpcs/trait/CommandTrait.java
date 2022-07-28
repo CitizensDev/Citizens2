@@ -473,7 +473,7 @@ public class CommandTrait extends Trait {
             this.n = n;
             this.delay = delay;
             this.globalCooldown = globalCooldown;
-            List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().splitToList(command);
+            List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().limit(2).splitToList(command);
             this.bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
         }
 
