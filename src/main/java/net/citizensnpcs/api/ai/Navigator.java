@@ -87,6 +87,26 @@ public interface Navigator {
     void setPaused(boolean paused);
 
     /**
+     * Sets the current navigation to an entity target. The NPC will walk towards them in a straight line without
+     * pathfinding.
+     *
+     * @param target
+     *            The {@link Entity} to walk towards
+     * @param aggressive
+     *            Whether to attack the target when close enough
+     */
+    void setStraightLineTarget(Entity target, boolean aggressive);
+
+    /**
+     * Sets the current navigation to a {@link Location} destination. The NPC will walk straight towards it without
+     * pathfinding.
+     *
+     * @param target
+     *            The destination
+     */
+    void setStraightLineTarget(Location target);
+
+    /**
      * Sets the current navigation to an entity target.
      *
      * @param target
