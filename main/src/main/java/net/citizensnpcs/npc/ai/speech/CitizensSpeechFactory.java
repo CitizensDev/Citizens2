@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 
 import com.google.common.base.Preconditions;
 
@@ -14,7 +13,7 @@ import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.VocalChord;
 
 public class CitizensSpeechFactory implements SpeechFactory {
-    Map<String, Class<? extends VocalChord>> registered = new HashMap<String, Class<? extends VocalChord>>();
+    private final Map<String, Class<? extends VocalChord>> registered = new HashMap<String, Class<? extends VocalChord>>();
 
     @Override
     public VocalChord getVocalChord(Class<? extends VocalChord> clazz) {
@@ -50,10 +49,11 @@ public class CitizensSpeechFactory implements SpeechFactory {
     @Override
     public String getVocalChordName(Class<? extends VocalChord> clazz) {
         // Get the name of a VocalChord class that has been registered
-        for (Entry<String, Class<? extends VocalChord>> vocalChord : registered.entrySet())
-            if (vocalChord.getValue() == clazz)
+        for (Entry<String, Class<? extends VocalChord>> vocalChord : registered.entrySet()) {
+            if (vocalChord.getValue() == clazz) {
                 return vocalChord.getKey();
-
+            }
+        }
         return null;
     }
 
@@ -68,11 +68,6 @@ public class CitizensSpeechFactory implements SpeechFactory {
         if (entity == null)
             return null;
         return new TalkableEntity(entity);
-    }
-
-    @Override
-    public Talkable newTalkableEntity(LivingEntity entity) {
-        return newTalkableEntity((Entity) entity);
     }
 
     @Override

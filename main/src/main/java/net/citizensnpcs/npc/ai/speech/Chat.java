@@ -14,11 +14,9 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 
 public class Chat implements VocalChord {
-    public final String VOCAL_CHORD_NAME = "chat";
-
     @Override
     public String getName() {
-        return VOCAL_CHORD_NAME;
+        return "chat";
     }
 
     @Override

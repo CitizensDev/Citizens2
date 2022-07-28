@@ -14,7 +14,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 
 public class TalkableEntity implements Talkable {
-    Entity entity;
+    private final Entity entity;
 
     public TalkableEntity(Entity entity) {
         this.entity = entity;
@@ -22,10 +22,6 @@ public class TalkableEntity implements Talkable {
 
     public TalkableEntity(NPC npc) {
         entity = npc.getEntity();
-    }
-
-    public TalkableEntity(Player player) {
-        entity = player;
     }
 
     /**
@@ -66,8 +62,8 @@ public class TalkableEntity implements Talkable {
     }
 
     private void talk(NPC npc, String message) {
-        if (entity instanceof Player && !CitizensAPI.getNPCRegistry().isNPC(entity)) {
-            Messaging.sendWithNPC(entity, message, npc);
+        if (!CitizensAPI.getNPCRegistry().isNPC(entity)) {
+            Messaging.sendWithNPCColorless(entity, message, npc);
         }
     }
 
