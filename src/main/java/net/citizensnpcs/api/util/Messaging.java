@@ -100,13 +100,13 @@ public class Messaging {
         log(Level.INFO, Translator.translate(key, msg));
     }
 
-    private static void parseAndSendComponents(CommandSender sender, String message) {
+    private static void parseAndSendComponents(CommandSender sender, String message, String color) {
         ComponentBuilder builder = new ComponentBuilder("");
         Matcher m = COMPONENT_MATCHER.matcher(message);
         int end = 0;
         while (m.find()) {
             if (m.start() != end) {
-                builder.append(MESSAGE_COLOUR + message.substring(end, m.start()));
+                builder.append(color + message.substring(end, m.start()));
             }
             String text = m.group(1);
             String type = m.group(2);
@@ -124,7 +124,7 @@ public class Messaging {
                     break;
             }
             if (action != null) {
-                text = MESSAGE_COLOUR + ChatColor.UNDERLINE + text;
+                text = color + ChatColor.UNDERLINE + text;
             }
             TextComponent tc = new TextComponent(text);
             if (action != null) {
@@ -139,7 +139,7 @@ public class Messaging {
             }
         }
         if (end - 1 < message.length()) {
-            builder.append(MESSAGE_COLOUR + message.substring(end));
+            builder.append(color + message.substring(end));
             builder.event((ClickEvent) null);
             builder.event((HoverEvent) null);
             builder.underlined(false);
@@ -167,7 +167,11 @@ public class Messaging {
     }
 
     public static void send(CommandSender sender, Object... msg) {
-        sendMessageTo(sender, SPACE.join(msg));
+        sendMessageTo(sender, SPACE.join(msg), true);
+    }
+
+    public static void sendColorless(CommandSender sender, Object... msg) {
+        sendMessageTo(sender, SPACE.join(msg), false);
     }
 
     public static void sendError(CommandSender sender, Object... msg) {
@@ -175,21 +179,22 @@ public class Messaging {
     }
 
     public static void sendErrorTr(CommandSender sender, String key, Object... msg) {
-        sendMessageTo(sender, ChatColor.RED + Translator.translate(key, msg));
+        send(sender, ERROR_COLOUR + Translator.translate(key, msg));
     }
 
-    private static void sendMessageTo(CommandSender sender, String rawMessage) {
+    private static void sendMessageTo(CommandSender sender, String rawMessage, boolean messageColor) {
         if (sender instanceof Player) {
             rawMessage = Placeholders.replace(rawMessage, (Player) sender);
         }
         rawMessage = Colorizer.parseColors(rawMessage);
         boolean hasComponents = rawMessage.contains("<<");
+        String color = messageColor ? MESSAGE_COLOUR : "";
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
             message = prettify(message);
             if (hasComponents) {
                 if (SUPPORTS_COMPONENTS) {
                     try {
-                        parseAndSendComponents(sender, message);
+                        parseAndSendComponents(sender, message, color);
                     } catch (Throwable t) {
                         SUPPORTS_COMPONENTS = false;
                     }
@@ -200,18 +205,18 @@ public class Messaging {
                     int end = 0;
                     while (m.find()) {
                         if (m.start() != end) {
-                            builder.append(MESSAGE_COLOUR + message.substring(end, m.start()));
+                            builder.append(color + message.substring(end, m.start()));
                         }
                         String text = m.group(1);
                         String command = m.group(3);
                         if (m.groupCount() > 3 && m.group(4) != null) {
                             text = m.group(4).substring(1);
                         }
-                        String res = text + " (" + MESSAGE_COLOUR + ChatColor.UNDERLINE + command + ")";
+                        String res = text + " (" + color + ChatColor.UNDERLINE + command + ")";
                         builder.append(res);
                     }
                     if (end - 1 < message.length()) {
-                        builder.append(MESSAGE_COLOUR + message.substring(end));
+                        builder.append(color + message.substring(end));
                     }
                     sender.sendMessage(builder.toString());
                 }
@@ -219,15 +224,22 @@ public class Messaging {
                 sender.sendMessage(message);
             }
         }
-
     }
 
     public static void sendTr(CommandSender sender, String key, Object... msg) {
-        sendMessageTo(sender, Translator.translate(key, msg));
+        sendMessageTo(sender, Translator.translate(key, msg), true);
+    }
+
+    public static void sendTrColorless(CommandSender sender, String key, Object... msg) {
+        sendMessageTo(sender, Translator.translate(key, msg), false);
     }
 
     public static void sendWithNPC(CommandSender sender, Object msg, NPC npc) {
-        send(sender, Placeholders.replace(msg.toString(), sender, npc));
+        sendMessageTo(sender, Placeholders.replace(msg.toString(), sender, npc), true);
+    }
+
+    public static void sendWithNPCColorless(CommandSender sender, Object msg, NPC npc) {
+        sendMessageTo(sender, Placeholders.replace(msg.toString(), sender, npc), false);
     }
 
     public static void severe(Object... messages) {
