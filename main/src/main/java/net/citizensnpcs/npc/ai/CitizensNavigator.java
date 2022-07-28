@@ -251,7 +251,7 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public void setTarget(Entity target, boolean aggressive) {
-        setTarget(target, aggressive, new Function<NavigatorParameters, PathStrategy>() {
+        setTarget(new Function<NavigatorParameters, PathStrategy>() {
             @Override
             public PathStrategy apply(NavigatorParameters params) {
                 return new MCTargetStrategy(npc, target, aggressive, params);
@@ -260,13 +260,9 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     @Override
-    public void setTarget(Entity target, boolean aggressive, Function<NavigatorParameters, PathStrategy> strategy) {
+    public void setTarget(Function<NavigatorParameters, PathStrategy> strategy) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
-        if (target == null) {
-            cancelNavigation();
-            return;
-        }
         switchParams();
         switchStrategyTo(strategy.apply(localParams));
     }
@@ -275,7 +271,11 @@ public class CitizensNavigator implements Navigator, Runnable {
     public void setTarget(Iterable<Vector> path) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
-        setTarget(path, new Function<NavigatorParameters, PathStrategy>() {
+        if (Iterables.size(path) == 0) {
+            cancelNavigation();
+            return;
+        }
+        setTarget(new Function<NavigatorParameters, PathStrategy>() {
             @Override
             public PathStrategy apply(NavigatorParameters params) {
                 if (npc.isFlyable()) {
@@ -291,23 +291,11 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     @Override
-    public void setTarget(Iterable<Vector> path, Function<NavigatorParameters, PathStrategy> strategy) {
-        if (!npc.isSpawned())
-            throw new IllegalStateException("npc is not spawned");
-        if (path == null || Iterables.size(path) == 0) {
-            cancelNavigation();
-            return;
-        }
-        switchParams();
-        switchStrategyTo(strategy.apply(localParams));
-    }
-
-    @Override
     public void setTarget(Location targetIn) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
         final Location target = targetIn.clone();
-        setTarget(target, new Function<NavigatorParameters, PathStrategy>() {
+        setTarget(new Function<NavigatorParameters, PathStrategy>() {
             @Override
             public PathStrategy apply(NavigatorParameters params) {
                 if (npc.isFlyable()) {
@@ -320,19 +308,6 @@ public class CitizensNavigator implements Navigator, Runnable {
                 }
             }
         });
-    }
-
-    @Override
-    public void setTarget(Location target, Function<NavigatorParameters, PathStrategy> strategy) {
-        if (!npc.isSpawned())
-            throw new IllegalStateException("npc is not spawned");
-        if (target == null) {
-            cancelNavigation();
-            return;
-        }
-        target = target.clone();
-        switchParams();
-        switchStrategyTo(strategy.apply(localParams));
     }
 
     private void stopNavigating() {
@@ -504,5 +479,6 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
     private static boolean SUPPORT_CHUNK_TICKETS = true;
+
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
 }
