@@ -109,7 +109,7 @@ public interface NMSBridge {
 
     public void mount(Entity entity, Entity passenger);
 
-    InventoryView openAnvilInventory(Player player, Inventory anvil, String title);
+    public InventoryView openAnvilInventory(Player player, Inventory anvil, String title);
 
     public void openHorseScreen(Tameable horse, Player equipper);
 

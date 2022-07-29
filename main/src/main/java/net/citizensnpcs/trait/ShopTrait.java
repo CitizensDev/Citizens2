@@ -39,6 +39,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.trait.shop.ItemAction;
 import net.citizensnpcs.trait.shop.ItemAction.ItemActionGUI;
 import net.citizensnpcs.trait.shop.MoneyAction;
@@ -93,7 +94,7 @@ public class ShopTrait extends Trait {
                 sender.sendMessage(ChatColor.RED + "Empty shop");
                 return;
             }
-            InventoryMenu.createSelfRegistered(new NPCShopViewer(this)).present(sender);
+            InventoryMenu.createSelfRegistered(new NPCShopViewer(this, sender)).present(sender);
         }
 
         public void displayEditor(Player sender) {
@@ -268,6 +269,21 @@ public class ShopTrait extends Trait {
                 }
             }
             return pending;
+        }
+
+        public ItemStack getDisplayItem(Player player) {
+            if (display == null)
+                return null;
+            ItemStack stack = display.clone();
+            ItemMeta meta = stack.getItemMeta();
+            if (meta.hasDisplayName()) {
+                meta.setDisplayName(Placeholders.replace(meta.getDisplayName(), player));
+            }
+            if (meta.hasLore()) {
+                meta.setLore(Lists.transform(meta.getLore(), line -> Placeholders.replace(line, player)));
+            }
+            stack.setItemMeta(meta);
+            return stack;
         }
 
         public void onClick(NPCShop shop, CitizensInventoryClickEvent event) {
@@ -479,14 +495,6 @@ public class ShopTrait extends Trait {
         @Override
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
-            ctx.getSlot(8).clear();
-            if (shop.pages.size() > 0) {
-                ctx.getSlot(8).setItemStack(new ItemStack(Material.CHEST, 1), "Open shop");
-                ctx.getSlot(8).setClickHandler(evt -> {
-                    evt.setCancelled(true);
-                    ctx.getMenu().transition(new NPCShopViewer(shop));
-                });
-            }
             ctx.getSlot(2).setDescription("<f>Edit shop view permission<br>" + shop.getRequiredPermission());
             ctx.getSlot(6).setDescription("<f>Edit shop title<br>" + shop.title);
         }
@@ -527,10 +535,12 @@ public class ShopTrait extends Trait {
     public static class NPCShopViewer extends InventoryMenuPage {
         private MenuContext ctx;
         private int currentPage = 0;
+        private final Player player;
         private final NPCShop shop;
 
-        public NPCShopViewer(NPCShop shop) {
+        public NPCShopViewer(NPCShop shop, Player player) {
             this.shop = shop;
+            this.player = player;
         }
 
         public void changePage(int newPage) {
@@ -538,7 +548,7 @@ public class ShopTrait extends Trait {
             NPCShopPage page = shop.pages.get(currentPage);
             if (page.title != null && !page.title.isEmpty()) {
                 Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
-                    ctx.setTitle(page.title);
+                    ctx.setTitle(Placeholders.replace(page.title, player));
                 }, 1);
             }
             for (int i = 0; i < ctx.getInventory().getSize(); i++) {
@@ -547,7 +557,7 @@ public class ShopTrait extends Trait {
                 if (item == null)
                     continue;
 
-                ctx.getSlot(i).setItemStack(item.display);
+                ctx.getSlot(i).setItemStack(item.getDisplayItem(player));
                 ctx.getSlot(i).setClickHandler(evt -> {
                     evt.setCancelled(true);
                     item.onClick(shop, evt);
@@ -576,7 +586,8 @@ public class ShopTrait extends Trait {
 
         @Override
         public Inventory createInventory(String title) {
-            return Bukkit.createInventory(null, 45, shop.title == null || shop.title.isEmpty() ? "Shop" : shop.title);
+            return Bukkit.createInventory(null, 45,
+                    shop.title == null || shop.title.isEmpty() ? "Shop" : Placeholders.replace(shop.title, player));
         }
 
         @Override
