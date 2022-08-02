@@ -44,8 +44,16 @@ public class VillagerProfession extends Trait {
             return;
         if (npc.getEntity() instanceof Villager) {
             ((Villager) npc.getEntity()).setProfession(profession);
-        } else if (npc.getEntity() instanceof ZombieVillager) {
-            ((ZombieVillager) npc.getEntity()).setVillagerProfession(profession);
+            return;
+        }
+        if (SUPPORT_ZOMBIE_VILLAGER) {
+            try {
+                if (npc.getEntity() instanceof ZombieVillager) {
+                    ((ZombieVillager) npc.getEntity()).setVillagerProfession(profession);
+                }
+            } catch (Throwable t) {
+                SUPPORT_ZOMBIE_VILLAGER = false;
+            }
         }
     }
 
@@ -66,4 +74,6 @@ public class VillagerProfession extends Trait {
     public String toString() {
         return "Profession{" + profession + "}";
     }
+
+    private static boolean SUPPORT_ZOMBIE_VILLAGER = true;
 }
