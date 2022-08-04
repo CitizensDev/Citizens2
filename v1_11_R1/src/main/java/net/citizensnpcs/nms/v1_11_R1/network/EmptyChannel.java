@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_11_R1.network;
 
+import java.net.SocketAddress;
+
 import io.netty.channel.AbstractChannel;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelConfig;
@@ -7,8 +9,7 @@ import io.netty.channel.ChannelMetadata;
 import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.DefaultChannelConfig;
 import io.netty.channel.EventLoop;
-
-import java.net.SocketAddress;
+import net.citizensnpcs.util.Util;
 
 public class EmptyChannel extends AbstractChannel {
     private final ChannelConfig config = new DefaultChannelConfig(this);
@@ -65,7 +66,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     public ChannelMetadata metadata() {
-        return null;
+        return Util.requiresNettyChannelMetadata() ? new ChannelMetadata(true) : null;
     }
 
     @Override

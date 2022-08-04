@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_8_R3.network;
 
+import java.net.SocketAddress;
+
 import io.netty.channel.AbstractChannel;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelConfig;
@@ -7,37 +9,9 @@ import io.netty.channel.ChannelMetadata;
 import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.DefaultChannelConfig;
 import io.netty.channel.EventLoop;
-import io.netty.util.Version;
-
-import java.net.SocketAddress;
-import java.util.Map;
+import net.citizensnpcs.util.Util;
 
 public class EmptyChannel extends AbstractChannel {
-
-    private static boolean updatedNetty = false;
-
-    static {
-        Map<String, Version> versionMap = Version.identify();
-        Version nettyVersion = versionMap.get("netty-common");
-        if (nettyVersion == null)
-            nettyVersion = versionMap.get("netty-all");
-
-        if (nettyVersion != null) {
-            String[] split = nettyVersion.artifactVersion().split("\\.");
-            try {
-                int major = Integer.parseInt(split[0]);
-                int minor = Integer.parseInt(split[1]);
-                int revision = Integer.parseInt(split[2]);
-
-                if (major > 4 || minor > 1 || revision > 24) {
-                    updatedNetty = true;
-                }
-            } catch (ArrayIndexOutOfBoundsException ignored) {
-            } catch (NumberFormatException ignored) {
-            }
-        }
-    }
-
     private final ChannelConfig config = new DefaultChannelConfig(this);
 
     public EmptyChannel(Channel parent) {
@@ -92,7 +66,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     public ChannelMetadata metadata() {
-        return updatedNetty ? new ChannelMetadata(true) : null;
+        return Util.requiresNettyChannelMetadata() ? new ChannelMetadata(true) : null;
     }
 
     @Override
