@@ -3,6 +3,7 @@ package net.citizensnpcs.npc;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,6 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.SetMultimap;
 
 import net.citizensnpcs.NPCNeedsRespawnEvent;
@@ -292,21 +294,22 @@ public class CitizensNPC extends AbstractNPC {
         NMS.setBodyYaw(getEntity(), at.getYaw());
 
         final Location to = at;
-        BukkitRunnable postSpawn = new BukkitRunnable() {
+        Consumer<Runnable> postSpawn = new Consumer<Runnable>() {
             private int timer;
 
             @Override
-            public void run() {
-                if (timer++ > Setting.ENTITY_SPAWN_WAIT_TICKS.asInt()) {
-                    Messaging.debug("Couldn't spawn", CitizensNPC.this, "entity not added to world");
-                    entityController.remove();
-                    cancel();
-                    Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(CitizensNPC.this, to));
+            public void accept(Runnable cancel) {
+                if (getEntity() == null || !getEntity().isValid()) {
+                    if (timer++ > Setting.ENTITY_SPAWN_WAIT_TICKS.asInt()) {
+                        Messaging.debug("Couldn't spawn ", CitizensNPC.this, "waited", timer,
+                                "ticks but entity not added to world");
+                        entityController.remove();
+                        cancel.run();
+                        Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(CitizensNPC.this, to));
+                    }
+
                     return;
                 }
-
-                if (getEntity() == null || !getEntity().isValid())
-                    return;
 
                 // Set the spawned state
                 getOrAddTrait(CurrentLocation.class).setLocation(to);
@@ -319,14 +322,13 @@ public class CitizensNPC extends AbstractNPC {
                     Messaging.debug("Couldn't spawn", CitizensNPC.this, "SpawnReason." + reason,
                             "due to event cancellation.");
                     entityController.remove();
-                    cancel();
+                    cancel.run();
                     return;
                 }
 
                 navigator.onSpawn();
 
-                Collection<Trait> onSpawn = traits.values();
-                for (Trait trait : onSpawn.toArray(new Trait[onSpawn.size()])) {
+                for (Trait trait : Iterables.toArray(traits.values(), Trait.class)) {
                     try {
                         trait.onSpawn();
                     } catch (Throwable ex) {
@@ -335,17 +337,20 @@ public class CitizensNPC extends AbstractNPC {
                     }
                 }
 
-                if (getEntity() instanceof LivingEntity) {
+                EntityType type = getEntity().getType();
+                if (type.isAlive()) {
                     LivingEntity entity = (LivingEntity) getEntity();
                     entity.setRemoveWhenFarAway(false);
 
                     if (NMS.getStepHeight(entity) < 1) {
                         NMS.setStepHeight(entity, 1);
                     }
-                    if (getEntity() instanceof Player) {
+
+                    if (type == EntityType.PLAYER) {
                         NMS.replaceTrackerEntry((Player) getEntity());
                         PlayerUpdateTask.registerPlayer(getEntity());
                     }
+
                     if (SUPPORT_NODAMAGE_TICKS && (Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt() != 20
                             || data().has(NPC.Metadata.SPAWN_NODAMAGE_TICKS))) {
                         try {
@@ -366,13 +371,19 @@ public class CitizensNPC extends AbstractNPC {
                 updateCustomName();
 
                 Messaging.debug("Spawned", CitizensNPC.this, "SpawnReason." + reason);
-                cancel();
+                cancel.run();
             }
         };
-        if (isSpawned()) {
-            postSpawn.runTask(CitizensAPI.getPlugin());
+        if (getEntity() != null && getEntity().isValid()) {
+            postSpawn.accept(() -> {
+            });
         } else {
-            postSpawn.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    postSpawn.accept(() -> cancel());
+                }
+            }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
         }
 
         return true;

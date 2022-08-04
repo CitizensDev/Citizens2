@@ -74,10 +74,7 @@ public class SkinUpdateTracker {
         Location playerLoc = player.getLocation(CACHE_LOCATION);
         Location skinLoc = entity.getLocation(NPC_LOCATION);
 
-        double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
-        viewDistance *= viewDistance;
-
-        if (playerLoc.distanceSquared(skinLoc) > viewDistance)
+        if (playerLoc.distance(skinLoc) > Setting.NPC_SKIN_VIEW_DISTANCE.asDouble())
             return false;
 
         // see if the NPC is within the players field of view

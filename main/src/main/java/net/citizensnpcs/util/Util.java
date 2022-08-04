@@ -26,7 +26,9 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
+import io.netty.util.Version;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -326,6 +328,27 @@ public class Util {
                 to.getBlockZ(), (int) to.getYaw(), (int) to.getPitch());
     }
 
+    public static boolean requiresNettyChannelMetadata() {
+        if (REQUIRES_CHANNEL_METADATA != null)
+            return REQUIRES_CHANNEL_METADATA;
+
+        Version version = Version.identify().get("netty-common");
+        if (version == null) {
+            version = Version.identify().get("netty-all");
+        }
+        if (version == null)
+            return REQUIRES_CHANNEL_METADATA = false;
+        try {
+            Integer[] parts = Iterables.toArray(
+                    Iterables.transform(Splitter.on('.').split(version.artifactVersion()), s -> Integer.parseInt(s)),
+                    int.class);
+            return REQUIRES_CHANNEL_METADATA = parts[0] > 4 || (parts[0] == 4 && parts[1] > 1);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return REQUIRES_CHANNEL_METADATA = true;
+        }
+    }
+
     /**
      * Sets the entity's yaw and pitch directly including head yaw.
      */
@@ -334,6 +357,8 @@ public class Util {
     }
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
+
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static String MINECRAFT_REVISION;
+    private static Boolean REQUIRES_CHANNEL_METADATA;
 }

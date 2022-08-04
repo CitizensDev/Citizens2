@@ -62,9 +62,12 @@ public class EditorCommands {
             desc = "Toggle the text editor",
             modifiers = { "text" },
             min = 1,
-            max = 1,
             permission = "citizens.npc.edit.text")
     public void text(CommandContext args, Player player, NPC npc) {
+        if (player.isConversing() && Editor.hasEditor(player) && args.argsLength() > 1) {
+            player.acceptConversationInput(args.getJoinedStrings(1));
+            return;
+        }
         Editor.enterOrLeave(player, npc.getOrAddTrait(Text.class).getEditor(player));
     }
 }

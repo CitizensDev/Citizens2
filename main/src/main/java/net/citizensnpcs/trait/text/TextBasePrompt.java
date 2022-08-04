@@ -26,6 +26,7 @@ public class TextBasePrompt extends StringPrompt {
     public Prompt acceptInput(ConversationContext context, String original) {
         String[] parts = ChatColor.stripColor(original.trim()).split(" ");
         String input = parts[0];
+
         CommandSender sender = (CommandSender) context.getForWhom();
         if (input.equalsIgnoreCase("add")) {
             text.add(Joiner.on(' ').join(Arrays.copyOfRange(parts, 1, parts.length)));

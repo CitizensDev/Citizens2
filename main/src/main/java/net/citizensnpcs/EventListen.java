@@ -47,8 +47,10 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -151,8 +153,7 @@ public class EventListen implements Listener {
                 Predicates.notNull());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onChunkLoad(ChunkLoadEvent event) {
+    private void loadNPCs(ChunkEvent event) {
         ChunkCoord coord = new ChunkCoord(event.getChunk());
         Runnable runnable = new Runnable() {
             @Override
@@ -168,6 +169,14 @@ public class EventListen implements Listener {
         } else {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable);
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onChunkLoad(ChunkLoadEvent event) {
+        if (usingEntitiesLoadEvents())
+            return;
+
+        loadNPCs(event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -230,6 +239,11 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onCommandSenderCreateNPC(CommandSenderCreateNPCEvent event) {
         checkCreationEvent(event);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntitiesLoad(EntitiesLoadEvent event) {
+        loadNPCs(event);
     }
 
     /*
@@ -732,4 +746,18 @@ public class EventListen implements Listener {
         }
         return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
     }
+
+    private static boolean usingEntitiesLoadEvents() {
+        if (USING_ENTITIES_LOAD == null) {
+            try {
+                Class.forName("org.bukkit.event.world.EntitiesLoadEvent");
+                USING_ENTITIES_LOAD = true;
+            } catch (ClassNotFoundException swallow) {
+                USING_ENTITIES_LOAD = false;
+            }
+        }
+        return USING_ENTITIES_LOAD;
+    }
+
+    private static Boolean USING_ENTITIES_LOAD;
 }

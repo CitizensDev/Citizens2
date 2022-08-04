@@ -66,7 +66,7 @@ public class SmoothRotationTrait extends Trait {
      *            The target location to face
      */
     public void rotateToFace(Location target) {
-        this.globalSession.setTarget(target);
+        globalSession.setTarget(target);
     }
 
     public void rotateToHave(float yaw, float pitch) {
@@ -119,13 +119,22 @@ public class SmoothRotationTrait extends Trait {
         }
     }
 
-    public static class RotationParams implements Persistable {
+    public static class RotationParams implements Persistable, Cloneable {
         private boolean headOnly = false;
         private boolean immediate = false;
         private float maxPitchPerTick = 10;
         private float maxYawPerTick = 40;
-        private final float[] pitchRange = { 0, 0 };
-        private final float[] yawRange = { 0, 0 };
+        private float[] pitchRange = { -180, 180 };
+        private float[] yawRange = { -180, 180 };
+
+        @Override
+        public RotationParams clone() {
+            try {
+                return (RotationParams) super.clone();
+            } catch (CloneNotSupportedException e) {
+                return null;
+            }
+        }
 
         public RotationParams headOnly(boolean headOnly) {
             this.headOnly = headOnly;
@@ -151,6 +160,14 @@ public class SmoothRotationTrait extends Trait {
             if (key.keyExists("maxYawPerTick")) {
                 maxYawPerTick = (float) key.getDouble("maxYawPerTick");
             }
+            if (key.keyExists("yawRange")) {
+                String[] parts = key.getString("yawRange").split(",");
+                yawRange = new float[] { Float.parseFloat(parts[0]), Float.parseFloat(parts[1]) };
+            }
+            if (key.keyExists("pitchRange")) {
+                String[] parts = key.getString("pitchRange").split(",");
+                pitchRange = new float[] { Float.parseFloat(parts[0]), Float.parseFloat(parts[1]) };
+            }
         }
 
         public RotationParams maxPitchPerTick(float val) {
@@ -163,13 +180,22 @@ public class SmoothRotationTrait extends Trait {
             return this;
         }
 
+        public RotationParams pitchRange(float[] val) {
+            this.pitchRange = val;
+            return this;
+        }
+
         public float rotateHeadYawTowards(int t, float yaw, float targetYaw) {
-            return rotateTowards(yaw, targetYaw, maxYawPerTick);
+            float out = rotateTowards(yaw, targetYaw, maxYawPerTick);
+            return clamp(out, yawRange[0], yawRange[1]);
         }
 
         public float rotatePitchTowards(int t, float pitch, float targetPitch) {
-            return rotateTowards(pitch, targetPitch, maxPitchPerTick);
-        }/*
+            float out = rotateTowards(pitch, targetPitch, maxPitchPerTick);
+            return clamp(out, pitchRange[0], pitchRange[1]);
+        }
+
+        /*
          *  public Vector3 SuperSmoothVector3Lerp( Vector3 pastPosition, Vector3 pastTargetPosition, Vector3 targetPosition, float time, float speed ){
          Vector3 f = pastPosition - pastTargetPosition + (targetPosition - pastTargetPosition) / (speed * time);
          return targetPosition - (targetPosition - pastTargetPosition) / (speed*time) + f * Mathf.Exp(-speed*time);
@@ -189,12 +215,35 @@ public class SmoothRotationTrait extends Trait {
             if (immediate) {
                 key.setBoolean("immediate", immediate);
             }
+
             if (maxPitchPerTick != 10) {
                 key.setDouble("maxPitchPerTick", maxPitchPerTick);
+            } else {
+                key.removeKey("maxPitchPerTick");
             }
+
             if (maxYawPerTick != 40) {
                 key.setDouble("maxYawPerTick", maxYawPerTick);
+            } else {
+                key.removeKey("maxYawPerTick");
             }
+
+            if (pitchRange[0] != -180 || pitchRange[1] != 180) {
+                key.setString("pitchRange", pitchRange[0] + "," + pitchRange[1]);
+            } else {
+                key.removeKey("pitchRange");
+            }
+
+            if (yawRange[0] != -180 || yawRange[1] != 180) {
+                key.setString("yawRange", yawRange[0] + "," + yawRange[1]);
+            } else {
+                key.removeKey("yawRange");
+            }
+        }
+
+        public RotationParams yawRange(float[] val) {
+            this.yawRange = val;
+            return this;
         }
     }
 
@@ -207,7 +256,7 @@ public class SmoothRotationTrait extends Trait {
             this.params = params;
         }
 
-        private float getTargetPitch() {
+        public float getTargetPitch() {
             double dx = tx - getX();
             double dy = ty - (getY() + getEyeY());
             double dz = tz - getZ();
@@ -215,8 +264,20 @@ public class SmoothRotationTrait extends Trait {
             return (float) -Math.toDegrees(Math.atan2(dy, diag));
         }
 
-        private float getTargetYaw() {
+        public double getTargetX() {
+            return tx;
+        }
+
+        public double getTargetY() {
+            return ty;
+        }
+
+        public float getTargetYaw() {
             return (float) Math.toDegrees(Math.atan2(tz - getZ(), tx - getX())) - 90.0F;
+        }
+
+        public double getTargetZ() {
+            return tz;
         }
 
         public boolean hasTarget() {

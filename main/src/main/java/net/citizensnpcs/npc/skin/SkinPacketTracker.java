@@ -171,8 +171,6 @@ public class SkinPacketTracker {
      *            The radius.
      */
     public void updateNearbyViewers(double radius) {
-        radius *= radius;
-
         org.bukkit.World world = entity.getBukkitEntity().getWorld();
         Player from = entity.getBukkitEntity();
         Location location = from.getLocation();
@@ -181,12 +179,12 @@ public class SkinPacketTracker {
             if (player == null || player.hasMetadata("NPC"))
                 continue;
 
-            player.getLocation(CACHE_LOCATION);
-            if (!player.canSee(from) || !location.getWorld().equals(CACHE_LOCATION.getWorld()))
+            if (!location.getWorld().equals(player.getLocation(CACHE_LOCATION).getWorld()) || !player.canSee(from))
                 continue;
 
-            if (location.distanceSquared(CACHE_LOCATION) > radius)
+            if (location.distance(CACHE_LOCATION) > radius)
                 continue;
+
             updateViewer(player);
         }
     }

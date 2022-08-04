@@ -1580,8 +1580,8 @@ public class NPCCommands {
             permission = "citizens.npc.passive")
     public void passive(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean passive = args.hasValueFlag("set") ? Boolean.parseBoolean(args.getFlag("set"))
-                : npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true);
-        npc.data().setPersistent(NPC.DAMAGE_OTHERS_METADATA, !passive);
+                : !npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true);
+        npc.data().setPersistent(NPC.DAMAGE_OTHERS_METADATA, passive);
         Messaging.sendTr(sender, passive ? Messages.PASSIVE_SET : Messages.PASSIVE_UNSET, npc.getName());
     }
 
