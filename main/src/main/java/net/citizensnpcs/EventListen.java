@@ -50,7 +50,6 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -111,6 +110,7 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class EventListen implements Listener {
+    private EventListenChunk chunkEventListener;
     private final Map<String, NPCRegistry> registries;
     private final SkinUpdateTracker skinUpdateTracker;
     private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create(64, 4);
@@ -118,6 +118,12 @@ public class EventListen implements Listener {
     EventListen(Map<String, NPCRegistry> registries) {
         this.registries = registries;
         this.skinUpdateTracker = new SkinUpdateTracker(registries);
+        try {
+            this.chunkEventListener = new EventListenChunk(this);
+            Bukkit.getPluginManager().registerEvents(chunkEventListener, CitizensAPI.getPlugin());
+        } catch (Throwable ex) {
+            this.chunkEventListener = null;
+        }
     }
 
     private void checkCreationEvent(CommandSenderCreateNPCEvent event) {
@@ -153,7 +159,7 @@ public class EventListen implements Listener {
                 Predicates.notNull());
     }
 
-    private void loadNPCs(ChunkEvent event) {
+    void loadNPCs(ChunkEvent event) {
         ChunkCoord coord = new ChunkCoord(event.getChunk());
         Runnable runnable = new Runnable() {
             @Override
@@ -173,9 +179,8 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
-        if (usingEntitiesLoadEvents())
+        if (chunkEventListener != null)
             return;
-
         loadNPCs(event);
     }
 
@@ -239,11 +244,6 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onCommandSenderCreateNPC(CommandSenderCreateNPCEvent event) {
         checkCreationEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntitiesLoad(EntitiesLoadEvent event) {
-        loadNPCs(event);
     }
 
     /*
@@ -746,18 +746,4 @@ public class EventListen implements Listener {
         }
         return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
     }
-
-    private static boolean usingEntitiesLoadEvents() {
-        if (USING_ENTITIES_LOAD == null) {
-            try {
-                Class.forName("org.bukkit.event.world.EntitiesLoadEvent");
-                USING_ENTITIES_LOAD = true;
-            } catch (ClassNotFoundException swallow) {
-                USING_ENTITIES_LOAD = false;
-            }
-        }
-        return USING_ENTITIES_LOAD;
-    }
-
-    private static Boolean USING_ENTITIES_LOAD;
 }
