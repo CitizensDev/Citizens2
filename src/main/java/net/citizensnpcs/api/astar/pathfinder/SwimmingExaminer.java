@@ -68,6 +68,8 @@ public class SwimmingExaminer implements BlockExaminer {
     }
 
     public static boolean isWaterMob(Entity entity) {
+        if (entity == null)
+            return false;
         if (!SpigotUtil.isUsing1_13API())
             return entity instanceof Squid;
         return entity instanceof WaterMob || entity.getType().name().equals("TURTLE")
