@@ -78,6 +78,16 @@ public class Util {
         return angle;
     }
 
+    public static float clamp(float angle, float min, float max, float d) {
+        while (angle < min) {
+            angle += d;
+        }
+        while (angle >= max) {
+            angle -= d;
+        }
+        return angle;
+    }
+
     public static ItemStack createItem(Material mat, String name) {
         return createItem(mat, name, null);
     }
@@ -357,7 +367,6 @@ public class Util {
     }
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
-
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static String MINECRAFT_REVISION;
     private static Boolean REQUIRES_CHANNEL_METADATA;

@@ -187,12 +187,12 @@ public class SmoothRotationTrait extends Trait {
 
         public float rotateHeadYawTowards(int t, float yaw, float targetYaw) {
             float out = rotateTowards(yaw, targetYaw, maxYawPerTick);
-            return clamp(out, yawRange[0], yawRange[1]);
+            return Util.clamp(out, yawRange[0], yawRange[1], 360);
         }
 
         public float rotatePitchTowards(int t, float pitch, float targetPitch) {
             float out = rotateTowards(pitch, targetPitch, maxPitchPerTick);
-            return clamp(out, pitchRange[0], pitchRange[1]);
+            return Util.clamp(out, pitchRange[0], pitchRange[1], 360);
         }
 
         /*
