@@ -28,6 +28,7 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 
 /**
@@ -81,7 +82,8 @@ public class HologramTrait extends Trait {
                 0));
         Matcher itemMatcher = ITEM_MATCHER.matcher(line);
         if (itemMatcher.matches()) {
-            Material item = Material.matchMaterial(itemMatcher.group(1), false);
+            Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
+                    : Material.matchMaterial(itemMatcher.group(1));
             NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", new ItemStack(item, 1));
             itemNPC.spawn(currentLoc);
             ((ArmorStand) hologramNPC.getEntity()).addPassenger(itemNPC.getEntity());
@@ -110,8 +112,7 @@ public class HologramTrait extends Trait {
     }
 
     private double getHeight(int lineNumber) {
-        return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight)
-                * (lastNameplateVisible ? lineNumber + 1 : lineNumber);
+        return getLineHeight() * (lastNameplateVisible ? lineNumber + 1 : lineNumber);
     }
 
     /**
@@ -125,7 +126,7 @@ public class HologramTrait extends Trait {
      * @return The line height between each hologram line, in blocks
      */
     public double getLineHeight() {
-        return lineHeight;
+        return lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight;
     }
 
     /**
@@ -136,8 +137,7 @@ public class HologramTrait extends Trait {
     }
 
     private double getMaxHeight() {
-        return (lineHeight == -1 ? Setting.DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT.asDouble() : lineHeight)
-                * (lines.size() + (npc.requiresNameHologram() ? 0 : 1));
+        return getLineHeight() * (lines.size() + (lastNameplateVisible ? 1 : -1));
     }
 
     /**
@@ -254,7 +254,8 @@ public class HologramTrait extends Trait {
                 continue;
 
             if (update) {
-                hologramNPC.teleport(currentLoc.clone().add(0, getEntityHeight() + getHeight(i), 0),
+                hologramNPC.teleport(currentLoc.clone().add(0, lastEntityHeight
+                        + (direction == HologramDirection.BOTTOM_UP ? getHeight(i) : getMaxHeight() - getHeight(i)), 0),
                         TeleportCause.PLUGIN);
             }
 
