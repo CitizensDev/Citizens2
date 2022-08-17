@@ -240,9 +240,10 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
 
     boolean sendPage(CommandSender player, int page) {
         Paginator paginator = new Paginator().header("Current Texts").enablePageSwitcher();
-        for (int i = 0; i < text.size(); i++)
+        for (int i = 0; i < text.size(); i++) {
             paginator.addLine("<a>" + text.get(i) + " (<<&eedit:suggest(edit " + i + " )>>) (<<&c-:command(remove " + i
                     + "):Remove this text>>)");
+        }
         return paginator.sendPage(player, page);
     }
 

@@ -701,12 +701,16 @@ public class CommandTrait extends Trait {
                     }
                 }
             }
-            for (String key : Sets.difference(Sets.newHashSet(lastUsed.keySet()), commandKeys)) {
+            Set<String> diff = Sets.newHashSet(lastUsed.keySet());
+            diff.removeAll(commandKeys);
+            for (String key : diff) {
                 lastUsed.remove(key);
                 nUsed.remove(key);
             }
             if (globalCooldowns != null) {
-                for (String key : Sets.difference(Sets.newHashSet(globalCooldowns.keySet()), commandKeys)) {
+                diff = Sets.newHashSet(globalCooldowns.keySet());
+                diff.removeAll(commandKeys);
+                for (String key : diff) {
                     globalCooldowns.remove(key);
                 }
             }

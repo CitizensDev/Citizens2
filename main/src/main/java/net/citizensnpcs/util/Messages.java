@@ -231,7 +231,7 @@ public class Messages {
     public static final String MOVETO_FORMAT = "citizens.commands.npc.moveto.format";
     public static final String MOVETO_TELEPORTED = "citizens.commands.npc.moveto.teleported";
     public static final String MUSHROOM_COW_VARIANT_SET = "citizens.commands.npc.mushroomcow.variant-set";
-    public static final String NAMEPLATE_VISIBILITY_TOGGLED = "citizens.commands.npc.nameplate.toggled";
+    public static final String NAMEPLATE_VISIBILITY_SET = "citizens.commands.npc.nameplate.set";
     public static final String NO_HORSE_MODIFIERS_GIVEN = "citizens.commands.npc.horse.no-modifiers";
     public static final String NO_NPC_WITH_ID_FOUND = "citizens.commands.npc.spawn.missing-npc-id";
     public static final String NO_STORED_SPAWN_LOCATION = "citizens.commands.npc.spawn.no-location";

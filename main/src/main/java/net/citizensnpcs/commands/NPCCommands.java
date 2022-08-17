@@ -1483,7 +1483,7 @@ public class NPCCommands {
             old = old.equals("hover") ? "true" : "" + !Boolean.parseBoolean(old);
         }
         npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, old);
-        Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_TOGGLED);
+        Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_SET, old);
     }
 
     @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "citizens.npc.info")
