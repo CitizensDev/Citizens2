@@ -129,6 +129,7 @@ public class Settings {
         NEW_PATHFINDER_CHECK_BOUNDING_BOXES("npc.pathfinding.new-finder.check-bounding-boxes", false),
         NEW_PATHFINDER_OPENS_DOORS("npc.pathfinding.new-finder.open-doors", false),
         NPC_ATTACK_DISTANCE("npc.pathfinding.attack-range", 1.75 * 1.75),
+        NPC_COMMAND_GLOBAL_COMMAND_DELAY("npc.commands.global-delay-seconds", 0),
         NPC_COMMAND_MAXIMUM_TIMES_USED_MESSAGE("npc.commands.error-messages.maximum-times-used",
                 "You have reached the maximum number of uses ({0})."),
         NPC_COMMAND_MISSING_ITEM_MESSAGE("npc.commands.error-messages.missing-item", "Missing {1} {0}"),

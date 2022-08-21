@@ -61,10 +61,10 @@ public class CommandTrait extends Trait {
     @Persist(keyType = Integer.class)
     @DelegatePersistence(NPCCommandPersister.class)
     private final Map<Integer, NPCCommand> commands = Maps.newHashMap();
-    @Persist(keyType = UUID.class, reify = true)
-    private final Map<UUID, PlayerNPCCommand> cooldowns = Maps.newHashMap();
     @Persist
     private double cost = -1;
+    @Persist
+    private final Map<CommandTraitMessages, String> customErrorMessages = Maps.newEnumMap(CommandTraitMessages.class);
     private final Map<String, Set<CommandTraitMessages>> executionErrors = Maps.newHashMap();
     @Persist
     private ExecutionMode executionMode = ExecutionMode.LINEAR;
@@ -76,6 +76,8 @@ public class CommandTrait extends Trait {
     private boolean hideErrorMessages;
     @Persist
     private final List<ItemStack> itemRequirements = Lists.newArrayList();
+    @Persist(keyType = UUID.class, reify = true, value = "cooldowns")
+    private final Map<UUID, PlayerNPCCommand> playerTracking = Maps.newHashMap();
     @Persist
     private final List<String> temporaryPermissions = Lists.newArrayList();
 
@@ -231,7 +233,7 @@ public class CommandTrait extends Trait {
                 }
                 for (NPCCommand command : commandList) {
                     if (executionMode == ExecutionMode.SEQUENTIAL) {
-                        PlayerNPCCommand info = cooldowns.get(player.getUniqueId());
+                        PlayerNPCCommand info = playerTracking.get(player.getUniqueId());
                         if (info != null && info.lastUsedHand != hand) {
                             info.lastUsedHand = hand;
                             info.lastUsedId = -1;
@@ -255,10 +257,10 @@ public class CommandTrait extends Trait {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        PlayerNPCCommand info = cooldowns.get(player.getUniqueId());
+                        PlayerNPCCommand info = playerTracking.get(player.getUniqueId());
                         if (info == null && (executionMode == ExecutionMode.SEQUENTIAL
                                 || PlayerNPCCommand.requiresTracking(command))) {
-                            cooldowns.put(player.getUniqueId(), info = new PlayerNPCCommand());
+                            playerTracking.put(player.getUniqueId(), info = new PlayerNPCCommand());
                         }
                         if (info != null && !info.canUse(CommandTrait.this, player, command)) {
                             return;
@@ -329,7 +331,7 @@ public class CommandTrait extends Trait {
     @Override
     public void save(DataKey key) {
         Collection<NPCCommand> commands = this.commands.values();
-        for (PlayerNPCCommand playerCommand : cooldowns.values()) {
+        for (PlayerNPCCommand playerCommand : playerTracking.values()) {
             playerCommand.prune(globalCooldowns, commands);
         }
     }
@@ -345,7 +347,7 @@ public class CommandTrait extends Trait {
                 return;
             sent.add(msg);
         }
-        String messageRaw = msg.setting.asString();
+        String messageRaw = customErrorMessages.getOrDefault(msg, msg.setting.asString());
         if (transform != null) {
             messageRaw = transform.apply(messageRaw);
         }
@@ -356,6 +358,10 @@ public class CommandTrait extends Trait {
 
     public void setCost(double cost) {
         this.cost = cost;
+    }
+
+    public void setCustomErrorMessage(CommandTraitMessages which, String message) {
+        customErrorMessages.put(which, message);
     }
 
     public void setExecutionMode(ExecutionMode mode) {
@@ -375,7 +381,7 @@ public class CommandTrait extends Trait {
         temporaryPermissions.addAll(permissions);
     }
 
-    private enum CommandTraitMessages {
+    public enum CommandTraitMessages {
         MAXIMUM_TIMES_USED(Setting.NPC_COMMAND_MAXIMUM_TIMES_USED_MESSAGE),
         MISSING_EXPERIENCE(Setting.NPC_COMMAND_NOT_ENOUGH_EXPERIENCE_MESSAGE),
         MISSING_ITEM(Setting.NPC_COMMAND_MISSING_ITEM_MESSAGE),
@@ -644,10 +650,11 @@ public class CommandTrait extends Trait {
                     return false;
                 }
             }
+            long globalDelay = Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong();
             long currentTimeSec = System.currentTimeMillis() / 1000;
             String commandKey = command.getEncodedKey();
             if (lastUsed.containsKey(commandKey)) {
-                long deadline = ((Number) lastUsed.get(commandKey)).longValue() + command.cooldown;
+                long deadline = ((Number) lastUsed.get(commandKey)).longValue() + command.cooldown + globalDelay;
                 if (currentTimeSec < deadline) {
                     long seconds = deadline - currentTimeSec;
                     trait.sendErrorMessage(player, CommandTraitMessages.ON_COOLDOWN,
@@ -671,7 +678,7 @@ public class CommandTrait extends Trait {
                 trait.sendErrorMessage(player, CommandTraitMessages.MAXIMUM_TIMES_USED, null, command.n);
                 return false;
             }
-            if (command.cooldown > 0) {
+            if (command.cooldown > 0 || globalDelay > 0) {
                 lastUsed.put(commandKey, currentTimeSec);
             }
             if (command.globalCooldown > 0) {
@@ -691,7 +698,8 @@ public class CommandTrait extends Trait {
                 String commandKey = command.getEncodedKey();
                 commandKeys.add(commandKey);
                 Number number = lastUsed.get(commandKey);
-                if (number != null && number.longValue() + command.cooldown <= currentTimeSec) {
+                if (number != null && number.longValue() + command.cooldown
+                        + Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong() <= currentTimeSec) {
                     lastUsed.remove(commandKey);
                 }
                 if (globalCooldowns != null) {
@@ -718,7 +726,8 @@ public class CommandTrait extends Trait {
 
         public static boolean requiresTracking(NPCCommand command) {
             return command.globalCooldown > 0 || command.cooldown > 0 || command.n > 0
-                    || (command.perms != null && command.perms.size() > 0);
+                    || (command.perms != null && command.perms.size() > 0)
+                    || Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong() > 0;
         }
     }
 

@@ -31,6 +31,7 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.util.Messages;
@@ -265,10 +266,10 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
             HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
             if (speechIndex == -1) {
                 speechIndex = trait.getLines().size();
-                trait.addLine(text.get(index));
+                trait.addLine(Placeholders.replace(text.get(index), player));
                 bubbleTicks = Setting.DEFAULT_TEXT_SPEECH_BUBBLE_TICKS.asInt();
             } else if (speechIndex < trait.getLines().size()) {
-                trait.setLine(speechIndex, text.get(index));
+                trait.setLine(speechIndex, Placeholders.replace(text.get(index), player));
             }
         } else {
             npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
