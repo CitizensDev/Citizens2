@@ -630,9 +630,6 @@ public class NMSImpl implements NMSBridge {
     public MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final Location dest,
             final NavigatorParameters params) {
         return getTargetNavigator(entity, params, (input) -> {
-            if (entity.hasMetadata("CitizensPrintMovements")) {
-                Messaging.log("Repathing", entity, dest);
-            }
             return input.moveTo(dest.getX(), dest.getY(), dest.getZ(), params.speed());
         });
     }
@@ -722,6 +719,10 @@ public class NMSImpl implements NMSBridge {
                         // make it just fit on 1 so hack around it a bit.
                     }
                     lastSpeed = params.speed();
+                }
+                if (entity.hasMetadata("CitizensPrintMovements")) {
+                    Path path = getPathEntity(navigation);
+                    Messaging.log("Next path node " + path.getNextNode().asVec3(), "wanted", getDestination(entity));
                 }
                 if (params.debug() && !navigation.isDone()) {
                     BlockData data = Material.DANDELION.createBlockData();

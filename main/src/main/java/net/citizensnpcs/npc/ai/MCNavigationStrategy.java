@@ -14,7 +14,6 @@ import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -41,9 +40,6 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         this.target = Util.getCenterLocation(dest.getBlock());
         this.parameters = params;
         entity = npc.getEntity();
-        if (entity.hasMetadata("CitizensPrintMovements")) {
-            Messaging.log("Setting MCNavigation path", entity, target);
-        }
         this.navigator = NMS.getTargetNavigator(entity, target, params);
     }
 
