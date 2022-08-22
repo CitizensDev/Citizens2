@@ -40,7 +40,6 @@ import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -664,12 +663,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "debug -p(aths) -n(avigation) -r(epathing)",
+            usage = "debug -p(aths) -n(avigation)",
             desc = "Display debugging information",
             modifiers = { "debug" },
             min = 1,
             max = 1,
-            flags = "pnr",
+            flags = "pn",
             permission = "citizens.npc.debug")
     @Requirements(ownership = true, selected = true)
     public void debug(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
@@ -686,13 +685,6 @@ public class NPCCommands {
                     + npc.getNavigator().getDefaultParameters().speed() + "]]<br>";
             output += "Stuck action [[" + npc.getNavigator().getDefaultParameters().stuckAction() + "]]<br>";
             Messaging.send(sender, output);
-        } else if (args.hasFlag('r')) {
-            if (!npc.getEntity().hasMetadata("CitizensPrintMovements")) {
-                npc.getEntity().setMetadata("CitizensPrintMovements",
-                        new FixedMetadataValue(CitizensAPI.getPlugin(), true));
-            } else {
-                npc.getEntity().removeMetadata("CitizensPrintMovements", CitizensAPI.getPlugin());
-            }
         }
     }
 

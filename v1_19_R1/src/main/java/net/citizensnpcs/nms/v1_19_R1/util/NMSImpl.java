@@ -720,10 +720,6 @@ public class NMSImpl implements NMSBridge {
                     }
                     lastSpeed = params.speed();
                 }
-                if (entity.hasMetadata("CitizensPrintMovements")) {
-                    Path path = getPathEntity(navigation);
-                    Messaging.log("Next path node " + path.getNextNode().asVec3(), "wanted", getDestination(entity));
-                }
                 if (params.debug() && !navigation.isDone()) {
                     BlockData data = Material.DANDELION.createBlockData();
                     Path path = getPathEntity(navigation);
