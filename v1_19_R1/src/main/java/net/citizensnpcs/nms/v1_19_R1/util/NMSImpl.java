@@ -614,9 +614,9 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public MCNavigator getTargetNavigator(org.bukkit.entity.Entity entity, Iterable<Vector> dest,
+    public MCNavigator getTargetNavigator(org.bukkit.entity.Entity entity, Iterable<Vector> nodes,
             final NavigatorParameters params) {
-        List<Node> list = Lists.<Node> newArrayList(Iterables.<Vector, Node> transform(dest, (input) -> {
+        List<Node> list = Lists.<Node> newArrayList(Iterables.<Vector, Node> transform(nodes, (input) -> {
             return new Node(input.getBlockX(), input.getBlockY(), input.getBlockZ());
         }));
         Node last = list.size() > 0 ? list.get(list.size() - 1) : null;
@@ -630,6 +630,9 @@ public class NMSImpl implements NMSBridge {
     public MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final Location dest,
             final NavigatorParameters params) {
         return getTargetNavigator(entity, params, (input) -> {
+            if (entity.hasMetadata("CitizensPrintMovements")) {
+                Messaging.log("Repathing", entity, dest);
+            }
             return input.moveTo(dest.getX(), dest.getY(), dest.getZ(), params.speed());
         });
     }
