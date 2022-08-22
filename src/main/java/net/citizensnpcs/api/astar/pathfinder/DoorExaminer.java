@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
-import java.util.ListIterator;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -158,7 +158,7 @@ public class DoorExaminer implements BlockExaminer {
         }
 
         @Override
-        public void run(NPC npc, Block point, ListIterator<Block> path) {
+        public void run(NPC npc, Block point, List<Block> path, int index) {
             if ((!MinecraftBlockExaminer.isDoor(point.getType()) && !MinecraftBlockExaminer.isGate(point.getType()))
                     || opened)
                 return;

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -146,13 +145,7 @@ public class Path implements Plan {
                         }
                     });
                 }
-                ListIterator<Block> vec = blockList.listIterator();
-                if (index > 0) {
-                    while (index != vec.nextIndex()) {
-                        vec.next();
-                    }
-                }
-                callback.run(npc, current, vec);
+                callback.run(npc, current, blockList, index);
             }
         }
 

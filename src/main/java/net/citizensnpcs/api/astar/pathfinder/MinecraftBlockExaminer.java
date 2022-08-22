@@ -1,7 +1,7 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.EnumSet;
-import java.util.ListIterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -81,11 +81,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     private class LadderClimber implements PathCallback {
         boolean added = false;
-        ListIterator<Block> current;
 
         @Override
-        public void run(final NPC npc, Block point, ListIterator<Block> path) {
-            current = path;
+        public void run(final NPC npc, Block point, List<Block> path, int index) {
             if (added || npc.data().<Boolean> get("running-ladder", false)) {
                 added = true;
                 return;
@@ -100,20 +98,26 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
                 @Override
                 public void run() {
+                    if (index + 1 >= path.size()) {
+                        return;
+                    }
                     Location loc = npc.getEntity().getLocation(dummy);
-                    Block dest = current.next();
-                    Material in = loc.getBlock().getType(), next = dest.getType();
-                    current.previous();
-                    if (isClimbable(in) || isScaffolding(next)) {
-                        if (current.next().getY() > current.previous().getY()) {
+                    Material in = loc.getBlock().getType();
+                    Block next = path.get(index + 1);
+                    Block prev = path.get(index);
+                    if (isClimbable(in) || isClimbable(loc.getBlock().getRelative(BlockFace.DOWN).getType())
+                            || isScaffolding(next.getType())) {
+                        if (next.getY() > prev.getY()) {
                             npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
                             if (sneakingForScaffolding) {
                                 npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = false);
                             }
-                        } else if ((isScaffolding(in) || isScaffolding(next))) {
-                            if (loc.distance(dest.getLocation().add(0.5, 1, 0.5)) < 0.4) {
+                        } else if ((isScaffolding(in) || isScaffolding(next.getType()))) {
+                            if (loc.distance(next.getLocation().add(0.5, 1, 0.5)) < 0.4) {
                                 npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = true);
                             }
+                        } else if (next.getY() < prev.getY()) {
+                            npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(-0.2));
                         }
                     } else if (sneakingForScaffolding) {
                         npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = false);

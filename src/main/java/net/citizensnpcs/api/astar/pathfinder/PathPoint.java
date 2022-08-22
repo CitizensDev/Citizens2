@@ -1,7 +1,6 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.List;
-import java.util.ListIterator;
 
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
@@ -73,7 +72,9 @@ public interface PathPoint {
          *            The point
          * @param path
          *            The future path destinations as blocks
+         * @param index
+         *            The current path index
          */
-        void run(NPC npc, Block point, ListIterator<Block> path);
+        void run(NPC npc, Block current, List<Block> path, int index);
     }
 }
