@@ -250,8 +250,8 @@ public class PlayerNavigation extends NavigationAbstract {
             Vec3D paramVec3D, double paramDouble1, double paramDouble2) {
         for (BlockPosition localBlockPosition : BlockPosition.a(new BlockPosition(paramInt1, paramInt2, paramInt3),
                 new BlockPosition(paramInt1 + paramInt4 - 1, paramInt2 + paramInt5 - 1, paramInt3 + paramInt6 - 1))) {
-            double d1 = localBlockPosition.getX() + 0.5D - paramVec3D.a;
-            double d2 = localBlockPosition.getZ() + 0.5D - paramVec3D.c;
+            double d1 = (localBlockPosition.getX() + 0.5D) - paramVec3D.a;
+            double d2 = (localBlockPosition.getZ() + 0.5D) - paramVec3D.c;
             if (d1 * paramDouble1 + d2 * paramDouble2 >= 0.0D) {
                 Block localBlock = this.c.getType(localBlockPosition).getBlock();
                 if (!localBlock.b(this.c, localBlockPosition)) {

@@ -450,9 +450,9 @@ public class PlayerNavigation extends NavigationAbstract {
         Vec3D var0 = b();
         this.l = (this.a.getWidth() > 0.75F) ? (this.a.getWidth() / 2.0F) : (0.75F - this.a.getWidth() / 2.0F);
         BaseBlockPosition var1 = this.c.g();
-        double var2 = Math.abs(this.a.locX() - var1.getX() + 0.5D);
+        double var2 = Math.abs(this.a.locX() - (var1.getX() + 0.5D));
         double var4 = Math.abs(this.a.locY() - var1.getY());
-        double var6 = Math.abs(this.a.locZ() - var1.getZ() + 0.5D);
+        double var6 = Math.abs(this.a.locZ() - (var1.getZ() + 0.5D));
         boolean var8 = (var2 < this.l && var6 < this.l && var4 < 1.0D);
         boolean b2 = Math.abs(this.a.locX() - (var1.getX() + 0.5D)) < this.l
                 && Math.abs(this.a.locZ() - (var1.getZ() + 0.5D)) < this.l

@@ -147,7 +147,7 @@ public class PlayerNavigation extends PathNavigation {
         }
         return true;
     }
-
+    
     private boolean canWalkOn(int var0, int var1, int var2, int var3, int var4, int var5, Vec3 var6, double var7,
             double var9) {
         int var11 = var0 - var3 / 2;
@@ -283,9 +283,9 @@ public class PlayerNavigation extends PathNavigation {
         this.maxDistanceToWaypoint = (this.mob.getBbWidth() > 0.75F) ? (this.mob.getBbWidth() / 2.0F)
                 : (0.75F - this.mob.getBbWidth() / 2.0F);
         BlockPos blockPos = this.path.getNextNodePos();
-        double var2 = Math.abs(this.mob.getX() - blockPos.getX() + 0.5D);
+        double var2 = Math.abs(this.mob.getX() - (blockPos.getX() + 0.5D));
         double var4 = Math.abs(this.mob.getY() - blockPos.getY());
-        double var6 = Math.abs(this.mob.getZ() - blockPos.getZ() + 0.5D);
+        double var6 = Math.abs(this.mob.getZ() - (blockPos.getZ() + 0.5D));
         boolean var8 = (var2 < this.maxDistanceToWaypoint && var6 < this.maxDistanceToWaypoint && var4 < 1.0D);
         if (var8 || (this.mob.canCutCorner((this.path.getNextNode()).type) && shouldTargetNextNodeInDirection(var0)))
             this.path.advance();

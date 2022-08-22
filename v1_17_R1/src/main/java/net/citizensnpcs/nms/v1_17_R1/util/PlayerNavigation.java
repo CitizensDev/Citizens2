@@ -137,8 +137,8 @@ public class PlayerNavigation extends PathNavigation {
             double var9) {
         for (BlockPos var12 : BlockPos.betweenClosed(new BlockPos(var0, var1, var2),
                 new BlockPos(var0 + var3 - 1, var1 + var4 - 1, var2 + var5 - 1))) {
-            double var13 = var12.getX() + 0.5D - var6.x;
-            double var15 = var12.getZ() + 0.5D - var6.z;
+            double var13 = (var12.getX() + 0.5D) - var6.x;
+            double var15 = (var12.getZ() + 0.5D) - var6.z;
             if (var13 * var7 + var15 * var9 < 0.0D)
                 continue;
             if (!this.level.getBlockState(var12).isPathfindable(this.level, var12, PathComputationType.LAND))
@@ -155,8 +155,8 @@ public class PlayerNavigation extends PathNavigation {
             return false;
         for (int var13 = var11; var13 < var11 + var3; var13++) {
             for (int var14 = var12; var14 < var12 + var5; var14++) {
-                double var15 = var13 + 0.5D - var6.x;
-                double var17 = var14 + 0.5D - var6.z;
+                double var15 = (var13 + 0.5D) - var6.x;
+                double var17 = (var14 + 0.5D) - var6.z;
                 if (var15 * var7 + var17 * var9 >= 0.0D) {
                     BlockPathTypes var19 = this.nodeEvaluator.getBlockPathType(this.level, var13, var1 - 1, var14,
                             this.mob, var3, var4, var5, true, true);
@@ -282,9 +282,9 @@ public class PlayerNavigation extends PathNavigation {
         this.maxDistanceToWaypoint = (this.mob.getBbWidth() > 0.75F) ? (this.mob.getBbWidth() / 2.0F)
                 : (0.75F - this.mob.getBbWidth() / 2.0F);
         BlockPos blockPos = this.path.getNextNodePos();
-        double var2 = Math.abs(this.mob.getX() - blockPos.getX() + 0.5D);
+        double var2 = Math.abs(this.mob.getX() - (blockPos.getX() + 0.5D));
         double var4 = Math.abs(this.mob.getY() - blockPos.getY());
-        double var6 = Math.abs(this.mob.getZ() - blockPos.getZ() + 0.5D);
+        double var6 = Math.abs(this.mob.getZ() - (blockPos.getZ() + 0.5D));
         boolean var8 = (var2 < this.maxDistanceToWaypoint && var6 < this.maxDistanceToWaypoint && var4 < 1.0D);
         if (var8 || (this.mob.canCutCorner((this.path.getNextNode()).type) && shouldTargetNextNodeInDirection(var0)))
             this.path.advance();
