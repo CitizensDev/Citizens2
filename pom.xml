@@ -61,6 +61,11 @@
             <artifactId>worldguard-bukkit</artifactId>
             <version>${worldguard.version}</version>
             <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bukkit</artifactId>
+            <version>4.1.2</version>
         </dependency>
     </dependencies>
 
@@ -106,7 +111,11 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.uncommons.maths</pattern>
-                                    <shadedPattern>lib.org.uncommons.maths</shadedPattern>
+                                    <shadedPattern>clib.org.uncommons.maths</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>clib.net.kyori</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

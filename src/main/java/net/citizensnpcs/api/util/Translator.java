@@ -6,12 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
@@ -20,10 +23,9 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
-import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
@@ -41,7 +43,7 @@ public class Translator {
                     new FileClassLoader(Translator.class.getClassLoader(), resourceFile));
         } catch (MissingResourceException e) {
             preferredBundle = getDefaultBundle();
-            Messaging.severe("Missing translation for system language (" + defaultLocale + "): defaulting to English");
+            Messaging.log("No translation for system language (" + defaultLocale + "): defaulting to English");
         }
     }
 
@@ -152,7 +154,7 @@ public class Translator {
                 File to = File.createTempFile(fileName, null, rootFolder);
                 to.deleteOnExit();
                 Resources.asByteSource(Resources.getResource(Translator.class, '/' + fileName))
-                        .copyTo(Files.asByteSink(to, FileWriteMode.APPEND));
+                        .copyTo(Files.asByteSink(to));
                 if (!file.exists()) {
                     to.renameTo(file);
                 }
@@ -168,69 +170,24 @@ public class Translator {
         String getName();
     }
 
-    private static void addTranslation(TranslationProvider from, File to) {
-        Properties props = new Properties();
-        InputStream in = from.createInputStream();
-        try {
-            props.load(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            Closeables.closeQuietly(in);
-        }
-        if (to.exists()) {
-            try {
-                props.load(in = new FileInputStream(to));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                Closeables.closeQuietly(in);
-            }
-        }
-        OutputStream out = null;
-        try {
-            props.store(out = new FileOutputStream(to), "");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (Exception e) {
-                e.getCause(); // Do nothing
-            }
-        }
-    }
-
-    public static void addTranslations(Collection<TranslationProvider> providers) {
-        for (TranslationProvider provider : providers) {
-            addTranslation(provider, new File(instance.resourceFile, provider.getName()));
-        }
-        defaultBundle = null;
-        setInstance(instance.resourceFile, instance.preferredBundle.getLocale());
-    }
-
-    public static void addTranslations(TranslationProvider... providers) {
-        addTranslations(Arrays.asList(providers));
-    }
-
     public static String format(String msg, Object... objects) {
         MessageFormat formatter = instance.getFormatter(msg);
         return formatter.format(objects);
     }
 
+    private static Charset getCharset(String fileName) {
+        Charset charset = JAPANESE_PATTERN.matcher(fileName).find() && Charset.isSupported("Shift-JIS")
+                ? Charset.forName("Shift-JIS")
+                : StandardCharsets.UTF_8;
+        return charset;
+    }
+
     private static Properties getDefaultBundleProperties() {
         Properties defaults = new Properties();
-        InputStream in = null;
-        try {
-            in = Translator.class.getResourceAsStream("/" + PREFIX + "_en.properties");
+        try (Reader in = new InputStreamReader(Translator.class.getResourceAsStream("/" + PREFIX + "_en.properties"),
+                StandardCharsets.UTF_8)) {
             defaults.load(in);
         } catch (IOException e) {
-        } finally {
-            Closeables.closeQuietly(in);
         }
         return defaults;
     }
@@ -249,15 +206,11 @@ public class Translator {
             }
         }
         Translator.populateDefaults(bundleFile);
-        FileInputStream stream = null;
-        try {
-            stream = new FileInputStream(bundleFile);
-            Translator.defaultBundle = new PropertyResourceBundle(stream);
+        try (Reader reader = new InputStreamReader(new FileInputStream(bundleFile), getCharset(fileName))) {
+            Translator.defaultBundle = new PropertyResourceBundle(reader);
         } catch (Exception e) {
             e.printStackTrace();
             Translator.defaultBundle = Translator.getFallbackResourceBundle();
-        } finally {
-            Closeables.closeQuietly(stream);
         }
         return Translator.defaultBundle;
     }
@@ -273,33 +226,24 @@ public class Translator {
 
     private static void populateDefaults(File bundleFile) {
         Properties properties = new Properties();
-        InputStream in = null;
-        try {
-            in = new FileInputStream(bundleFile);
-            properties.load(in);
-        } catch (IOException e) {
-        } finally {
-            Closeables.closeQuietly(in);
+        try (Reader reader = new InputStreamReader(new FileInputStream(bundleFile), getCharset(bundleFile.getName()))) {
+            properties.load(reader);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         Properties defaults = getDefaultBundleProperties();
         for (Entry<Object, Object> entry : defaults.entrySet()) {
-            if (!properties.containsKey(entry.getKey()))
+            if (!properties.containsKey(entry.getKey())) {
                 properties.put(entry.getKey(), entry.getValue());
+            }
         }
-        OutputStream stream = null;
-        try {
-            stream = new FileOutputStream(bundleFile);
+
+        try (Writer stream = new OutputStreamWriter(new FileOutputStream(bundleFile),
+                getCharset(bundleFile.getName()))) {
             properties.store(stream, "");
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (stream != null) {
-                    stream.close();
-                }
-            } catch (Exception e) {
-                e.getCause(); // Do nothing
-            }
         }
     }
 
@@ -318,5 +262,7 @@ public class Translator {
 
     private static ResourceBundle defaultBundle;
     private static Translator instance;
-    public static final String PREFIX = "messages";
+    private static final Pattern JAPANESE_PATTERN = Pattern.compile(".*?_ja(_jp)?\\.properties",
+            Pattern.CASE_INSENSITIVE);
+    private static final String PREFIX = "messages";
 }
