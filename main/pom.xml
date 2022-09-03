@@ -164,7 +164,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>gnu.trove</pattern>
-                                    <shadedPattern>lib.trove</shadedPattern>
+                                    <shadedPattern>clib.trove</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>

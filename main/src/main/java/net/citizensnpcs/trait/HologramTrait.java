@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +25,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
@@ -44,8 +44,7 @@ public class HologramTrait extends Trait {
     @Persist
     private double lineHeight = -1;
     private final List<NPC> lineHolograms = Lists.newArrayList();
-    @Persist
-    private final List<String> lines = Lists.newArrayList();
+    private final List<HologramLine> lines = Lists.newArrayList();
     private NPC nameNPC;
     private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
 
@@ -60,8 +59,21 @@ public class HologramTrait extends Trait {
      *            The new line to add
      */
     public void addLine(String text) {
-        lines.add(text);
+        lines.add(new HologramLine(text, true));
         reloadLineHolograms();
+    }
+
+    /**
+     * Adds a new hologram line which will displayed over an NPC's head. It will not persist to disk and will last for
+     * the specified amount of ticks.
+     *
+     * @param text
+     *            The new line to add
+     * @param ticks
+     *            The number of ticks to last for
+     */
+    public void addTemporaryLine(String text, int ticks) {
+        lines.add(new HologramLine(text, false, ticks));
     }
 
     /**
@@ -133,7 +145,7 @@ public class HologramTrait extends Trait {
      * @return the hologram lines, in bottom-up order
      */
     public List<String> getLines() {
-        return Collections.unmodifiableList(lines);
+        return Lists.transform(lines, (l) -> l.text);
     }
 
     private double getMaxHeight() {
@@ -145,6 +157,14 @@ public class HologramTrait extends Trait {
      */
     public ArmorStand getNameEntity() {
         return nameNPC != null && nameNPC.isSpawned() ? ((ArmorStand) nameNPC.getEntity()) : null;
+    }
+
+    @Override
+    public void load(DataKey root) {
+        lines.clear();
+        for (DataKey key : root.getRelative("lines").getIntegerSubKeys()) {
+            lines.add(new HologramLine(key.getString(""), true));
+        }
     }
 
     @Override
@@ -176,8 +196,7 @@ public class HologramTrait extends Trait {
         }
 
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            lineHolograms.add(createHologram(Placeholders.replace(line, null, npc), getHeight(i)));
+            lineHolograms.add(createHologram(Placeholders.replace(lines.get(i).text, null, npc), getHeight(i)));
         }
     }
 
@@ -189,9 +208,9 @@ public class HologramTrait extends Trait {
 
         if (!npc.isSpawned())
             return;
+
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            lineHolograms.add(createHologram(Placeholders.replace(line, null, npc), getHeight(i)));
+            lineHolograms.add(createHologram(Placeholders.replace(lines.get(i).text, null, npc), getHeight(i)));
         }
     }
 
@@ -264,7 +283,12 @@ public class HologramTrait extends Trait {
                 break;
             }
 
-            String text = lines.get(i);
+            HologramLine line = lines.get(i);
+            if (line.ticks > 0 && --line.ticks == 0) {
+                lines.remove(i--);
+                continue;
+            }
+            String text = line.text;
             if (ITEM_MATCHER.matcher(text).matches()) {
                 text = null;
             }
@@ -276,6 +300,18 @@ public class HologramTrait extends Trait {
                 hologramNPC.setName("");
                 hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, "hover");
             }
+        }
+    }
+
+    @Override
+    public void save(DataKey root) {
+        root.removeKey("lines");
+        int i = 0;
+        for (HologramLine line : lines) {
+            if (!line.persist)
+                continue;
+            root.setString("lines." + i, line.text);
+            i++;
         }
     }
 
@@ -304,7 +340,7 @@ public class HologramTrait extends Trait {
             return;
         }
 
-        lines.set(idx, text);
+        lines.get(idx).text = text;
         if (idx < lineHolograms.size()) {
             lineHolograms.get(idx).setName(Placeholders.replace(text, null, npc));
             return;
@@ -329,6 +365,19 @@ public class HologramTrait extends Trait {
     public enum HologramDirection {
         BOTTOM_UP,
         TOP_DOWN;
+    }
+
+    private class HologramLine {
+        boolean persist;
+        String text;
+        public int ticks;
+
+        public HologramLine(String text, boolean persist) {
+            this(text, persist, -1);
+        }
+
+        public HologramLine(String text, boolean persist, int ticks) {
+        }
     }
 
     private static final Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)>");

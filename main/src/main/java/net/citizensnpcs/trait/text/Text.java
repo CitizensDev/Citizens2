@@ -52,7 +52,7 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
     private boolean speechBubbles;
-    private int speechIndex = -1;
+    private final int speechIndex = -1;
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
     private final List<String> text = new ArrayList<String>();
 
@@ -69,14 +69,6 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
      */
     public void add(String string) {
         text.add(string);
-    }
-
-    private void clearBubble() {
-        if (speechIndex < npc.getOrAddTrait(HologramTrait.class).getLines().size()) {
-            npc.getOrAddTrait(HologramTrait.class).removeLine(speechIndex);
-            speechIndex = -1;
-        }
-        bubbleTicks = 0;
     }
 
     @Override
@@ -193,12 +185,9 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
         if (!npc.isSpawned())
             return;
 
-        if (bubbleTicks > 0 && --bubbleTicks == 0) {
-            clearBubble();
-        }
-
         if (!talkClose)
             return;
+
         List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
         for (Entity search : nearby) {
             if (!(search instanceof Player) || ((Player) search).getGameMode() == GameMode.SPECTATOR)
@@ -264,13 +253,8 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
 
         if (speechBubbles) {
             HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
-            if (speechIndex == -1) {
-                speechIndex = trait.getLines().size();
-                trait.addLine(Placeholders.replace(text.get(index), player));
-                bubbleTicks = Setting.DEFAULT_TEXT_SPEECH_BUBBLE_TICKS.asInt();
-            } else if (speechIndex < trait.getLines().size()) {
-                trait.setLine(speechIndex, Placeholders.replace(text.get(index), player));
-            }
+            trait.addTemporaryLine(Placeholders.replace(text.get(index), player),
+                    Setting.DEFAULT_TEXT_SPEECH_BUBBLE_TICKS.asInt());
         } else {
             npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
         }
@@ -336,9 +320,6 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
      * Toggles using speech bubbles instead of messages.
      */
     public boolean toggleSpeechBubbles() {
-        if (speechBubbles) {
-            clearBubble();
-        }
         return (speechBubbles = !speechBubbles);
     }
 
