@@ -116,6 +116,7 @@ public class Skin {
                 return false;
             }
         }
+
         setNPCSkinData(entity, skinName, skinId, skinData);
 
         return true;
@@ -137,6 +138,7 @@ public class Skin {
 
         if (!npc.isSpawned())
             return;
+
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
@@ -154,12 +156,18 @@ public class Skin {
             }
             return;
         }
+
         if (skinName.length() < 3 || skinName.length() > 16) {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Skin name invalid length '" + skinName + "'");
             }
             return;
         }
+
+        if (skinName.toLowerCase().startsWith("cit-")) {
+            return;
+        }
+
         fetching = true;
 
         ProfileFetcher.fetch(this.skinName, new ProfileFetchHandler() {
@@ -213,6 +221,11 @@ public class Skin {
             }
             return;
         }
+
+        if (skinName.toLowerCase().startsWith("cit-")) {
+            return;
+        }
+
         fetching = true;
 
         ProfileFetcher.fetchForced(this.skinName, new ProfileFetchHandler() {
@@ -371,6 +384,7 @@ public class Skin {
         synchronized (CACHE) {
             skin = CACHE.get(skinName);
         }
+
         if (skin == null) {
             skin = new Skin(skinName);
         } else if (forceUpdate) {

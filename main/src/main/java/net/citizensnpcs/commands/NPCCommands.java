@@ -333,6 +333,8 @@ public class NPCCommands {
         BlockBreakerConfiguration cfg = new BlockBreakerConfiguration();
         if (args.hasValueFlag("radius")) {
             cfg.radius(args.getFlagDouble("radius"));
+        } else if (Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble() > 0) {
+            cfg.radius(Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble());
         }
         BlockBreaker breaker = npc.getBlockBreaker(args.getSenderTargetBlockLocation().getBlock(), cfg);
         npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
@@ -1895,6 +1897,8 @@ public class NPCCommands {
             String owner = args.getFlag("owner");
             Player playerOwner = Bukkit.getPlayerExact(owner);
             for (NPC rem : Lists.newArrayList(CitizensAPI.getNPCRegistry())) {
+                if (!rem.getOrAddTrait(Owner.class).isOwnedBy(sender))
+                    continue;
                 if (playerOwner != null && rem.getOrAddTrait(Owner.class).isOwnedBy(playerOwner)) {
                     history.add(sender, new RemoveNPCHistoryItem(rem));
                     rem.destroy(sender);
@@ -1906,12 +1910,14 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.NPCS_REMOVED);
             return;
         }
+
         if (args.hasValueFlag("world")) {
             String world = args.getFlag("world");
             for (NPC rem : Lists.newArrayList(CitizensAPI.getNPCRegistry())) {
                 Location loc = rem.getStoredLocation();
-                if (loc != null && loc.getWorld() != null && (loc.getWorld().getUID().toString().equals(world)
-                        || loc.getWorld().getName().equalsIgnoreCase(world))) {
+                if (loc != null && rem.getOrAddTrait(Owner.class).isOwnedBy(sender) && loc.getWorld() != null
+                        && (loc.getWorld().getUID().toString().equals(world)
+                                || loc.getWorld().getName().equalsIgnoreCase(world))) {
                     history.add(sender, new RemoveNPCHistoryItem(rem));
                     rem.destroy(sender);
                 }
@@ -1919,9 +1925,11 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.NPCS_REMOVED);
             return;
         }
+
         if (args.hasValueFlag("eid")) {
             Entity entity = Bukkit.getServer().getEntity(UUID.fromString(args.getFlag("eid")));
-            if (entity != null && (npc = CitizensAPI.getNPCRegistry().getNPC(entity)) != null) {
+            if (entity != null && (npc = CitizensAPI.getNPCRegistry().getNPC(entity)) != null
+                    && npc.getOrAddTrait(Owner.class).isOwnedBy(sender)) {
                 history.add(sender, new RemoveNPCHistoryItem(npc));
                 npc.destroy(sender);
                 Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName(), npc.getId());

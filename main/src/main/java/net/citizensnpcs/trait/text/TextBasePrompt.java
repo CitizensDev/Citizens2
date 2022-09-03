@@ -32,11 +32,15 @@ public class TextBasePrompt extends StringPrompt {
             text.add(Joiner.on(' ').join(Arrays.copyOfRange(parts, 1, parts.length)));
             return this;
         } else if (input.equalsIgnoreCase("edit")) {
-            int index = Integer.parseInt(parts[1]);
-            if (!text.hasIndex(index)) {
-                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_INDEX, index);
+            if (parts.length < 2) {
+                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_INDEX, "missing index");
             } else {
-                text.edit(index, Joiner.on(' ').join(Arrays.copyOfRange(parts, 2, parts.length)));
+                int index = Integer.parseInt(parts[1]);
+                if (!text.hasIndex(index)) {
+                    Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_INDEX, index);
+                } else {
+                    text.edit(index, Joiner.on(' ').join(Arrays.copyOfRange(parts, 2, parts.length)));
+                }
             }
         } else if (input.equalsIgnoreCase("remove")) {
             int index = Integer.parseInt(parts[1]);
