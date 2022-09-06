@@ -4,56 +4,57 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.api.command.Arg.FlagValidator;
+import net.citizensnpcs.api.command.Arg.Identity;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
 import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.command.exception.ServerCommandException;
 import net.citizensnpcs.api.command.exception.UnhandledCommandException;
 import net.citizensnpcs.api.command.exception.WrappedCommandException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 
 public class CommandManager implements TabCompleter {
     private final Map<Class<? extends Annotation>, CommandAnnotationProcessor> annotationProcessors = Maps.newHashMap();
-
     /*
      * Mapping of commands (including aliases) with a description. Root commands
      * are stored under a key of null, whereas child commands are cached under
      * their respective Method. The child map has the key of the command name
      * (one for each alias) with the method.
      */
-    private final Map<String, Method> commands = new HashMap<String, Method>();
+    private final Map<String, CommandInfo> commands = Maps.newHashMap();
     private Injector injector;
-    private final Map<Method, Object> instances = new HashMap<Method, Object>();
-    private final ListMultimap<Method, Annotation> registeredAnnotations = ArrayListMultimap.create();
-    private final Set<Method> serverCommands = new HashSet<Method>();
 
     public CommandManager() {
         registerAnnotationProcessor(new RequirementsProcessor());
@@ -110,26 +111,26 @@ public class CommandManager implements TabCompleter {
         String modifier = args.length > 1 ? args[1] : "";
         boolean help = modifier.toLowerCase().equals("help");
 
-        Method method = commands.get(cmdName + " " + modifier.toLowerCase());
-        if (method == null && !help) {
-            method = commands.get(cmdName + " *");
+        CommandInfo info = commands.get(cmdName + " " + modifier.toLowerCase());
+        if ((info == null || info.method == null) && !help) {
+            info = commands.get(cmdName + " *");
         }
 
-        if (method == null && help) {
+        if ((info == null || info.method == null) && help) {
             executeHelp(args, sender);
             return;
         }
 
-        if (method == null)
+        if (info == null)
             throw new UnhandledCommandException();
 
-        if (!serverCommands.contains(method) && sender instanceof ConsoleCommandSender)
+        if (!info.serverCommand && sender instanceof ConsoleCommandSender)
             throw new ServerCommandException();
 
-        if (!hasPermission(method, sender))
+        if (!hasPermission(info, sender))
             throw new NoPermissionsException();
 
-        Command cmd = method.getAnnotation(Command.class);
+        Command cmd = info.commandAnnotation;
         CommandContext context = new CommandContext(sender, args);
 
         if (cmd.requiresFlags() && !context.hasAnyFlags())
@@ -142,21 +143,51 @@ public class CommandManager implements TabCompleter {
             throw new CommandUsageException(CommandMessages.TOO_MANY_ARGUMENTS, getUsage(args, cmd));
 
         if (!cmd.flags().contains("*")) {
-            for (char flag : context.getFlags())
+            for (char flag : context.getFlags()) {
                 if (cmd.flags().indexOf(String.valueOf(flag)) == -1)
                     throw new CommandUsageException("Unknown flag: " + flag, getUsage(args, cmd));
+            }
         }
 
         methodArgs[0] = context;
 
-        for (Annotation annotation : registeredAnnotations.get(method)) {
+        for (Annotation annotation : info.annotations) {
             CommandAnnotationProcessor processor = annotationProcessors.get(annotation.annotationType());
             processor.process(sender, context, annotation, methodArgs);
         }
 
-        Object instance = instances.get(method);
+        if (info.methodArguments.size() > 0) {
+            methodArgs = Arrays.copyOf(methodArgs, methodArgs.length + info.methodArguments.size());
+            for (Entry<Integer, FlagInstance> entry : info.methodArguments.entrySet()) {
+                Class<?> desiredType = entry.getValue().paramType;
+                Object val = entry.getValue().getInput(context);
+
+                if (val == null) {
+                } else if (entry.getValue().validator != null) {
+                    val = entry.getValue().validator.validate(sender,
+                            methodArgs.length > 2 && methodArgs[2] instanceof NPC ? (NPC) methodArgs[2] : null,
+                            val.toString());
+                } else if (Enum.class.isAssignableFrom(desiredType)) {
+                    val = matchEnum((Enum[]) desiredType.getEnumConstants(), val.toString().toUpperCase());
+                } else if (desiredType == double.class || desiredType == Double.class) {
+                    val = Double.parseDouble(val.toString());
+                } else if (desiredType == int.class || desiredType == Integer.class) {
+                    val = Integer.parseInt(val.toString());
+                } else if (desiredType == boolean.class || desiredType == Boolean.class) {
+                    val = Boolean.parseBoolean(val.toString());
+                } else if (desiredType == float.class || desiredType == Float.class) {
+                    val = Float.parseFloat(val.toString());
+                } else if (desiredType == Location.class) {
+                    val = CommandContext.parseLocation(context.getSenderLocation(), val.toString());
+                } else if (desiredType == UUID.class) {
+                    val = UUID.fromString(val.toString());
+                }
+                methodArgs[entry.getKey()] = val;
+            }
+        }
+
         try {
-            method.invoke(instance, methodArgs);
+            info.method.invoke(info.instance, methodArgs);
         } catch (IllegalArgumentException e) {
             logger.log(Level.SEVERE, "Failed to execute command", e);
         } catch (IllegalAccessException e) {
@@ -250,16 +281,7 @@ public class CommandManager implements TabCompleter {
      * @return The command info for the command
      */
     public CommandInfo getCommand(String rootCommand, String modifier) {
-        String joined = Joiner.on(' ').join(rootCommand, modifier);
-        for (Entry<String, Method> entry : commands.entrySet()) {
-            if (!entry.getKey().equalsIgnoreCase(joined) || entry.getValue() == null)
-                continue;
-            Command commandAnnotation = entry.getValue().getAnnotation(Command.class);
-            if (commandAnnotation == null)
-                continue;
-            return new CommandInfo(commandAnnotation);
-        }
-        return null;
+        return commands.get(Joiner.on(' ').join(rootCommand.toLowerCase(), modifier));
     }
 
     /**
@@ -272,15 +294,12 @@ public class CommandManager implements TabCompleter {
      * @return The list of {@link CommandInfo}s
      */
     public List<CommandInfo> getCommands(String command) {
-        List<CommandInfo> cmds = Lists.newArrayList();
         command = command.toLowerCase();
-        for (Entry<String, Method> entry : commands.entrySet()) {
+        List<CommandInfo> cmds = Lists.newArrayList();
+        for (Entry<String, CommandInfo> entry : commands.entrySet()) {
             if (!entry.getKey().startsWith(command) || entry.getValue() == null)
                 continue;
-            Command commandAnnotation = entry.getValue().getAnnotation(Command.class);
-            if (commandAnnotation == null)
-                continue;
-            cmds.add(new CommandInfo(commandAnnotation));
+            cmds.add(entry.getValue());
         }
         return cmds;
     }
@@ -322,18 +341,18 @@ public class CommandManager implements TabCompleter {
         return commands.containsKey(cmdName + " " + modifier.toLowerCase()) || commands.containsKey(cmdName + " *");
     }
 
-    // Returns whether a CommandSender has permission.
-    private boolean hasPermission(CommandSender sender, String perm) {
-        return sender.hasPermission(perm);
-    }
-
     // Returns whether a player has access to a command.
-    private boolean hasPermission(Method method, CommandSender sender) {
-        Command cmd = method.getAnnotation(Command.class);
+    private boolean hasPermission(CommandInfo method, CommandSender sender) {
+        Command cmd = method.commandAnnotation;
         if (cmd.permission().isEmpty() || hasPermission(sender, cmd.permission()) || hasPermission(sender, "admin"))
             return true;
 
         return false;
+    }
+
+    // Returns whether a CommandSender has permission.
+    private boolean hasPermission(CommandSender sender, String perm) {
+        return sender.hasPermission(perm);
     }
 
     @Override
@@ -354,25 +373,36 @@ public class CommandManager implements TabCompleter {
             }
             return results;
         }
-        CommandInfo internalCommand = getCommand(command.getName().toLowerCase(), args[0]);
-        if (internalCommand == null) {
+        CommandInfo cmd = getCommand(command.getName().toLowerCase(), args[0]);
+        if (cmd == null) {
             return results;
         }
+        // partial parse
         String[] newArgs = new String[args.length + 1];
         System.arraycopy(args, 0, newArgs, 1, args.length);
         newArgs[0] = command.getName().toLowerCase();
-        CommandContext context = new CommandContext(sender, newArgs); // partial parse
-        String flags = internalCommand.commandAnnotation.flags();
-        for (int i = 0; i < flags.length(); i++) {
-            char c = flags.charAt(i);
-            if (!context.hasFlag(c)) {
-                results.add("-" + c);
+        CommandContext context = new CommandContext(sender, newArgs);
+
+        Collection<String> valueFlags = cmd.valueFlags();
+        String lastArg = (newArgs[newArgs.length - 1].isEmpty() && newArgs.length >= 2 ? newArgs[newArgs.length - 2]
+                : newArgs[newArgs.length - 1]).toLowerCase();
+        String hyphenStrippedArg = lastArg.replaceFirst("--", "");
+
+        if (lastArg.startsWith("--") && valueFlags.contains(hyphenStrippedArg)) {
+            results.addAll(cmd.getFlagTabCompletions(hyphenStrippedArg));
+        } else {
+            for (String valueFlag : valueFlags) {
+                if (!context.hasValueFlag(valueFlag)) {
+                    results.add("--" + valueFlag);
+                }
             }
-        }
-        Collection<String> valueFlags = internalCommand.valueFlags();
-        for (String valueFlag : valueFlags) {
-            if (!context.hasValueFlag(valueFlag)) {
-                results.add("--" + valueFlag);
+
+            String flags = cmd.commandAnnotation.flags();
+            for (int i = 0; i < flags.length(); i++) {
+                char c = flags.charAt(i);
+                if (!context.hasFlag(c)) {
+                    results.add("-" + c);
+                }
             }
         }
         return results;
@@ -420,24 +450,14 @@ public class CommandManager implements TabCompleter {
         for (Method method : clazz.getMethods()) {
             if (!method.isAnnotationPresent(Command.class))
                 continue;
-            // We want to be able invoke with an instance
-            if (!Modifier.isStatic(method.getModifiers())) {
-                // Can't register this command if we don't have an instance
-                if (obj == null)
-                    continue;
-                instances.put(method, obj);
-            }
+
+            if (!Modifier.isStatic(method.getModifiers()) && obj == null)
+                continue;
 
             Command cmd = method.getAnnotation(Command.class);
-            // Cache the aliases too
-            for (String alias : cmd.aliases()) {
-                for (String modifier : cmd.modifiers()) {
-                    commands.put(alias + " " + modifier, method);
-                }
-                if (!commands.containsKey(alias + " help")) {
-                    commands.put(alias + " help", null);
-                }
-            }
+            CommandInfo info = new CommandInfo(cmd, method);
+
+            info.instance = obj;
 
             List<Annotation> annotations = Lists.newArrayList();
             for (Annotation annotation : method.getDeclaringClass().getAnnotations()) {
@@ -461,12 +481,31 @@ public class CommandManager implements TabCompleter {
             }
 
             if (annotations.size() > 0) {
-                registeredAnnotations.putAll(method, annotations);
+                info.annotations = annotations;
             }
 
             Class<?>[] parameterTypes = method.getParameterTypes();
-            if (parameterTypes.length <= 1 || parameterTypes[1] == CommandSender.class)
-                serverCommands.add(method);
+            if (parameterTypes.length <= 1 || parameterTypes[1] == CommandSender.class) {
+                info.serverCommand = true;
+            }
+
+            Parameter[] parameters = method.getParameters();
+            for (int i = 0; i < parameters.length; i++) {
+                for (Annotation ann : parameters[i].getAnnotations()) {
+                    if (!(ann instanceof Flag))
+                        continue;
+                    info.addFlagAnnotation(i, parameterTypes[i], (Flag) ann);
+                }
+            }
+
+            for (String alias : cmd.aliases()) {
+                for (String modifier : cmd.modifiers()) {
+                    commands.put(alias + " " + modifier, info);
+                }
+                if (!commands.containsKey(alias + " help")) {
+                    commands.put(alias + " help", null);
+                }
+            }
         }
     }
 
@@ -507,21 +546,29 @@ public class CommandManager implements TabCompleter {
     }
 
     public static class CommandInfo {
+        private List<Annotation> annotations = Lists.newArrayList();
         private final Command commandAnnotation;
-        private List<String> valueFlags;
+        public Object instance;
+        private final Method method;
+        private final Map<Integer, FlagInstance> methodArguments = Maps.newHashMap();
+        public boolean serverCommand;
+        private Collection<String> valueFlags;
 
-        public CommandInfo(Command commandAnnotation) {
+        public CommandInfo(Command commandAnnotation, Method method) {
             this.commandAnnotation = commandAnnotation;
+            this.method = method;
+        }
+
+        public void addFlagAnnotation(int idx, Class<?> paramType, Flag flag) {
+            this.methodArguments.put(idx, new FlagInstance(paramType, flag));
         }
 
         private Collection<String> calculateValueFlags() {
-            valueFlags = new ArrayList<String>();
-            String[] usage = commandAnnotation.usage().replace("(", "").replace(")", "").split(" ");
-            for (String part : usage) {
-                if (part.startsWith("--")) {
-                    valueFlags.add(part.split("\\|")[0].replace("--", ""));
-                }
+            valueFlags = new HashSet<String>();
+            for (FlagInstance instance : methodArguments.values()) {
+                valueFlags.add(instance.names[0]);
             }
+            valueFlags.addAll(Arrays.asList(commandAnnotation.valueFlags()));
             return valueFlags;
         }
 
@@ -548,6 +595,17 @@ public class CommandManager implements TabCompleter {
             return commandAnnotation;
         }
 
+        public Collection<String> getFlagTabCompletions(String flag) {
+            List<String> completions = Lists.newArrayList();
+            for (FlagInstance instance : methodArguments.values()) {
+                if (instance.names[0].equalsIgnoreCase(flag)
+                        || (instance.names.length > 1 && instance.names[1].equalsIgnoreCase(flag))) {
+                    completions.addAll(instance.getTabCompletions());
+                }
+            }
+            return completions;
+        }
+
         @Override
         public int hashCode() {
             return 31 + ((commandAnnotation == null) ? 0 : commandAnnotation.hashCode());
@@ -555,6 +613,59 @@ public class CommandManager implements TabCompleter {
 
         public Collection<String> valueFlags() {
             return valueFlags == null ? calculateValueFlags() : valueFlags;
+        }
+    }
+
+    private static class FlagInstance {
+        private final String[] completions;
+        private final String defaultValue;
+        private final int index = -1;
+        private final String[] names;
+        private final Class<?> paramType;
+        private FlagValidator<?> validator;
+
+        public FlagInstance(Class<?> paramType, Flag flag) {
+            this.paramType = paramType;
+            this.names = flag.value();
+            for (int i = 0; i < this.names.length; i++) {
+                this.names[i] = this.names[i].toLowerCase();
+            }
+            this.completions = flag.completions();
+            this.defaultValue = flag.defValue().isEmpty() ? null : flag.defValue();
+            if (flag.validator() != Identity.class) {
+                try {
+                    this.validator = flag.validator().getConstructor().newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public Object getInput(CommandContext context) {
+            if (names.length > 0) {
+                String flag = names[0];
+                Object val = context.getFlag(flag, defaultValue);
+                if (val == null && names.length > 1 && !names[1].isEmpty()) {
+                    val = context.getFlag(names[1], defaultValue);
+                }
+                return val;
+            } else {
+                return context.getString(index, defaultValue);
+            }
+        }
+
+        @SuppressWarnings("rawtypes")
+        public Collection<String> getTabCompletions() {
+            if (completions.length > 0) {
+                return Arrays.asList(completions);
+            }
+            if (Enum.class.isAssignableFrom(paramType)) {
+                Enum[] constants = (Enum[]) paramType.getEnumConstants();
+                return Lists.transform(Arrays.asList(constants), (e) -> e.name());
+            } else if (paramType == boolean.class || paramType == Boolean.class) {
+                return Arrays.asList("true", "false");
+            }
+            return Collections.emptyList();
         }
     }
 
@@ -616,6 +727,23 @@ public class CommandManager implements TabCompleter {
         // our last action in the above loop was to switch d and p, so p now
         // actually has the most recent cost counts
         return p[n];
+    }
+
+    private static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
+        toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
+        for (T check : values) {
+            if (toMatch.equals(check.name().toLowerCase())
+                    || (toMatch.equals("item") && check == EntityType.DROPPED_ITEM)) {
+                return check; // check for an exact match first
+            }
+        }
+        for (T check : values) {
+            String name = check.name().toLowerCase();
+            if (name.replace("_", "").equals(toMatch) || name.startsWith(toMatch)) {
+                return check;
+            }
+        }
+        return null;
     }
 
     private static final String COMMAND_FORMAT = "<7>/{{%s%s <7>- [[%s";

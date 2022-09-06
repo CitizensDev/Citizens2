@@ -26,7 +26,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 public class Placeholders {
     public static String replace(String text, CommandSender sender, NPC npc) {
         text = replace(text, sender instanceof OfflinePlayer ? (OfflinePlayer) sender : null);
-        if (npc == null) {
+        if (npc == null || text == null) {
             return text;
         }
         StringBuffer out = new StringBuffer();
@@ -51,6 +51,9 @@ public class Placeholders {
     public static String replace(String text, OfflinePlayer player) {
         if (player == null || (!player.isOnline() && !player.hasPlayedBefore())) {
             return setPlaceholderAPIPlaceholders(text, player);
+        }
+        if (text == null) {
+            return text;
         }
         if (player instanceof Entity && ((Entity) player).isValid()) {
             StringBuffer out = new StringBuffer();

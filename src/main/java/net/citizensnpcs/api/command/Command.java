@@ -59,4 +59,9 @@ public @interface Command {
      * Command usage string that is displayed when an error occurs with the command processing.
      */
     String usage() default "";
+
+    /**
+     * List of value flags (without --).
+     */
+    String[] valueFlags() default {};
 }
