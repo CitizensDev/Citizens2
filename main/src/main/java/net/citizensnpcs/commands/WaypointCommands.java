@@ -13,6 +13,7 @@ import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.hpastar.HPAGraph;
@@ -39,7 +40,8 @@ public class WaypointCommands {
             min = 4,
             max = 5,
             permission = "citizens.waypoints.add")
-    public void add(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public void add(CommandContext args, CommandSender sender, NPC npc, @Flag("index") Integer index)
+            throws CommandException {
         WaypointProvider provider = npc.getOrAddTrait(Waypoints.class).getCurrentProvider();
         if (!(provider instanceof LinearWaypointProvider))
             throw new CommandException();
@@ -48,7 +50,7 @@ public class WaypointCommands {
         if (world == null)
             throw new CommandException(Messages.WORLD_NOT_FOUND);
         Location loc = new Location(world, args.getInteger(1), args.getInteger(2), args.getInteger(3));
-        int index = args.getFlagInteger("index", waypoints.size());
+        int idx = index == null ? waypoints.size() : index;
         waypoints.add(index, new Waypoint(loc));
         Messaging.sendTr(sender, Messages.WAYPOINT_ADDED, Util.prettyPrintLocation(loc), index);
     }

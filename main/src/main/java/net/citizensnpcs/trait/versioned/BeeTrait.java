@@ -6,6 +6,7 @@ import org.bukkit.entity.EntityType;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -69,11 +70,11 @@ public class BeeTrait extends Trait {
             flags = "sn",
             permission = "citizens.npc.bee")
     @Requirements(selected = true, ownership = true, types = EntityType.BEE)
-    public static void bee(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void bee(CommandContext args, CommandSender sender, NPC npc, @Flag("anger") Integer anger)
+            throws CommandException {
         BeeTrait trait = npc.getOrAddTrait(BeeTrait.class);
         String output = "";
-        if (args.hasValueFlag("anger")) {
-            int anger = args.getFlagInteger("anger");
+        if (anger != null) {
             if (anger < 0) {
                 throw new CommandException(Messages.INVALID_BEE_ANGER);
             }

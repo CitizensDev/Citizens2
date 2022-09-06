@@ -8,6 +8,7 @@ import org.bukkit.entity.TropicalFish.Pattern;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -75,29 +76,27 @@ public class TropicalFishTrait extends Trait {
             max = 1,
             permission = "citizens.npc.tropicalfish")
     @Requirements(selected = true, ownership = true, types = EntityType.TROPICAL_FISH)
-    public static void tropicalfish(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void tropicalfish(CommandContext args, CommandSender sender, NPC npc, @Flag("body") DyeColor body,
+            @Flag("patterncolor") DyeColor patterncolor, @Flag("pattern") Pattern pattern) throws CommandException {
         TropicalFishTrait trait = npc.getOrAddTrait(TropicalFishTrait.class);
         String output = "";
         if (args.hasValueFlag("body")) {
-            DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("body"));
-            if (color == null) {
+            if (body == null) {
                 throw new CommandException(Messages.INVALID_TROPICALFISH_COLOR,
                         Util.listValuesPretty(DyeColor.values()));
             }
-            trait.setBodyColor(color);
-            output += Messaging.tr(Messages.TROPICALFISH_BODY_COLOR_SET, Util.prettyEnum(color));
+            trait.setBodyColor(body);
+            output += Messaging.tr(Messages.TROPICALFISH_BODY_COLOR_SET, Util.prettyEnum(body));
         }
         if (args.hasValueFlag("patterncolor")) {
-            DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("patterncolor"));
-            if (color == null) {
+            if (patterncolor == null) {
                 throw new CommandException(Messages.INVALID_TROPICALFISH_COLOR,
                         Util.listValuesPretty(DyeColor.values()));
             }
-            trait.setPatternColor(color);
-            output += Messaging.tr(Messages.TROPICALFISH_PATTERN_COLOR_SET, Util.prettyEnum(color));
+            trait.setPatternColor(patterncolor);
+            output += Messaging.tr(Messages.TROPICALFISH_PATTERN_COLOR_SET, Util.prettyEnum(patterncolor));
         }
         if (args.hasValueFlag("pattern")) {
-            Pattern pattern = Util.matchEnum(Pattern.values(), args.getFlag("pattern"));
             if (pattern == null) {
                 throw new CommandException(Messages.INVALID_TROPICALFISH_PATTERN,
                         Util.listValuesPretty(Pattern.values()));

@@ -7,6 +7,7 @@ import org.bukkit.entity.MushroomCow.Variant;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -56,11 +57,11 @@ public class MushroomCowTrait extends Trait {
             max = 1,
             permission = "citizens.npc.mushroomcow")
     @Requirements(selected = true, ownership = true, types = { EntityType.MUSHROOM_COW })
-    public static void mushroomcow(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void mushroomcow(CommandContext args, CommandSender sender, NPC npc,
+            @Flag("variant") MushroomCow.Variant variant) throws CommandException {
         MushroomCowTrait trait = npc.getOrAddTrait(MushroomCowTrait.class);
         boolean hasArg = false;
         if (args.hasValueFlag("variant")) {
-            MushroomCow.Variant variant = Util.matchEnum(MushroomCow.Variant.values(), args.getFlag("variant"));
             if (variant == null) {
                 Messaging.sendErrorTr(sender, Messages.INVALID_MUSHROOM_COW_VARIANT,
                         Util.listValuesPretty(MushroomCow.Variant.values()));

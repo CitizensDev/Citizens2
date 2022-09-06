@@ -7,6 +7,7 @@ import org.bukkit.entity.Frog.Variant;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
@@ -44,22 +45,20 @@ public class FrogTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "frog (--variant variant) (--target [target])",
+            usage = "frog (--variant variant)",
             desc = "Sets frog modifiers",
             modifiers = { "frog" },
             min = 1,
             max = 1,
             permission = "citizens.npc.frog")
     @Requirements(selected = true, ownership = true, types = EntityType.FROG)
-    public static void frog(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void frog(CommandContext args, CommandSender sender, NPC npc, @Flag("variant") Frog.Variant variant)
+            throws CommandException {
         FrogTrait trait = npc.getOrAddTrait(FrogTrait.class);
         String output = "";
         if (args.hasValueFlag("variant")) {
-            String variantRaw = args.getFlag("variant");
-            Frog.Variant variant = Util.matchEnum(Frog.Variant.values(), variantRaw);
             if (variant == null) {
-                String valid = Util.listValuesPretty(Frog.Variant.values());
-                throw new CommandException(Messages.INVALID_FROG_VARIANT, valid);
+                throw new CommandException(Messages.INVALID_FROG_VARIANT, Util.listValuesPretty(Frog.Variant.values()));
             }
             trait.setVariant(variant);
             output += Messaging.tr(Messages.FROG_VARIANT_SET, Util.prettyEnum(variant));

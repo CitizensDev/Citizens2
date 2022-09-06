@@ -6,6 +6,7 @@ import org.bukkit.entity.EntityType;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -65,11 +66,11 @@ public class AxolotlTrait extends Trait {
             flags = "d",
             permission = "citizens.npc.axolotl")
     @Requirements(selected = true, ownership = true, types = EntityType.AXOLOTL)
-    public static void axolotl(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void axolotl(CommandContext args, CommandSender sender, NPC npc,
+            @Flag("variant") Axolotl.Variant variant) throws CommandException {
         AxolotlTrait trait = npc.getOrAddTrait(AxolotlTrait.class);
         String output = "";
         if (args.hasValueFlag("variant")) {
-            Axolotl.Variant variant = Util.matchEnum(Axolotl.Variant.values(), args.getFlag("variant"));
             if (variant == null) {
                 throw new CommandException(Messages.INVALID_AXOLOTL_VARIANT,
                         Util.listValuesPretty(Axolotl.Variant.values()));

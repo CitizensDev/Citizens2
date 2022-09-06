@@ -8,6 +8,7 @@ import org.bukkit.entity.Ocelot.Type;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -95,26 +96,27 @@ public class CatTrait extends Trait {
             flags = "snl",
             permission = "citizens.npc.cat")
     @Requirements(selected = true, ownership = true, types = EntityType.CAT)
-    public static void cat(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void cat(CommandContext args, CommandSender sender, NPC npc, @Flag("ccolor") DyeColor ccolor,
+            @Flag("type") Cat.Type type) throws CommandException {
         CatTrait trait = npc.getOrAddTrait(CatTrait.class);
         String output = "";
         if (args.hasValueFlag("type")) {
-            Cat.Type type = Util.matchEnum(Cat.Type.values(), args.getFlag("type"));
             if (type == null) {
                 throw new CommandUsageException(Messages.INVALID_CAT_TYPE, Util.listValuesPretty(Cat.Type.values()));
             }
             trait.setType(type);
             output += ' ' + Messaging.tr(Messages.CAT_TYPE_SET, args.getFlag("type"));
         }
+
         if (args.hasValueFlag("ccolor")) {
-            DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("ccolor"));
-            if (color == null) {
+            if (ccolor == null) {
                 throw new CommandUsageException(Messages.INVALID_CAT_COLLAR_COLOR,
                         Util.listValuesPretty(DyeColor.values()));
             }
-            trait.setCollarColor(color);
+            trait.setCollarColor(ccolor);
             output += ' ' + Messaging.tr(Messages.CAT_COLLAR_COLOR_SET, args.getFlag("ccolor"));
         }
+
         if (args.hasFlag('s')) {
             trait.setSitting(true);
             output += ' ' + Messaging.tr(Messages.CAT_STARTED_SITTING, npc.getName());
@@ -122,11 +124,13 @@ public class CatTrait extends Trait {
             trait.setSitting(false);
             output += ' ' + Messaging.tr(Messages.CAT_STOPPED_SITTING, npc.getName());
         }
+
         if (args.hasFlag('l')) {
             trait.setLyingDown(!trait.isLyingDown());
             output += ' ' + Messaging.tr(trait.isLyingDown() ? Messages.CAT_STARTED_LYING : Messages.CAT_STOPPED_LYING,
                     npc.getName());
         }
+
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
         } else {

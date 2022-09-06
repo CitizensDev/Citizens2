@@ -5,6 +5,7 @@ import org.bukkit.entity.EntityType;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
@@ -40,11 +41,12 @@ public class PufferFishTrait extends Trait {
             max = 1,
             permission = "citizens.npc.pufferfish")
     @Requirements(selected = true, ownership = true, types = EntityType.PUFFERFISH)
-    public static void pufferfish(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void pufferfish(CommandContext args, CommandSender sender, NPC npc, @Flag("state") Integer state)
+            throws CommandException {
         PufferFishTrait trait = npc.getOrAddTrait(PufferFishTrait.class);
         String output = "";
-        if (args.hasValueFlag("state")) {
-            int state = Math.min(Math.max(args.getFlagInteger("state"), 0), 3);
+        if (state != null) {
+            state = Math.min(Math.max(state, 0), 3);
             trait.setPuffState(state);
             output += Messaging.tr(Messages.PUFFERFISH_STATE_SET, state);
         }

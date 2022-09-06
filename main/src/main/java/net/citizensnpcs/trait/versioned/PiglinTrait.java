@@ -6,6 +6,7 @@ import org.bukkit.entity.Piglin;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -50,11 +51,11 @@ public class PiglinTrait extends Trait {
             max = 1,
             permission = "citizens.npc.piglin")
     @Requirements(selected = true, ownership = true, types = { EntityType.PIGLIN })
-    public static void piglin(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void piglin(CommandContext args, CommandSender sender, NPC npc, @Flag("dancing") Boolean dancing)
+            throws CommandException {
         PiglinTrait trait = npc.getOrAddTrait(PiglinTrait.class);
         boolean hasArg = false;
-        if (args.hasValueFlag("dancing")) {
-            boolean dancing = Boolean.valueOf(args.getFlag("dancing"));
+        if (dancing != null) {
             trait.setDancing(dancing);
             Messaging.sendTr(sender, dancing ? Messages.PIGLIN_DANCING_SET : Messages.PIGLIN_DANCING_UNSET,
                     npc.getName());

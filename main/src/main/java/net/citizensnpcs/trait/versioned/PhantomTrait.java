@@ -6,6 +6,7 @@ import org.bukkit.entity.Phantom;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -50,15 +51,16 @@ public class PhantomTrait extends Trait {
             max = 1,
             permission = "citizens.npc.phantom")
     @Requirements(selected = true, ownership = true, types = EntityType.PHANTOM)
-    public static void phantom(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void phantom(CommandContext args, CommandSender sender, NPC npc, @Flag("size") Integer size)
+            throws CommandException {
         PhantomTrait trait = npc.getOrAddTrait(PhantomTrait.class);
         String output = "";
-        if (args.hasValueFlag("size")) {
-            if (args.getFlagInteger("size") <= 0) {
+        if (size != null) {
+            if (size <= 0) {
                 throw new CommandUsageException();
             }
-            trait.setSize(args.getFlagInteger("size"));
-            output += Messaging.tr(Messages.PHANTOM_STATE_SET, args.getFlagInteger("size"));
+            trait.setSize(size);
+            output += Messaging.tr(Messages.PHANTOM_STATE_SET, size);
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);

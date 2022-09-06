@@ -7,6 +7,7 @@ import org.bukkit.entity.Shulker;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -76,17 +77,16 @@ public class ShulkerTrait extends Trait {
             max = 1,
             permission = "citizens.npc.shulker")
     @Requirements(selected = true, ownership = true, types = { EntityType.SHULKER })
-    public static void shulker(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void shulker(CommandContext args, CommandSender sender, NPC npc, @Flag("peek") Integer peek,
+            @Flag("color") DyeColor color) throws CommandException {
         ShulkerTrait trait = npc.getOrAddTrait(ShulkerTrait.class);
         boolean hasArg = false;
-        if (args.hasValueFlag("peek")) {
-            int peek = (byte) args.getFlagInteger("peek");
-            trait.setPeek(peek);
+        if (peek != null) {
+            trait.setPeek((byte) (int) peek);
             Messaging.sendTr(sender, Messages.SHULKER_PEEK_SET, npc.getName(), peek);
             hasArg = true;
         }
         if (args.hasValueFlag("color")) {
-            DyeColor color = Util.matchEnum(DyeColor.values(), args.getFlag("color"));
             if (color == null) {
                 Messaging.sendErrorTr(sender, Messages.INVALID_SHULKER_COLOR, Util.listValuesPretty(DyeColor.values()));
                 return;

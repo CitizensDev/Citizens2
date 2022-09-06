@@ -377,6 +377,9 @@ public class HologramTrait extends Trait {
         }
 
         public HologramLine(String text, boolean persist, int ticks) {
+            this.text = text;
+            this.persist = persist;
+            this.ticks = ticks;
         }
     }
 

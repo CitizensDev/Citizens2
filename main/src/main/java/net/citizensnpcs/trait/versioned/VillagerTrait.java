@@ -9,6 +9,7 @@ import com.google.common.base.Joiner;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -68,18 +69,19 @@ public class VillagerTrait extends Trait {
             max = 1,
             permission = "citizens.npc.villager")
     @Requirements(selected = true, ownership = true, types = EntityType.VILLAGER)
-    public static void villager(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void villager(CommandContext args, CommandSender sender, NPC npc,
+            @Flag("profession") Profession profession, @Flag("type") Villager.Type type, @Flag("level") Integer level)
+            throws CommandException {
         VillagerTrait trait = npc.getOrAddTrait(VillagerTrait.class);
         String output = "";
-        if (args.hasValueFlag("level")) {
-            if (args.getFlagInteger("level") < 0) {
+        if (level != null) {
+            if (level < 0) {
                 throw new CommandUsageException();
             }
-            trait.setLevel(args.getFlagInteger("level"));
-            output += " " + Messaging.tr(Messages.VILLAGER_LEVEL_SET, args.getFlagInteger("level"));
+            trait.setLevel(level);
+            output += " " + Messaging.tr(Messages.VILLAGER_LEVEL_SET, level);
         }
         if (args.hasValueFlag("type")) {
-            Villager.Type type = Util.matchEnum(Villager.Type.values(), args.getFlag("type"));
             if (type == null) {
                 throw new CommandException(Messages.INVALID_VILLAGER_TYPE,
                         Util.listValuesPretty(Villager.Type.values()));
@@ -88,12 +90,11 @@ public class VillagerTrait extends Trait {
             output += " " + Messaging.tr(Messages.VILLAGER_TYPE_SET, args.getFlag("type"));
         }
         if (args.hasValueFlag("profession")) {
-            Profession parsed = Util.matchEnum(Profession.values(), args.getFlag("profession"));
-            if (parsed == null) {
+            if (profession == null) {
                 throw new CommandException(Messages.INVALID_PROFESSION, args.getFlag("profession"),
                         Joiner.on(',').join(Profession.values()));
             }
-            npc.getOrAddTrait(VillagerProfession.class).setProfession(parsed);
+            npc.getOrAddTrait(VillagerProfession.class).setProfession(profession);
             output += " " + Messaging.tr(Messages.PROFESSION_SET, npc.getName(), args.getFlag("profession"));
         }
         if (!output.isEmpty()) {

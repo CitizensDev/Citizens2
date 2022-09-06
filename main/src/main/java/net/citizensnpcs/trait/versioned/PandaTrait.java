@@ -6,6 +6,7 @@ import org.bukkit.entity.Panda;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.command.exception.CommandUsageException;
@@ -73,7 +74,7 @@ public class PandaTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "panda --gene (main gene) --hgene (hidden gene) -s(itting)",
+            usage = "panda --gene (main gene) --hiddengene (hidden gene) -s(itting)",
             desc = "Sets panda modifiers",
             modifiers = { "panda" },
             flags = "s",
@@ -81,11 +82,11 @@ public class PandaTrait extends Trait {
             max = 1,
             permission = "citizens.npc.panda")
     @Requirements(selected = true, ownership = true, types = EntityType.PANDA)
-    public static void panda(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void panda(CommandContext args, CommandSender sender, NPC npc, @Flag("gene") Panda.Gene gene,
+            @Flag("hiddengene") Panda.Gene hiddengene) throws CommandException {
         PandaTrait trait = npc.getOrAddTrait(PandaTrait.class);
         String output = "";
         if (args.hasValueFlag("gene")) {
-            Panda.Gene gene = Util.matchEnum(Panda.Gene.values(), args.getFlag("gene"));
             if (gene == null) {
                 throw new CommandUsageException(Messages.INVALID_PANDA_GENE,
                         Util.listValuesPretty(Panda.Gene.values()));
@@ -93,14 +94,13 @@ public class PandaTrait extends Trait {
             trait.setMainGene(gene);
             output += ' ' + Messaging.tr(Messages.PANDA_MAIN_GENE_SET, args.getFlag("gene"));
         }
-        if (args.hasValueFlag("hgene")) {
-            Panda.Gene gene = Util.matchEnum(Panda.Gene.values(), args.getFlag("hgene"));
-            if (gene == null) {
+        if (args.hasValueFlag("hiddengene")) {
+            if (hiddengene == null) {
                 throw new CommandUsageException(Messages.INVALID_PANDA_GENE,
                         Util.listValuesPretty(Panda.Gene.values()));
             }
-            trait.setHiddenGene(gene);
-            output += ' ' + Messaging.tr(Messages.PANDA_HIDDEN_GENE_SET, args.getFlag("hgene"));
+            trait.setHiddenGene(hiddengene);
+            output += ' ' + Messaging.tr(Messages.PANDA_HIDDEN_GENE_SET, hiddengene);
         }
         if (args.hasFlag('s')) {
             boolean isSitting = trait.toggleSitting();

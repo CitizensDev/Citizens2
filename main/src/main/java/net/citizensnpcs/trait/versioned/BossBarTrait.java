@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
@@ -196,38 +197,34 @@ public class BossBarTrait extends Trait {
             min = 1,
             max = 1)
     @Requirements(selected = true, ownership = true)
-    public static void bossbar(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void bossbar(CommandContext args, CommandSender sender, NPC npc, @Flag("style") BarStyle style,
+            @Flag("track") String track, @Flag("color") BarColor color, @Flag("visible") Boolean visible,
+            @Flag("title") String title, @Flag("flags") String flags) throws CommandException {
         BossBarTrait trait = npc.getOrAddTrait(BossBarTrait.class);
-        if (args.hasValueFlag("style")) {
-            BarStyle style = Util.matchEnum(BarStyle.values(), args.getFlag("style"));
-            if (style != null) {
-                trait.setStyle(style);
-            }
+        if (style != null) {
+            trait.setStyle(style);
         }
-        if (args.hasValueFlag("color")) {
-            BarColor color = Util.matchEnum(BarColor.values(), args.getFlag("color"));
-            if (color != null) {
-                trait.setColor(color);
-            }
+        if (color != null) {
+            trait.setColor(color);
         }
-        if (args.hasValueFlag("track")) {
-            trait.setTrackVariable(args.getFlag("track"));
+        if (track != null) {
+            trait.setTrackVariable(track);
         }
-        if (args.hasValueFlag("title")) {
-            trait.setTitle(Colorizer.parseColors(args.getFlag("title")));
+        if (title != null) {
+            trait.setTitle(Colorizer.parseColors(title));
         }
-        if (args.hasValueFlag("visible")) {
-            trait.setVisible(Boolean.parseBoolean(args.getFlag("visible")));
+        if (visible != null) {
+            trait.setVisible(visible);
         }
-        if (args.hasValueFlag("flags")) {
-            List<BarFlag> flags = Lists.newArrayList();
-            for (String s : Splitter.on(',').omitEmptyStrings().trimResults().split(args.getFlag("flags"))) {
+        if (flags != null) {
+            List<BarFlag> parsed = Lists.newArrayList();
+            for (String s : Splitter.on(',').omitEmptyStrings().trimResults().split(flags)) {
                 BarFlag flag = Util.matchEnum(BarFlag.values(), s);
                 if (flag != null) {
-                    flags.add(flag);
+                    parsed.add(flag);
                 }
             }
-            trait.setFlags(flags);
+            trait.setFlags(parsed);
         }
     }
 

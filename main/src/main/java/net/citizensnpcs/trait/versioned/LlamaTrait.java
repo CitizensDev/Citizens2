@@ -7,6 +7,7 @@ import org.bukkit.entity.Llama.Color;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandMessages;
+import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
@@ -64,14 +65,13 @@ public class LlamaTrait extends Trait {
             max = 1,
             permission = "citizens.npc.llama")
     @Requirements(selected = true, ownership = true)
-    public static void llama(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public static void llama(CommandContext args, CommandSender sender, NPC npc,
+            @Flag({ "color", "colour" }) Color color, @Flag("strength") Integer strength) throws CommandException {
         if (npc.getOrAddTrait(MobType.class).getType().name().contains("LLAMA"))
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE);
         LlamaTrait trait = npc.getOrAddTrait(LlamaTrait.class);
         String output = "";
-        if (args.hasValueFlag("color") || args.hasValueFlag("colour")) {
-            String colorRaw = args.getFlag("color", args.getFlag("colour"));
-            Color color = Util.matchEnum(Color.values(), colorRaw);
+        if (args.hasAnyValueFlag("color", "colour")) {
             if (color == null) {
                 String valid = Util.listValuesPretty(Color.values());
                 throw new CommandException(Messages.INVALID_LLAMA_COLOR, valid);
@@ -79,10 +79,12 @@ public class LlamaTrait extends Trait {
             trait.setColor(color);
             output += Messaging.tr(Messages.LLAMA_COLOR_SET, Util.prettyEnum(color));
         }
-        if (args.hasValueFlag("strength")) {
-            trait.setStrength(Math.max(1, Math.min(5, args.getFlagInteger("strength"))));
-            output += Messaging.tr(Messages.LLAMA_STRENGTH_SET, args.getFlagInteger("strength"));
+
+        if (strength != null) {
+            trait.setStrength(Math.max(1, Math.min(5, strength)));
+            output += Messaging.tr(Messages.LLAMA_STRENGTH_SET, trait.getStrength());
         }
+
         if (args.hasFlag('c')) {
             npc.getOrAddTrait(HorseModifiers.class).setCarryingChest(true);
             output += Messaging.tr(Messages.HORSE_CHEST_SET) + " ";
