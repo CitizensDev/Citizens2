@@ -9,7 +9,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <bukkit.version>1.19.2-R0.1-SNAPSHOT</bukkit.version>
-        <placeholderapi.version>2.10.9</placeholderapi.version>
+        <placeholderapi.version>2.11.2</placeholderapi.version>
         <worldguard.version>7.0.4</worldguard.version>
         <powermock.version>1.4.12</powermock.version>
         <build.number>Unknown</build.number>
@@ -98,30 +98,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.2</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <configuration>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.uncommons.maths</pattern>
-                                    <shadedPattern>clib.org.uncommons.maths</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>net.kyori</pattern>
-                                    <shadedPattern>clib.net.kyori</shadedPattern>
-                                </relocation>
-                            </relocations>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            </plugin> 
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
