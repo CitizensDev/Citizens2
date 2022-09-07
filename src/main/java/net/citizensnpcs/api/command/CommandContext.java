@@ -30,6 +30,7 @@ import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.EulerAngle;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -310,6 +311,12 @@ public class CommandContext {
         return args[0].equalsIgnoreCase(command);
     }
 
+    public EulerAngle parseEulerAngle(String input) {
+        List<Double> pose = Lists
+                .newArrayList(Iterables.transform(Splitter.on(',').split(input), (s) -> Double.parseDouble(s)));
+        return new EulerAngle(pose.get(0), pose.get(1), pose.get(2));
+    }
+
     public int parseTicks(String dur) {
         dur = dur.trim();
         char last = Character.toLowerCase(dur.charAt(dur.length() - 1));
@@ -377,6 +384,5 @@ public class CommandContext {
 
     private static final Pattern FLAG = Pattern.compile("^-[a-zA-Z]+$");
     private static final Splitter LOCATION_SPLITTER = Splitter.on(Pattern.compile("[,:]")).omitEmptyStrings();
-
     private static final Pattern VALUE_FLAG = Pattern.compile("^--[a-zA-Z0-9-]+$");
 }

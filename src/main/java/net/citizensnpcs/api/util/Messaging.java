@@ -68,7 +68,15 @@ public class Messaging {
         }
 
         if (CitizensAPI.getPlugin() != null) {
-            AUDIENCES = BukkitAudiences.create(CitizensAPI.getPlugin());
+            try {
+                AUDIENCES = BukkitAudiences.create(CitizensAPI.getPlugin());
+            } catch (Exception e) {
+                if (Messaging.isDebugging()) {
+                    e.printStackTrace();
+                } else {
+                    Messaging.log("Unable to load Adventure, chat components will not work");
+                }
+            }
         }
 
         if (debugFile != null) {
@@ -200,7 +208,7 @@ public class Messaging {
         String color = messageColor ? MESSAGE_COLOUR : "";
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
             message = prettify(message);
-            if (hasComponents) {
+            if (hasComponents && AUDIENCES != null) {
                 parseAndSendComponents(sender, message, color);
             } else {
                 sender.sendMessage(message);

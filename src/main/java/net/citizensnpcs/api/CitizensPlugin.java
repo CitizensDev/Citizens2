@@ -5,6 +5,7 @@ import java.io.File;
 import org.bukkit.plugin.Plugin;
 
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
+import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
@@ -35,6 +36,8 @@ public interface CitizensPlugin extends Plugin {
      * @return A new NPCRegistry, that can also be retrieved via {@link #getNamedNPCRegistry(String)}
      */
     public NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store);
+
+    public CommandManager getCommandManager();
 
     /**
      * @return The default {@link NPCSelector} for managing player/server NPC selection

@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
+import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -58,6 +59,10 @@ public final class CitizensAPI {
      */
     public static NPCRegistry createNamedNPCRegistry(String name, NPCDataStore store) {
         return getImplementation().createNamedNPCRegistry(name, store);
+    }
+
+    public static CommandManager getCommandManager() {
+        return getImplementation().getCommandManager();
     }
 
     /**
