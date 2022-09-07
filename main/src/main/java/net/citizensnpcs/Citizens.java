@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -35,7 +34,6 @@ import net.citizensnpcs.api.InventoryHelper;
 import net.citizensnpcs.api.SkullMetaProvider;
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.command.CommandManager;
-import net.citizensnpcs.api.command.CommandManager.CommandInfo;
 import net.citizensnpcs.api.command.Injector;
 import net.citizensnpcs.api.event.CitizensDisableEvent;
 import net.citizensnpcs.api.event.CitizensEnableEvent;
@@ -43,7 +41,6 @@ import net.citizensnpcs.api.event.CitizensPreReloadEvent;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.SimpleNPCDataStore;
@@ -74,7 +71,6 @@ import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerUpdateTask;
-import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
 
@@ -197,12 +193,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         NMS.loadPlugins();
     }
 
-    public CommandInfo getCommandInfo(String rootCommand, String modifier) {
-        return commands.getCommand(rootCommand, modifier);
-    }
-
-    public Iterable<CommandInfo> getCommands(String base) {
-        return commands.getCommands(base);
+    @Override
+    public CommandManager getCommandManager() {
+        return commands;
     }
 
     @Override
@@ -291,17 +284,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String cmdName, String[] args) {
-        String modifier = args.length > 0 ? args[0] : "";
-        if (!commands.hasCommand(command, modifier) && !modifier.isEmpty()) {
-            return suggestClosestModifier(sender, command.getName(), modifier);
-        }
-
-        NPC npc = selector == null ? null : selector.getSelected(sender);
-        // TODO: change the args supplied to a context style system for
-        // flexibility (ie. adding more context in the future without
-        // changing everything)
-
-        Object[] methodArgs = { sender, npc };
+        // TODO: use injector?
+        Object[] methodArgs = { sender, selector == null ? null : selector.getSelected(sender) };
         return commands.executeSafe(command, args, sender, methodArgs);
     }
 
@@ -528,16 +512,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             shops.save();
             saves.saveToDiskImmediate();
         }
-    }
-
-    private boolean suggestClosestModifier(CommandSender sender, String command, String modifier) {
-        String closest = commands.getClosestCommandModifier(command, modifier);
-        if (!closest.isEmpty()) {
-            sender.sendMessage(ChatColor.GRAY + Messaging.tr(Messages.UNKNOWN_COMMAND));
-            sender.sendMessage(StringHelper.wrap(" /") + command + " " + StringHelper.wrap(closest));
-            return true;
-        }
-        return false;
     }
 
     private class CitizensLoadTask implements Runnable {

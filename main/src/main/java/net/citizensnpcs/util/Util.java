@@ -276,10 +276,6 @@ public class Util {
         return current.distance(target) <= range;
     }
 
-    public static EntityType matchEntityType(String toMatch) {
-        return matchEnum(EntityType.values(), toMatch);
-    }
-
     public static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
         toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
         for (T check : values) {

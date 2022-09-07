@@ -72,7 +72,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         } else if (args.hasFlag('r')) {
             explicitType = null;
         } else if (args.hasValueFlag("explicittype")) {
-            explicitType = Util.matchEntityType(args.getFlag("explicittype"));
+            explicitType = Util.matchEnum(EntityType.values(), args.getFlag("explicittype"));
         }
 
         if (npc.isSpawned()) {
@@ -101,7 +101,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
     @Override
     public void load(DataKey key) throws NPCLoadException {
         if (key.keyExists("explicittype")) {
-            explicitType = Util.matchEntityType(key.getString("explicittype"));
+            explicitType = Util.matchEnum(EntityType.values(), key.getString("explicittype"));
         }
     }
 
