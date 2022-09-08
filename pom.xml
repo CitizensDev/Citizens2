@@ -14,8 +14,8 @@
 
     <distributionManagement>
         <repository>
-            <id>citizens-snapshots</id>
-            <url>https://repo2.citizensnpcs.co/snapshots</url>
+            <id>citizens-repo</id>
+            <url>https://repo2.citizensnpcs.co/repo</url>
         </repository>
     </distributionManagement>
 
