@@ -15,13 +15,6 @@
         <build.number>Unknown</build.number>
     </properties>
 
-    <distributionManagement>
-        <repository>
-            <id>everything</id>
-            <url>https://repo2.citizensnpcs.co/</url>
-        </repository>
-    </distributionManagement>
-
     <repositories>
         <repository>
             <id>placeholderapi</id>
