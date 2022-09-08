@@ -154,6 +154,12 @@ public class WitherController extends MobEntityController {
             }
             return super.n(entity);
         }
+
+        @Override
+        public boolean S_() {
+            return npc == null || !npc.data().has("wither-arrow-damageable") ? super.S_()
+                    : npc.data().get("wither-arrow-damageable");
+        }
     }
 
     public static class WitherNPC extends CraftWither implements ForwardingNPCHolder {

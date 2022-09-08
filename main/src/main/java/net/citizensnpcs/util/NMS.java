@@ -607,7 +607,7 @@ public class NMS {
         BRIDGE.setVerticalMovement(bukkitEntity, d);
     }
 
-    public static void setWitherCharged(Wither wither, boolean charged) {
+    public static void setWitherInvulnerable(Wither wither, boolean charged) {
         BRIDGE.setWitherCharged(wither, charged);
     }
 

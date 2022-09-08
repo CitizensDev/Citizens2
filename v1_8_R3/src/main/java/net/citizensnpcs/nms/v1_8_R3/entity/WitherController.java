@@ -63,6 +63,12 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
+        public boolean cm() {
+            return npc == null || !npc.data().has("wither-arrow-damageable") ? super.cm()
+                    : npc.data().<Boolean> get("wither-arrow-damageable");
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.

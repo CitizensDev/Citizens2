@@ -2804,7 +2804,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "wither (--charged [charged])",
+            usage = "wither (--invulnerable [true|false]) (--arrow-shield [true|false])",
             desc = "Sets wither modifiers",
             modifiers = { "wither" },
             min = 1,
@@ -2812,11 +2812,14 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.wither")
     @Requirements(selected = true, ownership = true, types = { EntityType.WITHER })
-    public void wither(CommandContext args, CommandSender sender, NPC npc, @Flag("charged") Boolean charged)
-            throws CommandException {
+    public void wither(CommandContext args, CommandSender sender, NPC npc, @Flag("invulnerable") Boolean invulnerable,
+            @Flag("arrow-shield") Boolean arrows) throws CommandException {
         WitherTrait trait = npc.getOrAddTrait(WitherTrait.class);
-        if (charged != null) {
-            trait.setCharged(charged);
+        if (invulnerable != null) {
+            trait.setInvulnerable(invulnerable);
+        }
+        if (arrows != null) {
+            trait.setBlocksArrows(arrows);
         }
     }
 

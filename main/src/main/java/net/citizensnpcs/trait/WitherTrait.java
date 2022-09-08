@@ -14,26 +14,41 @@ import net.citizensnpcs.util.NMS;
  */
 @TraitName("withertrait")
 public class WitherTrait extends Trait {
+    @Persist("arrowshield")
+    private Boolean arrowShield;
     @Persist("charged")
-    private boolean charged = false;
+    private Boolean invulnerable;
 
     public WitherTrait() {
         super("withertrait");
     }
 
-    public boolean isCharged() {
-        return charged;
+    public Boolean blocksArrows() {
+        return arrowShield;
+    }
+
+    public boolean isInvulnerable() {
+        return invulnerable == null ? npc.isProtected() : invulnerable;
     }
 
     @Override
     public void run() {
-        if (npc.getEntity() instanceof Wither) {
-            Wither wither = (Wither) npc.getEntity();
-            NMS.setWitherCharged(wither, charged);
+        if (!(npc.getEntity() instanceof Wither))
+            return;
+        Wither wither = (Wither) npc.getEntity();
+        NMS.setWitherInvulnerable(wither, invulnerable == null ? npc.isProtected() : invulnerable);
+        if (arrowShield != null) {
+            npc.data().set("wither-arrow-shield", arrowShield);
+        } else {
+            npc.data().remove("wither-arrow-shield");
         }
     }
 
-    public void setCharged(boolean charged) {
-        this.charged = charged;
+    public void setBlocksArrows(boolean arrowShield) {
+        this.arrowShield = arrowShield;
+    }
+
+    public void setInvulnerable(boolean invulnerable) {
+        this.invulnerable = invulnerable;
     }
 }

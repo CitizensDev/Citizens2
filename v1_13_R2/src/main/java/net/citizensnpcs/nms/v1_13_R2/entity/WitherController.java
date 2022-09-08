@@ -74,6 +74,12 @@ public class WitherController extends MobEntityController {
         }
 
         @Override
+        public boolean dA() {
+            return npc == null || !npc.data().has("wither-arrow-damageable") ? super.dA()
+                    : npc.data().get("wither-arrow-damageable");
+        }
+
+        @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
             if (npc == null) {
                 super.enderTeleportTo(d0, d1, d2);
