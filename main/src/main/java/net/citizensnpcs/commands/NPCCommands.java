@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -1181,8 +1182,9 @@ public class NPCCommands {
             permission = "citizens.npc.list")
     @Requirements
     public void list(CommandContext args, CommandSender sender, NPC npc, @Flag("owner") String owner,
-            @Flag("type") EntityType type, @Flag("page") Integer page) throws CommandException {
-        NPCRegistry source = args.hasValueFlag("registry") ? CitizensAPI.getNamedNPCRegistry(args.getFlag("registry"))
+            @Flag("type") EntityType type, @Flag("page") Integer page, @Flag("registry") String registry)
+            throws CommandException {
+        NPCRegistry source = registry != null ? CitizensAPI.getNamedNPCRegistry(registry)
                 : CitizensAPI.getNPCRegistry();
         if (source == null)
             throw new CommandException();
@@ -1192,29 +1194,27 @@ public class NPCCommands {
             for (NPC add : source.sorted()) {
                 npcs.add(add);
             }
-        } else if (args.getValueFlags().size() == 0 && sender instanceof Player) {
+        } else if (owner != null) {
+            for (NPC add : source.sorted()) {
+                if (!npcs.contains(add) && add.getOrAddTrait(Owner.class).isOwnedBy(owner)) {
+                    npcs.add(add);
+                }
+            }
+        } else if (sender instanceof Player) {
             for (NPC add : source.sorted()) {
                 if (!npcs.contains(add) && add.getOrAddTrait(Owner.class).isOwnedBy(sender)) {
                     npcs.add(add);
                 }
             }
-        } else {
-            if (owner != null) {
-                for (NPC add : source.sorted()) {
-                    if (!npcs.contains(add) && add.getOrAddTrait(Owner.class).isOwnedBy(owner)) {
-                        npcs.add(add);
-                    }
-                }
-            }
+        }
 
-            if (args.hasValueFlag("type")) {
-                if (type == null)
-                    throw new CommandException(Messages.COMMAND_INVALID_MOBTYPE, type);
+        if (args.hasValueFlag("type")) {
+            if (type == null)
+                throw new CommandException(Messages.COMMAND_INVALID_MOBTYPE, type);
 
-                for (NPC add : source) {
-                    if (!npcs.contains(add) && add.getOrAddTrait(MobType.class).getType() == type) {
-                        npcs.add(add);
-                    }
+            for (Iterator<NPC> iterator = npcs.iterator(); iterator.hasNext();) {
+                if (iterator.next().getOrAddTrait(MobType.class).getType() != type) {
+                    iterator.remove();
                 }
             }
         }
