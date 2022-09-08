@@ -126,6 +126,18 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
@@ -165,11 +177,11 @@
                                 <relocation>
                                     <pattern>gnu.trove</pattern>
                                     <shadedPattern>clib.trove</shadedPattern>
-                                </relocation> 
+                                </relocation>
                                 <relocation>
                                     <pattern>ch.ethz.globis.phtree</pattern>
                                     <shadedPattern>clib.phtree</shadedPattern>
-                                </relocation> 
+                                </relocation>
                                 <relocation>
                                     <pattern>net.kyori</pattern>
                                     <shadedPattern>clib.net.kyori</shadedPattern>
