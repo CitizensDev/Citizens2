@@ -13,13 +13,6 @@
         <craftbukkit.version>1.19.2-R0.1-SNAPSHOT</craftbukkit.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>everything</id>
-            <url>https://repo.citizensnpcs.co</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
