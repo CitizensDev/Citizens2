@@ -31,6 +31,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -359,6 +360,16 @@ public class EventListen implements Listener {
             return;
         event.setCancelled(!npc.data().get(NPC.TARGETABLE_METADATA, !npc.isProtected()));
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
+    }
+
+    @EventHandler
+    public void onEntityTransform(EntityTransformEvent event) {
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
+        if (npc == null)
+            return;
+        if (npc.isProtected()) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
