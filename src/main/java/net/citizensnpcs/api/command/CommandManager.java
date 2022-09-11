@@ -345,7 +345,25 @@ public class CommandManager implements TabCompleter {
      */
     public boolean hasCommand(org.bukkit.command.Command cmd, String... modifier) {
         String cmdName = cmd.getName().toLowerCase();
-        return commands.containsKey(Joiner.on(' ').join(cmdName, modifier)) || commands.containsKey(cmdName + " *");
+        String[] parts = new String[modifier.length + 1];
+        System.arraycopy(modifier, 0, parts, 1, modifier.length);
+        parts[0] = cmdName;
+        return hasCommand(parts);
+    }
+
+    /**
+     * Checks to see whether there is a command handler for the given command parts at the root level. This will check
+     * aliases as well.
+     *
+     * @param parts
+     *            The parts to check (must not be empty)
+     * @return Whether the command is handled
+     */
+    public boolean hasCommand(String... parts) {
+        if (parts == null || parts.length == 0) {
+            throw new IllegalArgumentException("parts must not be empty");
+        }
+        return commands.containsKey(Joiner.on(' ').join(parts)) || commands.containsKey(parts[0] + " *");
     }
 
     private boolean hasPermission(CommandInfo method, CommandSender sender) {
