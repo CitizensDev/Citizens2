@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_19_R1.entity;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftSnowman;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.SnowGolem;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -53,13 +53,13 @@ public class SnowmanController extends MobEntityController {
 
         @Override
         public void aiStep() {
-            boolean allowsGriefing = this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+            boolean allowsGriefing = this.level.getWorld().getGameRuleValue(GameRule.MOB_GRIEFING);
             if (npc != null) {
-                this.level.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(false, getServer());
+                this.level.getWorld().setGameRule(GameRule.MOB_GRIEFING, false);
             }
             super.aiStep();
             if (npc != null) {
-                this.level.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(allowsGriefing, getServer());
+                this.level.getWorld().setGameRule(GameRule.MOB_GRIEFING, allowsGriefing);
             }
         }
 
