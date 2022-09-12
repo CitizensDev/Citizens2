@@ -125,6 +125,20 @@ public class EventListen implements Listener {
         } catch (Throwable ex) {
             this.chunkEventListener = null;
         }
+        try {
+            Bukkit.getPluginManager().registerEvents(new Listener() {
+                @EventHandler
+                public void onEntityTransform(EntityTransformEvent event) {
+                    NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
+                    if (npc == null)
+                        return;
+                    if (npc.isProtected()) {
+                        event.setCancelled(true);
+                    }
+                }
+            }, CitizensAPI.getPlugin());
+        } catch (Throwable ex) {
+        }
     }
 
     private void checkCreationEvent(CommandSenderCreateNPCEvent event) {
@@ -360,16 +374,6 @@ public class EventListen implements Listener {
             return;
         event.setCancelled(!npc.data().get(NPC.TARGETABLE_METADATA, !npc.isProtected()));
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
-    }
-
-    @EventHandler
-    public void onEntityTransform(EntityTransformEvent event) {
-        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
-        if (npc == null)
-            return;
-        if (npc.isProtected()) {
-            event.setCancelled(true);
-        }
     }
 
     @EventHandler
