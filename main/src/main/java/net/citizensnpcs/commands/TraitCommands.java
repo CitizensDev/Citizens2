@@ -55,10 +55,12 @@ public class TraitCommands {
             addTrait(npc, clazz, sender);
             added.add(StringHelper.wrap(traitName));
         }
-        if (added.size() > 0)
+        if (added.size() > 0) {
             Messaging.sendTr(sender, Messages.TRAITS_ADDED, Joiner.on(", ").join(added));
-        if (failed.size() > 0)
+        }
+        if (failed.size() > 0) {
             Messaging.sendTr(sender, Messages.TRAITS_FAILED_TO_ADD, Joiner.on(", ").join(failed));
+        }
     }
 
     private void addTrait(NPC npc, Class<? extends Trait> clazz, CommandSender sender) {

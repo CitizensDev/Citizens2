@@ -422,6 +422,8 @@ public class NPCCommands {
         } else if (action.equalsIgnoreCase("add")) {
             if (args.argsLength() == 2)
                 throw new CommandUsageException();
+            if (args.hasFlag('o') && !sender.hasPermission("citizens.admin"))
+                throw new NoPermissionsException();
             String command = args.getJoinedStrings(2);
             CommandTrait.Hand hand = args.hasFlag('l') && args.hasFlag('r') ? CommandTrait.Hand.BOTH
                     : args.hasFlag('l') ? CommandTrait.Hand.LEFT : CommandTrait.Hand.RIGHT;
@@ -452,6 +454,8 @@ public class NPCCommands {
             commands.removeCommandById(id);
             Messaging.sendTr(sender, Messages.COMMAND_REMOVED, id);
         } else if (action.equalsIgnoreCase("permissions") || action.equalsIgnoreCase("perms")) {
+            if (!sender.hasPermission("citizens.admin"))
+                throw new NoPermissionsException();
             List<String> temporaryPermissions = Arrays.asList(args.getSlice(2));
             commands.setTemporaryPermissions(temporaryPermissions);
             Messaging.sendTr(sender, Messages.COMMAND_TEMPORARY_PERMISSIONS_SET,
@@ -603,6 +607,7 @@ public class NPCCommands {
                 Messaging.send(sender, "An in-memory registry has been created named [[" + name + "]].");
             }
         }
+
         if (args.hasFlag('t')) {
             registry = temporaryRegistry;
         }
@@ -646,6 +651,8 @@ public class NPCCommands {
         }
 
         if (at != null) {
+            if (!sender.hasPermission("citizens.npc.create-at-location"))
+                throw new NoPermissionsException();
             spawnLoc = at;
             spawnLoc.getChunk().load();
         }
