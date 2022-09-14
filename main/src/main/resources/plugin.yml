@@ -1,21 +1,19 @@
 name: Citizens
 authors: [fullwall]
-softdepend: [Vault, PlaceholderAPI, WorldGuard]
+softdepend: [Vault, PlaceholderAPI, WorldGuard, ProtocolLib]
 version: ${project.version} (build ${BUILD_NUMBER})
 main: net.citizensnpcs.Citizens
-website: http://www.citizensnpcs.co
+website: https://www.citizensnpcs.co
 api-version: "1.13"
 commands:
   traitc:
     aliases: [trc]
     description: Configures traits
     permission: citizens.trait.help
-  trait:
-    aliases: [tr]
+  trait: 
     description: Trait commands
     permission: citizens.trait.help 
-  citizens:
-    aliases: [citizens2]
+  citizens: 
     description: Administration commands
     permission: citizens.citizens.help
   npc:

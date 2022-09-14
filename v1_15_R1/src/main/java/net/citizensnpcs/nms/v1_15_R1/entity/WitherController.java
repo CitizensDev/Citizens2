@@ -131,8 +131,8 @@ public class WitherController extends MobEntityController {
 
         @Override
         public boolean J_() {
-            return npc == null || !npc.data().has("wither-arrow-damageable") ? super.J_()
-                    : npc.data().get("wither-arrow-damageable");
+            return npc == null || !npc.data().has("wither-arrow-shield") ? super.J_()
+                    : npc.data().get("wither-arrow-shield");
         }
 
         @Override
