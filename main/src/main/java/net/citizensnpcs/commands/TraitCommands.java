@@ -27,7 +27,7 @@ import net.citizensnpcs.util.StringHelper;
 @Requirements(selected = true, ownership = true)
 public class TraitCommands {
     @Command(
-            aliases = { "trait", "tr" },
+            aliases = { "trait" },
             usage = "add [trait name]...",
             desc = "Adds traits to the NPC",
             modifiers = { "add", "a" },
@@ -91,7 +91,7 @@ public class TraitCommands {
     }
 
     @Command(
-            aliases = { "trait", "tr" },
+            aliases = { "trait" },
             usage = "remove [trait names]...",
             desc = "Removes traits on the NPC",
             modifiers = { "remove", "rem", "r" },
@@ -132,7 +132,7 @@ public class TraitCommands {
     }
 
     @Command(
-            aliases = { "trait", "tr" },
+            aliases = { "trait" },
             usage = "[trait name], [trait name]...",
             desc = "Toggles traits on the NPC",
             modifiers = { "*" },
