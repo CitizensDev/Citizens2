@@ -26,6 +26,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -548,7 +549,11 @@ public class CommandManager implements TabCompleter {
 
     public void registerTabCompletion(JavaPlugin plugin) {
         for (String string : commands.keySet()) {
-            plugin.getCommand(string.split(" ")[0]).setTabCompleter(this);
+            PluginCommand command = plugin.getCommand(string.split(" ")[0]);
+            if (command == null) {
+                continue;
+            }
+            command.setTabCompleter(this);
         }
     }
 
