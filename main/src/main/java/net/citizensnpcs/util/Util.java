@@ -346,9 +346,19 @@ public class Util {
             return REQUIRES_CHANNEL_METADATA = false;
         try {
             Integer[] parts = Iterables.toArray(
-                    Iterables.transform(Splitter.on('.').split(version.artifactVersion()), s -> Integer.parseInt(s)),
+                    Iterables.transform(Splitter.on('.').split(version.artifactVersion()), string -> {
+                        // Newer versions of netty use suffix (like .Final) that can't be parsed to String
+                        try {
+                            return Integer.parseInt(string);
+                        } catch (NumberFormatException e) {
+                            return -1;
+                        }
+                    }),
                     int.class);
-            return REQUIRES_CHANNEL_METADATA = parts[0] > 4 || (parts[0] == 4 && parts[1] > 1);
+            int major = parts[0];
+            int minor = parts[1];
+            int patch = parts[2];
+            return REQUIRES_CHANNEL_METADATA = major >= 5 || major == 4 && minor > 1 || patch >= 64;
         } catch (Throwable t) {
             t.printStackTrace();
             return REQUIRES_CHANNEL_METADATA = true;
