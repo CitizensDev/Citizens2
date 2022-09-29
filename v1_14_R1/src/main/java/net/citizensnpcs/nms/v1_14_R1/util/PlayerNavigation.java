@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_14_R1.AttributeInstance;
 import net.minecraft.server.v1_14_R1.Block;
@@ -65,7 +66,7 @@ public class PlayerNavigation extends NavigationAbstract {
         this.p = entityinsentient.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         this.o = new PlayerPathfinderNormal();
         this.o.a(true);
-        this.s = new PlayerPathfinder(this.o, 768);
+        this.s = new PlayerPathfinder(this.o, Setting.MAXIMUM_VISITED_NODES.asInt());
         this.setRange(24);
         // this.b.C().a(this);
     }
