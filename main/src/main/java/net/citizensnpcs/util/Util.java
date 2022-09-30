@@ -347,7 +347,7 @@ public class Util {
         try {
             Integer[] parts = Iterables.toArray(
                     Iterables.transform(Splitter.on('.').split(version.artifactVersion()), string -> {
-                        // Newer versions of netty use suffix (like .Final) that can't be parsed to String
+                        // Newer versions of netty use suffix (like .Final) that can't be parsed to Integer
                         try {
                             return Integer.parseInt(string);
                         } catch (NumberFormatException e) {
