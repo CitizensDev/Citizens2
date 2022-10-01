@@ -125,6 +125,7 @@ public class Settings {
         MAX_SPEED("npc.limits.max-speed", 100),
         MAX_TEXT_RANGE("npc.chat.options.max-text-range", 500),
         MAXIMUM_ASTAR_ITERATIONS("npc.pathfinding.maximum-new-pathfinder-iterations", 10000),
+        MAXIMUM_VISITED_NODES("npc.pathfinding.maximum-visited-nodes", 768),
         MC_NAVIGATION_MAX_FALL_DISTANCE("npc.pathfinding.minecraft.max-fall-distance", 3),
         MESSAGE_COLOUR("general.color-scheme.message", "<a>"),
         NEW_PATHFINDER_CHECK_BOUNDING_BOXES("npc.pathfinding.new-finder.check-bounding-boxes", false),
