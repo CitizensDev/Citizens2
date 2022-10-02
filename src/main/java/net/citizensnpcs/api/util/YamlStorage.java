@@ -119,7 +119,7 @@ public class YamlStorage implements FileStorage {
     }
 
     private void tryIncreaseMaxCodepoints(FileConfiguration config) {
-        if (SET_CODEPOINT_LIMIT == null)
+        if (LOADER_OPTIONS == null || SET_CODEPOINT_LIMIT == null)
             return;
         try {
             LoaderOptions options = (LoaderOptions) LOADER_OPTIONS.get(config);
@@ -344,13 +344,12 @@ public class YamlStorage implements FileStorage {
         try {
             LOADER_OPTIONS = YamlConfiguration.class.getDeclaredField("yamlLoaderOptions");
             LOADER_OPTIONS.setAccessible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
         }
         try {
             SET_CODEPOINT_LIMIT = LoaderOptions.class.getMethod("setCodepointLimit", int.class);
             SET_CODEPOINT_LIMIT.setAccessible(true);
-        } catch (Exception e) {
+        } catch (Exception ex) {
         }
     }
 }
