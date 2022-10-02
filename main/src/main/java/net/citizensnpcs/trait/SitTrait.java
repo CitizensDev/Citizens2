@@ -45,7 +45,7 @@ public class SitTrait extends Trait {
             }
             holder = registry.createNPC(EntityType.ARMOR_STAND, "");
             holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
-            holder.spawn(npc.getEntity().getLocation());
+            holder.spawn(npc.getStoredLocation());
         }
         if (holder.getEntity() != null && !NMS.getPassengers(holder.getEntity()).contains(npc.getEntity())) {
             NMS.mount(holder.getEntity(), npc.getEntity());

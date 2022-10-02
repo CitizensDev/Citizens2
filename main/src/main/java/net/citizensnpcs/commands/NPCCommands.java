@@ -541,7 +541,7 @@ public class NPCCommands {
             copy.setName(name);
         }
 
-        if (copy.isSpawned() && args.getSenderLocation() != null) {
+        if (copy.getOrAddTrait(Spawned.class).shouldSpawn() && args.getSenderLocation() != null) {
             Location location = args.getSenderLocation();
             location.getChunk().load();
             copy.teleport(location, TeleportCause.COMMAND);
@@ -1317,7 +1317,7 @@ public class NPCCommands {
             desc = "Manages NPC metadata",
             modifiers = { "metadata" },
             flags = "t",
-            min = 2,
+            min = 3,
             max = 4,
             permission = "citizens.npc.metadata")
     @Requirements(selected = true, ownership = true)

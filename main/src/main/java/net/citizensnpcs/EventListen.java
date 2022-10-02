@@ -108,6 +108,7 @@ import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
 
 public class EventListen implements Listener {
@@ -523,7 +524,9 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(rightClickEvent);
         if (rightClickEvent.isCancelled()) {
             event.setCancelled(true);
+            return;
         }
+        PlayerAnimation.STOP_USE_ITEM.play(player);
         if (npc.hasTrait(CommandTrait.class)) {
             npc.getTraitNullable(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
         }
