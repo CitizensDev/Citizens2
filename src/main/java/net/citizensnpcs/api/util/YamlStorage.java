@@ -2,6 +2,8 @@ package net.citizensnpcs.api.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.yaml.snakeyaml.LoaderOptions;
 
 import com.google.common.io.Files;
 
@@ -25,6 +28,7 @@ public class YamlStorage implements FileStorage {
 
     public YamlStorage(File file, String header) {
         config = new YamlConfiguration();
+        tryIncreaseMaxCodepoints(config);
         this.file = file;
         if (!file.exists()) {
             create();
@@ -112,6 +116,17 @@ public class YamlStorage implements FileStorage {
     @Override
     public String toString() {
         return "YamlStorage {file=" + file + "}";
+    }
+
+    private void tryIncreaseMaxCodepoints(FileConfiguration config) {
+        if (SET_CODEPOINT_LIMIT == null)
+            return;
+        try {
+            LoaderOptions options = (LoaderOptions) LOADER_OPTIONS.get(config);
+            SET_CODEPOINT_LIMIT.invoke(options, 67108864 /* ~64MB, Paper's limit */);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public class YamlKey extends DataKey {
@@ -320,6 +335,22 @@ public class YamlStorage implements FileStorage {
         @Override
         public String toString() {
             return "YamlKey [path=" + path + "]";
+        }
+    }
+
+    private static Field LOADER_OPTIONS;
+    private static Method SET_CODEPOINT_LIMIT;
+    static {
+        try {
+            LOADER_OPTIONS = YamlConfiguration.class.getDeclaredField("yamlLoaderOptions");
+            LOADER_OPTIONS.setAccessible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            SET_CODEPOINT_LIMIT = LoaderOptions.class.getMethod("setCodepointLimit", int.class);
+            SET_CODEPOINT_LIMIT.setAccessible(true);
+        } catch (Exception e) {
         }
     }
 }
