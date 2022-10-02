@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_17_R1.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -61,7 +62,7 @@ public class PlayerNavigation extends PathNavigation {
         this.followRange = entityinsentient.getAttribute(Attributes.FOLLOW_RANGE);
         this.nodeEvaluator = new PlayerNodeEvaluator();
         this.nodeEvaluator.setCanPassDoors(true);
-        this.pathFinder = new PlayerPathfinder(this.nodeEvaluator, 768);
+        this.pathFinder = new PlayerPathfinder(this.nodeEvaluator, Setting.MAXIMUM_VISITED_NODES.asInt());
         this.setRange(24);
     }
 

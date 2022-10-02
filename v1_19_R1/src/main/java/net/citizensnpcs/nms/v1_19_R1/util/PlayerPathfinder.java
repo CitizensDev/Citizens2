@@ -31,13 +31,6 @@ public class PlayerPathfinder extends PathFinder {
     private final PlayerNodeEvaluator nodeEvaluator;
     private final BinaryHeap openSet;
 
-    public PlayerPathfinder() {
-        super(null, 768);
-        this.nodeEvaluator = new PlayerNodeEvaluator();
-        this.openSet = new BinaryHeap();
-        this.maxVisitedNodes = 768;
-    }
-
     public PlayerPathfinder(PlayerNodeEvaluator var0, int var1) {
         super(var0, var1);
         this.openSet = new BinaryHeap();
