@@ -14,7 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.yaml.snakeyaml.LoaderOptions;
 
 import com.google.common.io.Files;
 
@@ -119,11 +118,10 @@ public class YamlStorage implements FileStorage {
     }
 
     private void tryIncreaseMaxCodepoints(FileConfiguration config) {
-        if (LOADER_OPTIONS == null || SET_CODEPOINT_LIMIT == null)
+        if (SET_CODEPOINT_LIMIT == null || LOADER_OPTIONS == null)
             return;
         try {
-            LoaderOptions options = (LoaderOptions) LOADER_OPTIONS.get(config);
-            SET_CODEPOINT_LIMIT.invoke(options, 67108864 /* ~64MB, Paper's limit */);
+            SET_CODEPOINT_LIMIT.invoke(LOADER_OPTIONS.get(config), 67108864 /* ~64MB, Paper's limit */);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -344,12 +342,10 @@ public class YamlStorage implements FileStorage {
         try {
             LOADER_OPTIONS = YamlConfiguration.class.getDeclaredField("yamlLoaderOptions");
             LOADER_OPTIONS.setAccessible(true);
-        } catch (Exception ex) {
-        }
-        try {
-            SET_CODEPOINT_LIMIT = LoaderOptions.class.getMethod("setCodepointLimit", int.class);
+            SET_CODEPOINT_LIMIT = Class.forName("org.yaml.snakeyaml.LoaderOptions").getMethod("setCodepointLimit",
+                    int.class);
             SET_CODEPOINT_LIMIT.setAccessible(true);
-        } catch (Exception ex) {
+        } catch (Exception e) {
         }
     }
 }
