@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -502,6 +503,7 @@ public class CommandManager implements TabCompleter {
                     annotations.add(annotation);
                 }
             }
+
             for (Annotation annotation : method.getAnnotations()) {
                 Class<? extends Annotation> annotationClass = annotation.annotationType();
                 if (!annotationProcessors.containsKey(annotationClass))
@@ -642,7 +644,9 @@ public class CommandManager implements TabCompleter {
             List<String> completions = Lists.newArrayList();
             for (InjectedCommandArgument instance : methodArguments.values()) {
                 if (instance.matches(index)) {
-                    completions.addAll(instance.getTabCompletions(args, sender));
+                    String needle = index < args.argsLength() ? args.getString(index) : "";
+                    completions.addAll(Collections2.filter(instance.getTabCompletions(args, sender),
+                            (s) -> needle.isEmpty() || s.toLowerCase().startsWith(needle.toLowerCase())));
                 }
             }
             return completions;
@@ -656,7 +660,9 @@ public class CommandManager implements TabCompleter {
             List<String> completions = Lists.newArrayList();
             for (InjectedCommandArgument instance : methodArguments.values()) {
                 if (instance.matches(flag)) {
-                    completions.addAll(instance.getTabCompletions(args, sender));
+                    String needle = args.getFlag(flag, "");
+                    completions.addAll(Collections2.filter(instance.getTabCompletions(args, sender),
+                            (s) -> needle.isEmpty() || s.toLowerCase().startsWith(needle.toLowerCase())));
                 }
             }
             return completions;
