@@ -121,6 +121,16 @@ public class ArmorStandTrait extends Trait {
         entity.setMarker(marker);
     }
 
+    public void setAsHelperEntity(NPC parent) {
+        npc.addTrait(new ClickRedirectTrait(npc));
+        setAsPointEntity();
+    }
+
+    public void setAsHelperEntityWithName(NPC parent) {
+        npc.addTrait(new ClickRedirectTrait(npc));
+        setAsPointEntityWithName();
+    }
+
     /**
      * Configures the entity as an invisible point entity, e.g. for mounting NPCs on top, nameplates, etc.
      */

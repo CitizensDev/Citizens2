@@ -526,7 +526,13 @@ public class EventListen implements Listener {
             event.setCancelled(true);
             return;
         }
-        PlayerAnimation.STOP_USE_ITEM.play(player);
+        if (SUPPORT_STOP_USE_ITEM) {
+            try {
+                PlayerAnimation.STOP_USE_ITEM.play(player);
+            } catch (UnsupportedOperationException e) {
+                SUPPORT_STOP_USE_ITEM = false;
+            }
+        }
         if (npc.hasTrait(CommandTrait.class)) {
             npc.getTraitNullable(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
         }
@@ -764,4 +770,6 @@ public class EventListen implements Listener {
         }
         return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
     }
+
+    private static boolean SUPPORT_STOP_USE_ITEM = true;
 }

@@ -38,15 +38,17 @@ public class SitTrait extends Trait {
         if (!npc.isSpawned() || !sitting) {
             return;
         }
+
         if (holder == null) {
             NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("PlayerAnimationImpl");
             if (registry == null) {
                 registry = CitizensAPI.createNamedNPCRegistry("PlayerAnimationImpl", new MemoryNPCDataStore());
             }
             holder = registry.createNPC(EntityType.ARMOR_STAND, "");
-            holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
+            holder.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntity(npc);
             holder.spawn(npc.getStoredLocation());
         }
+
         if (holder.getEntity() != null && !NMS.getPassengers(holder.getEntity()).contains(npc.getEntity())) {
             NMS.mount(holder.getEntity(), npc.getEntity());
         }
