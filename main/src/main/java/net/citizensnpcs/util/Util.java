@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
+import java.util.stream.StreamSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -345,20 +346,18 @@ public class Util {
         if (version == null)
             return REQUIRES_CHANNEL_METADATA = false;
         try {
-            Integer[] parts = Iterables.toArray(
-                    Iterables.transform(Splitter.on('.').split(version.artifactVersion()), string -> {
-                        // Newer versions of netty use suffix (like .Final) that can't be parsed to Integer
-                        try {
-                            return Integer.parseInt(string);
-                        } catch (NumberFormatException e) {
-                            return -1;
-                        }
-                    }),
-                    int.class);
+           Integer[] parts = StreamSupport.stream(Splitter.on('.').split(version.artifactVersion()).spliterator(), false).map(string -> {
+               // Newer versions of netty use suffix (like .Final) that can't be parsed to Integer
+               try {
+                   return Integer.parseInt(string);
+               } catch (NumberFormatException e) {
+                   return -1;
+               }
+           }).toArray(Integer[]::new);
             int major = parts[0];
             int minor = parts[1];
             int patch = parts[2];
-            return REQUIRES_CHANNEL_METADATA = major >= 5 || major == 4 && minor > 1 || patch >= 64;
+            return REQUIRES_CHANNEL_METADATA = major >= 5 || major == 4 && (minor > 1 || patch >= 64);
         } catch (Throwable t) {
             t.printStackTrace();
             return REQUIRES_CHANNEL_METADATA = true;
