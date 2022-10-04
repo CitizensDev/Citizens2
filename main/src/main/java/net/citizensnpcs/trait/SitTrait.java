@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -15,14 +16,14 @@ import net.citizensnpcs.util.NMS;
 public class SitTrait extends Trait {
     private NPC holder;
     @Persist
-    private boolean sitting;
+    private Location sittingAt;
 
     public SitTrait() {
         super("sittrait");
     }
 
     public boolean isSitting() {
-        return sitting;
+        return sittingAt != null;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class SitTrait extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || !sitting) {
+        if (!npc.isSpawned() || !isSitting()) {
             return;
         }
 
@@ -46,7 +47,7 @@ public class SitTrait extends Trait {
             }
             holder = registry.createNPC(EntityType.ARMOR_STAND, "");
             holder.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntity(npc);
-            holder.spawn(npc.getStoredLocation());
+            holder.spawn(sittingAt);
         }
 
         if (holder.getEntity() != null && !NMS.getPassengers(holder.getEntity()).contains(npc.getEntity())) {
@@ -54,9 +55,9 @@ public class SitTrait extends Trait {
         }
     }
 
-    public void setSitting(boolean val) {
-        this.sitting = val;
-        if (!sitting) {
+    public void setSitting(Location at) {
+        this.sittingAt = at != null ? at.clone() : null;
+        if (!isSitting()) {
             onDespawn();
         }
     }

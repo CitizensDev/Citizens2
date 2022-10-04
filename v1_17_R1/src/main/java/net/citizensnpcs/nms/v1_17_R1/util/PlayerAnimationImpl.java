@@ -2,21 +2,10 @@ package net.citizensnpcs.nms.v1_17_R1.util;
 
 import java.util.EnumMap;
 
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Maps;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.MemoryNPCDataStore;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.trait.ArmorStandTrait;
-import net.citizensnpcs.trait.SitTrait;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
@@ -33,41 +22,6 @@ public class PlayerAnimationImpl {
             return;
         }
         switch (animation) {
-            case SIT:
-                if (player instanceof NPCHolder) {
-                    ((NPCHolder) player).getNPC().getOrAddTrait(SitTrait.class).setSitting(true);
-                    return;
-                }
-                player.getBukkitEntity().setMetadata("citizens.sitting",
-                        new FixedMetadataValue(CitizensAPI.getPlugin(), true));
-                NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("PlayerAnimationImpl");
-                if (registry == null) {
-                    registry = CitizensAPI.createNamedNPCRegistry("PlayerAnimationImpl", new MemoryNPCDataStore());
-                }
-                final NPC holder = registry.createNPC(EntityType.ARMOR_STAND, "");
-                holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
-                holder.spawn(player.getBukkitEntity().getLocation());
-                new BukkitRunnable() {
-                    @Override
-                    public void cancel() {
-                        super.cancel();
-                        holder.destroy();
-                    }
-
-                    @Override
-                    public void run() {
-                        if (player.isRemoved() || !player.valid
-                                || !player.getBukkitEntity().hasMetadata("citizens.sitting")
-                                || !player.getBukkitEntity().getMetadata("citizens.sitting").get(0).asBoolean()) {
-                            cancel();
-                            return;
-                        }
-                        if (!NMS.getPassengers(holder.getEntity()).contains(player.getBukkitEntity())) {
-                            NMS.mount(holder.getEntity(), player.getBukkitEntity());
-                        }
-                    }
-                }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
-                break;
             case SLEEP:
                 player.setPose(Pose.SLEEPING);
                 break;
@@ -88,15 +42,6 @@ public class PlayerAnimationImpl {
                 player.startUsingItem(InteractionHand.OFF_HAND);
                 sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData(), true),
                         player, radius);
-                break;
-            case STOP_SITTING:
-                if (player instanceof NPCHolder) {
-                    ((NPCHolder) player).getNPC().getOrAddTrait(SitTrait.class).setSitting(false);
-                    return;
-                }
-                player.getBukkitEntity().setMetadata("citizens.sitting",
-                        new FixedMetadataValue(CitizensAPI.getPlugin(), false));
-                NMS.mount(player.getBukkitEntity(), null);
                 break;
             case STOP_SLEEPING:
                 player.setPose(Pose.STANDING);
