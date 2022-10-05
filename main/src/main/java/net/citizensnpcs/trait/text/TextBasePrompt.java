@@ -105,7 +105,7 @@ public class TextBasePrompt extends StringPrompt {
     }
 
     private String colorToggleableText(boolean enabled) {
-        return (enabled ? ChatColor.GREEN : ChatColor.RED).toString();
+        return (enabled ? "<green>" : "<red>").toString();
     }
 
     @Override

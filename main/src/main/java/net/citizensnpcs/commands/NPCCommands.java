@@ -262,19 +262,19 @@ public class NPCCommands {
                 throw new CommandException(Messages.ANCHOR_MISSING, remove);
         } else if (!args.hasFlag('a')) {
             Paginator paginator = new Paginator().header("Anchors").console(sender instanceof ConsoleCommandSender);
-            paginator.addLine("<e>Key: <a>ID  <b>Name  <c>World  <d>Location (X,Y,Z)");
+            paginator.addLine("Key: [[ID]]  <blue>Name  <red>World  <gray>Location (X,Y,Z)");
             for (int i = 0; i < trait.getAnchors().size(); i++) {
                 if (trait.getAnchors().get(i).isLoaded()) {
-                    String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  "
-                            + trait.getAnchors().get(i).getLocation().getWorld().getName() + "<d>  "
+                    String line = i + "<blue>  " + trait.getAnchors().get(i).getName() + "<yellow>  "
+                            + trait.getAnchors().get(i).getLocation().getWorld().getName() + "<gray>  "
                             + trait.getAnchors().get(i).getLocation().getBlockX() + ", "
                             + trait.getAnchors().get(i).getLocation().getBlockY() + ", "
                             + trait.getAnchors().get(i).getLocation().getBlockZ();
                     paginator.addLine(line);
                 } else {
                     String[] parts = trait.getAnchors().get(i).getUnloadedValue();
-                    String line = "<a>" + i + "<b>  " + trait.getAnchors().get(i).getName() + "<c>  " + parts[0]
-                            + "<d>  " + parts[1] + ", " + parts[2] + ", " + parts[3] + " <f>(unloaded)";
+                    String line = i + "<blue>  " + trait.getAnchors().get(i).getName() + "<red>  " + parts[0]
+                            + "<gray>  " + parts[1] + ", " + parts[2] + ", " + parts[3] + " <white>(unloaded)";
                     paginator.addLine(line);
                 }
             }
@@ -1230,9 +1230,12 @@ public class NPCCommands {
                 .enablePageSwitcher('/' + args.getRawCommand() + " --page $page");
         for (int i = 0; i < npcs.size(); i++) {
             int id = npcs.get(i).getId();
-            String line = StringHelper.wrap(id) + " " + npcs.get(i).getName() + " (<<[[tp:command(/npc tp --id " + id
-                    + "):Teleport to this NPC>>) (<<[[summon:command(/npc tph --id " + id
-                    + "):Teleport NPC to me>>) (<<<c>-:command(/npc remove " + id + "):Remove this NPC>>)";
+            String line = StringHelper.wrap(id) + " " + npcs.get(i).getName() + " (<click:run_command:/npc tp --id "
+                    + id
+                    + "><hover:show_text:Teleport to this NPC>[[tp]]</hover></click>) (<click:run_command:/npc tph --id "
+                    + id
+                    + "><hover:show_text:Teleport NPC to me>[[summon]]</hover></click>) (<click:run_command:/npc remove "
+                    + id + "><hover:show_text:Remove this NPC><red>-</red></hover></click>)";
             paginator.addLine(line);
         }
 
@@ -1529,22 +1532,22 @@ public class NPCCommands {
     @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "citizens.npc.info")
     public void npc(CommandContext args, CommandSender sender, final NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
-        Messaging.send(sender, "    <a>ID: <e>" + npc.getId());
+        Messaging.send(sender, "    ID: [[" + npc.getId());
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
         Messaging.send(sender,
-                "    <a>UUID: <e>" + npc.getUniqueId() + (npc.isSpawned() && type == EntityType.PLAYER ? "(v4)" : ""));
-        Messaging.send(sender, "    <a>Type: <e>" + type);
+                "    UUID: [[" + npc.getUniqueId() + (npc.isSpawned() && type == EntityType.PLAYER ? "(v4)" : ""));
+        Messaging.send(sender, "    Type: [[" + type);
         if (npc.isSpawned()) {
             Location loc = npc.getEntity().getLocation();
-            String format = "    <a>Spawned at <e>%d, %d, %d <a>in world<e> %s";
+            String format = "    Spawned at [[%d, %d, %d]] in world [[%s";
             Messaging.send(sender,
                     String.format(format, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName()));
         }
-        Messaging.send(sender, "    <a>Traits<e>");
+        Messaging.send(sender, "    Traits");
         for (Trait trait : npc.getTraits()) {
             if (CitizensAPI.getTraitFactory().isInternalTrait(trait))
                 continue;
-            String message = "     <e>- <a>" + trait.getName();
+            String message = "     [[- ]]" + trait.getName();
             Messaging.send(sender, message);
         }
     }
