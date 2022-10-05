@@ -28,6 +28,6 @@ public class Colorizer {
         for (ChatColor color : ChatColor.values()) {
             colors += color.getChar();
         }
-        COLOR_MATCHER = Pattern.compile("\\<([COLORS])\\>".replace("COLORS", colors), Pattern.CASE_INSENSITIVE);
+        COLOR_MATCHER = Pattern.compile("\\<([" + colors + "])\\>", Pattern.CASE_INSENSITIVE);
     }
 }

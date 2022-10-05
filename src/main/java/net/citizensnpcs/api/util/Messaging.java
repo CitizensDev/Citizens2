@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -20,16 +21,12 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.TextComponent.Builder;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class Messaging {
     private static class DebugFormatter extends Formatter {
@@ -58,9 +55,9 @@ public class Messaging {
     public static void configure(File debugFile, boolean debug, String messageColour, String highlightColour,
             String errorColour) {
         DEBUG = debug;
-        MESSAGE_COLOUR = Colorizer.parseColors(messageColour);
-        HIGHLIGHT_COLOUR = Colorizer.parseColors(highlightColour);
-        ERROR_COLOUR = Colorizer.parseColors(errorColour);
+        MESSAGE_COLOUR = messageColour.replace("<a>", "<green>");
+        HIGHLIGHT_COLOUR = highlightColour.replace("<e>", "<yellow>");
+        ERROR_COLOUR = errorColour.replace("<c>", "<red>");
 
         if (Bukkit.getLogger() != null) {
             LOGGER = Bukkit.getLogger();
@@ -94,6 +91,16 @@ public class Messaging {
         }
     }
 
+    private static String convertLegacyCodes(String message) {
+        Matcher m = LEGACY_COLORCODE_MATCHER.matcher(message);
+        StringBuilder sb = new StringBuilder();
+        while (m.find()) {
+            m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1)));
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
     public static void debug(Object... msg) {
         if (isDebugging()) {
             DEBUG_LOGGER.log(Level.INFO, "[Citizens] " + SPACE.join(msg));
@@ -116,54 +123,6 @@ public class Messaging {
         log(Level.INFO, Translator.translate(key, msg));
     }
 
-    private static void parseAndSendComponents(CommandSender sender, String message, String color) {
-        Builder builder = Component.text();
-        Matcher m = COMPONENT_MATCHER.matcher(message);
-        int end = 0;
-        while (m.find()) {
-            if (m.start() != end) {
-                builder.append(Component.text(color + message.substring(end, m.start())));
-            }
-            String text = m.group(1);
-            String type = m.group(2);
-            String command = m.group(3);
-            ClickEvent evt = null;
-            switch (type) {
-                case "url":
-                    evt = ClickEvent.openUrl(command);
-                    break;
-                case "command":
-                    evt = ClickEvent.runCommand(command);
-                    break;
-                case "suggest":
-                    evt = ClickEvent.suggestCommand(command);
-                    break;
-                case "copy":
-                    evt = ClickEvent.copyToClipboard(command);
-                    break;
-            }
-            if (evt != null) {
-                text = color + ChatColor.UNDERLINE + text;
-            }
-            TextComponent tc = Component.text(text);
-            if (evt != null) {
-                tc = tc.clickEvent(evt);
-            }
-            builder.append(tc);
-            end = m.end();
-            if (m.groupCount() > 3 && m.group(4) != null) {
-                builder.hoverEvent(HoverEvent.showText(Component.text(m.group(4).substring(1))));
-            } else {
-                builder.hoverEvent(null);
-            }
-        }
-        if (end - 1 < message.length()) {
-            builder.append(Component.text(color + message.substring(end)).decoration(TextDecoration.UNDERLINED, false)
-                    .clickEvent(null).hoverEvent(null));
-        }
-        AUDIENCES.sender(sender).sendMessage(builder);
-    }
-
     private static String prettify(String message) {
         String trimmed = message.trim();
         String messageColour = MESSAGE_COLOUR;
@@ -172,8 +131,9 @@ public class Messaging {
                 ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
                 if (test == null) {
                     message = messageColour + message;
-                } else
+                } else {
                     messageColour = test.toString();
+                }
             } else {
                 message = messageColour + message;
             }
@@ -203,15 +163,13 @@ public class Messaging {
         if (sender instanceof Player) {
             rawMessage = Placeholders.replace(rawMessage, (Player) sender);
         }
-        rawMessage = Colorizer.parseColors(rawMessage);
-        boolean hasComponents = rawMessage.contains("<<");
-        String color = messageColor ? MESSAGE_COLOUR : "";
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
             message = prettify(message);
-            if (hasComponents && AUDIENCES != null) {
-                parseAndSendComponents(sender, message, color);
+            if (AUDIENCES != null) {
+                AUDIENCES.sender(sender)
+                        .sendMessage(MiniMessage.miniMessage().deserialize(convertLegacyCodes(message)));
             } else {
-                sender.sendMessage(message);
+                sender.sendMessage(Colorizer.parseColors(rawMessage));
             }
         }
     }
@@ -254,16 +212,40 @@ public class Messaging {
     private static BukkitAudiences AUDIENCES;
     private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|\\n", Pattern.MULTILINE);
     private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
-    // <<example text:action():optional hover text>>
-    private static final Pattern COMPONENT_MATCHER = Pattern.compile("<<(.*?):([_a-zA-Z]+)\\((.*?)\\)(:.*?)?>>");
+    private static final Map<String, String> COLORCODE_CONVERTER = Maps.newHashMap();
     private static boolean DEBUG = false;
     private static Logger DEBUG_LOGGER;
-    private static String ERROR_COLOUR = ChatColor.RED.toString();
+    private static String ERROR_COLOUR = "<red>";
     private static final Pattern ERROR_MATCHER = Pattern.compile("{{", Pattern.LITERAL);
-    private static String HIGHLIGHT_COLOUR = ChatColor.YELLOW.toString();
+    private static String HIGHLIGHT_COLOUR = "<yellow>";
     private static final Pattern HIGHLIGHT_MATCHER = Pattern.compile("[[", Pattern.LITERAL);
+    private static Pattern LEGACY_COLORCODE_MATCHER = Pattern.compile(ChatColor.COLOR_CHAR + "([0-9a-r])",
+            Pattern.CASE_INSENSITIVE);
     private static Logger LOGGER = Logger.getLogger("Citizens");
-    private static String MESSAGE_COLOUR = ChatColor.GREEN.toString();
+    private static String MESSAGE_COLOUR = "<green>";
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
     private static final Pattern TRANSLATION_MATCHER = Pattern.compile("^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+\\.[a-zA-Z0-9.]+");
+    static {
+        COLORCODE_CONVERTER.put("0", "<black>");
+        COLORCODE_CONVERTER.put("1", "<dark_blue>");
+        COLORCODE_CONVERTER.put("2", "<dark_green>");
+        COLORCODE_CONVERTER.put("3", "<dark_aqua>");
+        COLORCODE_CONVERTER.put("4", "<dark_red>");
+        COLORCODE_CONVERTER.put("5", "<dark_purple>");
+        COLORCODE_CONVERTER.put("6", "<gold>");
+        COLORCODE_CONVERTER.put("7", "<gray>");
+        COLORCODE_CONVERTER.put("8", "<dark_gray>");
+        COLORCODE_CONVERTER.put("9", "<blue>");
+        COLORCODE_CONVERTER.put("a", "<green>");
+        COLORCODE_CONVERTER.put("b", "<aqua>");
+        COLORCODE_CONVERTER.put("c", "<red>");
+        COLORCODE_CONVERTER.put("d", "<light_purple>");
+        COLORCODE_CONVERTER.put("e", "<yellow>");
+        COLORCODE_CONVERTER.put("f", "<white>");
+        COLORCODE_CONVERTER.put("m", "<st>");
+        COLORCODE_CONVERTER.put("k", "<obf>");
+        COLORCODE_CONVERTER.put("o", "<i>");
+        COLORCODE_CONVERTER.put("l", "<b>");
+        COLORCODE_CONVERTER.put("r", "<r>");
+    }
 }

@@ -21,7 +21,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -564,7 +563,7 @@ public class CommandManager implements TabCompleter {
             name = "NPC";
         }
         Paginator paginator = new Paginator()
-                .header(ChatColor.GREEN + capitalize(name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER))
+                .header(capitalize(name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER))
                 .console(sender instanceof ConsoleCommandSender);
         for (String line : getLines(sender, name.toLowerCase())) {
             paginator.addLine(line);
@@ -582,7 +581,7 @@ public class CommandManager implements TabCompleter {
         String help = Messaging.tryTranslate(info.getCommandAnnotation().help());
         if (help.isEmpty())
             return;
-        Messaging.send(sender, ChatColor.AQUA + help);
+        Messaging.send(sender, "<aqua>" + help);
     }
 
     public void setInjector(Injector injector) {

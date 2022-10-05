@@ -60,15 +60,15 @@ public class Paginator {
         String pageDisplay = page + "/" + pages;
         if (pageSwitcher) {
             if (page > 1) {
-                pageDisplay = "<<<f>< :command(" + pageCommand.replace("$page", "" + (page - 1))
-                        + "):Previous page>><f>" + pageDisplay;
+                pageDisplay = "<click:run_command:" + pageCommand.replace("$page", "" + (page - 1))
+                        + "><hover:show_text:Previous page><</hover></click> <white>" + pageDisplay;
             }
             if (pages > 1 && page != pages) {
-                pageDisplay = pageDisplay + "<<<f> >:command(" + pageCommand.replace("$page", "" + (page + 1))
-                        + "):Next page>>";
+                pageDisplay += " <click:run_command:" + pageCommand.replace("$page", "" + (page + 1))
+                        + "><hover:show_text:Next page>></hover></click><white>";
             }
         }
-        String text = header == null ? "" : wrapHeader("[[" + header + " <f>" + pageDisplay);
+        String text = header == null ? "" : wrapHeader("[[" + header + " <white>" + pageDisplay);
 
         if (lines.size() < endIndex)
             endIndex = lines.size();
