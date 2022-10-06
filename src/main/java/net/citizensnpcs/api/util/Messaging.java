@@ -93,7 +93,7 @@ public class Messaging {
 
     private static String convertLegacyCodes(String message) {
         Matcher m = LEGACY_COLORCODE_MATCHER.matcher(message);
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         while (m.find()) {
             m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1)));
         }
