@@ -369,7 +369,8 @@ public class CommandManager implements TabCompleter {
 
     private boolean hasPermission(CommandInfo method, CommandSender sender) {
         Command cmd = method.commandAnnotation;
-        return cmd.permission().isEmpty() || hasPermission(sender, cmd.permission()) || hasPermission(sender, "admin");
+        return cmd.permission().isEmpty() || hasPermission(sender, cmd.permission())
+                || hasPermission(sender, "citizens.admin");
     }
 
     private boolean hasPermission(CommandSender sender, String perm) {

@@ -208,6 +208,8 @@ public class InventoryMenu implements Listener, Runnable {
     private void handleClick(InventoryClickEvent event) {
         Inventory clicked = event.getClickedInventory() != null ? event.getClickedInventory() : event.getInventory();
         if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+            if (!views.stream().anyMatch(v -> event.getWhoClicked().equals(v.getPlayer())))
+                return;
             event.setCancelled(true);
             Inventory dest = event.getInventory() == event.getClickedInventory() ? event.getWhoClicked().getInventory()
                     : page.ctx.getInventory();
