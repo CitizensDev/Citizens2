@@ -135,6 +135,7 @@ import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
+import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -1156,6 +1157,18 @@ public class NPCCommands {
             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
         Messaging.sendTr(sender, Messages.ITEM_SET, Util.prettyEnum(mat));
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "jump",
+            desc = "Makes the NPC jump",
+            modifiers = { "jump" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.jump")
+    public void jump(CommandContext args, CommandSender sender, NPC npc) {
+        NMS.setShouldJump(npc.getEntity());
     }
 
     @Command(
@@ -2810,6 +2823,20 @@ public class NPCCommands {
         }
         String key = vulnerable ? Messages.VULNERABLE_STOPPED : Messages.VULNERABLE_SET;
         Messaging.sendTr(sender, key, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "wander",
+            desc = "Sets the NPC to wander around",
+            modifiers = { "wander" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.wander")
+    public void wander(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        Waypoints trait = npc.getOrAddTrait(Waypoints.class);
+        trait.setWaypointProvider(trait.getCurrentProviderName().equals("wander") ? "wander" : "linear");
+        Messaging.sendTr(sender, Messages.WAYPOINT_PROVIDER_SET, trait.getCurrentProviderName());
     }
 
     @Command(
