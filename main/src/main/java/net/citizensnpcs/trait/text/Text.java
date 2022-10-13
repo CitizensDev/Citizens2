@@ -42,7 +42,6 @@ import net.citizensnpcs.util.Util;
  */
 @TraitName("text")
 public class Text extends Trait implements Runnable, Listener, ConversationAbandonedListener {
-    private int bubbleTicks;
     private final Map<UUID, Long> cooldowns = Maps.newHashMap();
     private int currentIndex;
     private int delay = -1;
@@ -52,7 +51,6 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
     private boolean speechBubbles;
-    private final int speechIndex = -1;
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
     private final List<String> text = new ArrayList<String>();
 

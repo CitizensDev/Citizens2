@@ -287,7 +287,6 @@ public class SkinUpdateTracker {
             return;
 
         double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
-        viewDistance *= viewDistance;
         Location location = entity.getLocation(NPC_LOCATION);
         List<Player> players = entity.getWorld().getPlayers();
         for (Player player : players) {
@@ -296,8 +295,7 @@ public class SkinUpdateTracker {
             Location ploc = player.getLocation(CACHE_LOCATION);
             if (ploc.getWorld() != location.getWorld())
                 continue;
-            double distanceSquared = ploc.distanceSquared(location);
-            if (distanceSquared > viewDistance)
+            if (ploc.distance(location) > viewDistance)
                 continue;
 
             PlayerTracker tracker = playerTrackers.get(player.getUniqueId());
