@@ -42,6 +42,7 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
                 error += ' ' + Messaging.tr(CommandMessages.ID_NOT_FOUND, context.getFlagInteger("id"));
             }
         }
+
         if (requirements.selected() && npc == null) {
             throw new RequirementMissingException(error);
         }

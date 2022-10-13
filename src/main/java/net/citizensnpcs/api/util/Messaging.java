@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
@@ -26,7 +27,10 @@ import com.google.common.collect.Maps;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 public class Messaging {
     private static class DebugFormatter extends Formatter {
@@ -92,10 +96,11 @@ public class Messaging {
     }
 
     private static String convertLegacyCodes(String message) {
+        message = ChatColor.translateAlternateColorCodes('&', message);
         Matcher m = LEGACY_COLORCODE_MATCHER.matcher(message);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
-            m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1)));
+            m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1)) + "<csr>");
         }
         m.appendTail(sb);
         return sb.toString();
@@ -166,8 +171,7 @@ public class Messaging {
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
             message = prettify(message);
             if (AUDIENCES != null) {
-                AUDIENCES.sender(sender)
-                        .sendMessage(MiniMessage.miniMessage().deserialize(convertLegacyCodes(message)));
+                AUDIENCES.sender(sender).sendMessage(MINIMESSAGE.deserialize(convertLegacyCodes(message)));
             } else {
                 sender.sendMessage(Colorizer.parseColors(rawMessage));
             }
@@ -223,6 +227,7 @@ public class Messaging {
             Pattern.CASE_INSENSITIVE);
     private static Logger LOGGER = Logger.getLogger("Citizens");
     private static String MESSAGE_COLOUR = "<green>";
+    private static MiniMessage MINIMESSAGE;
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
     private static final Pattern TRANSLATION_MATCHER = Pattern.compile("^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+\\.[a-zA-Z0-9.]+");
     static {
@@ -247,5 +252,12 @@ public class Messaging {
         COLORCODE_CONVERTER.put("o", "<i>");
         COLORCODE_CONVERTER.put("l", "<b>");
         COLORCODE_CONVERTER.put("r", "<r>");
+        try {
+            MINIMESSAGE = MiniMessage.builder()
+                    .editTags(t -> t.resolver(TagResolver.resolver("csr", Tag.styling(
+                            s -> Arrays.stream(TextDecoration.values()).forEach(td -> s.decoration(td, false))))))
+                    .build();
+        } catch (Throwable t) {
+        }
     }
 }
