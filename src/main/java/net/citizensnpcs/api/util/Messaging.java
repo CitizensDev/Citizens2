@@ -22,11 +22,13 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -100,10 +102,10 @@ public class Messaging {
         Matcher m = LEGACY_COLORCODE_MATCHER.matcher(message);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
-            m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1)) + "<csr>");
+            m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1)));
         }
         m.appendTail(sb);
-        return sb.toString();
+        return MINIMESSAGE_COLORCODE_MATCHER.matcher(sb.toString()).replaceAll("$0<csr>");
     }
 
     public static void debug(Object... msg) {
@@ -223,11 +225,12 @@ public class Messaging {
     private static final Pattern ERROR_MATCHER = Pattern.compile("{{", Pattern.LITERAL);
     private static String HIGHLIGHT_COLOUR = "<yellow>";
     private static final Pattern HIGHLIGHT_MATCHER = Pattern.compile("[[", Pattern.LITERAL);
-    private static Pattern LEGACY_COLORCODE_MATCHER = Pattern.compile(ChatColor.COLOR_CHAR + "([0-9a-r])",
+    private static final Pattern LEGACY_COLORCODE_MATCHER = Pattern.compile(ChatColor.COLOR_CHAR + "([0-9a-r])",
             Pattern.CASE_INSENSITIVE);
     private static Logger LOGGER = Logger.getLogger("Citizens");
     private static String MESSAGE_COLOUR = "<green>";
     private static MiniMessage MINIMESSAGE;
+    private static Pattern MINIMESSAGE_COLORCODE_MATCHER;
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
     private static final Pattern TRANSLATION_MATCHER = Pattern.compile("^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+\\.[a-zA-Z0-9.]+");
     static {
@@ -253,6 +256,10 @@ public class Messaging {
         COLORCODE_CONVERTER.put("l", "<b>");
         COLORCODE_CONVERTER.put("r", "<r>");
         try {
+            MINIMESSAGE_COLORCODE_MATCHER = Pattern.compile(
+                    Joiner.on('|').join(
+                            Collections2.transform(NamedTextColor.NAMES.values(), (c) -> '<' + c.toString() + '>')),
+                    Pattern.CASE_INSENSITIVE);
             MINIMESSAGE = MiniMessage.builder()
                     .editTags(t -> t.resolver(TagResolver.resolver("csr", Tag.styling(
                             s -> Arrays.stream(TextDecoration.values()).forEach(td -> s.decoration(td, false))))))

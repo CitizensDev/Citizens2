@@ -77,7 +77,6 @@ public class SimpleGoalController implements GoalController {
             public int getPriority() {
                 return goal.getPriority();
             }
-
         });
         hasPrioritisableGoal = true;
     }

@@ -10,8 +10,32 @@ public class ForwardingBehaviorGoalAdapter extends BehaviorGoalAdapter {
         this.behavior = behavior;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        ForwardingBehaviorGoalAdapter other = (ForwardingBehaviorGoalAdapter) obj;
+        if (behavior == null) {
+            if (other.behavior != null) {
+                return false;
+            }
+        } else if (!behavior.equals(other.behavior)) {
+            return false;
+        }
+        return true;
+    }
+
     public Behavior getWrapped() {
         return behavior;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 + ((behavior == null) ? 0 : behavior.hashCode());
     }
 
     @Override
