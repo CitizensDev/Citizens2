@@ -2513,13 +2513,13 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "speak [message] --target [npcid|player name] (--type vocal_type)",
+            usage = "speak [message] --target [npcid|player name] --range (range to look for entities to speak to in blocks) (--type vocal_type)",
             desc = "Says a message from the NPC",
             modifiers = { "speak" },
             min = 2,
             permission = "citizens.npc.speak")
     public void speak(CommandContext args, CommandSender sender, NPC npc, @Flag("type") String type,
-            @Flag("target") String target) throws CommandException {
+            @Flag("target") String target, @Flag("range") Float range) throws CommandException {
         String message = Colorizer.parseColors(args.getJoinedStrings(1));
 
         if (message.length() <= 0) {
@@ -2541,6 +2541,14 @@ public class NPCCommands {
                     context.addRecipient((Entity) player);
                 }
             }
+        }
+
+        if (range != null) {
+            npc.getEntity().getNearbyEntities(range / 2, range, range / 2).forEach((e) -> {
+                if (!CitizensAPI.getNPCRegistry().isNPC(e)) {
+                    context.addRecipient(e);
+                }
+            });
         }
 
         if (type == null || !CitizensAPI.getSpeechFactory().isRegistered(type)) {
