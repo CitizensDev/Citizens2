@@ -110,7 +110,7 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
     String getPageText(int page) {
         Paginator paginator = new Paginator().header("Current Texts");
         for (int i = 0; i < text.size(); i++) {
-            paginator.addLine("<a>" + i + " <7>- <e>" + text.get(i));
+            paginator.addLine("<green>" + i + " <gray>- <yellow>" + text.get(i));
         }
         return paginator.getPageText(page);
     }
@@ -230,8 +230,9 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
     boolean sendPage(CommandSender player, int page) {
         Paginator paginator = new Paginator().header("Current Texts").enablePageSwitcher();
         for (int i = 0; i < text.size(); i++) {
-            paginator.addLine("<a>" + text.get(i) + " (<<&eedit:suggest(edit " + i + " )>>) (<<&c-:command(remove " + i
-                    + "):Remove this text>>)");
+            paginator.addLine("<yellow>" + text.get(i) + " <green>(<click:suggest_command:edit " + i
+                    + "><yellow>edit</click>) (<click:run_command:remove " + i
+                    + "><hover:show_text:Remove this text><red>-</hover></click>)");
         }
         return paginator.sendPage(player, page);
     }
