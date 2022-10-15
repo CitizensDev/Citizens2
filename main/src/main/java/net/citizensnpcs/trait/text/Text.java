@@ -109,9 +109,9 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
 
     String getPageText(int page) {
         Paginator paginator = new Paginator().header("Current Texts");
-        for (int i = 0; i < text.size(); i++)
+        for (int i = 0; i < text.size(); i++) {
             paginator.addLine("<a>" + i + " <7>- <e>" + text.get(i));
-
+        }
         return paginator.getPageText(page);
     }
 
@@ -199,6 +199,7 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
                 }
                 cooldowns.remove(player.getUniqueId());
             }
+
             sendText(player);
 
             int secondsDelta = delay != -1 ? delay
