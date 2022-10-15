@@ -143,6 +143,7 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
         for (DataKey sub : key.getRelative("text").getIntegerSubKeys()) {
             text.add(sub.getString(""));
         }
+
         if (text.isEmpty()) {
             populateDefaultText();
         }
@@ -162,7 +163,7 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
             return;
         String localPattern = itemInHandPattern.equals("default") ? Setting.TALK_ITEM.asString() : itemInHandPattern;
         if (Util.matchesItemInHand(event.getClicker(), localPattern) && !shouldTalkClose()) {
-            sendText(event.getClicker());
+            sendCooldownMessage(event.getClicker());
             event.setCancelled(true);
         }
     }
@@ -190,25 +191,7 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
         for (Entity search : nearby) {
             if (!(search instanceof Player) || ((Player) search).getGameMode() == GameMode.SPECTATOR)
                 continue;
-            Player player = (Player) search;
-
-            Long cooldown = cooldowns.get(player.getUniqueId());
-            if (cooldown != null) {
-                if (System.currentTimeMillis() < cooldown) {
-                    return;
-                }
-                cooldowns.remove(player.getUniqueId());
-            }
-
-            sendText(player);
-
-            int secondsDelta = delay != -1 ? delay
-                    : RANDOM.nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
-                            + Setting.TALK_CLOSE_MINIMUM_COOLDOWN.asInt();
-            if (secondsDelta <= 0)
-                return;
-            long millisecondsDelta = TimeUnit.MILLISECONDS.convert(secondsDelta, TimeUnit.SECONDS);
-            cooldowns.put(player.getUniqueId(), System.currentTimeMillis() + millisecondsDelta);
+            sendCooldownMessage((Player) search);
         }
     }
 
@@ -225,6 +208,26 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
         for (int i = 0; i < text.size(); i++) {
             key.setString("text." + String.valueOf(i), text.get(i));
         }
+    }
+
+    private void sendCooldownMessage(Player player) {
+        Long cooldown = cooldowns.get(player.getUniqueId());
+        if (cooldown != null) {
+            if (System.currentTimeMillis() < cooldown)
+                return;
+
+            cooldowns.remove(player.getUniqueId());
+        }
+
+        sendText(player);
+
+        int secondsDelta = delay != -1 ? delay
+                : RANDOM.nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
+                        + Setting.TALK_CLOSE_MINIMUM_COOLDOWN.asInt();
+        if (secondsDelta <= 0)
+            return;
+        long millisecondsDelta = TimeUnit.MILLISECONDS.convert(secondsDelta, TimeUnit.SECONDS);
+        cooldowns.put(player.getUniqueId(), System.currentTimeMillis() + millisecondsDelta);
     }
 
     boolean sendPage(CommandSender player, int page) {
