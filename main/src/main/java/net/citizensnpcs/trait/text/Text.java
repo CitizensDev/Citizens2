@@ -233,8 +233,8 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
     boolean sendPage(CommandSender player, int page) {
         Paginator paginator = new Paginator().header("Current Texts").enablePageSwitcher();
         for (int i = 0; i < text.size(); i++) {
-            paginator.addLine("<yellow>" + text.get(i) + " <green>(<click:suggest_command:edit " + i
-                    + "><yellow>edit</click>) (<click:run_command:remove " + i
+            paginator.addLine(text.get(i) + " <green>(<click:suggest_command:edit " + i
+                    + " ><yellow>edit</click>) (<click:run_command:remove " + i
                     + "><hover:show_text:Remove this text><red>-</hover></click>)");
         }
         return paginator.sendPage(player, page);
