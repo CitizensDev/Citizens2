@@ -163,6 +163,7 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void destroy() {
         Bukkit.getPluginManager().callEvent(new NPCRemoveEvent(this));
+        despawn(DespawnReason.REMOVAL);
         runnables.clear();
         for (Trait trait : traits.values()) {
             HandlerList.unregisterAll(trait);
