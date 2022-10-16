@@ -89,8 +89,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
                     removeMetadata(block);
                 }
             } else {
-                Player search = Bukkit.getPlayerExact(value);
-                removeMetadata(search);
+                removeMetadata(Bukkit.getPlayer(UUID.fromString(value)));
             }
         }
         npc.data().remove("selectors");
@@ -128,7 +127,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         if (sender instanceof Player) {
             Player player = (Player) sender;
             setMetadata(npc, player);
-            selectors.add(sender.getName());
+            selectors.add(player.getUniqueId().toString());
 
             // Remove editor if the player has one
             Editor.leave(player);

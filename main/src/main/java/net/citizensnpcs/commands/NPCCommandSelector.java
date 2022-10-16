@@ -74,7 +74,7 @@ public class NPCCommandSelector extends NumericPrompt {
     public String getPromptText(ConversationContext context) {
         String text = Messaging.tr(Messages.SELECTION_PROMPT);
         for (NPC npc : choices) {
-            text += "\n    - " + npc.getId();
+            text += "<br>    - " + npc.getId();
         }
         Messaging.send((CommandSender) context.getForWhom(), text);
         return "";

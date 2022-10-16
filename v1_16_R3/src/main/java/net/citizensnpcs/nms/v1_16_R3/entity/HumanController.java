@@ -15,7 +15,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.skin.Skin;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -79,17 +78,5 @@ public class HumanController extends AbstractEntityController {
     @Override
     public Player getBukkitEntity() {
         return (Player) super.getBukkitEntity();
-    }
-
-    @Override
-    public void remove() {
-        Player entity = getBukkitEntity();
-        if (entity != null) {
-            NMS.removeFromWorld(entity);
-            SkinnableEntity npc = entity instanceof SkinnableEntity ? (SkinnableEntity) entity : null;
-            npc.getSkinTracker().onRemoveNPC();
-        }
-        NMS.remove(entity);
-        setEntity(null);
     }
 }

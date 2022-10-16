@@ -70,7 +70,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean despawn(DespawnReason reason) {
-        if (!isSpawned() && reason != DespawnReason.DEATH) {
+        if (getEntity() == null && reason != DespawnReason.DEATH) {
             Messaging.debug("Tried to despawn", this, "while already despawned, DespawnReason." + reason);
             if (reason == DespawnReason.RELOAD) {
                 unloadEvents();
