@@ -181,7 +181,8 @@ public class CommandTrait extends Trait {
 
     private String describe(NPCCommand command) {
         String output = "<br>    - " + command.command + " [" + StringHelper.wrap(command.cooldown)
-                + "s] [<<<c>-:command(/npc cmd remove " + command.id + "):Remove this command>>]";
+                + "s] [<click:run_command:/npc cmd remove " + command.id
+                + "><hover:show_text:Remove this command><red>-</hover></click>]";
         if (command.globalCooldown > 0) {
             output += "[global " + StringHelper.wrap(command.globalCooldown) + "s]";
         }
