@@ -1,5 +1,6 @@
 package net.citizensnpcs;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -202,53 +203,9 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkUnload(final ChunkUnloadEvent event) {
-        final List<NPC> toDespawn = Lists.newArrayList();
-        for (Entity entity : event.getChunk().getEntities()) {
-            NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
-            if (npc == null || !npc.isSpawned())
-                continue;
-            toDespawn.add(npc);
-        }
-        if (toDespawn.isEmpty())
+        if (chunkEventListener != null)
             return;
-        ChunkCoord coord = new ChunkCoord(event.getChunk());
-        boolean loadChunk = false;
-        for (NPC npc : toDespawn) {
-            if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
-                if (!(event instanceof Cancellable)) {
-                    if (Messaging.isDebugging()) {
-                        Messaging.debug("Reloading chunk because", npc, "couldn't despawn");
-                    }
-                    loadChunk = true;
-                    toRespawn.put(coord, npc);
-                    continue;
-                }
-                ((Cancellable) event).setCancelled(true);
-                Messaging.debug("Cancelled chunk unload at", coord);
-                respawnAllFromCoord(coord, event);
-                return;
-            }
-            toRespawn.put(coord, npc);
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Despawned", npc, "due to chunk unload at", coord);
-            }
-        }
-        if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
-            new Exception("CITIZENS CHUNK UNLOAD DEBUG " + coord).printStackTrace();
-        }
-        if (loadChunk) {
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Loading chunk in 10 ticks due to forced chunk load at", coord);
-            }
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    if (!event.getChunk().isLoaded()) {
-                        event.getChunk().load();
-                    }
-                }
-            }, 10);
-        }
+        unloadNPCs(event, Arrays.asList(event.getChunk().getEntities()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -704,6 +661,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
+        System.out.println(event.getWorld());
         for (NPC npc : getAllNPCs()) {
             if (npc == null || !npc.isSpawned() || !npc.getEntity().getWorld().equals(event.getWorld()))
                 continue;
@@ -769,6 +727,58 @@ public class EventListen implements Listener {
             return false;
         }
         return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
+    }
+
+    void unloadNPCs(ChunkEvent event, List<Entity> entities) {
+        final List<NPC> toDespawn = Lists.newArrayList();
+        for (Entity entity : entities) {
+            NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
+            // XXX : npc#isSpawned() checks entity valid status which is now inconsistent on chunk unload between
+            // different server software (e.g. Paper and Spigot), so check for npc.getEntity() == null instead.
+            if (npc == null || npc.getEntity() == null)
+                continue;
+            toDespawn.add(npc);
+        }
+        if (toDespawn.isEmpty())
+            return;
+        ChunkCoord coord = new ChunkCoord(event.getChunk());
+        boolean loadChunk = false;
+        for (NPC npc : toDespawn) {
+            if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
+                if (!(event instanceof Cancellable)) {
+                    if (Messaging.isDebugging()) {
+                        Messaging.debug("Reloading chunk because", npc, "couldn't despawn");
+                    }
+                    loadChunk = true;
+                    toRespawn.put(coord, npc);
+                    continue;
+                }
+                ((Cancellable) event).setCancelled(true);
+                Messaging.debug("Cancelled chunk unload at", coord);
+                respawnAllFromCoord(coord, event);
+                return;
+            }
+            toRespawn.put(coord, npc);
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Despawned", npc, "due to chunk unload at", coord);
+            }
+        }
+        if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
+            new Exception("CITIZENS CHUNK UNLOAD DEBUG " + coord).printStackTrace();
+        }
+        if (loadChunk) {
+            if (Messaging.isDebugging()) {
+                Messaging.debug("Loading chunk in 10 ticks due to forced chunk load at", coord);
+            }
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    if (!event.getChunk().isLoaded()) {
+                        event.getChunk().load();
+                    }
+                }
+            }, 10);
+        }
     }
 
     private static boolean SUPPORT_STOP_USE_ITEM = true;
