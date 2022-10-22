@@ -251,6 +251,7 @@ public class Messaging {
         COLORCODE_CONVERTER.put("e", "<yellow>");
         COLORCODE_CONVERTER.put("f", "<white>");
         COLORCODE_CONVERTER.put("m", "<st>");
+        COLORCODE_CONVERTER.put("n", "<u>");
         COLORCODE_CONVERTER.put("k", "<obf>");
         COLORCODE_CONVERTER.put("o", "<i>");
         COLORCODE_CONVERTER.put("l", "<b>");

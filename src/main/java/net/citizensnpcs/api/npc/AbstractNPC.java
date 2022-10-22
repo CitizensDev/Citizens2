@@ -169,8 +169,8 @@ public abstract class AbstractNPC implements NPC {
             trait.onRemove();
         }
         traits.clear();
-        registry.deregister(this);
         goalController.clear();
+        registry.deregister(this);
     }
 
     @Override
