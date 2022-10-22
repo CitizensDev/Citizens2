@@ -106,6 +106,7 @@ import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.ScoreboardTrait;
+import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -492,6 +493,9 @@ public class EventListen implements Listener {
         }
         if (npc.hasTrait(CommandTrait.class)) {
             npc.getTraitNullable(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
+        }
+        if (npc.hasTrait(ShopTrait.class)) {
+            npc.getTraitNullable(ShopTrait.class).onRightClick(player);
         }
     }
 

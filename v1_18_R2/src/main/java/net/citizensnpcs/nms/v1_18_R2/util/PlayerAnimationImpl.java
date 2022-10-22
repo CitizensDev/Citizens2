@@ -33,6 +33,9 @@ public class PlayerAnimationImpl {
             case START_ELYTRA:
                 player.startFallFlying();
                 break;
+            case STOP_ELYTRA:
+                player.stopFallFlying();
+                break;
             case START_USE_MAINHAND_ITEM:
                 player.startUsingItem(InteractionHand.MAIN_HAND);
                 sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData(), true),

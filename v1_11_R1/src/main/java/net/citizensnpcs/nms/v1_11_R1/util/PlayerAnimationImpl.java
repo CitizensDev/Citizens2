@@ -27,6 +27,9 @@ public class PlayerAnimationImpl {
             case START_ELYTRA:
                 player.M();
                 break;
+            case STOP_ELYTRA:
+                player.N();
+                break;
             case SLEEP:
                 PacketPlayOutBed packet = new PacketPlayOutBed(player,
                         new BlockPosition((int) player.locX, (int) player.locY, (int) player.locZ));

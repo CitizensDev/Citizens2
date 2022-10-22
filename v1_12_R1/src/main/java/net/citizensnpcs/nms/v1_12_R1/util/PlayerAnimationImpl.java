@@ -37,6 +37,9 @@ public class PlayerAnimationImpl {
             case START_ELYTRA:
                 player.N();
                 break;
+            case STOP_ELYTRA:
+                player.O();
+                break;
             case START_USE_MAINHAND_ITEM:
                 player.c(EnumHand.MAIN_HAND);
                 sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,

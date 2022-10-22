@@ -68,9 +68,18 @@ public class ShopTrait extends Trait {
         return StoredShops.GLOBAL_SHOPS.computeIfAbsent(name, NPCShop::new);
     }
 
+    public void onRightClick(Player player) {
+        NPCShop shop = getDefaultShop();
+        if (shop.openOnRightClick) {
+            shop.display(player);
+        }
+    }
+
     public static class NPCShop {
         @Persist(value = "")
         private String name;
+        @Persist
+        private boolean openOnRightClick;
         @Persist(reify = true)
         private final List<NPCShopPage> pages = Lists.newArrayList();
         @Persist
@@ -497,6 +506,7 @@ public class ShopTrait extends Trait {
             this.ctx = ctx;
             ctx.getSlot(2).setDescription("<f>Edit shop view permission<br>" + shop.getRequiredPermission());
             ctx.getSlot(6).setDescription("<f>Edit shop title<br>" + shop.title);
+            ctx.getSlot(8).setDescription("<f>Show shop on right click<br>" + shop.openOnRightClick);
         }
 
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
@@ -528,6 +538,13 @@ public class ShopTrait extends Trait {
                     Choice.of(ShopType.SELL, Material.EMERALD, "Players sell items", shop.type == ShopType.SELL),
                     Choice.of(ShopType.COMMAND, Material.ENDER_EYE, "Clicks trigger commands only",
                             shop.type == ShopType.COMMAND)));
+        }
+
+        @MenuSlot(slot = { 0, 8 }, material = Material.COMMAND_BLOCK, amount = 1)
+        public void onToggleRightClick(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            event.setCancelled(true);
+            shop.openOnRightClick = !shop.openOnRightClick;
+            ctx.getSlot(8).setDescription("<f>Show shop on right click<br>" + shop.openOnRightClick);
         }
     }
 

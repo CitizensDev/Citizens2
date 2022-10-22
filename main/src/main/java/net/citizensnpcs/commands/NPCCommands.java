@@ -1523,7 +1523,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            modifiers = { "name" },
+            modifiers = { "name", "hidename" },
             usage = "name (-h(over))",
             desc = "Toggle nameplate visibility, or only show names on hover",
             min = 1,
