@@ -64,8 +64,8 @@ public class CommandTrait extends Trait {
     @Persist
     private double cost = -1;
     @Persist
-    private final Map<CommandTraitMessages, String> customErrorMessages = Maps.newEnumMap(CommandTraitMessages.class);
-    private final Map<String, Set<CommandTraitMessages>> executionErrors = Maps.newHashMap();
+    private final Map<CommandTraitError, String> customErrorMessages = Maps.newEnumMap(CommandTraitError.class);
+    private final Map<String, Set<CommandTraitError>> executionErrors = Maps.newHashMap();
     @Persist
     private ExecutionMode executionMode = ExecutionMode.LINEAR;
     @Persist
@@ -99,7 +99,7 @@ public class CommandTrait extends Trait {
                 if (provider != null && provider.getProvider() != null) {
                     Economy economy = provider.getProvider();
                     if (!economy.has(player, cost)) {
-                        sendErrorMessage(player, CommandTraitMessages.MISSING_MONEY, null, cost);
+                        sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
                         return false;
                     }
                     economy.withdrawPlayer(player, cost);
@@ -110,7 +110,7 @@ public class CommandTrait extends Trait {
         }
         if (experienceCost > 0) {
             if (player.getLevel() < experienceCost) {
-                sendErrorMessage(player, CommandTraitMessages.MISSING_EXPERIENCE, null, experienceCost);
+                sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, experienceCost);
                 return false;
             }
             player.setLevel((int) (player.getLevel() - experienceCost));
@@ -125,7 +125,7 @@ public class CommandTrait extends Trait {
                 if (tempInventory.containsAtLeast(stack, stack.getAmount())) {
                     tempInventory.removeItem(stack);
                 } else {
-                    sendErrorMessage(player, CommandTraitMessages.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
+                    sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
                             stack.getAmount());
                     return false;
                 }
@@ -135,6 +135,34 @@ public class CommandTrait extends Trait {
             }
         }
         return true;
+    }
+
+    public void clearHistory(CommandTraitError which, Player who) {
+        Collection<PlayerNPCCommand> toClear = Lists.newArrayList();
+        if (who != null) {
+            toClear.add(playerTracking.get(who.getUniqueId()));
+        } else {
+            toClear.addAll(playerTracking.values());
+        }
+        switch (which) {
+            case MAXIMUM_TIMES_USED:
+                for (PlayerNPCCommand tracked : toClear) {
+                    tracked.nUsed.clear();
+                }
+
+                break;
+            case ON_COOLDOWN:
+                for (PlayerNPCCommand tracked : toClear) {
+                    tracked.lastUsed.clear();
+                }
+
+                break;
+            case ON_GLOBAL_COOLDOWN:
+                globalCooldowns.clear();
+                break;
+            default:
+                return;
+        }
     }
 
     /**
@@ -230,7 +258,7 @@ public class CommandTrait extends Trait {
                     max = commandList.size() > 0 ? commandList.get(commandList.size() - 1).id : -1;
                 }
                 if (executionMode == ExecutionMode.LINEAR) {
-                    executionErrors.put(player.getUniqueId().toString(), EnumSet.noneOf(CommandTraitMessages.class));
+                    executionErrors.put(player.getUniqueId().toString(), EnumSet.noneOf(CommandTraitError.class));
                 }
                 for (NPCCommand command : commandList) {
                     if (executionMode == ExecutionMode.SEQUENTIAL) {
@@ -337,12 +365,12 @@ public class CommandTrait extends Trait {
         }
     }
 
-    private void sendErrorMessage(Player player, CommandTraitMessages msg, Function<String, String> transform,
+    private void sendErrorMessage(Player player, CommandTraitError msg, Function<String, String> transform,
             Object... objects) {
         if (hideErrorMessages) {
             return;
         }
-        Set<CommandTraitMessages> sent = executionErrors.get(player.getUniqueId().toString());
+        Set<CommandTraitError> sent = executionErrors.get(player.getUniqueId().toString());
         if (sent != null) {
             if (sent.contains(msg))
                 return;
@@ -361,7 +389,7 @@ public class CommandTrait extends Trait {
         this.cost = cost;
     }
 
-    public void setCustomErrorMessage(CommandTraitMessages which, String message) {
+    public void setCustomErrorMessage(CommandTraitError which, String message) {
         customErrorMessages.put(which, message);
     }
 
@@ -382,7 +410,7 @@ public class CommandTrait extends Trait {
         temporaryPermissions.addAll(permissions);
     }
 
-    public enum CommandTraitMessages {
+    public enum CommandTraitError {
         MAXIMUM_TIMES_USED(Setting.NPC_COMMAND_MAXIMUM_TIMES_USED_MESSAGE),
         MISSING_EXPERIENCE(Setting.NPC_COMMAND_NOT_ENOUGH_EXPERIENCE_MESSAGE),
         MISSING_ITEM(Setting.NPC_COMMAND_MISSING_ITEM_MESSAGE),
@@ -393,7 +421,7 @@ public class CommandTrait extends Trait {
 
         private final Setting setting;
 
-        CommandTraitMessages(Setting setting) {
+        CommandTraitError(Setting setting) {
             this.setting = setting;
         }
     }
@@ -647,7 +675,7 @@ public class CommandTrait extends Trait {
         public boolean canUse(CommandTrait trait, Player player, NPCCommand command) {
             for (String perm : command.perms) {
                 if (!player.hasPermission(perm)) {
-                    trait.sendErrorMessage(player, CommandTraitMessages.NO_PERMISSION, null);
+                    trait.sendErrorMessage(player, CommandTraitError.NO_PERMISSION, null);
                     return false;
                 }
             }
@@ -658,7 +686,7 @@ public class CommandTrait extends Trait {
                 long deadline = ((Number) lastUsed.get(commandKey)).longValue() + command.cooldown + globalDelay;
                 if (currentTimeSec < deadline) {
                     long seconds = deadline - currentTimeSec;
-                    trait.sendErrorMessage(player, CommandTraitMessages.ON_COOLDOWN,
+                    trait.sendErrorMessage(player, CommandTraitError.ON_COOLDOWN,
                             new TimeVariableFormatter(seconds, TimeUnit.SECONDS), seconds);
                     return false;
                 }
@@ -668,7 +696,7 @@ public class CommandTrait extends Trait {
                 long deadline = ((Number) trait.globalCooldowns.get(commandKey)).longValue() + command.globalCooldown;
                 if (currentTimeSec < deadline) {
                     long seconds = deadline - currentTimeSec;
-                    trait.sendErrorMessage(player, CommandTraitMessages.ON_GLOBAL_COOLDOWN,
+                    trait.sendErrorMessage(player, CommandTraitError.ON_GLOBAL_COOLDOWN,
                             new TimeVariableFormatter(seconds, TimeUnit.SECONDS), seconds);
                     return false;
                 }
@@ -676,7 +704,7 @@ public class CommandTrait extends Trait {
             }
             int previouslyUsed = nUsed.getOrDefault(commandKey, 0);
             if (command.n > 0 && command.n <= previouslyUsed) {
-                trait.sendErrorMessage(player, CommandTraitMessages.MAXIMUM_TIMES_USED, null, command.n);
+                trait.sendErrorMessage(player, CommandTraitError.MAXIMUM_TIMES_USED, null, command.n);
                 return false;
             }
             if (command.cooldown > 0 || globalDelay > 0) {

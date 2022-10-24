@@ -102,7 +102,7 @@ import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
-import net.citizensnpcs.trait.CommandTrait.CommandTraitMessages;
+import net.citizensnpcs.trait.CommandTrait.CommandTraitError;
 import net.citizensnpcs.trait.CommandTrait.ExecutionMode;
 import net.citizensnpcs.trait.CommandTrait.ItemRequirementGUI;
 import net.citizensnpcs.trait.CommandTrait.NPCCommandBuilder;
@@ -401,7 +401,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | errormsg [type] [msg] | (exp|item)cost [cost]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | (exp|item)cost [cost]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
@@ -415,7 +415,7 @@ public class NPCCommands {
             @Arg(
                     value = 1,
                     completions = { "add", "remove", "permissions", "sequential", "random", "hideerrors", "errormsg",
-                            "expcost", "itemcost" }) String action)
+                            "clearerror", "expcost", "itemcost" }) String action)
             throws CommandException {
         CommandTrait commands = npc.getOrAddTrait(CommandTrait.class);
         if (args.argsLength() == 1) {
@@ -440,6 +440,19 @@ public class NPCCommands {
             } catch (NumberFormatException ex) {
                 throw new CommandException(CommandMessages.INVALID_NUMBER);
             }
+        } else if (action.equalsIgnoreCase("clearerror")) {
+            CommandTraitError which = Util.matchEnum(CommandTraitError.values(), args.getString(2));
+            if (which == null)
+                throw new CommandException(Messages.NPC_COMMAND_INVALID_ERROR_MESSAGE,
+                        Util.listValuesPretty(CommandTraitError.values()));
+            Player player = null;
+            if (args.argsLength() > 3) {
+                player = Bukkit.getPlayerExact(args.getString(3));
+                if (player == null) {
+                    player = Bukkit.getPlayer(UUID.fromString(args.getString(3)));
+                }
+            }
+            commands.clearHistory(which, player);
         } else if (action.equalsIgnoreCase("sequential")) {
             commands.setExecutionMode(commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? ExecutionMode.LINEAR
                     : ExecutionMode.SEQUENTIAL);
@@ -481,10 +494,10 @@ public class NPCCommands {
                 throw new CommandException(CommandMessages.MUST_BE_INGAME);
             InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands)).present(((Player) sender));
         } else if (action.equalsIgnoreCase("errormsg")) {
-            CommandTraitMessages which = Util.matchEnum(CommandTraitMessages.values(), args.getString(2));
+            CommandTraitError which = Util.matchEnum(CommandTraitError.values(), args.getString(2));
             if (which == null)
                 throw new CommandException(Messages.NPC_COMMAND_INVALID_ERROR_MESSAGE,
-                        Util.listValuesPretty(CommandTraitMessages.values()));
+                        Util.listValuesPretty(CommandTraitError.values()));
             commands.setCustomErrorMessage(which, args.getString(3));
         } else {
             throw new CommandUsageException();
