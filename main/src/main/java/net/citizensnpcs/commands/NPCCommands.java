@@ -457,6 +457,7 @@ public class NPCCommands {
                 }
             }
             commands.clearHistory(which, player);
+            Messaging.send(sender, Messages.NPC_COMMAND_ERRORS_CLEARED, Util.prettyEnum(which));
         } else if (action.equalsIgnoreCase("sequential")) {
             commands.setExecutionMode(commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? ExecutionMode.LINEAR
                     : ExecutionMode.SEQUENTIAL);

@@ -1345,6 +1345,15 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sleep(Player player, boolean sleep) {
+        try {
+            ENTITY_SETPOSE_METHOD.invoke(player, sleep ? EntityPose.SLEEPING : EntityPose.STANDING);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public boolean tick(org.bukkit.entity.Entity next) {
         Entity entity = NMSImpl.getHandle(next);
         Entity entity1 = entity.getVehicle();
@@ -2075,6 +2084,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "c");
+
     private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
             "c", false, double.class, double.class, double.class);
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
@@ -2091,6 +2101,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle ENTITY_R = NMS.getMethodHandle(EntityLiving.class, "r", true, float.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static final MethodHandle ENTITY_SETPOSE = NMS.getMethodHandle(Entity.class, "setPose", false,
+            EntityPose.class);
+    private static final MethodHandle ENTITY_SETPOSE_METHOD = NMS.getMethodHandle(Entity.class, "setPose", true,
             EntityPose.class);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle GOAL_FIELD = NMS.getGetter(PathfinderGoalSelector.class, "d");

@@ -7,12 +7,10 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.util.PlayerAnimation;
-import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.EnumHand;
 import net.minecraft.server.v1_13_R2.Packet;
 import net.minecraft.server.v1_13_R2.PacketPlayOutAnimation;
-import net.minecraft.server.v1_13_R2.PacketPlayOutBed;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityMetadata;
 
 public class PlayerAnimationImpl {
@@ -24,11 +22,6 @@ public class PlayerAnimationImpl {
             return;
         }
         switch (animation) {
-            case SLEEP:
-                PacketPlayOutBed packet = new PacketPlayOutBed(player,
-                        new BlockPosition((int) player.locX, (int) player.locY, (int) player.locZ));
-                sendPacketNearby(packet, player, radius);
-                break;
             case SNEAK:
                 player.getBukkitEntity().setSneaking(true);
                 sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
@@ -49,9 +42,6 @@ public class PlayerAnimationImpl {
                 player.c(EnumHand.OFF_HAND);
                 sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
                         radius);
-                break;
-            case STOP_SLEEPING:
-                playDefaultAnimation(player, radius, 2);
                 break;
             case STOP_SNEAKING:
                 player.getBukkitEntity().setSneaking(false);

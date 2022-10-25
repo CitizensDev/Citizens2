@@ -1408,6 +1408,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sleep(org.bukkit.entity.Player player, boolean sleeping) {
+        getHandle(player).setPose(sleeping ? Pose.SLEEPING : Pose.STANDING);
+    }
+
+    @Override
     public boolean tick(org.bukkit.entity.Entity next) {
         Entity entity = NMSImpl.getHandle(next);
         Entity entity1 = entity.getVehicle();

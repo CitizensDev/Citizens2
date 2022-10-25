@@ -12,7 +12,6 @@ import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Pose;
 
 public class PlayerAnimationImpl {
     public static void play(PlayerAnimation animation, Player bplayer, int radius) {
@@ -22,9 +21,6 @@ public class PlayerAnimationImpl {
             return;
         }
         switch (animation) {
-            case SLEEP:
-                player.setPose(Pose.SLEEPING);
-                break;
             case SNEAK:
                 player.getBukkitEntity().setSneaking(true);
                 sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData(), true),
@@ -45,9 +41,6 @@ public class PlayerAnimationImpl {
                 player.startUsingItem(InteractionHand.OFF_HAND);
                 sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData(), true),
                         player, radius);
-                break;
-            case STOP_SLEEPING:
-                player.setPose(Pose.STANDING);
                 break;
             case STOP_SNEAKING:
                 player.getBukkitEntity().setSneaking(false);

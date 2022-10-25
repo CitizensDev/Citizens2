@@ -189,6 +189,8 @@ public interface NMSBridge {
 
     public void shutdown();
 
+    public void sleep(Player entity, boolean sleep);
+
     public boolean tick(Entity next);
 
     public void trySwim(Entity entity);

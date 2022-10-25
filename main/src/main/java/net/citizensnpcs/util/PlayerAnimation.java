@@ -12,6 +12,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.SitTrait;
+import net.citizensnpcs.trait.SleepTrait;
 
 public enum PlayerAnimation {
     ARM_SWING,
@@ -79,6 +80,18 @@ public enum PlayerAnimation {
             player.setMetadata("citizens.sitting", new FixedMetadataValue(CitizensAPI.getPlugin(), false));
             NMS.mount(player, null);
             return;
+        } else if (this == SLEEP) {
+            if (player instanceof NPCHolder) {
+                ((NPCHolder) player).getNPC().getOrAddTrait(SleepTrait.class).setSleeping(player.getLocation());
+                return;
+            }
+            NMS.sleep(player, true);
+        } else if (this == STOP_SLEEPING) {
+            if (player instanceof NPCHolder) {
+                ((NPCHolder) player).getNPC().getOrAddTrait(SleepTrait.class).setSleeping(null);
+                return;
+            }
+            NMS.sleep(player, false);
         }
         NMS.playAnimation(this, player, radius);
     }

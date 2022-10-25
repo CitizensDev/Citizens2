@@ -1407,6 +1407,15 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sleep(Player player, boolean sleep) {
+        try {
+            ENTITY_SETPOSE_METHOD.invoke(player, sleep ? EntityPose.SLEEPING : EntityPose.STANDING);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public boolean tick(org.bukkit.entity.Entity next) {
         Entity entity = NMSImpl.getHandle(next);
         Entity entity1 = entity.getVehicle();
@@ -2130,7 +2139,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.SHULKER, EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "e");
-
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(PlayerChunkMap.class, "a",
             true, EntityPlayer.class, boolean.class);
@@ -2145,6 +2153,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle ENTITY_GET_SOUND_FALL = NMS.getMethodHandle(EntityLiving.class, "getSoundFall",
             true, int.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
+    private static final MethodHandle ENTITY_SETPOSE_METHOD = NMS.getMethodHandle(Entity.class, "setPose", true,
+            EntityPose.class);
     private static final MethodHandle FISHING_HOOK_HOOKED = NMS.getGetter(EntityFishingHook.class, "hooked");
     private static final MethodHandle FISHING_HOOK_HOOKED_SETTER = NMS.getSetter(EntityFishingHook.class, "hooked");
     private static final MethodHandle FLYING_MOVECONTROL_FLOAT_GETTER = NMS.getFirstGetter(ControllerMoveFlying.class,
@@ -2175,13 +2185,9 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
-
     private static Field SKULL_PROFILE_FIELD;
-
     private static MethodHandle SOUNDEFFECT_KEY = NMS.getGetter(SoundEffect.class, "b");
-
     private static MethodHandle TEAM_FIELD;
-
     static {
         try {
             ENTITY_REGISTRY = new CustomEntityRegistry(

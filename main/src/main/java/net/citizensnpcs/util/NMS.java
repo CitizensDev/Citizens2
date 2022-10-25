@@ -622,6 +622,10 @@ public class NMS {
         }
     }
 
+    public static void sleep(Player entity, boolean sleep) {
+        BRIDGE.sleep(entity, sleep);
+    }
+
     public static boolean tick(Entity next) {
         return BRIDGE.tick(next);
     }
@@ -654,6 +658,7 @@ public class NMS {
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
+
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {

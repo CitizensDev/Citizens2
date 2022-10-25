@@ -181,6 +181,8 @@ import net.minecraft.server.v1_8_R3.Navigation;
 import net.minecraft.server.v1_8_R3.NavigationAbstract;
 import net.minecraft.server.v1_8_R3.NetworkManager;
 import net.minecraft.server.v1_8_R3.Packet;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_8_R3.PacketPlayOutOpenWindow;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
@@ -1124,6 +1126,19 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void shutdown() {
+    }
+
+    @Override
+    public void sleep(Player entity, boolean sleep) {
+        EntityPlayer player = (EntityPlayer) getHandle(entity);
+        if (sleep) {
+            PacketPlayOutBed packet = new PacketPlayOutBed(player,
+                    new BlockPosition((int) player.locX, (int) player.locY, (int) player.locZ));
+            sendPacketNearby(entity, entity.getLocation(), packet, 64);
+        } else {
+            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 2);
+            sendPacketNearby(entity, entity.getLocation(), packet, 64);
+        }
     }
 
     @Override

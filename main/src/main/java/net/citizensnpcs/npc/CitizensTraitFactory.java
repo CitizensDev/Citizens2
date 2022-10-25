@@ -50,6 +50,7 @@ import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinTrait;
+import net.citizensnpcs.trait.SleepTrait;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.SmoothRotationTrait;
 import net.citizensnpcs.trait.SneakTrait;
@@ -77,7 +78,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(EndermanTrait.class));
         registerTrait(TraitInfo.create(Equipment.class));
         registerTrait(TraitInfo.create(FollowTrait.class));
-        registerTrait(TraitInfo.create(SitTrait.class));
         registerTrait(TraitInfo.create(GameModeTrait.class));
         registerTrait(TraitInfo.create(Gravity.class));
         registerTrait(TraitInfo.create(HorseModifiers.class));
@@ -95,6 +95,8 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Saddle.class));
         registerTrait(TraitInfo.create(ScoreboardTrait.class));
         registerTrait(TraitInfo.create(ScriptTrait.class));
+        registerTrait(TraitInfo.create(SitTrait.class));
+        registerTrait(TraitInfo.create(SleepTrait.class));
         registerTrait(TraitInfo.create(SheepTrait.class));
         registerTrait(TraitInfo.create(SkinLayers.class));
         registerTrait(TraitInfo.create(SkinTrait.class));

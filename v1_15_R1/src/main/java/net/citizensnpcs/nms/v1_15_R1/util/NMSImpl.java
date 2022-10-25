@@ -1384,6 +1384,15 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sleep(Player player, boolean sleep) {
+        try {
+            ENTITY_SETPOSE_METHOD.invoke(player, sleep ? EntityPose.SLEEPING : EntityPose.STANDING);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public boolean tick(org.bukkit.entity.Entity next) {
         Entity entity = NMSImpl.getHandle(next);
         Entity entity1 = entity.getVehicle();
@@ -2155,6 +2164,7 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(PlayerChunkMap.class, "a",
             true, EntityPlayer.class, boolean.class);
+
     private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
@@ -2166,6 +2176,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle ENTITY_R = NMS.getMethodHandle(EntityLiving.class, "r", true, float.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static final MethodHandle ENTITY_SETPOSE = NMS.getMethodHandle(Entity.class, "setPose", false,
+            EntityPose.class);
+    private static final MethodHandle ENTITY_SETPOSE_METHOD = NMS.getMethodHandle(Entity.class, "setPose", true,
             EntityPose.class);
     private static final MethodHandle FLYING_MOVECONTROL_FLOAT_GETTER = NMS.getFirstGetter(ControllerMoveFlying.class,
             boolean.class);

@@ -244,6 +244,8 @@ import net.minecraft.server.v1_13_R2.MobEffects;
 import net.minecraft.server.v1_13_R2.NavigationAbstract;
 import net.minecraft.server.v1_13_R2.NetworkManager;
 import net.minecraft.server.v1_13_R2.Packet;
+import net.minecraft.server.v1_13_R2.PacketPlayOutAnimation;
+import net.minecraft.server.v1_13_R2.PacketPlayOutBed;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_13_R2.PacketPlayOutOpenWindow;
 import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerInfo;
@@ -1286,6 +1288,19 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sleep(Player entity, boolean sleep) {
+        EntityPlayer player = (EntityPlayer) getHandle(entity);
+        if (sleep) {
+            PacketPlayOutBed packet = new PacketPlayOutBed(player,
+                    new BlockPosition((int) player.locX, (int) player.locY, (int) player.locZ));
+            sendPacketNearby(entity, entity.getLocation(), packet, 64);
+        } else {
+            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 2);
+            sendPacketNearby(entity, entity.getLocation(), packet, 64);
+        }
+    }
+
+    @Override
     public boolean tick(org.bukkit.entity.Entity next) {
         Entity entity = NMSImpl.getHandle(next);
         Entity entity1 = entity.getVehicle();
@@ -1903,7 +1918,6 @@ public class NMSImpl implements NMSBridge {
 
     private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "e", false,
             double.class, double.class, double.class);
-
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);
@@ -1926,6 +1940,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle REPAIR_INVENTORY = NMS.getGetter(ContainerAnvil.class, "repairInventory");
     private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "resultInventory");
     private static Field SKULL_PROFILE_FIELD;
+
     private static MethodHandle TEAM_FIELD;
 
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
