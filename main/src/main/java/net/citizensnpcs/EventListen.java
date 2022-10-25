@@ -129,6 +129,7 @@ public class EventListen implements Listener {
             this.chunkEventListener = null;
         }
         try {
+            Class.forName("org.bukkit.event.entity.EntityTransformEvent");
             Bukkit.getPluginManager().registerEvents(new Listener() {
                 @EventHandler
                 public void onEntityTransform(EntityTransformEvent event) {
