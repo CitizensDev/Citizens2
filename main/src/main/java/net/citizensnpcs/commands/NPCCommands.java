@@ -441,6 +441,10 @@ public class NPCCommands {
                 throw new CommandException(CommandMessages.INVALID_NUMBER);
             }
         } else if (action.equalsIgnoreCase("clearerror")) {
+            if (args.argsLength() < 3)
+                throw new CommandException(Messages.NPC_COMMAND_INVALID_ERROR_MESSAGE,
+                        Util.listValuesPretty(CommandTraitError.values()));
+
             CommandTraitError which = Util.matchEnum(CommandTraitError.values(), args.getString(2));
             if (which == null)
                 throw new CommandException(Messages.NPC_COMMAND_INVALID_ERROR_MESSAGE,
