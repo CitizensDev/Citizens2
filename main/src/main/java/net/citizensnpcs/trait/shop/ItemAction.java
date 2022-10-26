@@ -68,9 +68,7 @@ public class ItemAction extends NPCShopAction {
                     .collect(Collectors.toMap(k -> k.getType(), v -> v.getAmount()));
             boolean contains = true;
             for (Map.Entry<Material, Integer> entry : required.entrySet()) {
-                if (!source.contains(entry.getKey(), entry.getValue())) {
-                    contains = false;
-                }
+                contains &= source.contains(entry.getKey(), entry.getValue());
             }
             for (ItemStack item : items) {
                 if (item.hasItemMeta() && !source.contains(item)) {
@@ -79,7 +77,26 @@ public class ItemAction extends NPCShopAction {
             }
             return contains;
         }, () -> {
-            source.removeItem(items.toArray(new ItemStack[items.size()]));
+            Map<Material, Integer> required = items.stream()
+                    .collect(Collectors.toMap(k -> k.getType(), v -> v.getAmount()));
+            ItemStack[] contents = source.getContents();
+            for (int i = 0; i < contents.length; i++) {
+                ItemStack stack = contents[i];
+                if (stack == null || stack.getType() == Material.AIR || !required.containsKey(stack.getType()))
+                    continue;
+                Material type = stack.getType();
+                int remaining = required.remove(type);
+                int taken = stack.getAmount() > remaining ? remaining : stack.getAmount();
+                if (stack.getAmount() == taken) {
+                    source.clear(i);
+                } else {
+                    stack.setAmount(stack.getAmount() - taken);
+                    source.setItem(i, stack);
+                }
+                if (remaining - taken > 0) {
+                    required.put(type, remaining - taken);
+                }
+            }
         }, () -> {
             source.addItem(items.toArray(new ItemStack[items.size()]));
         });
@@ -105,7 +122,7 @@ public class ItemAction extends NPCShopAction {
             for (int i = 0; i < 3 * 9; i++) {
                 InventoryMenuSlot slot = ctx.getSlot(i);
                 slot.clear();
-                if (i < base.items.size()) {
+                if (base != null && i < base.items.size()) {
                     slot.setItemStack(base.items.get(i).clone());
                 }
                 slot.setClickHandler(event -> {

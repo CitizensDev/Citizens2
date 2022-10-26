@@ -296,13 +296,13 @@ public class ShopTrait extends Trait {
         }
 
         public void onClick(NPCShop shop, CitizensInventoryClickEvent event) {
-            if (shop.type != ShopType.COMMAND) {
-                List<Transaction> take = execute(cost, action -> action.take(event.getWhoClicked()));
-                if (take == null)
-                    return;
-                if (execute(result, action -> action.grant(event.getWhoClicked())) == null) {
-                    take.forEach(a -> a.rollback());
-                }
+            if (shop.type == ShopType.COMMAND)
+                return;
+            List<Transaction> take = execute(cost, action -> action.take(event.getWhoClicked()));
+            if (take == null)
+                return;
+            if (execute(result, action -> action.grant(event.getWhoClicked())) == null) {
+                take.forEach(a -> a.rollback());
             }
         }
     }

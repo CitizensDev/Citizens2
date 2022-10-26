@@ -234,8 +234,8 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
         Paginator paginator = new Paginator().header("Current Texts").enablePageSwitcher();
         for (int i = 0; i < text.size(); i++) {
             paginator.addLine(text.get(i) + " <green>(<click:suggest_command:edit " + i
-                    + " ><yellow>edit</click>) (<click:run_command:remove " + i
-                    + "><hover:show_text:Remove this text><red>-</hover></click>)");
+                    + " ><yellow>edit</click>) (<hover:show_text:Remove this text><click:run_command:/npc text remove "
+                    + i + "><red>-</click></hover>)");
         }
         return paginator.sendPage(player, page);
     }
