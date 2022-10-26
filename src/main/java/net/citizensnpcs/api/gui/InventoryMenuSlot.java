@@ -31,9 +31,9 @@ public class InventoryMenuSlot {
     private final int index;
     private final Inventory inventory;
 
-    InventoryMenuSlot(MenuContext menu, int i) {
+    InventoryMenuSlot(MenuContext menu, int index) {
         this.inventory = menu.getInventory();
-        this.index = i;
+        this.index = index;
     }
 
     /**

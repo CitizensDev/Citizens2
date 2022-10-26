@@ -165,7 +165,8 @@ public class InputMenus {
             this.ctx = ctx;
             ItemStack item = from.getCurrentItem();
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(initialValue.get());
+            String name = initialValue.get();
+            meta.setDisplayName(name == null ? "Not set" : name);
             item.setItemMeta(meta);
         }
 

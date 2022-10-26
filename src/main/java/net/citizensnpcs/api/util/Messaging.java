@@ -62,7 +62,7 @@ public class Messaging {
             String errorColour) {
         DEBUG = debug;
         MESSAGE_COLOUR = messageColour.replace("<a>", "<green>");
-        HIGHLIGHT_COLOUR = highlightColour.replace("<e>", "<yellow>");
+        HIGHLIGHT_COLOUR = highlightColour.replace("<e>", "yellow").replace("<yellow>", "yellow");
         ERROR_COLOUR = errorColour.replace("<c>", "<red>");
 
         if (Bukkit.getLogger() != null) {
@@ -145,9 +145,9 @@ public class Messaging {
                 message = messageColour + message;
             }
         }
-        message = HIGHLIGHT_MATCHER.matcher(message).replaceAll(HIGHLIGHT_COLOUR);
+        message = HIGHLIGHT_MATCHER.matcher(message).replaceAll("<" + HIGHLIGHT_COLOUR + ">");
         message = ERROR_MATCHER.matcher(message).replaceAll(ERROR_COLOUR);
-        return CHAT_NEWLINE.matcher(message).replaceAll("<br>]]").replace("]]", messageColour);
+        return CHAT_NEWLINE.matcher(message).replaceAll("<br>]]").replace("]]", "</" + HIGHLIGHT_COLOUR + ">");
     }
 
     public static void send(CommandSender sender, Object... msg) {
@@ -223,7 +223,7 @@ public class Messaging {
     private static Logger DEBUG_LOGGER;
     private static String ERROR_COLOUR = "<red>";
     private static final Pattern ERROR_MATCHER = Pattern.compile("{{", Pattern.LITERAL);
-    private static String HIGHLIGHT_COLOUR = "<yellow>";
+    private static String HIGHLIGHT_COLOUR = "yellow";
     private static final Pattern HIGHLIGHT_MATCHER = Pattern.compile("[[", Pattern.LITERAL);
     private static final Pattern LEGACY_COLORCODE_MATCHER = Pattern.compile(ChatColor.COLOR_CHAR + "([0-9a-r])",
             Pattern.CASE_INSENSITIVE);
