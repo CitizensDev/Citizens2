@@ -156,12 +156,19 @@ public class ShopTrait extends Trait {
 
         public void changePage(int newPage) {
             this.page = newPage;
-            NPCShopPage sp = shop.getOrCreatePage(page);
+            NPCShopPage shopPage = shop.getOrCreatePage(page);
             for (int i = 0; i < ctx.getInventory().getSize(); i++) {
-                ctx.getSlot(i).clear();
-                NPCShopItem item = sp.getItem(i);
+                InventoryMenuSlot slot = ctx.getSlot(i);
+                slot.clear();
+                NPCShopItem item = shopPage.getItem(i);
+
+                if (item != null) {
+                    slot.setItemStack(item.display);
+                }
+
                 final int idx = i;
-                ctx.getSlot(i).setClickHandler(evt -> {
+                slot.setClickHandler(evt -> {
+                    evt.setCancelled(true);
                     ctx.clearSlots();
                     NPCShopItem display = item;
                     if (display == null) {
@@ -173,18 +180,14 @@ public class ShopTrait extends Trait {
 
                     ctx.getMenu().transition(new NPCShopItemEditor(display, modified -> {
                         if (modified == null) {
-                            sp.removeItem(idx);
+                            shopPage.removeItem(idx);
                         } else {
-                            sp.setItem(idx, modified);
+                            shopPage.setItem(idx, modified);
                         }
                     }));
                 });
-
-                if (item == null)
-                    continue;
-
-                ctx.getSlot(i).setItemStack(item.display);
             }
+
             InventoryMenuSlot prev = ctx.getSlot(4 * 9 + 3);
             InventoryMenuSlot edit = ctx.getSlot(4 * 9 + 4);
             InventoryMenuSlot next = ctx.getSlot(4 * 9 + 5);
