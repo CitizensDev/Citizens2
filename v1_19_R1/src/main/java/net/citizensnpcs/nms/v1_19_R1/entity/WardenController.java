@@ -82,17 +82,17 @@ public class WardenController extends MobEntityController {
 
         @Override
         public void customServerAiStep() {
-            if (npc != null) {
-                if (npc.useMinecraftAI()) {
-                    super.customServerAiStep();
-                } else {
-                    NMSImpl.updateAI(this);
-                }
-                NMSImpl.updateMinecraftAIState(npc, this);
-                npc.update();
-            } else {
+            if (npc == null) {
                 super.customServerAiStep();
+                return;
             }
+            NMSImpl.updateMinecraftAIState(npc, this);
+            if (npc.useMinecraftAI()) {
+                super.customServerAiStep();
+            } else {
+                NMSImpl.updateAI(this);
+            }
+            npc.update();
         }
 
         @Override
