@@ -18,9 +18,11 @@ import net.minecraft.core.PositionImpl;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -48,6 +50,7 @@ public class WardenController extends MobEntityController {
         public EntityWardenNPC(EntityType<? extends Warden> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+            this.getBrain().setMemoryWithExpiry(MemoryModuleType.DIG_COOLDOWN, Unit.INSTANCE, 1200L);
         }
 
         @Override
@@ -87,6 +90,7 @@ public class WardenController extends MobEntityController {
                 return;
             }
             NMSImpl.updateMinecraftAIState(npc, this);
+
             if (npc.useMinecraftAI()) {
                 super.customServerAiStep();
             } else {
