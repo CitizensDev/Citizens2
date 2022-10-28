@@ -688,11 +688,11 @@ public class CommandManager implements TabCompleter {
         private FlagValidator<?> validator;
 
         public InjectedCommandArgument(Class<?> paramType, Arg arg) {
-            this.defaultValue = "";
-            this.names = new String[] {};
             this.paramType = paramType;
+            this.names = new String[] {};
             this.index = arg.value();
             this.completions = arg.completions();
+            this.defaultValue = arg.defValue().isEmpty() ? null : arg.defValue();
             if (arg.validator() != FlagValidator.Identity.class) {
                 try {
                     this.validator = arg.validator().getConstructor().newInstance();

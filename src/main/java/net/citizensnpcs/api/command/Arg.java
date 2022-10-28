@@ -19,6 +19,8 @@ public @interface Arg {
 
     Class<? extends CompletionsProvider> completionsProvider() default CompletionsProvider.Identity.class;
 
+    String defValue() default "";
+
     Class<? extends FlagValidator<?>> validator() default FlagValidator.Identity.class;
 
     int value();
