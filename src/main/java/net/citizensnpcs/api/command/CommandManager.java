@@ -854,7 +854,7 @@ public class CommandManager implements TabCompleter {
         return null;
     }
 
-    private static final String COMMAND_FORMAT = "<7>/{{%s%s <7>- [[%s";
+    private static final String COMMAND_FORMAT = "<green>/{{%s%s <green>- [[%s";
 
     // Logger for general errors.
     private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
