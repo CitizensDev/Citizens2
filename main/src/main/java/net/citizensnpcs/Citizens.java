@@ -63,7 +63,6 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
-import net.citizensnpcs.npc.ai.speech.Chat;
 import net.citizensnpcs.npc.ai.speech.CitizensSpeechFactory;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
@@ -338,11 +337,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         }
 
+        speechFactory = new CitizensSpeechFactory();
         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
         traitFactory = new CitizensTraitFactory();
         selector = new NPCSelector(this);
-        speechFactory = new CitizensSpeechFactory();
-        speechFactory.register(Chat.class, "chat");
 
         Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {

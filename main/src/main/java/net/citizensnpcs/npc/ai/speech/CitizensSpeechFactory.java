@@ -15,6 +15,10 @@ import net.citizensnpcs.api.ai.speech.VocalChord;
 public class CitizensSpeechFactory implements SpeechFactory {
     private final Map<String, Class<? extends VocalChord>> registered = new HashMap<String, Class<? extends VocalChord>>();
 
+    public CitizensSpeechFactory() {
+        register(Chat.class, "chat");
+    }
+
     @Override
     public VocalChord getVocalChord(Class<? extends VocalChord> clazz) {
         Preconditions.checkNotNull(clazz, "class cannot be null");
@@ -33,6 +37,9 @@ public class CitizensSpeechFactory implements SpeechFactory {
     public VocalChord getVocalChord(String name) {
         Preconditions.checkNotNull(name, "name cannot be null");
         // Check if VocalChord name is a registered type
+        if (name.equalsIgnoreCase("chat")) {
+            return new Chat();
+        }
         if (isRegistered(name)) {
             // Return a new instance of the VocalChord specified
             try {
