@@ -1,13 +1,14 @@
 package net.citizensnpcs.util;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-
 import java.util.stream.StreamSupport;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +28,6 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 import io.netty.util.Version;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
@@ -331,8 +331,9 @@ public class Util {
     }
 
     public static String prettyPrintLocation(Location to) {
-        return String.format("%s at %d, %d, %d (%d, %d)", to.getWorld().getName(), to.getBlockX(), to.getBlockY(),
-                to.getBlockZ(), (int) to.getYaw(), (int) to.getPitch());
+        return String.format("%s at %s, %s, %s (%s, %s)", to.getWorld().getName(), TWO_DIGIT_DECIMAL.format(to.getX()),
+                TWO_DIGIT_DECIMAL.format(to.getY()), TWO_DIGIT_DECIMAL.format(to.getZ()),
+                TWO_DIGIT_DECIMAL.format(to.getYaw()), TWO_DIGIT_DECIMAL.format(to.getPitch()));
     }
 
     public static boolean requiresNettyChannelMetadata() {
@@ -346,14 +347,15 @@ public class Util {
         if (version == null)
             return REQUIRES_CHANNEL_METADATA = false;
         try {
-           Integer[] parts = StreamSupport.stream(Splitter.on('.').split(version.artifactVersion()).spliterator(), false).map(string -> {
-               // Newer versions of netty use suffix (like .Final) that can't be parsed to Integer
-               try {
-                   return Integer.parseInt(string);
-               } catch (NumberFormatException e) {
-                   return -1;
-               }
-           }).toArray(Integer[]::new);
+            Integer[] parts = StreamSupport
+                    .stream(Splitter.on('.').split(version.artifactVersion()).spliterator(), false).map(string -> {
+                        // Newer versions of netty use suffix (like .Final) that can't be parsed to Integer
+                        try {
+                            return Integer.parseInt(string);
+                        } catch (NumberFormatException e) {
+                            return -1;
+                        }
+                    }).toArray(Integer[]::new);
             int major = parts[0];
             int minor = parts[1];
             int patch = parts[2];
@@ -375,4 +377,8 @@ public class Util {
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static String MINECRAFT_REVISION;
     private static Boolean REQUIRES_CHANNEL_METADATA;
+    private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
+    static {
+        TWO_DIGIT_DECIMAL.setMaximumFractionDigits(2);
+    }
 }

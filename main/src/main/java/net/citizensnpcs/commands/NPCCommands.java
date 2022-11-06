@@ -2862,7 +2862,7 @@ public class NPCCommands {
             permission = "citizens.npc.wander")
     public void wander(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Waypoints trait = npc.getOrAddTrait(Waypoints.class);
-        trait.setWaypointProvider(trait.getCurrentProviderName().equals("wander") ? "wander" : "linear");
+        trait.setWaypointProvider(trait.getCurrentProviderName().equals("wander") ? "linear" : "wander");
         Messaging.sendTr(sender, Messages.WAYPOINT_PROVIDER_SET, trait.getCurrentProviderName());
     }
 

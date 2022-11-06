@@ -48,6 +48,8 @@ public class WanderWaypointProvider
     @Persist
     public int delay = -1;
     private NPC npc;
+    @Persist
+    public boolean pathfind = true;
     private boolean paused;
     @Persist
     private final List<Location> regionCentres = Lists.newArrayList();
@@ -110,7 +112,7 @@ public class WanderWaypointProvider
 
             @Override
             public void begin() {
-                Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_BEGIN);
+                Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_BEGIN, pathfind ? "<green>" : "<red>");
                 if (currentGoal != null) {
                     currentGoal.pause();
                 }
@@ -155,29 +157,22 @@ public class WanderWaypointProvider
                         recalculateTree();
                     } catch (Exception ex) {
                     }
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_RANGE_SET, xrange, yrange);
-                        }
-                    });
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                            () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_RANGE_SET, xrange, yrange));
                 } else if (message.startsWith("regions")) {
                     event.setCancelled(true);
                     editingRegions = !editingRegions;
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            if (editingRegions) {
-                                for (Location regionCentre : regionCentres) {
-                                    Entity entity = markers.createMarker(regionCentre, regionCentre);
-                                    entity.setMetadata("wandermarker",
-                                            new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));
-                                }
-                                Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_REGION_EDITING_START);
-                            } else {
-                                markers.destroyMarkers();
-                                Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_REGION_EDITING_STOP);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                        if (editingRegions) {
+                            for (Location regionCentre : regionCentres) {
+                                Entity entity = markers.createMarker(regionCentre, regionCentre);
+                                entity.setMetadata("wandermarker",
+                                        new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));
                             }
+                            Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_REGION_EDITING_START);
+                        } else {
+                            markers.destroyMarkers();
+                            Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_REGION_EDITING_STOP);
                         }
                     });
                 } else if (message.startsWith("delay")) {
@@ -187,44 +182,42 @@ public class WanderWaypointProvider
                         if (currentGoal != null) {
                             currentGoal.setDelay(delay);
                         }
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay);
-                            }
-                        });
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                                () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
                     } catch (Exception e) {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_INVALID_DELAY);
-                            }
-                        });
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                                () -> Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_INVALID_DELAY));
                     }
                 } else if (message.startsWith("worldguardregion")) {
                     event.setCancelled(true);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            Object region = null;
-                            String regionId = message.replace("worldguardregion ", "");
-                            try {
-                                RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer()
-                                        .get(BukkitAdapter.adapt(npc.getStoredLocation().getWorld()));
-                                region = manager.getRegion(regionId);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            if (region == null) {
-                                Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_NOT_FOUND);
-                                return;
-                            }
-                            WanderWaypointProvider.this.worldguardRegion = regionId;
-                            if (currentGoal != null) {
-                                currentGoal.setWorldGuardRegion(region);
-                            }
-                            Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_SET, regionId);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                        Object region = null;
+                        String regionId = message.replace("worldguardregion ", "");
+                        try {
+                            RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer()
+                                    .get(BukkitAdapter.adapt(npc.getStoredLocation().getWorld()));
+                            region = manager.getRegion(regionId);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+                        if (region == null) {
+                            Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_NOT_FOUND);
+                            return;
+                        }
+                        WanderWaypointProvider.this.worldguardRegion = regionId;
+                        if (currentGoal != null) {
+                            currentGoal.setWorldGuardRegion(region);
+                        }
+                        Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_SET, regionId);
+                    });
+                } else if (message.startsWith("pathfind")) {
+                    event.setCancelled(true);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                        pathfind = !pathfind;
+                        if (currentGoal != null) {
+                            currentGoal.setPathfind(pathfind);
+                        }
+                        begin();
                     });
                 }
             }

@@ -224,6 +224,17 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public void setMoveDestination(Location destination) {
+        if (!isSpawned())
+            return;
+        if (destination == null) {
+            NMS.cancelMoveDestination(getEntity());
+        } else {
+            NMS.setDestination(getEntity(), destination.getX(), destination.getY(), destination.getZ(), 1);
+        }
+    }
+
+    @Override
     public void setName(String name) {
         super.setName(name);
 

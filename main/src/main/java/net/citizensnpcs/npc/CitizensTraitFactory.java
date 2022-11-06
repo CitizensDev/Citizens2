@@ -184,6 +184,7 @@ public class CitizensTraitFactory implements TraitFactory {
     @Override
     public void registerTrait(TraitInfo info) {
         Preconditions.checkNotNull(info, "info cannot be null");
+        info.checkValid();
         if (registered.containsKey(info.getTraitName())) {
             throw new IllegalArgumentException("Trait name " + info.getTraitName() + " already registered");
         }

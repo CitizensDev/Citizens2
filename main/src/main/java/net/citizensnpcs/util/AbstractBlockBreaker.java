@@ -95,7 +95,7 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
                                 .distanceMargin(Math.max(configuration.radius() - 1, 0.75));
                         setTarget = true;
                     }
-                } else if (NMS.getDestination(entity) == null) {
+                } else {
                     NMS.setDestination(entity, x, y, z, 1);
                     setTarget = true;
                 }
