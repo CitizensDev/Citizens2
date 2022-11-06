@@ -22,6 +22,16 @@ public final class TraitInfo {
         return this;
     }
 
+    public void checkValid() {
+        if (supplier == null) {
+            try {
+                trait.getConstructor(new Class<?>[] {});
+            } catch (NoSuchMethodException e) {
+                throw new IllegalArgumentException("Trait class must have a no-arguments constructor");
+            }
+        }
+    }
+
     public Class<? extends Trait> getTraitClass() {
         return trait;
     }
@@ -75,11 +85,6 @@ public final class TraitInfo {
      */
     public static TraitInfo create(Class<? extends Trait> trait) {
         Preconditions.checkNotNull(trait);
-        try {
-            trait.getConstructor(new Class<?>[] {});
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Trait class must have a no-arguments constructor");
-        }
         return new TraitInfo(trait);
     }
 }
