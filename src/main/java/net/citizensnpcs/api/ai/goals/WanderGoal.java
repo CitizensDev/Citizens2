@@ -5,8 +5,6 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import com.google.common.base.Function;
@@ -15,9 +13,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import ch.ethz.globis.phtree.PhTreeSolid;
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
-import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
@@ -32,16 +28,20 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private int delayedTicks;
     private final Function<NPC, Location> fallback;
     private boolean forceFinish;
+    private int movingTicks;
     private final NPC npc;
+    private boolean pathfind;
     private boolean paused;
+    private Location target;
     private final Supplier<PhTreeSolid<Boolean>> tree;
     private Object worldguardRegion;
     private int xrange;
     private int yrange;
 
-    private WanderGoal(NPC npc, int xrange, int yrange, Supplier<PhTreeSolid<Boolean>> tree,
+    private WanderGoal(NPC npc, boolean pathfind, int xrange, int yrange, Supplier<PhTreeSolid<Boolean>> tree,
             Function<NPC, Location> fallback, Object worldguardRegion) {
         this.npc = npc;
+        this.pathfind = pathfind;
         this.worldguardRegion = worldguardRegion;
         this.xrange = xrange;
         this.yrange = yrange;
@@ -51,7 +51,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
 
     private Location findRandomPosition() {
         Location found = MinecraftBlockExaminer.findRandomValidLocation(npc.getEntity().getLocation(NPC_LOCATION),
-                xrange, yrange, new Function<Block, Boolean>() {
+                pathfind ? xrange : 1, pathfind ? yrange : 1, new Function<Block, Boolean>() {
                     @Override
                     public Boolean apply(Block block) {
                         if ((MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(BlockFace.UP))
@@ -83,33 +83,45 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         return found;
     }
 
-    @EventHandler
-    public void onFinish(NavigationCompleteEvent event) {
-        forceFinish = true;
-    }
-
     public void pause() {
         this.paused = true;
     }
 
     @Override
     public void reset() {
+        target = null;
+        movingTicks = 0;
         delayedTicks = delay;
         forceFinish = false;
-        HandlerList.unregisterAll(this);
     }
 
     @Override
     public BehaviorStatus run() {
-        if (!npc.getNavigator().isNavigating() || forceFinish) {
-            return BehaviorStatus.SUCCESS;
+        if (pathfind) {
+            if (!npc.getNavigator().isNavigating() || forceFinish) {
+                return BehaviorStatus.SUCCESS;
+            }
+        } else {
+            if (npc.getEntity().getLocation(NPC_LOCATION).distance(target) >= 0.1) {
+                npc.setMoveDestination(target);
+            } else {
+                return BehaviorStatus.SUCCESS;
+            }
+            if (movingTicks-- <= 0) {
+                npc.setMoveDestination(null);
+                return BehaviorStatus.SUCCESS;
+            }
         }
         return BehaviorStatus.RUNNING;
     }
 
-    public void setDelay(int delay) {
-        this.delay = delay;
-        this.delayedTicks = delay;
+    public void setDelay(int delayTicks) {
+        this.delay = delayTicks;
+        this.delayedTicks = delayTicks;
+    }
+
+    public void setPathfind(boolean pathfind) {
+        this.pathfind = pathfind;
     }
 
     public void setWorldGuardRegion(Object region) {
@@ -131,8 +143,16 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         Location dest = findRandomPosition();
         if (dest == null)
             return false;
-        npc.getNavigator().setTarget(dest);
-        CitizensAPI.registerEvents(this);
+        if (pathfind) {
+            npc.getNavigator().setTarget(dest);
+            npc.getNavigator().getLocalParameters().addSingleUseCallback((reason) -> forceFinish = true);
+        } else {
+            Random random = new Random();
+            dest.setX(dest.getX() + random.nextDouble(0.5));
+            dest.setZ(dest.getZ() + random.nextDouble(0.5));
+            movingTicks = 20 + random.nextInt(20);
+        }
+        this.target = dest;
         return true;
     }
 
@@ -143,26 +163,30 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     public static class Builder {
         private Function<NPC, Location> fallback;
         private final NPC npc;
+        private boolean pathfind = true;
         private Supplier<PhTreeSolid<Boolean>> tree;
         private Object worldguardRegion;
-        private int xrange;
-        private int yrange;
+        private int xrange = 10;
+        private int yrange = 2;
 
         private Builder(NPC npc) {
             this.npc = npc;
-            this.xrange = 10;
-            this.yrange = 2;
             this.tree = null;
             this.fallback = null;
             this.worldguardRegion = null;
         }
 
         public WanderGoal build() {
-            return new WanderGoal(npc, xrange, yrange, tree, fallback, worldguardRegion);
+            return new WanderGoal(npc, pathfind, xrange, yrange, tree, fallback, worldguardRegion);
         }
 
         public Builder fallback(Function<NPC, Location> fallback) {
             this.fallback = fallback;
+            return this;
+        }
+
+        public Builder pathfind(boolean pathfind) {
+            this.pathfind = pathfind;
             return this;
         }
 

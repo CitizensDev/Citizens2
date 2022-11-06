@@ -297,6 +297,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public void setFlyable(boolean flyable);
 
+    public void setMoveDestination(Location destination);
+
     /**
      * Sets the name of this NPC.
      *

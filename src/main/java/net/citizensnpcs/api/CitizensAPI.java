@@ -183,8 +183,9 @@ public final class CitizensAPI {
      *            The listener to register events for
      */
     public static void registerEvents(Listener listener) {
-        if (Bukkit.getServer() != null && getPlugin() != null)
+        if (Bukkit.getServer() != null && getPlugin() != null) {
             Bukkit.getPluginManager().registerEvents(listener, getPlugin());
+        }
     }
 
     /**
