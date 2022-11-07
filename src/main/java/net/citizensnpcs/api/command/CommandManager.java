@@ -614,8 +614,7 @@ public class CommandManager implements TabCompleter {
         private Collection<String> calculateValueFlags() {
             valueFlags = new HashSet<String>();
             for (InjectedCommandArgument instance : methodArguments.values()) {
-                instance.getValueFlag().ifPresentOrElse((flag) -> valueFlags.add(flag), () -> {
-                });
+                instance.getValueFlag().ifPresent((flag) -> valueFlags.add(flag));
             }
             valueFlags.addAll(Arrays.asList(commandAnnotation.valueFlags()));
             return valueFlags;
