@@ -170,7 +170,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             return;
         }
         super.baseTick();
-        boolean navigating = npc.getNavigator().isNavigating();
+        boolean navigating = npc.getNavigator().isNavigating() || controllerMove.hasWanted();
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))

@@ -135,7 +135,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", bukkitEntity);
 
-        boolean navigating = npc.getNavigator().isNavigating();
+        boolean navigating = npc.getNavigator().isNavigating() || controllerMove.b();
         updatePackets(navigating);
 
         npc.update();
