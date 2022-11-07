@@ -39,7 +39,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private int yrange;
 
     private WanderGoal(NPC npc, boolean pathfind, int xrange, int yrange, Supplier<PhTreeSolid<Boolean>> tree,
-            Function<NPC, Location> fallback, Object worldguardRegion) {
+            Function<NPC, Location> fallback, Object worldguardRegion, int delay) {
         this.npc = npc;
         this.pathfind = pathfind;
         this.worldguardRegion = worldguardRegion;
@@ -47,6 +47,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         this.yrange = yrange;
         this.tree = tree;
         this.fallback = fallback;
+        this.delay = delay;
     }
 
     private Location findRandomPosition() {
@@ -161,6 +162,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     }
 
     public static class Builder {
+        private int delay = 10;
         private Function<NPC, Location> fallback;
         private final NPC npc;
         private boolean pathfind = true;
@@ -177,7 +179,12 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         }
 
         public WanderGoal build() {
-            return new WanderGoal(npc, pathfind, xrange, yrange, tree, fallback, worldguardRegion);
+            return new WanderGoal(npc, pathfind, xrange, yrange, tree, fallback, worldguardRegion, delay);
+        }
+
+        public Builder delay(int delay) {
+            this.delay = delay;
+            return this;
         }
 
         public Builder fallback(Function<NPC, Location> fallback) {
