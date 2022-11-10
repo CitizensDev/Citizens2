@@ -40,7 +40,7 @@ public final class TraitInfo {
         if (name == null && !triedAnnotation) {
             TraitName anno = trait.getAnnotation(TraitName.class);
             if (anno != null) {
-                name = anno.value();
+                name = anno.value().toLowerCase();
             }
             triedAnnotation = true;
         }
