@@ -39,8 +39,10 @@ import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.AttributeInstance;
+import net.minecraft.server.v1_10_R1.AxisAlignedBB;
 import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.DamageSource;
+import net.minecraft.server.v1_10_R1.Entity;
 import net.minecraft.server.v1_10_R1.EntityHuman;
 import net.minecraft.server.v1_10_R1.EntityPlayer;
 import net.minecraft.server.v1_10_R1.EnumGamemode;
@@ -310,6 +312,21 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             cs();
+        }
+
+        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected())) {
+            AxisAlignedBB axisalignedbb;
+            if (this.isPassenger() && !this.getVehicle().dead) {
+                axisalignedbb = this.getBoundingBox().a(this.getVehicle().getBoundingBox()).grow(1.0, 0.0, 1.0);
+            } else {
+                axisalignedbb = this.getBoundingBox().grow(1.0, 0.5, 1.0);
+            }
+
+            for (Entity entity : this.world.getEntities(this, axisalignedbb)) {
+                if (!entity.dead) {
+                    entity.d(this);
+                }
+            }
         }
     }
 

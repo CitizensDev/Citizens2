@@ -74,6 +74,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityHumanNPC extends ServerPlayer implements NPCHolder, SkinnableEntity {
@@ -172,6 +173,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             super.doTick();
             return;
         }
+
         super.baseTick();
         boolean navigating = npc.getNavigator().isNavigating() || controllerMove.hasWanted();
         if (!navigating && getBukkitEntity() != null
@@ -192,6 +194,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             }
             moveOnCurrentHeading();
         }
+
         NMSImpl.updateAI(this);
 
         if (isSpectator()) {
@@ -201,6 +204,19 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             pushEntities();
+        }
+
+        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected())) {
+            AABB axisalignedbb;
+            if (this.isPassenger() && !this.getVehicle().isRemoved()) {
+                axisalignedbb = this.getBoundingBox().minmax(this.getVehicle().getBoundingBox()).inflate(1.0, 0.0, 1.0);
+            } else {
+                axisalignedbb = this.getBoundingBox().inflate(1.0, 0.5, 1.0);
+            }
+
+            for (Entity entity : this.level.getEntities(this, axisalignedbb)) {
+                entity.playerTouch(this);
+            }
         }
     }
 
@@ -468,7 +484,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         super.tick();
         if (npc == null)
             return;
-        noPhysics = isSpectator();
+
         if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
             effectsDirty = true;
         }

@@ -39,10 +39,12 @@ import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.AttributeInstance;
+import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.DamageSource;
 import net.minecraft.server.v1_8_R3.DataWatcher;
+import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EnumProtocolDirection;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
@@ -311,6 +313,21 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             bL();
+        }
+
+        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected())) {
+            AxisAlignedBB axisalignedbb = null;
+            if (this.vehicle != null && !this.vehicle.dead) {
+                axisalignedbb = this.getBoundingBox().a(this.vehicle.getBoundingBox()).grow(1.0, 0.0, 1.0);
+            } else {
+                axisalignedbb = this.getBoundingBox().grow(1.0, 0.5, 1.0);
+            }
+
+            for (Entity entity : this.world.getEntities(this, axisalignedbb)) {
+                if (!entity.dead) {
+                    entity.d(this);
+                }
+            }
         }
     }
 

@@ -49,9 +49,11 @@ import net.minecraft.server.v1_16_R3.AttributeBase;
 import net.minecraft.server.v1_16_R3.AttributeMapBase;
 import net.minecraft.server.v1_16_R3.AttributeModifiable;
 import net.minecraft.server.v1_16_R3.AttributeProvider;
+import net.minecraft.server.v1_16_R3.AxisAlignedBB;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.DamageSource;
+import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EnumGamemode;
@@ -461,6 +463,21 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         updatePackets(navigating);
 
         npc.update();
+
+        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected())) {
+            AxisAlignedBB axisalignedbb;
+            if (this.isPassenger() && !this.getVehicle().dead) {
+                axisalignedbb = this.getBoundingBox().b(this.getVehicle().getBoundingBox()).grow(1.0, 0.0, 1.0);
+            } else {
+                axisalignedbb = this.getBoundingBox().grow(1.0, 0.5, 1.0);
+            }
+
+            for (Entity entity : this.world.getEntities(this, axisalignedbb)) {
+                if (!entity.dead) {
+                    entity.pickup(this);
+                }
+            }
+        }
         /*
          double diff = this.yaw - this.aK;
          if (diff != 40 && diff != -40) {

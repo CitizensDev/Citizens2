@@ -29,6 +29,7 @@ public class SleepTrait extends Trait {
             return;
         } else if (sleeping && at == null) {
             stopSleeping();
+            return;
         }
         if (npc.getEntity() instanceof Player) {
             Player player = (Player) npc.getEntity();

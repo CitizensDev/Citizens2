@@ -1769,7 +1769,7 @@ public class NPCCommands {
             throws CommandException {
         boolean pickup = set == null ? !npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected()) : set;
         npc.data().set(NPC.Metadata.PICKUP_ITEMS, pickup);
-        Messaging.send(sender, pickup ? Messages.PICKUP_ITEMS_SET : Messages.PICKUP_ITEMS_UNSET, npc.getName());
+        Messaging.sendTr(sender, pickup ? Messages.PICKUP_ITEMS_SET : Messages.PICKUP_ITEMS_UNSET, npc.getName());
     }
 
     @Command(
