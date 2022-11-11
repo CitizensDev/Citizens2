@@ -1768,7 +1768,7 @@ public class NPCCommands {
     public void pickupitems(CommandContext args, CommandSender sender, NPC npc, @Flag("set") Boolean set)
             throws CommandException {
         boolean pickup = set == null ? !npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected()) : set;
-        npc.data().set(NPC.Metadata.PICKUP_ITEMS, pickup);
+        npc.data().setPersistent(NPC.Metadata.PICKUP_ITEMS, pickup);
         Messaging.sendTr(sender, pickup ? Messages.PICKUP_ITEMS_SET : Messages.PICKUP_ITEMS_UNSET, npc.getName());
     }
 

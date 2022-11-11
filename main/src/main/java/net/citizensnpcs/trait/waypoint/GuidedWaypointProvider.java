@@ -302,9 +302,11 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 selector.finish();
                 return;
             }
+
             if (npc.getNavigator().isNavigating()) {
                 return;
             }
+
             Waypoint current = plan.getCurrentWaypoint();
             npc.getNavigator().setTarget(current.getLocation());
             npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
@@ -322,6 +324,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             if (paused || available.size() == 0 || !npc.isSpawned() || npc.getNavigator().isNavigating()) {
                 return false;
             }
+
             Waypoint target = available.get(Util.getFastRandom().nextInt(available.size()));
             plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(null, new Waypoint(npc.getStoredLocation())));
             return plan != null;
@@ -403,8 +406,8 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             List<AStarNode> resList = Lists.newArrayList();
             res.forEachRemaining(new Consumer<Waypoint>() {
                 @Override
-                public void accept(Waypoint t) {
-                    resList.add(new GuidedNode(null, t));
+                public void accept(Waypoint n) {
+                    resList.add(new GuidedNode(null, n));
                 }
             });
             return resList;
