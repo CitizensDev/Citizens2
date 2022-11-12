@@ -102,6 +102,11 @@ public class CitizensNPC extends AbstractNPC {
             trait.onDespawn();
         }
         Messaging.debug("Despawned", this, "DespawnReason." + reason);
+
+        if (getEntity() instanceof SkinnableEntity) {
+            ((SkinnableEntity) getEntity()).getSkinTracker().onRemoveNPC();
+        }
+
         if (reason == DespawnReason.DEATH) {
             entityController.setEntity(null);
         } else {

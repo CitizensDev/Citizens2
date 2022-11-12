@@ -5,7 +5,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
 
 public abstract class AbstractEntityController implements EntityController {
@@ -31,8 +30,6 @@ public abstract class AbstractEntityController implements EntityController {
             return;
         if (bukkitEntity instanceof Player) {
             NMS.removeFromWorld(bukkitEntity);
-            SkinnableEntity npc = bukkitEntity instanceof SkinnableEntity ? (SkinnableEntity) bukkitEntity : null;
-            npc.getSkinTracker().onRemoveNPC();
             NMS.remove(bukkitEntity);
             setEntity(null);
         } else {
