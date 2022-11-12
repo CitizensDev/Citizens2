@@ -1386,7 +1386,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void sleep(Player player, boolean sleep) {
         try {
-            ENTITY_SETPOSE_METHOD.invoke(player, sleep ? EntityPose.SLEEPING : EntityPose.STANDING);
+            ENTITY_SETPOSE_METHOD.invoke(getHandle(player), sleep ? EntityPose.SLEEPING : EntityPose.STANDING);
         } catch (Throwable e) {
             e.printStackTrace();
         }
