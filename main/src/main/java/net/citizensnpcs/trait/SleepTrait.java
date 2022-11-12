@@ -25,12 +25,16 @@ public class SleepTrait extends Trait {
     public void run() {
         if (!npc.isSpawned())
             return;
-        if (sleeping && at != null) {
-            return;
-        } else if (sleeping && at == null) {
-            stopSleeping();
+        if (sleeping) {
+            if (at == null) {
+                wakeup();
+            }
             return;
         }
+        if (at == null)
+            return;
+
+        npc.teleport(at, TeleportCause.PLUGIN);
         if (npc.getEntity() instanceof Player) {
             Player player = (Player) npc.getEntity();
             if (at.getBlock().getBlockData() instanceof Bed || at.getBlock().getState() instanceof Bed) {
@@ -46,15 +50,15 @@ public class SleepTrait extends Trait {
 
     public void setSleeping(Location at) {
         this.at = at != null ? at.clone() : null;
-        stopSleeping();
-        npc.teleport(at, TeleportCause.PLUGIN);
+        wakeup();
     }
 
-    private void stopSleeping() {
+    private void wakeup() {
         if (npc.getEntity() instanceof Player) {
             NMS.sleep((Player) npc.getEntity(), false);
         } else if (npc.getEntity() instanceof Villager) {
             ((Villager) npc.getEntity()).wakeup();
         }
+        sleeping = false;
     }
 }

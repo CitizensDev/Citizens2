@@ -345,6 +345,13 @@ public class WanderWaypointProvider
     @Override
     public void setPaused(boolean paused) {
         this.paused = paused;
+        if (currentGoal != null) {
+            if (paused) {
+                currentGoal.pause();
+            } else {
+                currentGoal.unpause();
+            }
+        }
     }
 
     public void setXYRange(int xrange, int yrange) {
