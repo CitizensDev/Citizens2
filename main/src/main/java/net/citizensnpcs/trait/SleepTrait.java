@@ -22,6 +22,11 @@ public class SleepTrait extends Trait {
     }
 
     @Override
+    public void onDespawn() {
+        sleeping = false;
+    }
+
+    @Override
     public void run() {
         if (!npc.isSpawned())
             return;

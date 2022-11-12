@@ -1114,7 +1114,16 @@ public class NPCCommands {
             min = 2,
             max = 2,
             permission = "citizens.npc.hurt")
-    public void hurt(CommandContext args, Player sender, NPC npc) {
+    public void hurt(CommandContext args, CommandSender sender, NPC npc) {
+        if (!(npc.getEntity() instanceof Damageable)) {
+            Messaging.sendErrorTr(sender, Messages.NPC_NOT_DAMAGEABLE,
+                    Util.prettyEnum(npc.getOrAddTrait(MobType.class).getType()));
+            return;
+        }
+        if (npc.isProtected()) {
+            Messaging.sendErrorTr(sender, Messages.NPC_PROTECTED);
+            return;
+        }
         ((Damageable) npc.getEntity()).damage(args.getInteger(1));
     }
 

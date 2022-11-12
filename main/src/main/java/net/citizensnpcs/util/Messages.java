@@ -249,8 +249,10 @@ public class Messages {
     public static final String NPC_GOAT_HORNS_SET = "citizens.commands.npc.goat.horns-set";
     public static final String NPC_NAME_TOO_LONG = "citizens.commands.npc.create.npc-name-too-long";
     public static final String NPC_NOT_CONTROLLABLE = "citizens.commands.npc.controllable.not-controllable";
+    public static final String NPC_NOT_DAMAGEABLE = "citizens.commands.npc.hurt.not-damageable";
     public static final String NPC_NOT_FOUND = "citizens.notifications.npc-not-found";
     public static final String NPC_OWNER = "citizens.commands.npc.owner.owner";
+    public static final String NPC_PROTECTED = "citizens.commands.npc.hurt.protected";
     public static final String NPC_REMOVED = "citizens.commands.npc.remove.removed";
     public static final String NPC_RENAMED = "citizens.commands.npc.rename.renamed";
     public static final String NPC_SPAWNED = "citizens.commands.npc.spawn.spawned";
