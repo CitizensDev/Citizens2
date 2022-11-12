@@ -234,6 +234,7 @@ public class CommandManager implements TabCompleter {
                 }
                 Messaging.sendError(sender, ex.getUsage());
             } catch (UnhandledCommandException ex) {
+                Messaging.sendErrorTr(sender, CommandMessages.UNKNOWN_COMMAND);
                 return false;
             } catch (WrappedCommandException ex) {
                 if (ex.getCause() instanceof NumberFormatException) {
