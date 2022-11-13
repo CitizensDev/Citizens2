@@ -236,6 +236,13 @@ public interface NPC extends Agent, Cloneable {
     public boolean isProtected();
 
     /**
+     * Gets whether this NPC is pushable by fluids.
+     *
+     * @return Whether this NPC is pushable by fluids
+     */
+    public boolean isPushableByFluids();
+
+    /**
      * Gets whether this NPC is currently spawned.
      *
      * @return Whether this NPC is spawned
@@ -386,6 +393,10 @@ public interface NPC extends Agent, Cloneable {
          */
         DROPS_ITEMS("drops-items"),
         /**
+         * Whether the NPC is pushable by fluids. Boolean.
+         */
+        FLUID_PUSHABLE("fluid-pushable"),
+        /**
          * Whether the NPC is 'flyable' i.e. will fly when pathfinding. Boolean.
          */
         FLYABLE("flyable"),
@@ -450,12 +461,12 @@ public interface NPC extends Agent, Cloneable {
          * Whether to pick up items. Boolean defaults to isProtected().
          */
         PICKUP_ITEMS("pickup-items"),
+
         /**
          * @see SkinTrait
          */
         @Deprecated
         PLAYER_SKIN_TEXTURE_PROPERTIES("player-skin-textures"),
-
         /**
          * @see SkinTrait
          */

@@ -301,6 +301,11 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public boolean isPushableByFluids() {
+        return data().get(NPC.Metadata.FLUID_PUSHABLE, isProtected());
+    }
+
+    @Override
     public void load(final DataKey root) {
         name = root.getString("name");
         metadata.loadFrom(root.getRelative("metadata"));
