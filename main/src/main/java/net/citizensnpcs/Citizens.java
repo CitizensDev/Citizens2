@@ -29,6 +29,8 @@ import com.mojang.authlib.properties.Property;
 
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
+import net.byteflux.libby.LibraryManager;
+import net.byteflux.libby.logging.LogLevel;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -284,10 +286,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void loadMavenLibraries() {
-        BukkitLibraryManager lib = new BukkitLibraryManager(this);
+        Messaging.log("Downloading libraries, please wait...");
+        LibraryManager lib = new BukkitLibraryManager(this);
         lib.addMavenCentral();
+        lib.setLogLevel(LogLevel.WARN);
         // Unfortunately, transitive dependency management is not supported in this library.
-        // TODO: consider using eclipse aether to resolve dependencies
         lib.loadLibrary(Library.builder().groupId("ch{}ethz{}globis{}phtree").artifactId("phtree").version("2.5.0")
                 .relocate("ch{}ethz{}globis{}phtree", "clib{}phtree").build());
         lib.loadLibrary(Library.builder().groupId("net{}sf{}trove4j").artifactId("trove4j").version("3.0.3")

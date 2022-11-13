@@ -113,7 +113,7 @@
         </dependency>
         <dependency>
             <groupId>net.byteflux</groupId>
-            <artifactId>libby-bukkit</artifactId> <!-- Replace bukkit if you're using another platform -->
+            <artifactId>libby-bukkit</artifactId>
             <version>1.1.5</version>
         </dependency>
     </dependencies>

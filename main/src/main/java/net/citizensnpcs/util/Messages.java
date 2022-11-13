@@ -208,10 +208,14 @@ public class Messages {
     public static final String LOADED_ECONOMY = "citizens.economy.loaded";
     public static final String LOADING_SUB_PLUGIN = "citizens.sub-plugins.load";
     public static final String LOCALE_NOTIFICATION = "citizens.notifications.locale";
+    public static final String LOOKCLOSE_DISABLE_WHEN_NAVIGATING = "citizens.commands.npc.lookclose.disable-when-navigating";
+    public static final String LOOKCLOSE_ENABLE_WHEN_NAVIGATING = "citizens.commands.npc.lookclose.enable-when-navigating";
     public static final String LOOKCLOSE_RANDOM_DELAY_SET = "citizens.commands.npc.lookclose.random-look-delay-set";
     public static final String LOOKCLOSE_RANDOM_PITCH_RANGE_SET = "citizens.commands.npc.lookclose.random-pitch-range-set";
     public static final String LOOKCLOSE_RANDOM_SET = "citizens.commands.npc.lookclose.random-set";
     public static final String LOOKCLOSE_RANDOM_STOPPED = "citizens.commands.npc.lookclose.random-stopped";
+    public static final String LOOKCLOSE_RANDOM_TARGET_SWITCH_DISABLED = "citizens.commands.npc.lookclose.random-target-switch-disabled";
+    public static final String LOOKCLOSE_RANDOM_TARGET_SWITCH_ENABLED = "citizens.commands.npc.lookclose.random-target-switch-enabled";
     public static final String LOOKCLOSE_RANDOM_YAW_RANGE_SET = "citizens.commands.npc.lookclose.random-yaw-range-set";
     public static final String LOOKCLOSE_RANGE_SET = "citizens.commands.npc.lookclose.range-set";
     public static final String LOOKCLOSE_REALISTIC_LOOK_SET = "citizens.commands.npc.lookclose.rl-set";

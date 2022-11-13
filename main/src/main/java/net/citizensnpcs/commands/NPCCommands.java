@@ -1288,7 +1288,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --randompitchrange [min,max] --randomyawrange [min,max]",
+            usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false]",
             desc = "Toggle whether a NPC will look when a player is near",
             modifiers = { "lookclose", "look", "rotate" },
             min = 1,
@@ -1298,13 +1298,26 @@ public class NPCCommands {
     public void lookClose(CommandContext args, CommandSender sender, NPC npc,
             @Flag({ "randomlook", "rlook" }) Boolean randomlook, @Flag("range") Double range,
             @Flag("randomlookdelay") Integer randomLookDelay, @Flag("randomyawrange") String randomYaw,
-            @Flag("randompitchrange") String randomPitch) throws CommandException {
+            @Flag("randompitchrange") String randomPitch, @Flag("randomswitchtargets") Boolean randomSwitchTargets,
+            @Flag("disablewhennavigating") Boolean disableWhenNavigating) throws CommandException {
         boolean toggle = true;
         LookClose trait = npc.getOrAddTrait(LookClose.class);
         if (randomlook != null) {
             trait.setRandomLook(randomlook);
             Messaging.sendTr(sender, randomlook ? Messages.LOOKCLOSE_RANDOM_SET : Messages.LOOKCLOSE_RANDOM_STOPPED,
                     npc.getName());
+            toggle = false;
+        }
+        if (randomSwitchTargets) {
+            trait.setRandomlySwitchTargets(randomSwitchTargets);
+            Messaging.sendTr(sender, randomSwitchTargets ? Messages.LOOKCLOSE_RANDOM_TARGET_SWITCH_ENABLED
+                    : Messages.LOOKCLOSE_RANDOM_TARGET_SWITCH_DISABLED, npc.getName());
+            toggle = false;
+        }
+        if (disableWhenNavigating != null) {
+            trait.setDisableWhileNavigating(disableWhenNavigating);
+            Messaging.sendTr(sender, disableWhenNavigating ? Messages.LOOKCLOSE_DISABLE_WHEN_NAVIGATING
+                    : Messages.LOOKCLOSE_ENABLE_WHEN_NAVIGATING, npc.getName());
             toggle = false;
         }
         if (range != null) {

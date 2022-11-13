@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -10,6 +11,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
+
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -42,6 +45,8 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     private int randomLookDelay = Setting.DEFAULT_RANDOM_LOOK_DELAY.asInt();
     @Persist
     private float[] randomPitchRange = { 0, 0 };
+    @Persist
+    private boolean randomSwitchTargets;
     @Persist
     private float[] randomYawRange = { 0, 360 };
     private double range = Setting.DEFAULT_LOOK_CLOSE_RANGE.asDouble();
@@ -87,20 +92,50 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
      * Finds a new look-close target
      */
     public void findNewTarget() {
-        double min = range;
+        if (lookingAt != null && !isValid(lookingAt)) {
+            NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, lookingAt, null);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.getNewTarget() != null && isValid(event.getNewTarget())) {
+                lookingAt = event.getNewTarget();
+            } else {
+                lookingAt = null;
+            }
+        }
+
         Player old = lookingAt;
-        for (Entity entity : npc.getEntity().getNearbyEntities(range, range, range)) {
-            if (!(entity instanceof Player))
-                continue;
-            Player player = (Player) entity;
-            Location location = player.getLocation(CACHE_LOCATION);
-            if (location.getWorld() != NPC_LOCATION.getWorld())
-                continue;
-            double dist = location.distance(NPC_LOCATION);
-            if (dist > min || CitizensAPI.getNPCRegistry().getNPC(entity) != null || isInvisible(player))
-                continue;
-            min = dist;
-            lookingAt = player;
+        if (lookingAt != null) {
+            if (randomSwitchTargets && t <= 0) {
+                List<Player> options = Lists.newArrayList();
+                for (Entity entity : npc.getEntity().getNearbyEntities(range, range, range)) {
+                    if (entity == lookingAt || !(entity instanceof Player)
+                            || CitizensAPI.getNPCRegistry().getNPC(entity) != null) {
+                        continue;
+                    }
+                    Player player = (Player) entity;
+                    if (player.getLocation().getWorld() != NPC_LOCATION.getWorld() || isInvisible(player))
+                        continue;
+                    options.add(player);
+                }
+                if (options.size() > 0) {
+                    lookingAt = options.get(Util.getFastRandom().nextInt(options.size()));
+                    t = randomLookDelay;
+                }
+            }
+        } else {
+            double min = range;
+            for (Entity entity : npc.getEntity().getNearbyEntities(range, range, range)) {
+                if (!(entity instanceof Player))
+                    continue;
+                Player player = (Player) entity;
+                Location location = player.getLocation(CACHE_LOCATION);
+                if (location.getWorld() != NPC_LOCATION.getWorld())
+                    continue;
+                double dist = location.distance(NPC_LOCATION);
+                if (dist > min || CitizensAPI.getNPCRegistry().getNPC(entity) != null || isInvisible(player))
+                    continue;
+                min = dist;
+                lookingAt = player;
+            }
         }
 
         if (old != lookingAt) {
@@ -202,10 +237,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             if (!npc.getNavigator().isNavigating() && lookingAt == null && t <= 0) {
                 randomLook();
                 t = randomLookDelay;
-            } else {
-                t--;
             }
         }
+        t--;
+
         if (!enabled)
             return;
 
@@ -213,9 +248,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             return;
 
         npc.getEntity().getLocation(NPC_LOCATION);
-        if (tryInvalidateTarget()) {
-            findNewTarget();
-        }
+        findNewTarget();
 
         if (npc.getNavigator().isNavigating()) {
             npc.getNavigator().setPaused(lookingAt != null);
@@ -225,6 +258,7 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
             return;
 
         Util.faceEntity(npc.getEntity(), lookingAt);
+
         if (npc.getEntity().getType().name().equals("SHULKER")) {
             boolean wasSilent = npc.getEntity().isSilent();
             npc.getEntity().setSilent(true);
@@ -265,6 +299,10 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
         this.randomYawRange = new float[] { min, max };
     }
 
+    public void setRandomlySwitchTargets(boolean randomSwitchTargets) {
+        this.randomSwitchTargets = randomSwitchTargets;
+    }
+
     /**
      * Sets the maximum range in blocks to look at other Entities
      */
@@ -288,21 +326,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
     @Override
     public String toString() {
         return "LookClose{" + enabled + "}";
-    }
-
-    private boolean tryInvalidateTarget() {
-        if (lookingAt == null)
-            return true;
-        if (!isValid(lookingAt)) {
-            NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, lookingAt, null);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.getNewTarget() != null && isValid(event.getNewTarget())) {
-                lookingAt = event.getNewTarget();
-            } else {
-                lookingAt = null;
-            }
-        }
-        return lookingAt == null;
     }
 
     public boolean useRealisticLooking() {
