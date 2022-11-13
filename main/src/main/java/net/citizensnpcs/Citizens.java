@@ -286,7 +286,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void loadMavenLibraries() {
-        Messaging.log("Downloading libraries, please wait...");
+        getLogger().info("[Citizens] Downloading libraries, please wait...");
+
         LibraryManager lib = new BukkitLibraryManager(this);
         lib.addMavenCentral();
         lib.setLogLevel(LogLevel.WARN);
