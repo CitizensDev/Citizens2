@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_19_R1.entity.CraftWither;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R1.util.NMSImpl;
@@ -133,6 +134,14 @@ public class WitherController extends MobEntityController {
         public boolean isPowered() {
             return npc == null || !npc.data().has("wither-arrow-shield") ? super.isPowered()
                     : npc.data().get("wither-arrow-shield");
+        }
+
+        @Override
+        public void knockback(double strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
         }
 
         @Override

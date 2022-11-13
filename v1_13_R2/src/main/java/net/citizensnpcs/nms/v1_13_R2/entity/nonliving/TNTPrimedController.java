@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
-import net.minecraft.server.v1_13_R2.Tag;
-import net.minecraft.server.v1_13_R2.FluidType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -16,7 +13,9 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.EntityTNTPrimed;
+import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.Tag;
 import net.minecraft.server.v1_13_R2.World;
 
 public class TNTPrimedController extends MobEntityController {
@@ -30,25 +29,29 @@ public class TNTPrimedController extends MobEntityController {
     }
 
     public static class EntityTNTPrimedNPC extends EntityTNTPrimed implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityTNTPrimedNPC(World world) {
             this(world, null);
         }
 
-        @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
-
         public EntityTNTPrimedNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override
@@ -59,6 +62,11 @@ public class TNTPrimedController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override

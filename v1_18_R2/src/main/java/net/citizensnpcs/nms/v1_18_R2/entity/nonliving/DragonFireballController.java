@@ -41,16 +41,6 @@ public class DragonFireballController extends MobEntityController {
     }
 
     public static class EntityDragonFireballNPC extends DragonFireball implements NPCHolder {
-        @Override
-        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityDragonFireballNPC(EntityType<? extends DragonFireball> types, Level level) {
@@ -124,6 +114,16 @@ public class DragonFireballController extends MobEntityController {
             } else {
                 super.tick();
             }
+        }
+
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 }

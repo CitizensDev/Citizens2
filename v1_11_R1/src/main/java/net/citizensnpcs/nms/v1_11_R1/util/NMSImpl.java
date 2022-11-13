@@ -1417,7 +1417,7 @@ public class NMSImpl implements NMSBridge {
         @Override
         public void update() {
             updateNavigation(navigation);
-        };
+        }
     }
 
     private static class NavigationIterable implements Iterable<Vector> {

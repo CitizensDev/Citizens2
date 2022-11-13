@@ -1,11 +1,33 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
+import java.lang.reflect.Method;
+
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_13_R2.*;
-
-import java.lang.reflect.Method;
+import net.minecraft.server.v1_13_R2.AttributeInstance;
+import net.minecraft.server.v1_13_R2.Block;
+import net.minecraft.server.v1_13_R2.BlockPosition;
+import net.minecraft.server.v1_13_R2.Blocks;
+import net.minecraft.server.v1_13_R2.ChunkCache;
+import net.minecraft.server.v1_13_R2.Entity;
+import net.minecraft.server.v1_13_R2.EntityInsentient;
+import net.minecraft.server.v1_13_R2.EntityTypes;
+import net.minecraft.server.v1_13_R2.GenericAttributes;
+import net.minecraft.server.v1_13_R2.IBlockData;
+import net.minecraft.server.v1_13_R2.MathHelper;
+import net.minecraft.server.v1_13_R2.MethodProfiler;
+import net.minecraft.server.v1_13_R2.NavigationAbstract;
+import net.minecraft.server.v1_13_R2.PathEntity;
+import net.minecraft.server.v1_13_R2.PathMode;
+import net.minecraft.server.v1_13_R2.PathPoint;
+import net.minecraft.server.v1_13_R2.PathType;
+import net.minecraft.server.v1_13_R2.Pathfinder;
+import net.minecraft.server.v1_13_R2.PathfinderAbstract;
+import net.minecraft.server.v1_13_R2.PathfinderNormal;
+import net.minecraft.server.v1_13_R2.SystemUtils;
+import net.minecraft.server.v1_13_R2.Vec3D;
+import net.minecraft.server.v1_13_R2.World;
 
 public class PlayerNavigation extends NavigationAbstract {
     protected EntityHumanNPC a;
@@ -90,13 +112,7 @@ public class PlayerNavigation extends NavigationAbstract {
                 if (d1 * paramDouble1 + d2 * paramDouble2 >= 0.0D) {
                     PathType localPathType = this.o.a(this.b, k, paramInt2 - 1, m, this.a, paramInt4, paramInt5,
                             paramInt6, true, true);
-                    if (localPathType == PathType.WATER) {
-                        return false;
-                    }
-                    if (localPathType == PathType.LAVA) {
-                        return false;
-                    }
-                    if (localPathType == PathType.OPEN) {
+                    if ((localPathType == PathType.WATER) || (localPathType == PathType.LAVA) || (localPathType == PathType.OPEN)) {
                         return false;
                     }
                     localPathType = this.o.a(this.b, k, paramInt2, m, this.a, paramInt4, paramInt5, paramInt6, true,
@@ -162,21 +178,6 @@ public class PlayerNavigation extends NavigationAbstract {
             this.j = getMonotonicMillis();
         }
     }
-
-    private static long getMonotonicMillis() {
-        try {
-            return SystemUtils.getMonotonicMillis();
-        } catch (NoSuchMethodError ex) {
-            try {
-                return (long) GET_MONOTONIC_MILLIS.invoke(null);
-            } catch (Throwable ex2) {
-                ex2.printStackTrace();
-                return 0;
-            }
-        }
-    }
-
-    private static final Method GET_MONOTONIC_MILLIS = NMS.getMethod(SystemUtils.class, "b", false);
 
     @Override
     protected boolean a(Vec3D paramVec3D1, Vec3D paramVec3D2, int paramInt1, int paramInt2, int paramInt3) {
@@ -488,9 +489,6 @@ public class PlayerNavigation extends NavigationAbstract {
         return localPathEntity;
     }
 
-    private static final Method PROFILER_ENTER = NMS.getMethod(MethodProfiler.class, "a", false, String.class);
-    private static final Method PROFILER_EXIT = NMS.getMethod(MethodProfiler.class, "e", false);
-
     protected void superE_() {
         if (this.c == null) {
             return;
@@ -543,4 +541,23 @@ public class PlayerNavigation extends NavigationAbstract {
         return new EntityInsentient(EntityTypes.PLAYER, world) {
         };
     }
+
+    private static long getMonotonicMillis() {
+        try {
+            return SystemUtils.getMonotonicMillis();
+        } catch (NoSuchMethodError ex) {
+            try {
+                return (long) GET_MONOTONIC_MILLIS.invoke(null);
+            } catch (Throwable ex2) {
+                ex2.printStackTrace();
+                return 0;
+            }
+        }
+    }
+
+    private static final Method GET_MONOTONIC_MILLIS = NMS.getMethod(SystemUtils.class, "b", false);
+
+    private static final Method PROFILER_ENTER = NMS.getMethod(MethodProfiler.class, "a", false, String.class);
+
+    private static final Method PROFILER_EXIT = NMS.getMethod(MethodProfiler.class, "e", false);
 }

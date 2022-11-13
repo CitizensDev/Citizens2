@@ -1,7 +1,4 @@
-package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;import net.minecraft.server.v1_14_R1.Vec3D;
-
-import net.minecraft.server.v1_14_R1.Tag;
-import net.minecraft.server.v1_14_R1.FluidType;
+package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,8 +25,10 @@ import net.minecraft.server.v1_14_R1.Blocks;
 import net.minecraft.server.v1_14_R1.EntityFallingBlock;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EnumMoveType;
+import net.minecraft.server.v1_14_R1.FluidType;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
+import net.minecraft.server.v1_14_R1.Tag;
 import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 import net.minecraft.server.v1_14_R1.WorldServer;
@@ -60,11 +59,6 @@ public class FallingBlockController extends AbstractEntityController {
     }
 
     public static class EntityFallingBlockNPC extends EntityFallingBlock implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityFallingBlockNPC(EntityTypes<? extends EntityFallingBlock> types, World world) {
@@ -79,6 +73,16 @@ public class FallingBlockController extends AbstractEntityController {
         public EntityFallingBlockNPC(World world, NPC npc, double d0, double d1, double d2, IBlockData data) {
             super(world, d0, d1, d2, data);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

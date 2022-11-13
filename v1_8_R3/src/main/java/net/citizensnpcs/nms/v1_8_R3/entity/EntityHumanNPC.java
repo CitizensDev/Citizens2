@@ -371,7 +371,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     @Override
     public void setSkinFlags(byte flags) {
         // set skin flag byte
-        getDataWatcher().watch(10, Byte.valueOf(flags));
+        getDataWatcher().watch(10, flags);
     }
 
     @Override

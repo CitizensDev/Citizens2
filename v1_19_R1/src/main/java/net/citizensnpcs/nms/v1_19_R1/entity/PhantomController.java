@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPhantom;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R1.util.NMSImpl;
@@ -48,6 +49,7 @@ public class PhantomController extends MobEntityController {
 
     public static class EntityPhantomNPC extends Phantom implements NPCHolder {
         boolean calledNMSHeight = false;
+
         private final CitizensNPC npc;
         private LookControl oldLookController;
         private MoveControl oldMoveController;
@@ -172,6 +174,14 @@ public class PhantomController extends MobEntityController {
             if (npc == null || !npc.isProtected())
                 return super.isSunBurnTick();
             return false;
+        }
+
+        @Override
+        public void knockback(double strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
         }
 
         @Override

@@ -63,14 +63,21 @@ public class EggController extends AbstractEntityController {
             this.npc = (CitizensNPC) npc;
         }
 
-        @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
-
         public EntityEggNPC(World world, NPC npc, double d0, double d1, double d2) {
             super(world, d0, d1, d2);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void A_() {
+            if (npc != null) {
+                npc.update();
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                    super.A_();
+                }
+            } else {
+                super.A_();
+            }
         }
 
         @Override
@@ -81,6 +88,11 @@ public class EggController extends AbstractEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -102,18 +114,6 @@ public class EggController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void A_() {
-            if (npc != null) {
-                npc.update();
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
-                    super.A_();
-                }
-            } else {
-                super.A_();
-            }
         }
     }
 }

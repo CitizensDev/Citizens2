@@ -34,16 +34,6 @@ public class MinecartChestController extends MobEntityController {
     }
 
     public static class EntityMinecartChestNPC extends MinecartChest implements NPCHolder {
-        @Override
-        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityMinecartChestNPC(EntityType<? extends MinecartChest> types, Level level) {
@@ -98,6 +88,16 @@ public class MinecartChestController extends MobEntityController {
                 npc.update();
                 NMSImpl.minecartItemLogic(this);
             }
+        }
+
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
 
     }

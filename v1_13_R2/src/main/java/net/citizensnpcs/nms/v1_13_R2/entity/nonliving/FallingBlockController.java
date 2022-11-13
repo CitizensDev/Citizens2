@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
-import net.minecraft.server.v1_13_R2.Tag;
-import net.minecraft.server.v1_13_R2.FluidType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,8 +24,10 @@ import net.minecraft.server.v1_13_R2.Block;
 import net.minecraft.server.v1_13_R2.Blocks;
 import net.minecraft.server.v1_13_R2.EntityFallingBlock;
 import net.minecraft.server.v1_13_R2.EnumMoveType;
+import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.Tag;
 import net.minecraft.server.v1_13_R2.World;
 import net.minecraft.server.v1_13_R2.WorldServer;
 
@@ -58,11 +57,6 @@ public class FallingBlockController extends AbstractEntityController {
     }
 
     public static class EntityFallingBlockNPC extends EntityFallingBlock implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityFallingBlockNPC(World world) {
@@ -77,6 +71,20 @@ public class FallingBlockController extends AbstractEntityController {
         public EntityFallingBlockNPC(World world, NPC npc, double d0, double d1, double d2, IBlockData data) {
             super(world, d0, d1, d2, data);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override

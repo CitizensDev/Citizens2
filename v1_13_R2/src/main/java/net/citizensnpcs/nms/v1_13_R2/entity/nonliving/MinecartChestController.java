@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
-import net.minecraft.server.v1_13_R2.Tag;
-import net.minecraft.server.v1_13_R2.FluidType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -17,7 +14,9 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.EntityMinecartChest;
+import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.Tag;
 import net.minecraft.server.v1_13_R2.World;
 
 public class MinecartChestController extends MobEntityController {
@@ -31,11 +30,6 @@ public class MinecartChestController extends MobEntityController {
     }
 
     public static class EntityMinecartChestNPC extends EntityMinecartChest implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityMinecartChestNPC(World world) {
@@ -45,6 +39,20 @@ public class MinecartChestController extends MobEntityController {
         public EntityMinecartChestNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override

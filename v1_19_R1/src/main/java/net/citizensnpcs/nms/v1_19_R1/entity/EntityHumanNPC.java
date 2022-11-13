@@ -26,6 +26,7 @@ import com.mojang.datafixers.util.Pair;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.util.SpigotUtil;
@@ -384,6 +385,14 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     @Override
     public boolean isPushable() {
         return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA, !npc.isProtected());
+    }
+
+    @Override
+    public void knockback(double strength, double dx, double dz) {
+        NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+        Bukkit.getPluginManager().callEvent(event);
+        Vector kb = event.getKnockbackVector();
+        super.knockback(event.getStrength(), kb.getX(), kb.getZ());
     }
 
     private void moveOnCurrentHeading() {

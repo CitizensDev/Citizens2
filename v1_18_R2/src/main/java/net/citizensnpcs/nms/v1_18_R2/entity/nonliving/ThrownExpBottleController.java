@@ -36,16 +36,6 @@ public class ThrownExpBottleController extends MobEntityController {
     }
 
     public static class EntityThrownExpBottleNPC extends ThrownExperienceBottle implements NPCHolder {
-        @Override
-        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityThrownExpBottleNPC(EntityType<? extends ThrownExperienceBottle> types, Level level) {
@@ -110,6 +100,16 @@ public class ThrownExpBottleController extends MobEntityController {
             } else {
                 super.tick();
             }
+        }
+
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 

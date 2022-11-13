@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity;import net.minecraft.server.v1_15_R1.Vec3D;import net.minecraft.server.v1_15_R1.Tag;import net.minecraft.server.v1_15_R1.FluidType;
+package net.citizensnpcs.nms.v1_15_R1.entity;
 
 import java.util.UUID;
 

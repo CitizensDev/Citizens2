@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftCaveSpider;
@@ -10,6 +8,7 @@ import org.bukkit.entity.CaveSpider;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
@@ -48,16 +47,6 @@ public class CaveSpiderController extends MobEntityController {
     }
 
     public static class EntityCaveSpiderNPC extends EntityCaveSpider implements NPCHolder {
-        @Override
-        public boolean a(Tag<FluidType> tag, double d0) {
-            Vec3D old = getMot().add(0, 0, 0);
-            boolean res = super.a(tag, d0);
-            if (!npc.isPushableByFluids()) {
-                this.setMot(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityCaveSpiderNPC(EntityTypes<? extends EntityCaveSpider> types, World world) {
@@ -74,6 +63,24 @@ public class CaveSpiderController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public void a(float strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.a((float)event.getStrength(), kb.getX(), kb.getZ());
+        }
+
+        @Override
+        public boolean a(Tag<FluidType> tag, double d0) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

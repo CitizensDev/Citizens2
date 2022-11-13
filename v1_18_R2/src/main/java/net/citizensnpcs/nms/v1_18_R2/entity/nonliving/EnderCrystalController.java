@@ -41,16 +41,6 @@ public class EnderCrystalController extends MobEntityController {
     }
 
     public static class EntityEnderCrystalNPC extends EndCrystal implements NPCHolder {
-        @Override
-        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderCrystalNPC(EntityType<? extends EndCrystal> types, Level level) {
@@ -112,6 +102,16 @@ public class EnderCrystalController extends MobEntityController {
             } else {
                 super.tick();
             }
+        }
+
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 }

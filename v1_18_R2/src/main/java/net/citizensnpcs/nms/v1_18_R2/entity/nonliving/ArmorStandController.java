@@ -45,16 +45,6 @@ public class ArmorStandController extends MobEntityController {
     }
 
     public static class EntityArmorStandNPC extends ArmorStand implements NPCHolder {
-        @Override
-        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityArmorStandNPC(EntityType<? extends ArmorStand> types, Level level) {
@@ -126,6 +116,16 @@ public class ArmorStandController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
+        }
+
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 }

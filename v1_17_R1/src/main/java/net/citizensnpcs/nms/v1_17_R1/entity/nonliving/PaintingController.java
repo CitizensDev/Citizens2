@@ -33,16 +33,6 @@ public class PaintingController extends MobEntityController {
     }
 
     public static class EntityPaintingNPC extends Painting implements NPCHolder {
-        @Override
-        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityPaintingNPC(EntityType<? extends Painting> types, Level level) {
@@ -102,6 +92,16 @@ public class PaintingController extends MobEntityController {
             } else {
                 super.tick();
             }
+        }
+
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 

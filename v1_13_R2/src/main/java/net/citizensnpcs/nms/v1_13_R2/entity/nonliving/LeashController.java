@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
-import net.minecraft.server.v1_13_R2.Tag;
-import net.minecraft.server.v1_13_R2.FluidType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -16,7 +13,9 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.EntityLeash;
+import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.Tag;
 import net.minecraft.server.v1_13_R2.World;
 
 public class LeashController extends MobEntityController {
@@ -30,11 +29,6 @@ public class LeashController extends MobEntityController {
     }
 
     public static class EntityLeashNPC extends EntityLeash implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityLeashNPC(World world) {
@@ -44,6 +38,20 @@ public class LeashController extends MobEntityController {
         public EntityLeashNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override
@@ -83,17 +91,17 @@ public class LeashController extends MobEntityController {
         }
 
         @Override
+        public boolean survives() {
+            return npc == null || !npc.isProtected() ? super.survives() : true;
+        }
+
+        @Override
         public void tick() {
             if (npc != null) {
                 npc.update();
             } else {
                 super.tick();
             }
-        }
-
-        @Override
-        public boolean survives() {
-            return npc == null || !npc.isProtected() ? super.survives() : true;
         }
     }
 

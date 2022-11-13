@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity.nonliving;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

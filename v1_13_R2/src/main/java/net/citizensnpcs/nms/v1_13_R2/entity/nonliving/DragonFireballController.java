@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
-import net.minecraft.server.v1_13_R2.Tag;
-import net.minecraft.server.v1_13_R2.FluidType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftDragonFireball;
@@ -17,7 +14,9 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.EntityDragonFireball;
+import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.Tag;
 import net.minecraft.server.v1_13_R2.World;
 
 public class DragonFireballController extends MobEntityController {
@@ -45,11 +44,6 @@ public class DragonFireballController extends MobEntityController {
     }
 
     public static class EntityDragonFireballNPC extends EntityDragonFireball implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityDragonFireballNPC(World world) {
@@ -59,6 +53,20 @@ public class DragonFireballController extends MobEntityController {
         public EntityDragonFireballNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override
@@ -98,6 +106,15 @@ public class DragonFireballController extends MobEntityController {
         }
 
         @Override
+        public void setSize(float f, float f1) {
+            if (npc == null) {
+                super.setSize(f, f1);
+            } else {
+                NMSImpl.setSize(this, f, f1, justCreated);
+            }
+        }
+
+        @Override
         public void tick() {
             if (npc != null) {
                 npc.update();
@@ -106,15 +123,6 @@ public class DragonFireballController extends MobEntityController {
                 }
             } else {
                 super.tick();
-            }
-        }
-
-        @Override
-        public void setSize(float f, float f1) {
-            if (npc == null) {
-                super.setSize(f, f1);
-            } else {
-                NMSImpl.setSize(this, f, f1, justCreated);
             }
         }
     }

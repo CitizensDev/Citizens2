@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_18_R2.entity.CraftGoat;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSImpl;
@@ -41,17 +42,8 @@ public class GoatController extends MobEntityController {
     }
 
     public static class EntityGoatNPC extends Goat implements NPCHolder {
-        @Override
-        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
-        }
-
         boolean calledNMSHeight = false;
+
         private final CitizensNPC npc;
 
         public EntityGoatNPC(EntityType<? extends Goat> types, Level level) {
@@ -157,6 +149,14 @@ public class GoatController extends MobEntityController {
         }
 
         @Override
+        public void knockback(double strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
+        }
+
+        @Override
         public boolean onClimbable() {
             if (npc == null || !npc.isFlyable()) {
                 return super.onClimbable();
@@ -213,6 +213,16 @@ public class GoatController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+        }
+
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 

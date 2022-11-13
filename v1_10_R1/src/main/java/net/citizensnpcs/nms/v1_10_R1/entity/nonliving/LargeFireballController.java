@@ -76,15 +76,6 @@ public class LargeFireballController extends MobEntityController {
         }
 
         @Override
-        public void setSize(float f, float f1) {
-            if (npc == null) {
-                super.setSize(f, f1);
-            } else {
-                NMSImpl.setSize(this, f, f1, justCreated);
-            }
-        }
-
-        @Override
         public void m() {
             if (npc != null) {
                 npc.update();
@@ -93,6 +84,15 @@ public class LargeFireballController extends MobEntityController {
                 }
             } else {
                 super.m();
+            }
+        }
+
+        @Override
+        public void setSize(float f, float f1) {
+            if (npc == null) {
+                super.setSize(f, f1);
+            } else {
+                NMSImpl.setSize(this, f, f1, justCreated);
             }
         }
     }

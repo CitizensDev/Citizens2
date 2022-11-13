@@ -43,16 +43,6 @@ public class FishingHookController extends MobEntityController {
     }
 
     public static class EntityFishingHookNPC extends FishingHook implements NPCHolder {
-        @Override
-        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityFishingHookNPC(EntityType<? extends FishingHook> types, Level level) {
@@ -122,6 +112,16 @@ public class FishingHookController extends MobEntityController {
             } else {
                 super.tick();
             }
+        }
+
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 

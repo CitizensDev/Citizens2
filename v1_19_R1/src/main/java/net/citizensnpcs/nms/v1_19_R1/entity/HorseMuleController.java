@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_19_R1.entity.CraftMule;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R1.util.NMSImpl;
@@ -54,6 +55,7 @@ public class HorseMuleController extends MobEntityController {
 
     public static class EntityHorseMuleNPC extends Mule implements NPCHolder {
         private double baseMovementSpeed;
+
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
         private boolean riding;
@@ -183,6 +185,14 @@ public class HorseMuleController extends MobEntityController {
         @Override
         public boolean isVehicle() {
             return npc != null && npc.getNavigator().isNavigating() ? false : super.isVehicle();
+        }
+
+        @Override
+        public void knockback(double strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
         }
 
         @Override

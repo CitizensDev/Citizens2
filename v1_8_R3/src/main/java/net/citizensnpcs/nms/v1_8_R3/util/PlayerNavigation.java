@@ -131,13 +131,7 @@ public class PlayerNavigation extends NavigationAbstract {
                 if (d1 * paramDouble1 + d2 * paramDouble2 >= 0.0D) {
                     Block localBlock = this.c.getType(new BlockPosition(k, paramInt2 - 1, m)).getBlock();
                     Material localMaterial = localBlock.getMaterial();
-                    if (localMaterial == Material.AIR) {
-                        return false;
-                    }
-                    if ((localMaterial == Material.WATER) && (!this.b.V())) {
-                        return false;
-                    }
-                    if (localMaterial == Material.LAVA) {
+                    if ((localMaterial == Material.AIR) || ((localMaterial == Material.WATER) && (!this.b.V())) || (localMaterial == Material.LAVA)) {
                         return false;
                     }
                 }

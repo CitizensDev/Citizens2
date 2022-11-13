@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
-import net.minecraft.server.v1_13_R2.Tag;
-import net.minecraft.server.v1_13_R2.FluidType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -11,6 +8,7 @@ import org.bukkit.entity.TropicalFish;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -25,11 +23,13 @@ import net.minecraft.server.v1_13_R2.EntityHuman;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.EntityTropicalFish;
 import net.minecraft.server.v1_13_R2.EnumHand;
+import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.ItemStack;
 import net.minecraft.server.v1_13_R2.Items;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
+import net.minecraft.server.v1_13_R2.Tag;
 import net.minecraft.server.v1_13_R2.World;
 
 public class TropicalFishController extends MobEntityController {
@@ -43,11 +43,6 @@ public class TropicalFishController extends MobEntityController {
     }
 
     public static class EntityTropicalFishNPC extends EntityTropicalFish implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityTropicalFishNPC(World world) {
@@ -70,6 +65,14 @@ public class TropicalFishController extends MobEntityController {
         }
 
         @Override
+        public void a(Entity entity, float strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.a(entity, (float) event.getStrength(), kb.getX(), kb.getZ());
+        }
+
+        @Override
         public boolean a(EntityHuman entityhuman, EnumHand enumhand) {
             if (npc == null || !npc.isProtected())
                 return super.a(entityhuman, enumhand);
@@ -89,6 +92,20 @@ public class TropicalFishController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override

@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.net.Socket;
@@ -119,11 +117,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     public float a(PathType pathtype) {
-        return this.bz.containsKey(pathtype) ? this.bz.get(pathtype).floatValue() : pathtype.a();
+        return this.bz.containsKey(pathtype) ? this.bz.get(pathtype) : pathtype.a();
     }
 
     public void a(PathType pathtype, float f) {
-        this.bz.put(pathtype, Float.valueOf(f));
+        this.bz.put(pathtype, f);
     }
 
     @Override

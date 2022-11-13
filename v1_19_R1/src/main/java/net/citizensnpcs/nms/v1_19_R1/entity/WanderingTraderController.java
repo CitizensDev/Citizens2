@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_19_R1.entity.CraftWanderingTrader;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R1.util.NMSImpl;
@@ -48,6 +49,7 @@ public class WanderingTraderController extends MobEntityController {
 
     public static class EntityWanderingTraderNPC extends WanderingTrader implements NPCHolder {
         private boolean blockingATrade;
+
         private boolean blockTrades = true;
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
@@ -159,6 +161,14 @@ public class WanderingTraderController extends MobEntityController {
                 return true;
             }
             return super.isTrading();
+        }
+
+        @Override
+        public void knockback(double strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
         }
 
         @Override

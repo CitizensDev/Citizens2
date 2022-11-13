@@ -90,20 +90,20 @@ public class BoatController extends MobEntityController {
         }
 
         @Override
-        public void setSize(float f, float f1) {
-            if (npc == null) {
-                super.setSize(f, f1);
-            } else {
-                NMSImpl.setSize(this, f, f1, justCreated);
-            }
-        }
-
-        @Override
         public void m() {
             if (npc != null) {
                 npc.update();
             } else {
                 super.m();
+            }
+        }
+
+        @Override
+        public void setSize(float f, float f1) {
+            if (npc == null) {
+                super.setSize(f, f1);
+            } else {
+                NMSImpl.setSize(this, f, f1, justCreated);
             }
         }
     }

@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity.nonliving;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
@@ -46,16 +44,6 @@ public class ArmorStandController extends MobEntityController {
     }
 
     public static class EntityArmorStandNPC extends EntityArmorStand implements NPCHolder {
-        @Override
-        public boolean a(Tag<FluidType> tag, double d0) {
-            Vec3D old = getMot().add(0, 0, 0);
-            boolean res = super.a(tag, d0);
-            if (!npc.isPushableByFluids()) {
-                this.setMot(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityArmorStandNPC(EntityTypes<? extends EntityArmorStand> types, World world) {
@@ -76,6 +64,16 @@ public class ArmorStandController extends MobEntityController {
                     getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);
             return event.isCancelled() ? EnumInteractionResult.FAIL : EnumInteractionResult.SUCCESS;
+        }
+
+        @Override
+        public boolean a(Tag<FluidType> tag, double d0) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

@@ -47,11 +47,6 @@ public class EnderCrystalController extends MobEntityController {
             this(world, null);
         }
 
-        @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
-
         public EntityEnderCrystalNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
@@ -65,6 +60,11 @@ public class EnderCrystalController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override

@@ -39,11 +39,6 @@ public class FireworkController extends MobEntityController {
         }
 
         @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
-
-        @Override
         public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -51,6 +46,11 @@ public class FireworkController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override

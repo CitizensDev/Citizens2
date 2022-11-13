@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
-import net.minecraft.server.v1_13_R2.Tag;
-import net.minecraft.server.v1_13_R2.FluidType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
@@ -20,7 +17,9 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.EntityLlama;
 import net.minecraft.server.v1_13_R2.EntityLlamaSpit;
+import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.Tag;
 import net.minecraft.server.v1_13_R2.World;
 import net.minecraft.server.v1_13_R2.WorldServer;
 
@@ -43,11 +42,6 @@ public class LlamaSpitController extends AbstractEntityController {
     }
 
     public static class EntityLlamaSpitNPC extends EntityLlamaSpit implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityLlamaSpitNPC(World world) {
@@ -65,15 +59,17 @@ public class LlamaSpitController extends AbstractEntityController {
         }
 
         @Override
-        public void tick() {
-            if (npc != null) {
-                npc.update();
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
-                    super.tick();
-                }
-            } else {
-                super.tick();
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
             }
+            return res;
         }
 
         @Override
@@ -110,6 +106,18 @@ public class LlamaSpitController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void tick() {
+            if (npc != null) {
+                npc.update();
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                    super.tick();
+                }
+            } else {
+                super.tick();
+            }
         }
     }
 

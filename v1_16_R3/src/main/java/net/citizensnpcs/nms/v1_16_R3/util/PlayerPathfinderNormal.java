@@ -51,7 +51,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     }
 
     private boolean a(AxisAlignedBB var0) {
-        return this.l.computeIfAbsent(var0, var1 -> Boolean.valueOf(!this.a.getCubes(this.b, var0))).booleanValue();
+        return this.l.computeIfAbsent(var0, var1 -> !this.a.getCubes(this.b, var0));
     }
 
     @Override
@@ -269,9 +269,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     }
 
     private boolean a(PathPoint var0, PathPoint var1, PathPoint var2, PathPoint var3) {
-        if (var3 == null || var2 == null || var1 == null)
-            return false;
-        if (var3.i)
+        if (var3 == null || var2 == null || var1 == null || var3.i)
             return false;
         if (var2.b > var0.b || var1.b > var0.b)
             return false;

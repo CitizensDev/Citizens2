@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity.nonliving;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
@@ -22,6 +20,7 @@ import net.minecraft.server.v1_16_R3.FluidType;
 import net.minecraft.server.v1_16_R3.Items;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.Tag;
+import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.World;
 
 public class ThrownPotionController extends MobEntityController {

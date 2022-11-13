@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity;import net.minecraft.server.v1_15_R1.Vec3D;import net.minecraft.server.v1_15_R1.Tag;import net.minecraft.server.v1_15_R1.FluidType;
+package net.citizensnpcs.nms.v1_15_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
@@ -8,6 +8,7 @@ import org.bukkit.entity.Parrot;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
@@ -22,8 +23,11 @@ import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityParrot;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.EnumHand;
+import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import net.minecraft.server.v1_15_R1.SoundEffect;
+import net.minecraft.server.v1_15_R1.Tag;
+import net.minecraft.server.v1_15_R1.Vec3D;
 import net.minecraft.server.v1_15_R1.World;
 
 public class ParrotController extends MobEntityController {
@@ -36,7 +40,7 @@ public class ParrotController extends MobEntityController {
         return (Parrot) super.getBukkitEntity();
     }
 
-    public static class EntityParrotNPC extends EntityParrot implements NPCHolder {@Override public boolean b(Tag<FluidType> tag) { Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res; }
+    public static class EntityParrotNPC extends EntityParrot implements NPCHolder {
         private final CitizensNPC npc;
 
         public EntityParrotNPC(EntityTypes<? extends EntityParrot> types, World world) {
@@ -49,12 +53,30 @@ public class ParrotController extends MobEntityController {
         }
 
         @Override
+        public void a(Entity entity, float strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.a(entity, (float) event.getStrength(), kb.getX(), kb.getZ());
+        }
+
+        @Override
         public boolean a(EntityHuman paramEntityHuman, EnumHand paramEnumHand) {
             // block feeding
             if (npc == null || !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
                 return super.a(paramEntityHuman, paramEnumHand);
             }
             return false;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

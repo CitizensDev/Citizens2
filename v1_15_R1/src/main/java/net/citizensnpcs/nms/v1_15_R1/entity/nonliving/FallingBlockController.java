@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;import net.minecraft.server.v1_15_R1.Vec3D;
+package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -77,7 +77,12 @@ public class FallingBlockController extends AbstractEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

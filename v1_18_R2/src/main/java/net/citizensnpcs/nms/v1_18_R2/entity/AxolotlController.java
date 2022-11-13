@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 import com.mojang.serialization.Dynamic;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSImpl;
@@ -57,6 +58,7 @@ public class AxolotlController extends MobEntityController {
 
     public static class EntityAxolotlNPC extends Axolotl implements NPCHolder {
         private final CitizensNPC npc;
+
         private MoveControl oldMoveController;
 
         public EntityAxolotlNPC(EntityType<? extends Axolotl> types, Level level) {
@@ -156,6 +158,14 @@ public class AxolotlController extends MobEntityController {
                 dropLeash(true, false); // clearLeash with client update
             }
             return false; // shouldLeash
+        }
+
+        @Override
+        public void knockback(double strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
         }
 
         @Override

@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity.nonliving;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftBoat;
@@ -48,17 +46,8 @@ public class BoatController extends MobEntityController {
     }
 
     public static class EntityBoatNPC extends EntityBoat implements NPCHolder {
-        @Override
-        public boolean a(Tag<FluidType> tag, double d0) {
-            Vec3D old = getMot().add(0, 0, 0);
-            boolean res = super.a(tag, d0);
-            if (!npc.isPushableByFluids()) {
-                this.setMot(old);
-            }
-            return res;
-        }
-
         private double aC;
+
         private float aD;
         private EnumStatus aE;
         private EnumStatus aF;
@@ -73,6 +62,16 @@ public class BoatController extends MobEntityController {
         public EntityBoatNPC(EntityTypes<? extends EntityBoat> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean a(Tag<FluidType> tag, double d0) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

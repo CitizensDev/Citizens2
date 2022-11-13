@@ -33,14 +33,18 @@ public class WitherSkullController extends MobEntityController {
             this(world, null);
         }
 
-        @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
-
         public EntityWitherSkullNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void A_() {
+            if (npc != null) {
+                npc.update();
+            } else {
+                super.A_();
+            }
         }
 
         @Override
@@ -51,6 +55,11 @@ public class WitherSkullController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -72,15 +81,6 @@ public class WitherSkullController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void A_() {
-            if (npc != null) {
-                npc.update();
-            } else {
-                super.A_();
-            }
         }
     }
 

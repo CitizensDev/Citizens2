@@ -1,7 +1,4 @@
-package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;import net.minecraft.server.v1_14_R1.Vec3D;
-
-import net.minecraft.server.v1_14_R1.Tag;
-import net.minecraft.server.v1_14_R1.FluidType;
+package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
@@ -18,7 +15,10 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.EntityBoat;
 import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_14_R1.FluidType;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
+import net.minecraft.server.v1_14_R1.Tag;
+import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 
 public class BoatController extends MobEntityController {
@@ -46,11 +46,6 @@ public class BoatController extends MobEntityController {
     }
 
     public static class EntityBoatNPC extends EntityBoat implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityBoatNPC(EntityTypes<? extends EntityBoat> types, World world) {
@@ -60,6 +55,16 @@ public class BoatController extends MobEntityController {
         public EntityBoatNPC(EntityTypes<? extends EntityBoat> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override
@@ -99,20 +104,20 @@ public class BoatController extends MobEntityController {
         }
 
         @Override
-        public void updateSize() {
-            if (npc == null) {
-                super.updateSize();
-            } else {
-                NMSImpl.setSize(this, justCreated);
-            }
-        }
-
-        @Override
         public void tick() {
             if (npc != null) {
                 npc.update();
             } else {
                 super.tick();
+            }
+        }
+
+        @Override
+        public void updateSize() {
+            if (npc == null) {
+                super.updateSize();
+            } else {
+                NMSImpl.setSize(this, justCreated);
             }
         }
     }

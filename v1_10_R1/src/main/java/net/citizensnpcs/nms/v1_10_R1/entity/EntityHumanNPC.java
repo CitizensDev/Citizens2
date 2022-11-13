@@ -104,11 +104,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     public float a(PathType pathtype) {
-        return this.bz.containsKey(pathtype) ? this.bz.get(pathtype).floatValue() : pathtype.a();
+        return this.bz.containsKey(pathtype) ? this.bz.get(pathtype) : pathtype.a();
     }
 
     public void a(PathType pathtype, float f) {
-        this.bz.put(pathtype, Float.valueOf(f));
+        this.bz.put(pathtype, f);
     }
 
     @Override

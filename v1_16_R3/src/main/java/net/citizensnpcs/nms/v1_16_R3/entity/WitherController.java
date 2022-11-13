@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
@@ -10,6 +8,7 @@ import org.bukkit.entity.Wither;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
@@ -26,6 +25,7 @@ import net.minecraft.server.v1_16_R3.FluidType;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.SoundEffect;
 import net.minecraft.server.v1_16_R3.Tag;
+import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.World;
 
 public class WitherController extends MobEntityController {
@@ -39,16 +39,6 @@ public class WitherController extends MobEntityController {
     }
 
     public static class EntityWitherNPC extends EntityWither implements NPCHolder {
-        @Override
-        public boolean a(Tag<FluidType> tag, double d0) {
-            Vec3D old = getMot().add(0, 0, 0);
-            boolean res = super.a(tag, d0);
-            if (!npc.isPushableByFluids()) {
-                this.setMot(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityWitherNPC(EntityTypes<? extends EntityWither> types, World world) {
@@ -58,6 +48,24 @@ public class WitherController extends MobEntityController {
         public EntityWitherNPC(EntityTypes<? extends EntityWither> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void a(float strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.a((float)event.getStrength(), kb.getX(), kb.getZ());
+        }
+
+        @Override
+        public boolean a(Tag<FluidType> tag, double d0) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

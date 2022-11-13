@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftBat;
@@ -10,6 +8,7 @@ import org.bukkit.entity.Bat;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
@@ -26,6 +25,7 @@ import net.minecraft.server.v1_16_R3.FluidType;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.SoundEffect;
 import net.minecraft.server.v1_16_R3.Tag;
+import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.World;
 
 public class BatController extends MobEntityController {
@@ -57,6 +57,14 @@ public class BatController extends MobEntityController {
             if (npc != null) {
                 setFlying(false);
             }
+        }
+
+        @Override
+        public void a(float strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.a((float)event.getStrength(), kb.getX(), kb.getZ());
         }
 
         @Override

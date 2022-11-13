@@ -148,7 +148,7 @@ public class PlayerNavigation extends PathNavigation {
         }
         return true;
     }
-    
+
     private boolean canWalkOn(int var0, int var1, int var2, int var3, int var4, int var5, Vec3 var6, double var7,
             double var9) {
         int var11 = var0 - var3 / 2;

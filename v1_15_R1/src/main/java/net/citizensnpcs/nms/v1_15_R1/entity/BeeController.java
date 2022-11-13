@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity;import net.minecraft.server.v1_15_R1.Vec3D;import net.minecraft.server.v1_15_R1.Tag;import net.minecraft.server.v1_15_R1.FluidType;
+package net.citizensnpcs.nms.v1_15_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
@@ -8,6 +8,7 @@ import org.bukkit.entity.Bee;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
@@ -20,8 +21,11 @@ import net.minecraft.server.v1_15_R1.EntityBee;
 import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityTypes;
+import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import net.minecraft.server.v1_15_R1.SoundEffect;
+import net.minecraft.server.v1_15_R1.Tag;
+import net.minecraft.server.v1_15_R1.Vec3D;
 import net.minecraft.server.v1_15_R1.World;
 
 public class BeeController extends MobEntityController {
@@ -40,7 +44,7 @@ public class BeeController extends MobEntityController {
         }
     }
 
-    public static class EntityBeeNPC extends EntityBee implements NPCHolder {@Override public boolean b(Tag<FluidType> tag) { Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res; }
+    public static class EntityBeeNPC extends EntityBee implements NPCHolder {
         private final CitizensNPC npc;
 
         public EntityBeeNPC(EntityTypes<? extends EntityBee> types, World world) {
@@ -50,6 +54,24 @@ public class BeeController extends MobEntityController {
         public EntityBeeNPC(EntityTypes<? extends EntityBee> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void a(Entity entity, float strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.a(entity, (float) event.getStrength(), kb.getX(), kb.getZ());
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

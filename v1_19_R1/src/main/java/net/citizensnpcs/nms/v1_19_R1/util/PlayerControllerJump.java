@@ -10,12 +10,12 @@ public class PlayerControllerJump {
         this.b = entityinsentient;
     }
 
+    public void jump() {
+        this.a = true;
+    }
+
     public void tick() {
         this.b.setJumping(this.a);
         this.a = false;
-    }
-
-    public void jump() {
-        this.a = true;
     }
 }

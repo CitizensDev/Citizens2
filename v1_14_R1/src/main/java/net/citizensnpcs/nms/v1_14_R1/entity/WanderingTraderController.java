@@ -1,7 +1,4 @@
-package net.citizensnpcs.nms.v1_14_R1.entity;import net.minecraft.server.v1_14_R1.Vec3D;
-
-import net.minecraft.server.v1_14_R1.Tag;
-import net.minecraft.server.v1_14_R1.FluidType;
+package net.citizensnpcs.nms.v1_14_R1.entity;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -14,6 +11,7 @@ import org.bukkit.entity.WanderingTrader;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -30,10 +28,12 @@ import net.minecraft.server.v1_14_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EntityVillagerTrader;
 import net.minecraft.server.v1_14_R1.EnumHand;
+import net.minecraft.server.v1_14_R1.FluidType;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.MerchantRecipe;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.SoundEffect;
+import net.minecraft.server.v1_14_R1.Tag;
 import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 
@@ -48,13 +48,10 @@ public class WanderingTraderController extends MobEntityController {
     }
 
     public static class EntityWanderingTraderNPC extends EntityVillagerTrader implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
-        }
-
         private TreeMap<?, ?> behaviorMap;
+
         private boolean blockingATrade;
+
         private boolean blockTrades = true;
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
@@ -87,6 +84,14 @@ public class WanderingTraderController extends MobEntityController {
         }
 
         @Override
+        public void a(Entity entity, float strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.a(entity, (float) event.getStrength(), kb.getX(), kb.getZ());
+        }
+
+        @Override
         public boolean a(EntityHuman entityhuman, EnumHand enumhand) {
             if (npc != null && blockTrades) {
                 blockingATrade = true;
@@ -103,6 +108,16 @@ public class WanderingTraderController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
             }
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

@@ -54,6 +54,18 @@ public class DragonFireballController extends MobEntityController {
         }
 
         @Override
+        public void B_() {
+            if (npc != null) {
+                npc.update();
+                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                    super.B_();
+                }
+            } else {
+                super.B_();
+            }
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_12_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -87,18 +99,6 @@ public class DragonFireballController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void B_() {
-            if (npc != null) {
-                npc.update();
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
-                    super.B_();
-                }
-            } else {
-                super.B_();
-            }
         }
 
         @Override

@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_19_R1.entity.CraftTropicalFish;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R1.util.NMSImpl;
@@ -49,6 +50,7 @@ public class TropicalFishController extends MobEntityController {
 
     public static class EntityTropicalFishNPC extends TropicalFish implements NPCHolder {
         private final CitizensNPC npc;
+
         private MoveControl oldMoveController;
 
         public EntityTropicalFishNPC(EntityType<? extends TropicalFish> types, Level level) {
@@ -170,6 +172,14 @@ public class TropicalFishController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(this, super.isLeashed());
+        }
+
+        @Override
+        public void knockback(double strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
         }
 
         @Override

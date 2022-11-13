@@ -967,7 +967,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setEndermanAngry(org.bukkit.entity.Enderman enderman, boolean angry) {
-        getHandle(enderman).getDataWatcher().watch(17, Byte.valueOf((byte) (angry ? 1 : 0)));
+        getHandle(enderman).getDataWatcher().watch(17, (byte) (angry ? 1 : 0));
     }
 
     @Override
@@ -999,9 +999,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setNoGravity(org.bukkit.entity.Entity entity, boolean enabled) {
-        if (!enabled)
-            return;
-        if (((NPCHolder) entity).getNPC().getNavigator().isNavigating())
+        if (!enabled || ((NPCHolder) entity).getNPC().getNavigator().isNavigating())
             return; // use legacy gravity behaviour
         Vector vector = entity.getVelocity();
         vector.setY(Math.max(0, vector.getY()));
@@ -1301,7 +1299,7 @@ public class NMSImpl implements NMSBridge {
         @Override
         public void update() {
             updateNavigation(navigation);
-        };
+        }
     }
 
     private static class NavigationIterable implements Iterable<Vector> {

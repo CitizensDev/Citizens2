@@ -187,11 +187,7 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     protected boolean a(PathType var0) {
-        if (var0 == PathType.WATER)
-            return false;
-        if (var0 == PathType.LAVA)
-            return false;
-        if (var0 == PathType.OPEN)
+        if ((var0 == PathType.WATER) || (var0 == PathType.LAVA) || (var0 == PathType.OPEN))
             return false;
         return true;
     }
@@ -203,11 +199,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected PathEntity a(Set<BlockPosition> var0, int var1, boolean var2, int var3) {
-        if (var0.isEmpty())
-            return null;
-        if (this.a.locY() < 0.0D)
-            return null;
-        if (!a())
+        if (var0.isEmpty() || (this.a.locY() < 0.0D) || !a())
             return null;
         if (this.c != null && !this.c.c() && var0.contains(this.p))
             return this.c;

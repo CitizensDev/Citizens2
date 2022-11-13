@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity.nonliving;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEnderPearl;
@@ -21,6 +19,7 @@ import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.FluidType;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.Tag;
+import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.World;
 
 public class EnderPearlController extends MobEntityController {
@@ -40,16 +39,6 @@ public class EnderPearlController extends MobEntityController {
     }
 
     public static class EntityEnderPearlNPC extends EntityEnderPearl implements NPCHolder {
-        @Override
-        public boolean a(Tag<FluidType> tag, double d0) {
-            Vec3D old = getMot().add(0, 0, 0);
-            boolean res = super.a(tag, d0);
-            if (!npc.isPushableByFluids()) {
-                this.setMot(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderPearlNPC(EntityTypes<? extends EntityEnderPearl> types, World world) {
@@ -59,6 +48,16 @@ public class EnderPearlController extends MobEntityController {
         public EntityEnderPearlNPC(EntityTypes<? extends EntityEnderPearl> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean a(Tag<FluidType> tag, double d0) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

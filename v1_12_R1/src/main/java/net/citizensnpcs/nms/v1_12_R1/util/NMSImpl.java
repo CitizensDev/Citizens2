@@ -1427,7 +1427,7 @@ public class NMSImpl implements NMSBridge {
         @Override
         public void update() {
             updateNavigation(navigation);
-        };
+        }
     }
 
     private static class NavigationIterable implements Iterable<Vector> {
@@ -1757,7 +1757,7 @@ public class NMSImpl implements NMSBridge {
             if ((entity.width > f2) && (!justCreated) && (!entity.world.isClientSide))
                 entity.move(EnumMoveType.SELF, (f2 - entity.width) / 2, 0.0D, (f2 - entity.width) / 2);
         }
-    };
+    }
 
     public static void stopNavigation(NavigationAbstract navigation) {
         navigation.p();

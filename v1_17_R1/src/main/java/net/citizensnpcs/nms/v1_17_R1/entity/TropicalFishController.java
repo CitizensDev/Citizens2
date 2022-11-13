@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftTropicalFish;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
@@ -46,17 +47,8 @@ public class TropicalFishController extends MobEntityController {
     }
 
     public static class EntityTropicalFishNPC extends TropicalFish implements NPCHolder {
-        @Override
-        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
-        }
-
         private final CitizensNPC npc;
+
         private MoveControl oldMoveController;
 
         public EntityTropicalFishNPC(EntityType<? extends TropicalFish> types, Level level) {
@@ -189,6 +181,14 @@ public class TropicalFishController extends MobEntityController {
         }
 
         @Override
+        public void knockback(double strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
+        }
+
+        @Override
         protected InteractionResult mobInteract(Player entityhuman, InteractionHand enumhand) {
             if (npc == null || !npc.isProtected())
                 return super.mobInteract(entityhuman, enumhand);
@@ -239,6 +239,16 @@ public class TropicalFishController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+        }
+
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 

@@ -1,7 +1,4 @@
-package net.citizensnpcs.nms.v1_14_R1.entity;import net.minecraft.server.v1_14_R1.Vec3D;
-
-import net.minecraft.server.v1_14_R1.Tag;
-import net.minecraft.server.v1_14_R1.FluidType;
+package net.citizensnpcs.nms.v1_14_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
@@ -11,6 +8,7 @@ import org.bukkit.entity.PufferFish;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -29,11 +27,13 @@ import net.minecraft.server.v1_14_R1.EntityPufferFish;
 import net.minecraft.server.v1_14_R1.EntitySize;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EnumHand;
+import net.minecraft.server.v1_14_R1.FluidType;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.ItemStack;
 import net.minecraft.server.v1_14_R1.Items;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.SoundEffect;
+import net.minecraft.server.v1_14_R1.Tag;
 import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 
@@ -48,11 +48,6 @@ public class PufferFishController extends MobEntityController {
     }
 
     public static class EntityPufferFishNPC extends EntityPufferFish implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityPufferFishNPC(EntityTypes<? extends EntityPufferFish> types, World world) {
@@ -72,6 +67,14 @@ public class PufferFishController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public void a(Entity entity, float strength, double dx, double dz) {
+            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+            Bukkit.getPluginManager().callEvent(event);
+            Vector kb = event.getKnockbackVector();
+            super.a(entity, (float) event.getStrength(), kb.getX(), kb.getZ());
         }
 
         @Override
@@ -98,6 +101,16 @@ public class PufferFishController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
             }
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

@@ -1,8 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
-import net.minecraft.server.v1_13_R2.Tag;
-import net.minecraft.server.v1_13_R2.FluidType;
-
 import java.util.UUID;
 
 import org.bukkit.Bukkit;

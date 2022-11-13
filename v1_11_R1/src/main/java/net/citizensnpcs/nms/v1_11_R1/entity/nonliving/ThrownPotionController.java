@@ -40,6 +40,15 @@ public class ThrownPotionController extends MobEntityController {
         }
 
         @Override
+        public void A_() {
+            if (npc != null) {
+                npc.update();
+            } else {
+                super.A_();
+            }
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_11_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -77,15 +86,6 @@ public class ThrownPotionController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void A_() {
-            if (npc != null) {
-                npc.update();
-            } else {
-                super.A_();
-            }
         }
     }
 

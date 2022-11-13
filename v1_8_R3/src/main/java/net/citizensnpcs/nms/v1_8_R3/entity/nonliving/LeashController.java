@@ -75,17 +75,17 @@ public class LeashController extends MobEntityController {
         }
 
         @Override
+        public boolean survives() {
+            return npc == null || !npc.isProtected() ? super.survives() : true;
+        }
+
+        @Override
         public void t_() {
             if (npc != null) {
                 npc.update();
             } else {
                 super.t_();
             }
-        }
-
-        @Override
-        public boolean survives() {
-            return npc == null || !npc.isProtected() ? super.survives() : true;
         }
     }
 

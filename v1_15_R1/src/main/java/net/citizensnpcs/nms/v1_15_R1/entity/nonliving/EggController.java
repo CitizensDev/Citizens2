@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;import net.minecraft.server.v1_15_R1.Vec3D;
+package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,6 +22,7 @@ import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import net.minecraft.server.v1_15_R1.Tag;
+import net.minecraft.server.v1_15_R1.Vec3D;
 import net.minecraft.server.v1_15_R1.World;
 import net.minecraft.server.v1_15_R1.WorldServer;
 
@@ -67,7 +68,12 @@ public class EggController extends AbstractEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

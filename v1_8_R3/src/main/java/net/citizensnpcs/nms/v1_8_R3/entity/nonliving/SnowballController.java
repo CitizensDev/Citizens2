@@ -26,30 +26,11 @@ public class SnowballController extends MobEntityController {
         return (Snowball) super.getBukkitEntity();
     }
 
-    public static class SnowballNPC extends CraftSnowball implements NPCHolder {
-        private final CitizensNPC npc;
-
-        public SnowballNPC(EntitySnowballNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
-        }
-    }
-
     public static class EntitySnowballNPC extends EntitySnowball implements NPCHolder {
         private final CitizensNPC npc;
 
         public EntitySnowballNPC(World world) {
             this(world, null);
-        }
-
-        @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
         }
 
         public EntitySnowballNPC(World world, NPC npc) {
@@ -65,6 +46,11 @@ public class SnowballController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -95,6 +81,20 @@ public class SnowballController extends MobEntityController {
             } else {
                 super.t_();
             }
+        }
+    }
+
+    public static class SnowballNPC extends CraftSnowball implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public SnowballNPC(EntitySnowballNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 }

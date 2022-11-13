@@ -421,7 +421,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             for (var2 = new BlockPosition(
                     this.b); (this.a.getType(var2).isAir() || this.a.getType(var2).a(this.a, var2, PathMode.LAND))
                             && var2.getY() > 0; var2 = var2.down()) {
-                ;
+
             }
 
             var1 = var2.up().getY();

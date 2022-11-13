@@ -159,15 +159,7 @@ public class PlayerNavigation extends NavigationAbstract {
                     double var17 = var14 + 0.5D - var6.z;
                     if (var15 * var7 + var17 * var9 >= 0.0D) {
                         PathType var19 = this.o.a(this.b, var13, var1 - 1, var14, this.a, var3, var4, var5, true, true);
-                        if (var19 == PathType.WATER) {
-                            return false;
-                        }
-
-                        if (var19 == PathType.LAVA) {
-                            return false;
-                        }
-
-                        if (var19 == PathType.OPEN) {
+                        if ((var19 == PathType.WATER) || (var19 == PathType.LAVA) || (var19 == PathType.OPEN)) {
                             return false;
                         }
 

@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
-import net.minecraft.server.v1_16_R3.Vec3D;
-
 import java.util.UUID;
 
 import org.bukkit.Bukkit;

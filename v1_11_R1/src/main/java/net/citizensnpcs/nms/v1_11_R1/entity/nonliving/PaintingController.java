@@ -39,8 +39,12 @@ public class PaintingController extends MobEntityController {
         }
 
         @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
+        public void A_() {
+            if (npc != null) {
+                npc.update();
+            } else {
+                super.A_();
+            }
         }
 
         @Override
@@ -51,6 +55,11 @@ public class PaintingController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -72,15 +81,6 @@ public class PaintingController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void A_() {
-            if (npc != null) {
-                npc.update();
-            } else {
-                super.A_();
-            }
         }
 
         @Override

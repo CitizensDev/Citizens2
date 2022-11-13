@@ -145,12 +145,12 @@ public class BoatController extends MobEntityController {
                         double d8 = this.locX - d4 * d6 * 0.8D + d5 * d7;
                         double d9 = this.locZ - d5 * d6 * 0.8D - d4 * d7;
                         this.world.addParticle(EnumParticle.WATER_SPLASH, d8, this.locY - 0.125D, d9, this.motX,
-                                this.motY, this.motZ, new int[0]);
+                                this.motY, this.motZ);
                     } else {
                         double d8 = this.locX + d4 + d5 * d6 * 0.7D;
                         double d9 = this.locZ + d5 - d4 * d6 * 0.7D;
                         this.world.addParticle(EnumParticle.WATER_SPLASH, d8, this.locY - 0.125D, d9, this.motX,
-                                this.motY, this.motZ, new int[0]);
+                                this.motY, this.motZ);
                     }
                 }
             }

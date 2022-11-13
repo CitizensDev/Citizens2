@@ -33,14 +33,18 @@ public class TNTPrimedController extends MobEntityController {
             this(world, null);
         }
 
-        @Override
-        public boolean d(NBTTagCompound save) {
-            return npc == null ? super.d(save) : false;
-        }
-
         public EntityTNTPrimedNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void B_() {
+            if (npc != null) {
+                npc.update();
+            } else {
+                super.B_();
+            }
         }
 
         @Override
@@ -51,6 +55,11 @@ public class TNTPrimedController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public boolean d(NBTTagCompound save) {
+            return npc == null ? super.d(save) : false;
         }
 
         @Override
@@ -72,15 +81,6 @@ public class TNTPrimedController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void B_() {
-            if (npc != null) {
-                npc.update();
-            } else {
-                super.B_();
-            }
         }
     }
 

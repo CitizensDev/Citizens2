@@ -1,7 +1,4 @@
-package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;import net.minecraft.server.v1_14_R1.Vec3D;
-
-import net.minecraft.server.v1_14_R1.Tag;
-import net.minecraft.server.v1_14_R1.FluidType;
+package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
 import java.util.UUID;
 
@@ -25,10 +22,13 @@ import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityFishingHook;
 import net.minecraft.server.v1_14_R1.EntityPlayer;
 import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_14_R1.FluidType;
 import net.minecraft.server.v1_14_R1.ItemStack;
 import net.minecraft.server.v1_14_R1.Items;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.PlayerInteractManager;
+import net.minecraft.server.v1_14_R1.Tag;
+import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 import net.minecraft.server.v1_14_R1.WorldServer;
 
@@ -43,11 +43,6 @@ public class FishingHookController extends MobEntityController {
     }
 
     public static class EntityFishingHookNPC extends EntityFishingHook implements NPCHolder {
-        @Override
-        public boolean b(Tag<FluidType> tag) {
-            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
-        }
-
         private final CitizensNPC npc;
 
         public EntityFishingHookNPC(EntityTypes<? extends EntityFishingHook> types, World world) {
@@ -60,6 +55,16 @@ public class FishingHookController extends MobEntityController {
                     new PlayerInteractManager((WorldServer) world)) {
             }, world, 0, 0);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

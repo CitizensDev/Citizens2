@@ -105,19 +105,19 @@ public class ArmorStandController extends MobEntityController {
         }
 
         @Override
-        public void t_() {
-            super.t_();
-            if (npc != null) {
-                npc.update();
-            }
-        }
-
-        @Override
         public void setSize(float f, float f1) {
             if (npc == null) {
                 super.setSize(f, f1);
             } else {
                 NMSImpl.setSize(this, f, f1, justCreated);
+            }
+        }
+
+        @Override
+        public void t_() {
+            super.t_();
+            if (npc != null) {
+                npc.update();
             }
         }
     }
