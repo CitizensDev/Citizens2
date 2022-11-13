@@ -1308,7 +1308,7 @@ public class NPCCommands {
                     npc.getName());
             toggle = false;
         }
-        if (randomSwitchTargets) {
+        if (randomSwitchTargets != null) {
             trait.setRandomlySwitchTargets(randomSwitchTargets);
             Messaging.sendTr(sender, randomSwitchTargets ? Messages.LOOKCLOSE_RANDOM_TARGET_SWITCH_ENABLED
                     : Messages.LOOKCLOSE_RANDOM_TARGET_SWITCH_DISABLED, npc.getName());
