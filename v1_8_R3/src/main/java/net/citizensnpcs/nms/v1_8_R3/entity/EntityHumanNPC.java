@@ -2,7 +2,9 @@ package net.citizensnpcs.nms.v1_8_R3.entity;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,7 +17,6 @@ import org.bukkit.util.Vector;
 
 import com.mojang.authlib.GameProfile;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
@@ -61,7 +62,7 @@ import net.minecraft.server.v1_8_R3.WorldSettings;
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
     private PlayerControllerJump controllerJump;
     private PlayerControllerMove controllerMove;
-    private final TIntObjectHashMap<ItemStack> equipmentCache = new TIntObjectHashMap<ItemStack>();
+    private final Map<Integer, ItemStack> equipmentCache = new HashMap<Integer, ItemStack>();
     private int jumpTicks = 0;
     private PlayerNavigation navigation;
     private final CitizensNPC npc;

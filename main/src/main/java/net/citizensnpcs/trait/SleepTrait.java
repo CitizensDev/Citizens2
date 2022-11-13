@@ -36,6 +36,7 @@ public class SleepTrait extends Trait {
             }
             return;
         }
+
         if (at == null)
             return;
 

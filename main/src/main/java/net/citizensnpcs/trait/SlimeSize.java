@@ -47,7 +47,8 @@ public class SlimeSize extends Trait {
      */
     public void setSize(int size) {
         this.size = size;
-        if (slime)
+        if (slime) {
             ((Slime) npc.getEntity()).setSize(size);
+        }
     }
 }
