@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
+import net.minecraft.server.v1_16_R3.Vec3D;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
@@ -24,9 +26,11 @@ import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R3.EntityRabbit;
 import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.FluidType;
 import net.minecraft.server.v1_16_R3.IBlockData;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.SoundEffect;
+import net.minecraft.server.v1_16_R3.Tag;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.World;
 
@@ -41,6 +45,16 @@ public class RabbitController extends MobEntityController {
     }
 
     public static class EntityRabbitNPC extends EntityRabbit implements NPCHolder {
+        @Override
+        public boolean a(Tag<FluidType> tag, double d0) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
+        }
+
         boolean calledNMSHeight = false;
 
         private final CitizensNPC npc;

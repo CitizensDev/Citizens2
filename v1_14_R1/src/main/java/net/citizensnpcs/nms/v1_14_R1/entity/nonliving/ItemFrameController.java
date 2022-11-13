@@ -1,4 +1,7 @@
-package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
+package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;import net.minecraft.server.v1_14_R1.Vec3D;
+
+import net.minecraft.server.v1_14_R1.Tag;
+import net.minecraft.server.v1_14_R1.FluidType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -46,6 +49,11 @@ public class ItemFrameController extends MobEntityController {
     }
 
     public static class EntityItemFrameNPC extends EntityItemFrame implements NPCHolder {
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
+        }
+
         private final CitizensNPC npc;
 
         public EntityItemFrameNPC(EntityTypes<? extends EntityItemFrame> types, World world) {

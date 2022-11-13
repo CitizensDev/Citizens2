@@ -15,10 +15,13 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.SpectralArrow;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.Vec3;
 
 public class SpectralArrowController extends MobEntityController {
     public SpectralArrowController() {
@@ -31,6 +34,16 @@ public class SpectralArrowController extends MobEntityController {
     }
 
     public static class EntitySpectralArrowNPC extends SpectralArrow implements NPCHolder {
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
+        }
+
         private final CitizensNPC npc;
 
         public EntitySpectralArrowNPC(EntityType<? extends SpectralArrow> types, Level level) {

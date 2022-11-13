@@ -17,12 +17,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -44,6 +46,16 @@ public class BoatController extends MobEntityController {
     }
 
     public static class EntityBoatNPC extends Boat implements NPCHolder {
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
+        }
+
         private double aC;
         private float aD;
         private Status aE;

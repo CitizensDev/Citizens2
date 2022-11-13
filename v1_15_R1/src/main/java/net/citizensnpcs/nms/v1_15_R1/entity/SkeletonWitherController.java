@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity;
+package net.citizensnpcs.nms.v1_15_R1.entity;import net.minecraft.server.v1_15_R1.Vec3D;import net.minecraft.server.v1_15_R1.Tag;import net.minecraft.server.v1_15_R1.FluidType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
@@ -37,7 +37,7 @@ public class SkeletonWitherController extends MobEntityController {
         return (WitherSkeleton) super.getBukkitEntity();
     }
 
-    public static class EntitySkeletonWitherNPC extends EntitySkeletonWither implements NPCHolder {
+    public static class EntitySkeletonWitherNPC extends EntitySkeletonWither implements NPCHolder {@Override public boolean b(Tag<FluidType> tag) { Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res; }
         private final CitizensNPC npc;
 
         public EntitySkeletonWitherNPC(EntityTypes<? extends EntitySkeletonWither> types, World world) {

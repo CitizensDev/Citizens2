@@ -1,5 +1,8 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
+import net.minecraft.server.v1_13_R2.Tag;
+import net.minecraft.server.v1_13_R2.FluidType;
+
 import java.lang.reflect.Method;
 
 import org.bukkit.Bukkit;
@@ -38,6 +41,11 @@ public class SnowmanController extends MobEntityController {
     }
 
     public static class EntitySnowmanNPC extends EntitySnowman implements NPCHolder {
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
+        }
+
         private final CitizensNPC npc;
 
         public EntitySnowmanNPC(World world) {

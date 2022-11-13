@@ -1,5 +1,8 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
+import net.minecraft.server.v1_13_R2.Tag;
+import net.minecraft.server.v1_13_R2.FluidType;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftCreeper;
@@ -50,6 +53,11 @@ public class CreeperController extends MobEntityController {
     }
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHolder {
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
+        }
+
         private boolean allowPowered;
         private final CitizensNPC npc;
 

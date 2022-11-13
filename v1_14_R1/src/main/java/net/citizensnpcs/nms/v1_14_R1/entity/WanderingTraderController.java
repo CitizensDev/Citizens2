@@ -1,4 +1,7 @@
-package net.citizensnpcs.nms.v1_14_R1.entity;
+package net.citizensnpcs.nms.v1_14_R1.entity;import net.minecraft.server.v1_14_R1.Vec3D;
+
+import net.minecraft.server.v1_14_R1.Tag;
+import net.minecraft.server.v1_14_R1.FluidType;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -45,6 +48,11 @@ public class WanderingTraderController extends MobEntityController {
     }
 
     public static class EntityWanderingTraderNPC extends EntityVillagerTrader implements NPCHolder {
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
+        }
+
         private TreeMap<?, ?> behaviorMap;
         private boolean blockingATrade;
         private boolean blockTrades = true;

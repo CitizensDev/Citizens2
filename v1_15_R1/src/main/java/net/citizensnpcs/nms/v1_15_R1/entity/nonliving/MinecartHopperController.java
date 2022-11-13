@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;
+package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;import net.minecraft.server.v1_15_R1.Vec3D;import net.minecraft.server.v1_15_R1.Tag;import net.minecraft.server.v1_15_R1.FluidType;
 
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
@@ -24,7 +24,7 @@ public class MinecartHopperController extends MobEntityController {
         return (Minecart) super.getBukkitEntity();
     }
 
-    public static class EntityMinecartHopperNPC extends EntityMinecartHopper implements NPCHolder {
+    public static class EntityMinecartHopperNPC extends EntityMinecartHopper implements NPCHolder {@Override public boolean b(Tag<FluidType> tag) { Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res; }
         private final CitizensNPC npc;
 
         public EntityMinecartHopperNPC(EntityTypes<? extends EntityMinecartHopper> types, World world) {

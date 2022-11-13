@@ -1,4 +1,7 @@
-package net.citizensnpcs.nms.v1_14_R1.entity;
+package net.citizensnpcs.nms.v1_14_R1.entity;import net.minecraft.server.v1_14_R1.Vec3D;
+
+import net.minecraft.server.v1_14_R1.Tag;
+import net.minecraft.server.v1_14_R1.FluidType;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Constructor;

@@ -16,10 +16,13 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.Vec3;
 
 public class ExperienceOrbController extends MobEntityController {
     public ExperienceOrbController() {
@@ -32,6 +35,16 @@ public class ExperienceOrbController extends MobEntityController {
     }
 
     public static class EntityExperienceOrbNPC extends ExperienceOrb implements NPCHolder {
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
+        }
+
         private final CitizensNPC npc;
 
         public EntityExperienceOrbNPC(EntityType<? extends ExperienceOrb> types, Level level) {

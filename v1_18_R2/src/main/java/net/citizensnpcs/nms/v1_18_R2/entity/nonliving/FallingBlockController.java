@@ -14,6 +14,7 @@ import org.bukkit.util.Vector;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -22,6 +23,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
@@ -29,6 +31,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 
 public class FallingBlockController extends AbstractEntityController {
@@ -138,10 +141,20 @@ public class FallingBlockController extends AbstractEntityController {
             }
         }
 
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
+        }
+
         private static final double EPSILON = 0.001;
     }
 
-    public static class FallingBlockNPC extends CraftFallingBlock implements NPCHolder {
+    public static class FallingBlockNPC extends CraftFallingBlock implements ForwardingNPCHolder {
         private final CitizensNPC npc;
 
         public FallingBlockNPC(EntityFallingBlockNPC entity) {

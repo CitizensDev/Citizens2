@@ -17,6 +17,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -31,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 
 public class CodController extends MobEntityController {
@@ -50,6 +52,16 @@ public class CodController extends MobEntityController {
     }
 
     public static class EntityCodNPC extends Cod implements NPCHolder {
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
+        }
+
         private final CitizensNPC npc;
         private MoveControl oldMoveController;
 

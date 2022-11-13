@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -24,6 +25,8 @@ import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.Vec3;
 
 public class GhastController extends MobEntityController {
     public GhastController() {
@@ -36,6 +39,16 @@ public class GhastController extends MobEntityController {
     }
 
     public static class EntityGhastNPC extends Ghast implements NPCHolder {
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
+        }
+
         private final CitizensNPC npc;
 
         public EntityGhastNPC(EntityType<? extends Ghast> types, Level level) {

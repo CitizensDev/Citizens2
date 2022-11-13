@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity;
+package net.citizensnpcs.nms.v1_15_R1.entity;import net.minecraft.server.v1_15_R1.Vec3D;import net.minecraft.server.v1_15_R1.Tag;import net.minecraft.server.v1_15_R1.FluidType;
 
 import java.lang.invoke.MethodHandle;
 
@@ -49,7 +49,7 @@ public class TraderLlamaController extends MobEntityController {
         super.spawn(at, npc);
     }
 
-    public static class EntityTraderLlamaNPC extends EntityLlamaTrader implements NPCHolder {
+    public static class EntityTraderLlamaNPC extends EntityLlamaTrader implements NPCHolder {@Override public boolean b(Tag<FluidType> tag) { Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res; }
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
 

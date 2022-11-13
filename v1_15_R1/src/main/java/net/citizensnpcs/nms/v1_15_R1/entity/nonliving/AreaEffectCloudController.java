@@ -9,13 +9,17 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.entity.MobEntityController;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.EntityAreaEffectCloud;
 import net.minecraft.server.v1_15_R1.EntityTypes;
+import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
+import net.minecraft.server.v1_15_R1.Tag;
+import net.minecraft.server.v1_15_R1.Vec3D;
 import net.minecraft.server.v1_15_R1.World;
 
 public class AreaEffectCloudController extends MobEntityController {
@@ -28,17 +32,9 @@ public class AreaEffectCloudController extends MobEntityController {
         return (AreaEffectCloud) super.getBukkitEntity();
     }
 
-    public static class AreaEffectCloudNPC extends CraftAreaEffectCloud implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class AreaEffectCloudNPC extends CraftAreaEffectCloud implements ForwardingNPCHolder {
         public AreaEffectCloudNPC(EntityAreaEffectCloudNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 
@@ -52,6 +48,16 @@ public class AreaEffectCloudController extends MobEntityController {
         public EntityAreaEffectCloudNPC(EntityTypes<? extends EntityAreaEffectCloud> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override
@@ -70,14 +76,6 @@ public class AreaEffectCloudController extends MobEntityController {
         }
 
         @Override
-        public void h(double x, double y, double z) {
-            Vector vector = Util.callPushEvent(npc, x, y, z);
-            if (vector != null) {
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new AreaEffectCloudNPC(this));
@@ -88,6 +86,14 @@ public class AreaEffectCloudController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void h(double x, double y, double z) {
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
+                super.h(vector.getX(), vector.getY(), vector.getZ());
+            }
         }
 
         @Override

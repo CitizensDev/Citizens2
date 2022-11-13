@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;
+package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;import net.minecraft.server.v1_15_R1.Vec3D;
 
 import java.util.UUID;
 
@@ -13,6 +13,7 @@ import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.entity.MobEntityController;
+import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -22,10 +23,12 @@ import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityFishingHook;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
 import net.minecraft.server.v1_15_R1.EntityTypes;
+import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.ItemStack;
 import net.minecraft.server.v1_15_R1.Items;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import net.minecraft.server.v1_15_R1.PlayerInteractManager;
+import net.minecraft.server.v1_15_R1.Tag;
 import net.minecraft.server.v1_15_R1.World;
 import net.minecraft.server.v1_15_R1.WorldServer;
 
@@ -55,6 +58,11 @@ public class FishingHookController extends MobEntityController {
         }
 
         @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_15_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
@@ -70,14 +78,6 @@ public class FishingHookController extends MobEntityController {
         }
 
         @Override
-        public void h(double x, double y, double z) {
-            Vector vector = Util.callPushEvent(npc, x, y, z);
-            if (vector != null) {
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new FishingHookNPC(this));
@@ -88,6 +88,14 @@ public class FishingHookController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public void h(double x, double y, double z) {
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
+                super.h(vector.getX(), vector.getY(), vector.getZ());
+            }
         }
 
         @Override
@@ -120,17 +128,9 @@ public class FishingHookController extends MobEntityController {
         }
     }
 
-    public static class FishingHookNPC extends CraftFishHook implements NPCHolder {
-        private final CitizensNPC npc;
-
+    public static class FishingHookNPC extends CraftFishHook implements ForwardingNPCHolder {
         public FishingHookNPC(EntityFishingHookNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
-            this.npc = entity.npc;
-        }
-
-        @Override
-        public NPC getNPC() {
-            return npc;
         }
     }
 }

@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_15_R1.entity;
+package net.citizensnpcs.nms.v1_15_R1.entity;import net.minecraft.server.v1_15_R1.Vec3D;import net.minecraft.server.v1_15_R1.Tag;import net.minecraft.server.v1_15_R1.FluidType;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class VillagerController extends MobEntityController {
         return (Villager) super.getBukkitEntity();
     }
 
-    public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
+    public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {@Override public boolean b(Tag<FluidType> tag) { Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res; }
         private boolean blockingATrade;
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;

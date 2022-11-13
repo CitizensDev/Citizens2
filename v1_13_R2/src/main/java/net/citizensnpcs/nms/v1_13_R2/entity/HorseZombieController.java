@@ -1,5 +1,8 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
+import net.minecraft.server.v1_13_R2.Tag;
+import net.minecraft.server.v1_13_R2.FluidType;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
@@ -46,6 +49,11 @@ public class HorseZombieController extends MobEntityController {
     }
 
     public static class EntityHorseZombieNPC extends EntityHorseZombie implements NPCHolder {
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
+        }
+
         private double baseMovementSpeed;
         private final CitizensNPC npc;
         private boolean riding;

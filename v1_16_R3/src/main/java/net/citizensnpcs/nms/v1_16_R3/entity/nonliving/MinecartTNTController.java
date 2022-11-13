@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_16_R3.entity.nonliving;
 
+import net.minecraft.server.v1_16_R3.Vec3D;
+
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
 
@@ -11,7 +13,9 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_16_R3.EntityMinecartTNT;
 import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.FluidType;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
+import net.minecraft.server.v1_16_R3.Tag;
 import net.minecraft.server.v1_16_R3.World;
 
 public class MinecartTNTController extends MobEntityController {
@@ -25,6 +29,16 @@ public class MinecartTNTController extends MobEntityController {
     }
 
     public static class EntityMinecartTNTNPC extends EntityMinecartTNT implements NPCHolder {
+        @Override
+        public boolean a(Tag<FluidType> tag, double d0) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
+        }
+
         private final CitizensNPC npc;
 
         public EntityMinecartTNTNPC(EntityTypes<? extends EntityMinecartTNT> types, World world) {

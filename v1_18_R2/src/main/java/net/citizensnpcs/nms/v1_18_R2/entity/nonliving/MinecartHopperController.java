@@ -12,10 +12,13 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.MinecartHopper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.Vec3;
 
 public class MinecartHopperController extends MobEntityController {
     public MinecartHopperController() {
@@ -28,6 +31,16 @@ public class MinecartHopperController extends MobEntityController {
     }
 
     public static class EntityMinecartHopperNPC extends MinecartHopper implements NPCHolder {
+        @Override
+        public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
+        }
+
         private final CitizensNPC npc;
 
         public EntityMinecartHopperNPC(EntityType<? extends MinecartHopper> types, Level level) {

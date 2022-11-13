@@ -18,8 +18,10 @@ import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityBat;
 import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
+import net.minecraft.server.v1_13_R2.Tag;
 import net.minecraft.server.v1_13_R2.World;
 
 public class BatController extends MobEntityController {
@@ -59,6 +61,20 @@ public class BatController extends MobEntityController {
             if (npc != null) {
                 setFlying(false);
             }
+        }
+
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override

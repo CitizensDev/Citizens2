@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
+import net.minecraft.server.v1_16_R3.Vec3D;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftDolphin;
@@ -23,10 +25,12 @@ import net.minecraft.server.v1_16_R3.EntityBoat;
 import net.minecraft.server.v1_16_R3.EntityDolphin;
 import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.FluidType;
 import net.minecraft.server.v1_16_R3.GenericAttributes;
 import net.minecraft.server.v1_16_R3.IBlockData;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.SoundEffect;
+import net.minecraft.server.v1_16_R3.Tag;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.World;
 
@@ -48,6 +52,7 @@ public class DolphinController extends MobEntityController {
 
     public static class EntityDolphinNPC extends EntityDolphin implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerMove oldMoveController;
 
         public EntityDolphinNPC(EntityTypes<? extends EntityDolphin> types, World world) {
@@ -70,6 +75,16 @@ public class DolphinController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(Tag<FluidType> tag, double d0) {
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                this.setMot(old);
+            }
+            return res;
         }
 
         @Override

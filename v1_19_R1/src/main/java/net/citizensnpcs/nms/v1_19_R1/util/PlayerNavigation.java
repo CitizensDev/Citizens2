@@ -29,7 +29,6 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
-import org.bukkit.Bukkit;
 
 public class PlayerNavigation extends PathNavigation {
     private boolean avoidSun;
@@ -149,7 +148,7 @@ public class PlayerNavigation extends PathNavigation {
         }
         return true;
     }
-
+    
     private boolean canWalkOn(int var0, int var1, int var2, int var3, int var4, int var5, Vec3 var6, double var7,
             double var9) {
         int var11 = var0 - var3 / 2;

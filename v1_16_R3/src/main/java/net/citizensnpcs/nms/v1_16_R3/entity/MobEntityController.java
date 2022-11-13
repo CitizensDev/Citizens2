@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
+import net.minecraft.server.v1_16_R3.Vec3D;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Constructor;
 import java.util.Map;

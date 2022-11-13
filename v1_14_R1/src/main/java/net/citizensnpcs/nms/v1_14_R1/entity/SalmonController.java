@@ -1,4 +1,7 @@
-package net.citizensnpcs.nms.v1_14_R1.entity;
+package net.citizensnpcs.nms.v1_14_R1.entity;import net.minecraft.server.v1_14_R1.Vec3D;
+
+import net.minecraft.server.v1_14_R1.Tag;
+import net.minecraft.server.v1_14_R1.FluidType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
@@ -42,6 +45,11 @@ public class SalmonController extends MobEntityController {
     }
 
     public static class EntitySalmonNPC extends EntitySalmon implements NPCHolder {
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            Vec3D old = getMot().add(0, 0, 0);             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 this.setMot(old);             }             return res;
+        }
+
         private final CitizensNPC npc;
 
         public EntitySalmonNPC(EntityTypes<? extends EntitySalmon> types, World world) {

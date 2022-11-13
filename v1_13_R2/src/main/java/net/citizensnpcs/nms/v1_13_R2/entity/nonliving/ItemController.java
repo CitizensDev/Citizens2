@@ -1,5 +1,8 @@
 package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
 
+import net.minecraft.server.v1_13_R2.Tag;
+import net.minecraft.server.v1_13_R2.FluidType;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -56,6 +59,11 @@ public class ItemController extends AbstractEntityController {
     }
 
     public static class EntityItemNPC extends EntityItem implements NPCHolder {
+        @Override
+        public boolean b(Tag<FluidType> tag) {
+            double mx = motX;             double my = motY;             double mz = motZ;             boolean res = super.b(tag);             if (!npc.isPushableByFluids()) {                 motX = mx;                 motY = my;                 motZ = mz;             }             return res;
+        }
+
         private final CitizensNPC npc;
 
         public EntityItemNPC(World world) {
