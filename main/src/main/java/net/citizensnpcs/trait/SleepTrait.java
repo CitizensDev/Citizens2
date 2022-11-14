@@ -40,10 +40,19 @@ public class SleepTrait extends Trait {
         if (at == null)
             return;
 
+        if (SUPPORT_BLOCKDATA == null) {
+            try {
+                SUPPORT_BLOCKDATA = true;
+                at.getBlock().getBlockData();
+            } catch (NoSuchMethodError e) {
+                SUPPORT_BLOCKDATA = false;
+            }
+        }
         npc.teleport(at, TeleportCause.PLUGIN);
         if (npc.getEntity() instanceof Player) {
             Player player = (Player) npc.getEntity();
-            if (at.getBlock().getBlockData() instanceof Bed || at.getBlock().getState() instanceof Bed) {
+            if ((SUPPORT_BLOCKDATA && at.getBlock().getBlockData() instanceof Bed)
+                    || at.getBlock().getState() instanceof Bed) {
                 player.sleep(at, true);
             } else {
                 NMS.sleep(player, true);
@@ -67,4 +76,6 @@ public class SleepTrait extends Trait {
         }
         sleeping = false;
     }
+
+    private static Boolean SUPPORT_BLOCKDATA = null;
 }
