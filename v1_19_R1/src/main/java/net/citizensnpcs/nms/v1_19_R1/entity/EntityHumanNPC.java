@@ -392,7 +392,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
         Bukkit.getPluginManager().callEvent(event);
         Vector kb = event.getKnockbackVector();
-        super.knockback(event.getStrength(), kb.getX(), kb.getZ());
+        if (!event.isCancelled()) {
+            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
+        }
     }
 
     private void moveOnCurrentHeading() {

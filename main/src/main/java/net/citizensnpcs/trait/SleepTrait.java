@@ -33,6 +33,8 @@ public class SleepTrait extends Trait {
         if (sleeping) {
             if (at == null) {
                 wakeup();
+            } else {
+                npc.teleport(at, TeleportCause.PLUGIN);
             }
             return;
         }
@@ -48,7 +50,6 @@ public class SleepTrait extends Trait {
                 SUPPORT_BLOCKDATA = false;
             }
         }
-        npc.teleport(at, TeleportCause.PLUGIN);
         if (npc.getEntity() instanceof Player) {
             Player player = (Player) npc.getEntity();
             if ((SUPPORT_BLOCKDATA && at.getBlock().getBlockData() instanceof Bed)

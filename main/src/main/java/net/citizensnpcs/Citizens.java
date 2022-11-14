@@ -286,7 +286,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void loadMavenLibraries() {
-        getLogger().info("Loading external libraries...");
+        getLogger().info("Loading external libraries");
 
         LibraryManager lib = new BukkitLibraryManager(this);
         lib.addMavenCentral();
@@ -324,8 +324,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("examination-string").version("1.3.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
-
-        getLogger().info("Loaded.");
     }
 
     @Override

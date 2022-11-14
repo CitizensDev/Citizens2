@@ -143,7 +143,9 @@ public class ZombieController extends MobEntityController {
             NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
             Bukkit.getPluginManager().callEvent(event);
             Vector kb = event.getKnockbackVector();
-            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
+            if (!event.isCancelled()) {
+                super.knockback(event.getStrength(), kb.getX(), kb.getZ());
+            }
         }
 
         @Override

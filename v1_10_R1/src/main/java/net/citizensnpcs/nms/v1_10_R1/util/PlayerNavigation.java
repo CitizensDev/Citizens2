@@ -130,7 +130,8 @@ public class PlayerNavigation extends NavigationAbstract {
                 if (d1 * paramDouble1 + d2 * paramDouble2 >= 0.0D) {
                     PathType localPathType = this.e.a(this.b, k, paramInt2 - 1, m, this.a, paramInt4, paramInt5,
                             paramInt6, true, true);
-                    if ((localPathType == PathType.WATER) || (localPathType == PathType.LAVA) || (localPathType == PathType.OPEN)) {
+                    if ((localPathType == PathType.WATER) || (localPathType == PathType.LAVA)
+                            || (localPathType == PathType.OPEN)) {
                         return false;
                     }
                     localPathType = this.e.a(this.b, k, paramInt2, m, this.a, paramInt4, paramInt5, paramInt6, true,

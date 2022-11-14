@@ -95,7 +95,9 @@ public class PhantomController extends MobEntityController {
             NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
             Bukkit.getPluginManager().callEvent(event);
             Vector kb = event.getKnockbackVector();
-            super.a((float)event.getStrength(), kb.getX(), kb.getZ());
+            if (!event.isCancelled()) {
+                super.a((float) event.getStrength(), kb.getX(), kb.getZ());
+            }
         }
 
         @Override
