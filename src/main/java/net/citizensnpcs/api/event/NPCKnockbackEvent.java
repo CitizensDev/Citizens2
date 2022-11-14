@@ -1,11 +1,13 @@
 package net.citizensnpcs.api.event;
 
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 
-public class NPCKnockbackEvent extends NPCEvent {
+public class NPCKnockbackEvent extends NPCEvent implements Cancellable {
+    private boolean cancelled;
     private double strength;
     private Vector vector;
 
@@ -26,6 +28,16 @@ public class NPCKnockbackEvent extends NPCEvent {
 
     public double getStrength() {
         return strength;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
     }
 
     public void setKnockbackVector(Vector vector) {

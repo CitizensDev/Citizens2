@@ -99,8 +99,15 @@ public class Messaging {
 
     private static String convertLegacyCodes(String message) {
         message = ChatColor.translateAlternateColorCodes('&', message);
-        Matcher m = LEGACY_COLORCODE_MATCHER.matcher(message);
+        Matcher m = HEX_MATCHER.matcher(message);
         StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            m.appendReplacement(sb, "<#$1$2$3$4$5$6>");
+        }
+        m.appendTail(sb);
+
+        m = LEGACY_COLORCODE_MATCHER.matcher(sb.toString());
+        sb = new StringBuffer();
         while (m.find()) {
             m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1)));
         }
@@ -223,6 +230,9 @@ public class Messaging {
     private static Logger DEBUG_LOGGER;
     private static String ERROR_COLOUR = "<red>";
     private static final Pattern ERROR_MATCHER = Pattern.compile("{{", Pattern.LITERAL);
+    private static Pattern HEX_MATCHER = Pattern.compile(
+            "&x&([0-9a-f])&([0-9a-f])&([0-9a-f])&([0-9a-f])&([0-9a-f])&([0-9a-f])".replace('&', ChatColor.COLOR_CHAR),
+            Pattern.CASE_INSENSITIVE);
     private static String HIGHLIGHT_COLOUR = "yellow";
     private static final Pattern HIGHLIGHT_MATCHER = Pattern.compile("[[", Pattern.LITERAL);
     private static final Pattern LEGACY_COLORCODE_MATCHER = Pattern.compile(ChatColor.COLOR_CHAR + "([0-9a-r])",
