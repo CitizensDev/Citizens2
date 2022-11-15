@@ -2,6 +2,7 @@ package net.citizensnpcs.trait;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
@@ -53,6 +54,8 @@ public class SitTrait extends Trait {
         if (holder.getEntity() != null && !NMS.getPassengers(holder.getEntity()).contains(npc.getEntity())) {
             NMS.mount(holder.getEntity(), npc.getEntity());
         }
+
+        holder.teleport(sittingAt, TeleportCause.PLUGIN);
     }
 
     public void setSitting(Location at) {

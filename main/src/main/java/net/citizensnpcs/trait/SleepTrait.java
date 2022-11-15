@@ -4,7 +4,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Bed;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -30,17 +29,13 @@ public class SleepTrait extends Trait {
     public void run() {
         if (!npc.isSpawned())
             return;
-        if (sleeping) {
-            if (at == null) {
+
+        if (at == null) {
+            if (sleeping) {
                 wakeup();
-            } else {
-                npc.teleport(at, TeleportCause.PLUGIN);
             }
             return;
         }
-
-        if (at == null)
-            return;
 
         if (SUPPORT_BLOCKDATA == null) {
             try {
@@ -50,6 +45,7 @@ public class SleepTrait extends Trait {
                 SUPPORT_BLOCKDATA = false;
             }
         }
+
         if (npc.getEntity() instanceof Player) {
             Player player = (Player) npc.getEntity();
             if ((SUPPORT_BLOCKDATA && at.getBlock().getBlockData() instanceof Bed)
