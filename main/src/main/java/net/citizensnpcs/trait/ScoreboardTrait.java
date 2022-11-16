@@ -158,9 +158,10 @@ public class ScoreboardTrait extends Trait {
             }
         }
 
-        if (SUPPORT_COLLIDABLE_SETOPTION && npc.data().has(NPC.COLLIDABLE_METADATA)) {
+        if (SUPPORT_COLLIDABLE_SETOPTION) {
             try {
-                OptionStatus collide = npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA) ? OptionStatus.ALWAYS
+                OptionStatus collide = npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA, !npc.isProtected())
+                        ? OptionStatus.ALWAYS
                         : OptionStatus.NEVER;
                 if (collide != team.getOption(Option.COLLISION_RULE)) {
                     changed = true;

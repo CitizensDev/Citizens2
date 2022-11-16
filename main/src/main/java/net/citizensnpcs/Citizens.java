@@ -99,6 +99,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
     };
     private CitizensNPCRegistry npcRegistry;
+    private ProtocolLibListener protocolListener;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
     private NPCSelector selector;
@@ -392,6 +393,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new CitizensPlaceholders(selector).register();
+        }
+        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
+            protocolListener = new ProtocolLibListener(this);
         }
 
         setupEconomy();
