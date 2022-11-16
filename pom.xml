@@ -119,6 +119,8 @@
                     <doclint>none</doclint>
                     <links>
                         <link>https://hub.spigotmc.org/javadocs/spigot</link>
+                        <link>https://jd.adventure.kyori.net/platform/bukkit/4.1.2</link>
+                        <link>https://jd.adventure.kyori.net/api/4.11.0</link>
                     </links>
                 </configuration>
             </plugin>
