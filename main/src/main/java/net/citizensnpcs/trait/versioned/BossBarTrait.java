@@ -106,6 +106,11 @@ public class BossBarTrait extends Trait {
     }
 
     @Override
+    public void onRemove() {
+        onDespawn();
+    }
+
+    @Override
     public void run() {
         if (!npc.isSpawned())
             return;

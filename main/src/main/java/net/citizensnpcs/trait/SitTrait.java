@@ -36,6 +36,11 @@ public class SitTrait extends Trait {
     }
 
     @Override
+    public void onRemove() {
+        onDespawn();
+    }
+
+    @Override
     public void run() {
         if (!npc.isSpawned() || !isSitting()) {
             return;

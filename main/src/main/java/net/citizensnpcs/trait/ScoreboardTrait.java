@@ -97,6 +97,11 @@ public class ScoreboardTrait extends Trait {
     }
 
     @Override
+    public void onRemove() {
+        onDespawn();
+    }
+
+    @Override
     public void onSpawn() {
         changed = true;
     }
