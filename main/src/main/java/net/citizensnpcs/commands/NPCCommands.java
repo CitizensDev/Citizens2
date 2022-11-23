@@ -1102,7 +1102,7 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.HORSE_DESCRIBE, Util.prettyEnum(horse.getColor()), Util.prettyEnum(type),
                     Util.prettyEnum(horse.getStyle()));
         } else {
-            sender.sendMessage(output);
+            Messaging.send(sender, output);
         }
     }
 

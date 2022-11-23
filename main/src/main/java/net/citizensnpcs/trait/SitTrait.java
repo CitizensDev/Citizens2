@@ -55,7 +55,9 @@ public class SitTrait extends Trait {
             NMS.mount(holder.getEntity(), npc.getEntity());
         }
 
-        holder.teleport(sittingAt, TeleportCause.PLUGIN);
+        if (holder.getStoredLocation() != null && holder.getStoredLocation().distance(sittingAt) > 0.05) {
+            holder.teleport(sittingAt, TeleportCause.PLUGIN);
+        }
     }
 
     public void setSitting(Location at) {

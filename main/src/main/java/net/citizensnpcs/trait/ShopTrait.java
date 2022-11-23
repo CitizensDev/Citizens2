@@ -39,6 +39,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.trait.shop.ItemAction;
 import net.citizensnpcs.trait.shop.ItemAction.ItemActionGUI;
@@ -100,7 +101,7 @@ public class ShopTrait extends Trait {
             if (viewPermission != null && !sender.hasPermission(viewPermission))
                 return;
             if (pages.size() == 0) {
-                sender.sendMessage(ChatColor.RED + "Empty shop");
+                Messaging.send(sender, "<red>Empty shop");
                 return;
             }
             InventoryMenu.createSelfRegistered(new NPCShopViewer(this, sender)).present(sender);

@@ -85,5 +85,4 @@ public class CitizensSpeechFactory implements SpeechFactory {
             throw new IllegalArgumentException("vocalchord name already registered");
         registered.put(name.toLowerCase(), clazz);
     }
-
 }
