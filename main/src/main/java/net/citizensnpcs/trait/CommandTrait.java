@@ -2,8 +2,8 @@ package net.citizensnpcs.trait;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -234,13 +233,8 @@ public class CommandTrait extends Trait {
 
             @Override
             public void run() {
-                List<NPCCommand> commandList = Lists
-                        .newArrayList(Iterables.filter(commands.values(), new Predicate<NPCCommand>() {
-                            @Override
-                            public boolean apply(NPCCommand command) {
-                                return command.hand == hand || command.hand == Hand.BOTH;
-                            }
-                        }));
+                List<NPCCommand> commandList = Lists.newArrayList(Iterables.filter(commands.values(),
+                        command -> command.hand == hand || command.hand == Hand.BOTH));
                 if (executionMode == ExecutionMode.RANDOM) {
                     if (commandList.size() > 0) {
                         runCommand(player, commandList.get(Util.getFastRandom().nextInt(commandList.size())));
@@ -249,12 +243,7 @@ public class CommandTrait extends Trait {
                 }
                 int max = -1;
                 if (executionMode == ExecutionMode.SEQUENTIAL) {
-                    Collections.sort(commandList, new Comparator<NPCCommand>() {
-                        @Override
-                        public int compare(NPCCommand o1, NPCCommand o2) {
-                            return Integer.compare(o1.id, o2.id);
-                        }
-                    });
+                    Collections.sort(commandList, (o1, o2) -> Integer.compare(o1.id, o2.id));
                     max = commandList.size() > 0 ? commandList.get(commandList.size() - 1).id : -1;
                 }
                 if (executionMode == ExecutionMode.LINEAR) {
@@ -283,33 +272,30 @@ public class CommandTrait extends Trait {
             }
 
             private void runCommand(final Player player, NPCCommand command) {
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        PlayerNPCCommand info = playerTracking.get(player.getUniqueId());
-                        if (info == null && (executionMode == ExecutionMode.SEQUENTIAL
-                                || PlayerNPCCommand.requiresTracking(command))) {
-                            playerTracking.put(player.getUniqueId(), info = new PlayerNPCCommand());
-                        }
-                        if (info != null && !info.canUse(CommandTrait.this, player, command)) {
+                Runnable runnable = () -> {
+                    PlayerNPCCommand info = playerTracking.get(player.getUniqueId());
+                    if (info == null && (executionMode == ExecutionMode.SEQUENTIAL
+                            || PlayerNPCCommand.requiresTracking(command))) {
+                        playerTracking.put(player.getUniqueId(), info = new PlayerNPCCommand());
+                    }
+                    if (info != null && !info.canUse(CommandTrait.this, player, command)) {
+                        return;
+                    }
+                    if (charged == null) {
+                        if (!chargeCommandCosts(player, hand)) {
+                            charged = false;
                             return;
                         }
-                        if (charged == null) {
-                            if (!chargeCommandCosts(player, hand)) {
-                                charged = false;
-                                return;
-                            }
-                            charged = true;
-                        }
-                        PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
-                        if (temporaryPermissions.size() > 0) {
-                            for (String permission : temporaryPermissions) {
-                                attachment.setPermission(permission, true);
-                            }
-                        }
-                        command.run(npc, player);
-                        attachment.remove();
+                        charged = true;
                     }
+                    PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
+                    if (temporaryPermissions.size() > 0) {
+                        for (String permission : temporaryPermissions) {
+                            attachment.setPermission(permission, true);
+                        }
+                    }
+                    command.run(npc, player);
+                    attachment.remove();
                 };
                 if (command.delay <= 0) {
                     runnable.run();
@@ -360,8 +346,12 @@ public class CommandTrait extends Trait {
     @Override
     public void save(DataKey key) {
         Collection<NPCCommand> commands = this.commands.values();
-        for (PlayerNPCCommand playerCommand : playerTracking.values()) {
+        for (Iterator<PlayerNPCCommand> itr = playerTracking.values().iterator(); itr.hasNext();) {
+            PlayerNPCCommand playerCommand = itr.next();
             playerCommand.prune(globalCooldowns, commands);
+            if (playerCommand.lastUsed.isEmpty() && playerCommand.nUsed.isEmpty() && playerCommand.lastUsedId == -1) {
+                itr.remove();
+            }
         }
     }
 

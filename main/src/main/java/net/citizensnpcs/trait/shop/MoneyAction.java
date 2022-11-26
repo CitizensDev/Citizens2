@@ -4,8 +4,8 @@ import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.gui.InputMenus;
@@ -14,7 +14,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
 
-public   class MoneyAction extends NPCShopAction {
+public class MoneyAction extends NPCShopAction {
     @Persist
     public double money;
 
@@ -23,10 +23,10 @@ public   class MoneyAction extends NPCShopAction {
 
     @Override
     public Transaction grant(Entity entity) {
-        if (!(entity instanceof OfflinePlayer))
+        if (!(entity instanceof Player))
             return Transaction.fail();
         Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
-        OfflinePlayer player = (OfflinePlayer) entity;
+        Player player = (Player) entity;
         return Transaction.create(() -> {
             return true;
         }, () -> {
@@ -38,10 +38,10 @@ public   class MoneyAction extends NPCShopAction {
 
     @Override
     public Transaction take(Entity entity) {
-        if (!(entity instanceof OfflinePlayer))
+        if (!(entity instanceof Player))
             return Transaction.fail();
         Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
-        OfflinePlayer player = (OfflinePlayer) entity;
+        Player player = (Player) entity;
         return Transaction.create(() -> {
             return economy.has(player, money);
         }, () -> {

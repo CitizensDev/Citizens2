@@ -1,5 +1,4 @@
 <!-- Citizens build file -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -8,7 +7,6 @@
         <version>2.0.30-SNAPSHOT</version>
     </parent>
     <artifactId>citizens-main</artifactId>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <craftbukkit.version>1.19.2-R0.1-SNAPSHOT</craftbukkit.version>
@@ -17,7 +15,6 @@
         <worldguard.version>7.0.4</worldguard.version>
         <powermock.version>1.4.12</powermock.version>
     </properties>
-
     <repositories>
         <repository>
             <id>spigot-repo</id>
@@ -47,7 +44,6 @@
             <url>https://repo.alessiodp.com/releases/</url>
         </repository>
     </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -129,7 +125,6 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
     <url>http://www.citizensnpcs.co</url>
     <ciManagement>
         <system>jenkins</system>
@@ -143,7 +138,6 @@
     <build>
         <defaultGoal>clean package install javadoc:javadoc</defaultGoal>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-
         <resources>
             <resource>
                 <targetPath>.</targetPath>
@@ -155,7 +149,6 @@
                 </includes>
             </resource>
         </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -168,7 +161,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -178,13 +170,11 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -232,7 +222,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -246,7 +235,6 @@
                         <link>https://hub.spigotmc.org/javadocs/spigot</link>
                     </links>
                     <includeDependencySources>true</includeDependencySources>
-
                     <dependencySourceIncludes>
                         <dependencySourceInclude>net.citizensnpcs:citizensapi</dependencySourceInclude>
                     </dependencySourceIncludes>
