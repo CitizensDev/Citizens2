@@ -63,13 +63,16 @@ public class PersistenceLoader {
             this.field = field;
             this.persistAnnotation = field.getAnnotation(Persist.class);
             this.key = persistAnnotation.value().equals("UNINITIALISED") ? field.getName() : persistAnnotation.value();
-            Class<?> fallback = field.getType();
+            Class<?> fieldType = field.getType();
             if (field.getGenericType() instanceof ParameterizedType) {
                 int index = Map.class.isAssignableFrom(field.getType()) ? 1 : 0;
-                fallback = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[index];
+                fieldType = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[index];
             }
-            this.delegate = persistAnnotation.reify() ? new PersistenceLoaderPersister(fallback)
-                    : getDelegate(field, fallback);
+            if (persistAnnotation.valueType() != Object.class) {
+                fieldType = persistAnnotation.valueType();
+            }
+            this.delegate = persistAnnotation.reify() ? new PersistenceLoaderPersister(fieldType)
+                    : getDelegate(field, fieldType);
         }
 
         @SuppressWarnings("unchecked")
@@ -364,16 +367,16 @@ public class PersistenceLoader {
         }
     }
 
-    private static Persister<?> getDelegate(Field field, Class<?> fallback) {
+    private static Persister<?> getDelegate(Field field, Class<?> fieldType) {
         DelegatePersistence delegate = field.getAnnotation(DelegatePersistence.class);
         Persister<?> persister;
         if (delegate == null) {
-            if (registries.containsKey(fallback))
-                return registries.get(fallback);
-            return loadedDelegates.get(persistRedirects.get(fallback));
+            if (registries.containsKey(fieldType))
+                return registries.get(fieldType);
+            return loadedDelegates.get(persistRedirects.get(fieldType));
         }
         persister = loadedDelegates.get(delegate.value());
-        return persister == null ? loadedDelegates.get(persistRedirects.get(fallback)) : persister;
+        return persister == null ? loadedDelegates.get(persistRedirects.get(fieldType)) : persister;
     }
 
     private static PersistField[] getFields(Class<?> clazz) {

@@ -219,7 +219,7 @@ public class PersistenceLoaderTest {
     }
 
     public static class ReifiedListTest {
-        @Persist(reify = true)
+        @Persist(reify = true, valueType = ReifiedListValue.class)
         private List<ReifiedListValue> test;
     }
 
