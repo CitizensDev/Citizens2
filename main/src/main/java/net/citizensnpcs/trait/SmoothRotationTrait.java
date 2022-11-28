@@ -1,8 +1,15 @@
 package net.citizensnpcs.trait;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.Persistable;
@@ -14,14 +21,28 @@ import net.citizensnpcs.util.Util;
 
 @TraitName("smoothrotationtrait")
 public class SmoothRotationTrait extends Trait {
-    @Persist
-    private Float defaultPitch;
     @Persist(reify = true)
     private final RotationParams globalParameters = new RotationParams();
-    private final SmoothRotationSession globalSession = new SmoothRotationSession(globalParameters);
+    private final RotationSession globalSession = new RotationSession(globalParameters);
+    private final List<LocalRotationSession> localSessions = Lists.newArrayList();
 
     public SmoothRotationTrait() {
         super("smoothrotationtrait");
+    }
+
+    public void clearLocalSessions() {
+        localSessions.clear();
+    }
+
+    /**
+     * @return The created session
+     */
+    public RotationSession createLocalSession(RotationParams params) {
+        if (params.filter == null)
+            throw new IllegalStateException();
+        RotationSession session = new RotationSession(params);
+        localSessions.add(new LocalRotationSession(session));
+        return session;
     }
 
     private double getEyeY() {
@@ -33,6 +54,15 @@ public class SmoothRotationTrait extends Trait {
      */
     public RotationParams getGlobalParameters() {
         return globalParameters;
+    }
+
+    public LocalRotationSession getLocalSession(Player player) {
+        for (LocalRotationSession session : localSessions) {
+            if (session.accepts(player)) {
+                return session;
+            }
+        }
+        return null;
     }
 
     private double getX() {
@@ -78,54 +108,107 @@ public class SmoothRotationTrait extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || npc.getNavigator().isNavigating()) {
+        if (!npc.isSpawned())
+            return;
+
+        for (Iterator<LocalRotationSession> itr = localSessions.iterator(); itr.hasNext();) {
+            LocalRotationSession session = itr.next();
+            session.run(npc.getEntity());
+            if (!session.isActive()) {
+                itr.remove();
+            }
+        }
+
+        if (npc.getNavigator().isNavigating()) {
             // npc.yHeadRot = rotateIfNecessary(npc.yHeadRot, npc.yBodyRot, 75);
             return;
         }
-        if (!globalSession.hasTarget()) {
-            return;
-        }
-        EntityRotation rot = new EntityRotation(npc.getEntity());
-        globalSession.run(rot);
-        if (!globalSession.hasTarget()) {
-            rot.bodyYaw = rot.headYaw;
-        }
-        rot.apply(npc.getEntity());
+
+        globalSession.run(new EntityRotation(npc.getEntity()));
     }
 
-    /**
-     * Sets default pitch when not looking at anything
-     *
-     * @param pitch
-     *            The default pitch
-     */
-    public void setDefaultPitch(float pitch) {
-        defaultPitch = pitch;
-    }
-
-    private static class EntityRotation {
-        public float bodyYaw, headYaw, pitch;
+    private static class EntityRotation extends RotationTriple {
+        protected final Entity entity;
 
         public EntityRotation(Entity entity) {
-            this.bodyYaw = NMS.getYaw(entity);
-            this.headYaw = NMS.getHeadYaw(entity);
-            this.pitch = entity.getLocation().getPitch();
+            super(NMS.getYaw(entity), NMS.getHeadYaw(entity), entity.getLocation().getPitch());
+            this.entity = entity;
         }
 
-        public void apply(Entity entity) {
+        @Override
+        public void apply() {
             NMS.setBodyYaw(entity, bodyYaw);
             NMS.setHeadYaw(entity, headYaw);
             NMS.setPitch(entity, pitch);
         }
     }
 
+    public static class LocalRotationSession {
+        private final RotationSession session;
+        private RotationTriple triple;
+
+        public LocalRotationSession(RotationSession session) {
+            this.session = session;
+        }
+
+        public boolean accepts(Player player) {
+            return session.params.accepts(player);
+        }
+
+        public float getBodyYaw() {
+            return triple.bodyYaw;
+        }
+
+        public float getHeadYaw() {
+            return triple.headYaw;
+        }
+
+        public float getPitch() {
+            return triple.pitch;
+        }
+
+        public boolean isActive() {
+            return session.isActive();
+        }
+
+        public void run(Entity entity) {
+            if (triple == null) {
+                triple = new PacketRotationTriple(entity);
+            }
+            session.run(triple);
+            if (!session.isActive()) {
+                triple = null;
+            }
+        }
+    }
+
+    private static class PacketRotationTriple extends EntityRotation {
+        public PacketRotationTriple(Entity entity) {
+            super(entity);
+        }
+
+        @Override
+        public void apply() {
+            Location loc = entity.getLocation();
+            loc.setPitch(pitch);
+            loc.setYaw(headYaw);
+            NMS.sendRotationNearby(entity, bodyYaw, headYaw, pitch);
+        }
+    }
+
     public static class RotationParams implements Persistable, Cloneable {
+        private Function<Player, Boolean> filter;
         private boolean headOnly = false;
         private boolean immediate = false;
         private float maxPitchPerTick = 10;
         private float maxYawPerTick = 40;
+        private boolean persist = false;
         private float[] pitchRange = { -180, 180 };
         private float[] yawRange = { -180, 180 };
+
+        public boolean accepts(Player player) {
+            return filter.apply(player);
+        }
 
         @Override
         public RotationParams clone() {
@@ -134,6 +217,11 @@ public class SmoothRotationTrait extends Trait {
             } catch (CloneNotSupportedException e) {
                 return null;
             }
+        }
+
+        public RotationParams filter(Function<Player, Boolean> filter) {
+            this.filter = filter;
+            return this;
         }
 
         public RotationParams headOnly(boolean headOnly) {
@@ -180,6 +268,11 @@ public class SmoothRotationTrait extends Trait {
             return this;
         }
 
+        public RotationParams persist(boolean persist) {
+            this.persist = persist;
+            return this;
+        }
+
         public RotationParams pitchRange(float[] val) {
             this.pitchRange = val;
             return this;
@@ -212,6 +305,7 @@ public class SmoothRotationTrait extends Trait {
             if (headOnly) {
                 key.setBoolean("headOnly", headOnly);
             }
+
             if (immediate) {
                 key.setBoolean("immediate", immediate);
             }
@@ -247,12 +341,12 @@ public class SmoothRotationTrait extends Trait {
         }
     }
 
-    public class SmoothRotationSession {
+    public class RotationSession {
         private final RotationParams params;
         private int t = -1;
         private double tx, ty, tz;
 
-        public SmoothRotationSession(RotationParams params) {
+        public RotationSession(RotationParams params) {
             this.params = params;
         }
 
@@ -280,15 +374,17 @@ public class SmoothRotationTrait extends Trait {
             return tz;
         }
 
-        public boolean hasTarget() {
-            return t >= 0;
+        public boolean isActive() {
+            return params.persist || t >= 0;
         }
 
-        public void run(EntityRotation rot) {
-            if (!hasTarget())
+        private void run(RotationTriple rot) {
+            if (!isActive())
                 return;
+
             rot.headYaw = params.immediate ? getTargetYaw()
                     : Util.clamp(params.rotateHeadYawTowards(t, rot.headYaw, getTargetYaw()));
+
             if (!params.headOnly) {
                 float d = Util.clamp(rot.headYaw - 35);
                 if (d > rot.bodyYaw) {
@@ -301,11 +397,16 @@ public class SmoothRotationTrait extends Trait {
                     }
                 }
             }
+
             rot.pitch = params.immediate ? getTargetPitch() : params.rotatePitchTowards(t, rot.pitch, getTargetPitch());
             t++;
+
             if (Math.abs(rot.pitch - getTargetPitch()) + Math.abs(rot.headYaw - getTargetYaw()) < 0.1) {
                 t = -1;
+                rot.bodyYaw = rot.headYaw;
             }
+
+            rot.apply();
         }
 
         public void setTarget(Location target) {
@@ -313,6 +414,28 @@ public class SmoothRotationTrait extends Trait {
             ty = target.getY();
             tz = target.getZ();
             t = 0;
+        }
+    }
+
+    private static abstract class RotationTriple implements Cloneable {
+        public float bodyYaw, headYaw, pitch;
+
+        public RotationTriple(float bodyYaw, float headYaw, float pitch) {
+            this.bodyYaw = bodyYaw;
+            this.headYaw = headYaw;
+            this.pitch = pitch;
+        }
+
+        public abstract void apply();
+
+        @Override
+        public RotationTriple clone() {
+            try {
+                return (RotationTriple) super.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 

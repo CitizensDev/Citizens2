@@ -75,6 +75,8 @@ public class CommandTrait extends Trait {
     private boolean hideErrorMessages;
     @Persist
     private final List<ItemStack> itemRequirements = Lists.newArrayList();
+    @Persist
+    private boolean persistSequence = false;
     @Persist(keyType = UUID.class, reify = true, value = "cooldowns")
     private final Map<UUID, PlayerNPCCommand> playerTracking = Maps.newHashMap();
     @Persist
@@ -171,10 +173,10 @@ public class CommandTrait extends Trait {
         List<NPCCommand> left = Lists.newArrayList();
         List<NPCCommand> right = Lists.newArrayList();
         for (NPCCommand command : commands.values()) {
-            if (command.hand == Hand.LEFT || command.hand == Hand.BOTH) {
+            if (command.hand == Hand.LEFT || command.hand == Hand.SHIFT_LEFT || command.hand == Hand.BOTH) {
                 left.add(command);
             }
-            if (command.hand == Hand.RIGHT || command.hand == Hand.BOTH) {
+            if (command.hand == Hand.RIGHT || command.hand == Hand.SHIFT_RIGHT || command.hand == Hand.BOTH) {
                 right.add(command);
             }
         }
@@ -222,7 +224,10 @@ public class CommandTrait extends Trait {
         return output;
     }
 
-    public void dispatch(final Player player, final Hand hand) {
+    public void dispatch(final Player player, Hand handIn) {
+        final Hand hand = player.isSneaking()
+                ? (handIn == CommandTrait.Hand.LEFT ? CommandTrait.Hand.SHIFT_LEFT : CommandTrait.Hand.SHIFT_RIGHT)
+                : handIn;
         NPCCommandDispatchEvent event = new NPCCommandDispatchEvent(npc, player);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -233,8 +238,9 @@ public class CommandTrait extends Trait {
 
             @Override
             public void run() {
-                List<NPCCommand> commandList = Lists.newArrayList(Iterables.filter(commands.values(),
-                        command -> command.hand == hand || command.hand == Hand.BOTH));
+                List<NPCCommand> commandList = Lists.newArrayList(Iterables.filter(commands.values(), command -> {
+                    return command.hand == hand || command.hand == Hand.BOTH;
+                }));
                 if (executionMode == ExecutionMode.RANDOM) {
                     if (commandList.size() > 0) {
                         runCommand(player, commandList.get(Util.getFastRandom().nextInt(commandList.size())));
@@ -339,6 +345,10 @@ public class CommandTrait extends Trait {
         return hideErrorMessages;
     }
 
+    public boolean persistSequence() {
+        return persistSequence;
+    }
+
     public void removeCommandById(int id) {
         commands.remove(id);
     }
@@ -349,7 +359,8 @@ public class CommandTrait extends Trait {
         for (Iterator<PlayerNPCCommand> itr = playerTracking.values().iterator(); itr.hasNext();) {
             PlayerNPCCommand playerCommand = itr.next();
             playerCommand.prune(globalCooldowns, commands);
-            if (playerCommand.lastUsed.isEmpty() && playerCommand.nUsed.isEmpty() && playerCommand.lastUsedId == -1) {
+            if (playerCommand.lastUsed.isEmpty() && playerCommand.nUsed.isEmpty()
+                    && (!persistSequence || playerCommand.lastUsedId == -1)) {
                 itr.remove();
             }
         }
@@ -395,6 +406,10 @@ public class CommandTrait extends Trait {
         this.hideErrorMessages = hide;
     }
 
+    public void setPersistSequence(boolean persistSequence) {
+        this.persistSequence = persistSequence;
+    }
+
     public void setTemporaryPermissions(List<String> permissions) {
         temporaryPermissions.clear();
         temporaryPermissions.addAll(permissions);
@@ -430,7 +445,9 @@ public class CommandTrait extends Trait {
     public static enum Hand {
         BOTH,
         LEFT,
-        RIGHT;
+        RIGHT,
+        SHIFT_LEFT,
+        SHIFT_RIGHT;
     }
 
     @Menu(title = "Drag items for requirements", type = InventoryType.CHEST, dimensions = { 5, 9 })
@@ -728,12 +745,14 @@ public class CommandTrait extends Trait {
                     }
                 }
             }
+
             Set<String> diff = Sets.newHashSet(lastUsed.keySet());
             diff.removeAll(commandKeys);
             for (String key : diff) {
                 lastUsed.remove(key);
                 nUsed.remove(key);
             }
+
             if (globalCooldowns != null) {
                 diff = Sets.newHashSet(globalCooldowns.keySet());
                 diff.removeAll(commandKeys);

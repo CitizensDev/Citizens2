@@ -33,6 +33,19 @@ public class PermissionAction extends NPCShopAction {
     }
 
     @Override
+    public String describe() {
+        String description = permissions.size() + " permissions";
+        for (int i = 0; i < permissions.size(); i++) {
+            description += "\n" + permissions.get(i);
+            if (i == 3) {
+                description += "...";
+                break;
+            }
+        }
+        return description;
+    }
+
+    @Override
     public Transaction grant(Entity entity) {
         if (!(entity instanceof Player))
             return Transaction.fail();
@@ -153,14 +166,7 @@ public class PermissionAction extends NPCShopAction {
             String description = null;
             if (previous != null) {
                 PermissionAction old = (PermissionAction) previous;
-                description = old.permissions.size() + " permissions";
-                for (int i = 0; i < old.permissions.size(); i++) {
-                    description += "\n" + old.permissions.get(i);
-                    if (i == 3) {
-                        description += "...";
-                        break;
-                    }
-                }
+                description = old.describe();
             }
             return Util.createItem(Util.getFallbackMaterial("OAK_SIGN", "SIGN"), "Permission", description);
         }

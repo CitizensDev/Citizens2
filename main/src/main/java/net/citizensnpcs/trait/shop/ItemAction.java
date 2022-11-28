@@ -70,6 +70,20 @@ public class ItemAction extends NPCShopAction {
     }
 
     @Override
+    public String describe() {
+        String description = items.size() + " items";
+        for (int i = 0; i < items.size(); i++) {
+            ItemStack item = items.get(i);
+            description += "\n" + item.getAmount() + " " + Util.prettyEnum(item.getType());
+            if (i == 3) {
+                description += "...";
+                break;
+            }
+        }
+        return description;
+    }
+
+    @Override
     public Transaction grant(Entity entity) {
         if (!(entity instanceof InventoryHolder))
             return Transaction.fail();
@@ -175,15 +189,7 @@ public class ItemAction extends NPCShopAction {
             String description = null;
             if (previous != null) {
                 ItemAction old = (ItemAction) previous;
-                description = old.items.size() + " items";
-                for (int i = 0; i < old.items.size(); i++) {
-                    ItemStack item = old.items.get(i);
-                    description += "\n" + item.getAmount() + " " + Util.prettyEnum(item.getType());
-                    if (i == 3) {
-                        description += "...";
-                        break;
-                    }
-                }
+                description = old.describe();
             }
             return Util.createItem(Material.CHEST, "Item", description);
         }

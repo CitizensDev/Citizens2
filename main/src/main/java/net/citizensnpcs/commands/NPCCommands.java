@@ -133,6 +133,7 @@ import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SlimeSize;
+import net.citizensnpcs.trait.SmoothRotationTrait;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
@@ -402,12 +403,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | (exp|item)cost [cost]) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | (exp|item)cost [cost]) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
             min = 1,
-            flags = "lrpo",
+            flags = "lrpos",
             permission = "citizens.npc.command")
     public void command(CommandContext args, CommandSender sender, NPC npc, @Flag("permissions") String permissions,
             @Flag(value = "cooldown", defValue = "0") int cooldown,
@@ -415,8 +416,8 @@ public class NPCCommands {
             @Flag(value = "delay", defValue = "0") int delay,
             @Arg(
                     value = 1,
-                    completions = { "add", "remove", "permissions", "sequential", "random", "hideerrors", "errormsg",
-                            "clearerror", "expcost", "itemcost" }) String action)
+                    completions = { "add", "remove", "permissions", "persistsequence", "sequential", "random",
+                            "hideerrors", "errormsg", "clearerror", "expcost", "itemcost" }) String action)
             throws CommandException {
         CommandTrait commands = npc.getOrAddTrait(CommandTrait.class);
         if (args.argsLength() == 1) {
@@ -429,6 +430,9 @@ public class NPCCommands {
             String command = args.getJoinedStrings(2);
             CommandTrait.Hand hand = args.hasFlag('l') && args.hasFlag('r') ? CommandTrait.Hand.BOTH
                     : args.hasFlag('l') ? CommandTrait.Hand.LEFT : CommandTrait.Hand.RIGHT;
+            if (args.hasFlag('s') && hand != CommandTrait.Hand.BOTH) {
+                hand = hand == CommandTrait.Hand.LEFT ? CommandTrait.Hand.SHIFT_LEFT : CommandTrait.Hand.SHIFT_RIGHT;
+            }
             List<String> perms = Lists.newArrayList();
             if (permissions != null) {
                 perms.addAll(Arrays.asList(permissions.split(",")));
@@ -465,6 +469,14 @@ public class NPCCommands {
             Messaging.sendTr(sender,
                     commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? Messages.COMMANDS_SEQUENTIAL_SET
                             : Messages.COMMANDS_SEQUENTIAL_UNSET);
+        } else if (action.equalsIgnoreCase("persistsequence")) {
+            if (args.argsLength() == 2) {
+                commands.setPersistSequence(!commands.persistSequence());
+            } else {
+                commands.setPersistSequence(Boolean.parseBoolean(args.getString(3)));
+            }
+            Messaging.sendTr(sender, commands.persistSequence() ? Messages.COMMANDS_PERSIST_SEQUENCE_SET
+                    : Messages.COMMANDS_PERSIST_SEQUENCE_UNSET);
         } else if (action.equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
                 throw new CommandUsageException();
@@ -1290,7 +1302,7 @@ public class NPCCommands {
             aliases = { "npc" },
             usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false]",
             desc = "Toggle whether a NPC will look when a player is near",
-            modifiers = { "lookclose", "look", "rotate" },
+            modifiers = { "lookclose", "look" },
             min = 1,
             max = 1,
             flags = "r",
@@ -2098,6 +2110,42 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, delay);
         } else {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1));
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "rotate (--body [yaw]) (--head [yaw]) (--pitch [pitch]) (-s(mooth))",
+            desc = "Rotate NPC",
+            flags = "s",
+            modifiers = { "rotate" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.rotate")
+    public void rotate(CommandContext args, CommandSender sender, NPC npc, @Flag("body") Float yaw,
+            @Flag("head") Float head, @Flag("pitch") Float pitch) {
+        if (args.hasFlag('s')) {
+            if (pitch == null) {
+                pitch = npc.getStoredLocation().getPitch();
+            }
+            if (yaw == null) {
+                if (head != null) {
+                    yaw = head;
+                } else {
+                    yaw = NMS.getHeadYaw(npc.getEntity());
+                }
+            }
+            npc.getOrAddTrait(SmoothRotationTrait.class).rotateToHave(yaw, pitch);
+            return;
+        }
+        if (yaw != null) {
+            NMS.setBodyYaw(npc.getEntity(), yaw);
+        }
+        if (pitch != null) {
+            NMS.setPitch(npc.getEntity(), pitch);
+        }
+        if (head != null) {
+            NMS.setHeadYaw(npc.getEntity(), head);
         }
     }
 

@@ -22,6 +22,8 @@ public abstract class NPCShopAction implements Cloneable {
         }
     }
 
+    public abstract String describe();
+
     public abstract Transaction grant(Entity entity);
 
     public abstract Transaction take(Entity entity);

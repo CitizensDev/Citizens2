@@ -292,6 +292,15 @@ public class ShopTrait extends Trait {
             if (meta.hasDisplayName()) {
                 meta.setDisplayName(Placeholders.replace(meta.getDisplayName(), player));
             }
+            if (!meta.hasLore()) {
+                List<String> lore = Lists.newArrayList();
+                if (cost.size() > 0) {
+                    result.forEach((a) -> lore.add(a.describe()));
+                }
+                if (result.size() > 0) {
+                    result.forEach((a) -> lore.add(a.describe()));
+                }
+            }
             if (meta.hasLore()) {
                 meta.setLore(Lists.transform(meta.getLore(), line -> Placeholders.replace(line, player)));
             }

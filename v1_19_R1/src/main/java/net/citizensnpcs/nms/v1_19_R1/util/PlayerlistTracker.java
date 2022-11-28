@@ -53,7 +53,6 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
             return;
         this.lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
-
     }
 
     private static int getE(TrackedEntity entry) {

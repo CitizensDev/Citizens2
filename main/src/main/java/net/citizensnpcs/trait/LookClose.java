@@ -16,10 +16,6 @@ import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.command.CommandConfigurable;
-import net.citizensnpcs.api.command.CommandContext;
-import net.citizensnpcs.api.command.CommandMessages;
-import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.NPCLookCloseChangeTargetEvent;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -33,7 +29,7 @@ import net.citizensnpcs.util.Util;
  *
  */
 @TraitName("lookclose")
-public class LookClose extends Trait implements Toggleable, CommandConfigurable {
+public class LookClose extends Trait implements Toggleable {
     @Persist("disablewhilenavigating")
     private boolean disableWhileNavigating = Setting.DISABLE_LOOKCLOSE_WHILE_NAVIGATING.asBoolean();
     @Persist("enabled")
@@ -72,16 +68,6 @@ public class LookClose extends Trait implements Toggleable, CommandConfigurable 
      */
     public boolean canSeeTarget() {
         return canSee(lookingAt);
-    }
-
-    @Override
-    public void configure(CommandContext args) throws CommandException {
-        try {
-            range = args.getFlagDouble("range", args.getFlagDouble("r", range));
-        } catch (NumberFormatException ex) {
-            throw new CommandException(CommandMessages.INVALID_NUMBER);
-        }
-        realisticLooking = args.hasFlag('r');
     }
 
     public boolean disableWhileNavigating() {

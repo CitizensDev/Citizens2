@@ -73,6 +73,8 @@ public class Messages {
     public static final String COMMAND_SAVE_HELP = "citizens.commands.citizens.save.help";
     public static final String COMMAND_TEMPORARY_PERMISSIONS_SET = "citizens.commands.npc.command.temporary-permissions-set";
     public static final String COMMAND_UNKNOWN_COMMAND_ID = "citizens.commands.npc.command.unknown-id";
+    public static final String COMMANDS_PERSIST_SEQUENCE_SET = "citizens.commands.npc.command.persist-sequence-set";
+    public static final String COMMANDS_PERSIST_SEQUENCE_UNSET = "citizens.commands.npc.command.persist-sequence-unset";
     public static final String COMMANDS_RANDOM_SET = "citizens.commands.npc.commands.random-set";
     public static final String COMMANDS_RANDOM_UNSET = "citizens.commands.npc.commands.random-unset";
     public static final String COMMANDS_SEQUENTIAL_SET = "citizens.commands.npc.commands.sequential-set";

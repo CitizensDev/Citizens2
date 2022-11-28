@@ -180,7 +180,6 @@ import net.citizensnpcs.nms.v1_15_R1.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.nms.v1_15_R1.entity.nonliving.ThrownTridentController;
 import net.citizensnpcs.nms.v1_15_R1.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.nms.v1_15_R1.entity.nonliving.WitherSkullController;
-import net.citizensnpcs.nms.v1_15_R1.network.EmptyChannel;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -202,6 +201,7 @@ import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.trait.versioned.VillagerTrait;
+import net.citizensnpcs.util.EmptyChannel;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
@@ -268,6 +268,8 @@ import net.minecraft.server.v1_15_R1.MobEffects;
 import net.minecraft.server.v1_15_R1.NavigationAbstract;
 import net.minecraft.server.v1_15_R1.NetworkManager;
 import net.minecraft.server.v1_15_R1.Packet;
+import net.minecraft.server.v1_15_R1.PacketPlayOutEntity.PacketPlayOutEntityLook;
+import net.minecraft.server.v1_15_R1.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_15_R1.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_15_R1.PacketPlayOutOpenWindow;
 import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerInfo;
@@ -1117,6 +1119,16 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void sendPositionUpdate(Player excluding, org.bukkit.entity.Entity from, Location storedLocation) {
         sendPacketNearby(excluding, storedLocation, new PacketPlayOutEntityTeleport(getHandle(from)));
+    }
+
+    @Override
+    public void sendRotationNearby(org.bukkit.entity.Entity from, float bodyYaw, float headYaw, float pitch) {
+        Entity handle = getHandle(from);
+        Packet<?>[] packets = new Packet[] {
+                new PacketPlayOutEntityLook(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
+                        (byte) (pitch * 256.0F / 360.0F), isOnGround(from)),
+                new PacketPlayOutEntityHeadRotation(handle, (byte) (headYaw * 256.0F / 360.0F)) };
+        sendPacketsNearby(null, from.getLocation(), packets);
     }
 
     @Override

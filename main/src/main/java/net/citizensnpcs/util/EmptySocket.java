@@ -1,4 +1,4 @@
-package net.citizensnpcs.nms.v1_18_R2.network;
+package net.citizensnpcs.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,7 +14,7 @@ public class EmptySocket extends Socket {
 
     @Override
     public OutputStream getOutputStream() {
-        return new ByteArrayOutputStream(10);
+        return new ByteArrayOutputStream(5);
     }
 
     private static final byte[] EMPTY = new byte[50];

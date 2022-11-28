@@ -22,6 +22,12 @@ public class MoneyAction extends NPCShopAction {
     }
 
     @Override
+    public String describe() {
+        Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
+        return money + " " + economy.currencyNamePlural();
+    }
+
+    @Override
     public Transaction grant(Entity entity) {
         if (!(entity instanceof Player))
             return Transaction.fail();
@@ -85,9 +91,8 @@ public class MoneyAction extends NPCShopAction {
             }
             String description = null;
             if (previous != null) {
-                Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
                 MoneyAction old = (MoneyAction) previous;
-                description = old.money + " " + economy.currencyNamePlural();
+                description = old.describe();
             }
             return Util.createItem(Material.GOLD_INGOT, "Money", description);
         }

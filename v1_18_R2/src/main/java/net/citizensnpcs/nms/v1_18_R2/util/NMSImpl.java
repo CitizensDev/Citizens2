@@ -190,7 +190,6 @@ import net.citizensnpcs.nms.v1_18_R2.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.nms.v1_18_R2.entity.nonliving.ThrownTridentController;
 import net.citizensnpcs.nms.v1_18_R2.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.nms.v1_18_R2.entity.nonliving.WitherSkullController;
-import net.citizensnpcs.nms.v1_18_R2.network.EmptyChannel;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -214,6 +213,7 @@ import net.citizensnpcs.trait.versioned.ShulkerTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.trait.versioned.VillagerTrait;
+import net.citizensnpcs.util.EmptyChannel;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
@@ -227,8 +227,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -1145,6 +1147,16 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void sendPositionUpdate(Player excluding, org.bukkit.entity.Entity from, Location storedLocation) {
         sendPacketNearby(excluding, storedLocation, new ClientboundTeleportEntityPacket(getHandle(from)));
+    }
+
+    @Override
+    public void sendRotationNearby(org.bukkit.entity.Entity from, float bodyYaw, float headYaw, float pitch) {
+        Entity handle = getHandle(from);
+        Packet<?>[] packets = new Packet[] {
+                new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
+                        (byte) (pitch * 256.0F / 360.0F), handle.onGround),
+                new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)) };
+        sendPacketsNearby(null, from.getLocation(), packets);
     }
 
     @Override

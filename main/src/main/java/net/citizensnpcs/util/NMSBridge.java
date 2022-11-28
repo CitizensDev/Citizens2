@@ -129,7 +129,9 @@ public interface NMSBridge {
 
     public void replaceTrackerEntry(Player player);
 
-    public void sendPositionUpdate(Player excluding, Entity from, Location storedLocation);
+    public void sendPositionUpdate(Player excluding, Entity from, Location location);
+
+    public void sendRotationNearby(Entity from, float bodyYaw, float headYaw, float pitch);
 
     public void sendTabListAdd(Player recipient, Player listPlayer);
 
