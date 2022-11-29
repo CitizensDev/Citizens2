@@ -360,6 +360,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public void teleport(Location location, TeleportCause cause);
 
+    void updateCustomName();
+
     /**
      * Whether the NPC is currently set to use Minecraft AI. Defaults to false.
      */

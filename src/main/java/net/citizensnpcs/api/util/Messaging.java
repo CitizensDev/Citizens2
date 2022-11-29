@@ -28,6 +28,7 @@ import com.google.common.collect.Maps;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.platform.bukkit.MinecraftComponentSerializer;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -135,6 +136,13 @@ public class Messaging {
 
     public static void logTr(String key, Object... msg) {
         log(Level.INFO, Translator.translate(key, msg));
+    }
+
+    public static Object minecraftComponentFromRawMessage(String raw) {
+        if (AUDIENCES != null && MINIMESSAGE != null) {
+            return MinecraftComponentSerializer.get().serialize(MINIMESSAGE.deserialize(convertLegacyCodes(raw)));
+        }
+        return null;
     }
 
     private static String prettify(String message) {

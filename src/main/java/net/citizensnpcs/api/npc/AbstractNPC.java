@@ -7,10 +7,10 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Nameable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -329,6 +329,10 @@ public abstract class AbstractNPC implements NPC {
     }
 
     private void loadTraitFromKey(DataKey traitKey) {
+        if (traitKey.name().equals("smoothrotationtrait")) {
+            traitKey.removeKey("");
+            return;
+        }
         Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
         Trait trait;
         if (hasTrait(clazz)) {
@@ -421,12 +425,13 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void setName(String name) {
         this.name = name;
+
         if (!isSpawned())
             return;
+
         Entity bukkitEntity = getEntity();
-        if (bukkitEntity instanceof LivingEntity) {
-            ((LivingEntity) bukkitEntity).setCustomName(getFullName());
-        }
+        updateCustomName();
+
         if (bukkitEntity.getType() == EntityType.PLAYER && !requiresNameHologram()) {
             Location old = bukkitEntity.getLocation();
             despawn(DespawnReason.PENDING_RESPAWN);
@@ -504,6 +509,13 @@ public abstract class AbstractNPC implements NPC {
         }
         if (isSpawned()) {
             goalController.run();
+        }
+    }
+
+    @Override
+    public void updateCustomName() {
+        if (getEntity() instanceof Nameable) {
+            ((Nameable) getEntity()).setCustomName(getFullName());
         }
     }
 
