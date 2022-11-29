@@ -57,6 +57,9 @@ import net.citizensnpcs.util.Util;
  */
 @TraitName("shop")
 public class ShopTrait extends Trait {
+    @Persist
+    private String rightClickShop;
+
     public ShopTrait() {
         super("shop");
     }
@@ -70,17 +73,15 @@ public class ShopTrait extends Trait {
     }
 
     public void onRightClick(Player player) {
-        NPCShop shop = getDefaultShop();
-        if (shop.openOnRightClick) {
-            shop.display(player);
-        }
+        if (rightClickShop == null)
+            return;
+        NPCShop shop = StoredShops.GLOBAL_SHOPS.getOrDefault(rightClickShop, getDefaultShop());
+        shop.display(player);
     }
 
     public static class NPCShop {
         @Persist(value = "")
         private String name;
-        @Persist
-        private boolean openOnRightClick;
         @Persist(reify = true)
         private final List<NPCShopPage> pages = Lists.newArrayList();
         @Persist
@@ -107,8 +108,8 @@ public class ShopTrait extends Trait {
             InventoryMenu.createSelfRegistered(new NPCShopViewer(this, sender)).present(sender);
         }
 
-        public void displayEditor(Player sender) {
-            InventoryMenu.createSelfRegistered(new NPCShopSettings(this)).present(sender);
+        public void displayEditor(ShopTrait trait, Player sender) {
+            InventoryMenu.createSelfRegistered(new NPCShopSettings(trait, this)).present(sender);
         }
 
         public String getName() {
@@ -509,8 +510,10 @@ public class ShopTrait extends Trait {
     public static class NPCShopSettings extends InventoryMenuPage {
         private MenuContext ctx;
         private final NPCShop shop;
+        private final ShopTrait trait;
 
-        public NPCShopSettings(NPCShop shop) {
+        public NPCShopSettings(ShopTrait trait, NPCShop shop) {
+            this.trait = trait;
             this.shop = shop;
         }
 
@@ -519,7 +522,7 @@ public class ShopTrait extends Trait {
             this.ctx = ctx;
             ctx.getSlot(2).setDescription("<f>Edit shop view permission<br>" + shop.getRequiredPermission());
             ctx.getSlot(6).setDescription("<f>Edit shop title<br>" + shop.title);
-            ctx.getSlot(8).setDescription("<f>Show shop on right click<br>" + shop.openOnRightClick);
+            ctx.getSlot(8).setDescription("<f>Show shop on right click<br>" + shop.name.equals(trait.rightClickShop));
         }
 
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
@@ -556,8 +559,12 @@ public class ShopTrait extends Trait {
         @MenuSlot(slot = { 0, 8 }, material = Material.COMMAND_BLOCK, amount = 1)
         public void onToggleRightClick(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
-            shop.openOnRightClick = !shop.openOnRightClick;
-            ctx.getSlot(8).setDescription("<f>Show shop on right click<br>" + shop.openOnRightClick);
+            if (shop.name.equals(trait.rightClickShop)) {
+                trait.rightClickShop = null;
+            } else {
+                trait.rightClickShop = shop.name;
+            }
+            ctx.getSlot(8).setDescription("<f>Show shop on right click<br>" + shop.name.equals(trait.rightClickShop));
         }
     }
 

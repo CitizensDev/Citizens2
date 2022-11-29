@@ -2314,7 +2314,7 @@ public class NPCCommands {
             if (action.equalsIgnoreCase("edit")) {
                 if (!sender.hasPermission("citizens.npc.shop.edit"))
                     throw new NoPermissionsException();
-                shop.displayEditor(sender);
+                shop.displayEditor(trait, sender);
             } else if (action.equalsIgnoreCase("show")) {
                 shop.display(sender);
             } else {
