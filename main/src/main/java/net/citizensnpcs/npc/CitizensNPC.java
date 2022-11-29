@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Nameable;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -59,6 +60,7 @@ import net.citizensnpcs.util.Util;
 public class CitizensNPC extends AbstractNPC {
     private ChunkCoord cachedCoord;
     private EntityController entityController;
+    private Object minecraftComponentCache;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
 
@@ -241,6 +243,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public void setName(String name) {
+        minecraftComponentCache = Messaging.minecraftComponentFromRawMessage(name);
         super.setName(name);
 
         if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
@@ -384,7 +387,7 @@ public class CitizensNPC extends AbstractNPC {
 
                 updateFlyableState();
                 updateCustomNameVisibility();
-                updateCustomName();
+                updateScoreboard();
 
                 Messaging.debug("Spawned", CitizensNPC.this, "SpawnReason." + reason);
                 cancel.run();
@@ -465,7 +468,7 @@ public class CitizensNPC extends AbstractNPC {
                     }
                 }
                 if (isLiving) {
-                    updateCustomName();
+                    updateScoreboard();
                 }
                 updateCounter = 0;
             }
@@ -505,9 +508,14 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
-    private void updateCustomName() {
-        if (data().has(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME)) {
-            getOrAddTrait(ScoreboardTrait.class).update();
+    @Override
+    public void updateCustomName() {
+        if (!(getEntity() instanceof Nameable))
+            return;
+        if (minecraftComponentCache != null) {
+            NMS.setCustomName(getEntity(), minecraftComponentCache);
+        } else {
+            super.updateCustomName();
         }
     }
 
@@ -517,7 +525,7 @@ public class CitizensNPC extends AbstractNPC {
             nameplateVisible = "false";
         }
         if (nameplateVisible.equals("true") || nameplateVisible.equals("hover")) {
-            getEntity().setCustomName(getFullName());
+            updateCustomName();
         }
         getEntity().setCustomNameVisible(Boolean.parseBoolean(nameplateVisible));
     }
@@ -533,6 +541,12 @@ public class CitizensNPC extends AbstractNPC {
         }
         if (!hasTrait(Gravity.class)) {
             getOrAddTrait(Gravity.class).setEnabled(true);
+        }
+    }
+
+    private void updateScoreboard() {
+        if (data().has(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME)) {
+            getOrAddTrait(ScoreboardTrait.class).update();
         }
     }
 

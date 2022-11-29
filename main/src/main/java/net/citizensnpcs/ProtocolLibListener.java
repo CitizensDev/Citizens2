@@ -17,8 +17,8 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.trait.SmoothRotationTrait;
-import net.citizensnpcs.trait.SmoothRotationTrait.LocalRotationSession;
+import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.RotationTrait.LocalRotationSession;
 
 public class ProtocolLibListener {
     private final Class<?> flagsClass;
@@ -42,7 +42,7 @@ public class ProtocolLibListener {
                             return;
 
                         NPC npc = ((NPCHolder) entity).getNPC();
-                        SmoothRotationTrait trait = npc.getTraitNullable(SmoothRotationTrait.class);
+                        RotationTrait trait = npc.getTraitNullable(RotationTrait.class);
                         if (trait == null)
                             return;
 

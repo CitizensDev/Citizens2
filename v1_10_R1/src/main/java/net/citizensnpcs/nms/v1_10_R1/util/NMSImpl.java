@@ -149,7 +149,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.citizensnpcs.trait.SmoothRotationTrait;
+import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
@@ -197,6 +197,7 @@ import net.minecraft.server.v1_10_R1.EntityTrackerEntry;
 import net.minecraft.server.v1_10_R1.EntityTypes;
 import net.minecraft.server.v1_10_R1.EntityWither;
 import net.minecraft.server.v1_10_R1.GenericAttributes;
+import net.minecraft.server.v1_10_R1.IChatBaseComponent;
 import net.minecraft.server.v1_10_R1.IInventory;
 import net.minecraft.server.v1_10_R1.MathHelper;
 import net.minecraft.server.v1_10_R1.MinecraftKey;
@@ -764,7 +765,7 @@ public class NMSImpl implements NMSBridge {
                 ((EntityInsentient) handle).aQ += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(SmoothRotationTrait.class).rotateToFace(to);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
         }
     }
 
@@ -788,7 +789,7 @@ public class NMSImpl implements NMSBridge {
                 ((EntityLiving) handle).aQ += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(SmoothRotationTrait.class).rotateToFace(to);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
         }
     }
 
@@ -1022,6 +1023,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).yaw = yaw;
+    }
+
+    @Override
+    public void setCustomName(org.bukkit.entity.Entity entity, Object component) {
+        getHandle(entity).setCustomName(((IChatBaseComponent) component).getText());
     }
 
     @Override

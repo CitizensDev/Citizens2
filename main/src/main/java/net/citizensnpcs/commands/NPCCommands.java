@@ -133,7 +133,7 @@ import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SlimeSize;
-import net.citizensnpcs.trait.SmoothRotationTrait;
+import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
@@ -2135,7 +2135,7 @@ public class NPCCommands {
                     yaw = NMS.getHeadYaw(npc.getEntity());
                 }
             }
-            npc.getOrAddTrait(SmoothRotationTrait.class).rotateToHave(yaw, pitch);
+            npc.getOrAddTrait(RotationTrait.class).rotateToHave(yaw, pitch);
             return;
         }
         if (yaw != null) {
@@ -2294,14 +2294,14 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "shop (edit|show) (name)",
+            usage = "shop (edit|show|delete) (name)",
             desc = "NPC shop edit/show",
             modifiers = { "shop" },
             min = 1,
             max = 3,
             permission = "citizens.npc.shop")
     public void shop(CommandContext args, Player sender, NPC npc,
-            @Arg(value = 1, completions = { "edit", "show" }) String action) throws CommandException {
+            @Arg(value = 1, completions = { "edit", "show", "delete" }) String action) throws CommandException {
         ShopTrait trait = npc.getOrAddTrait(ShopTrait.class);
         NPCShop shop = trait.getDefaultShop();
         if (args.argsLength() > 1) {
@@ -2317,6 +2317,8 @@ public class NPCCommands {
                 shop.displayEditor(trait, sender);
             } else if (action.equalsIgnoreCase("show")) {
                 shop.display(sender);
+            } else if (action.equalsIgnoreCase("delete")) {
+                trait.deleteShop(args.getString(2));
             } else {
                 throw new CommandUsageException();
             }

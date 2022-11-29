@@ -145,6 +145,8 @@ public interface NMSBridge {
 
     public void setBodyYaw(Entity entity, float yaw);
 
+    public void setCustomName(Entity entity, Object component);
+
     public void setDestination(Entity entity, double x, double y, double z, float speed);
 
     public void setEndermanAngry(Enderman enderman, boolean angry);

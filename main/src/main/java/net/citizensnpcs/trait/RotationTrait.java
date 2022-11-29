@@ -19,15 +19,15 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
-@TraitName("smoothrotationtrait")
-public class SmoothRotationTrait extends Trait {
+@TraitName("rotationtrait")
+public class RotationTrait extends Trait {
     @Persist(reify = true)
     private final RotationParams globalParameters = new RotationParams();
     private final RotationSession globalSession = new RotationSession(globalParameters);
     private final List<LocalRotationSession> localSessions = Lists.newArrayList();
 
-    public SmoothRotationTrait() {
-        super("smoothrotationtrait");
+    public RotationTrait() {
+        super("rotationtrait");
     }
 
     public void clearLocalSessions() {

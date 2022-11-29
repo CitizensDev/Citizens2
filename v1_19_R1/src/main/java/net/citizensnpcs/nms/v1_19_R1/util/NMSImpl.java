@@ -200,7 +200,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.citizensnpcs.trait.SmoothRotationTrait;
+import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AllayTrait;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
@@ -234,6 +234,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.PositionImpl;
 import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.protocol.Packet;
@@ -324,6 +325,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
         int viewDistance = -1;
+
         ChunkMap chunkMap = null;
         try {
             if (entity instanceof Player) {
@@ -996,7 +998,7 @@ public class NMSImpl implements NMSBridge {
                 ((LivingEntity) handle).yHeadRot += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(SmoothRotationTrait.class).rotateToFace(to);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
         }
     }
 
@@ -1021,7 +1023,7 @@ public class NMSImpl implements NMSBridge {
                 ((LivingEntity) handle).yHeadRot += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(SmoothRotationTrait.class).rotateToFace(to);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
         }
     }
 
@@ -1246,6 +1248,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).setYRot(yaw);
+    }
+
+    @Override
+    public void setCustomName(org.bukkit.entity.Entity entity, Object component) {
+        getHandle(entity).setCustomName((Component) component);
     }
 
     @Override

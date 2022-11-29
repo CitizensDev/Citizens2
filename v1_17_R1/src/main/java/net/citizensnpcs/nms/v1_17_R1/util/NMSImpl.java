@@ -193,7 +193,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.citizensnpcs.trait.SmoothRotationTrait;
+import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
@@ -223,6 +223,7 @@ import net.minecraft.ReportedException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
@@ -970,7 +971,7 @@ public class NMSImpl implements NMSBridge {
                 ((LivingEntity) handle).yHeadRot += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(SmoothRotationTrait.class).rotateToFace(to);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
         }
     }
 
@@ -994,7 +995,7 @@ public class NMSImpl implements NMSBridge {
                 ((LivingEntity) handle).yHeadRot += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(SmoothRotationTrait.class).rotateToFace(to);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
         }
     }
 
@@ -1219,6 +1220,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).setYRot(yaw);
+    }
+
+    @Override
+    public void setCustomName(org.bukkit.entity.Entity entity, Object component) {
+        getHandle(entity).setCustomName((Component) component);
     }
 
     @Override

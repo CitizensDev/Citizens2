@@ -527,6 +527,10 @@ public class NMS {
         BRIDGE.setBodyYaw(entity, yaw);
     }
 
+    public static void setCustomName(Entity entity, Object component) {
+        BRIDGE.setCustomName(entity, component);
+    }
+
     public static void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {
         BRIDGE.setDestination(entity, x, y, z, speed);
     }

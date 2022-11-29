@@ -52,7 +52,7 @@ import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SleepTrait;
 import net.citizensnpcs.trait.SlimeSize;
-import net.citizensnpcs.trait.SmoothRotationTrait;
+import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
@@ -91,7 +91,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Poses.class));
         registerTrait(TraitInfo.create(Powered.class));
         registerTrait(TraitInfo.create(RabbitType.class));
-        registerTrait(TraitInfo.create(SmoothRotationTrait.class));
+        registerTrait(TraitInfo.create(RotationTrait.class));
         registerTrait(TraitInfo.create(Saddle.class));
         registerTrait(TraitInfo.create(ScoreboardTrait.class));
         registerTrait(TraitInfo.create(ScriptTrait.class));

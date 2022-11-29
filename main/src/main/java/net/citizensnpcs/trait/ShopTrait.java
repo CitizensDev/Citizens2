@@ -64,6 +64,14 @@ public class ShopTrait extends Trait {
         super("shop");
     }
 
+    public void deleteShop(String name) {
+        if (StoredShops.GLOBAL_SHOPS.containsKey(name)) {
+            StoredShops.GLOBAL_SHOPS.remove(name);
+        } else {
+            StoredShops.NPC_SHOPS.remove(name);
+        }
+    }
+
     public NPCShop getDefaultShop() {
         return StoredShops.NPC_SHOPS.computeIfAbsent(npc.getUniqueId().toString(), NPCShop::new);
     }
