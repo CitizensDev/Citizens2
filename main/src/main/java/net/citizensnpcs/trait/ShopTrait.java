@@ -73,11 +73,11 @@ public class ShopTrait extends Trait {
     }
 
     public NPCShop getDefaultShop() {
-        return StoredShops.NPC_SHOPS.computeIfAbsent(npc.getUniqueId().toString(), NPCShop::new);
+        return StoredShops.NPC_SHOPS.computeIfAbsent(npc.getUniqueId().toString(), (s) -> new NPCShop(npc.getName()));
     }
 
     public NPCShop getShop(String name) {
-        return StoredShops.GLOBAL_SHOPS.computeIfAbsent(name, NPCShop::new);
+        return StoredShops.GLOBAL_SHOPS.computeIfAbsent(name, (s) -> new NPCShop(name));
     }
 
     public void onRightClick(Player player) {
@@ -530,7 +530,8 @@ public class ShopTrait extends Trait {
             this.ctx = ctx;
             ctx.getSlot(2).setDescription("<f>Edit shop view permission<br>" + shop.getRequiredPermission());
             ctx.getSlot(6).setDescription("<f>Edit shop title<br>" + shop.title);
-            ctx.getSlot(8).setDescription("<f>Show shop on right click<br>" + shop.name.equals(trait.rightClickShop));
+            ctx.getSlot(8).setDescription(
+                    "<f>Show shop on right click<br>" + (shop.name != null && shop.name.equals(trait.rightClickShop)));
         }
 
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
@@ -567,12 +568,13 @@ public class ShopTrait extends Trait {
         @MenuSlot(slot = { 0, 8 }, material = Material.COMMAND_BLOCK, amount = 1)
         public void onToggleRightClick(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
-            if (shop.name.equals(trait.rightClickShop)) {
+            if (shop.name != null && shop.name.equals(trait.rightClickShop)) {
                 trait.rightClickShop = null;
             } else {
                 trait.rightClickShop = shop.name;
             }
-            ctx.getSlot(8).setDescription("<f>Show shop on right click<br>" + shop.name.equals(trait.rightClickShop));
+            ctx.getSlot(8).setDescription(
+                    "<f>Show shop on right click<br>" + (shop.name != null && shop.name.equals(trait.rightClickShop)));
         }
     }
 

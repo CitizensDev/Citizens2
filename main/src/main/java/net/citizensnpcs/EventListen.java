@@ -260,6 +260,7 @@ public class EventListen implements Listener {
 
             if (!damageEvent.isCancelled() || !(damageEvent.getDamager() instanceof Player))
                 return;
+
             Player damager = (Player) damageEvent.getDamager();
 
             if (npc.hasTrait(ClickRedirectTrait.class)) {
