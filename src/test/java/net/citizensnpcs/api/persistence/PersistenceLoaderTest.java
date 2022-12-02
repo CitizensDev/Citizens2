@@ -89,6 +89,7 @@ public class PersistenceLoaderTest {
     @Test
     public void mapReify() {
         root.setInt("enabled.test.integer", 5);
+        assertThat(PersistenceLoader.load(TestMapReify.class, root).enabled.get("test").key, is("test"));
         assertThat(PersistenceLoader.load(TestMapReify.class, root).enabled.get("test").integer, is(5));
     }
 
@@ -287,6 +288,8 @@ public class PersistenceLoaderTest {
     public static class SuperclassTest extends Superclass {
         @Persist
         public int integer;
+        @Persist("")
+        public String key;
     }
 
     public static class TestMap {

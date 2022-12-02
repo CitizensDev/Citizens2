@@ -251,8 +251,13 @@ public class PersistenceLoader {
             }
             field.set(instance, value);
         } else {
-            if (value != null && !type.isAssignableFrom(value.getClass()))
+            if (value != null && !type.isAssignableFrom(value.getClass())) {
+                if (root.getRelative(field.key).getSubKeys().iterator().hasNext()
+                        && field.field.getType() == String.class && field.delegate == null) {
+                    field.set(instance, root.getRelative(field.key).name());
+                }
                 return;
+            }
             field.set(instance, value);
         }
     }
@@ -576,6 +581,9 @@ public class PersistenceLoader {
         } else if (value instanceof Enum) {
             root.setRaw("", ((Enum<?>) value).name());
         } else {
+            if (root.getSubKeys().iterator().hasNext() && !(value instanceof Collection)) {
+                return;
+            }
             root.setRaw("", value);
         }
     }
