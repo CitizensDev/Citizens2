@@ -4,12 +4,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.Messaging;
@@ -37,15 +37,15 @@ public class ChatTrigger implements WaypointTrigger {
     public void onWaypointReached(NPC npc, Location waypoint) {
         if (radius < 0) {
             for (Player player : npc.getEntity().getWorld().getPlayers()) {
-                for (String line : lines)
+                for (String line : lines) {
                     Messaging.send(player, line);
+                }
             }
         } else {
-            for (Entity entity : npc.getEntity().getNearbyEntities(radius, radius, radius)) {
-                if (!(entity instanceof Player))
-                    continue;
-                for (String line : lines)
-                    Messaging.send((Player) entity, line);
+            for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getStoredLocation(), radius)) {
+                for (String line : lines) {
+                    Messaging.send(player, line);
+                }
             }
         }
     }

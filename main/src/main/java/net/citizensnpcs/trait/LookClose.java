@@ -6,7 +6,6 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
@@ -92,12 +91,11 @@ public class LookClose extends Trait implements Toggleable {
         if (lookingAt != null) {
             if (randomSwitchTargets && t <= 0) {
                 List<Player> options = Lists.newArrayList();
-                for (Entity entity : npc.getEntity().getNearbyEntities(range, range, range)) {
-                    if (entity == lookingAt || !(entity instanceof Player)
-                            || CitizensAPI.getNPCRegistry().getNPC(entity) != null) {
+                for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
+                        range)) {
+                    if (player == lookingAt || CitizensAPI.getNPCRegistry().getNPC(player) != null) {
                         continue;
                     }
-                    Player player = (Player) entity;
                     if (player.getLocation().getWorld() != NPC_LOCATION.getWorld() || isInvisible(player))
                         continue;
                     options.add(player);
@@ -109,15 +107,13 @@ public class LookClose extends Trait implements Toggleable {
             }
         } else {
             double min = range;
-            for (Entity entity : npc.getEntity().getNearbyEntities(range, range, range)) {
-                if (!(entity instanceof Player))
-                    continue;
-                Player player = (Player) entity;
+            for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
+                    range)) {
                 Location location = player.getLocation(CACHE_LOCATION);
                 if (location.getWorld() != NPC_LOCATION.getWorld())
                     continue;
                 double dist = location.distance(NPC_LOCATION);
-                if (dist > min || CitizensAPI.getNPCRegistry().getNPC(entity) != null || isInvisible(player))
+                if (dist > min || CitizensAPI.getNPCRegistry().getNPC(player) != null || isInvisible(player))
                     continue;
                 min = dist;
                 lookingAt = player;

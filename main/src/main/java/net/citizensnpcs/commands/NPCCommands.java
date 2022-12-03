@@ -10,7 +10,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -2245,12 +2244,9 @@ public class NPCCommands {
             Entity player = (Player) sender;
             final Location location = args.getSenderLocation();
             List<Entity> search = player.getNearbyEntities(range, range, range);
-            Collections.sort(search, new Comparator<Entity>() {
-                @Override
-                public int compare(Entity o1, Entity o2) {
-                    double d = o1.getLocation().distanceSquared(location) - o2.getLocation().distanceSquared(location);
-                    return d > 0 ? 1 : d < 0 ? -1 : 0;
-                }
+            Collections.sort(search, (o1, o2) -> {
+                double d = o1.getLocation().distanceSquared(location) - o2.getLocation().distanceSquared(location);
+                return d > 0 ? 1 : d < 0 ? -1 : 0;
             });
             for (Entity possibleNPC : search) {
                 NPC test = registry.getNPC(possibleNPC);

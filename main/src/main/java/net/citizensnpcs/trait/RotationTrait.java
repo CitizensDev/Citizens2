@@ -1,7 +1,11 @@
 package net.citizensnpcs.trait;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 
 import org.bukkit.Location;
@@ -9,7 +13,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.Persistable;
@@ -25,6 +32,7 @@ public class RotationTrait extends Trait {
     private final RotationParams globalParameters = new RotationParams();
     private final RotationSession globalSession = new RotationSession(globalParameters);
     private final List<LocalRotationSession> localSessions = Lists.newArrayList();
+    private final Map<UUID, LocalRotationSession> localSessionsByUUID = Maps.newHashMap();
 
     public RotationTrait() {
         super("rotationtrait");
@@ -37,12 +45,19 @@ public class RotationTrait extends Trait {
     /**
      * @return The created session
      */
-    public RotationSession createLocalSession(RotationParams params) {
-        if (params.filter == null)
+    public LocalRotationSession createLocalSession(RotationParams params) {
+        if (params.filter == null && params.uuidFilter == null)
             throw new IllegalStateException();
         RotationSession session = new RotationSession(params);
-        localSessions.add(new LocalRotationSession(session));
-        return session;
+        LocalRotationSession lrs = new LocalRotationSession(session);
+        if (params.uuidFilter != null) {
+            for (UUID uuid : params.uuidFilter) {
+                localSessionsByUUID.put(uuid, lrs);
+            }
+        } else {
+            localSessions.add(lrs);
+        }
+        return lrs;
     }
 
     private double getEyeY() {
@@ -57,6 +72,9 @@ public class RotationTrait extends Trait {
     }
 
     public LocalRotationSession getLocalSession(Player player) {
+        LocalRotationSession lrs = localSessionsByUUID.get(player.getUniqueId());
+        if (lrs != null)
+            return lrs;
         for (LocalRotationSession session : localSessions) {
             if (session.accepts(player)) {
                 return session;
@@ -111,8 +129,13 @@ public class RotationTrait extends Trait {
         if (!npc.isSpawned())
             return;
 
-        for (Iterator<LocalRotationSession> itr = localSessions.iterator(); itr.hasNext();) {
+        Set<LocalRotationSession> run = Sets.newHashSet();
+        for (Iterator<LocalRotationSession> itr = Iterables.concat(localSessions, localSessionsByUUID.values())
+                .iterator(); itr.hasNext();) {
             LocalRotationSession session = itr.next();
+            if (run.contains(session))
+                continue;
+            run.add(session);
             session.run(npc.getEntity());
             if (!session.isActive()) {
                 itr.remove();
@@ -144,6 +167,7 @@ public class RotationTrait extends Trait {
     }
 
     public static class LocalRotationSession {
+        private boolean ended;
         private final RotationSession session;
         private RotationTriple triple;
 
@@ -153,6 +177,10 @@ public class RotationTrait extends Trait {
 
         public boolean accepts(Player player) {
             return session.params.accepts(player);
+        }
+
+        public void end() {
+            this.ended = true;
         }
 
         public float getBodyYaw() {
@@ -168,7 +196,7 @@ public class RotationTrait extends Trait {
         }
 
         public boolean isActive() {
-            return session.isActive();
+            return !ended && session.isActive();
         }
 
         public void run(Entity entity) {
@@ -204,6 +232,7 @@ public class RotationTrait extends Trait {
         private float maxYawPerTick = 40;
         private boolean persist = false;
         private float[] pitchRange = { -180, 180 };
+        private List<UUID> uuidFilter;
         private float[] yawRange = { -180, 180 };
 
         public boolean accepts(Player player) {
@@ -288,13 +317,6 @@ public class RotationTrait extends Trait {
             return Util.clamp(out, pitchRange[0], pitchRange[1], 360);
         }
 
-        /*
-         *  public Vector3 SuperSmoothVector3Lerp( Vector3 pastPosition, Vector3 pastTargetPosition, Vector3 targetPosition, float time, float speed ){
-         Vector3 f = pastPosition - pastTargetPosition + (targetPosition - pastTargetPosition) / (speed * time);
-         return targetPosition - (targetPosition - pastTargetPosition) / (speed*time) + f * Mathf.Exp(-speed*time);
-         }
-         */
-
         private float rotateTowards(float target, float current, float maxRotPerTick) {
             float diff = Util.clamp(current - target);
             return target + clamp(diff, -maxRotPerTick, maxRotPerTick);
@@ -333,6 +355,22 @@ public class RotationTrait extends Trait {
             } else {
                 key.removeKey("yawRange");
             }
+        }
+
+        /*
+         *  public Vector3 SuperSmoothVector3Lerp( Vector3 pastPosition, Vector3 pastTargetPosition, Vector3 targetPosition, float time, float speed ){
+         Vector3 f = pastPosition - pastTargetPosition + (targetPosition - pastTargetPosition) / (speed * time);
+         return targetPosition - (targetPosition - pastTargetPosition) / (speed*time) + f * Mathf.Exp(-speed*time);
+         }
+         */
+
+        public RotationParams uuidFilter(List<UUID> uuids) {
+            this.uuidFilter = uuids;
+            return this;
+        }
+
+        public RotationParams uuidFilter(UUID... uuids) {
+            return uuidFilter(Arrays.asList(uuids));
         }
 
         public RotationParams yawRange(float[] val) {

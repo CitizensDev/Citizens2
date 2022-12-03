@@ -19,6 +19,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Flag;
@@ -157,11 +158,9 @@ public class BossBarTrait extends Trait {
         }
         if (barCache != null) {
             barCache.removeAll();
-            for (Entity entity : npc.getEntity().getNearbyEntities(Setting.BOSSBAR_RANGE.asInt() / 2,
-                    Setting.BOSSBAR_RANGE.asInt() / 2, Setting.BOSSBAR_RANGE.asInt() / 2)) {
-                if (entity instanceof Player) {
-                    barCache.addPlayer((Player) entity);
-                }
+            for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
+                    Setting.BOSSBAR_RANGE.asInt())) {
+                barCache.addPlayer(player);
             }
         }
     }

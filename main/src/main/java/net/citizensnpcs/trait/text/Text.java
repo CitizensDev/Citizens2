@@ -13,7 +13,6 @@ import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -187,11 +186,10 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
         if (!talkClose)
             return;
 
-        List<Entity> nearby = npc.getEntity().getNearbyEntities(range, range, range);
-        for (Entity search : nearby) {
-            if (!(search instanceof Player) || ((Player) search).getGameMode() == GameMode.SPECTATOR)
+        for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(), range)) {
+            if (player.getGameMode() == GameMode.SPECTATOR)
                 continue;
-            sendCooldownMessage((Player) search);
+            sendCooldownMessage(player);
         }
     }
 

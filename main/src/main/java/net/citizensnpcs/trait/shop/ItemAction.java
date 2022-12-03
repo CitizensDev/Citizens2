@@ -15,6 +15,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.BooleanSlotHandler;
@@ -212,9 +213,12 @@ public class ItemAction extends NPCShopAction {
                 base.compareSimilarity = res;
                 return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
             }, base.compareSimilarity));
-            ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Material.BOOK), "NBT comparison filter");
-            ctx.getSlot(3 * 9 + 3).addClickHandler((event) -> ctx.getMenu()
-                    .transition(InputMenus.stringSetter(() -> "", res -> base.metaFilter = Lists.newArrayList(res))));
+            ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Material.BOOK), "NBT comparison filter",
+                    Joiner.on("\n").join(base.metaFilter));
+            ctx.getSlot(3 * 9 + 3)
+                    .addClickHandler((event) -> ctx.getMenu()
+                            .transition(InputMenus.stringSetter(() -> Joiner.on(',').join(base.metaFilter),
+                                    res -> base.metaFilter = Arrays.asList(res.split(",")))));
         }
 
         @Override
