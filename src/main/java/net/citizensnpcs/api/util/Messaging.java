@@ -275,9 +275,13 @@ public class Messaging {
         COLORCODE_CONVERTER.put("l", "<b>");
         COLORCODE_CONVERTER.put("r", "<r>");
         try {
-            MINIMESSAGE_COLORCODE_MATCHER = Pattern.compile(Joiner.on('|')
-                    .join(Collections2.transform(NamedTextColor.NAMES.values(), (c) -> '<' + c.toString() + '>'))
-                    + "|<#\\d{6}>", Pattern.CASE_INSENSITIVE);
+            MINIMESSAGE_COLORCODE_MATCHER = Pattern
+                    .compile(
+                            Joiner.on('|')
+                                    .join(Collections2.transform(NamedTextColor.NAMES.values(),
+                                            c -> '<' + c.toString() + '>'))
+                                    + "|<#[a-f\\d]{6}>",
+                            Pattern.CASE_INSENSITIVE);
             MINIMESSAGE = MiniMessage.builder()
                     .editTags(t -> t.resolver(TagResolver.resolver("csr", Tag.styling(
                             s -> Arrays.stream(TextDecoration.values()).forEach(td -> s.decoration(td, false))))))

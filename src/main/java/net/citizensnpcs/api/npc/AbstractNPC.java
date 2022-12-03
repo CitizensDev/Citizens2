@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Nameable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -89,6 +88,7 @@ public abstract class AbstractNPC implements NPC {
             }
         }
     };
+    protected Object minecraftComponentCache;
     private String name;
     private final NPCRegistry registry;
     private final List<String> removedTraits = Lists.newArrayList();
@@ -102,6 +102,7 @@ public abstract class AbstractNPC implements NPC {
         this.id = id;
         this.registry = registry;
         this.name = name;
+        minecraftComponentCache = Messaging.minecraftComponentFromRawMessage(name);
         CitizensAPI.getTraitFactory().addDefaultTraits(this);
     }
 
@@ -468,7 +469,11 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void setName(String name) {
+        if (name.equals(this.name))
+            return;
+
         this.name = name;
+        minecraftComponentCache = Messaging.minecraftComponentFromRawMessage(name);
 
         if (!isSpawned())
             return;
@@ -558,9 +563,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void updateCustomName() {
-        if (getEntity() instanceof Nameable) {
-            ((Nameable) getEntity()).setCustomName(getFullName());
-        }
+        getEntity().setCustomName(getFullName());
     }
 
     @Override

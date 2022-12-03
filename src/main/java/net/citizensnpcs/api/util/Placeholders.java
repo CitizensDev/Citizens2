@@ -10,8 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.ImmutableList;
@@ -55,7 +53,7 @@ public class Placeholders {
         if (text == null) {
             return text;
         }
-        if (player instanceof Entity && ((Entity) player).isValid()) {
+        if (player.getPlayer() != null) {
             StringBuffer out = new StringBuffer();
             Matcher matcher = PLAYER_PLACEHOLDER_MATCHER.matcher(text);
             while (matcher.find()) {
@@ -82,22 +80,22 @@ public class Placeholders {
                 } else if (group.equals("<nearest_player>")) {
                     double min = Double.MAX_VALUE;
                     Player closest = null;
-                    for (Entity entity : ((Player) player).getNearbyEntities(25, 25, 25)) {
-                        if (entity == player || !(entity instanceof Player) || entity.getType() != EntityType.PLAYER
-                                || CitizensAPI.getNPCRegistry().isNPC(entity))
+                    for (Player entity : CitizensAPI.getLocationLookup()
+                            .getNearbyPlayers(player.getPlayer().getLocation(), 25)) {
+                        if (entity == player || CitizensAPI.getNPCRegistry().isNPC(entity))
                             continue;
                         Location location = entity.getLocation();
-                        double dist = location.distanceSquared(((Player) player).getLocation());
+                        double dist = location.distanceSquared(player.getPlayer().getLocation());
                         if (dist > min)
                             continue;
                         min = dist;
-                        closest = (Player) entity;
+                        closest = entity;
                     }
                     if (closest != null) {
                         replacement = closest.getName();
                     }
                 } else if (group.equals("<world>")) {
-                    replacement = ((Entity) player).getWorld().getName();
+                    replacement = player.getPlayer().getWorld().getName();
                 }
                 matcher.appendReplacement(out, "");
                 out.append(replacement);
