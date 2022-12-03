@@ -345,7 +345,7 @@ public class Util {
             version = Version.identify().get("netty-all");
         }
         if (version == null)
-            return REQUIRES_CHANNEL_METADATA = false;
+            return REQUIRES_CHANNEL_METADATA = true;
         try {
             Integer[] parts = StreamSupport
                     .stream(Splitter.on('.').split(version.artifactVersion()).spliterator(), false).map(string -> {
@@ -359,7 +359,7 @@ public class Util {
             int major = parts[0];
             int minor = parts[1];
             int patch = parts[2];
-            return REQUIRES_CHANNEL_METADATA = major >= 5 || major == 4 && (minor > 1 || patch >= 1);
+            return REQUIRES_CHANNEL_METADATA = major >= 5 || major == 4 && (minor > 1 || patch >= 25);
         } catch (Throwable t) {
             t.printStackTrace();
             return REQUIRES_CHANNEL_METADATA = true;
