@@ -22,6 +22,7 @@ import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
@@ -32,6 +33,7 @@ import com.mojang.authlib.GameProfileRepository;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -61,12 +63,11 @@ public class NMS {
 
     public static void cancelMoveDestination(Entity entity) {
         BRIDGE.cancelMoveDestination(entity);
-    }
-
-    /*
+    }/*
      * Yggdrasil's default implementation of this method silently fails instead of throwing
      * an Exception like it should.
      */
+
     public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {
         return BRIDGE.fillProfileProperties(profile, requireSecure);
     }
@@ -325,6 +326,10 @@ public class NMS {
             }
         }
         return null;
+    }
+
+    public static CompoundTag getNBT(ItemStack item) {
+        return BRIDGE.getNBT(item);
     }
 
     public static NPC getNPC(Entity entity) {

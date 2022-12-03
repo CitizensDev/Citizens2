@@ -461,7 +461,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     public void setPathfindingMalus(BlockPathTypes pathtype, float f) {
-        this.malus.put(pathtype, f);
+        malus.put(pathtype, f);
     }
 
     public void setShouldJump() {
@@ -470,7 +470,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public void setSkinFlags(byte flags) {
-        this.getEntityData().set(net.minecraft.world.entity.player.Player.DATA_PLAYER_MODE_CUSTOMISATION, flags);
+        getEntityData().set(net.minecraft.world.entity.player.Player.DATA_PLAYER_MODE_CUSTOMISATION, flags);
     }
 
     @Override
@@ -489,7 +489,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     public void setTracked(PlayerlistTracker tracker) {
-        this.playerlistTracker = tracker;
+        playerlistTracker = tracker;
     }
 
     @Override

@@ -34,7 +34,6 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
@@ -124,6 +123,7 @@ import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
+import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
@@ -133,7 +133,6 @@ import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SlimeSize;
-import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
@@ -1148,7 +1147,7 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.id")
     public void id(CommandContext args, CommandSender sender, NPC npc) {
-        Messaging.send(sender, npc.getId());
+        sender.sendMessage(Integer.toString(npc.getId()));
     }
 
     @Command(
@@ -1165,38 +1164,29 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "item [item] (data)",
+            usage = "item (item) (amount) (data)",
             desc = "Sets the NPC's item",
             modifiers = { "item", },
-            min = 2,
+            min = 1,
             max = 3,
-            flags = "",
+            flags = "h",
             permission = "citizens.npc.item")
-    @Requirements(
-            selected = true,
-            ownership = true,
-            types = { EntityType.DROPPED_ITEM, EntityType.ITEM_FRAME, EntityType.FALLING_BLOCK })
-    public void item(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Material mat) throws CommandException {
-        if (mat == null)
+    @Requirements(selected = true, ownership = true)
+    public void item(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Material mat, @Arg(2) Integer amount,
+            @Arg(3) Byte data) throws CommandException {
+        EntityType type = npc.getOrAddTrait(MobType.class).getType();
+        if (!type.name().contains("ITEM_FRAME") && type != EntityType.DROPPED_ITEM && type != EntityType.FALLING_BLOCK)
+            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE);
+        ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand()
+                : new ItemStack(mat, amount == null ? 1 : amount, data == null ? 0 : data);
+        if (mat == null && !args.hasFlag('h'))
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
-        int data = args.getInteger(2, 0);
-        npc.data().setPersistent(NPC.ITEM_ID_METADATA, mat.name());
-        npc.data().setPersistent(NPC.ITEM_DATA_METADATA, data);
-        switch (npc.getEntity().getType()) {
-            case DROPPED_ITEM:
-                ((org.bukkit.entity.Item) npc.getEntity()).getItemStack().setType(mat);
-                break;
-            case ITEM_FRAME:
-                ((ItemFrame) npc.getEntity()).setItem(new ItemStack(mat, 1));
-                break;
-            default:
-                break;
-        }
+        npc.setItemProvider(() -> stack);
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
-        Messaging.sendTr(sender, Messages.ITEM_SET, Util.prettyEnum(mat));
+        Messaging.sendTr(sender, Messages.ITEM_SET, Util.prettyEnum(stack.getType()));
     }
 
     @Command(

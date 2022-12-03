@@ -164,7 +164,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             if (registry == null)
                 continue;
             if (save) {
-                registry.saveToStore();
+                if (registry == npcRegistry) {
+                    storeNPCs(false);
+                } else {
+                    registry.saveToStore();
+                }
             }
             registry.despawnNPCs(DespawnReason.RELOAD);
         }

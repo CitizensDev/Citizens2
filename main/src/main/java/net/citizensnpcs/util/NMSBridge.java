@@ -17,6 +17,7 @@ import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
@@ -27,6 +28,7 @@ import com.mojang.authlib.GameProfileRepository;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -64,6 +66,8 @@ public interface NMSBridge {
     public double getHeight(Entity entity);
 
     public float getHorizontalMovement(Entity entity);
+
+    public CompoundTag getNBT(ItemStack item);
 
     public NPC getNPC(Entity entity);
 

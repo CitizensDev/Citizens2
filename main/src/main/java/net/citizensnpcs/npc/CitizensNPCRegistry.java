@@ -91,9 +91,10 @@ public class CitizensNPCRegistry implements NPCRegistry {
         NPC npc = createNPC(type, name);
         if (type == EntityType.DROPPED_ITEM || type == EntityType.FALLING_BLOCK || type == EntityType.GLOW_ITEM_FRAME
                 || type == EntityType.ITEM_FRAME) {
-            npc.data().set(NPC.ITEM_ID_METADATA, item.getType().name());
-            npc.data().set(NPC.ITEM_DATA_METADATA, (int) item.getData().getData());
-            npc.data().set(NPC.ITEM_AMOUNT_METADATA, item.getAmount());
+            npc.data().set(NPC.Metadata.ITEM_AMOUNT, item.getAmount());
+            npc.data().set(NPC.Metadata.ITEM_ID, item.getType().getId());
+            npc.data().set(NPC.Metadata.ITEM_DATA, item.getData().getData());
+            npc.setItemProvider(() -> item);
         } else {
             throw new UnsupportedOperationException("Not an item entity type");
         }

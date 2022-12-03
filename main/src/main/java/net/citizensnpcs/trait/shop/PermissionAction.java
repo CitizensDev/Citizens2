@@ -112,6 +112,7 @@ public class PermissionAction extends NPCShopAction {
                 }
                 ctx.getSlot(i).setClickHandler(event -> {
                     if (event.isRightClick()) {
+                        event.setCancelled(true);
                         if (idx < base.permissions.size()) {
                             base.permissions.remove(idx);
                             ctx.getSlot(idx).setItemStack(null);

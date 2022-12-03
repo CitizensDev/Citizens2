@@ -73,11 +73,11 @@ public class ShopTrait extends Trait {
     }
 
     public NPCShop getDefaultShop() {
-        return StoredShops.NPC_SHOPS.computeIfAbsent(npc.getUniqueId().toString(), (s) -> new NPCShop(npc.getName()));
+        return StoredShops.NPC_SHOPS.computeIfAbsent(npc.getUniqueId().toString(), (s) -> new NPCShop(s));
     }
 
     public NPCShop getShop(String name) {
-        return StoredShops.GLOBAL_SHOPS.computeIfAbsent(name, (s) -> new NPCShop(name));
+        return StoredShops.GLOBAL_SHOPS.computeIfAbsent(name, (s) -> new NPCShop(s));
     }
 
     public void onRightClick(Player player) {
@@ -121,7 +121,7 @@ public class ShopTrait extends Trait {
         }
 
         public String getName() {
-            return name;
+            return name == null ? "" : name;
         }
 
         public NPCShopPage getOrCreatePage(int page) {
@@ -178,7 +178,6 @@ public class ShopTrait extends Trait {
 
                 final int idx = i;
                 slot.setClickHandler(evt -> {
-                    evt.setCancelled(true);
                     ctx.clearSlots();
                     NPCShopItem display = item;
                     if (display == null) {
@@ -367,20 +366,16 @@ public class ShopTrait extends Trait {
                 NPCShopAction oldCost = modified.cost.stream().filter(template::manages).findFirst().orElse(null);
                 costItems.getSlots().get(pos)
                         .setItemStack(Util.editTitle(template.createMenuItem(oldCost), title -> title + " Cost"));
-                costItems.getSlots().get(pos).setClickHandler(event -> {
-                    event.setCancelled(true);
-                    ctx.getMenu().transition(
-                            template.createEditor(oldCost, cost -> modified.changeCost(template::manages, cost)));
-                });
+                costItems.getSlots().get(pos).setClickHandler(event -> ctx.getMenu().transition(
+                        template.createEditor(oldCost, cost -> modified.changeCost(template::manages, cost))));
 
                 NPCShopAction oldResult = modified.result.stream().filter(template::manages).findFirst().orElse(null);
                 actionItems.getSlots().get(pos)
                         .setItemStack(Util.editTitle(template.createMenuItem(oldResult), title -> title + " Result"));
-                actionItems.getSlots().get(pos).setClickHandler(event -> {
-                    event.setCancelled(true);
+                actionItems.getSlots().get(pos).setClickHandler(event -> 
                     ctx.getMenu().transition(template.createEditor(oldResult,
-                            result -> modified.changeResult(template::manages, result)));
-                });
+                            result -> modified.changeResult(template::manages, result)))
+                );
 
                 pos++;
             }
@@ -530,8 +525,8 @@ public class ShopTrait extends Trait {
             this.ctx = ctx;
             ctx.getSlot(2).setDescription("<f>Edit shop view permission<br>" + shop.getRequiredPermission());
             ctx.getSlot(6).setDescription("<f>Edit shop title<br>" + shop.title);
-            ctx.getSlot(8).setDescription(
-                    "<f>Show shop on right click<br>" + (shop.name != null && shop.name.equals(trait.rightClickShop)));
+            ctx.getSlot(8)
+                    .setDescription("<f>Show shop on right click<br>" + shop.getName().equals(trait.rightClickShop));
         }
 
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
@@ -568,13 +563,13 @@ public class ShopTrait extends Trait {
         @MenuSlot(slot = { 0, 8 }, material = Material.COMMAND_BLOCK, amount = 1)
         public void onToggleRightClick(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
-            if (shop.name != null && shop.name.equals(trait.rightClickShop)) {
+            if (shop.getName().equals(trait.rightClickShop)) {
                 trait.rightClickShop = null;
             } else {
                 trait.rightClickShop = shop.name;
             }
-            ctx.getSlot(8).setDescription(
-                    "<f>Show shop on right click<br>" + (shop.name != null && shop.name.equals(trait.rightClickShop)));
+            ctx.getSlot(8)
+                    .setDescription("<f>Show shop on right click<br>" + (shop.getName().equals(trait.rightClickShop)));
         }
     }
 

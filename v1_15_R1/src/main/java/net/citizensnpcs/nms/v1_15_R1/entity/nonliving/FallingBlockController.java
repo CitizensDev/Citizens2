@@ -21,7 +21,6 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.Block;
-import net.minecraft.server.v1_15_R1.Blocks;
 import net.minecraft.server.v1_15_R1.EntityFallingBlock;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.EnumMoveType;
@@ -41,13 +40,7 @@ public class FallingBlockController extends AbstractEntityController {
     @Override
     protected Entity createEntity(Location at, NPC npc) {
         WorldServer ws = ((CraftWorld) at.getWorld()).getHandle();
-        Block id = Blocks.STONE;
-        int data = npc.data().get(NPC.ITEM_DATA_METADATA, npc.data().get("falling-block-data", 0));
-        // TODO: how to incorporate this - probably delete?
-        if (npc.data().has("falling-block-id") || npc.data().has(NPC.ITEM_ID_METADATA)) {
-            id = CraftMagicNumbers.getBlock(Material.getMaterial(
-                    npc.data().<String> get(NPC.ITEM_ID_METADATA, npc.data().<String> get("falling-block-id"))));
-        }
+        Block id = CraftMagicNumbers.getBlock(npc.getItemProvider().get().getType());
         final EntityFallingBlockNPC handle = new EntityFallingBlockNPC(ws, npc, at.getX(), at.getY(), at.getZ(),
                 id.getBlockData());
         return handle.getBukkitEntity();

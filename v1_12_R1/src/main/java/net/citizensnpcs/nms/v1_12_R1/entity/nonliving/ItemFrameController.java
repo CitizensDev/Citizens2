@@ -2,17 +2,13 @@ package net.citizensnpcs.nms.v1_12_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftItemFrame;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import net.citizensnpcs.api.event.DespawnReason;
-import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_12_R1.entity.MobEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -112,25 +108,12 @@ public class ItemFrameController extends MobEntityController {
         public ItemFrameNPC(EntityItemFrameNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
             this.npc = entity.npc;
-            int amount = npc.data().get(NPC.ITEM_AMOUNT_METADATA, 1);
-            Material material = Material.getMaterial(npc.data().<String> get(NPC.ITEM_ID_METADATA, "STONE"));
-            Number durability = npc.data().<Number> get(NPC.ITEM_DATA_METADATA,
-                    npc.data().<Number> get("falling-block-data", (short) 0));
-            setItem(new ItemStack(material, amount, durability.shortValue()));
+            setItem(npc.getItemProvider().get());
         }
 
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        public void setType(Material material, int data) {
-            npc.data().setPersistent(NPC.ITEM_ID_METADATA, material.name());
-            npc.data().setPersistent(NPC.ITEM_DATA_METADATA, data);
-            if (npc.isSpawned()) {
-                npc.despawn(DespawnReason.PENDING_RESPAWN);
-                npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
-            }
         }
     }
 }

@@ -14,7 +14,6 @@ import org.bukkit.util.Vector;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.nms.v1_19_R1.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -40,19 +39,8 @@ public class ItemController extends AbstractEntityController {
 
     @Override
     protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {
-        ServerLevel ws = ((CraftWorld) at.getWorld()).getHandle();
-        Material id = Material.STONE;
-        int data = npc.data().get(NPC.ITEM_DATA_METADATA, npc.data().get("falling-block-data", 0));
-        if (npc.data().has(NPC.ITEM_ID_METADATA)) {
-            id = Material.getMaterial(npc.data().<String> get(NPC.ITEM_ID_METADATA), false);
-        }
-        if (id == Material.AIR) {
-            id = Material.STONE;
-            Messaging.severe(npc.getId(), "invalid Material: converted to stone");
-        }
-        final EntityItemNPC handle = new EntityItemNPC(ws, npc, at.getX(), at.getY(), at.getZ(),
-                CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(id,
-                        npc.data().get(NPC.ITEM_AMOUNT_METADATA, 1), (short) data)));
+        final EntityItemNPC handle = new EntityItemNPC(((CraftWorld) at.getWorld()).getHandle(), npc, at.getX(), at.getY(), at.getZ(),
+                CraftItemStack.asNMSCopy(npc.getItemProvider().get()));
         return handle.getBukkitEntity();
     }
 
