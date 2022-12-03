@@ -458,6 +458,12 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void setItemProvider(Supplier<ItemStack> provider) {
         this.itemProvider = provider;
+        ItemStack stack = provider.get();
+        if (stack != null) {
+            data().set(NPC.Metadata.ITEM_ID, stack.getType().getId());
+            data().set(NPC.Metadata.ITEM_DATA, stack.getData().getData());
+            data().set(NPC.Metadata.ITEM_AMOUNT, stack.getAmount());
+        }
     }
 
     @Override
