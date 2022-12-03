@@ -4,15 +4,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Nameable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Function;
@@ -40,6 +43,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.ItemStorage;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
@@ -48,6 +52,18 @@ import net.citizensnpcs.api.util.SpigotUtil;
 public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
     private final int id;
+    private Supplier<ItemStack> itemProvider = () -> {
+        Material id = Material.STONE;
+        int data = data().get(NPC.ITEM_DATA_METADATA, data().get("falling-block-data", 0));
+        if (data().has(NPC.ITEM_ID_METADATA)) {
+            id = Material.getMaterial(data().<String> get(NPC.ITEM_ID_METADATA), false);
+        }
+        if (id == Material.AIR) {
+            id = Material.STONE;
+            Messaging.severe(getId(), "invalid Material: converted to stone");
+        }
+        return new org.bukkit.inventory.ItemStack(id, data().get(NPC.ITEM_AMOUNT_METADATA, 1), (short) data);
+    };
     private final MetadataStore metadata = new SimpleMetadataStore() {
         @Override
         public void remove(String key) {
@@ -236,6 +252,11 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public Supplier<ItemStack> getItemProvider() {
+        return itemProvider;
+    }
+
+    @Override
     public String getName() {
         return Colorizer.stripColors(name);
     }
@@ -308,6 +329,10 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void load(final DataKey root) {
         name = root.getString("name");
+        if (root.keyExists("itemprovider")) {
+            ItemStack item = ItemStorage.loadItemStack(root.getRelative("itemprovider"));
+            itemProvider = () -> item;
+        }
         metadata.loadFrom(root.getRelative("metadata"));
 
         String traitNames = root.getString("traitnames");
@@ -382,9 +407,17 @@ public abstract class AbstractNPC implements NPC {
     public void save(DataKey root) {
         if (!metadata.get(NPC.SHOULD_SAVE_METADATA, true))
             return;
+
         metadata.saveTo(root.getRelative("metadata"));
         root.setString("name", name);
         root.setString("uuid", uuid.toString());
+
+        if (data().has(NPC.ITEM_ID_METADATA)) {
+            ItemStack stack = itemProvider.get();
+            ItemStorage.saveItem(root.getRelative("itemprovider"), stack);
+        } else {
+            root.removeKey("itemprovider");
+        }
 
         // Save all existing traits
         StringBuilder traitNames = new StringBuilder();
@@ -420,6 +453,11 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public void setFlyable(boolean flyable) {
         data().setPersistent(NPC.FLYABLE_METADATA, flyable);
+    }
+
+    @Override
+    public void setItemProvider(Supplier<ItemStack> provider) {
+        this.itemProvider = provider;
     }
 
     @Override

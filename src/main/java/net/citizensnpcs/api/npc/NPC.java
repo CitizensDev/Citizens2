@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.npc;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.Navigator;
@@ -138,6 +140,11 @@ public interface NPC extends Agent, Cloneable {
      * @return ID of this NPC
      */
     public int getId();
+
+    /**
+     * @see #getItemProvider()
+     */
+    public Supplier<ItemStack> getItemProvider();
 
     /**
      * Gets the name of this NPC with color codes stripped.
@@ -304,6 +311,20 @@ public interface NPC extends Agent, Cloneable {
      */
     public void setFlyable(boolean flyable);
 
+    /**
+     * For item-type NPCs, set a {@link Supplier} of the {@link ItemStack} to use when spawning the NPC.
+     *
+     * @param supplier
+     *            The supplier
+     */
+    public void setItemProvider(Supplier<ItemStack> supplier);
+
+    /**
+     * Set the target movement destination location to walk towards using Minecraft movement. Should be set every tick.
+     *
+     * @param destination
+     *            The destination {@link Location}
+     */
     public void setMoveDestination(Location destination);
 
     /**
