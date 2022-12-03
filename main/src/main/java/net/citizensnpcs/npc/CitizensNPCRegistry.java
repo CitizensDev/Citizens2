@@ -92,7 +92,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         if (type == EntityType.DROPPED_ITEM || type == EntityType.FALLING_BLOCK || type == EntityType.GLOW_ITEM_FRAME
                 || type == EntityType.ITEM_FRAME) {
             npc.data().set(NPC.Metadata.ITEM_AMOUNT, item.getAmount());
-            npc.data().set(NPC.Metadata.ITEM_ID, item.getType().getId());
+            npc.data().set(NPC.Metadata.ITEM_ID, item.getType().name());
             npc.data().set(NPC.Metadata.ITEM_DATA, item.getData().getData());
             npc.setItemProvider(() -> item);
         } else {

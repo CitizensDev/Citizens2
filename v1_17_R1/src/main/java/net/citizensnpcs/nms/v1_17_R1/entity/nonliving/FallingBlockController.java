@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_17_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
@@ -11,8 +10,6 @@ import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
 
-import net.citizensnpcs.api.event.DespawnReason;
-import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
@@ -152,15 +149,6 @@ public class FallingBlockController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        public void setType(Material material, int data) {
-            npc.data().setPersistent(NPC.ITEM_ID_METADATA, material.name());
-            npc.data().setPersistent(NPC.ITEM_DATA_METADATA, data);
-            if (npc.isSpawned()) {
-                npc.despawn(DespawnReason.PENDING_RESPAWN);
-                npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
-            }
         }
     }
 }
