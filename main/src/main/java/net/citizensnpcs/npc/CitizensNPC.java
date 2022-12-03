@@ -59,7 +59,6 @@ import net.citizensnpcs.util.Util;
 public class CitizensNPC extends AbstractNPC {
     private ChunkCoord cachedCoord;
     private EntityController entityController;
-    private Object minecraftComponentCache;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
 
@@ -242,7 +241,6 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public void setName(String name) {
-        minecraftComponentCache = Messaging.minecraftComponentFromRawMessage(name);
         super.setName(name);
 
         if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
