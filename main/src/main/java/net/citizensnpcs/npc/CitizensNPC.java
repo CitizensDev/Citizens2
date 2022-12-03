@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Nameable;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -510,8 +509,6 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public void updateCustomName() {
-        if (!(getEntity() instanceof Nameable))
-            return;
         if (minecraftComponentCache != null) {
             NMS.setCustomName(getEntity(), minecraftComponentCache);
         } else {

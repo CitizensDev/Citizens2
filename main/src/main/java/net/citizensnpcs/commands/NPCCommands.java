@@ -598,7 +598,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary)) --at [x:y:z:world] --type [type] --trait ['trait1, trait2...'] --registry [registry name])",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --registry [registry name])",
             desc = "Create a new NPC",
             flags = "bust",
             modifiers = { "create" },
@@ -607,7 +607,8 @@ public class NPCCommands {
     @Requirements
     public void create(CommandContext args, CommandSender sender, NPC npc, @Flag("at") Location at,
             @Flag(value = "type", defValue = "PLAYER") EntityType type, @Flag("trait") String traits,
-            @Flag("template") String templateName, @Flag("registry") String registryName) throws CommandException {
+            @Flag("item") String item, @Flag("template") String templateName, @Flag("registry") String registryName)
+            throws CommandException {
         String name = Colorizer.parseColors(args.getJoinedStrings(1).trim());
         if (args.hasValueFlag("type")) {
             if (type == null) {
@@ -643,7 +644,18 @@ public class NPCCommands {
             registry = temporaryRegistry;
         }
 
-        npc = registry.createNPC(type, name);
+        if (item != null) {
+            ItemStack stack = new ItemStack(Material.STONE, 1);
+            try {
+                Bukkit.getUnsafe().modifyItemStack(stack, item);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            npc = registry.createNPCUsingItem(type, name, stack);
+        } else {
+            npc = registry.createNPC(type, name);
+        }
+
         String msg = "Created [[" + npc.getName() + "]] (ID [[" + npc.getId() + "]])";
 
         int age = 0;
@@ -1164,7 +1176,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "item (item) (amount) (data)",
+            usage = "item (item) (metadata) (-h(and))",
             desc = "Sets the NPC's item",
             modifiers = { "item", },
             min = 1,
@@ -1172,13 +1184,19 @@ public class NPCCommands {
             flags = "h",
             permission = "citizens.npc.item")
     @Requirements(selected = true, ownership = true)
-    public void item(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Material mat, @Arg(2) Integer amount,
-            @Arg(3) Byte data) throws CommandException {
+    public void item(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Material mat, @Arg(2) String modify)
+            throws CommandException {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
         if (!type.name().contains("ITEM_FRAME") && type != EntityType.DROPPED_ITEM && type != EntityType.FALLING_BLOCK)
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE);
-        ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand()
-                : new ItemStack(mat, amount == null ? 1 : amount, data == null ? 0 : data);
+        ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand() : new ItemStack(mat, 1);
+        if (modify != null) {
+            try {
+                Bukkit.getUnsafe().modifyItemStack(stack, modify);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
         if (mat == null && !args.hasFlag('h'))
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
         npc.setItemProvider(() -> stack);
