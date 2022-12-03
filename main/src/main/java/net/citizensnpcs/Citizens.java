@@ -35,6 +35,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.InventoryHelper;
+import net.citizensnpcs.api.LocationLookup;
 import net.citizensnpcs.api.SkullMetaProvider;
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.command.CommandManager;
@@ -52,6 +53,7 @@ import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
+import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.NBTStorage;
 import net.citizensnpcs.api.util.Storage;
@@ -98,12 +100,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             NMS.updateInventoryTitle(player, view, newTitle);
         }
     };
+    private LocationLookup locationLookup;
     private CitizensNPCRegistry npcRegistry;
     private ProtocolLibListener protocolListener;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
     private NPCSelector selector;
-    private Storage shops;
+    private StoredShops shops;
     private final SkullMetaProvider skullMetaProvider = new SkullMetaProvider() {
         @Override
         public String getTexture(SkullMeta meta) {
@@ -214,6 +217,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public InventoryHelper getInventoryHelper() {
         return inventoryHelper;
+    }
+
+    @Override
+    public LocationLookup getLocationLookup() {
+        return locationLookup;
     }
 
     @Override
@@ -333,7 +341,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String cmdName, String[] args) {
-        // TODO: use injector?
         Object[] methodArgs = { sender, selector == null ? null : selector.getSelected(sender) };
         return commands.executeSafe(command, args, sender, methodArgs);
     }
@@ -353,6 +360,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs(saveOnDisable);
         HandlerList.unregisterAll(this);
         npcRegistry = null;
+        locationLookup = null;
         enabled = false;
         saveOnDisable = true;
         NMS.shutdown();
@@ -382,16 +390,22 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         registerScriptHelpers();
 
         saves = createStorage(getDataFolder());
-        shops = new YamlStorage(new File(getDataFolder(), "shops.yml"));
-        if (saves == null || !shops.load()) {
+        shops = new StoredShops(new YamlStorage(new File(getDataFolder(), "shops.yml")));
+        if (saves == null || !shops.loadFromDisk()) {
             Messaging.severeTr(Messages.FAILED_LOAD_SAVES);
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
+        locationLookup = new LocationLookup();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, locationLookup, 0, 5);
+
         speechFactory = new CitizensSpeechFactory();
         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
         traitFactory = new CitizensTraitFactory();
+        traitFactory.registerTrait(TraitInfo.create(ShopTrait.class).withSupplier(() -> {
+            return new ShopTrait();
+        }));
         selector = new NPCSelector(this);
 
         Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
@@ -461,8 +475,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         saves.reloadFromSource();
         saves.loadInto(npcRegistry);
 
+        shops.loadFromDisk();
         shops.load();
-        ShopTrait.loadShops(shops.getKey(""));
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
@@ -533,15 +547,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     return Iterables.size(npcRegistry);
                 }
             }));
-            /*
-            TODO: not implemented yet
-            metrics.addCustomChart(new Metrics.MultiLineChart("traits", new Callable<Map<String, Integer>>() {
-                @Override
-                public Map<String, Integer> call() throws Exception {
-                    return traitFactory.getTraitPlot();
-                }
-            }));
-            */
         } catch (Exception e) {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
         }
@@ -555,14 +560,14 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (saves == null)
             return;
         saves.storeAll(npcRegistry);
-        ShopTrait.saveShops(shops.getKey(""));
+        shops.saveShops();
         if (async) {
             saves.saveToDisk();
             new Thread(() -> {
-                shops.save();
+                shops.saveToDisk();
             }).start();
         } else {
-            shops.save();
+            shops.saveToDisk();
             saves.saveToDiskImmediate();
         }
     }
@@ -571,7 +576,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         @Override
         public void run() {
             saves.loadInto(npcRegistry);
-            ShopTrait.loadShops(shops.getKey(""));
+            shops.load();
 
             Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
             startMetrics();

@@ -3,14 +3,11 @@ package net.citizensnpcs.npc;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
@@ -42,17 +39,16 @@ import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
+import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
-import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SleepTrait;
 import net.citizensnpcs.trait.SlimeSize;
-import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
@@ -102,7 +98,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(SkinTrait.class));
         registerTrait(TraitInfo.create(SneakTrait.class));
         registerTrait(TraitInfo.create(SlimeSize.class));
-        registerTrait(TraitInfo.create(ShopTrait.class));
         registerTrait(TraitInfo.create(Spawned.class));
         registerTrait(TraitInfo.create(Speech.class));
         registerTrait(TraitInfo.create(Text.class));
@@ -111,10 +106,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(WoolColor.class));
         registerTrait(TraitInfo.create(WolfModifiers.class));
         registerTrait(TraitInfo.create(VillagerProfession.class));
-
-        for (String trait : registered.keySet()) {
-            INTERNAL_TRAITS.add(trait);
-        }
     }
 
     @Override
@@ -164,23 +155,6 @@ public class CitizensTraitFactory implements TraitFactory {
         return info == null ? null : info.getTraitClass();
     }
 
-    public Map<String, Integer> getTraitPlot() {
-        Map<String, Integer> counts = Maps.newHashMap();
-        for (NPC npc : CitizensAPI.getNPCRegistry()) {
-            for (Trait trait : npc.getTraits()) {
-                if (INTERNAL_TRAITS.contains(trait.getName()))
-                    continue;
-                counts.put(trait.getName(), counts.getOrDefault(trait.getName(), 0) + 1);
-            }
-        }
-        return counts;
-    }
-
-    @Override
-    public boolean isInternalTrait(Trait trait) {
-        return INTERNAL_TRAITS.contains(trait.getName());
-    }
-
     @Override
     public void registerTrait(TraitInfo info) {
         Preconditions.checkNotNull(info, "info cannot be null");
@@ -193,6 +167,4 @@ public class CitizensTraitFactory implements TraitFactory {
             defaultTraits.add(info);
         }
     }
-
-    private static final Set<String> INTERNAL_TRAITS = Sets.newHashSet();
 }

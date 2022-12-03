@@ -31,7 +31,7 @@ import net.citizensnpcs.util.Util;
 
 public class ItemAction extends NPCShopAction {
     @Persist
-    public boolean compareSimilarity = false;
+    public boolean compareSimilarity = true;
     @Persist
     public List<ItemStack> items = Lists.newArrayList();
     @Persist

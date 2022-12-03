@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import net.citizensnpcs.StoredShops;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
 import net.citizensnpcs.api.gui.ClickHandler;
@@ -34,11 +35,9 @@ import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.gui.MenuPattern;
 import net.citizensnpcs.api.gui.MenuSlot;
 import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.trait.shop.ItemAction;
@@ -59,31 +58,37 @@ import net.citizensnpcs.util.Util;
 public class ShopTrait extends Trait {
     @Persist
     private String rightClickShop;
+    private StoredShops shops;
 
     public ShopTrait() {
         super("shop");
     }
 
+    public ShopTrait(StoredShops shops) {
+        this();
+        this.shops = shops;
+    }
+
     public void deleteShop(String name) {
-        if (StoredShops.GLOBAL_SHOPS.containsKey(name)) {
-            StoredShops.GLOBAL_SHOPS.remove(name);
+        if (shops.globalShops.containsKey(name)) {
+            shops.globalShops.remove(name);
         } else {
-            StoredShops.NPC_SHOPS.remove(name);
+            shops.npcShops.remove(name);
         }
     }
 
     public NPCShop getDefaultShop() {
-        return StoredShops.NPC_SHOPS.computeIfAbsent(npc.getUniqueId().toString(), (s) -> new NPCShop(s));
+        return shops.npcShops.computeIfAbsent(npc.getUniqueId().toString(), (s) -> new NPCShop(s));
     }
 
     public NPCShop getShop(String name) {
-        return StoredShops.GLOBAL_SHOPS.computeIfAbsent(name, (s) -> new NPCShop(s));
+        return shops.globalShops.computeIfAbsent(name, (s) -> new NPCShop(s));
     }
 
     public void onRightClick(Player player) {
         if (rightClickShop == null)
             return;
-        NPCShop shop = StoredShops.GLOBAL_SHOPS.getOrDefault(rightClickShop, getDefaultShop());
+        NPCShop shop = shops.globalShops.getOrDefault(rightClickShop, getDefaultShop());
         shop.display(player);
     }
 
@@ -372,10 +377,8 @@ public class ShopTrait extends Trait {
                 NPCShopAction oldResult = modified.result.stream().filter(template::manages).findFirst().orElse(null);
                 actionItems.getSlots().get(pos)
                         .setItemStack(Util.editTitle(template.createMenuItem(oldResult), title -> title + " Result"));
-                actionItems.getSlots().get(pos).setClickHandler(event -> 
-                    ctx.getMenu().transition(template.createEditor(oldResult,
-                            result -> modified.changeResult(template::manages, result)))
-                );
+                actionItems.getSlots().get(pos).setClickHandler(event -> ctx.getMenu().transition(
+                        template.createEditor(oldResult, result -> modified.changeResult(template::manages, result))));
 
                 pos++;
             }
@@ -645,22 +648,6 @@ public class ShopTrait extends Trait {
         SELL;
     }
 
-    private static class StoredShops {
-        @Persist(value = "global", reify = true)
-        private static Map<String, NPCShop> GLOBAL_SHOPS = Maps.newHashMap();
-        @Persist(value = "npc", reify = true)
-        private static Map<String, NPCShop> NPC_SHOPS = Maps.newHashMap();
-    }
-
-    public static void loadShops(DataKey root) {
-        SAVED = PersistenceLoader.load(StoredShops.class, root);
-    }
-
-    public static void saveShops(DataKey root) {
-        PersistenceLoader.save(SAVED, root);
-    }
-
-    private static StoredShops SAVED = new StoredShops();
     static {
         NPCShopAction.register(ItemAction.class, "items", new ItemActionGUI());
         NPCShopAction.register(PermissionAction.class, "permissions", new PermissionActionGUI());

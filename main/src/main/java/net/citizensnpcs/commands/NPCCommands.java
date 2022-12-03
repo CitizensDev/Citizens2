@@ -1619,8 +1619,6 @@ public class NPCCommands {
         }
         Messaging.send(sender, "    Traits");
         for (Trait trait : npc.getTraits()) {
-            if (CitizensAPI.getTraitFactory().isInternalTrait(trait))
-                continue;
             String message = "     [[- ]]" + trait.getName();
             Messaging.send(sender, message);
         }
