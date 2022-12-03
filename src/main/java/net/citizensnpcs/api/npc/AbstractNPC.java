@@ -460,7 +460,7 @@ public abstract class AbstractNPC implements NPC {
         this.itemProvider = provider;
         ItemStack stack = provider.get();
         if (stack != null) {
-            data().set(NPC.Metadata.ITEM_ID, stack.getType().getId());
+            data().set(NPC.Metadata.ITEM_ID, stack.getType().name());
             data().set(NPC.Metadata.ITEM_DATA, stack.getData().getData());
             data().set(NPC.Metadata.ITEM_AMOUNT, stack.getAmount());
         }
