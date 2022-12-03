@@ -93,6 +93,10 @@ public final class CitizensAPI {
         return getImplementation().getInventoryHelper();
     }
 
+    public static LocationLookup getLocationLookup() {
+        return getImplementation().getLocationLookup();
+    }
+
     /**
      * Retrieves the {@link NPCRegistry} previously created via {@link #createNamedNPCRegistry(String, NPCDataStore)}
      * with the given name, or null if not found.

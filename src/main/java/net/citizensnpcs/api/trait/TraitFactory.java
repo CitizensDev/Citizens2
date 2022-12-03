@@ -24,7 +24,7 @@ public interface TraitFactory {
 
     /**
      * Returns all currently registered traits, including <em>internal</em> traits
-     * 
+     *
      * @return
      */
     Collection<TraitInfo> getRegisteredTraits();
@@ -55,16 +55,6 @@ public interface TraitFactory {
      * @return The trait class
      */
     Class<? extends Trait> getTraitClass(String name);
-
-    /**
-     * Checks whether the given trait is 'internal'. An internal trait is implementation-defined and is default or
-     * built-in.
-     *
-     * @param trait
-     *            The trait to check
-     * @return Whether the trait is an internal trait
-     */
-    boolean isInternalTrait(Trait trait);
 
     /**
      * Registers a trait using the given information.

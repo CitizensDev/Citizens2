@@ -47,6 +47,13 @@ public interface CitizensPlugin extends Plugin {
     public InventoryHelper getInventoryHelper();
 
     /**
+     * Gets the Citizens {@link LocationLookup}
+     *
+     * @return
+     */
+    public LocationLookup getLocationLookup();
+
+    /**
      *
      * @param name
      *            The plugin name
