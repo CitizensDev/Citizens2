@@ -359,7 +359,7 @@ public class Util {
             int major = parts[0];
             int minor = parts[1];
             int patch = parts[2];
-            return REQUIRES_CHANNEL_METADATA = major >= 5 || major == 4 && (minor > 1 || patch >= 25);
+            return REQUIRES_CHANNEL_METADATA = major >= 5 || major == 4 && (minor > 1 || patch >= 1);
         } catch (Throwable t) {
             t.printStackTrace();
             return REQUIRES_CHANNEL_METADATA = true;
