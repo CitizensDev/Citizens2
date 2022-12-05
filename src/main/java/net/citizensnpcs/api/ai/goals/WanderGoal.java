@@ -87,7 +87,6 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     public void pause() {
         this.paused = true;
         if (target != null) {
-            npc.getNavigator().cancelNavigation();
             if (pathfind) {
                 npc.getNavigator().cancelNavigation();
             } else {
