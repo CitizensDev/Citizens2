@@ -404,7 +404,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
         traitFactory = new CitizensTraitFactory();
         traitFactory.registerTrait(TraitInfo.create(ShopTrait.class).withSupplier(() -> {
-            return new ShopTrait();
+            return new ShopTrait(shops);
         }));
         selector = new NPCSelector(this);
 
