@@ -85,6 +85,11 @@ public class ShopTrait extends Trait {
         return shops.globalShops.computeIfAbsent(name, (s) -> new NPCShop(s));
     }
 
+    @Override
+    public void onRemove() {
+        deleteShop(npc.getUniqueId().toString());
+    }
+
     public void onRightClick(Player player) {
         if (rightClickShop == null)
             return;
@@ -608,6 +613,7 @@ public class ShopTrait extends Trait {
                     item.onClick(shop, evt);
                 });
             }
+
             InventoryMenuSlot prev = ctx.getSlot(4 * 9 + 3);
             InventoryMenuSlot next = ctx.getSlot(4 * 9 + 5);
             prev.clear();
