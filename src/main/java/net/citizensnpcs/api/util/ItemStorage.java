@@ -437,8 +437,8 @@ public class ItemStorage {
                         if (modifier.getSlot() != null) {
                             root.setString("slot", modifier.getSlot().name());
                         }
+                        i++;
                     }
-                    i++;
                 }
             } catch (Throwable e) {
                 SUPPORTS_ATTRIBUTES = false;
@@ -451,7 +451,7 @@ public class ItemStorage {
                 key.setString("flags." + j++, flag.name());
             }
         }
-        if (meta instanceof Repairable) {
+        if (meta instanceof Repairable && ((Repairable) meta).hasRepairCost()) {
             Repairable rep = (Repairable) meta;
             key.setInt("repaircost", rep.getRepairCost());
         } else {
@@ -474,10 +474,10 @@ public class ItemStorage {
         if (meta instanceof SkullMeta) {
             SkullMeta skull = (SkullMeta) meta;
             String texture = CitizensAPI.getSkullMetaProvider().getTexture(skull);
-            if (texture == null) {
+            if (texture == null || texture.isEmpty()) {
                 key.removeKey("skull.texture");
             } else {
-                key.setString("skull.texture", CitizensAPI.getSkullMetaProvider().getTexture(skull));
+                key.setString("skull.texture", texture);
             }
             key.setString("skull.owner", skull.getOwner());
         } else {
