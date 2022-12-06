@@ -115,9 +115,9 @@ public class ItemAction extends NPCShopAction {
             }
             return free >= items.size();
         }, () -> {
-            source.addItem(items.toArray(new ItemStack[items.size()]));
+            source.addItem(items.stream().map(item -> item.clone()).toArray(ItemStack[]::new));
         }, () -> {
-            source.removeItem(items.toArray(new ItemStack[items.size()]));
+            source.removeItem(items.stream().map(item -> item.clone()).toArray(ItemStack[]::new));
         });
     }
 
@@ -168,7 +168,7 @@ public class ItemAction extends NPCShopAction {
                 }
             });
         }, () -> {
-            source.addItem(items.toArray(new ItemStack[items.size()]));
+            source.addItem(items.stream().map(item -> item.clone()).toArray(ItemStack[]::new));
         });
     }
 
