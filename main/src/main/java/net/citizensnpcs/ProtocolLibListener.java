@@ -18,7 +18,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.RotationTrait;
-import net.citizensnpcs.trait.RotationTrait.LocalRotationSession;
+import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 
 public class ProtocolLibListener {
     private final Class<?> flagsClass;
@@ -46,7 +46,7 @@ public class ProtocolLibListener {
                         if (trait == null)
                             return;
 
-                        LocalRotationSession session = trait.getLocalSession(event.getPlayer());
+                        PacketRotationSession session = trait.getPacketSession(event.getPlayer());
                         if (session == null || !session.isActive())
                             return;
 

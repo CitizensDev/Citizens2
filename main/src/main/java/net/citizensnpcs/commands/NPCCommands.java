@@ -2140,7 +2140,7 @@ public class NPCCommands {
                     yaw = NMS.getHeadYaw(npc.getEntity());
                 }
             }
-            npc.getOrAddTrait(RotationTrait.class).rotateToHave(yaw, pitch);
+            npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToHave(yaw, pitch);
             return;
         }
         if (yaw != null) {

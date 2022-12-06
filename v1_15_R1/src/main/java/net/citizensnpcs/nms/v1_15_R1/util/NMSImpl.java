@@ -962,7 +962,7 @@ public class NMSImpl implements NMSBridge {
                 ((EntityLiving) handle).aK += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(to);
         }
     }
 
@@ -986,7 +986,7 @@ public class NMSImpl implements NMSBridge {
                 ((EntityLiving) handle).aK += 360F;
             }
         } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).rotateToFace(to);
+            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(to);
         }
     }
 
@@ -2128,15 +2128,15 @@ public class NMSImpl implements NMSBridge {
     public static void sendPacketsNearby(Player from, Location location, Collection<Packet<?>> packets, double radius) {
         radius *= radius;
         final org.bukkit.World world = location.getWorld();
-        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
-            if (ply == null || world != ply.getWorld() || (from != null && !ply.canSee(from))) {
+        for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
+            if (world != player.getWorld() || (from != null && !player.canSee(from))) {
                 continue;
             }
-            if (location.distanceSquared(ply.getLocation(PACKET_CACHE_LOCATION)) > radius) {
+            if (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius) {
                 continue;
             }
             for (Packet<?> packet : packets) {
-                NMSImpl.sendPacket(ply, packet);
+                NMSImpl.sendPacket(player, packet);
             }
         }
     }

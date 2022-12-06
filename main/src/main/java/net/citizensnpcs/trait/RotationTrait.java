@@ -31,31 +31,32 @@ public class RotationTrait extends Trait {
     @Persist(reify = true)
     private final RotationParams globalParameters = new RotationParams();
     private final RotationSession globalSession = new RotationSession(globalParameters);
-    private final List<LocalRotationSession> localSessions = Lists.newArrayList();
-    private final Map<UUID, LocalRotationSession> localSessionsByUUID = Maps.newHashMap();
+    private final List<PacketRotationSession> packetSessions = Lists.newArrayList();
+    private final Map<UUID, PacketRotationSession> packetSessionsByUUID = Maps.newHashMap();
 
     public RotationTrait() {
         super("rotationtrait");
     }
 
-    public void clearLocalSessions() {
-        localSessions.clear();
+    public void clearPacketSessions() {
+        packetSessions.clear();
+        packetSessionsByUUID.clear();
     }
 
     /**
      * @return The created session
      */
-    public LocalRotationSession createLocalSession(RotationParams params) {
+    public PacketRotationSession createPacketSession(RotationParams params) {
         if (params.filter == null && params.uuidFilter == null)
             throw new IllegalStateException();
         RotationSession session = new RotationSession(params);
-        LocalRotationSession lrs = new LocalRotationSession(session);
+        PacketRotationSession lrs = new PacketRotationSession(session);
         if (params.uuidFilter != null) {
             for (UUID uuid : params.uuidFilter) {
-                localSessionsByUUID.put(uuid, lrs);
+                packetSessionsByUUID.put(uuid, lrs);
             }
         } else {
-            localSessions.add(lrs);
+            packetSessions.add(lrs);
         }
         return lrs;
     }
@@ -71,16 +72,20 @@ public class RotationTrait extends Trait {
         return globalParameters;
     }
 
-    public LocalRotationSession getLocalSession(Player player) {
-        LocalRotationSession lrs = localSessionsByUUID.get(player.getUniqueId());
+    public PacketRotationSession getPacketSession(Player player) {
+        PacketRotationSession lrs = packetSessionsByUUID.get(player.getUniqueId());
         if (lrs != null)
             return lrs;
-        for (LocalRotationSession session : localSessions) {
+        for (PacketRotationSession session : packetSessions) {
             if (session.accepts(player)) {
                 return session;
             }
         }
         return null;
+    }
+
+    public RotationSession getPhysicalSession() {
+        return globalSession;
     }
 
     private double getX() {
@@ -95,44 +100,15 @@ public class RotationTrait extends Trait {
         return npc.getStoredLocation().getZ();
     }
 
-    /**
-     * Rotates to face target entity
-     *
-     * @param target
-     *            The target entity to face
-     */
-    public void rotateToFace(Entity target) {
-        Location loc = target.getLocation();
-        loc.setY(loc.getY() + NMS.getHeight(target));
-        rotateToFace(loc);
-    }
-
-    /**
-     * Rotates to face target location
-     *
-     * @param target
-     *            The target location to face
-     */
-    public void rotateToFace(Location target) {
-        globalSession.setTarget(target);
-    }
-
-    public void rotateToHave(float yaw, float pitch) {
-        double pitchCos = Math.cos(Math.toRadians(pitch));
-        Vector vector = new Vector(Math.sin(Math.toRadians(yaw)) * -pitchCos, -Math.sin(Math.toRadians(pitch)),
-                Math.cos(Math.toRadians(yaw)) * pitchCos).normalize();
-        rotateToFace(npc.getStoredLocation().clone().add(vector));
-    }
-
     @Override
     public void run() {
         if (!npc.isSpawned())
             return;
 
-        Set<LocalRotationSession> run = Sets.newHashSet();
-        for (Iterator<LocalRotationSession> itr = Iterables.concat(localSessions, localSessionsByUUID.values())
+        Set<PacketRotationSession> run = Sets.newHashSet();
+        for (Iterator<PacketRotationSession> itr = Iterables.concat(packetSessions, packetSessionsByUUID.values())
                 .iterator(); itr.hasNext();) {
-            LocalRotationSession session = itr.next();
+            PacketRotationSession session = itr.next();
             if (run.contains(session))
                 continue;
             run.add(session);
@@ -166,12 +142,12 @@ public class RotationTrait extends Trait {
         }
     }
 
-    public static class LocalRotationSession {
+    public static class PacketRotationSession {
         private boolean ended;
         private final RotationSession session;
         private RotationTriple triple;
 
-        public LocalRotationSession(RotationSession session) {
+        public PacketRotationSession(RotationSession session) {
             this.session = session;
         }
 
@@ -193,6 +169,11 @@ public class RotationTrait extends Trait {
 
         public float getPitch() {
             return triple.pitch;
+        }
+
+        // TODO: inheritance rather than composition?
+        public RotationSession getSession() {
+            return session;
         }
 
         public boolean isActive() {
@@ -414,6 +395,41 @@ public class RotationTrait extends Trait {
 
         public boolean isActive() {
             return params.persist || t >= 0;
+        }
+
+        /**
+         * Rotates to face target entity
+         *
+         * @param target
+         *            The target entity to face
+         */
+        public void rotateToFace(Entity target) {
+            Location loc = target.getLocation();
+            loc.setY(loc.getY() + NMS.getHeight(target));
+            rotateToFace(loc);
+        }
+
+        /**
+         * Rotates to face target location
+         *
+         * @param target
+         *            The target location to face
+         */
+        public void rotateToFace(Location target) {
+            setTarget(target);
+        }
+
+        /**
+         * Rotate to have the given yaw and pitch
+         *
+         * @param yaw
+         * @param pitch
+         */
+        public void rotateToHave(float yaw, float pitch) {
+            double pitchCos = Math.cos(Math.toRadians(pitch));
+            Vector vector = new Vector(Math.sin(Math.toRadians(yaw)) * -pitchCos, -Math.sin(Math.toRadians(pitch)),
+                    Math.cos(Math.toRadians(yaw)) * pitchCos).normalize();
+            rotateToFace(npc.getStoredLocation().clone().add(vector));
         }
 
         private void run(RotationTriple rot) {

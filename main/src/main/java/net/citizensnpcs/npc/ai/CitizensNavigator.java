@@ -36,9 +36,11 @@ import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
+import net.citizensnpcs.trait.RotationTrait.RotationParams;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.Util;
 
 public class CitizensNavigator implements Navigator, Runnable {
     private Location activeTicket;
@@ -58,6 +60,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     private NavigatorParameters localParams = defaultParams;
     private final NPC npc;
     private boolean paused;
+    private PacketRotationSession session;
     private int stationaryTicks;
 
     public CitizensNavigator(NPC npc) {
@@ -174,15 +177,11 @@ public class CitizensNavigator implements Navigator, Runnable {
             localParams.run();
         }
         if (localParams.lookAtFunction() != null) {
-            Util.faceLocation(npc.getEntity(), localParams.lookAtFunction().apply(this), true, true);
-            Entity entity = npc.getEntity().getPassenger();
-            npcLoc = npc.getEntity().getLocation();
-            while (entity != null) {
-                Location loc = entity.getLocation(STATIONARY_LOCATION);
-                loc.setYaw(npcLoc.getYaw());
-                entity.teleport(loc);
-                entity = entity.getPassenger();
+            if (session == null) {
+                RotationTrait trait = npc.getOrAddTrait(RotationTrait.class);
+                session = trait.createPacketSession(new RotationParams().filter((p) -> true).persist(true));
             }
+            session.getSession().rotateToFace(localParams.lookAtFunction().apply(this));
         }
         if (localParams.destinationTeleportMargin() > 0
                 && npcLoc.distance(targetLoc) <= localParams.destinationTeleportMargin()) {
@@ -374,6 +373,10 @@ public class CitizensNavigator implements Navigator, Runnable {
     private void stopNavigating(CancelReason reason) {
         if (!isNavigating())
             return;
+        if (session != null) {
+            session.end();
+            session = null;
+        }
         Iterator<NavigatorCallback> itr = localParams.callbacks().iterator();
         List<NavigatorCallback> callbacks = new ArrayList<NavigatorCallback>();
         while (itr.hasNext()) {
