@@ -105,7 +105,7 @@ public class TabListRemover {
 
     private class PlayerEntry {
         Player player;
-        Set<SkinnableEntity> toRemove = new HashSet<SkinnableEntity>(30);
+        Set<SkinnableEntity> toRemove = new HashSet<SkinnableEntity>(20);
 
         PlayerEntry(Player player) {
             this.player = player;

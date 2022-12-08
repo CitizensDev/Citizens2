@@ -924,7 +924,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendTabListAdd(Player recipient, Player listPlayer) {
+    public boolean sendTabListAdd(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
 
@@ -932,6 +932,7 @@ public class NMSImpl implements NMSBridge {
 
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entity));
+        return true;
     }
 
     @Override

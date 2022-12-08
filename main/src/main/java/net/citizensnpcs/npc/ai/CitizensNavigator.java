@@ -77,6 +77,11 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     @Override
+    public void cancelNavigation(CancelReason reason) {
+        stopNavigating(reason);
+    }
+
+    @Override
     public NavigatorParameters getDefaultParameters() {
         return defaultParams;
     }

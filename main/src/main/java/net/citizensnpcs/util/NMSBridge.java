@@ -137,7 +137,7 @@ public interface NMSBridge {
 
     public void sendRotationNearby(Entity from, float bodyYaw, float headYaw, float pitch);
 
-    public void sendTabListAdd(Player recipient, Player listPlayer);
+    public boolean sendTabListAdd(Player recipient, Player listPlayer);
 
     public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);
 

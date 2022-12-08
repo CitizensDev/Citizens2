@@ -139,23 +139,15 @@ public class SkinPacketTracker {
     }
 
     private void scheduleRemovePacket(final PlayerEntry entry) {
-        if (isRemoved || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
+        if (isRemoved || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled()
+                || !shouldRemoveFromTabList())
             return;
 
-        entry.removeTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                if (shouldRemoveFromTabList()) {
-                    TAB_LIST_REMOVER.sendPacket(entry.player, entity);
-                }
-            }
-        }, PACKET_DELAY_REMOVE);
+        entry.removeTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
+                () -> TAB_LIST_REMOVER.sendPacket(entry.player, entity), PACKET_DELAY_REMOVE);
     }
 
     private void scheduleRemovePacket(PlayerEntry entry, int count) {
-        if (!shouldRemoveFromTabList())
-            return;
-
         entry.removeCount = count;
         scheduleRemovePacket(entry);
     }
@@ -171,22 +163,13 @@ public class SkinPacketTracker {
      *            The radius.
      */
     public void updateNearbyViewers(double radius) {
-        org.bukkit.World world = entity.getBukkitEntity().getWorld();
         Player from = entity.getBukkitEntity();
-        Location location = from.getLocation();
 
-        for (Player player : world.getPlayers()) {
-            if (player == null || player.hasMetadata("NPC"))
-                continue;
-
-            if (!location.getWorld().equals(player.getLocation(CACHE_LOCATION).getWorld()) || !player.canSee(from))
-                continue;
-
-            if (location.distance(CACHE_LOCATION) > radius)
-                continue;
-
+        CitizensAPI.getLocationLookup().getNearbyPlayers(from.getLocation(CACHE_LOCATION), radius).forEach(player -> {
+            if (!player.canSee(from) || player.hasMetadata("NPC"))
+                return;
             updateViewer(player);
-        }
+        });
     }
 
     /**
@@ -212,9 +195,9 @@ public class SkinPacketTracker {
 
         inProgress.put(player.getUniqueId(), entry);
         skin.apply(entity);
-        NMS.sendTabListAdd(player, entity.getBukkitEntity());
-
-        scheduleRemovePacket(entry, 2);
+        if (NMS.sendTabListAdd(player, entity.getBukkitEntity())) {
+            scheduleRemovePacket(entry, 2);
+        }
     }
 
     private class PlayerEntry {

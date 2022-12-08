@@ -508,8 +508,8 @@ public class NMS {
         BRIDGE.sendRotationNearby(entity, bodyYaw, headYaw, pitch);
     }
 
-    public static void sendTabListAdd(Player recipient, Player listPlayer) {
-        BRIDGE.sendTabListAdd(recipient, listPlayer);
+    public static boolean sendTabListAdd(Player recipient, Player listPlayer) {
+        return BRIDGE.sendTabListAdd(recipient, listPlayer);
     }
 
     public static void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {

@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>citizens-v1_19_R1</artifactId>
+            <artifactId>citizens-v1_19_R2</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
