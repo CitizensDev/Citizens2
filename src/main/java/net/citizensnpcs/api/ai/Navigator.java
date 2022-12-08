@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
+import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 
 /**
@@ -16,6 +17,11 @@ public interface Navigator {
      * Cancels any running navigation towards a target.
      */
     void cancelNavigation();
+
+    /**
+     * Cancels any running navigation towards a target with a specific {@link CancelReason}.
+     */
+    void cancelNavigation(CancelReason reason);
 
     /**
      * Returns the {@link NavigatorParameters} local to this navigator. These parameters are copied to local target
