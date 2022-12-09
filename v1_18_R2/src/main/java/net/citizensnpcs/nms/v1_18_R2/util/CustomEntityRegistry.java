@@ -19,6 +19,7 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -154,6 +155,26 @@ public class CustomEntityRegistry extends DefaultedRegistry {
         return this.wrapped.byId(var0);
     }
 
+    @Override
+    public Object byIdOrThrow(int var0) {
+        return this.wrapped.byIdOrThrow(var0);
+    }
+
+    @Override
+    public boolean containsKey(ResourceKey var0) {
+        return this.wrapped.containsKey(var0);
+    }
+
+    @Override
+    public boolean containsKey(ResourceLocation var0) {
+        return this.wrapped.containsKey(var0);
+    }
+
+    @Override
+    public Set<Object> entrySet() {
+        return (Set) wrapped.entrySet();
+    }
+
     public EntityType findType(Class<?> search) {
         return minecraftClassMap.inverse().get(search);
         /*
@@ -167,12 +188,27 @@ public class CustomEntityRegistry extends DefaultedRegistry {
     }
 
     @Override
+    public EntityType get(ResourceKey key) {
+        return wrapped.get(key);
+    }
+
+    @Override
     public EntityType get(ResourceLocation key) {
         if (entities.containsKey(key)) {
             return entities.get(key);
         }
 
         return wrapped.get(key);
+    }
+
+    @Override
+    public Optional getHolder(int var0) {
+        return this.wrapped.getHolder(var0);
+    }
+
+    @Override
+    public Optional getHolder(ResourceKey var0) {
+        return this.wrapped.getHolder(var0);
     }
 
     @Override
@@ -194,6 +230,11 @@ public class CustomEntityRegistry extends DefaultedRegistry {
     }
 
     @Override
+    public Optional getOptional(ResourceKey var0) {
+        return this.wrapped.getOptional(var0);
+    }
+
+    @Override
     public Optional getOptional(ResourceLocation var0) {
         if (entities.containsKey(var0)) {
             return Optional.of(entities.get(var0));
@@ -203,8 +244,23 @@ public class CustomEntityRegistry extends DefaultedRegistry {
     }
 
     @Override
+    public EntityType getOrThrow(ResourceKey key) {
+        return wrapped.getOrThrow(key);
+    }
+
+    @Override
     public Optional getRandom(Random paramRandom) {
         return wrapped.getRandom(paramRandom);
+    }
+
+    @Override
+    public Optional getResourceKey(Object var0) {
+        return wrapped.getResourceKey((EntityType<?>) var0);
+    }
+
+    @Override
+    public Optional getTag(TagKey var0) {
+        return this.wrapped.getTag(var0);
     }
 
     public MappedRegistry<EntityType<?>> getWrapped() {

@@ -44,6 +44,21 @@ public class CustomEntityRegistry extends RegistryBlocks {
         return wrapped.a(paramRandom);
     }
 
+    @Override
+    public Object a(ResourceKey key) {
+        return wrapped.a(key);
+    }
+
+    @Override
+    public Optional c(Object key) {
+        return wrapped.c((EntityTypes<?>) key);
+    }
+
+    @Override
+    public Object d(ResourceKey key) {
+        return wrapped.d(key);
+    }
+
     public EntityTypes findType(Class<?> search) {
         return minecraftClassMap.inverse().get(search);
         /*
