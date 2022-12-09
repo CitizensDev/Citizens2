@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -248,11 +249,6 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry {
     }
 
     @Override
-    public EntityType getOrThrow(ResourceKey key) {
-        return wrapped.getOrThrow(key);
-    }
-
-    @Override
     public Optional getRandom(RandomSource paramRandom) {
         return wrapped.getRandom(paramRandom);
     }
@@ -265,6 +261,16 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry {
     @Override
     public Optional getTag(TagKey var0) {
         return this.wrapped.getTag(var0);
+    }
+
+    @Override
+    public Stream getTagNames() {
+        return wrapped.getTagNames();
+    }
+
+    @Override
+    public Stream getTags() {
+        return wrapped.getTags();
     }
 
     public MappedRegistry<EntityType<?>> getWrapped() {
@@ -289,6 +295,11 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry {
     @Override
     public Set<Object> registryKeySet() {
         return (Set) wrapped.registryKeySet();
+    }
+
+    @Override
+    public int size() {
+        return wrapped.size();
     }
 
     private static final MethodHandle IREGISTRY_HOLDER_PROVDER = NMS.getGetter(MappedRegistry.class, "m");

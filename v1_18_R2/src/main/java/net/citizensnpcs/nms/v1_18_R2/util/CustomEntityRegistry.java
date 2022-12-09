@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -263,6 +264,16 @@ public class CustomEntityRegistry extends DefaultedRegistry {
         return this.wrapped.getTag(var0);
     }
 
+    @Override
+    public Stream getTagNames() {
+        return wrapped.getTagNames();
+    }
+
+    @Override
+    public Stream getTags() {
+        return wrapped.getTags();
+    }
+
     public MappedRegistry<EntityType<?>> getWrapped() {
         return wrapped;
     }
@@ -280,6 +291,11 @@ public class CustomEntityRegistry extends DefaultedRegistry {
     public void put(int entityId, ResourceLocation key, EntityType entityClass) {
         entities.put(key, entityClass);
         entityIds.put(entityClass, entityId);
+    }
+
+    @Override
+    public int size() {
+        return wrapped.size();
     }
 
     private static final MethodHandle IREGISTRY_CUSTOM_HOLDER_PROVDER = NMS.getFirstGetter(MappedRegistry.class,
