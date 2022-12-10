@@ -48,11 +48,20 @@ public class SleepTrait extends Trait {
 
         if (npc.getEntity() instanceof Player) {
             Player player = (Player) npc.getEntity();
-            if ((SUPPORT_BLOCKDATA && at.getBlock().getBlockData() instanceof Bed)
-                    || at.getBlock().getState() instanceof Bed) {
-                player.sleep(at, true);
-            } else {
+            if (!SUPPORT_BLOCKSTATE) {
                 NMS.sleep(player, true);
+            } else {
+                try {
+                    if ((SUPPORT_BLOCKDATA && at.getBlock().getBlockData() instanceof Bed)
+                            || at.getBlock().getState() instanceof Bed) {
+                        player.sleep(at, true);
+                    } else {
+                        NMS.sleep(player, true);
+                    }
+                } catch (Throwable t) {
+                    SUPPORT_BLOCKSTATE = false;
+                    NMS.sleep(player, true);
+                }
             }
             sleeping = true;
         } else if (npc.getEntity() instanceof Villager) {
@@ -75,4 +84,5 @@ public class SleepTrait extends Trait {
     }
 
     private static Boolean SUPPORT_BLOCKDATA = null;
+    private static boolean SUPPORT_BLOCKSTATE = true;
 }
