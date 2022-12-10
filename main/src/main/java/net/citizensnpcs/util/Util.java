@@ -3,6 +3,7 @@ package net.citizensnpcs.util;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -28,13 +29,18 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 import io.netty.util.Version;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.md_5.bungee.api.ChatColor;
 
@@ -363,6 +369,50 @@ public class Util {
         } catch (Throwable t) {
             t.printStackTrace();
             return REQUIRES_CHANNEL_METADATA = true;
+        }
+    }
+
+    public static void runCommand(NPC npc, Player clicker, String command, boolean op, boolean player) {
+        List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().limit(2).splitToList(command);
+        String bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
+        String cmd = command;
+        if (command.startsWith("say")) {
+            cmd = "npc speak " + command.replaceFirst("say", "").trim() + " --target <p>";
+        }
+        if ((cmd.startsWith("npc ") || cmd.startsWith("waypoints ") || cmd.startsWith("wp "))
+                && !cmd.contains("--id ")) {
+            cmd += " --id <id>";
+        }
+        String interpolatedCommand = Placeholders.replace(cmd, clicker, npc);
+        if (Messaging.isDebugging()) {
+            Messaging.debug("Running command " + interpolatedCommand + " on NPC " + (npc == null ? -1 : npc.getId())
+                    + " clicker " + clicker);
+        }
+        if (!player) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
+            return;
+        }
+        boolean wasOp = clicker.isOp();
+        if (op) {
+            clicker.setOp(true);
+        }
+
+        if (bungeeServer != null) {
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("Connect");
+            out.writeUTF(bungeeServer);
+
+            clicker.sendPluginMessage(CitizensAPI.getPlugin(), "BungeeCord", out.toByteArray());
+        } else {
+            try {
+                clicker.chat("/" + interpolatedCommand);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+
+        if (op) {
+            clicker.setOp(wasOp);
         }
     }
 

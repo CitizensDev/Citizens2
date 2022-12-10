@@ -40,6 +40,7 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.trait.shop.CommandAction.CommandActionGUI;
 import net.citizensnpcs.trait.shop.ItemAction;
 import net.citizensnpcs.trait.shop.ItemAction.ItemActionGUI;
 import net.citizensnpcs.trait.shop.MoneyAction;
@@ -327,8 +328,6 @@ public class ShopTrait extends Trait {
         }
 
         public void onClick(NPCShop shop, CitizensInventoryClickEvent event) {
-            if (shop.type == ShopType.COMMAND)
-                return;
             List<Transaction> take = execute(cost, action -> action.take(event.getWhoClicked()));
             if (take == null)
                 return;
@@ -658,5 +657,6 @@ public class ShopTrait extends Trait {
         NPCShopAction.register(ItemAction.class, "items", new ItemActionGUI());
         NPCShopAction.register(PermissionAction.class, "permissions", new PermissionActionGUI());
         NPCShopAction.register(MoneyAction.class, "money", new MoneyActionGUI());
+        NPCShopAction.register(MoneyAction.class, "command", new CommandActionGUI());
     }
 }

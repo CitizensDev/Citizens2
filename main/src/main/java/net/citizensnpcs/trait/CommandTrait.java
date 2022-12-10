@@ -30,8 +30,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -48,7 +46,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
@@ -526,45 +523,7 @@ public class CommandTrait extends Trait {
         }
 
         public void run(NPC npc, Player clicker) {
-            String cmd = command;
-            if (command.startsWith("say")) {
-                cmd = "npc speak " + command.replaceFirst("say", "").trim() + " --target <p>";
-            }
-            if ((cmd.startsWith("npc ") || cmd.startsWith("waypoints ") || cmd.startsWith("wp "))
-                    && !cmd.contains("--id ")) {
-                cmd += " --id <id>";
-            }
-            String interpolatedCommand = Placeholders.replace(cmd, clicker, npc);
-            if (Messaging.isDebugging()) {
-                Messaging.debug(
-                        "Running command " + interpolatedCommand + " on NPC " + npc.getId() + " clicker " + clicker);
-            }
-            if (!player) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
-                return;
-            }
-            boolean wasOp = clicker.isOp();
-            if (op) {
-                clicker.setOp(true);
-            }
-
-            if (bungeeServer != null) {
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                out.writeUTF("Connect");
-                out.writeUTF(bungeeServer);
-
-                clicker.sendPluginMessage(CitizensAPI.getPlugin(), "BungeeCord", out.toByteArray());
-            } else {
-                try {
-                    clicker.chat("/" + interpolatedCommand);
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
-
-            if (op) {
-                clicker.setOp(wasOp);
-            }
+            Util.runCommand(npc, clicker, command, op, player);
         }
     }
 
