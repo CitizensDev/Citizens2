@@ -136,7 +136,7 @@ class ProfileFetchThread implements Runnable {
             public void onProfileLookupFailed(GameProfile profile, Exception e) {
                 if (Messaging.isDebugging()) {
                     Messaging.debug(
-                            "Profile lookup for player '" + profile.getName() + "' failed2: " + getExceptionMsg(e));
+                            "Profile lookup for player '" + profile.getName() + "' failed: " + getExceptionMsg(e));
                     Messaging.debug(Throwables.getStackTraceAsString(e));
                 }
 
@@ -167,7 +167,7 @@ class ProfileFetchThread implements Runnable {
                     request.setResult(NMS.fillProfileProperties(profile, true), ProfileFetchResult.SUCCESS);
                 } catch (Throwable e) {
                     if (Messaging.isDebugging()) {
-                        Messaging.debug("Profile lookup for player '" + profile.getName() + "' failed: "
+                        Messaging.debug("Filling profile lookup for player '" + profile.getName() + "' failed: "
                                 + getExceptionMsg(e) + " " + isTooManyRequests(e));
                         Messaging.debug(Throwables.getStackTraceAsString(e));
                     }

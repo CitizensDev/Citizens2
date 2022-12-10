@@ -23,8 +23,7 @@ public class PlayerAnimationImpl {
         switch (animation) {
             case SNEAK:
                 player.getBukkitEntity().setSneaking(true);
-                sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData().packDirty()),
-                        player, radius);
+                sendEntityData(radius, player);
                 break;
             case START_ELYTRA:
                 player.startFallFlying();
@@ -34,32 +33,36 @@ public class PlayerAnimationImpl {
                 break;
             case START_USE_MAINHAND_ITEM:
                 player.startUsingItem(InteractionHand.MAIN_HAND);
-                sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData().packDirty()),
-                        player, radius);
+                sendEntityData(radius, player);
                 break;
             case START_USE_OFFHAND_ITEM:
                 player.startUsingItem(InteractionHand.OFF_HAND);
-                sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData().packDirty()),
-                        player, radius);
+                sendEntityData(radius, player);
                 break;
             case STOP_SNEAKING:
                 player.getBukkitEntity().setSneaking(false);
-                sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData().packDirty()),
-                        player, radius);
+                sendEntityData(radius, player);
                 break;
             case STOP_USE_ITEM:
                 player.stopUsingItem();
-                sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData().packDirty()),
-                        player, radius);
+                sendEntityData(radius, player);
                 break;
             default:
                 throw new UnsupportedOperationException();
         }
+
     }
 
     protected static void playDefaultAnimation(ServerPlayer player, int radius, int code) {
         ClientboundAnimatePacket packet = new ClientboundAnimatePacket(player, code);
         sendPacketNearby(packet, player, radius);
+    }
+
+    private static void sendEntityData(int radius, final ServerPlayer player) {
+        if (!player.getEntityData().isDirty())
+            return;
+        sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData().packDirty()), player,
+                radius);
     }
 
     protected static void sendPacketNearby(Packet<?> packet, ServerPlayer player, int radius) {
