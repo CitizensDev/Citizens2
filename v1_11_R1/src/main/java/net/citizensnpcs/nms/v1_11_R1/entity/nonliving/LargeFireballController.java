@@ -43,7 +43,7 @@ public class LargeFireballController extends MobEntityController {
         public void A_() {
             if (npc != null) {
                 npc.update();
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                if (!npc.isProtected()) {
                     super.A_();
                 }
             } else {

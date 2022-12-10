@@ -107,7 +107,7 @@ public class DragonFireballController extends MobEntityController {
         public void tick() {
             if (npc != null) {
                 npc.update();
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                if (!npc.isProtected()) {
                     super.tick();
                 }
             } else {

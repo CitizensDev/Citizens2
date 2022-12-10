@@ -58,7 +58,7 @@ public class ParrotController extends MobEntityController {
         @Override
         public boolean a(EntityHuman paramEntityHuman, EnumHand paramEnumHand) {
             // block feeding
-            if (npc == null || !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+            if (npc == null || !npc.isProtected()) {
                 return super.a(paramEntityHuman, paramEnumHand);
             }
             return false;
@@ -133,7 +133,7 @@ public class ParrotController extends MobEntityController {
             if (npc == null) {
                 return super.isLeashed();
             }
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            boolean protectedDefault = npc.isProtected();
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
                 return super.isLeashed();
             if (super.isLeashed()) {

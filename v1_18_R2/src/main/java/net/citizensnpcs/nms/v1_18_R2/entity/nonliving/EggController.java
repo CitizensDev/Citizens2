@@ -113,7 +113,7 @@ public class EggController extends AbstractEntityController {
         public void tick() {
             if (npc != null) {
                 npc.update();
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                if (!npc.isProtected()) {
                     super.tick();
                 }
             } else {

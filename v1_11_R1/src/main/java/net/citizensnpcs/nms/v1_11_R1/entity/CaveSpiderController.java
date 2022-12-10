@@ -158,7 +158,7 @@ public class CaveSpiderController extends MobEntityController {
             if (npc == null) {
                 return super.isLeashed();
             }
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            boolean protectedDefault = npc.isProtected();
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault)) {
                 return super.isLeashed();
             }

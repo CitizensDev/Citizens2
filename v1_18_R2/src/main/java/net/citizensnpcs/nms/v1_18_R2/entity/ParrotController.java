@@ -57,7 +57,7 @@ public class ParrotController extends MobEntityController {
         @Override
         protected boolean canRide(Entity entity) {
             if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart)) {
-                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+                return !npc.isProtected();
             }
             return super.canRide(entity);
         }
@@ -130,7 +130,7 @@ public class ParrotController extends MobEntityController {
             if (npc == null) {
                 return super.isLeashed();
             }
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            boolean protectedDefault = npc.isProtected();
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
                 return super.isLeashed();
             if (super.isLeashed()) {
@@ -152,7 +152,7 @@ public class ParrotController extends MobEntityController {
         @Override
         public InteractionResult mobInteract(Player entityhuman, InteractionHand enumhand) {
             // block feeding
-            if (npc == null || !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+            if (npc == null || !npc.isProtected()) {
                 return super.mobInteract(entityhuman, enumhand);
             }
             return InteractionResult.FAIL;

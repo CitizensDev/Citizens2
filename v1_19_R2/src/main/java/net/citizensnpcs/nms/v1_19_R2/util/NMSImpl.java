@@ -2064,7 +2064,7 @@ public class NMSImpl implements NMSBridge {
         NPC npc = ((NPCHolder) entity).getNPC();
         if (npc == null)
             return superLeashed;
-        boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+        boolean protectedDefault = npc.isProtected();
         if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
             return superLeashed;
         if (superLeashed) {

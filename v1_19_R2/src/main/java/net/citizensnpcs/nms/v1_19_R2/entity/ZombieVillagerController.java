@@ -56,7 +56,7 @@ public class ZombieVillagerController extends MobEntityController {
         @Override
         protected boolean canRide(Entity entity) {
             if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart)) {
-                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+                return !npc.isProtected();
             }
             return super.canRide(entity);
         }

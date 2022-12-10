@@ -56,7 +56,7 @@ public class EnderPearlController extends MobEntityController {
         public void B_() {
             if (npc != null) {
                 npc.update();
-                if (!npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true)) {
+                if (!npc.isProtected()) {
                     super.B_();
                 }
             } else {

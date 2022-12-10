@@ -229,7 +229,7 @@ public class VillagerController extends MobEntityController {
         public boolean isLeashed() {
             if (npc == null)
                 return super.isLeashed();
-            boolean protectedDefault = npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+            boolean protectedDefault = npc.isProtected();
             if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
                 return super.isLeashed();
             if (super.isLeashed()) {
@@ -252,7 +252,7 @@ public class VillagerController extends MobEntityController {
         @Override
         protected boolean n(Entity entity) {
             if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
-                return !npc.data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+                return !npc.isProtected();
             }
             return super.n(entity);
         }
