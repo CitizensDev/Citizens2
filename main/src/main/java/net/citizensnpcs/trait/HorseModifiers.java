@@ -2,7 +2,7 @@ package net.citizensnpcs.trait;
 
 import java.lang.invoke.MethodHandle;
 
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
@@ -113,9 +113,7 @@ public class HorseModifiers extends Trait {
         }
         if (CARRYING_CHEST_METHOD == null)
             return;
-        EntityType type = npc.getEntity().getType();
-        if (type.name().equals("LLAMA") || type.name().equals("TRADER_LLAMA") || type.name().equals("DONKEY")
-                || type.name().equals("MULE")) {
+        if (npc.getEntity() instanceof ChestedHorse) {
             try {
                 CARRYING_CHEST_METHOD.invoke(npc.getEntity(), carryingChest);
             } catch (Throwable e) {
