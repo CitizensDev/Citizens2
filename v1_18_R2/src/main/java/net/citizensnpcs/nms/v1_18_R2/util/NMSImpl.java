@@ -2103,10 +2103,7 @@ public class NMSImpl implements NMSBridge {
         radius *= radius;
         final org.bukkit.World world = location.getWorld();
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
-            if (world != player.getWorld() || (from != null && !player.canSee(from))) {
-                continue;
-            }
-            if (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius) {
+            if (world != player.getWorld() || (from != null && !player.canSee(from)) || (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius)) {
                 continue;
             }
             for (Packet<?> packet : packets) {

@@ -83,9 +83,7 @@ public class CreeperController extends MobEntityController {
 
         @Override
         protected boolean a(EntityHuman entityhuman, EnumHand enumhand, ItemStack itemstack) {
-            return npc == null || !npc.isProtected()
-                    ? super.a(entityhuman, enumhand, itemstack)
-                    : false;
+            return npc == null || !npc.isProtected() ? super.a(entityhuman, enumhand, itemstack) : false;
         }
 
         @Override
