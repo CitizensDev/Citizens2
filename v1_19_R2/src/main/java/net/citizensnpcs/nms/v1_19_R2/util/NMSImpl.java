@@ -100,6 +100,7 @@ import net.citizensnpcs.nms.v1_19_R2.entity.AxolotlController;
 import net.citizensnpcs.nms.v1_19_R2.entity.BatController;
 import net.citizensnpcs.nms.v1_19_R2.entity.BeeController;
 import net.citizensnpcs.nms.v1_19_R2.entity.BlazeController;
+import net.citizensnpcs.nms.v1_19_R2.entity.CamelController;
 import net.citizensnpcs.nms.v1_19_R2.entity.CatController;
 import net.citizensnpcs.nms.v1_19_R2.entity.CaveSpiderController;
 import net.citizensnpcs.nms.v1_19_R2.entity.ChickenController;
@@ -852,6 +853,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.BLAZE, BlazeController.class);
         EntityControllers.setEntityControllerForType(EntityType.BOAT, BoatController.class);
         EntityControllers.setEntityControllerForType(EntityType.CAT, CatController.class);
+        EntityControllers.setEntityControllerForType(EntityType.CAMEL, CamelController.class);
         EntityControllers.setEntityControllerForType(EntityType.CAVE_SPIDER, CaveSpiderController.class);
         EntityControllers.setEntityControllerForType(EntityType.CHEST_BOAT, ChestBoatController.class);
         EntityControllers.setEntityControllerForType(EntityType.CHICKEN, ChickenController.class);
@@ -2153,7 +2155,8 @@ public class NMSImpl implements NMSBridge {
         radius *= radius;
         final org.bukkit.World world = location.getWorld();
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
-            if (world != player.getWorld() || (from != null && !player.canSee(from)) || (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius)) {
+            if (world != player.getWorld() || (from != null && !player.canSee(from))
+                    || (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius)) {
                 continue;
             }
             for (Packet<?> packet : packets) {

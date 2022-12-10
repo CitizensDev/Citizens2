@@ -53,6 +53,7 @@ import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
+import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.animal.frog.Tadpole;
 import net.minecraft.world.entity.animal.goat.Goat;
@@ -320,6 +321,7 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry {
         minecraftClassMap.put(EntityType.BOAT, Boat.class);
         minecraftClassMap.put(EntityType.CHEST_BOAT, ChestBoat.class);
         minecraftClassMap.put(EntityType.CAT, Cat.class);
+        minecraftClassMap.put(EntityType.CAMEL, Camel.class);
         minecraftClassMap.put(EntityType.CAVE_SPIDER, CaveSpider.class);
         minecraftClassMap.put(EntityType.CHICKEN, Chicken.class);
         minecraftClassMap.put(EntityType.COD, Cod.class);
