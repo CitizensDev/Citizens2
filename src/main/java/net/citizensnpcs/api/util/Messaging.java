@@ -186,7 +186,9 @@ public class Messaging {
             rawMessage = Placeholders.replace(rawMessage, (Player) sender);
         }
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
-            message = prettify(message);
+            if (messageColor) {
+                message = prettify(message);
+            }
             if (AUDIENCES != null) {
                 AUDIENCES.sender(sender).sendMessage(MINIMESSAGE.deserialize(convertLegacyCodes(message)));
             } else {

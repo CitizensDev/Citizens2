@@ -1,5 +1,8 @@
 package net.citizensnpcs.api.util;
 
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.Map;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -131,6 +134,24 @@ public abstract class DataKey {
     public abstract String name();
 
     public abstract void removeKey(String key);
+
+    protected Map<String, Object> sectionToValues(ConfigurationSection section) {
+        if (section == null)
+            return Collections.emptyMap();
+        Map<String, Object> object = section.getValues(false);
+        Deque<Map<String, Object>> queue = new ArrayDeque<>();
+        queue.add(object);
+        while (!queue.isEmpty()) {
+            for (Map.Entry<String, Object> entry : queue.pollLast().entrySet()) {
+                if (entry.getValue() instanceof ConfigurationSection) {
+                    Map<String, Object> values = ((ConfigurationSection) entry.getValue()).getValues(false);
+                    entry.setValue(values);
+                    queue.add(values);
+                }
+            }
+        }
+        return object;
+    }
 
     public abstract void setBoolean(String key, boolean value);
 

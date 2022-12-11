@@ -292,7 +292,6 @@ public class NBTStorage implements FileStorage {
             return subKeys;
         }
 
-        @Override
         public Map<String, Object> getValuesDeep() {
             Tag tag = findLastTag(path, false);
             if (!(tag instanceof CompoundTag))
@@ -315,11 +314,7 @@ public class NBTStorage implements FileStorage {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + getOuterType().hashCode();
-            result = prime * result + ((path == null) ? 0 : path.hashCode());
-            return result;
+            return 31 * (31 + getOuterType().hashCode()) + ((path == null) ? 0 : path.hashCode());
         }
 
         @Override

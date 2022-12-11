@@ -266,11 +266,9 @@ public class YamlStorage implements FileStorage {
             return res;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public Map<String, Object> getValuesDeep() {
-            ConfigurationSection subSection = config.getConfigurationSection(path);
-            return (Map<String, Object>) (subSection == null ? Collections.emptyMap() : subSection.getValues(true));
+            return sectionToValues(config.getConfigurationSection(path));
         }
 
         @Override
