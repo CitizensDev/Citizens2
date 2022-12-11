@@ -1,5 +1,6 @@
 package net.citizensnpcs.commands;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -21,7 +22,6 @@ import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.Template;
-import net.citizensnpcs.npc.Template.TemplateBuilder;
 import net.citizensnpcs.util.Messages;
 
 @Requirements(selected = true, ownership = true)
@@ -72,7 +72,7 @@ public class TemplateCommands {
 
     @Command(
             aliases = { "template", "tpl" },
-            usage = "create [template name] (-o)",
+            usage = "create [template name] (-k)",
             desc = "Creates a template from the selected NPC",
             modifiers = { "create" },
             min = 2,
@@ -84,8 +84,12 @@ public class TemplateCommands {
         if (Template.byName(name) != null)
             throw new CommandException(Messages.TEMPLATE_CONFLICT);
 
-        TemplateBuilder.create(name).from(npc).override(args.hasFlag('o')).buildAndSave();
-        Messaging.sendTr(sender, Messages.TEMPLATE_CREATED);
+        try {
+            Template.Builder.create(name).from(npc).override(!args.hasFlag('k')).buildAndSave();
+            Messaging.sendTr(sender, Messages.TEMPLATE_CREATED);
+        } catch (IOException e) {
+            Messaging.sendError(sender, "Invalid template filename");
+        }
     }
 
     @Command(
@@ -114,7 +118,7 @@ public class TemplateCommands {
             permission = "citizens.templates.list")
     public void list(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.sendTr(sender, Messages.TEMPLATE_LIST_HEADER);
-        for (Template template : Template.allTemplates()) {
+        for (Template template : Template.getTemplates()) {
             Messaging.send(sender, "[[-]]    " + template.getName());
         }
     }

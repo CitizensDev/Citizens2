@@ -212,6 +212,8 @@ public class Messages {
     public static final String LOCALE_NOTIFICATION = "citizens.notifications.locale";
     public static final String LOOKCLOSE_DISABLE_WHEN_NAVIGATING = "citizens.commands.npc.lookclose.disable-when-navigating";
     public static final String LOOKCLOSE_ENABLE_WHEN_NAVIGATING = "citizens.commands.npc.lookclose.enable-when-navigating";
+    public static final String LOOKCLOSE_PERPLAYER_SET = "citizens.commands.npc.lookclose.perplayer-set";
+    public static final String LOOKCLOSE_PERPLAYER_UNSET = "citizens.commands.npc.lookclose.perplayer-unset";
     public static final String LOOKCLOSE_RANDOM_DELAY_SET = "citizens.commands.npc.lookclose.random-look-delay-set";
     public static final String LOOKCLOSE_RANDOM_PITCH_RANGE_SET = "citizens.commands.npc.lookclose.random-pitch-range-set";
     public static final String LOOKCLOSE_RANDOM_SET = "citizens.commands.npc.lookclose.random-set";

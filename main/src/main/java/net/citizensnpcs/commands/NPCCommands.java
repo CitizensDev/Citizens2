@@ -1318,12 +1318,19 @@ public class NPCCommands {
             @Flag({ "randomlook", "rlook" }) Boolean randomlook, @Flag("range") Double range,
             @Flag("randomlookdelay") Integer randomLookDelay, @Flag("randomyawrange") String randomYaw,
             @Flag("randompitchrange") String randomPitch, @Flag("randomswitchtargets") Boolean randomSwitchTargets,
-            @Flag("disablewhennavigating") Boolean disableWhenNavigating) throws CommandException {
+            @Flag("disablewhennavigating") Boolean disableWhenNavigating, @Flag("perplayer") Boolean perPlayer)
+            throws CommandException {
         boolean toggle = true;
         LookClose trait = npc.getOrAddTrait(LookClose.class);
         if (randomlook != null) {
             trait.setRandomLook(randomlook);
             Messaging.sendTr(sender, randomlook ? Messages.LOOKCLOSE_RANDOM_SET : Messages.LOOKCLOSE_RANDOM_STOPPED,
+                    npc.getName());
+            toggle = false;
+        }
+        if (perPlayer != null) {
+            trait.setPerPlayer(perPlayer);
+            Messaging.sendTr(sender, perPlayer ? Messages.LOOKCLOSE_PERPLAYER_SET : Messages.LOOKCLOSE_PERPLAYER_UNSET,
                     npc.getName());
             toggle = false;
         }

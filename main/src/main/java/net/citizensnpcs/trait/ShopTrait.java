@@ -228,10 +228,7 @@ public class ShopTrait extends Trait {
             });
 
             edit.setItemStack(new ItemStack(Material.BOOK), "Edit page");
-            edit.setClickHandler(evt -> {
-                evt.setCancelled(true);
-                ctx.getMenu().transition(new NPCShopPageSettings(shop.getOrCreatePage(page)));
-            });
+            edit.setClickHandler(evt -> ctx.getMenu().transition(new NPCShopPageSettings(shop.getOrCreatePage(page))));
         }
 
         @Override
@@ -251,6 +248,8 @@ public class ShopTrait extends Trait {
         private final List<NPCShopAction> cost = Lists.newArrayList();
         @Persist
         private ItemStack display;
+        @Persist
+        private String message;
         @Persist
         private final List<NPCShopAction> result = Lists.newArrayList();
 
@@ -334,17 +333,20 @@ public class ShopTrait extends Trait {
             if (execute(result, action -> action.grant(event.getWhoClicked())) == null) {
                 take.forEach(a -> a.rollback());
             }
+            if (message != null) {
+                Messaging.sendColorless(event.getWhoClicked(), message);
+            }
         }
     }
 
     @Menu(title = "NPC Shop Item Editor", type = InventoryType.CHEST, dimensions = { 6, 9 })
-    @MenuSlot(slot = { 3, 4 }, material = Material.DISPENSER, amount = 1, title = "<f>Place display item below")
     public static class NPCShopItemEditor extends InventoryMenuPage {
         @MenuPattern(
                 offset = { 0, 6 },
                 slots = { @MenuSlot(pat = 'x', material = Material.AIR) },
                 value = "x x\n x \nx x")
         private InventoryMenuPattern actionItems;
+        private NPCShopItem base;
         private final Consumer<NPCShopItem> callback;
         @MenuPattern(
                 offset = { 0, 0 },
@@ -353,11 +355,10 @@ public class ShopTrait extends Trait {
         private InventoryMenuPattern costItems;
         private MenuContext ctx;
         private final NPCShopItem modified;
-        private NPCShopItem original;
 
         public NPCShopItemEditor(NPCShopItem item, Consumer<NPCShopItem> consumer) {
-            this.original = item;
-            this.modified = original.clone();
+            this.base = item;
+            this.modified = base.clone();
             this.callback = consumer;
         }
 
@@ -367,6 +368,13 @@ public class ShopTrait extends Trait {
             if (modified.display != null) {
                 ctx.getSlot(9 * 4 + 4).setItemStack(modified.display);
             }
+            ctx.getSlot(9 * 3 + 4).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
+                    "Set message to send on click, currently:", modified.message);
+            ctx.getSlot(9 * 3 + 4).setClickHandler(
+                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.message, s -> {
+                        modified.message = s;
+                        ctx.getSlot(9 * 3 + 4).setDescription(modified.message);
+                    })));
             int pos = 0;
             for (GUI template : NPCShopAction.getGUIs()) {
                 if (template.createMenuItem(null) == null)
@@ -390,16 +398,15 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 5, 3 }, material = Material.REDSTONE_BLOCK, amount = 1, title = "<7>Cancel")
         public void onCancel(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
             ctx.getMenu().transitionBack();
         }
 
         @Override
         public void onClose(HumanEntity who) {
-            if (original != null && original.display == null) {
-                original = null;
+            if (base != null && base.display == null) {
+                base = null;
             }
-            callback.accept(original);
+            callback.accept(base);
         }
 
         @MenuSlot(slot = { 4, 5 }, material = Material.BOOK, amount = 1, title = "<f>Set description")
@@ -444,15 +451,13 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 5, 4 }, material = Material.TNT, amount = 1, title = "<c>Remove")
         public void onRemove(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            original = null;
-            event.setCancelled(true);
+            base = null;
             ctx.getMenu().transitionBack();
         }
 
         @MenuSlot(slot = { 5, 5 }, material = Material.EMERALD_BLOCK, amount = 1, title = "<a>Save")
         public void onSave(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            original = modified;
-            event.setCancelled(true);
+            base = modified;
             ctx.getMenu().transitionBack();
         }
     }
@@ -496,7 +501,6 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1)
         public void editPageTitle(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
             ctx.getMenu().transition(InputMenus.stringSetter(() -> page.title, newTitle -> {
                 page.title = newTitle.isEmpty() ? null : newTitle;
             }));
@@ -510,7 +514,6 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 4, 4 }, material = Material.TNT, amount = 1, title = "<c>Remove page")
         public void removePage(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
             ctx.data().put("removePage", page.index);
             ctx.getMenu().transitionBack();
         }
@@ -538,19 +541,16 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
         public void onEditItems(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
             ctx.getMenu().transition(new NPCShopContentsEditor(shop));
         }
 
         @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1)
         public void onPermissionChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
             ctx.getMenu().transition(InputMenus.stringSetter(shop::getRequiredPermission, shop::setPermission));
         }
 
         @MenuSlot(slot = { 0, 6 }, material = Material.NAME_TAG, amount = 1)
         public void onSetTitle(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
             ctx.getMenu().transition(InputMenus.stringSetter(() -> shop.title, newTitle -> {
                 shop.title = newTitle.isEmpty() ? null : newTitle;
             }));
@@ -558,7 +558,6 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, title = "<f>Edit shop type")
         public void onShopTypeChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            event.setCancelled(true);
             ctx.getMenu().transition(InputMenus.<ShopType> picker("Edit shop type", chosen -> {
                 shop.type = chosen.getValue();
             }, Choice.<ShopType> of(ShopType.BUY, Material.DIAMOND, "Players buy items", shop.type == ShopType.BUY),

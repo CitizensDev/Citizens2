@@ -16,7 +16,6 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_19_R2.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.util.profiling.metrics.MetricCategory;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.pathfinder.BinaryHeap;
@@ -45,7 +44,7 @@ public class PlayerPathfinder extends PathFinder {
         Node var6 = this.nodeEvaluator.getStart();
         Map<Target, BlockPos> var7 = var2.stream().collect(
                 Collectors.toMap(p -> this.nodeEvaluator.getGoal(p.getX(), p.getY(), p.getZ()), Function.identity()));
-        Path var8 = findPath(var0.getProfiler(), var6, var7, var3, var4, var5);
+        Path var8 = findPath(null, var6, var7, var3, var4, var5);
         this.nodeEvaluator.done();
         return var8;
     }
@@ -57,15 +56,13 @@ public class PlayerPathfinder extends PathFinder {
         Node var6 = this.nodeEvaluator.getStart();
         Map<Target, BlockPos> var7 = var2.stream().collect(
                 Collectors.toMap(p -> this.nodeEvaluator.getGoal(p.getX(), p.getY(), p.getZ()), Function.identity()));
-        Path var8 = findPath(var0.getProfiler(), var6, var7, var3, var4, var5);
+        Path var8 = findPath(null, var6, var7, var3, var4, var5);
         this.nodeEvaluator.done();
         return var8;
     }
 
     private Path findPath(ProfilerFiller var0, Node var1, Map<Target, BlockPos> var2, float var3, int var4,
             float var5) {
-        var0.push("find_path");
-        var0.markForCharting(MetricCategory.PATH_FINDING);
         Set<Target> var6 = var2.keySet();
         var1.g = 0.0F;
         var1.h = getBestH(var1, var6);
@@ -111,7 +108,6 @@ public class PlayerPathfinder extends PathFinder {
                 ? var9.stream().map(p -> reconstructPath(p.getBestNode(), var2.get(p), true)).min(
                         Comparator.comparingInt(Path::getNodeCount))
                 : getFallbackDestinations(var2, var6).findFirst();
-        var0.pop();
         if (!var11.isPresent())
             return null;
         Path var12 = var11.get();

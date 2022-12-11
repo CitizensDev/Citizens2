@@ -105,13 +105,13 @@ public class RotationTrait extends Trait {
         if (!npc.isSpawned())
             return;
 
-        Set<PacketRotationSession> run = Sets.newHashSet();
+        Set<PacketRotationSession> ran = Sets.newHashSet();
         for (Iterator<PacketRotationSession> itr = Iterables.concat(packetSessions, packetSessionsByUUID.values())
                 .iterator(); itr.hasNext();) {
             PacketRotationSession session = itr.next();
-            if (run.contains(session))
+            if (ran.contains(session))
                 continue;
-            run.add(session);
+            ran.add(session);
             session.run(npc.getEntity());
             if (!session.isActive()) {
                 itr.remove();

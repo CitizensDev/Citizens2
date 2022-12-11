@@ -1,7 +1,9 @@
 package net.citizensnpcs.trait;
 
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -12,6 +14,8 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -20,6 +24,8 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
+import net.citizensnpcs.trait.RotationTrait.RotationParams;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -36,6 +42,8 @@ public class LookClose extends Trait implements Toggleable {
     @Persist
     private boolean enableRandomLook = Setting.DEFAULT_RANDOM_LOOK_CLOSE.asBoolean();
     private Player lookingAt;
+    @Persist("perplayer")
+    private boolean perPlayer;
     @Persist
     private int randomLookDelay = Setting.DEFAULT_RANDOM_LOOK_DELAY.asInt();
     @Persist
@@ -47,6 +55,7 @@ public class LookClose extends Trait implements Toggleable {
     private double range = Setting.DEFAULT_LOOK_CLOSE_RANGE.asDouble();
     @Persist("realisticlooking")
     private boolean realisticLooking = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
+    private final Map<UUID, PacketRotationSession> sessions = Maps.newHashMapWithExpectedSize(4);
     private int t;
 
     public LookClose() {
@@ -77,6 +86,29 @@ public class LookClose extends Trait implements Toggleable {
      * Finds a new look-close target
      */
     public void findNewTarget() {
+        if (perPlayer) {
+            lookingAt = null;
+            List<Player> nearbyPlayers = getNearbyPlayers();
+            Set<UUID> seen = Sets.newHashSet();
+            for (Player player : nearbyPlayers) {
+                PacketRotationSession session = sessions.get(player.getUniqueId());
+                if (session == null) {
+                    sessions.put(player.getUniqueId(), session = npc.getOrAddTrait(RotationTrait.class)
+                            .createPacketSession(new RotationParams().uuidFilter(player.getUniqueId()).persist(true)));
+                }
+                session.getSession().rotateToFace(player);
+                seen.add(player.getUniqueId());
+            }
+            for (UUID uuid : Sets.newHashSet(Sets.difference(sessions.keySet(), seen))) {
+                sessions.remove(uuid).end();
+            }
+        } else if (sessions.size() > 0) {
+            for (PacketRotationSession session : sessions.values()) {
+                session.end();
+            }
+            sessions.clear();
+        }
+
         if (lookingAt != null && !isValid(lookingAt)) {
             NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, lookingAt, null);
             Bukkit.getPluginManager().callEvent(event);
@@ -90,16 +122,7 @@ public class LookClose extends Trait implements Toggleable {
         Player old = lookingAt;
         if (lookingAt != null) {
             if (randomSwitchTargets && t <= 0) {
-                List<Player> options = Lists.newArrayList();
-                for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
-                        range)) {
-                    if (player == lookingAt || CitizensAPI.getNPCRegistry().getNPC(player) != null) {
-                        continue;
-                    }
-                    if (player.getLocation().getWorld() != NPC_LOCATION.getWorld() || isInvisible(player))
-                        continue;
-                    options.add(player);
-                }
+                List<Player> options = getNearbyPlayers();
                 if (options.size() > 0) {
                     lookingAt = options.get(Util.getFastRandom().nextInt(options.size()));
                     t = randomLookDelay;
@@ -107,8 +130,7 @@ public class LookClose extends Trait implements Toggleable {
             }
         } else {
             double min = range;
-            for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
-                    range)) {
+            for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(NPC_LOCATION, range)) {
                 Location location = player.getLocation(CACHE_LOCATION);
                 if (location.getWorld() != NPC_LOCATION.getWorld())
                     continue;
@@ -128,6 +150,19 @@ public class LookClose extends Trait implements Toggleable {
             }
             lookingAt = event.getNewTarget();
         }
+    }
+
+    private List<Player> getNearbyPlayers() {
+        List<Player> options = Lists.newArrayList();
+        for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(NPC_LOCATION, range)) {
+            if (player == lookingAt || CitizensAPI.getNPCRegistry().getNPC(player) != null) {
+                continue;
+            }
+            if (player.getLocation().getWorld() != NPC_LOCATION.getWorld() || isInvisible(player))
+                continue;
+            options.add(player);
+        }
+        return options;
     }
 
     public int getRandomLookDelay() {
@@ -202,12 +237,11 @@ public class LookClose extends Trait implements Toggleable {
     }
 
     private void randomLook() {
-        Random rand = new Random();
         float pitch = isEqual(randomPitchRange) ? randomPitchRange[0]
-                : rand.doubles(randomPitchRange[0], randomPitchRange[1]).iterator().next().floatValue();
+                : Util.getFastRandom().doubles(randomPitchRange[0], randomPitchRange[1]).iterator().next().floatValue();
         float yaw = isEqual(randomYawRange) ? randomYawRange[0]
-                : rand.doubles(randomYawRange[0], randomYawRange[1]).iterator().next().floatValue();
-        Util.face(npc.getEntity(), yaw, pitch);
+                : Util.getFastRandom().doubles(randomYawRange[0], randomYawRange[1]).iterator().next().floatValue();
+        npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToHave(yaw, pitch);
     }
 
     @Override
@@ -257,6 +291,10 @@ public class LookClose extends Trait implements Toggleable {
 
     public void setDisableWhileNavigating(boolean set) {
         disableWhileNavigating = set;
+    }
+
+    public void setPerPlayer(boolean perPlayer) {
+        this.perPlayer = perPlayer;
     }
 
     /**

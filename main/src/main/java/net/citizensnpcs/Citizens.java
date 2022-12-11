@@ -69,6 +69,7 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
+import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.npc.ai.speech.CitizensSpeechFactory;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
@@ -363,6 +364,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         locationLookup = null;
         enabled = false;
         saveOnDisable = true;
+        Template.shutdown();
         NMS.shutdown();
         CitizensAPI.shutdown();
     }
@@ -387,6 +389,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+
         registerScriptHelpers();
 
         saves = createStorage(getDataFolder());
@@ -421,6 +424,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         registerCommands();
         enableSubPlugins();
         NMS.load(commands);
+        Template.migrate();
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         commands.registerTabCompletion(this);
 
@@ -477,6 +481,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         shops.loadFromDisk();
         shops.load();
+
+        Template.shutdown();
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
