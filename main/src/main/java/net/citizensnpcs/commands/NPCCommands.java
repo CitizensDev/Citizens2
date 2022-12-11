@@ -893,7 +893,7 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.follow")
-    public void follow(CommandContext args, Player sender, NPC npc) throws CommandException {
+    public void follow(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean protect = args.hasFlag('p');
         String name = sender.getName();
         if (args.argsLength() > 1) {
