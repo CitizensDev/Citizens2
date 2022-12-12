@@ -10,8 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +38,7 @@ import net.citizensnpcs.util.Util;
  * Persists text metadata, i.e. text that will be said by an NPC on certain triggers.
  */
 @TraitName("text")
-public class Text extends Trait implements Runnable, Listener, ConversationAbandonedListener {
+public class Text extends Trait implements Runnable, Listener {
     private final Map<UUID, Long> cooldowns = Maps.newHashMap();
     private int currentIndex;
     private int delay = -1;
@@ -68,10 +66,6 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
         text.add(string);
     }
 
-    @Override
-    public void conversationAbandoned(ConversationAbandonedEvent event) {
-    }
-
     /**
      * Edit the text at a given index to a new text.
      *
@@ -88,8 +82,8 @@ public class Text extends Trait implements Runnable, Listener, ConversationAband
      * Builds a text editor in game for the supplied {@link Player}.
      */
     public Editor getEditor(final Player player) {
-        final Conversation conversation = new ConversationFactory(plugin).addConversationAbandonedListener(this)
-                .withLocalEcho(false).withEscapeSequence("/npc text").withEscapeSequence("exit").withModality(false)
+        final Conversation conversation = new ConversationFactory(plugin).withLocalEcho(false)
+                .withEscapeSequence("/npc text").withEscapeSequence("exit").withModality(false)
                 .withFirstPrompt(new TextBasePrompt(this)).buildConversation(player);
         return new Editor() {
             @Override

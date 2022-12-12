@@ -91,7 +91,6 @@ public class TextBasePrompt extends StringPrompt {
                     Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
                 }
                 context.setSessionData("page", page);
-                return this;
             } catch (NumberFormatException e) {
                 Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
             }
