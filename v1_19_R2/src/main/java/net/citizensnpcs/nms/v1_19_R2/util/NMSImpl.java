@@ -1212,7 +1212,9 @@ public class NMSImpl implements NMSBridge {
         ServerPlayer entity = ((CraftPlayer) listPlayer).getHandle();
 
         ClientboundPlayerInfoUpdatePacket packet = new ClientboundPlayerInfoUpdatePacket(
-                ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, entity);
+                EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER,
+                        ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED),
+                Arrays.asList(entity));
 
         boolean list = entity instanceof NPCHolder
                 ? !((NPCHolder) entity).getNPC().data().get("removefromtablist", Setting.DISABLE_TABLIST.asBoolean())
@@ -1221,11 +1223,13 @@ public class NMSImpl implements NMSBridge {
                 entity.getGameProfile(), list, entity.latency, entity.gameMode.getGameModeForPlayer(),
                 entity.getTabListDisplayName(),
                 entity.getChatSession() == null ? null : entity.getChatSession().asData());
+
         try {
             PLAYERINFO_ENTRIES.invoke(packet, Lists.newArrayList(entry));
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
         NMSImpl.sendPacket(recipient, packet);
         return false;
     }
