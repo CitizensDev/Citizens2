@@ -9,7 +9,6 @@ import io.netty.channel.ChannelMetadata;
 import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.DefaultChannelConfig;
 import io.netty.channel.EventLoop;
-import net.citizensnpcs.util.Util;
 
 public class EmptyChannel extends AbstractChannel {
     private final ChannelConfig config = new DefaultChannelConfig(this);
@@ -66,7 +65,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     public ChannelMetadata metadata() {
-        return Util.requiresNettyChannelMetadata() ? new ChannelMetadata(true) : null;
+        return new ChannelMetadata(true);
     }
 
     @Override

@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.StreamSupport;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,7 +31,6 @@ import com.google.common.base.Splitter;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import io.netty.util.Version;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
@@ -340,36 +338,6 @@ public class Util {
         return String.format("%s at %s, %s, %s (%s, %s)", to.getWorld().getName(), TWO_DIGIT_DECIMAL.format(to.getX()),
                 TWO_DIGIT_DECIMAL.format(to.getY()), TWO_DIGIT_DECIMAL.format(to.getZ()),
                 TWO_DIGIT_DECIMAL.format(to.getYaw()), TWO_DIGIT_DECIMAL.format(to.getPitch()));
-    }
-
-    public static boolean requiresNettyChannelMetadata() {
-        if (REQUIRES_CHANNEL_METADATA != null)
-            return REQUIRES_CHANNEL_METADATA;
-
-        Version version = Version.identify().get("netty-common");
-        if (version == null) {
-            version = Version.identify().get("netty-all");
-        }
-        if (version == null)
-            return REQUIRES_CHANNEL_METADATA = true;
-        try {
-            Integer[] parts = StreamSupport
-                    .stream(Splitter.on('.').split(version.artifactVersion()).spliterator(), false).map(string -> {
-                        // Newer versions of netty use suffix (like .Final) that can't be parsed to Integer
-                        try {
-                            return Integer.parseInt(string);
-                        } catch (NumberFormatException e) {
-                            return -1;
-                        }
-                    }).toArray(Integer[]::new);
-            int major = parts[0];
-            int minor = parts[1];
-            int patch = parts[2];
-            return REQUIRES_CHANNEL_METADATA = major >= 5 || major == 4 && (minor > 1 || patch >= 25);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            return REQUIRES_CHANNEL_METADATA = true;
-        }
     }
 
     public static void runCommand(NPC npc, Player clicker, String command, boolean op, boolean player) {
