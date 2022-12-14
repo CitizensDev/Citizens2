@@ -30,6 +30,7 @@ import net.citizensnpcs.api.util.ItemStorage;
 @TraitName("inventory")
 public class Inventory extends Trait {
     private ItemStack[] contents;
+    private int t;
     private org.bukkit.inventory.Inventory view;
     private final Set<InventoryView> views = new HashSet<InventoryView>();
 
@@ -136,7 +137,10 @@ public class Inventory extends Trait {
 
     @Override
     public void run() {
-        saveContents(npc.getEntity());
+        if (t++ > 10) {
+            saveContents(npc.getEntity());
+            t = 0;
+        }
         if (views.isEmpty())
             return;
         Iterator<InventoryView> itr = views.iterator();
