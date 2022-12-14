@@ -1217,9 +1217,10 @@ public class NMSImpl implements NMSBridge {
         boolean list = entity instanceof NPCHolder
                 ? !((NPCHolder) entity).getNPC().data().get("removefromtablist", Setting.DISABLE_TABLIST.asBoolean())
                 : false;
+
         ClientboundPlayerInfoUpdatePacket.Entry entry = new ClientboundPlayerInfoUpdatePacket.Entry(entity.getUUID(),
                 entity.getGameProfile(), list, entity.latency, entity.gameMode.getGameModeForPlayer(),
-                entity.getTabListDisplayName(),
+                !list ? Component.empty() : entity.getTabListDisplayName(),
                 entity.getChatSession() == null ? null : entity.getChatSession().asData());
 
         try {
