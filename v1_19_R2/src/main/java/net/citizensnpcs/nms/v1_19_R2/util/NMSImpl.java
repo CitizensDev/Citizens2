@@ -1209,19 +1209,19 @@ public class NMSImpl implements NMSBridge {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
 
-        ServerPlayer entity = ((CraftPlayer) listPlayer).getHandle();
+        ServerPlayer from = ((CraftPlayer) listPlayer).getHandle();
 
         ClientboundPlayerInfoUpdatePacket packet = ClientboundPlayerInfoUpdatePacket
-                .createPlayerInitializing(Arrays.asList(entity));
+                .createPlayerInitializing(Arrays.asList(from));
 
-        boolean list = entity instanceof NPCHolder
-                ? !((NPCHolder) entity).getNPC().data().get("removefromtablist", Setting.DISABLE_TABLIST.asBoolean())
+        boolean list = from instanceof NPCHolder
+                ? !((NPCHolder) from).getNPC().data().get("removefromtablist", Setting.DISABLE_TABLIST.asBoolean())
                 : false;
 
-        ClientboundPlayerInfoUpdatePacket.Entry entry = new ClientboundPlayerInfoUpdatePacket.Entry(entity.getUUID(),
-                entity.getGameProfile(), list, entity.latency, entity.gameMode.getGameModeForPlayer(),
-                !list ? Component.empty() : entity.getTabListDisplayName(),
-                entity.getChatSession() == null ? null : entity.getChatSession().asData());
+        ClientboundPlayerInfoUpdatePacket.Entry entry = new ClientboundPlayerInfoUpdatePacket.Entry(from.getUUID(),
+                from.getGameProfile(), list, from.latency, from.gameMode.getGameModeForPlayer(),
+                list ? from.getTabListDisplayName() : Component.empty(),
+                from.getChatSession() == null ? null : from.getChatSession().asData());
 
         try {
             PLAYERINFO_ENTRIES.invoke(packet, Lists.newArrayList(entry));

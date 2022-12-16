@@ -152,7 +152,7 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry {
     public CustomEntityRegistry(DefaultedRegistry<EntityType<?>> original) throws Throwable {
         super(original.getDefaultKey().getNamespace(),
                 (ResourceKey<Registry<EntityType<?>>>) IREGISTRY_RESOURCE_KEY.invoke(original),
-                (Lifecycle) IREGISTRY_LIFECYCLE.invoke(original), IREGISTRY_HOLDER_PROVDER.invoke(original) != null);
+                (Lifecycle) IREGISTRY_LIFECYCLE.invoke(original), true);
         this.wrapped = (MappedRegistry<EntityType<?>>) original;
     }
 
@@ -303,7 +303,6 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry {
         return wrapped.size();
     }
 
-    private static final MethodHandle IREGISTRY_HOLDER_PROVDER = NMS.getGetter(MappedRegistry.class, "m");
     private static final MethodHandle IREGISTRY_LIFECYCLE = NMS.getFirstGetter(MappedRegistry.class, Lifecycle.class);
     // replace regex .*?> ([A-Z_]+).*?of\((.*?)::new.*?$ minecraftClassMap.put(EntityType.\1, \2.class);
     private static final MethodHandle IREGISTRY_RESOURCE_KEY = NMS.getFirstGetter(MappedRegistry.class,
