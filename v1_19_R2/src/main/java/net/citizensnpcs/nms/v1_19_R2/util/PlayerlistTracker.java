@@ -5,6 +5,9 @@ import java.lang.invoke.MethodHandle;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.viaversion.viaversion.api.Via;
+
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.nms.v1_19_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
@@ -22,6 +25,15 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
     public PlayerlistTracker(ChunkMap map, Entity entity, int i, int j, boolean flag) {
         map.super(entity, i, j, flag);
         this.tracker = entity;
+
+        if (VIA_ENABLED == null) {
+            try {
+                Via.getAPI();
+                VIA_ENABLED = true;
+            } catch (Throwable t) {
+                VIA_ENABLED = false;
+            }
+        }
     }
 
     public PlayerlistTracker(ChunkMap map, TrackedEntity entry) {
@@ -41,6 +53,21 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
                 NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0));
             }
         }, 1);
+
+        if (VIA_ENABLED == false || !Setting.DISABLE_TABLIST.asBoolean())
+            return;
+
+        @SuppressWarnings("unchecked")
+        int version = Via.getAPI().getPlayerVersion(entityplayer.getBukkitEntity());
+        if (version >= 761 /* 1.19.3 */)
+            return;
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
+            }
+        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asInt());
     }
 
     @Override
@@ -92,4 +119,5 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
     private static final MethodHandle TRACKER = NMS.getFirstGetter(TrackedEntity.class, Entity.class);
     private static final MethodHandle TRACKER_ENTRY = NMS.getFirstGetter(TrackedEntity.class, ServerEntity.class);
     private static final MethodHandle TRACKING_DISTANCE = NMS.getFirstGetter(TrackedEntity.class, int.class);
+    private static Boolean VIA_ENABLED = null;
 }

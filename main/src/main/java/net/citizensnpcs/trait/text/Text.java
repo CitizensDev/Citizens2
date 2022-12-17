@@ -223,7 +223,7 @@ public class Text extends Trait implements Runnable, Listener {
     }
 
     boolean sendPage(CommandSender player, int page) {
-        Paginator paginator = new Paginator().header("Current Texts").enablePageSwitcher();
+        Paginator paginator = new Paginator().header("Current Texts").enablePageSwitcher("/npc text page $page");
         for (int i = 0; i < text.size(); i++) {
             paginator.addLine(text.get(i) + " <green>(<click:suggest_command:edit " + i
                     + " ><yellow>edit</click>) (<hover:show_text:Remove this text><click:run_command:/npc text remove "
