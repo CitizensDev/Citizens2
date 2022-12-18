@@ -36,7 +36,6 @@ import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
-import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
@@ -100,9 +99,9 @@ public class Util {
     public static ItemStack createItem(Material mat, String name, String description) {
         ItemStack stack = new ItemStack(mat, 1);
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.RESET + Colorizer.parseColors(name));
+        meta.setDisplayName(ChatColor.RESET + Messaging.parseComponents(name));
         if (description != null) {
-            meta.setLore(Arrays.asList(Colorizer.parseColors(description).split("\n")));
+            meta.setLore(Arrays.asList(Messaging.parseComponents(description).split("\n")));
         }
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         stack.setItemMeta(meta);

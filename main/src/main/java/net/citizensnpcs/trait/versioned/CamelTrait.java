@@ -49,7 +49,7 @@ public class CamelTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "camel (--pose pose) (--strength strength)",
+            usage = "camel (--pose pose)",
             desc = "Sets camel modifiers",
             modifiers = { "camel" },
             min = 1,

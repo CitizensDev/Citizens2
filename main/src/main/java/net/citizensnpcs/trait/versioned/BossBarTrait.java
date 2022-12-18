@@ -29,7 +29,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -215,7 +215,7 @@ public class BossBarTrait extends Trait {
             trait.setTrackVariable(track);
         }
         if (title != null) {
-            trait.setTitle(Colorizer.parseColors(title));
+            trait.setTitle(Messaging.parseComponents(title));
         }
         if (visible != null) {
             trait.setVisible(visible);

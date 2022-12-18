@@ -84,7 +84,6 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.trait.trait.Speech;
-import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.Placeholders;
@@ -608,7 +607,7 @@ public class NPCCommands {
             @Flag(value = "type", defValue = "PLAYER") EntityType type, @Flag("trait") String traits,
             @Flag("item") String item, @Flag("template") String templateName, @Flag("registry") String registryName)
             throws CommandException {
-        String name = Colorizer.parseColors(args.getJoinedStrings(1).trim());
+        String name = args.getJoinedStrings(1).trim();
         if (args.hasValueFlag("type")) {
             if (type == null) {
                 throw new CommandException(Messaging.tr(Messages.NPC_CREATE_INVALID_MOBTYPE, args.getFlag("type")));
@@ -2096,7 +2095,7 @@ public class NPCCommands {
             permission = "citizens.npc.rename")
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
-        String newName = Colorizer.parseColors(args.getJoinedStrings(1));
+        String newName = args.getJoinedStrings(1);
         int nameLength = SpigotUtil.getMaxNameLength(npc.getOrAddTrait(MobType.class).getType());
         if (newName.length() > nameLength && Placeholders.replace(newName, sender, npc).length() > nameLength) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
@@ -2620,7 +2619,7 @@ public class NPCCommands {
             permission = "citizens.npc.speak")
     public void speak(CommandContext args, CommandSender sender, NPC npc, @Flag("type") String type,
             @Flag("target") String target, @Flag("range") Float range) throws CommandException {
-        String message = Colorizer.parseColors(args.getJoinedStrings(1));
+        String message = args.getJoinedStrings(1);
 
         if (message.length() <= 0) {
             Messaging.send(sender, "Default Vocal Chord for " + npc.getName() + ": "

@@ -24,8 +24,8 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
@@ -296,7 +296,7 @@ public class HologramTrait extends Trait {
                 text = null;
             }
 
-            if (text != null && !ChatColor.stripColor(Colorizer.parseColors(text)).isEmpty()) {
+            if (text != null && !ChatColor.stripColor(Messaging.parseComponents(text)).isEmpty()) {
                 hologramNPC.setName(Placeholders.replace(text, null, npc));
                 hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
             } else {

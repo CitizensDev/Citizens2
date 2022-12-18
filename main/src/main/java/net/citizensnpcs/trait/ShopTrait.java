@@ -37,7 +37,6 @@ import net.citizensnpcs.api.gui.MenuSlot;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.trait.shop.CommandAction;
@@ -420,8 +419,8 @@ public class ShopTrait extends Trait {
                             ? Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore())
                             : "", description -> {
                                 ItemMeta meta = modified.display.getItemMeta();
-                                meta.setLore(Lists
-                                        .newArrayList(Splitter.on("<br>").split(Colorizer.parseColors(description))));
+                                meta.setLore(Lists.newArrayList(
+                                        Splitter.on("<br>").split(Messaging.parseComponents(description))));
                                 modified.display.setItemMeta(meta);
                             }));
         }
@@ -433,7 +432,7 @@ public class ShopTrait extends Trait {
                 return;
             ctx.getMenu().transition(InputMenus.stringSetter(modified.display.getItemMeta()::getDisplayName, name -> {
                 ItemMeta meta = modified.display.getItemMeta();
-                meta.setDisplayName(ChatColor.RESET + Colorizer.parseColors(name));
+                meta.setDisplayName(ChatColor.RESET + Messaging.parseComponents(name));
                 modified.display.setItemMeta(meta);
             }));
         }
