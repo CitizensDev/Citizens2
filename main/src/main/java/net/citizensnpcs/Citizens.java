@@ -284,6 +284,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return new File(getDataFolder(), "scripts");
     }
 
+    public StoredShops getShops() {
+        return shops;
+    }
+
     @Override
     public SkullMetaProvider getSkullMetaProvider() {
         return skullMetaProvider;

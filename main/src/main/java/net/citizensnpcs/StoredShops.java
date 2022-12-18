@@ -21,6 +21,25 @@ public class StoredShops {
         this.storage = storage;
     }
 
+    public void deleteShop(String name) {
+        if (globalShops.containsKey(name)) {
+            globalShops.remove(name);
+        } else {
+            npcShops.remove(name);
+        }
+    }
+
+    public NPCShop getGlobalShop(String name) {
+        return globalShops.computeIfAbsent(name, s -> new NPCShop(s));
+    }
+
+    public NPCShop getShop(String name) {
+        if (npcShops.containsKey(name)) {
+            return npcShops.get(name);
+        }
+        return getGlobalShop(name);
+    }
+
     public void load() {
         PersistenceLoader.load(this, storage.getKey(""));
     }

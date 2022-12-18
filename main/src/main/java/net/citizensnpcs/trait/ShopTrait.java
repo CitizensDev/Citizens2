@@ -70,14 +70,6 @@ public class ShopTrait extends Trait {
         this.shops = shops;
     }
 
-    public void deleteShop(String name) {
-        if (shops.globalShops.containsKey(name)) {
-            shops.globalShops.remove(name);
-        } else {
-            shops.npcShops.remove(name);
-        }
-    }
-
     public NPCShop getDefaultShop() {
         return shops.npcShops.computeIfAbsent(npc.getUniqueId().toString(), (s) -> new NPCShop(s));
     }
@@ -88,7 +80,7 @@ public class ShopTrait extends Trait {
 
     @Override
     public void onRemove() {
-        deleteShop(npc.getUniqueId().toString());
+        shops.deleteShop(npc.getUniqueId().toString());
     }
 
     public void onRightClick(Player player) {
@@ -113,7 +105,7 @@ public class ShopTrait extends Trait {
         private NPCShop() {
         }
 
-        private NPCShop(String name) {
+        public NPCShop(String name) {
             this.name = name;
         }
 
@@ -535,8 +527,10 @@ public class ShopTrait extends Trait {
             this.ctx = ctx;
             ctx.getSlot(2).setDescription("<f>Edit shop view permission<br>" + shop.getRequiredPermission());
             ctx.getSlot(6).setDescription("<f>Edit shop title<br>" + shop.title);
-            ctx.getSlot(8)
-                    .setDescription("<f>Show shop on right click<br>" + shop.getName().equals(trait.rightClickShop));
+            if (trait != null) {
+                ctx.getSlot(8).setDescription(
+                        "<f>Show shop on right click<br>" + shop.getName().equals(trait.rightClickShop));
+            }
         }
 
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
@@ -569,6 +563,8 @@ public class ShopTrait extends Trait {
         @MenuSlot(slot = { 0, 8 }, material = Material.COMMAND_BLOCK, amount = 1)
         public void onToggleRightClick(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
+            if (trait == null)
+                return;
             if (shop.getName().equals(trait.rightClickShop)) {
                 trait.rightClickShop = null;
             } else {
