@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.npc;
 
+import net.citizensnpcs.api.npc.NPC.Metadata;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
@@ -18,7 +19,9 @@ public interface MetadataStore {
      *            The key to get metadata from
      * @return The metadata at the given key, or null if not found
      */
-    <T> T get(NPC.Metadata key);
+    default <T> T get(NPC.Metadata key) {
+        return get(key.getKey());
+    }
 
     /**
      * Fetches metadata from the given key.
@@ -29,7 +32,9 @@ public interface MetadataStore {
      *            The default value to return
      * @return The metadata at the given key, or def if not found
      */
-    <T> T get(NPC.Metadata key, T def);
+    default <T> T get(NPC.Metadata key, T def) {
+        return get(key.getKey(), def);
+    }
 
     /**
      * Fetches metadata from the given key.
@@ -59,7 +64,9 @@ public interface MetadataStore {
      *            The metadata key
      * @return Whether the metadata exists
      */
-    boolean has(NPC.Metadata key);
+    default boolean has(NPC.Metadata key) {
+        return has(key.getKey());
+    }
 
     /**
      * Returns whether the metadata exists.
@@ -77,6 +84,16 @@ public interface MetadataStore {
      *            The key to load from
      */
     void loadFrom(DataKey key);
+
+    /**
+     * Removes any metadata at the given metadata key.
+     *
+     * @param key
+     *            The metadata key
+     */
+    default void remove(Metadata distance) {
+        remove(distance.getKey());
+    }
 
     /**
      * Removes any metadata at the given metadata key.
@@ -102,7 +119,9 @@ public interface MetadataStore {
      * @param data
      *            The data to store
      */
-    void set(NPC.Metadata key, Object data);
+    default void set(NPC.Metadata key, Object data) {
+        set(key.getKey(), data);
+    }
 
     /**
      * Stores data at the given key. Data will not persist.
@@ -122,7 +141,9 @@ public interface MetadataStore {
      * @param data
      *            The data to store
      */
-    void setPersistent(NPC.Metadata key, Object data);
+    default void setPersistent(NPC.Metadata key, Object data) {
+        setPersistent(key.getKey(), data);
+    }
 
     /**
      * Stores data at the given key. Data will persist and must be a primitive type or {@link String}.
@@ -138,5 +159,5 @@ public interface MetadataStore {
      *
      * @return The number of elements in the store
      */
-    public int size();
+    int size();
 }

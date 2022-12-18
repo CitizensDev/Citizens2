@@ -389,6 +389,8 @@ public interface NPC extends Agent, Cloneable {
     public boolean useMinecraftAI();
 
     public enum Metadata {
+        /** The activation range. Integer, defaults to the configured activation range. */
+        ACTIVATION_RANGE("activation-range"),
         ALWAYS_USE_NAME_HOLOGRAM("always-use-name-hologram"),
         /**
          * The Minecraft ambient sound played. String - Minecraft sound name
@@ -480,11 +482,11 @@ public interface NPC extends Agent, Cloneable {
          * Whether to open doors while pathfinding. Boolean.
          */
         PATHFINDER_OPEN_DOORS("pathfinder-open-doors"),
+
         /**
          * Whether to pick up items. Boolean defaults to isProtected().
          */
         PICKUP_ITEMS("pickup-items"),
-
         /**
          * @see SkinTrait
          */
@@ -542,6 +544,10 @@ public interface NPC extends Agent, Cloneable {
          * Whether to prevent NPC being targeted by hostile mobs. Boolean.
          */
         TARGETABLE("protected-target"),
+        /**
+         * The tracking distance for packets. Integer, defaults to the default tracking distance defined by the server
+         */
+        TRACKING_RANGE("tracking-distance"),
         /**
          * Whether to use Minecraft AI. Boolean.
          */
