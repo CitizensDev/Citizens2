@@ -550,7 +550,7 @@ public class EventListen implements Listener {
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         if (event.getCause() == TeleportCause.PLUGIN && !event.getPlayer().hasMetadata("citizens-force-teleporting")
                 && CitizensAPI.getNPCRegistry().getNPC(event.getPlayer()) != null
-                && Setting.TELEPORT_DELAY.asInt() > 0) {
+                && Setting.PLAYER_TELEPORT_DELAY.asInt() > 0) {
             event.setCancelled(true);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
@@ -560,7 +560,7 @@ public class EventListen implements Listener {
                     event.getPlayer().teleport(event.getTo());
                     event.getPlayer().removeMetadata("citizens-force-teleporting", CitizensAPI.getPlugin());
                 }
-            }, Setting.TELEPORT_DELAY.asInt());
+            }, Setting.PLAYER_TELEPORT_DELAY.asInt());
         }
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
     }

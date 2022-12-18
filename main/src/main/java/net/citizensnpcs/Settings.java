@@ -59,7 +59,8 @@ public class Settings {
 
     public enum Setting {
         ALWAYS_USE_NAME_HOLOGRAM("npc.always-use-name-holograms", false),
-        ASTAR_ITERATIONS_PER_TICK("npc.pathfinding.new-finder.iterations-per-tick", 5000),
+        ASTAR_ITERATIONS_PER_TICK("npc.pathfinding.new-finder.iterations-per-tick",
+                "npc.pathfinding.new-finder.iterations-per-tick", 2500),
         AUTH_SERVER_URL("general.authlib.profile-url", "https://sessionserver.mojang.com/session/minecraft/profile/"),
         BOSSBAR_RANGE("npc.default.bossbar-view-range", 64),
         CHAT_BYSTANDERS_HEAR_TARGETED_CHAT("npc.chat.options.bystanders-hear-targeted-chat", false),
@@ -78,9 +79,10 @@ public class Settings {
         DEBUG_FILE("general.debug-file", ""),
         DEBUG_MODE("general.debug-mode", false),
         DEBUG_PATHFINDING("general.debug-pathfinding", false),
-        DEFAULT_BLOCK_BREAKER_RADIUS("npc.defaults.block-breaker-radius", -1),
+        DEFAULT_BLOCK_BREAKER_RADIUS("npc.defaults.block-breaker-radius", "npc.default.block-breaker-radius", -1),
         DEFAULT_CACHE_WAYPOINT_PATHS("npc.default.waypoints.cache-paths", false),
-        DEFAULT_DESTINATION_TELEPORT_MARGIN("npc.pathfinding.defaults.destination-teleport-margin", -1),
+        DEFAULT_DESTINATION_TELEPORT_MARGIN("npc.pathfinding.defaults.destination-teleport-margin",
+                "npc.pathfinding.default-destination-teleport-margin", -1),
         DEFAULT_DISTANCE_MARGIN("npc.pathfinding.default-distance-margin", 2),
         DEFAULT_LOOK_CLOSE("npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("npc.default.look-close.range", 5),
@@ -88,22 +90,23 @@ public class Settings {
         DEFAULT_NPC_LIMIT("npc.limits.default-limit", 10),
         DEFAULT_PATH_DISTANCE_MARGIN("npc.pathfinding.default-path-distance-margin", 1),
         DEFAULT_PATHFINDER_UPDATE_PATH_RATE("npc.pathfinding.update-path-rate", 20),
-        DEFAULT_PATHFINDING_RANGE("npc.default.pathfinding.range", 75F),
+        DEFAULT_PATHFINDING_RANGE("npc.default.pathfinding.range", "npc.pathfinding.default-range-blocks", 75F),
         DEFAULT_RANDOM_LOOK_CLOSE("npc.default.look-close.random-look-enabled", false),
         DEFAULT_RANDOM_LOOK_DELAY("npc.default.look-close.random-look-delay", 60),
-        DEFAULT_RANDOM_TALKER("npc.default.random-talker", false),
-        DEFAULT_REALISTIC_LOOKING("npc.default.realistic-looking", false),
+        DEFAULT_RANDOM_TALKER("npc.default.random-talker", "npc.default.talk-close.random-talker", false),
+        DEFAULT_REALISTIC_LOOKING("npc.default.realistic-looking", "npc.default.look-close.realistic-looking", false),
         DEFAULT_SPAWN_NODAMAGE_TICKS("npc.default.spawn-nodamage-ticks", 20),
         DEFAULT_STATIONARY_TICKS("npc.default.stationary-ticks", -1),
         DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE("npc.pathfinding.straight-line-targeting-distance", 5),
         DEFAULT_TALK_CLOSE("npc.default.talk-close.enabled", false),
         DEFAULT_TALK_CLOSE_RANGE("npc.default.talk-close.range", 5),
-        DEFAULT_TEXT("npc.default.text.0", "Hi, I'm <npc>!") {
+        DEFAULT_TEXT("npc.default.talk-close.text.0", "Hi, I'm <npc>!") {
             @Override
             public void loadFromKey(DataKey root) {
                 List<String> list = new ArrayList<String>();
-                for (DataKey key : root.getRelative("npc.default.text").getSubKeys())
+                for (DataKey key : root.getRelative("npc.default.talk-close.text").getSubKeys()) {
                     list.add(key.getString(""));
+                }
                 value = list;
             }
         },
@@ -124,8 +127,9 @@ public class Settings {
         MAX_PACKET_ENTRIES("npc.limits.max-packet-entries", 15),
         MAX_SPEED("npc.limits.max-speed", 100),
         MAX_TEXT_RANGE("npc.chat.options.max-text-range", 500),
-        MAXIMUM_ASTAR_ITERATIONS("npc.pathfinding.maximum-new-pathfinder-iterations", 10000),
-        MAXIMUM_VISITED_NODES("npc.pathfinding.maximum-visited-nodes", 768),
+        MAXIMUM_ASTAR_ITERATIONS("npc.pathfinding.maximum-new-pathfinder-iterations",
+                "npc.pathfinding.new-finder.maximum-iterations", 5000),
+        MAXIMUM_VISITED_NODES("npc.pathfinding.maximum-visited-nodes", "npc.pathfinding.maximum-visited-blocks", 768),
         MC_NAVIGATION_MAX_FALL_DISTANCE("npc.pathfinding.minecraft.max-fall-distance", 3),
         MESSAGE_COLOUR("general.color-scheme.message", "<green>"),
         NEW_PATHFINDER_CHECK_BOUNDING_BOXES("npc.pathfinding.new-finder.check-bounding-boxes", false),
@@ -151,6 +155,7 @@ public class Settings {
         NPC_SKIN_VIEW_DISTANCE("npc.skins.view-distance", 100D),
         PACKET_UPDATE_DELAY("npc.packets.update-delay", 30),
         PLACEHOLDER_SKIN_UPDATE_FREQUENCY("npc.skins.placeholder-update-frequency-ticks", 5 * 60 * 20),
+        PLAYER_TELEPORT_DELAY("npc.teleport-delay", "npc.delay-player-teleport-ticks", -1),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
         SCOREBOARD_SEND_TICKS("npc.scoreboard-teams.packet-send-ticks", 1),
@@ -165,16 +170,22 @@ public class Settings {
         TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 10),
         TALK_CLOSE_TO_NPCS("npc.chat.options.talk-to-npcs", true),
         TALK_ITEM("npc.text.talk-item", "*"),
-        TELEPORT_DELAY("npc.teleport-delay", -1),
         USE_BOAT_CONTROLS("npc.controllable.use-boat-controls", true),
         USE_NEW_PATHFINDER("npc.pathfinding.use-new-finder", false),
         USE_SCOREBOARD_TEAMS("npc.scoreboard-teams.enable", true),
         WARN_ON_RELOAD("general.reload-warning-enabled", true);
 
+        protected String migrate;
         protected String path;
         protected Object value;
 
         Setting(String path, Object value) {
+            this.path = path;
+            this.value = value;
+        }
+
+        Setting(String migrate, String path, Object value) {
+            this.migrate = migrate;
             this.path = path;
             this.value = value;
         }
@@ -215,7 +226,11 @@ public class Settings {
         }
 
         protected void loadFromKey(DataKey root) {
-            value = root.getRaw(path);
+            if (migrate != null && root.keyExists(migrate) && !root.keyExists(path)) {
+                value = root.getRaw(migrate);
+            } else {
+                value = root.getRaw(path);
+            }
         }
 
         protected void setAtKey(DataKey root) {
