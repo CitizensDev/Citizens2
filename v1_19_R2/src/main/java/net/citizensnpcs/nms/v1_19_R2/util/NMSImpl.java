@@ -65,6 +65,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UUIDTypeAdapter;
+import com.viaversion.viaversion.api.Via;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -844,6 +845,15 @@ public class NMSImpl implements NMSBridge {
         registerTraitWithCommand(manager, SnowmanTrait.class);
         registerTraitWithCommand(manager, TropicalFishTrait.class);
         registerTraitWithCommand(manager, VillagerTrait.class);
+
+        if (VIA_ENABLED == null) {
+            try {
+                Via.getAPI();
+                VIA_ENABLED = true;
+            } catch (Throwable t) {
+                VIA_ENABLED = false;
+            }
+        }
     }
 
     private void loadEntityTypes() {
@@ -1234,7 +1244,12 @@ public class NMSImpl implements NMSBridge {
         }
 
         NMSImpl.sendPacket(recipient, packet);
-        return false;
+        if (VIA_ENABLED == false)
+            return false;
+
+        @SuppressWarnings("unchecked")
+        int version = Via.getAPI().getPlayerVersion(recipient);
+        return version < 761;
     }
 
     @Override
@@ -1258,9 +1273,8 @@ public class NMSImpl implements NMSBridge {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
 
-        ServerPlayer entity = ((CraftPlayer) listPlayer).getHandle();
-
-        NMSImpl.sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(Arrays.asList(entity.getUUID())));
+        NMSImpl.sendPacket(recipient,
+                new ClientboundPlayerInfoRemovePacket(Arrays.asList(getHandle(listPlayer).getUUID())));
     }
 
     @Override
@@ -2334,6 +2348,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cq");
+
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
@@ -2391,6 +2406,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
     private static Field SKULL_PROFILE_FIELD;
     private static MethodHandle TEAM_FIELD;
+    private static Boolean VIA_ENABLED = null;
 
     static {
         try {
