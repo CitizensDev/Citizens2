@@ -196,11 +196,6 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     }
 
     @Override
-    public Reference<EntityType<?>> createIntrusiveHolder(EntityType var0) {
-        return wrapped.createIntrusiveHolder(var0);
-    }
-
-    @Override
     public HolderGetter<EntityType<?>> createRegistrationLookup() {
         return wrapped.createRegistrationLookup();
     }
@@ -212,19 +207,6 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
 
     public EntityType findType(Class<?> search) {
         return minecraftClassMap.inverse().get(search);
-        /*
-        for (Object type : wrapped) {
-            if (minecraftClassMap.get(type) == search) {
-                return (EntityTypes) type;
-            }
-        }
-        return null;
-        */
-    }
-
-    @Override
-    public Registry<EntityType<?>> freeze() {
-        return wrapped.freeze();
     }
 
     @Override
@@ -345,17 +327,6 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     public void put(int entityId, ResourceLocation key, EntityType entityClass) {
         entities.put(key, entityClass);
         entityIds.put(entityClass, entityId);
-    }
-
-    @Override
-    public Reference<EntityType<?>> register(ResourceKey<EntityType<?>> key, EntityType<?> type, Lifecycle lifecycle) {
-        return wrapped.register(key, type, lifecycle);
-    }
-
-    @Override
-    public Reference<EntityType<?>> registerMapping(int var0, ResourceKey<EntityType<?>> key, EntityType<?> type,
-            Lifecycle lifecycle) {
-        return wrapped.registerMapping(var0, key, type, lifecycle);
     }
 
     @Override
