@@ -67,7 +67,7 @@ public class LlamaTrait extends Trait {
     @Requirements(selected = true, ownership = true)
     public static void llama(CommandContext args, CommandSender sender, NPC npc,
             @Flag({ "color", "colour" }) Color color, @Flag("strength") Integer strength) throws CommandException {
-        if (npc.getOrAddTrait(MobType.class).getType().name().contains("LLAMA"))
+        if (!npc.getOrAddTrait(MobType.class).getType().name().contains("LLAMA"))
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE);
         LlamaTrait trait = npc.getOrAddTrait(LlamaTrait.class);
         String output = "";

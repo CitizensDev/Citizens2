@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.google.common.collect.BiMap;
@@ -136,11 +137,11 @@ import net.minecraft.world.entity.vehicle.MinecartSpawner;
 import net.minecraft.world.entity.vehicle.MinecartTNT;
 
 @SuppressWarnings("rawtypes")
-public class CustomEntityRegistry extends DefaultedRegistry {
+public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<DefaultedRegistry<EntityType<?>>> {
     private final BiMap<ResourceLocation, EntityType> entities = HashBiMap.create();
     private final BiMap<EntityType, ResourceLocation> entityClasses = this.entities.inverse();
     private final Map<EntityType, Integer> entityIds = Maps.newHashMap();
-    private final MappedRegistry<EntityType<?>> wrapped;
+    private final DefaultedRegistry<EntityType<?>> wrapped;
 
     @SuppressWarnings("unchecked")
     public CustomEntityRegistry(DefaultedRegistry<EntityType<?>> original) throws Throwable {
@@ -186,6 +187,11 @@ public class CustomEntityRegistry extends DefaultedRegistry {
         }
         return null;
         */
+    }
+
+    @Override
+    public DefaultedRegistry<EntityType<?>> get() {
+        return wrapped;
     }
 
     @Override
@@ -272,10 +278,6 @@ public class CustomEntityRegistry extends DefaultedRegistry {
     @Override
     public Stream getTags() {
         return wrapped.getTags();
-    }
-
-    public MappedRegistry<EntityType<?>> getWrapped() {
-        return wrapped;
     }
 
     @Override

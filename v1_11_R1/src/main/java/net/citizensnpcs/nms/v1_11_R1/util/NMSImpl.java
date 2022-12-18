@@ -1258,7 +1258,7 @@ public class NMSImpl implements NMSBridge {
             return;
         try {
             MethodHandle setter = NMS.getFinalSetter(EntityTypes.class, "b");
-            setter.invoke(ENTITY_REGISTRY.getWrapped());
+            setter.invoke(ENTITY_REGISTRY.get());
         } catch (Throwable e) {
         }
     }

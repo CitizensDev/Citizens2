@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -13,11 +14,11 @@ import com.google.common.collect.Maps;
 import net.minecraft.server.v1_14_R1.*;
 
 @SuppressWarnings("rawtypes")
-public class CustomEntityRegistry extends RegistryBlocks {
+public class CustomEntityRegistry extends RegistryBlocks implements Supplier<RegistryBlocks<EntityTypes<?>>> {
     private final BiMap<MinecraftKey, EntityTypes> entities = HashBiMap.create();
     private final BiMap<EntityTypes, MinecraftKey> entityClasses = this.entities.inverse();
     private final Map<EntityTypes, Integer> entityIds = Maps.newHashMap();
-    private final RegistryMaterials<EntityTypes<?>> wrapped;
+    private final RegistryBlocks<EntityTypes<?>> wrapped;
 
     public CustomEntityRegistry(RegistryBlocks<EntityTypes<?>> original) {
         super(original.a().getNamespace());
@@ -56,6 +57,11 @@ public class CustomEntityRegistry extends RegistryBlocks {
     }
 
     @Override
+    public RegistryBlocks<EntityTypes<?>> get() {
+        return wrapped;
+    }
+
+    @Override
     public EntityTypes get(MinecraftKey key) {
         if (entities.containsKey(key)) {
             return entities.get(key);
@@ -80,10 +86,6 @@ public class CustomEntityRegistry extends RegistryBlocks {
         }
 
         return Optional.ofNullable(this.wrapped.get(var0));
-    }
-
-    public RegistryMaterials<EntityTypes<?>> getWrapped() {
-        return wrapped;
     }
 
     @Override

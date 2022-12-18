@@ -2,10 +2,10 @@ package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Camel;
+import org.bukkit.entity.EntityType;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
-import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
@@ -13,7 +13,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -55,11 +54,9 @@ public class CamelTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.camel")
-    @Requirements(selected = true, ownership = true)
+    @Requirements(selected = true, ownership = true, types = EntityType.CAMEL)
     public static void camel(CommandContext args, CommandSender sender, NPC npc, @Flag("pose") CamelPose pose)
             throws CommandException {
-        if (npc.getOrAddTrait(MobType.class).getType().name().equals("CAMEL"))
-            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE);
         CamelTrait trait = npc.getOrAddTrait(CamelTrait.class);
         String output = "";
 

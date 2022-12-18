@@ -1430,7 +1430,7 @@ public class NMSImpl implements NMSBridge {
         if (ENTITY_REGISTRY == null)
             return;
         try {
-            ENTITY_REGISTRY_SETTER.invoke(null, ENTITY_REGISTRY.getWrapped());
+            ENTITY_REGISTRY_SETTER.invoke(null, ENTITY_REGISTRY.get());
         } catch (Throwable e) {
         }
     }

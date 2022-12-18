@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.google.common.collect.BiMap;
@@ -151,18 +152,18 @@ import net.minecraft.world.entity.vehicle.MinecartSpawner;
 import net.minecraft.world.entity.vehicle.MinecartTNT;
 
 @SuppressWarnings("rawtypes")
-public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>> {
+public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
+        implements Supplier<DefaultedMappedRegistry<EntityType<?>>> {
     private final BiMap<ResourceLocation, EntityType> entities = HashBiMap.create();
     private final BiMap<EntityType, ResourceLocation> entityClasses = this.entities.inverse();
     private final Map<EntityType, Integer> entityIds = Maps.newHashMap();
-    private final MappedRegistry<EntityType<?>> wrapped;
+    private final DefaultedMappedRegistry<EntityType<?>> wrapped;
 
-    @SuppressWarnings("unchecked")
     public CustomEntityRegistry(DefaultedRegistry<EntityType<?>> original) throws Throwable {
         super(original.getDefaultKey().getNamespace(),
                 (ResourceKey<? extends Registry<EntityType<?>>>) IREGISTRY_RESOURCE_KEY.invoke(original),
                 (Lifecycle) IREGISTRY_LIFECYCLE.invoke(original), true);
-        this.wrapped = (MappedRegistry<EntityType<?>>) original;
+        this.wrapped = (DefaultedMappedRegistry<EntityType<?>>) original;
     }
 
     @Override
@@ -207,6 +208,11 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
 
     public EntityType findType(Class<?> search) {
         return minecraftClassMap.inverse().get(search);
+    }
+
+    @Override
+    public DefaultedMappedRegistry<EntityType<?>> get() {
+        return wrapped;
     }
 
     @Override
@@ -288,10 +294,6 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     @Override
     public Stream<Pair<TagKey<EntityType<?>>, Named<EntityType<?>>>> getTags() {
         return wrapped.getTags();
-    }
-
-    public MappedRegistry<EntityType<?>> getWrapped() {
-        return wrapped;
     }
 
     @Override

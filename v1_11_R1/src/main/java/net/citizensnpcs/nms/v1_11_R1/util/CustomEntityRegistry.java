@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -14,7 +15,8 @@ import net.minecraft.server.v1_11_R1.MinecraftKey;
 import net.minecraft.server.v1_11_R1.RegistryMaterials;
 
 @SuppressWarnings("rawtypes")
-public class CustomEntityRegistry extends RegistryMaterials {
+public class CustomEntityRegistry extends RegistryMaterials
+        implements Supplier<RegistryMaterials<MinecraftKey, Class<? extends Entity>>> {
     private final BiMap<MinecraftKey, Class<? extends Entity>> entities = HashBiMap.create();
     private final BiMap<Class<? extends Entity>, MinecraftKey> entityClasses = this.entities.inverse();
     private final Map<Class<? extends Entity>, Integer> entityIds = Maps.newHashMap();
@@ -58,6 +60,11 @@ public class CustomEntityRegistry extends RegistryMaterials {
     }
 
     @Override
+    public RegistryMaterials<MinecraftKey, Class<? extends Entity>> get() {
+        return wrapped;
+    }
+
+    @Override
     public Class<? extends Entity> get(Object key) {
         if (entities.containsKey(key)) {
             return entities.get(key);
@@ -69,10 +76,6 @@ public class CustomEntityRegistry extends RegistryMaterials {
     @Override
     public Object getId(int paramInt) {
         return wrapped.getId(paramInt);
-    }
-
-    public RegistryMaterials<MinecraftKey, Class<? extends Entity>> getWrapped() {
-        return wrapped;
     }
 
     @Override
