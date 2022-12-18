@@ -337,6 +337,7 @@ public class Messages {
     public static final String SPEED_MODIFIER_ABOVE_LIMIT = "citizens.commands.npc.speed.modifier-above-limit";
     public static final String SPEED_MODIFIER_SET = "citizens.commands.npc.speed.set";
     public static final String SPEED_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.speed.prompt";
+    public static final String SPELL_SET = "citizens.commands.npc.spellcaster.spell-set";
     public static final String SWIMMING_SET = "citizens.commands.npc.swim.set";
     public static final String SWIMMING_UNSET = "citizens.commands.npc.swim.unset";
     public static final String TARGETABLE_SET = "citizens.commands.npc.targetable.set";
