@@ -155,14 +155,14 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     private final BiMap<ResourceLocation, EntityType> entities = HashBiMap.create();
     private final BiMap<EntityType, ResourceLocation> entityClasses = this.entities.inverse();
     private final Map<EntityType, Integer> entityIds = Maps.newHashMap();
-    private final MappedRegistry<EntityType<?>> wrapped;
+    private final DefaultedMappedRegistry<EntityType<?>> wrapped;
 
     @SuppressWarnings("unchecked")
     public CustomEntityRegistry(DefaultedRegistry<EntityType<?>> original) throws Throwable {
         super(original.getDefaultKey().getNamespace(),
                 (ResourceKey<? extends Registry<EntityType<?>>>) IREGISTRY_RESOURCE_KEY.invoke(original),
                 (Lifecycle) IREGISTRY_LIFECYCLE.invoke(original), true);
-        this.wrapped = (MappedRegistry<EntityType<?>>) original;
+        this.wrapped = (DefaultedMappedRegistry<EntityType<?>>) original;
     }
 
     @Override
