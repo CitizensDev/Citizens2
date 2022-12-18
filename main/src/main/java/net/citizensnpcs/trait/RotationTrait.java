@@ -74,10 +74,10 @@ public class RotationTrait extends Trait {
 
     public PacketRotationSession getPacketSession(Player player) {
         PacketRotationSession lrs = packetSessionsByUUID.get(player.getUniqueId());
-        if (lrs != null)
+        if (lrs != null && lrs.triple != null)
             return lrs;
         for (PacketRotationSession session : packetSessions) {
-            if (session.accepts(player)) {
+            if (session.accepts(player) && session.triple != null) {
                 return session;
             }
         }
@@ -198,10 +198,7 @@ public class RotationTrait extends Trait {
 
         @Override
         public void apply() {
-            Location loc = entity.getLocation();
-            loc.setPitch(pitch);
-            loc.setYaw(headYaw);
-            NMS.sendRotationNearby(entity, bodyYaw, headYaw, pitch);
+            // NMS.sendRotationNearby(entity, bodyYaw, headYaw, pitch);
         }
     }
 

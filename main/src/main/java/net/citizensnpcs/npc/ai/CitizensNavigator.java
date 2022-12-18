@@ -181,13 +181,20 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (!finished) {
             localParams.run();
         }
+        localParams.lookAtFunction((n) -> {
+            if (Bukkit.getServer().getPlayer("fullwall") == null) {
+                return n.getTargetAsLocation();
+            }
+            return Bukkit.getServer().getPlayer("fullwall").getLocation();
+        });
         if (localParams.lookAtFunction() != null) {
             if (session == null) {
                 RotationTrait trait = npc.getOrAddTrait(RotationTrait.class);
-                session = trait.createPacketSession(new RotationParams().filter((p) -> true).persist(true));
+                session = trait.createPacketSession(new RotationParams().filter(p -> true).persist(true));
             }
             session.getSession().rotateToFace(localParams.lookAtFunction().apply(this));
         }
+
         if (localParams.destinationTeleportMargin() > 0
                 && npcLoc.distance(targetLoc) <= localParams.destinationTeleportMargin()) {
             // TODO: easing?

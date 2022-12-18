@@ -71,10 +71,6 @@ public class ProtocolLibListener {
                 });
     }
 
-    private static byte degToByte(float in) {
-        return (byte) (in * 256.0F / 360.0F);
-    }
-
     private StructureModifier<Set<PlayerTeleportFlag>> getFlagsModifier(PacketContainer handle) {
         return handle.getSets(EnumWrappers.getGenericConverter(flagsClass, PlayerTeleportFlag.class));
     }
@@ -85,5 +81,9 @@ public class ProtocolLibListener {
         Z,
         ZPITCH,
         ZYAW,
+    }
+
+    private static byte degToByte(float in) {
+        return (byte) (in * 256.0F / 360.0F);
     }
 }
