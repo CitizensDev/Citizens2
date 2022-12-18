@@ -38,7 +38,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 
 // TODO: class-based injection? sub-inventory pages
@@ -460,7 +459,7 @@ public class InventoryMenu implements Listener, Runnable {
         int[] dim = info.menuAnnotation.dimensions();
         int size;
         InventoryType type;
-        String title = Colorizer.parseColors(Messaging.tryTranslate(
+        String title = Messaging.parseComponents(Messaging.tryTranslate(
                 context.containsKey("title") ? (String) context.get("title") : info.menuAnnotation.title()));
         Inventory inventory = instance.createInventory(title);
         if (inventory == null) {

@@ -18,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.common.collect.Lists;
 
-import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.Messaging;
 import net.md_5.bungee.api.ChatColor;
 
@@ -107,11 +106,11 @@ public class InventoryMenuSlot {
             if (meta != null) {
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                 if (!data.lore().equals("EMPTY")) {
-                    meta.setLore(Arrays
-                            .asList(Colorizer.parseColors(Messaging.tryTranslate(data.lore())).split("\\n|\n|<br>")));
+                    meta.setLore(Arrays.asList(Messaging
+                            .parseComponents(Messaging.tryTranslate(data.lore())).split("\\n|\n|<br>")));
                 }
                 if (!data.title().equals("EMPTY")) {
-                    meta.setDisplayName(Colorizer.parseColors(Messaging.tryTranslate(data.title())));
+                    meta.setDisplayName(Messaging.parseComponents(Messaging.tryTranslate(data.title())));
                 }
                 defaultItem.setItemMeta(meta);
             }
@@ -141,7 +140,7 @@ public class InventoryMenuSlot {
         if (!meta.hasDisplayName()) {
 
         }
-        List<String> list = Arrays.asList(Colorizer.parseColors(description).split("\\n|\n|<br>"));
+        List<String> list = Arrays.asList(Messaging.parseComponents(description).split("\\n|\n|<br>"));
         meta.setDisplayName(ChatColor.RESET + list.get(0));
         meta.setLore(list.subList(1, list.size()));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -176,9 +175,9 @@ public class InventoryMenuSlot {
 
     public void setItemStack(ItemStack stack, String name, String description) {
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.RESET + Colorizer.parseColors(name));
+        meta.setDisplayName(ChatColor.RESET + Messaging.parseComponents(name));
         if (description != null) {
-            meta.setLore(Arrays.asList(Colorizer.parseColors(description).split("\n")));
+            meta.setLore(Arrays.asList(Messaging.parseComponents(description).split("\n")));
         }
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         stack.setItemMeta(meta);

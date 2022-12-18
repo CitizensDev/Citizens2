@@ -34,6 +34,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class Messaging {
     private static class DebugFormatter extends Formatter {
@@ -145,6 +146,14 @@ public class Messaging {
         return null;
     }
 
+    public static String parseComponents(String raw) {
+        if (AUDIENCES != null && MINIMESSAGE != null) {
+            return LegacyComponentSerializer.legacySection()
+                    .serialize(MINIMESSAGE.deserialize(convertLegacyCodes(raw)));
+        }
+        return convertLegacyCodes(raw);
+    }
+
     private static String prettify(String message) {
         String trimmed = message.trim();
         String messageColour = MESSAGE_COLOUR;
@@ -192,7 +201,7 @@ public class Messaging {
             if (AUDIENCES != null) {
                 AUDIENCES.sender(sender).sendMessage(MINIMESSAGE.deserialize(convertLegacyCodes(message)));
             } else {
-                sender.sendMessage(Colorizer.parseColors(rawMessage));
+                sender.sendMessage(convertLegacyCodes(rawMessage));
             }
         }
     }

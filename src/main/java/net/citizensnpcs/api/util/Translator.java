@@ -252,7 +252,7 @@ public class Translator {
     }
 
     public static String translate(String key, Locale preferredLocale, Object... msg) {
-        return Colorizer.parseColors(msg.length == 0 ? instance.translate(key, preferredLocale)
+        return Messaging.parseComponents(msg.length == 0 ? instance.translate(key, preferredLocale)
                 : instance.format(key, preferredLocale, msg));
     }
 

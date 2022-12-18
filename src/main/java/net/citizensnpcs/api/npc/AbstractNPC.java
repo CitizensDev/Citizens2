@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -40,7 +41,6 @@ import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Speech;
-import net.citizensnpcs.api.util.Colorizer;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 import net.citizensnpcs.api.util.MemoryDataKey;
@@ -238,7 +238,7 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public String getFullName() {
         int nameLength = SpigotUtil.getMaxNameLength(getEntityType());
-        String replaced = Placeholders.replace(Colorizer.parseColors(name), null, this);
+        String replaced = Placeholders.replace(Messaging.parseComponents(name), null, this);
         if (replaced.length() > nameLength) {
             Messaging.severe("ID", id, "created with name length greater than " + nameLength + ", truncating", replaced,
                     "to", replaced.substring(0, nameLength));
@@ -259,7 +259,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getName() {
-        return Colorizer.stripColors(name);
+        return ChatColor.stripColor(name);
     }
 
     @Override

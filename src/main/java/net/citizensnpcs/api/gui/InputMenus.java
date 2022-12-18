@@ -18,7 +18,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.InputMenus.Choice.Type;
-import net.citizensnpcs.api.util.Colorizer;
+import net.citizensnpcs.api.util.Messaging;
 
 public class InputMenus {
     public static class Choice<T> {
@@ -45,7 +45,7 @@ public class InputMenus {
         }
 
         public String getDescription() {
-            return Colorizer.parseColors(description);
+            return Messaging.parseComponents(description);
         }
 
         public Material getDisplayMaterial() {
