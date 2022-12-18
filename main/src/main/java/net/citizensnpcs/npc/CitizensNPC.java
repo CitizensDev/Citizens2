@@ -430,11 +430,20 @@ public class CitizensNPC extends AbstractNPC {
                 resetCachedCoord();
                 return;
             }
+
+            if (data().has(NPC.Metadata.ACTIVATION_RANGE)) {
+                int range = data().get(NPC.Metadata.ACTIVATION_RANGE);
+                if (range == -1 || CitizensAPI.getLocationLookup().getNearbyPlayers(getStoredLocation(), range)
+                        .iterator().hasNext()) {
+                    NMS.activate(getEntity());
+                }
+            }
+
             if (navigator.isNavigating()) {
                 if (data().get(NPC.Metadata.SWIMMING, true)) {
                     Location currentDest = navigator.getPathStrategy().getCurrentDestination();
                     if (currentDest == null || currentDest.getY() > getStoredLocation().getY()) {
-                        NMS.trySwim(getEntity(), SwimmingExaminer.isWaterMob(getEntity()) ? 0.02F : 0.04F);
+                        NMS.trySwim(getEntity());
                     }
                 }
             } else if (data().<Boolean> get(NPC.Metadata.SWIMMING, !SwimmingExaminer.isWaterMob(getEntity()))) {
@@ -443,6 +452,7 @@ public class CitizensNPC extends AbstractNPC {
                     NMS.trySwim(getEntity());
                 }
             }
+
             navigator.run();
             if (SUPPORT_GLOWING) {
                 try {

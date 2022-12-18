@@ -31,6 +31,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 
 import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.jnbt.CompoundTag;
@@ -48,6 +49,10 @@ import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 public class NMS {
     private NMS() {
         // util class
+    }
+
+    public static void activate(Entity entity) {
+        BRIDGE.activate(entity);
     }
 
     public static boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
@@ -649,7 +654,7 @@ public class NMS {
     }
 
     public static void trySwim(org.bukkit.entity.Entity entity) {
-        BRIDGE.trySwim(entity);
+        trySwim(entity, SwimmingExaminer.isWaterMob(entity) ? 0.02F : 0.04F);
     }
 
     public static void trySwim(org.bukkit.entity.Entity entity, float power) {

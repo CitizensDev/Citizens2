@@ -7,7 +7,9 @@ import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
@@ -59,6 +61,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     private static int getB(EntityTrackerEntry entry) {
         try {
+            Entity entity = getTracker(entry);
+            if (entity instanceof NPCHolder) {
+                return ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.TRACKING_RANGE, (Integer) B.get(entry));
+            }
             return (Integer) B.get(entry);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

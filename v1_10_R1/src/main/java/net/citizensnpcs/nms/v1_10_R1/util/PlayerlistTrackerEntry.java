@@ -4,7 +4,9 @@ import java.lang.reflect.Field;
 
 import org.bukkit.entity.Player;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_10_R1.entity.EntityHumanNPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_10_R1.Entity;
@@ -47,6 +49,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     private static int getE(EntityTrackerEntry entry) {
         try {
+            Entity entity = getTracker(entry);
+            if (entity instanceof NPCHolder) {
+                return ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.TRACKING_RANGE, (Integer) E.get(entry));
+            }
             return (Integer) E.get(entry);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

@@ -7,7 +7,9 @@ import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityPlayer;
@@ -81,7 +83,12 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     private static int getTrackingDistance(EntityTracker entry) {
         try {
-            return (Integer) TRACKING_DISTANCE.invoke(entry);
+            Entity entity = getTracker(entry);
+            if (entity instanceof NPCHolder) {
+                return ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.TRACKING_RANGE,
+                        (Integer) TRACKING_RANGE.invoke(entry));
+            }
+            return (Integer) TRACKING_RANGE.invoke(entry);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -92,5 +99,5 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
     private static final MethodHandle E = NMS.getGetter(EntityTrackerEntry.class, "e");
     private static final MethodHandle TRACKER = NMS.getGetter(EntityTracker.class, "tracker");
     private static final MethodHandle TRACKER_ENTRY = NMS.getGetter(EntityTracker.class, "trackerEntry");
-    private static final MethodHandle TRACKING_DISTANCE = NMS.getGetter(EntityTracker.class, "trackingDistance");
+    private static final MethodHandle TRACKING_RANGE = NMS.getGetter(EntityTracker.class, "trackingDistance");
 }

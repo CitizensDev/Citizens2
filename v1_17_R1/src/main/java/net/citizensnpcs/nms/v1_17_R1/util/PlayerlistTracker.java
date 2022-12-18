@@ -7,7 +7,9 @@ import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.entity.EntityHumanNPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.server.level.ChunkMap;
@@ -85,7 +87,12 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
 
     private static int getTrackingDistance(TrackedEntity entry) {
         try {
-            return (Integer) TRACKING_DISTANCE.invoke(entry);
+            Entity entity = getTracker(entry);
+            if (entity instanceof NPCHolder) {
+                return ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.TRACKING_RANGE,
+                        (Integer) TRACKING_RANGE.invoke(entry));
+            }
+            return (Integer) TRACKING_RANGE.invoke(entry);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -96,5 +103,5 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
     private static final MethodHandle F = NMS.getGetter(ServerEntity.class, "f");
     private static final MethodHandle TRACKER = NMS.getFirstGetter(TrackedEntity.class, Entity.class);
     private static final MethodHandle TRACKER_ENTRY = NMS.getFirstGetter(TrackedEntity.class, ServerEntity.class);
-    private static final MethodHandle TRACKING_DISTANCE = NMS.getFirstGetter(TrackedEntity.class, int.class);
+    private static final MethodHandle TRACKING_RANGE = NMS.getFirstGetter(TrackedEntity.class, int.class);
 }

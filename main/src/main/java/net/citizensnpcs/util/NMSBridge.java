@@ -40,6 +40,9 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 
 public interface NMSBridge {
+    default void activate(Entity entity) {
+    };
+
     public boolean addEntityToWorld(Entity entity, SpawnReason custom);
 
     public void addOrRemoveFromPlayerList(Entity entity, boolean remove);
@@ -146,11 +149,11 @@ public interface NMSBridge {
 
     public void sendTabListRemove(Player recipient, Player listPlayer);
 
-    public void sendTeamPacket(Player recipient, Team team, int mode);
+    public void sendTeamPacket(Player recipient, Team team, int mode);;
 
     public default void setAllayDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void setBodyYaw(Entity entity, float yaw);
 
@@ -166,15 +169,15 @@ public interface NMSBridge {
 
     public void setHeadYaw(Entity entity, float yaw);
 
-    public void setKnockbackResistance(LivingEntity entity, double d);
+    public void setKnockbackResistance(LivingEntity entity, double d);;
 
     public default void setLyingDown(Entity cat, boolean lying) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void setNavigationTarget(Entity handle, Entity target, float speed);
 
-    public void setNoGravity(Entity entity, boolean nogravity);
+    public void setNoGravity(Entity entity, boolean nogravity);;
 
     public default void setPandaSitting(Entity entity, boolean sitting) {
         throw new UnsupportedOperationException();
@@ -186,13 +189,13 @@ public interface NMSBridge {
 
     public default void setPiglinDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
-    };
+    }
 
-    public void setPitch(Entity entity, float pitch);
+    public void setPitch(Entity entity, float pitch);;
 
     public default void setPolarBearRearing(Entity entity, boolean rearing) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void setProfile(SkullMeta meta, GameProfile profile);
 
@@ -228,5 +231,5 @@ public interface NMSBridge {
 
     public void updateNavigationWorld(Entity entity, World world);
 
-    public void updatePathfindingRange(NPC npc, float pathfindingRange);;
+    public void updatePathfindingRange(NPC npc, float pathfindingRange);
 }

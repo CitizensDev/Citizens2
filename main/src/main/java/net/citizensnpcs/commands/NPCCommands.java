@@ -156,6 +156,23 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "activationrange [range]",
+            desc = "Sets the activation range",
+            modifiers = { "activationrange" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.activationrange")
+    public void activationrange(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Integer range) {
+        if (range == null) {
+            npc.data().remove(NPC.Metadata.ACTIVATION_RANGE);
+        } else {
+            npc.data().setPersistent(NPC.Metadata.ACTIVATION_RANGE, range);
+        }
+        Messaging.sendTr(sender, Messages.ACTIVATION_RANGE_SET, range);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "age [age] (-l(ock))",
             desc = "Set the age of a NPC",
             help = Messages.COMMAND_AGE_HELP,
@@ -2849,6 +2866,23 @@ public class NPCCommands {
             throw new CommandException(Messages.TO_ENTITY_NOT_FOUND);
         from.teleport(to);
         Messaging.sendTr(sender, Messages.TPTO_SUCCESS);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "trackingrange [range]",
+            desc = "Sets the tracking range",
+            modifiers = { "trackingrange" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.trackingrange")
+    public void trackingrange(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Integer range) {
+        if (range == null) {
+            npc.data().remove(NPC.Metadata.TRACKING_RANGE);
+        } else {
+            npc.data().setPersistent(NPC.Metadata.TRACKING_RANGE, range);
+        }
+        Messaging.sendTr(sender, Messages.TRACKING_RANGE_SET, range);
     }
 
     @Command(

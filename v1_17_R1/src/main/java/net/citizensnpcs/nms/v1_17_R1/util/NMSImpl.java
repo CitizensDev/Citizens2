@@ -250,6 +250,7 @@ import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
@@ -319,6 +320,11 @@ import net.minecraft.world.scores.PlayerTeam;
 public class NMSImpl implements NMSBridge {
     public NMSImpl() {
         loadEntityTypes();
+    }
+
+    @Override
+    public void activate(org.bukkit.entity.Entity entity) {
+        getHandle(entity).activatedTick = MinecraftServer.currentTick;
     }
 
     @SuppressWarnings("resource")

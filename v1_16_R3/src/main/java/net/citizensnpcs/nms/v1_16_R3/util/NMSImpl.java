@@ -290,6 +290,7 @@ import net.minecraft.server.v1_16_R3.IInventory;
 import net.minecraft.server.v1_16_R3.IRegistry;
 import net.minecraft.server.v1_16_R3.MathHelper;
 import net.minecraft.server.v1_16_R3.MinecraftKey;
+import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.MobEffects;
 import net.minecraft.server.v1_16_R3.NavigationAbstract;
 import net.minecraft.server.v1_16_R3.NetworkManager;
@@ -319,6 +320,11 @@ import net.minecraft.server.v1_16_R3.WorldServer;
 public class NMSImpl implements NMSBridge {
     public NMSImpl() {
         loadEntityTypes();
+    }
+
+    @Override
+    public void activate(org.bukkit.entity.Entity entity) {
+        getHandle(entity).activatedTick = MinecraftServer.currentTick;
     }
 
     @SuppressWarnings("resource")
