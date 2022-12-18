@@ -96,10 +96,8 @@ public class Messages {
     public static final String ENDERMAN_ANGRY_SET = "citizens.commands.npc.enderman.angry-set";
     public static final String ENDERMAN_ANGRY_UNSET = "citizens.commands.npc.enderman.angry-unset";
     public static final String ENTITY_TYPE_SET = "citizens.commands.npc.type.set";
-    public static final String EQUIPMENT_EDITOR_ALL_ITEMS_REMOVED = "citizens.editors.equipment.all-items-removed";
     public static final String EQUIPMENT_EDITOR_BEGIN = "citizens.editors.equipment.begin";
     public static final String EQUIPMENT_EDITOR_END = "citizens.editors.equipment.end";
-    public static final String EQUIPMENT_EDITOR_INVALID_BLOCK = "citizens.editors.equipment.invalid-block";
     public static final String EQUIPMENT_EDITOR_SHEEP_COLOURED = "citizens.editors.equipment.sheep-coloured";
     public static final String ERROR_CLEARING_GOALS = "citizens.nms-errors.clearing-goals";
     public static final String ERROR_GETTING_FIELD = "citizens.nms-errors.getting-field";
@@ -157,7 +155,6 @@ public class Messages {
     public static final String HORSE_COLOR_SET = "citizens.commands.npc.horse.color-set";
     public static final String HORSE_DESCRIBE = "citizens.commands.npc.horse.describe";
     public static final String HORSE_STYLE_SET = "citizens.commands.npc.horse.style-set";
-    public static final String HORSE_TYPE_SET = "citizens.commands.npc.horse.type-set";
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";
@@ -314,9 +311,6 @@ public class Messages {
     public static final String RESPAWN_DELAY_SET = "citizens.commands.npc.respawn.delay-set";
     public static final String SADDLED_SET = "citizens.editors.equipment.saddled-set";
     public static final String SADDLED_STOPPED = "citizens.editors.equipment.saddled-stopped";
-    public static final String SCRIPT_COMPILED = "citizens.commands.script.compiled";
-    public static final String SCRIPT_COMPILING = "citizens.commands.script.compiling";
-    public static final String SCRIPT_FILE_MISSING = "citizens.commands.script.file-missing";
     public static final String SELECTION_PROMPT = "citizens.editors.selection.start-prompt";
     public static final String SELECTION_PROMPT_INVALID_CHOICE = "citizens.conversations.selection.invalid-choice";
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
