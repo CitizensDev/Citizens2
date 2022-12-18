@@ -1235,10 +1235,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setAllayDancing(org.bukkit.entity.Entity entity, boolean dancing) {
-    }
-
-    @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).setYRot(yaw);
     }
@@ -1969,10 +1965,6 @@ public class NMSImpl implements NMSBridge {
         return (LivingEntity) NMSImpl.getHandle((org.bukkit.entity.Entity) entity);
     }
 
-    public static float getHeadYaw(LivingEntity handle) {
-        return handle.getYHeadRot();
-    }
-
     public static PathNavigation getNavigation(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         return handle instanceof Mob ? ((Mob) handle).getNavigation()
@@ -2096,7 +2088,8 @@ public class NMSImpl implements NMSBridge {
         radius *= radius;
         final org.bukkit.World world = location.getWorld();
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
-            if (world != player.getWorld() || (from != null && !player.canSee(from)) || (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius)) {
+            if (world != player.getWorld() || (from != null && !player.canSee(from))
+                    || (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius)) {
                 continue;
             }
             for (Packet<?> packet : packets) {

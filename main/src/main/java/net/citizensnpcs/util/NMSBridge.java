@@ -37,6 +37,7 @@ import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 
 public interface NMSBridge {
     public boolean addEntityToWorld(Entity entity, SpawnReason custom);
@@ -51,7 +52,9 @@ public interface NMSBridge {
 
     public BlockBreaker getBlockBreaker(Entity entity, Block targetBlock, BlockBreakerConfiguration config);
 
-    public Object getBossBar(Entity entity);
+    public default Object getBossBar(Entity entity) {
+        throw new UnsupportedOperationException();
+    }
 
     public BoundingBox getBoundingBox(Entity handle);
 
@@ -145,9 +148,15 @@ public interface NMSBridge {
 
     public void sendTeamPacket(Player recipient, Team team, int mode);
 
-    public void setAllayDancing(Entity entity, boolean dancing);
+    public default void setAllayDancing(Entity entity, boolean dancing) {
+        throw new UnsupportedOperationException();
+    };
 
     public void setBodyYaw(Entity entity, float yaw);
+
+    public default void setCamelPose(Entity entity, CamelPose pose) {
+        throw new UnsupportedOperationException();
+    }
 
     public void setCustomName(Entity entity, Object component);
 
@@ -159,21 +168,31 @@ public interface NMSBridge {
 
     public void setKnockbackResistance(LivingEntity entity, double d);
 
-    public void setLyingDown(Entity cat, boolean lying);
+    public default void setLyingDown(Entity cat, boolean lying) {
+        throw new UnsupportedOperationException();
+    };
 
     public void setNavigationTarget(Entity handle, Entity target, float speed);
 
     public void setNoGravity(Entity entity, boolean nogravity);
 
-    public void setPandaSitting(Entity entity, boolean sitting);
+    public default void setPandaSitting(Entity entity, boolean sitting) {
+        throw new UnsupportedOperationException();
+    };
 
-    public void setPeekShulker(Entity entity, int peek);
+    public default void setPeekShulker(Entity entity, int peek) {
+        throw new UnsupportedOperationException();
+    };
 
-    public void setPiglinDancing(Entity entity, boolean dancing);
+    public default void setPiglinDancing(Entity entity, boolean dancing) {
+        throw new UnsupportedOperationException();
+    };
 
     public void setPitch(Entity entity, float pitch);
 
-    public void setPolarBearRearing(Entity entity, boolean rearing);
+    public default void setPolarBearRearing(Entity entity, boolean rearing) {
+        throw new UnsupportedOperationException();
+    };
 
     public void setProfile(SkullMeta meta, GameProfile profile);
 
@@ -209,5 +228,5 @@ public interface NMSBridge {
 
     public void updateNavigationWorld(Entity entity, World world);
 
-    public void updatePathfindingRange(NPC npc, float pathfindingRange);
+    public void updatePathfindingRange(NPC npc, float pathfindingRange);;
 }

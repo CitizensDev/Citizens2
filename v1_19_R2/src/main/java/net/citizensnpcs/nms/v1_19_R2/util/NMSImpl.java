@@ -222,6 +222,8 @@ import net.citizensnpcs.trait.versioned.AllayTrait;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
+import net.citizensnpcs.trait.versioned.CamelTrait;
+import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.CatTrait;
 import net.citizensnpcs.trait.versioned.FoxTrait;
 import net.citizensnpcs.trait.versioned.FrogTrait;
@@ -304,6 +306,7 @@ import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
+import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
@@ -824,6 +827,7 @@ public class NMSImpl implements NMSBridge {
         registerTraitWithCommand(manager, AxolotlTrait.class);
         registerTraitWithCommand(manager, BeeTrait.class);
         registerTraitWithCommand(manager, BossBarTrait.class);
+        registerTraitWithCommand(manager, CamelTrait.class);
         registerTraitWithCommand(manager, CatTrait.class);
         registerTraitWithCommand(manager, FoxTrait.class);
         registerTraitWithCommand(manager, FrogTrait.class);
@@ -1290,6 +1294,30 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).setYRot(yaw);
+    }
+
+    @Override
+    public void setCamelPose(org.bukkit.entity.Entity entity, CamelPose pose) {
+        if (entity.getType() != EntityType.CAMEL)
+            throw new IllegalStateException();
+        Camel camel = (Camel) getHandle(entity);
+        switch (pose) {
+            case STANDING:
+                if (!camel.isStanding()) {
+                    camel.standUp();
+                }
+                return;
+            case SITTING:
+                if (!camel.isPoseSitting()) {
+                    camel.sitDown();
+                }
+                return;
+            case PANIC:
+                if (!camel.isPanicking()) {
+                    camel.standUpPanic();
+                }
+                return;
+        }
     }
 
     @Override
@@ -2016,10 +2044,6 @@ public class NMSImpl implements NMSBridge {
 
     private static LivingEntity getHandle(Tameable entity) {
         return (LivingEntity) NMSImpl.getHandle((org.bukkit.entity.Entity) entity);
-    }
-
-    public static float getHeadYaw(LivingEntity handle) {
-        return handle.getYHeadRot();
     }
 
     public static PathNavigation getNavigation(org.bukkit.entity.Entity entity) {

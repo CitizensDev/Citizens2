@@ -31,6 +31,7 @@ public class Messages {
     public static final String BEHAVIOUR_HELP = "citizens.commands.npc.behaviour.help";
     public static final String BEHAVIOURS_ADDED = "citizens.commands.npc.behaviour.added";
     public static final String BEHAVIOURS_REMOVED = "citizens.commands.npc.behaviour.removed";
+    public static final String CAMEL_POSE_SET = "citizens.commands.npc.camel.pose-set";
     public static final String CANNOT_TELEPORT_ACROSS_WORLDS = "citizens.commands.npc.tphere.multiworld-not-allowed";
     public static final String CAT_COLLAR_COLOR_SET = "citizens.commands.npc.cat.collar-color-set";
     public static final String CAT_STARTED_LYING = "citizens.commands.npc.cat.lying-start";

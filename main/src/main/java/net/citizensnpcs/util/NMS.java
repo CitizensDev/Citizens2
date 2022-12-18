@@ -43,6 +43,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 
 public class NMS {
     private NMS() {
@@ -530,6 +531,10 @@ public class NMS {
 
     public static void setBodyYaw(Entity entity, float yaw) {
         BRIDGE.setBodyYaw(entity, yaw);
+    }
+
+    public static void setCamelPose(Entity entity, CamelPose pose) {
+        BRIDGE.setCamelPose(entity, pose);
     }
 
     public static void setCustomName(Entity entity, Object component) {

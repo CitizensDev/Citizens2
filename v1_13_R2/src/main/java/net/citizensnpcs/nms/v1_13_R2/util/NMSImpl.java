@@ -1142,10 +1142,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setAllayDancing(org.bukkit.entity.Entity entity, boolean dancing) {
-    }
-
-    @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).yaw = yaw;
     }
@@ -1194,10 +1190,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setLyingDown(org.bukkit.entity.Entity cat, boolean lying) {
-    }
-
-    @Override
     public void setNavigationTarget(org.bukkit.entity.Entity handle, org.bukkit.entity.Entity target, float speed) {
         NMSImpl.getNavigation(handle).a(NMSImpl.getHandle(target), speed);
     }
@@ -1208,16 +1200,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setPandaSitting(org.bukkit.entity.Entity entity, boolean sitting) {
-    }
-
-    @Override
     public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
         ((EntityShulker) getHandle(shulker)).a((byte) peek);
-    }
-
-    @Override
-    public void setPiglinDancing(org.bukkit.entity.Entity entity, boolean dancing) {
     }
 
     @Override
@@ -1829,10 +1813,6 @@ public class NMSImpl implements NMSBridge {
         return ((CraftEntity) entity).getHandle();
     }
 
-    public static float getHeadYaw(EntityLiving handle) {
-        return handle.getHeadRotation();
-    }
-
     public static NavigationAbstract getNavigation(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         return handle instanceof EntityInsentient ? ((EntityInsentient) handle).getNavigation()
@@ -1937,7 +1917,8 @@ public class NMSImpl implements NMSBridge {
         radius *= radius;
         final org.bukkit.World world = location.getWorld();
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
-            if (world != player.getWorld() || (from != null && !player.canSee(from)) || (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius)) {
+            if (world != player.getWorld() || (from != null && !player.canSee(from))
+                    || (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius)) {
                 continue;
             }
             for (Packet<?> packet : packets) {
