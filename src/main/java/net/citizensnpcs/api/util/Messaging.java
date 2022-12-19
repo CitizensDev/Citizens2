@@ -108,6 +108,13 @@ public class Messaging {
         }
         m.appendTail(sb);
 
+        m = HEX_CODE_MATCHER.matcher(message);
+        sb = new StringBuffer();
+        while (m.find()) {
+            m.appendReplacement(sb, "<$1>");
+        }
+        m.appendTail(sb);
+
         m = LEGACY_COLORCODE_MATCHER.matcher(sb.toString());
         sb = new StringBuffer();
         while (m.find()) {
@@ -249,6 +256,8 @@ public class Messaging {
     private static Logger DEBUG_LOGGER;
     private static String ERROR_COLOUR = "<red>";
     private static final Pattern ERROR_MATCHER = Pattern.compile("{{", Pattern.LITERAL);
+    private static Pattern HEX_CODE_MATCHER = Pattern.compile("&(#[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f])",
+            Pattern.CASE_INSENSITIVE);
     private static Pattern HEX_MATCHER = Pattern.compile(
             "&x&([0-9a-f])&([0-9a-f])&([0-9a-f])&([0-9a-f])&([0-9a-f])&([0-9a-f])".replace('&', ChatColor.COLOR_CHAR),
             Pattern.CASE_INSENSITIVE);
