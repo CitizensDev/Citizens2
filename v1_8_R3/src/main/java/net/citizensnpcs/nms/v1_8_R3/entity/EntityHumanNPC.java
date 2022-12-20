@@ -256,6 +256,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             socket.close();
         } catch (IOException e) {
             // swallow
+        } catch (NoSuchMethodError err) {
+            // swallow, reported by a single user on Discord
         }
 
         AttributeInstance range = getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
