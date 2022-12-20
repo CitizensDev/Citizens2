@@ -73,6 +73,7 @@ public class ScoreboardTrait extends Trait {
 
     @Override
     public void onDespawn() {
+        previosuGlowingColor = null;
         if (npc.getEntity() == null)
             return;
         String name = npc.getEntity() instanceof Player ? npc.getEntity().getName() : npc.getUniqueId().toString();
