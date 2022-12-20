@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.bukkit.entity.Entity;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -11,6 +12,7 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.FieldAccessException;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
@@ -36,8 +38,14 @@ public class ProtocolLibListener {
                     @Override
                     public void onPacketSending(PacketEvent event) {
                         PacketContainer packet = event.getPacket();
-                        Entity entity = manager.getEntityFromID(event.getPlayer().getWorld(),
-                                packet.getIntegers().getValues().get(0));
+                        Entity entity = null;
+                        try {
+                            entity = manager.getEntityFromID(event.getPlayer().getWorld(),
+                                    packet.getIntegers().getValues().get(0));
+                        } catch (FieldAccessException ex) {
+                            return;
+                        }
+
                         if (!(entity instanceof NPCHolder))
                             return;
 
@@ -50,16 +58,16 @@ public class ProtocolLibListener {
                         if (session == null || !session.isActive())
                             return;
 
-                        if (event.getPacketType() == Server.ENTITY_HEAD_ROTATION) {
+                        PacketType type = event.getPacketType();
+                        if (type == Server.ENTITY_HEAD_ROTATION) {
                             packet.getBytes().write(0, degToByte(session.getHeadYaw()));
-                        } else if (event.getPacketType() == Server.ENTITY_LOOK) {
+                        } else if (type == Server.ENTITY_LOOK) {
                             packet.getBytes().write(0, degToByte(session.getBodyYaw()));
                             packet.getBytes().write(1, degToByte(session.getPitch()));
-                        } else if (event.getPacketType() == Server.ENTITY_MOVE_LOOK
-                                || event.getPacketType() == Server.REL_ENTITY_MOVE_LOOK) {
+                        } else if (type == Server.ENTITY_MOVE_LOOK || type == Server.REL_ENTITY_MOVE_LOOK) {
                             packet.getBytes().write(0, degToByte(session.getBodyYaw()));
                             packet.getBytes().write(1, degToByte(session.getPitch()));
-                        } else if (event.getPacketType() == Server.POSITION) {
+                        } else if (type == Server.POSITION) {
                             Set<PlayerTeleportFlag> rel = getFlagsModifier(packet).read(0);
                             rel.remove(PlayerTeleportFlag.ZYAW);
                             rel.remove(PlayerTeleportFlag.ZPITCH);

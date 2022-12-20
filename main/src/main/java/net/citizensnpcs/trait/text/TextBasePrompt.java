@@ -49,7 +49,21 @@ public class TextBasePrompt extends StringPrompt {
             } else {
                 text.remove(index);
             }
-        } else if (input.equalsIgnoreCase("delay")) {
+        } else if (input.equalsIgnoreCase("page")) {
+            try {
+                int page = Integer.parseInt(parts[1]);
+                if (!text.hasPage(page)) {
+                    Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
+                }
+                context.setSessionData("page", page);
+            } catch (NumberFormatException e) {
+                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
+            }
+        }
+
+        Messaging.send(sender, getPromptText(context));
+
+        if (input.equalsIgnoreCase("delay")) {
             try {
                 int delay = Integer.parseInt(parts[1]);
                 text.setDelay(delay);
@@ -84,22 +98,11 @@ public class TextBasePrompt extends StringPrompt {
             } else {
                 Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_MISSING_ITEM_PATTERN);
             }
-        } else if (input.equalsIgnoreCase("page")) {
-            try {
-                int page = Integer.parseInt(parts[1]);
-                if (!text.hasPage(page)) {
-                    Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
-                }
-                context.setSessionData("page", page);
-            } catch (NumberFormatException e) {
-                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
-            }
         } else {
             Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_EDIT_TYPE);
             return this;
         }
 
-        Messaging.send(sender, getPromptText(context));
         return this;
     }
 
