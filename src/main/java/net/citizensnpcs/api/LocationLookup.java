@@ -26,13 +26,12 @@ public class LocationLookup implements Runnable {
 
     @Override
     public void run() {
-        worlds.clear();
         for (World world : Bukkit.getServer().getWorlds()) {
             List<Player> players = world.getPlayers();
             if (players.isEmpty())
                 continue;
-            PhTreeF<Player> tree = PhTreeF.create(3);
-            worlds.put(world.getUID(), tree);
+            PhTreeF<Player> tree = worlds.computeIfAbsent(world.getUID(), uid -> PhTreeF.create(3));
+            tree.clear();
             Location loc = new Location(null, 0, 0, 0);
             for (Player player : players) {
                 if (player.hasMetadata("NPC"))
