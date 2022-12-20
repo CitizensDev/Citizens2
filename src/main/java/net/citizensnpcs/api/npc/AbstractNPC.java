@@ -36,6 +36,7 @@ import net.citizensnpcs.api.event.NPCCloneEvent;
 import net.citizensnpcs.api.event.NPCRemoveByCommandSenderEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRemoveTraitEvent;
+import net.citizensnpcs.api.event.NPCRenameEvent;
 import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
@@ -472,8 +473,10 @@ public abstract class AbstractNPC implements NPC {
         if (name.equals(this.name))
             return;
 
-        this.name = name;
-        minecraftComponentCache = Messaging.minecraftComponentFromRawMessage(name);
+        NPCRenameEvent event = new NPCRenameEvent(this, this.name, name);
+        Bukkit.getPluginManager().callEvent(event);
+        this.name = event.getNewName();
+        minecraftComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
 
         if (!isSpawned())
             return;
