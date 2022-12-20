@@ -3,7 +3,6 @@ package net.citizensnpcs.api.npc;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -430,11 +429,6 @@ public interface NPC extends Agent, Cloneable {
          */
         GLOWING("glowing"),
         /**
-         * The color to glow using Minecraft's scoreboard glowing feature. Should be a {@link ChatColor#name()}.
-         * DEPRECATED: use ScoreboardTrait instead
-         */
-        GLOWING_COLOR("glowing-color"),
-        /**
          * The Minecraft sound to play when hurt. String - Minecraft sound name.
          */
         HURT_SOUND("hurt-sound"),
@@ -606,11 +600,6 @@ public interface NPC extends Agent, Cloneable {
      * Whether the NPC is 'flyable' i.e. will fly when pathfinding. Boolean.
      */
     public static final String FLYABLE_METADATA = "flyable";
-    /**
-     * The color to glow using Minecraft's scoreboard glowing feature. Should be a {@link ChatColor#name()}. DEPRECATED:
-     * use ScoreboardTrait instead
-     */
-    public static final String GLOWING_COLOR_METADATA = "glowing-color";
     /**
      * Whether the NPC is currently glowing. Boolean.
      */

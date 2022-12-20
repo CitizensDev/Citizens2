@@ -252,8 +252,7 @@ public class Translator {
     }
 
     public static String translate(String key, Locale preferredLocale, Object... msg) {
-        return Messaging.parseComponents(msg.length == 0 ? instance.translate(key, preferredLocale)
-                : instance.format(key, preferredLocale, msg));
+        return msg.length == 0 ? instance.translate(key, preferredLocale) : instance.format(key, preferredLocale, msg);
     }
 
     public static String translate(String key, Object... msg) {

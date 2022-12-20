@@ -176,9 +176,10 @@ public class Messaging {
                 message = messageColour + message;
             }
         }
+        message = CHAT_NEWLINE.matcher(message).replaceAll("<reset><br>]]");
         message = HIGHLIGHT_MATCHER.matcher(message).replaceAll("<" + HIGHLIGHT_COLOUR + ">");
         message = ERROR_MATCHER.matcher(message).replaceAll(ERROR_COLOUR);
-        return CHAT_NEWLINE.matcher(message).replaceAll("<br>]]").replace("]]", "</" + HIGHLIGHT_COLOUR + ">");
+        return message.replace("]]", MESSAGE_COLOUR);
     }
 
     public static void send(CommandSender sender, Object... msg) {
@@ -293,7 +294,7 @@ public class Messaging {
         COLORCODE_CONVERTER.put("k", "<obf>");
         COLORCODE_CONVERTER.put("o", "<i>");
         COLORCODE_CONVERTER.put("l", "<b>");
-        COLORCODE_CONVERTER.put("r", "<r>");
+        COLORCODE_CONVERTER.put("r", "<reset>");
         try {
             MINIMESSAGE_COLORCODE_MATCHER = Pattern
                     .compile(
