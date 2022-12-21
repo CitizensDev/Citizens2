@@ -18,6 +18,7 @@ import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
@@ -33,23 +34,15 @@ public class ProtocolLibListener {
         flagsClass = MinecraftReflection.getMinecraftClass("EnumPlayerTeleportFlags",
                 "PacketPlayOutPosition$EnumPlayerTeleportFlags",
                 "network.protocol.game.PacketPlayOutPosition$EnumPlayerTeleportFlags");
+
         manager.addPacketListener(
                 new PacketAdapter(plugin, ListenerPriority.MONITOR, Server.ENTITY_HEAD_ROTATION, Server.ENTITY_LOOK) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
-                        PacketContainer packet = event.getPacket();
-                        Entity entity = null;
-                        try {
-                            entity = manager.getEntityFromID(event.getPlayer().getWorld(),
-                                    packet.getIntegers().getValues().get(0));
-                        } catch (FieldAccessException ex) {
-                            return;
-                        }
-
-                        if (!(entity instanceof NPCHolder))
+                        NPC npc = getNPCFromPacket(event);
+                        if (npc == null)
                             return;
 
-                        NPC npc = ((NPCHolder) entity).getNPC();
                         RotationTrait trait = npc.getTraitNullable(RotationTrait.class);
                         if (trait == null)
                             return;
@@ -58,6 +51,7 @@ public class ProtocolLibListener {
                         if (session == null || !session.isActive())
                             return;
 
+                        PacketContainer packet = event.getPacket();
                         PacketType type = event.getPacketType();
                         if (type == Server.ENTITY_HEAD_ROTATION) {
                             packet.getBytes().write(0, degToByte(session.getHeadYaw()));
@@ -83,6 +77,29 @@ public class ProtocolLibListener {
         return handle.getSets(EnumWrappers.getGenericConverter(flagsClass, PlayerTeleportFlag.class));
     }
 
+    private NPC getNPCFromPacket(PacketEvent event) {
+        PacketContainer packet = event.getPacket();
+        Entity entity = null;
+        try {
+            Integer id = packet.getIntegers().readSafely(0);
+            if (id == null)
+                return null;
+            entity = manager.getEntityFromID(event.getPlayer().getWorld(), id);
+        } catch (FieldAccessException | IllegalArgumentException ex) {
+            if (!LOGGED_ERROR) {
+                Messaging.severe(
+                        "Error retrieving entity from ID: ProtocolLib error? Suppressing further exceptions unless debugging.");
+                ex.printStackTrace();
+                LOGGED_ERROR = true;
+            } else if (Messaging.isDebugging()) {
+                ex.printStackTrace();
+            }
+            return null;
+        }
+
+        return entity instanceof NPCHolder ? ((NPCHolder) entity).getNPC() : null;
+    }
+
     public enum PlayerTeleportFlag {
         X,
         Y,
@@ -94,4 +111,6 @@ public class ProtocolLibListener {
     private static byte degToByte(float in) {
         return (byte) (in * 256.0F / 360.0F);
     }
+
+    private static boolean LOGGED_ERROR = false;
 }
