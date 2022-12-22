@@ -89,8 +89,9 @@ public abstract class AbstractNPC implements NPC {
             }
         }
     };
-    protected Object minecraftComponentCache;
+    protected Object nameComponentCache;
     private String name;
+    protected String nameStringComponentCache;
     private final NPCRegistry registry;
     private final List<String> removedTraits = Lists.newArrayList();
     private final List<Runnable> runnables = Lists.newArrayList();
@@ -103,7 +104,8 @@ public abstract class AbstractNPC implements NPC {
         this.id = id;
         this.registry = registry;
         this.name = name;
-        minecraftComponentCache = Messaging.minecraftComponentFromRawMessage(name);
+        nameStringComponentCache = Messaging.parseComponents(name);
+        nameComponentCache = Messaging.minecraftComponentFromRawMessage(name);
         CitizensAPI.getTraitFactory().addDefaultTraits(this);
     }
 
@@ -476,7 +478,8 @@ public abstract class AbstractNPC implements NPC {
         NPCRenameEvent event = new NPCRenameEvent(this, this.name, name);
         Bukkit.getPluginManager().callEvent(event);
         this.name = event.getNewName();
-        minecraftComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
+        nameComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
+        nameStringComponentCache = Messaging.parseComponents(this.name);
 
         if (!isSpawned())
             return;

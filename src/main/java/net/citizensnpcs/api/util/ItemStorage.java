@@ -308,7 +308,7 @@ public class ItemStorage {
 
     public static ItemStack loadItemStack(DataKey root) {
         Material material = null;
-        if (root.keyExists("type_key")) {
+        if (root.keyExists("type_key") && SpigotUtil.isUsing1_13API()) {
             NamespacedKey key = new NamespacedKey(root.getString("type_namespace", "minecraft"),
                     root.getString("type_key"));
             material = Material.getMaterial(key.getKey().toUpperCase(), false);
