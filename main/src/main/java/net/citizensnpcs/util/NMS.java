@@ -542,8 +542,8 @@ public class NMS {
         BRIDGE.setCamelPose(entity, pose);
     }
 
-    public static void setCustomName(Entity entity, Object component) {
-        BRIDGE.setCustomName(entity, component);
+    public static void setCustomName(Entity entity, Object component, String string) {
+        BRIDGE.setCustomName(entity, component, string);
     }
 
     public static void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {

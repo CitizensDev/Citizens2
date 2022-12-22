@@ -1,5 +1,6 @@
 package net.citizensnpcs;
 
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.entity.Entity;
@@ -16,7 +17,10 @@ import com.comphenix.protocol.reflect.FieldAccessException;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.google.common.collect.Lists;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -34,7 +38,21 @@ public class ProtocolLibListener {
         flagsClass = MinecraftReflection.getMinecraftClass("EnumPlayerTeleportFlags",
                 "PacketPlayOutPosition$EnumPlayerTeleportFlags",
                 "network.protocol.game.PacketPlayOutPosition$EnumPlayerTeleportFlags");
-
+        manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.MONITOR, Server.PLAYER_INFO) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists().readSafely(0);
+                if (list == null)
+                    return;
+                for (PlayerInfoData data : Lists.newArrayList(list)) {
+                    if (data == null)
+                        continue;
+                    NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(data.getProfile().getUUID());
+                    if (npc == null)
+                        continue;
+                }
+            }
+        });
         manager.addPacketListener(
                 new PacketAdapter(plugin, ListenerPriority.MONITOR, Server.ENTITY_HEAD_ROTATION, Server.ENTITY_LOOK) {
                     @Override

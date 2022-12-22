@@ -237,7 +237,6 @@ import net.minecraft.server.v1_12_R1.EntityTypes;
 import net.minecraft.server.v1_12_R1.EntityWither;
 import net.minecraft.server.v1_12_R1.EnumMoveType;
 import net.minecraft.server.v1_12_R1.GenericAttributes;
-import net.minecraft.server.v1_12_R1.IChatBaseComponent;
 import net.minecraft.server.v1_12_R1.IInventory;
 import net.minecraft.server.v1_12_R1.MathHelper;
 import net.minecraft.server.v1_12_R1.MinecraftKey;
@@ -1113,8 +1112,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setCustomName(org.bukkit.entity.Entity entity, Object component) {
-        getHandle(entity).setCustomName(((IChatBaseComponent) component).getText());
+    public void setCustomName(org.bukkit.entity.Entity entity, Object component, String string) {
+        getHandle(entity).setCustomName(string);
     }
 
     @Override

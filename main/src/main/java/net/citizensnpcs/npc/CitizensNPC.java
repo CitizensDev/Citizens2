@@ -517,8 +517,8 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public void updateCustomName() {
-        if (minecraftComponentCache != null) {
-            NMS.setCustomName(getEntity(), minecraftComponentCache);
+        if (nameComponentCache != null) {
+            NMS.setCustomName(getEntity(), nameComponentCache, nameStringComponentCache);
         } else {
             super.updateCustomName();
         }

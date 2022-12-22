@@ -1204,7 +1204,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setCustomName(org.bukkit.entity.Entity entity, Object component) {
+    public void setCustomName(org.bukkit.entity.Entity entity, Object component, String string) {
         getHandle(entity).setCustomName((IChatBaseComponent) component);
     }
 

@@ -161,7 +161,7 @@ public interface NMSBridge {
         throw new UnsupportedOperationException();
     }
 
-    public void setCustomName(Entity entity, Object component);
+    public void setCustomName(Entity entity, Object component, String string);
 
     public void setDestination(Entity entity, double x, double y, double z, float speed);
 

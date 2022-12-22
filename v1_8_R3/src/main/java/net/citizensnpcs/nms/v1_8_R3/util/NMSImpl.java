@@ -191,7 +191,6 @@ import net.minecraft.server.v1_8_R3.EntityTrackerEntry;
 import net.minecraft.server.v1_8_R3.EntityTypes;
 import net.minecraft.server.v1_8_R3.EntityWither;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.IInventory;
 import net.minecraft.server.v1_8_R3.MathHelper;
 import net.minecraft.server.v1_8_R3.Navigation;
@@ -980,8 +979,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setCustomName(org.bukkit.entity.Entity entity, Object component) {
-        getHandle(entity).setCustomName(((IChatBaseComponent) component).getText());
+    public void setCustomName(org.bukkit.entity.Entity entity, Object component, String string) {
+        getHandle(entity).setCustomName(string);
     }
 
     @Override

@@ -54,6 +54,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -107,6 +108,7 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.ShopTrait;
+import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -481,6 +483,9 @@ public class EventListen implements Listener {
         }
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
+        if (event.getHand() == EquipmentSlot.HAND && event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
+            rightClickEvent.setCancelled(npc.isProtected());
+        }
         Bukkit.getPluginManager().callEvent(rightClickEvent);
         if (rightClickEvent.isCancelled()) {
             event.setCancelled(true);
@@ -548,9 +553,14 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getPlayer());
+        if (event.getCause() == TeleportCause.PLUGIN && npc != null) {
+            if (npc.hasTrait(SitTrait.class)) {
+                npc.getOrAddTrait(SitTrait.class).setSitting(event.getTo());
+            }
+        }
         if (event.getCause() == TeleportCause.PLUGIN && !event.getPlayer().hasMetadata("citizens-force-teleporting")
-                && CitizensAPI.getNPCRegistry().getNPC(event.getPlayer()) != null
-                && Setting.PLAYER_TELEPORT_DELAY.asInt() > 0) {
+                && npc != null && Setting.PLAYER_TELEPORT_DELAY.asInt() > 0) {
             event.setCancelled(true);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
@@ -667,7 +677,6 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
-        System.out.println(event.getWorld());
         for (NPC npc : getAllNPCs()) {
             if (npc == null || !npc.isSpawned() || !npc.getEntity().getWorld().equals(event.getWorld()))
                 continue;
