@@ -1318,9 +1318,14 @@ public class NMSImpl implements NMSBridge {
     public void sleep(Player entity, boolean sleep) {
         EntityPlayer player = (EntityPlayer) getHandle(entity);
         if (sleep) {
-            PacketPlayOutBed packet = new PacketPlayOutBed(player,
+            Location loc = player.getBukkitEntity().getLocation();
+            PacketPlayOutBed bed = new PacketPlayOutBed(player,
                     new BlockPosition((int) player.locX, (int) player.locY, (int) player.locZ));
-            sendPacketNearby(entity, entity.getLocation(), packet, 64);
+            for (Player nearby : CitizensAPI.getLocationLookup().getNearbyPlayers(entity.getLocation(), 64)) {
+                nearby.sendBlockChange(loc, Material.BLACK_BED, (byte) 11);
+                sendPacket(nearby, bed);
+                nearby.sendBlockChange(loc, Material.AIR, (byte) 0);
+            }
         } else {
             PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 2);
             sendPacketNearby(entity, entity.getLocation(), packet, 64);
