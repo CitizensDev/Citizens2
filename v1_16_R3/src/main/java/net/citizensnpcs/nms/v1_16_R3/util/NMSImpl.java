@@ -569,6 +569,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public GameProfile getProfile(Player player) {
+        return ((EntityHuman) getHandle(player)).getProfile();
+    }
+
+    @Override
     public GameProfile getProfile(SkullMeta meta) {
         if (SKULL_PROFILE_FIELD == null) {
             SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);

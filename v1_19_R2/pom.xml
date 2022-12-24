@@ -6,21 +6,17 @@
         <artifactId>citizens-parent</artifactId>
         <version>2.0.30-SNAPSHOT</version>
     </parent>
-    
     <artifactId>citizens-v1_19_R2</artifactId>
-    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <craftbukkit.version>1.19.3-R0.1-SNAPSHOT</craftbukkit.version>
     </properties>
-    
     <repositories>
         <repository>
             <id>viaversion-repo</id>
             <url>https://repo.viaversion.com</url>
         </repository>
     </repositories>
-    
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -42,7 +38,6 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    
     <build>
         <defaultGoal>clean package install</defaultGoal>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>

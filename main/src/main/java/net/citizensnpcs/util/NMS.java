@@ -346,6 +346,10 @@ public class NMS {
         return BRIDGE.getPassengers(entity);
     }
 
+    public static GameProfile getProfile(Player player) {
+        return BRIDGE.getProfile(player);
+    }
+
     public static GameProfile getProfile(SkullMeta meta) {
         return BRIDGE.getProfile(meta);
     }

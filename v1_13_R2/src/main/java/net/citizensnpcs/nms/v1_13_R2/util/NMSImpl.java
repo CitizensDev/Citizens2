@@ -507,6 +507,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public GameProfile getProfile(Player player) {
+        return ((EntityHuman) getHandle(player)).getProfile();
+    }
+
+    @Override
     public GameProfile getProfile(SkullMeta meta) {
         if (SKULL_PROFILE_FIELD == null) {
             try {
@@ -1324,7 +1329,7 @@ public class NMSImpl implements NMSBridge {
             List<Player> nearbyPlayers = Lists.newArrayList(Iterables
                     .filter(CitizensAPI.getLocationLookup().getNearbyPlayers(entity.getLocation(), 64), (p) -> {
                         Long time = meta.getMarker(p.getUniqueId(), entity.getUniqueId().toString());
-                        return time == null || Math.abs(entity.getWorld().getFullTime() - time) > 100;
+                        return time == null || Math.abs(System.currentTimeMillis() - time) > 5000;
                     }));
             if (nearbyPlayers.size() == 0)
                 return;
@@ -1359,7 +1364,7 @@ public class NMSImpl implements NMSBridge {
             for (Player nearby : nearbyPlayers) {
                 nearby.sendBlockChange(bedLoc, Material.BLACK_BED, facingByte);
                 list.forEach((packet) -> sendPacket(nearby, packet));
-                meta.set(nearby.getUniqueId(), entity.getUniqueId().toString(), nearby.getWorld().getFullTime());
+                meta.set(nearby.getUniqueId(), entity.getUniqueId().toString(), System.currentTimeMillis());
             }
         } else {
             PacketPlayOutAnimation packet = new PacketPlayOutAnimation(from, 2);

@@ -117,6 +117,7 @@ import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HologramTrait.HologramDirection;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.Poses;
@@ -1510,6 +1511,22 @@ public class NPCCommands {
 
         Messaging.sendTr(sender, Messages.MINECART_SET, npc.data().get(NPC.MINECART_ITEM_METADATA, ""),
                 npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0), npc.data().get(NPC.MINECART_OFFSET_METADATA, 0));
+    }
+
+    @Command(
+            aliases = { "npc" },
+            modifiers = { "mirror" },
+            usage = "mirror",
+            desc = "Controls mirroring of NPC skins and more",
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.mirror")
+    @Requirements(selected = true, ownership = true)
+    public void mirror(CommandContext args, CommandSender sender, NPC npc) {
+        MirrorTrait trait = npc.getOrAddTrait(MirrorTrait.class);
+        boolean enabled = !trait.isEnabled();
+        trait.setEnabled(enabled);
+        Messaging.sendTr(sender, enabled ? Messages.MIRROR_SET : Messages.MIRROR_UNSET, npc.getName());
     }
 
     @Command(

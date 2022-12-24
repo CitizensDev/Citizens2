@@ -2,7 +2,6 @@ package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC createNPC(EntityType type, String name) {
-        return createNPC(type, UUID.randomUUID(), generateUniqueId(), name);
+        return createNPC(type, UUID.randomUUID(), generateIntegerId(), name);
     }
 
     @Override
@@ -142,7 +141,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
         }
     }
 
-    private int generateUniqueId() {
+    private int generateIntegerId() {
         return saves.createUniqueNPCId(this);
     }
 
@@ -155,22 +154,35 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC getByUniqueId(UUID uuid) {
+        if (uuid.version() == 2) {
+            long msb = uuid.getMostSignificantBits();
+            msb &= ~0x0000000000002000L;
+            msb |= 0x0000000000004000L;
+            uuid = new UUID(msb, uuid.getLeastSignificantBits());
+        }
         return uniqueNPCs.get(uuid);
     }
 
     @Override
     public NPC getByUniqueIdGlobal(UUID uuid) {
+        if (uuid.version() == 2) {
+            long msb = uuid.getMostSignificantBits();
+            msb &= ~0x0000000000002000L;
+            msb |= 0x0000000000004000L;
+            uuid = new UUID(msb, uuid.getLeastSignificantBits());
+        }
         NPC npc = getByUniqueId(uuid);
         if (npc != null)
             return npc;
         for (NPCRegistry registry : CitizensAPI.getNPCRegistries()) {
-            if (registry != this) {
-                NPC other = registry.getByUniqueId(uuid);
-                if (other != null) {
-                    return other;
-                }
+            if (registry == this)
+                continue;
+            NPC other = registry.getByUniqueId(uuid);
+            if (other != null) {
+                return other;
             }
         }
+
         return null;
     }
 
@@ -233,14 +245,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     @Override
     public Iterable<NPC> sorted() {
         List<NPC> vals = new ArrayList<NPC>(npcs.valueCollection());
-        Collections.sort(vals, NPC_COMPARATOR);
+        Collections.sort(vals, (a, b) -> Integer.compare(a.getId(), b.getId()));
         return vals;
     }
-
-    private static final Comparator<NPC> NPC_COMPARATOR = new Comparator<NPC>() {
-        @Override
-        public int compare(NPC o1, NPC o2) {
-            return o1.getId() - o2.getId();
-        }
-    };
 }

@@ -79,6 +79,8 @@ public interface NMSBridge {
 
     public List<Entity> getPassengers(Entity entity);
 
+    public GameProfile getProfile(Player player);
+
     public GameProfile getProfile(SkullMeta meta);
 
     public String getSound(String flag) throws CommandException;
@@ -145,11 +147,11 @@ public interface NMSBridge {
 
     public boolean sendTabListAdd(Player recipient, Player listPlayer);
 
-    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);
+    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);;
 
     public void sendTabListRemove(Player recipient, Player listPlayer);
 
-    public void sendTeamPacket(Player recipient, Team team, int mode);;
+    public void sendTeamPacket(Player recipient, Team team, int mode);
 
     public default void setAllayDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
@@ -165,23 +167,23 @@ public interface NMSBridge {
 
     public void setDestination(Entity entity, double x, double y, double z, float speed);
 
-    public void setEndermanAngry(Enderman enderman, boolean angry);
+    public void setEndermanAngry(Enderman enderman, boolean angry);;
 
     public void setHeadYaw(Entity entity, float yaw);
 
-    public void setKnockbackResistance(LivingEntity entity, double d);;
+    public void setKnockbackResistance(LivingEntity entity, double d);
 
     public default void setLyingDown(Entity cat, boolean lying) {
         throw new UnsupportedOperationException();
-    }
+    };
 
-    public void setNavigationTarget(Entity handle, Entity target, float speed);
+    public void setNavigationTarget(Entity handle, Entity target, float speed);;
 
     public void setNoGravity(Entity entity, boolean nogravity);;
 
     public default void setPandaSitting(Entity entity, boolean sitting) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     public default void setPeekShulker(Entity entity, int peek) {
         throw new UnsupportedOperationException();
@@ -191,7 +193,7 @@ public interface NMSBridge {
         throw new UnsupportedOperationException();
     }
 
-    public void setPitch(Entity entity, float pitch);;
+    public void setPitch(Entity entity, float pitch);
 
     public default void setPolarBearRearing(Entity entity, boolean rearing) {
         throw new UnsupportedOperationException();

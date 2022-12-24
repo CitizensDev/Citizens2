@@ -607,6 +607,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public GameProfile getProfile(Player player) {
+        return ((net.minecraft.world.entity.player.Player) getHandle(player)).getGameProfile();
+    }
+
+    @Override
     public GameProfile getProfile(SkullMeta meta) {
         if (SKULL_PROFILE_FIELD == null) {
             SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
@@ -1255,7 +1260,6 @@ public class NMSImpl implements NMSBridge {
         if (VIA_ENABLED == false)
             return false;
 
-        @SuppressWarnings("unchecked")
         int version = Via.getAPI().getPlayerVersion(recipient);
         return version < 761;
     }
