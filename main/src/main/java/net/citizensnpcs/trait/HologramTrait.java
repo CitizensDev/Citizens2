@@ -199,7 +199,7 @@ public class HologramTrait extends Trait {
                 .parseBoolean(npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString());
         currentLoc = npc.getStoredLocation();
         if (npc.requiresNameHologram() && lastNameplateVisible) {
-            nameNPC = createHologram(npc.getFullName(), 0);
+            nameNPC = createHologram(Placeholders.replace(npc.getRawName(), null, npc), 0);
         }
 
         for (int i = 0; i < lines.size(); i++) {
@@ -252,7 +252,7 @@ public class HologramTrait extends Trait {
                 nameNPC.destroy();
                 nameNPC = null;
             } else if (nameNPC == null && nameplateVisible) {
-                nameNPC = createHologram(npc.getFullName(), 0);
+                nameNPC = createHologram(Placeholders.replace(npc.getRawName(), null, npc), 0);
             }
         }
 
@@ -270,7 +270,7 @@ public class HologramTrait extends Trait {
             if (updatePosition) {
                 nameNPC.teleport(currentLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
             }
-            nameNPC.setName(npc.getFullName());
+            nameNPC.setName(Placeholders.replace(npc.getRawName(), null, npc));
         }
 
         for (int i = 0; i < lines.size(); i++) {

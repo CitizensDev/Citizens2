@@ -583,10 +583,10 @@ public class NPCCommands {
     public void copy(CommandContext args, CommandSender sender, NPC npc, @Flag("name") String name)
             throws CommandException {
         if (name == null) {
-            name = npc.getFullName();
+            name = npc.getRawName();
         }
         NPC copy = npc.clone();
-        if (!copy.getFullName().equals(name)) {
+        if (!copy.getRawName().equals(name)) {
             copy.setName(name);
         }
 

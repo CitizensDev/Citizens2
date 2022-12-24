@@ -19,7 +19,7 @@ public class CopierEditor extends Editor {
     public CopierEditor(Player player, NPC npc) {
         this.player = player;
         this.npc = npc;
-        this.name = npc.getFullName();
+        this.name = npc.getRawName();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class CopierEditor extends Editor {
             return;
         }
         NPC copy = npc.clone();
-        if (!copy.getFullName().equals(name)) {
+        if (!copy.getRawName().equals(name)) {
             copy.setName(name);
         }
 
