@@ -13,17 +13,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.SetMultimap;
 
 import ch.ethz.globis.phtree.PhTreeF;
 
 public class LocationLookup implements Runnable {
-    private final Map<String, PerPlayerMetadata> metadata = Maps.newHashMap();
+    private final Map<String, PerPlayerMetadata<?>> metadata = Maps.newHashMap();
     private final Map<UUID, PhTreeF<Player>> worlds = Maps.newHashMap();
 
-    public PerPlayerMetadata getMetadata(String key) {
+    public PerPlayerMetadata<?> getMetadata(String key) {
         return metadata.get(key);
     }
 
@@ -34,6 +32,7 @@ public class LocationLookup implements Runnable {
         return () -> tree.rangeQuery(dist, base.getX(), base.getY(), base.getZ());
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void onJoin(PlayerJoinEvent event) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             updateWorld(event.getPlayer().getWorld());
@@ -48,14 +47,16 @@ public class LocationLookup implements Runnable {
     public void onQuit(PlayerQuitEvent event) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             updateWorld(event.getPlayer().getWorld());
-            for (PerPlayerMetadata meta : metadata.values()) {
-                meta.sent.removeAll(event.getPlayer().getUniqueId());
+            for (PerPlayerMetadata<?> meta : metadata.values()) {
+                meta.sent.remove(event.getPlayer().getUniqueId());
             }
         });
     }
 
-    public PerPlayerMetadata registerMetadata(String key, BiConsumer<PerPlayerMetadata, PlayerJoinEvent> onJoin) {
-        return metadata.computeIfAbsent(key, (s) -> new PerPlayerMetadata(onJoin));
+    @SuppressWarnings("unchecked")
+    public <T> PerPlayerMetadata<T> registerMetadata(String key,
+            BiConsumer<PerPlayerMetadata<T>, PlayerJoinEvent> onJoin) {
+        return (PerPlayerMetadata<T>) metadata.computeIfAbsent(key, (s) -> new PerPlayerMetadata<T>(onJoin));
     }
 
     @Override
@@ -80,12 +81,28 @@ public class LocationLookup implements Runnable {
         }
     }
 
-    public static class PerPlayerMetadata {
-        private final BiConsumer<PerPlayerMetadata, PlayerJoinEvent> onJoin;
-        public SetMultimap<UUID, String> sent = HashMultimap.create();
+    public static class PerPlayerMetadata<T> {
+        private final BiConsumer<PerPlayerMetadata<T>, PlayerJoinEvent> onJoin;
+        private final Map<UUID, Map<String, T>> sent = Maps.newHashMap();
 
-        public PerPlayerMetadata(BiConsumer<PerPlayerMetadata, PlayerJoinEvent> onJoin) {
+        public PerPlayerMetadata(BiConsumer<PerPlayerMetadata<T>, PlayerJoinEvent> onJoin) {
             this.onJoin = onJoin;
+        }
+
+        public T getMarker(UUID key, String value) {
+            return sent.getOrDefault(key, Collections.emptyMap()).get(value);
+        }
+
+        public boolean has(UUID key, String value) {
+            return sent.getOrDefault(key, Collections.emptyMap()).containsKey(value);
+        }
+
+        public boolean remove(UUID key, String value) {
+            return sent.getOrDefault(key, Collections.emptyMap()).remove(value) != null;
+        }
+
+        public void set(UUID key, String value, T marker) {
+            sent.computeIfAbsent(key, (k) -> Maps.newHashMap()).put(value, marker);
         }
     }
 }
