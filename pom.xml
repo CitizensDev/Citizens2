@@ -1,11 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>net.citizensnpcs</groupId>
     <artifactId>citizensapi</artifactId>
     <version>2.0.30-SNAPSHOT</version>
     <name>CitizensAPI</name>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <bukkit.version>1.19.3-R0.1-SNAPSHOT</bukkit.version>
@@ -14,7 +12,6 @@
         <powermock.version>1.4.12</powermock.version>
         <build.number>Unknown</build.number>
     </properties>
-
     <repositories>
         <repository>
             <id>placeholderapi</id>
@@ -23,16 +20,15 @@
         <repository>
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
-        </repository>
+        </repository> 
     </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>${bukkit.version}</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
@@ -66,17 +62,16 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.11.0</version>
+            <version>4.12.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.1.2</version>
+            <version>4.2.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
     <url>http://www.citizensnpcs.co</url>
     <ciManagement>
         <system>jenkins</system>
@@ -90,7 +85,6 @@
     <build>
         <defaultGoal>clean install javadoc:javadoc</defaultGoal>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -101,13 +95,11 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.2</version>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -124,7 +116,6 @@
                     </links>
                 </configuration>
             </plugin>
-
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.2.0</version>

@@ -28,13 +28,13 @@ import com.google.common.collect.Maps;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.platform.bukkit.MinecraftComponentSerializer;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class Messaging {
     private static class DebugFormatter extends Formatter {
@@ -155,8 +155,7 @@ public class Messaging {
 
     public static String parseComponents(String raw) {
         if (AUDIENCES != null && MINIMESSAGE != null) {
-            return LegacyComponentSerializer.legacySection()
-                    .serialize(MINIMESSAGE.deserialize(convertLegacyCodes(raw)));
+            return BukkitComponentSerializer.legacy().serialize(MINIMESSAGE.deserialize(convertLegacyCodes(raw)));
         }
         return convertLegacyCodes(raw);
     }

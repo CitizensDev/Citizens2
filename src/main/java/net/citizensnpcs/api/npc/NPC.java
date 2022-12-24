@@ -172,6 +172,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public NPCRegistry getOwningRegistry();
 
+    String getRawName();
+
     /**
      * If the NPC is not spawned, then this method will return the last known location, or null if it has never been
      * spawned. Otherwise, it is equivalent to calling <code>npc.getBukkitEntity().getLocation()</code>.

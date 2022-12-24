@@ -89,9 +89,9 @@ public abstract class AbstractNPC implements NPC {
             }
         }
     };
-    protected Object nameComponentCache;
     private String name;
-    protected String nameStringComponentCache;
+    protected Object coloredNameComponentCache;
+    protected String coloredNameStringCache;
     private final NPCRegistry registry;
     private final List<String> removedTraits = Lists.newArrayList();
     private final List<Runnable> runnables = Lists.newArrayList();
@@ -104,8 +104,8 @@ public abstract class AbstractNPC implements NPC {
         this.id = id;
         this.registry = registry;
         this.name = name;
-        nameStringComponentCache = Messaging.parseComponents(name);
-        nameComponentCache = Messaging.minecraftComponentFromRawMessage(name);
+        coloredNameStringCache = Messaging.parseComponents(name);
+        coloredNameComponentCache = Messaging.minecraftComponentFromRawMessage(name);
         CitizensAPI.getTraitFactory().addDefaultTraits(this);
     }
 
@@ -158,7 +158,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public NPC copy() {
-        NPC copy = registry.createNPC(getOrAddTrait(MobType.class).getType(), getFullName());
+        NPC copy = registry.createNPC(getOrAddTrait(MobType.class).getType(), getRawName());
         DataKey key = new MemoryDataKey();
         save(key);
         copy.load(key);
@@ -262,7 +262,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public String getName() {
-        return ChatColor.stripColor(name);
+        return ChatColor.stripColor(coloredNameStringCache);
     }
 
     @Override
@@ -278,6 +278,11 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public NPCRegistry getOwningRegistry() {
         return registry;
+    }
+
+    @Override
+    public String getRawName() {
+        return name;
     }
 
     @Override
@@ -478,8 +483,8 @@ public abstract class AbstractNPC implements NPC {
         NPCRenameEvent event = new NPCRenameEvent(this, this.name, name);
         Bukkit.getPluginManager().callEvent(event);
         this.name = event.getNewName();
-        nameComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
-        nameStringComponentCache = Messaging.parseComponents(this.name);
+        coloredNameComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
+        coloredNameStringCache = Messaging.parseComponents(this.name);
 
         if (!isSpawned())
             return;
