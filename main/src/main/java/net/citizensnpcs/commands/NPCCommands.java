@@ -616,9 +616,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --registry [registry name])",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --registry [registry name])",
             desc = "Create a new NPC",
-            flags = "bust",
+            flags = "bustc",
             modifiers = { "create" },
             min = 2,
             permission = "citizens.npc.create")
@@ -721,6 +721,10 @@ public class NPCCommands {
         if (spawnLoc == null) {
             npc.destroy();
             throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
+        }
+
+        if (args.hasFlag('c')) {
+            spawnLoc = Util.getCenterLocation(spawnLoc.getBlock());
         }
 
         if (!args.hasFlag('u')) {
@@ -2171,6 +2175,9 @@ public class NPCCommands {
         }
         if (yaw != null) {
             NMS.setBodyYaw(npc.getEntity(), yaw);
+            if (npc.getEntity().getType() == EntityType.PLAYER) {
+                PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
+            }
         }
         if (pitch != null) {
             NMS.setPitch(npc.getEntity(), pitch);

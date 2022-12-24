@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -360,34 +360,26 @@ public class RotationTrait extends Trait {
     public class RotationSession {
         private final RotationParams params;
         private int t = -1;
-        private double tx, ty, tz;
+        private Supplier<Float> targetPitch = () -> 0F;
+        private Supplier<Float> targetYaw = targetPitch;
 
         public RotationSession(RotationParams params) {
             this.params = params;
         }
 
         public float getTargetPitch() {
-            double dx = tx - getX();
-            double dy = ty - (getY() + getEyeY());
-            double dz = tz - getZ();
-            double diag = Math.sqrt((float) (dx * dx + dz * dz));
-            return (float) -Math.toDegrees(Math.atan2(dy, diag));
-        }
-
-        public double getTargetX() {
-            return tx;
-        }
-
-        public double getTargetY() {
-            return ty;
+            return targetPitch.get();
         }
 
         public float getTargetYaw() {
-            return (float) Math.toDegrees(Math.atan2(tz - getZ(), tx - getX())) - 90.0F;
-        }
-
-        public double getTargetZ() {
-            return tz;
+            switch (npc.getEntity().getType()) {
+                case PHANTOM:
+                    return Util.clamp(targetYaw.get() + 45);
+                case ENDER_DRAGON:
+                    return Util.clamp(targetYaw.get() - 180);
+                default:
+                    return targetYaw.get();
+            }
         }
 
         public boolean isActive() {
@@ -413,7 +405,17 @@ public class RotationTrait extends Trait {
          *            The target location to face
          */
         public void rotateToFace(Location target) {
-            setTarget(target);
+            t = 0;
+            targetPitch = () -> {
+                double dx = target.getX() - getX();
+                double dy = target.getY() - (getY() + getEyeY());
+                double dz = target.getZ() - getZ();
+                double diag = Math.sqrt((float) (dx * dx + dz * dz));
+                return (float) -Math.toDegrees(Math.atan2(dy, diag));
+            };
+            targetYaw = () -> {
+                return (float) Math.toDegrees(Math.atan2(target.getZ() - getZ(), target.getX() - getX())) - 90.0F;
+            };
         }
 
         /**
@@ -423,10 +425,9 @@ public class RotationTrait extends Trait {
          * @param pitch
          */
         public void rotateToHave(float yaw, float pitch) {
-            double pitchCos = Math.cos(Math.toRadians(pitch));
-            Vector vector = new Vector(Math.sin(Math.toRadians(yaw)) * -pitchCos, -Math.sin(Math.toRadians(pitch)),
-                    Math.cos(Math.toRadians(yaw)) * pitchCos).normalize();
-            rotateToFace(npc.getStoredLocation().clone().add(vector));
+            t = 0;
+            targetYaw = () -> yaw;
+            targetPitch = () -> pitch;
         }
 
         private void run(RotationTriple rot) {
@@ -458,13 +459,6 @@ public class RotationTrait extends Trait {
             }
 
             rot.apply();
-        }
-
-        public void setTarget(Location target) {
-            tx = target.getX();
-            ty = target.getY();
-            tz = target.getZ();
-            t = 0;
         }
     }
 

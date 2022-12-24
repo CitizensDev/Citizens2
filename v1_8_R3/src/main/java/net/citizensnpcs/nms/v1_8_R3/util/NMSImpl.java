@@ -1139,11 +1139,13 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void sleep(Player entity, boolean sleep) {
         EntityPlayer from = (EntityPlayer) getHandle(entity);
-        PerPlayerMetadata meta = CitizensAPI.getLocationLookup().registerMetadata("sleeping", null);
+        PerPlayerMetadata<Long> meta = CitizensAPI.getLocationLookup().registerMetadata("sleeping", null);
         if (sleep) {
-            List<Player> nearbyPlayers = Lists.newArrayList(
-                    Iterables.filter(CitizensAPI.getLocationLookup().getNearbyPlayers(entity.getLocation(), 64),
-                            (p) -> !meta.sent.containsEntry(p.getUniqueId(), entity.getUniqueId().toString())));
+            List<Player> nearbyPlayers = Lists.newArrayList(Iterables
+                    .filter(CitizensAPI.getLocationLookup().getNearbyPlayers(entity.getLocation(), 64), (p) -> {
+                        Long time = meta.getMarker(p.getUniqueId(), entity.getUniqueId().toString());
+                        return time == null || Math.abs(entity.getWorld().getFullTime() - time) > 100;
+                    }));
             if (nearbyPlayers.size() == 0)
                 return;
             Location loc = from.getBukkitEntity().getLocation().clone();
@@ -1177,13 +1179,13 @@ public class NMSImpl implements NMSBridge {
             for (Player nearby : nearbyPlayers) {
                 nearby.sendBlockChange(bedLoc, Material.BED_BLOCK, facingByte);
                 list.forEach((packet) -> sendPacket(nearby, packet));
-                meta.sent.put(nearby.getUniqueId(), entity.getUniqueId().toString());
+                meta.set(nearby.getUniqueId(), entity.getUniqueId().toString(), nearby.getWorld().getFullTime());
             }
         } else {
             PacketPlayOutAnimation packet = new PacketPlayOutAnimation(from, 2);
             sendPacketNearby(entity, entity.getLocation(), packet, 64);
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (meta.sent.remove(player.getUniqueId(), entity.getUniqueId().toString())) {
+                if (meta.remove(player.getUniqueId(), entity.getUniqueId().toString())) {
                     sendPacket(player, packet);
                 }
             }

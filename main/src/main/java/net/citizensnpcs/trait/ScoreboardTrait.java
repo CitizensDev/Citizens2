@@ -27,23 +27,23 @@ public class ScoreboardTrait extends Trait {
     private boolean changed;
     @Persist
     private ChatColor color;
-    private final PerPlayerMetadata metadata;
+    private final PerPlayerMetadata<Boolean> metadata;
     private ChatColor previousGlowingColor;
     @Persist
     private final Set<String> tags = new HashSet<String>();
 
     public ScoreboardTrait() {
         super("scoreboardtrait");
-        metadata = CitizensAPI.getLocationLookup().registerMetadata("scoreboard", (meta, event) -> {
+        metadata = CitizensAPI.getLocationLookup().<Boolean> registerMetadata("scoreboard", (meta, event) -> {
             for (NPC npc : CitizensAPI.getNPCRegistry()) {
                 ScoreboardTrait trait = npc.getTraitNullable(ScoreboardTrait.class);
                 if (trait == null)
                     continue;
                 Team team = trait.getTeam();
-                if (team == null || meta.sent.containsEntry(event.getPlayer().getUniqueId(), team.getName()))
+                if (team == null || meta.has(event.getPlayer().getUniqueId(), team.getName()))
                     continue;
                 NMS.sendTeamPacket(event.getPlayer(), team, 0);
-                meta.sent.put(event.getPlayer().getUniqueId(), team.getName());
+                meta.set(event.getPlayer().getUniqueId(), team.getName(), true);
             }
         });
     }
@@ -94,7 +94,7 @@ public class ScoreboardTrait extends Trait {
         if (team.hasEntry(name)) {
             if (team.getSize() == 1) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    metadata.sent.remove(player.getUniqueId(), team.getName());
+                    metadata.remove(player.getUniqueId(), team.getName());
                     NMS.sendTeamPacket(player, team, 1);
                 }
                 team.unregister();
@@ -222,11 +222,11 @@ public class ScoreboardTrait extends Trait {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasMetadata("NPC"))
                     continue;
-                if (metadata.sent.containsEntry(player.getUniqueId(), team.getName())) {
+                if (metadata.has(player.getUniqueId(), team.getName())) {
                     NMS.sendTeamPacket(player, team, 2);
                 } else {
                     NMS.sendTeamPacket(player, team, 0);
-                    metadata.sent.put(player.getUniqueId(), team.getName());
+                    metadata.set(player.getUniqueId(), team.getName(), true);
                 }
             }
         }
