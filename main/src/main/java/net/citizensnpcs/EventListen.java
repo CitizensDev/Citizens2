@@ -106,7 +106,6 @@ import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
-import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.util.ChunkCoord;
@@ -510,8 +509,7 @@ public class EventListen implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         skinUpdateTracker.updatePlayer(event.getPlayer(), Setting.INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY_TICKS.asInt(),
                 true);
-
-        ScoreboardTrait.onPlayerJoin(event);
+        CitizensAPI.getLocationLookup().onJoin(event);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -543,7 +541,7 @@ public class EventListen implements Listener {
             }
         }
         skinUpdateTracker.removePlayer(event.getPlayer().getUniqueId());
-        ScoreboardTrait.onPlayerQuit(event);
+        CitizensAPI.getLocationLookup().onQuit(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

@@ -21,6 +21,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -67,6 +68,7 @@ import com.mojang.util.UUIDTypeAdapter;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.LocationLookup.PerPlayerMetadata;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.command.CommandManager;
@@ -1199,19 +1201,55 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void sleep(Player entity, boolean sleep) {
-        EntityPlayer player = (EntityPlayer) getHandle(entity);
+        EntityPlayer from = (EntityPlayer) getHandle(entity);
+        PerPlayerMetadata meta = CitizensAPI.getLocationLookup().registerMetadata("sleeping", null);
         if (sleep) {
-            Location loc = player.getBukkitEntity().getLocation();
-            PacketPlayOutBed bed = new PacketPlayOutBed(player,
-                    new BlockPosition((int) player.locX, (int) player.locY, (int) player.locZ));
-            for (Player nearby : CitizensAPI.getLocationLookup().getNearbyPlayers(entity.getLocation(), 64)) {
-                nearby.sendBlockChange(loc, Material.BED.getId(), (byte) 11);
-                sendPacket(nearby, bed);
-                nearby.sendBlockChange(loc, 0, (byte) 0);
+            List<Player> nearbyPlayers = Lists.newArrayList(
+                    Iterables.filter(CitizensAPI.getLocationLookup().getNearbyPlayers(entity.getLocation(), 64),
+                            (p) -> !meta.sent.containsEntry(p.getUniqueId(), entity.getUniqueId().toString())));
+            if (nearbyPlayers.size() == 0)
+                return;
+            Location loc = from.getBukkitEntity().getLocation().clone();
+            BlockFace[] axis = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+            BlockFace facing = axis[Math.round(loc.getYaw() / 90f) & 0x3].getOppositeFace();
+            byte facingByte = 0;
+            switch (facing) {
+                case EAST:
+                    facingByte = (byte) 1;
+                    break;
+                case SOUTH:
+                    facingByte = (byte) 2;
+                    break;
+                case WEST:
+                    facingByte = (byte) 3;
+                    break;
+            }
+            Location bedLoc = loc.clone().add(0, -loc.getY(), 0);
+            PacketPlayOutBed bed = new PacketPlayOutBed(from,
+                    new BlockPosition(bedLoc.getBlockX(), bedLoc.getBlockY(), bedLoc.getBlockZ()));
+            List<Packet<?>> list = Lists.newArrayListWithCapacity(3);
+            from.locX = bedLoc.getBlockX();
+            from.locY = bedLoc.getBlockY();
+            from.locZ = bedLoc.getBlockZ();
+            list.add(new PacketPlayOutEntityTeleport(from));
+            list.add(bed);
+            from.locX = loc.getX();
+            from.locY = loc.getY();
+            from.locZ = loc.getZ();
+            list.add(new PacketPlayOutEntityTeleport(from));
+            for (Player nearby : nearbyPlayers) {
+                nearby.sendBlockChange(bedLoc, Material.BED_BLOCK, facingByte);
+                list.forEach((packet) -> sendPacket(nearby, packet));
+                meta.sent.put(nearby.getUniqueId(), entity.getUniqueId().toString());
             }
         } else {
-            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, 2);
+            PacketPlayOutAnimation packet = new PacketPlayOutAnimation(from, 2);
             sendPacketNearby(entity, entity.getLocation(), packet, 64);
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (meta.sent.remove(player.getUniqueId(), entity.getUniqueId().toString())) {
+                    sendPacket(player, packet);
+                }
+            }
         }
     }
 

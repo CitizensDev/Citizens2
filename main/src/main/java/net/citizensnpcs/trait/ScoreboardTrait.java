@@ -3,23 +3,18 @@ package net.citizensnpcs.trait;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.LocationLookup.PerPlayerMetadata;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -32,13 +27,25 @@ public class ScoreboardTrait extends Trait {
     private boolean changed;
     @Persist
     private ChatColor color;
+    private final PerPlayerMetadata metadata;
     private ChatColor previousGlowingColor;
-
     @Persist
     private final Set<String> tags = new HashSet<String>();
 
     public ScoreboardTrait() {
         super("scoreboardtrait");
+        metadata = CitizensAPI.getLocationLookup().registerMetadata("scoreboard", (meta, event) -> {
+            for (NPC npc : CitizensAPI.getNPCRegistry()) {
+                ScoreboardTrait trait = npc.getTraitNullable(ScoreboardTrait.class);
+                if (trait == null)
+                    continue;
+                Team team = trait.getTeam();
+                if (team == null || meta.sent.containsEntry(event.getPlayer().getUniqueId(), team.getName()))
+                    continue;
+                NMS.sendTeamPacket(event.getPlayer(), team, 0);
+                meta.sent.put(event.getPlayer().getUniqueId(), team.getName());
+            }
+        });
     }
 
     public void addTag(String tag) {
@@ -87,7 +94,7 @@ public class ScoreboardTrait extends Trait {
         if (team.hasEntry(name)) {
             if (team.getSize() == 1) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    SENT_TEAMS.remove(player.getUniqueId(), team.getName());
+                    metadata.sent.remove(player.getUniqueId(), team.getName());
                     NMS.sendTeamPacket(player, team, 1);
                 }
                 team.unregister();
@@ -215,34 +222,16 @@ public class ScoreboardTrait extends Trait {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasMetadata("NPC"))
                     continue;
-                if (SENT_TEAMS.containsEntry(player.getUniqueId(), team.getName())) {
+                if (metadata.sent.containsEntry(player.getUniqueId(), team.getName())) {
                     NMS.sendTeamPacket(player, team, 2);
                 } else {
                     NMS.sendTeamPacket(player, team, 0);
-                    SENT_TEAMS.put(player.getUniqueId(), team.getName());
+                    metadata.sent.put(player.getUniqueId(), team.getName());
                 }
             }
         }
     }
 
-    public static void onPlayerJoin(PlayerJoinEvent event) {
-        for (NPC npc : CitizensAPI.getNPCRegistry()) {
-            ScoreboardTrait trait = npc.getTraitNullable(ScoreboardTrait.class);
-            if (trait == null)
-                continue;
-            Team team = trait.getTeam();
-            if (team == null || SENT_TEAMS.containsEntry(event.getPlayer().getUniqueId(), team.getName()))
-                continue;
-            NMS.sendTeamPacket(event.getPlayer(), team, 0);
-            SENT_TEAMS.put(event.getPlayer().getUniqueId(), team.getName());
-        }
-    }
-
-    public static void onPlayerQuit(PlayerQuitEvent event) {
-        SENT_TEAMS.removeAll(event.getPlayer().getUniqueId());
-    }
-
-    private static SetMultimap<UUID, String> SENT_TEAMS = HashMultimap.create();
     private static boolean SUPPORT_COLLIDABLE_SETOPTION = true;
     private static boolean SUPPORT_GLOWING_COLOR = true;
     private static boolean SUPPORT_TAGS = true;
