@@ -106,8 +106,8 @@ public class InventoryMenuSlot {
             if (meta != null) {
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                 if (!data.lore().equals("EMPTY")) {
-                    meta.setLore(Arrays.asList(Messaging
-                            .parseComponents(Messaging.tryTranslate(data.lore())).split("\\n|\n|<br>")));
+                    meta.setLore(Arrays.asList(
+                            Messaging.parseComponents(Messaging.tryTranslate(data.lore())).split("\\n|\n|<br>")));
                 }
                 if (!data.title().equals("EMPTY")) {
                     meta.setDisplayName(Messaging.parseComponents(Messaging.tryTranslate(data.title())));
@@ -137,9 +137,6 @@ public class InventoryMenuSlot {
     public void setDescription(String description) {
         ItemStack item = inventory.getItem(index);
         ItemMeta meta = item.getItemMeta();
-        if (!meta.hasDisplayName()) {
-
-        }
         List<String> list = Arrays.asList(Messaging.parseComponents(description).split("\\n|\n|<br>"));
         meta.setDisplayName(ChatColor.RESET + list.get(0));
         meta.setLore(list.subList(1, list.size()));

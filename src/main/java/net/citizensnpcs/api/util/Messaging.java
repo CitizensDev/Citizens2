@@ -118,7 +118,7 @@ public class Messaging {
         m = LEGACY_COLORCODE_MATCHER.matcher(sb.toString());
         sb = new StringBuffer();
         while (m.find()) {
-            m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1)));
+            m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1) == null ? m.group(2) : m.group(1)));
         }
         m.appendTail(sb);
         return MINIMESSAGE_COLORCODE_MATCHER.matcher(sb.toString()).replaceAll("$0<csr>");
@@ -263,8 +263,8 @@ public class Messaging {
             Pattern.CASE_INSENSITIVE);
     private static String HIGHLIGHT_COLOUR = "yellow";
     private static final Pattern HIGHLIGHT_MATCHER = Pattern.compile("[[", Pattern.LITERAL);
-    private static final Pattern LEGACY_COLORCODE_MATCHER = Pattern.compile(ChatColor.COLOR_CHAR + "([0-9a-r])",
-            Pattern.CASE_INSENSITIVE);
+    private static final Pattern LEGACY_COLORCODE_MATCHER = Pattern
+            .compile(ChatColor.COLOR_CHAR + "([0-9a-r])|<([0-9a-f])>", Pattern.CASE_INSENSITIVE);
     private static Logger LOGGER = Logger.getLogger("Citizens");
     private static String MESSAGE_COLOUR = "<green>";
     private static MiniMessage MINIMESSAGE;
