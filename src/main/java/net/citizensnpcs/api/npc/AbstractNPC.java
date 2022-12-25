@@ -50,6 +50,8 @@ import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
 
 public abstract class AbstractNPC implements NPC {
+    protected Object coloredNameComponentCache;
+    protected String coloredNameStringCache;
     private final GoalController goalController = new SimpleGoalController();
     private final int id;
     private Supplier<ItemStack> itemProvider = () -> {
@@ -90,8 +92,6 @@ public abstract class AbstractNPC implements NPC {
         }
     };
     private String name;
-    protected Object coloredNameComponentCache;
-    protected String coloredNameStringCache;
     private final NPCRegistry registry;
     private final List<String> removedTraits = Lists.newArrayList();
     private final List<Runnable> runnables = Lists.newArrayList();
@@ -241,7 +241,8 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public String getFullName() {
         int nameLength = SpigotUtil.getMaxNameLength(getEntityType());
-        String replaced = Placeholders.replace(Messaging.parseComponents(name), null, this);
+        String replaced = Placeholders.replace(
+                coloredNameStringCache != null ? coloredNameStringCache : Messaging.parseComponents(name), null, this);
         if (replaced.length() > nameLength) {
             Messaging.severe("ID", id, "created with name length greater than " + nameLength + ", truncating", replaced,
                     "to", replaced.substring(0, nameLength));
@@ -408,8 +409,9 @@ public abstract class AbstractNPC implements NPC {
     public boolean requiresNameHologram() {
         return getEntityType() != EntityType.ARMOR_STAND
                 && ((name.length() > 16 && getEntityType() == EntityType.PLAYER)
-                        || data().get(NPC.ALWAYS_USE_NAME_HOLOGRAM_METADATA, false) || name.contains("&x")
-                        || name.contains("§x") || !Placeholders.replace(name, null, this).equals(name));
+                        || data().get(NPC.ALWAYS_USE_NAME_HOLOGRAM_METADATA, false)
+                        || (coloredNameStringCache != null && coloredNameStringCache.contains("§x"))
+                        || !Placeholders.replace(name, null, this).equals(name));
     }
 
     @Override
