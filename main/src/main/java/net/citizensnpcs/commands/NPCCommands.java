@@ -638,7 +638,7 @@ public class NPCCommands {
         }
 
         int nameLength = SpigotUtil.getMaxNameLength(type);
-        if (name.length() > nameLength && Placeholders.replace(name, sender, npc).length() > nameLength) {
+        if (Placeholders.replace(Messaging.parseComponents(name), sender, npc).length() > nameLength) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             name = name.substring(0, nameLength);
         }
@@ -2138,7 +2138,7 @@ public class NPCCommands {
         String oldName = npc.getName();
         String newName = args.getJoinedStrings(1);
         int nameLength = SpigotUtil.getMaxNameLength(npc.getOrAddTrait(MobType.class).getType());
-        if (newName.length() > nameLength && Placeholders.replace(newName, sender, npc).length() > nameLength) {
+        if (Placeholders.replace(Messaging.parseComponents(newName), sender, npc).length() > nameLength) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             newName = newName.substring(0, nameLength);
         }

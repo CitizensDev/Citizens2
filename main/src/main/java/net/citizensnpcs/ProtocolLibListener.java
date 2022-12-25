@@ -53,9 +53,6 @@ public class ProtocolLibListener {
         manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.MONITOR, Server.PLAYER_INFO) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                if (event.getPlayer().hasMetadata("NPC"))
-                    return;
-
                 int version = VIA_ENABLED ? Via.getAPI().getPlayerVersion(event.getPlayer())
                         : manager.getProtocolVersion(event.getPlayer());
                 List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists()
@@ -97,9 +94,6 @@ public class ProtocolLibListener {
                 new PacketAdapter(plugin, ListenerPriority.MONITOR, Server.ENTITY_HEAD_ROTATION, Server.ENTITY_LOOK) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
-                        if (event.getPlayer().hasMetadata("NPC"))
-                            return;
-
                         NPC npc = getNPCFromPacket(event);
                         if (npc == null)
                             return;
