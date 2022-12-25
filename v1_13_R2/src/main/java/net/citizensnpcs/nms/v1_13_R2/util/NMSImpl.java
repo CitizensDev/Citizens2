@@ -1329,7 +1329,10 @@ public class NMSImpl implements NMSBridge {
             List<Player> nearbyPlayers = Lists.newArrayList(Iterables
                     .filter(CitizensAPI.getLocationLookup().getNearbyPlayers(entity.getLocation(), 64), (p) -> {
                         Long time = meta.getMarker(p.getUniqueId(), entity.getUniqueId().toString());
-                        return time == null || Math.abs(System.currentTimeMillis() - time) > 5000;
+                        if (time == null || Math.abs(System.currentTimeMillis() - time) > 5000)
+                            return true;
+                        meta.set(p.getUniqueId(), entity.getUniqueId().toString(), System.currentTimeMillis());
+                        return false;
                     }));
             if (nearbyPlayers.size() == 0)
                 return;
