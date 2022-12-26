@@ -54,7 +54,6 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -482,7 +481,7 @@ public class EventListen implements Listener {
         }
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
-        if (event.getHand() == EquipmentSlot.HAND && event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
+        if (event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
             rightClickEvent.setCancelled(npc.isProtected());
         }
         Bukkit.getPluginManager().callEvent(rightClickEvent);
