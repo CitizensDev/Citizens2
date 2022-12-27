@@ -1331,7 +1331,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false]",
+            usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false] --targetnpcs [true|false]",
             desc = "Toggle whether a NPC will look when a player is near",
             modifiers = { "lookclose", "look" },
             min = 1,
@@ -1342,8 +1342,8 @@ public class NPCCommands {
             @Flag({ "randomlook", "rlook" }) Boolean randomlook, @Flag("range") Double range,
             @Flag("randomlookdelay") Integer randomLookDelay, @Flag("randomyawrange") String randomYaw,
             @Flag("randompitchrange") String randomPitch, @Flag("randomswitchtargets") Boolean randomSwitchTargets,
-            @Flag("disablewhennavigating") Boolean disableWhenNavigating, @Flag("perplayer") Boolean perPlayer)
-            throws CommandException {
+            @Flag("disablewhennavigating") Boolean disableWhenNavigating, @Flag("perplayer") Boolean perPlayer,
+            @Flag("targetnpcs") Boolean targetNPCs) throws CommandException {
         boolean toggle = true;
         LookClose trait = npc.getOrAddTrait(LookClose.class);
         if (randomlook != null) {
@@ -1362,6 +1362,13 @@ public class NPCCommands {
             trait.setRandomlySwitchTargets(randomSwitchTargets);
             Messaging.sendTr(sender, randomSwitchTargets ? Messages.LOOKCLOSE_RANDOM_TARGET_SWITCH_ENABLED
                     : Messages.LOOKCLOSE_RANDOM_TARGET_SWITCH_DISABLED, npc.getName());
+            toggle = false;
+        }
+        if (targetNPCs != null) {
+            trait.setTargetNPCs(targetNPCs);
+            Messaging.sendTr(sender,
+                    targetNPCs ? Messages.LOOKCLOSE_TARGET_NPCS_SET : Messages.LOOKCLOSE_TARGET_NPCS_UNSET,
+                    npc.getName());
             toggle = false;
         }
         if (disableWhenNavigating != null) {

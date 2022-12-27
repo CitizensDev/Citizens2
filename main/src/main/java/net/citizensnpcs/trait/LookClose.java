@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
@@ -57,6 +59,8 @@ public class LookClose extends Trait implements Toggleable {
     private boolean realisticLooking = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
     private final Map<UUID, PacketRotationSession> sessions = Maps.newHashMapWithExpectedSize(4);
     private int t;
+    @Persist("targetnpcs")
+    private boolean targetNPCs;
 
     public LookClose() {
         super("lookclose");
@@ -130,12 +134,9 @@ public class LookClose extends Trait implements Toggleable {
             }
         } else {
             double min = range;
-            for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(NPC_LOCATION, range)) {
-                Location location = player.getLocation(CACHE_LOCATION);
-                if (location.getWorld() != NPC_LOCATION.getWorld())
-                    continue;
-                double dist = location.distance(NPC_LOCATION);
-                if (dist > min || CitizensAPI.getNPCRegistry().getNPC(player) != null || isInvisible(player))
+            for (Player player : getNearbyPlayers()) {
+                double dist = player.getLocation(CACHE_LOCATION).distance(NPC_LOCATION);
+                if (dist > min)
                     continue;
                 min = dist;
                 lookingAt = player;
@@ -154,12 +155,17 @@ public class LookClose extends Trait implements Toggleable {
 
     private List<Player> getNearbyPlayers() {
         List<Player> options = Lists.newArrayList();
-        for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(NPC_LOCATION, range)) {
-            if (player == lookingAt || CitizensAPI.getNPCRegistry().getNPC(player) != null) {
+        Iterable<Player> nearby = targetNPCs
+                ? npc.getEntity().getNearbyEntities(range, range, range).stream()
+                        .filter(e -> e.getType() == EntityType.PLAYER && e.getWorld() == NPC_LOCATION.getWorld())
+                        .map(e -> (Player) e).collect(Collectors.toList())
+                : CitizensAPI.getLocationLookup().getNearbyPlayers(NPC_LOCATION, range);
+        for (Player player : nearby) {
+            if (player == lookingAt || (!targetNPCs && CitizensAPI.getNPCRegistry().getNPC(player) != null))
                 continue;
-            }
             if (player.getLocation().getWorld() != NPC_LOCATION.getWorld() || isInvisible(player))
                 continue;
+
             options.add(player);
         }
         return options;
@@ -335,6 +341,14 @@ public class LookClose extends Trait implements Toggleable {
      */
     public void setRealisticLooking(boolean realistic) {
         this.realisticLooking = realistic;
+    }
+
+    public void setTargetNPCs(boolean target) {
+        this.targetNPCs = target;
+    }
+
+    public boolean targetNPCs() {
+        return targetNPCs;
     }
 
     @Override

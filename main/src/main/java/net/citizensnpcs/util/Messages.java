@@ -225,6 +225,8 @@ public class Messages {
     public static final String LOOKCLOSE_REALISTIC_LOOK_UNSET = "citizens.commands.npc.lookclose.rl-unset";
     public static final String LOOKCLOSE_SET = "citizens.commands.npc.lookclose.set";
     public static final String LOOKCLOSE_STOPPED = "citizens.commands.npc.lookclose.stopped";
+    public static final String LOOKCLOSE_TARGET_NPCS_SET = "citizens.commands.npc.lookclose.target-npcs-set";
+    public static final String LOOKCLOSE_TARGET_NPCS_UNSET = "citizens.commands.npc.lookclose.target-npcs-unset";
     public static final String METADATA_SET = "citizens.commands.npc.metadata.set";
     public static final String METADATA_UNSET = "citizens.commands.npc.metadata.unset";
     public static final String METRICS_ERROR_NOTIFICATION = "citizens.notifications.metrics-load-error";
