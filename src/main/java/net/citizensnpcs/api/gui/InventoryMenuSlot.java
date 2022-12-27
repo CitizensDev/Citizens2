@@ -92,10 +92,12 @@ public class InventoryMenuSlot {
 
     void initialise(MenuSlot data) {
         ItemStack defaultItem = null;
-        if (data.compatMaterial().length == 2) {
-            Material mat = Material.getMaterial(data.compatMaterial()[0]);
-            if (mat == null) {
-                mat = Material.getMaterial(data.compatMaterial()[1]);
+        if (data.compatMaterial().length > 1) {
+            Material mat = null;
+            for (String str : data.compatMaterial()) {
+                mat = Material.getMaterial(str);
+                if (mat != null)
+                    break;
             }
             defaultItem = new ItemStack(mat, data.amount());
         } else if (data.material() != null) {
