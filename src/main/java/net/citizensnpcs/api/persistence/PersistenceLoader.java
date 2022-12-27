@@ -145,7 +145,12 @@ public class PersistenceLoader {
         if (List.class.isAssignableFrom(type)) {
             List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists.newArrayList()
                     : collectionType.newInstance());
-            deserialiseCollection(list, root, field);
+            Object raw = root.getRaw(field.key);
+            if (raw instanceof List && collectionType.isAssignableFrom(raw.getClass())) {
+                list = (List<Object>) raw;
+            } else {
+                deserialiseCollection(list, root, field);
+            }
             value = list;
         } else if (Set.class.isAssignableFrom(type)) {
             Set set;

@@ -46,7 +46,6 @@ public class PersistenceLoaderTest {
 
     @Test
     public void illegalCollectionClass() {
-        root.setString("a.0.asf", "test");
         assertThat(PersistenceLoader.load(IllegalCollectionClassTest.class, root), is(nullValue()));
     }
 
@@ -116,7 +115,6 @@ public class PersistenceLoaderTest {
         root = new MemoryDataKey();
         try {
             yamlRoot = new YamlStorage(File.createTempFile("citizens_test", null)).getKey("");
-            root = yamlRoot;
         } catch (IOException e) {
             e.printStackTrace();
         }
