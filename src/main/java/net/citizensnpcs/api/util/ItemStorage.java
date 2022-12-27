@@ -14,6 +14,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
@@ -198,12 +199,25 @@ public class ItemStorage {
 
         if (root.keyExists("skull")) {
             SkullMeta meta = ensureMeta(res);
-            if (root.keyExists("skull.owner") && !root.getString("skull.owner").isEmpty()) {
+            if (SUPPORT_OWNING_PLAYER) {
+                try {
+                    meta.getOwningPlayer();
+                } catch (Throwable t) {
+                    SUPPORT_OWNING_PLAYER = false;
+                }
+            }
+
+            if (root.keyExists("skull.uuid") && SUPPORT_OWNING_PLAYER) {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(root.getString("skull.uuid")));
+                meta.setOwningPlayer(offlinePlayer);
+            } else if (root.keyExists("skull.owner") && !root.getString("skull.owner").isEmpty()) {
                 meta.setOwner(root.getString("skull.owner", ""));
             }
+
             if (root.keyExists("skull.texture") && !root.getString("skull.texture").isEmpty()) {
                 CitizensAPI.getSkullMetaProvider().setTexture(root.getString("skull.texture", ""), meta);
             }
+
             res.setItemMeta(meta);
         }
 
@@ -386,12 +400,6 @@ public class ItemStorage {
 
     private static void serialiseMeta(DataKey key, ItemMeta meta) {
         key.removeKey("encoded-meta");
-        // TODO: remove when Spigot fixes the inability to serialise SkullMeta
-        if (meta instanceof SkullMeta) {
-            serialiseSkull(key, meta);
-            Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
-            return;
-        }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BukkitObjectOutputStream bukkitOut;
         try {
@@ -401,7 +409,7 @@ public class ItemStorage {
             e.printStackTrace();
         } catch (NullPointerException e) {
             // spigot bug
-            Messaging.severe("Spigot error when saving item meta");
+            Messaging.severe("Spigot error when saving item meta: upgrade spigot");
             e.printStackTrace();
             return;
         }
@@ -411,80 +419,7 @@ public class ItemStorage {
         return;
     }
 
-    private static void serialiseSkull(DataKey key, ItemMeta meta) {
-        if (SUPPORTS_CUSTOM_MODEL_DATA) {
-            try {
-                if (meta.hasCustomModelData()) {
-                    key.setInt("custommodel", meta.getCustomModelData());
-                } else {
-                    key.removeKey("custommodel");
-                }
-            } catch (NoSuchMethodError e) {
-                SUPPORTS_CUSTOM_MODEL_DATA = false;
-            }
-        }
-        if (SUPPORTS_ATTRIBUTES) {
-            try {
-                key.removeKey("attributes");
-                for (Attribute attr : meta.getAttributeModifiers().keySet()) {
-                    int i = 0;
-                    for (AttributeModifier modifier : meta.getAttributeModifiers(attr)) {
-                        DataKey root = key.getRelative("attributes." + attr.name() + "." + i);
-                        root.setString("uuid", modifier.getUniqueId().toString());
-                        root.setString("name", modifier.getName());
-                        root.setDouble("amount", modifier.getAmount());
-                        root.setString("operation", modifier.getOperation().name());
-                        if (modifier.getSlot() != null) {
-                            root.setString("slot", modifier.getSlot().name());
-                        }
-                        i++;
-                    }
-                }
-            } catch (Throwable e) {
-                SUPPORTS_ATTRIBUTES = false;
-            }
-        }
-        key.removeKey("flags");
-        int j = 0;
-        for (ItemFlag flag : ItemFlag.values()) {
-            if (meta.hasItemFlag(flag)) {
-                key.setString("flags." + j++, flag.name());
-            }
-        }
-        if (meta instanceof Repairable && ((Repairable) meta).hasRepairCost()) {
-            Repairable rep = (Repairable) meta;
-            key.setInt("repaircost", rep.getRepairCost());
-        } else {
-            key.removeKey("repaircost");
-        }
-        if (meta.hasLore()) {
-            List<String> lore = meta.getLore();
-            DataKey root = key.getRelative("lore");
-            for (int i = 0; i < lore.size(); i++) {
-                root.setString(Integer.toString(i), lore.get(i));
-            }
-        } else {
-            key.removeKey("lore");
-        }
-        if (meta.hasDisplayName()) {
-            key.setString("displayname", meta.getDisplayName());
-        } else {
-            key.removeKey("displayname");
-        }
-        if (meta instanceof SkullMeta) {
-            SkullMeta skull = (SkullMeta) meta;
-            String texture = CitizensAPI.getSkullMetaProvider().getTexture(skull);
-            if (texture == null || texture.isEmpty()) {
-                key.removeKey("skull.texture");
-            } else {
-                key.setString("skull.texture", texture);
-            }
-            key.setString("skull.owner", skull.getOwner());
-        } else {
-            key.removeKey("skull");
-        }
-    }
-
+    private static boolean SUPPORT_OWNING_PLAYER = true;
     private static boolean SUPPORTS_1_14_API = true;
     private static boolean SUPPORTS_ATTRIBUTES = true;
     private static boolean SUPPORTS_CUSTOM_MODEL_DATA = true;

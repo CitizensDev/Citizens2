@@ -190,6 +190,7 @@ public class Inventory extends Trait {
         } else if (npc.getEntity() instanceof StorageMinecart) {
             dest = ((StorageMinecart) npc.getEntity()).getInventory();
         }
+
         if (SUPPORT_ABSTRACT_HORSE) {
             try {
                 if (npc.getEntity() instanceof AbstractHorse) {
@@ -209,6 +210,7 @@ public class Inventory extends Trait {
 
         if (dest == null)
             return;
+
         if (maxCopySize == -1) {
             maxCopySize = dest.getSize();
         }
@@ -218,8 +220,10 @@ public class Inventory extends Trait {
                 dest.setItem(i, contents[i]);
             }
         }
+
         if (view == null)
             return;
+
         for (int i = 0; i < maxCopySize; i++) {
             if (i < contents.length && i < view.getSize()) {
                 view.setItem(i, contents[i]);
