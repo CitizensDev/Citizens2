@@ -107,8 +107,8 @@ public class NPCCommandSelector extends NumericPrompt {
             String name = args.getString(1);
             List<NPC> possible = Lists.newArrayList();
             double range = -1;
-            if (args.hasValueFlag("r")) {
-                range = Math.abs(args.getFlagDouble("r"));
+            if (args.hasValueFlag("range")) {
+                range = Math.abs(args.getFlagDouble("range"));
             }
             for (NPC test : npcRegistry) {
                 if (test.getName().equalsIgnoreCase(name)) {

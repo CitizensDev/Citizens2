@@ -455,6 +455,9 @@ public class NPCCommands {
             if (permissions != null) {
                 perms.addAll(Arrays.asList(permissions.split(",")));
             }
+            if (command.startsWith("npc select")) {
+                throw new CommandException("npc select not currently supported within commands. Use --id <id> instead");
+            }
             try {
                 int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
                         .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o')).cooldown(cooldown)
@@ -2270,7 +2273,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "select|sel [id|name] (--r range) (--registry [name])",
+            usage = "select|sel [id|name] (--range range) (--registry [name])",
             desc = "Select a NPC with the given ID or name",
             modifiers = { "select", "sel" },
             min = 1,

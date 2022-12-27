@@ -355,27 +355,29 @@ public class Util {
             Messaging.debug("Running command " + interpolatedCommand + " on NPC " + (npc == null ? -1 : npc.getId())
                     + " clicker " + clicker);
         }
+
         if (!player) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
             return;
         }
+
         boolean wasOp = clicker.isOp();
         if (op) {
             clicker.setOp(true);
         }
 
-        if (bungeeServer != null) {
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            out.writeUTF("Connect");
-            out.writeUTF(bungeeServer);
+        try {
+            if (bungeeServer != null) {
+                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                out.writeUTF("Connect");
+                out.writeUTF(bungeeServer);
 
-            clicker.sendPluginMessage(CitizensAPI.getPlugin(), "BungeeCord", out.toByteArray());
-        } else {
-            try {
+                clicker.sendPluginMessage(CitizensAPI.getPlugin(), "BungeeCord", out.toByteArray());
+            } else {
                 clicker.chat("/" + interpolatedCommand);
-            } catch (Throwable t) {
-                t.printStackTrace();
             }
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
 
         if (op) {
