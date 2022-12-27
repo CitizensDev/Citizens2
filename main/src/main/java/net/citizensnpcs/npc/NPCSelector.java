@@ -133,35 +133,16 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
             Editor.leave(player);
         } else if (sender instanceof BlockCommandSender) {
             Block block = ((BlockCommandSender) sender).getBlock();
-            if (SUPPORT_BLOCK_STATE == null) {
-                try {
-                    block.getState();
-                    SUPPORT_BLOCK_STATE = true;
-                } catch (Exception ex) {
-                    SUPPORT_BLOCK_STATE = false;
-                }
-            }
             while (block != null) {
                 setMetadata(npc, block);
                 selectors.add(toName(block));
-                if (SUPPORT_BLOCK_STATE) {
-                    if (block.getState() instanceof org.bukkit.block.data.Directional) {
-                        block = block.getRelative(((org.bukkit.block.data.Directional) block.getState()).getFacing());
-                        if (!(block.getState() instanceof org.bukkit.block.CommandBlock)) {
-                            block = null;
-                        }
-                    } else {
+                if (block.getBlockData() instanceof org.bukkit.block.data.Directional) {
+                    block = block.getRelative(((org.bukkit.block.data.Directional) block.getState()).getFacing());
+                    if (!block.getType().name().contains("COMMAND_BLOCK")) {
                         block = null;
                     }
                 } else {
-                    if (block.getBlockData() instanceof org.bukkit.material.Directional) {
-                        block = block.getRelative(((org.bukkit.material.Directional) block.getState()).getFacing());
-                        if (!(block.getBlockData() instanceof org.bukkit.block.data.type.CommandBlock)) {
-                            block = null;
-                        }
-                    } else {
-                        block = null;
-                    }
+                    block = null;
                 }
             }
         } else if (sender instanceof ConsoleCommandSender) {
@@ -183,6 +164,4 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         return '@' + block.getWorld().getName() + ":" + Integer.toString(block.getX()) + ":"
                 + Integer.toString(block.getY()) + ":" + Integer.toString(block.getZ());
     }
-
-    private static Boolean SUPPORT_BLOCK_STATE = null;
 }
