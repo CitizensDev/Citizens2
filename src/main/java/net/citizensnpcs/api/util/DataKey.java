@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.primitives.Ints;
 
 /**
  * A hierarchical abstract storage class. Similar to Bukkit's {@link ConfigurationSection}.
@@ -77,7 +77,7 @@ public abstract class DataKey {
     }
 
     public Iterable<DataKey> getIntegerSubKeys() {
-        return Iterables.filter(getSubKeys(), SIMPLE_INTEGER_FILTER);
+        return Iterables.filter(getSubKeys(), k -> Ints.tryParse(k.name()) != null);
     }
 
     public abstract long getLong(String key);
@@ -164,21 +164,4 @@ public abstract class DataKey {
     public abstract void setRaw(String key, Object value);
 
     public abstract void setString(String key, String value);
-
-    private static final Predicate<DataKey> SIMPLE_INTEGER_FILTER = new Predicate<DataKey>() {
-        @Override
-        public boolean apply(DataKey key) {
-            try {
-                Integer.parseInt(key.name());
-                return true;
-            } catch (NumberFormatException ex) {
-                return false;
-            }
-        }
-
-        @Override
-        public boolean test(DataKey key) {
-            return apply(key);
-        }
-    };
 }

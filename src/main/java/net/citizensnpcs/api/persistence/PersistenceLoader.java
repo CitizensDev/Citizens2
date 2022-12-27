@@ -145,12 +145,7 @@ public class PersistenceLoader {
         if (List.class.isAssignableFrom(type)) {
             List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists.newArrayList()
                     : collectionType.newInstance());
-            Object raw = root.getRaw(field.key);
-            if (raw instanceof List && collectionType.isAssignableFrom(raw.getClass())) {
-                list = (List<Object>) raw;
-            } else {
-                deserialiseCollection(list, root, field);
-            }
+            deserialiseCollection(list, root, field);
             value = list;
         } else if (Set.class.isAssignableFrom(type)) {
             Set set;
@@ -165,11 +160,7 @@ public class PersistenceLoader {
                             : Sets.newHashSet());
                 }
             }
-            Object raw = root.getRaw(field.key);
-            if (raw instanceof Set && collectionType.isAssignableFrom(raw.getClass())) {
-                set = (Set) raw;
-            } else
-                deserialiseCollection(set, root, field);
+            deserialiseCollection(set, root, field);
             value = set;
         } else if (Map.class.isAssignableFrom(type)) {
             Map<Object, Object> map;
