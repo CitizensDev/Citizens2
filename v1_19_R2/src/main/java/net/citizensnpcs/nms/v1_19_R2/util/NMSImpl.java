@@ -51,6 +51,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
+import org.geysermc.floodgate.api.FloodgateApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -859,13 +860,18 @@ public class NMSImpl implements NMSBridge {
         registerTraitWithCommand(manager, TropicalFishTrait.class);
         registerTraitWithCommand(manager, VillagerTrait.class);
 
-        if (VIA_ENABLED == null) {
-            try {
-                Via.getAPI();
-                VIA_ENABLED = true;
-            } catch (Throwable t) {
-                VIA_ENABLED = false;
-            }
+        try {
+            Via.getAPI();
+            VIA_ENABLED = true;
+        } catch (Throwable t) {
+            VIA_ENABLED = false;
+        }
+
+        try {
+            FloodgateApi.getInstance();
+            FLOODGATE_ENABLED = true;
+        } catch (Throwable t) {
+            FLOODGATE_ENABLED = false;
         }
     }
 
@@ -1257,11 +1263,16 @@ public class NMSImpl implements NMSBridge {
         }
 
         NMSImpl.sendPacket(recipient, packet);
-        if (VIA_ENABLED == false)
-            return false;
 
-        int version = Via.getAPI().getPlayerVersion(recipient);
-        return version < 761;
+        if (FLOODGATE_ENABLED == true) {
+            return FloodgateApi.getInstance().isFloodgatePlayer(recipient.getUniqueId());
+        }
+
+        if (VIA_ENABLED == true) {
+            int version = Via.getAPI().getPlayerVersion(recipient);
+            return version < 761;
+        }
+        return false;
     }
 
     @Override
@@ -2365,6 +2376,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
+
     private static final MethodHandle BEHAVIOR_TREE_MAP = NMS.getGetter(Brain.class, "f");
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
@@ -2386,6 +2398,7 @@ public class NMSImpl implements NMSBridge {
             true, PortalInfo.class, ServerLevel.class);
     // first int of block of 4
     private static final MethodHandle FISHING_HOOK_LIFE = NMS.getSetter(FishingHook.class, "aq");
+    private static Boolean FLOODGATE_ENABLED = null;
     private static final MethodHandle FLYING_MOVECONTROL_FLOAT_GETTER = NMS.getFirstGetter(FlyingMoveControl.class,
             boolean.class);
     private static final MethodHandle FLYING_MOVECONTROL_FLOAT_SETTER = NMS.getFirstSetter(FlyingMoveControl.class,
