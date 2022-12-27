@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_19_R2.util;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Field;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
@@ -51,7 +50,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
-import org.geysermc.floodgate.api.FloodgateApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -614,15 +612,16 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public GameProfile getProfile(SkullMeta meta) {
-        if (SKULL_PROFILE_FIELD == null) {
-            SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
-            if (SKULL_PROFILE_FIELD == null) {
+        if (SKULL_META_PROFILE == null) {
+            SKULL_META_PROFILE = NMS.getFirstGetter(meta.getClass(), GameProfile.class);
+            if (SKULL_META_PROFILE == null) {
                 return null;
             }
         }
+
         try {
-            return (GameProfile) SKULL_PROFILE_FIELD.get(meta);
-        } catch (Exception e) {
+            return (GameProfile) SKULL_META_PROFILE.invoke(meta);
+        } catch (Throwable e) {
             e.printStackTrace();
             return null;
         }
@@ -865,13 +864,6 @@ public class NMSImpl implements NMSBridge {
             VIA_ENABLED = true;
         } catch (Throwable t) {
             VIA_ENABLED = false;
-        }
-
-        try {
-            FloodgateApi.getInstance();
-            FLOODGATE_ENABLED = true;
-        } catch (Throwable t) {
-            FLOODGATE_ENABLED = false;
         }
     }
 
@@ -1264,10 +1256,6 @@ public class NMSImpl implements NMSBridge {
 
         NMSImpl.sendPacket(recipient, packet);
 
-        if (FLOODGATE_ENABLED == true) {
-            return FloodgateApi.getInstance().isFloodgatePlayer(recipient.getUniqueId());
-        }
-
         if (VIA_ENABLED == true) {
             int version = Via.getAPI().getPlayerVersion(recipient);
             return version < 761;
@@ -1463,15 +1451,16 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
-        if (SKULL_PROFILE_FIELD == null) {
-            SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
-            if (SKULL_PROFILE_FIELD == null) {
+        if (SET_PROFILE_METHOD == null) {
+            SET_PROFILE_METHOD = NMS.getMethodHandle(meta.getClass(), "setProfile", true, GameProfile.class);
+            if (SET_PROFILE_METHOD == null) {
                 return;
             }
         }
         try {
-            SKULL_PROFILE_FIELD.set(meta, profile);
-        } catch (Exception e) {
+            SET_PROFILE_METHOD.invoke(meta, profile);
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
@@ -2378,6 +2367,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.SHULKER, EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_TREE_MAP = NMS.getGetter(Brain.class, "f");
+
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);
@@ -2398,7 +2388,6 @@ public class NMSImpl implements NMSBridge {
             true, PortalInfo.class, ServerLevel.class);
     // first int of block of 4
     private static final MethodHandle FISHING_HOOK_LIFE = NMS.getSetter(FishingHook.class, "aq");
-    private static Boolean FLOODGATE_ENABLED = null;
     private static final MethodHandle FLYING_MOVECONTROL_FLOAT_GETTER = NMS.getFirstGetter(FlyingMoveControl.class,
             boolean.class);
     private static final MethodHandle FLYING_MOVECONTROL_FLOAT_SETTER = NMS.getFirstSetter(FlyingMoveControl.class,
@@ -2427,9 +2416,10 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle PUFFERFISH_D = NMS.getSetter(Pufferfish.class, "bY");
     private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
     private static final Random RANDOM = Util.getFastRandom();
+    private static MethodHandle SET_PROFILE_METHOD;
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getFirstGetter(Entity.class, EntityDimensions.class);
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
-    private static Field SKULL_PROFILE_FIELD;
+    private static MethodHandle SKULL_META_PROFILE;
     private static MethodHandle TEAM_FIELD;
     private static Boolean VIA_ENABLED = null;
 

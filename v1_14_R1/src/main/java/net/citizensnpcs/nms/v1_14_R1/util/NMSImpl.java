@@ -1289,6 +1289,7 @@ public class NMSImpl implements NMSBridge {
                 return;
             }
         }
+
         try {
             SKULL_PROFILE_FIELD.set(meta, profile);
         } catch (Exception e) {

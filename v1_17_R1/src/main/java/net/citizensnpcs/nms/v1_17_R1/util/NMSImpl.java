@@ -1358,15 +1358,16 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
-        if (SKULL_PROFILE_FIELD == null) {
-            SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
-            if (SKULL_PROFILE_FIELD == null) {
+        if (SET_PROFILE_METHOD == null) {
+            SET_PROFILE_METHOD = NMS.getMethodHandle(meta.getClass(), "setProfile", true, GameProfile.class);
+            if (SET_PROFILE_METHOD == null) {
                 return;
             }
         }
         try {
-            SKULL_PROFILE_FIELD.set(meta, profile);
-        } catch (Exception e) {
+            SET_PROFILE_METHOD.invoke(meta, profile);
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
@@ -2224,6 +2225,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.SHULKER, EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(Brain.class, "f");
+
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);
@@ -2262,6 +2264,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle PUFFERFISH_D = NMS.getSetter(Pufferfish.class, "bT");
     private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
     private static final Random RANDOM = Util.getFastRandom();
+    private static MethodHandle SET_PROFILE_METHOD;
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getFirstGetter(Entity.class, EntityDimensions.class);
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
     private static Field SKULL_PROFILE_FIELD;

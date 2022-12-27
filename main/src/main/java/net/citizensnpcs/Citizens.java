@@ -111,10 +111,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final SkullMetaProvider skullMetaProvider = new SkullMetaProvider() {
         @Override
         public String getTexture(SkullMeta meta) {
-            if (NMS.getProfile(meta) == null)
-                return null;
-            return Iterables.getFirst(NMS.getProfile(meta).getProperties().get("textures"), new Property("", ""))
-                    .getValue();
+            GameProfile profile = NMS.getProfile(meta);
+            return profile == null ? null
+                    : Iterables.getFirst(profile.getProperties().get("textures"), new Property("", "")).getValue();
         }
 
         @Override

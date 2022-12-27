@@ -1,11 +1,8 @@
 package net.citizensnpcs;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -54,7 +51,6 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -64,16 +60,12 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
-import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
 import net.citizensnpcs.api.event.CitizensPreReloadEvent;
-import net.citizensnpcs.api.event.CitizensSerialiseMetaEvent;
 import net.citizensnpcs.api.event.CommandSenderCreateNPCEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.EntityTargetNPCEvent;
@@ -96,9 +88,7 @@ import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
 import net.citizensnpcs.trait.ClickRedirectTrait;
@@ -335,61 +325,6 @@ public class EventListen implements Listener {
             return;
         event.setCancelled(!npc.data().get(NPC.TARGETABLE_METADATA, !npc.isProtected()));
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
-    }
-
-    @EventHandler
-    public void onMetaDeserialise(CitizensDeserialiseMetaEvent event) {
-        if (event.getKey().keyExists("skull")) {
-            String owner = event.getKey().getString("skull.owner", "");
-            UUID uuid = event.getKey().keyExists("skull.uuid") ? UUID.fromString(event.getKey().getString("skull.uuid"))
-                    : null;
-            if (owner.isEmpty() && uuid == null) {
-                return;
-            }
-            GameProfile profile = new GameProfile(uuid, owner);
-            for (DataKey sub : event.getKey().getRelative("skull.properties").getSubKeys()) {
-                String propertyName = sub.name();
-                for (DataKey property : sub.getIntegerSubKeys()) {
-                    profile.getProperties().put(propertyName,
-                            new Property(property.getString("name"), property.getString("value"),
-                                    property.keyExists("signature") ? property.getString("signature") : null));
-                }
-            }
-            Material mat = SpigotUtil.isUsing1_13API() ? Material.SKELETON_SKULL : Material.valueOf("SKULL_ITEM");
-            SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(mat);
-            NMS.setProfile(meta, profile);
-            event.getItemStack().setItemMeta(meta);
-        }
-    }
-
-    @EventHandler
-    public void onMetaSerialise(CitizensSerialiseMetaEvent event) {
-        if (!(event.getMeta() instanceof SkullMeta))
-            return;
-        SkullMeta meta = (SkullMeta) event.getMeta();
-        GameProfile profile = NMS.getProfile(meta);
-        if (profile == null)
-            return;
-        if (profile.getName() != null) {
-            event.getKey().setString("skull.owner", profile.getName());
-        }
-        if (profile.getId() != null) {
-            event.getKey().setString("skull.uuid", profile.getId().toString());
-        }
-        if (profile.getProperties() != null) {
-            for (Entry<String, Collection<Property>> entry : profile.getProperties().asMap().entrySet()) {
-                DataKey relative = event.getKey().getRelative("skull.properties." + entry.getKey());
-                int i = 0;
-                for (Property value : entry.getValue()) {
-                    relative.getRelative(i).setString("name", value.getName());
-                    if (value.getSignature() != null) {
-                        relative.getRelative(i).setString("signature", value.getSignature());
-                    }
-                    relative.getRelative(i).setString("value", value.getValue());
-                    i++;
-                }
-            }
-        }
     }
 
     @EventHandler
@@ -793,5 +728,6 @@ public class EventListen implements Listener {
         }
     }
 
+    private static boolean SUPPORT_OWNING_PLAYER = true;
     private static boolean SUPPORT_STOP_USE_ITEM = true;
 }

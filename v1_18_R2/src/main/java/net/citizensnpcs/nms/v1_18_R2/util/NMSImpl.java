@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_18_R2.util;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Field;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
@@ -594,15 +593,17 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public GameProfile getProfile(SkullMeta meta) {
-        if (SKULL_PROFILE_FIELD == null) {
-            SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
-            if (SKULL_PROFILE_FIELD == null) {
+        if (SKULL_META_PROFILE == null) {
+            SKULL_META_PROFILE = NMS.getFirstGetter(meta.getClass(), GameProfile.class);
+            if (SKULL_META_PROFILE == null) {
                 return null;
             }
         }
+
         try {
-            return (GameProfile) SKULL_PROFILE_FIELD.get(meta);
-        } catch (Exception e) {
+            return (GameProfile) SKULL_META_PROFILE.invoke(meta);
+        } catch (Throwable t) {
+            t.printStackTrace();
             return null;
         }
     }
@@ -1365,15 +1366,16 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
-        if (SKULL_PROFILE_FIELD == null) {
-            SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
-            if (SKULL_PROFILE_FIELD == null) {
+        if (SET_PROFILE_METHOD == null) {
+            SET_PROFILE_METHOD = NMS.getMethodHandle(meta.getClass(), "setProfile", true, GameProfile.class);
+            if (SET_PROFILE_METHOD == null) {
                 return;
             }
         }
         try {
-            SKULL_PROFILE_FIELD.set(meta, profile);
-        } catch (Exception e) {
+            SET_PROFILE_METHOD.invoke(meta, profile);
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
@@ -2260,6 +2262,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cr");
+
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
@@ -2310,9 +2313,10 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle PUFFERFISH_D = NMS.getSetter(Pufferfish.class, "bW");
     private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
     private static final Random RANDOM = Util.getFastRandom();
+    private static MethodHandle SET_PROFILE_METHOD;
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getFirstGetter(Entity.class, EntityDimensions.class);
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
-    private static Field SKULL_PROFILE_FIELD;
+    private static MethodHandle SKULL_META_PROFILE;
     private static MethodHandle TEAM_FIELD;
     static {
         try {

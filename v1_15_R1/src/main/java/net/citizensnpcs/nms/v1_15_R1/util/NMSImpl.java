@@ -1326,15 +1326,16 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
-        if (SKULL_PROFILE_FIELD == null) {
-            SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
-            if (SKULL_PROFILE_FIELD == null) {
+        if (SET_PROFILE_METHOD == null) {
+            SET_PROFILE_METHOD = NMS.getMethodHandle(meta.getClass(), "setProfile", true, GameProfile.class);
+            if (SET_PROFILE_METHOD == null) {
                 return;
             }
         }
         try {
-            SKULL_PROFILE_FIELD.set(meta, profile);
-        } catch (Exception e) {
+            SET_PROFILE_METHOD.invoke(meta, profile);
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
@@ -2254,6 +2255,7 @@ public class NMSImpl implements NMSBridge {
             true, EntityPlayer.class, boolean.class);
 
     private static final Map<Class<?>, EntityTypes<?>> CITIZENS_ENTITY_TYPES = Maps.newHashMap();
+
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
     private static final MethodHandle ENDERDRAGON_BATTLE_FIELD = NMS.getGetter(EntityEnderDragon.class, "bN");
@@ -2296,6 +2298,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle REPAIR_INVENTORY = NMS.getGetter(ContainerAnvil.class, "repairInventory");
     private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "resultInventory");
     private static final MethodHandle SET_POSE = NMS.getMethodHandle(Entity.class, "setPose", true, EntityPose.class);
+    private static MethodHandle SET_PROFILE_METHOD;
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getGetter(Entity.class, "size");
 
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
