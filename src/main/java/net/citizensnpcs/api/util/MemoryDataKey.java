@@ -7,7 +7,6 @@ import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 public class MemoryDataKey extends DataKey {
@@ -101,12 +100,7 @@ public class MemoryDataKey extends DataKey {
         if (head == null)
             return Collections.emptyList();
         Set<String> keys = head.getKeys(false);
-        return Iterables.transform(keys, new Function<String, DataKey>() {
-            @Override
-            public DataKey apply(String input) {
-                return new MemoryDataKey(root, getKeyFor(input));
-            }
-        });
+        return Iterables.transform(keys, input -> new MemoryDataKey(root, getKeyFor(input)));
     }
 
     @Override

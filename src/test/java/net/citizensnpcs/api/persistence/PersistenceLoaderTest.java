@@ -211,6 +211,8 @@ public class PersistenceLoaderTest {
 
     public static class ListTest {
         @Persist
+        private List<Map> mapTest;
+        @Persist
         private List<String> test;
     }
 

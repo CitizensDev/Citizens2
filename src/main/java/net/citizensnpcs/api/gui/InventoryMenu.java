@@ -324,7 +324,12 @@ public class InventoryMenu implements Listener, Runnable {
         if (page == null || transitioning || closingViews)
             return;
         delayViewerChanges = true;
-        handleClick(event);
+        try {
+            handleClick(event);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            event.getWhoClicked().closeInventory();
+        }
         delayViewerChanges = false;
     }
 
