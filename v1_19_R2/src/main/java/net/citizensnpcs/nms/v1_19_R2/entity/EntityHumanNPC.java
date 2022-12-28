@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
@@ -614,6 +615,12 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         @Override
         public void removeMetadata(String metadataKey, Plugin owningPlugin) {
             ((CraftServer) Bukkit.getServer()).getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
+        }
+
+        @Override
+        public void setGameMode(GameMode mode) {
+            super.setGameMode(mode);
+            getHandle().noPhysics = mode == GameMode.SPECTATOR;
         }
 
         @Override
