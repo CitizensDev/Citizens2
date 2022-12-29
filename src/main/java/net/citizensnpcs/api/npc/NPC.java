@@ -426,6 +426,8 @@ public interface NPC extends Agent, Cloneable {
          * Whether the NPC is 'flyable' i.e. will fly when pathfinding. Boolean.
          */
         FLYABLE("flyable"),
+        /** Forces a singular packet update. Boolean. */
+        FORCE_PACKET_UPDATE("force-packet-update"),
         /**
          * Whether the NPC is currently glowing. Boolean.
          */
@@ -474,11 +476,11 @@ public interface NPC extends Agent, Cloneable {
          * The packet update delay. Integer defaults to setting value.
          */
         PACKET_UPDATE_DELAY("packet-update-delay"),
+
         /**
          * Whether to open doors while pathfinding. Boolean.
          */
         PATHFINDER_OPEN_DOORS("pathfinder-open-doors"),
-
         /**
          * Whether to pick up items. Boolean defaults to isProtected().
          */

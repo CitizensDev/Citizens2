@@ -255,6 +255,11 @@ public class YamlStorageWithLists implements FileStorage {
         }
 
         @Override
+        public Iterable<DataKey> getIntegerSubKeys() {
+            return super.getIntegerSubKeys();
+        }
+
+        @Override
         public long getLong(String key) {
             return getLong(key, 0L);
         }
