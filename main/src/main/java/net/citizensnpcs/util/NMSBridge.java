@@ -121,6 +121,9 @@ public interface NMSBridge {
 
     public void mount(Entity entity, Entity passenger);
 
+    public default void onPlayerInfoAdd(Player player, Object source) {
+    }
+
     public InventoryView openAnvilInventory(Player player, Inventory anvil, String title);
 
     public void openHorseScreen(Tameable horse, Player equipper);
@@ -145,9 +148,9 @@ public interface NMSBridge {
 
     public void sendRotationNearby(Entity from, float bodyYaw, float headYaw, float pitch);
 
-    public boolean sendTabListAdd(Player recipient, Player listPlayer);
+    public boolean sendTabListAdd(Player recipient, Player listPlayer);;
 
-    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);;
+    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);
 
     public void sendTabListRemove(Player recipient, Player listPlayer);
 
@@ -165,13 +168,13 @@ public interface NMSBridge {
 
     public void setCustomName(Entity entity, Object component, String string);
 
-    public void setDestination(Entity entity, double x, double y, double z, float speed);
+    public void setDestination(Entity entity, double x, double y, double z, float speed);;
 
-    public void setEndermanAngry(Enderman enderman, boolean angry);;
+    public void setEndermanAngry(Enderman enderman, boolean angry);
 
     public void setHeadYaw(Entity entity, float yaw);
 
-    public void setKnockbackResistance(LivingEntity entity, double d);
+    public void setKnockbackResistance(LivingEntity entity, double d);;
 
     public default void setLyingDown(Entity cat, boolean lying) {
         throw new UnsupportedOperationException();
@@ -179,15 +182,15 @@ public interface NMSBridge {
 
     public void setNavigationTarget(Entity handle, Entity target, float speed);;
 
-    public void setNoGravity(Entity entity, boolean nogravity);;
+    public void setNoGravity(Entity entity, boolean nogravity);
 
     public default void setPandaSitting(Entity entity, boolean sitting) {
         throw new UnsupportedOperationException();
-    }
+    };
 
     public default void setPeekShulker(Entity entity, int peek) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     public default void setPiglinDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
@@ -233,5 +236,5 @@ public interface NMSBridge {
 
     public void updateNavigationWorld(Entity entity, World world);
 
-    public void updatePathfindingRange(NPC npc, float pathfindingRange);
+    public void updatePathfindingRange(NPC npc, float pathfindingRange);;
 }

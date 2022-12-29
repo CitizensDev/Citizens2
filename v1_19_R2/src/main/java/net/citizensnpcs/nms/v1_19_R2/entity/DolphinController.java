@@ -50,8 +50,8 @@ public class DolphinController extends MobEntityController {
     }
 
     public static class EntityDolphinNPC extends Dolphin implements NPCHolder {
+        private boolean inProtectedTick;
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
 
         public EntityDolphinNPC(EntityType<? extends Dolphin> types, Level level) {
@@ -141,6 +141,11 @@ public class DolphinController extends MobEntityController {
         }
 
         @Override
+        public boolean isInWaterRainOrBubble() {
+            return inProtectedTick ? true : super.isInWaterRainOrBubble();
+        }
+
+        @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(this, super.isLeashed());
         }
@@ -196,7 +201,11 @@ public class DolphinController extends MobEntityController {
 
         @Override
         public void tick() {
+            if (npc != null && npc.isProtected()) {
+                inProtectedTick = true;
+            }
             super.tick();
+            inProtectedTick = false;
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 if (npc.useMinecraftAI() && this.moveControl != this.oldMoveController) {

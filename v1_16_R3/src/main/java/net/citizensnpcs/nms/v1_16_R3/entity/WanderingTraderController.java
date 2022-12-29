@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
+import java.lang.invoke.MethodHandle;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.DamageSource;
@@ -246,6 +248,12 @@ public class WanderingTraderController extends MobEntityController {
             }
             super.mobTick();
             if (npc != null) {
+                try {
+                    if (bq != null) {
+                        bq.invoke(this, 10); // DespawnDelay
+                    }
+                } catch (Throwable e) {
+                }
                 npc.update();
             }
         }
@@ -268,6 +276,8 @@ public class WanderingTraderController extends MobEntityController {
         public void setBlockTrades(boolean blocked) {
             this.blockTrades = blocked;
         }
+
+        private static final MethodHandle bq = NMS.getSetter(EntityVillagerTrader.class, "bq");
     }
 
     public static class WanderingTraderNPC extends CraftWanderingTrader implements ForwardingNPCHolder {

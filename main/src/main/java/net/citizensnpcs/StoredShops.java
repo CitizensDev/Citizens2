@@ -21,11 +21,11 @@ public class StoredShops {
         this.storage = storage;
     }
 
-    public void deleteShop(String name) {
-        if (globalShops.containsKey(name)) {
-            globalShops.remove(name);
+    public void deleteShop(NPCShop shop) {
+        if (npcShops.values().contains(shop)) {
+            npcShops.values().remove(shop);
         } else {
-            npcShops.remove(name);
+            globalShops.values().remove(shop);
         }
     }
 

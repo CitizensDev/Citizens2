@@ -48,9 +48,7 @@ public class WanderingTraderController extends MobEntityController {
 
     public static class EntityWanderingTraderNPC extends WanderingTrader implements NPCHolder {
         private boolean blockingATrade;
-
         private boolean blockTrades = true;
-
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
 
@@ -100,6 +98,7 @@ public class WanderingTraderController extends MobEntityController {
             }
             super.customServerAiStep();
             if (npc != null) {
+                setDespawnDelay(10);
                 npc.update();
             }
         }

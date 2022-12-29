@@ -470,6 +470,10 @@ public class NMS {
         BRIDGE.mount(entity, passenger);
     }
 
+    public static void onPlayerInfoAdd(Player player, Object source) {
+        BRIDGE.onPlayerInfoAdd(player, source);
+    }
+
     public static InventoryView openAnvilInventory(Player player, Inventory inventory, String title) {
         return BRIDGE.openAnvilInventory(player, inventory, title);
     }

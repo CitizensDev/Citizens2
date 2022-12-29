@@ -56,6 +56,8 @@ public class DolphinController extends MobEntityController {
     }
 
     public static class EntityDolphinNPC extends EntityDolphin implements NPCHolder {
+        private boolean inProtectedTick;
+
         private final CitizensNPC npc;
 
         public EntityDolphinNPC(EntityTypes<? extends EntityDolphin> types, World world) {
@@ -87,6 +89,11 @@ public class DolphinController extends MobEntityController {
             if (!event.isCancelled()) {
                 super.a(entity, (float) event.getStrength(), kb.getX(), kb.getZ());
             }
+        }
+
+        @Override
+        public boolean au() {
+            return inProtectedTick ? true : super.au();
         }
 
         @Override
@@ -219,7 +226,11 @@ public class DolphinController extends MobEntityController {
 
         @Override
         public void tick() {
+            if (npc != null && npc.isProtected()) {
+                inProtectedTick = true;
+            }
             super.tick();
+            inProtectedTick = false;
             if (npc != null) {
                 npc.update();
             }

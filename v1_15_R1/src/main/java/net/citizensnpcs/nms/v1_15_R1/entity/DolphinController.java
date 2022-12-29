@@ -50,6 +50,8 @@ public class DolphinController extends MobEntityController {
     }
 
     public static class EntityDolphinNPC extends EntityDolphin implements NPCHolder {
+        private boolean inProtectedTick;
+
         private final CitizensNPC npc;
 
         private ControllerMove oldMoveController;
@@ -84,6 +86,11 @@ public class DolphinController extends MobEntityController {
             if (!event.isCancelled()) {
                 super.a(entity, (float) event.getStrength(), kb.getX(), kb.getZ());
             }
+        }
+
+        @Override
+        public boolean ay() {
+            return inProtectedTick ? true : super.ay();
         }
 
         @Override
@@ -217,7 +224,11 @@ public class DolphinController extends MobEntityController {
 
         @Override
         public void tick() {
+            if (npc != null && npc.isProtected()) {
+                inProtectedTick = true;
+            }
             super.tick();
+            inProtectedTick = false;
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 if (npc.useMinecraftAI() && this.moveController != this.oldMoveController) {

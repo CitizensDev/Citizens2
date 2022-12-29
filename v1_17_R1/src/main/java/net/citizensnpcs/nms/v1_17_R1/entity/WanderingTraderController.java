@@ -100,6 +100,7 @@ public class WanderingTraderController extends MobEntityController {
             }
             super.customServerAiStep();
             if (npc != null) {
+                setDespawnDelay(10);
                 npc.update();
             }
         }

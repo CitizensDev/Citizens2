@@ -60,6 +60,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.HttpAuthenticationService;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
+import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
@@ -217,6 +218,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AllayTrait;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
@@ -1081,6 +1083,50 @@ public class NMSImpl implements NMSBridge {
         if (NMSImpl.getHandle(passenger) == null)
             return;
         NMSImpl.getHandle(passenger).startRiding(NMSImpl.getHandle(entity));
+    }
+
+    @Override
+    public void onPlayerInfoAdd(Player player, Object raw) {
+        ClientboundPlayerInfoUpdatePacket packet = (ClientboundPlayerInfoUpdatePacket) raw;
+        List<ClientboundPlayerInfoUpdatePacket.Entry> list = Lists.newArrayList(packet.entries());
+        boolean changed = false;
+        for (int i = 0; i < list.size(); i++) {
+            ClientboundPlayerInfoUpdatePacket.Entry data = list.get(i);
+            if (data == null)
+                continue;
+            if (data.profileId().version() != 2)
+                continue;
+            NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(data.profileId());
+            if (npc == null || !npc.isSpawned())
+                continue;
+            if (Setting.DISABLE_TABLIST.asBoolean() != data.listed()) {
+                list.set(i,
+                        new ClientboundPlayerInfoUpdatePacket.Entry(data.profileId(), data.profile(),
+                                Setting.DISABLE_TABLIST.asBoolean(), data.latency(), data.gameMode(),
+                                Setting.DISABLE_TABLIST.asBoolean() ? data.displayName() : Component.empty(),
+                                data.chatSession()));
+                changed = true;
+            }
+            MirrorTrait trait = npc.getTraitNullable(MirrorTrait.class);
+            if (trait == null || !trait.isMirroring(player))
+                continue;
+            GameProfile profile = NMS.getProfile(player);
+            Collection<Property> textures = profile.getProperties().get("textures");
+            if (textures == null || textures.size() == 0)
+                continue;
+            data.profile().getProperties().clear();
+            for (String key : profile.getProperties().keySet()) {
+                data.profile().getProperties().putAll(key, profile.getProperties().get(key));
+            }
+            changed = true;
+        }
+        if (changed) {
+            try {
+                PLAYER_INFO_ENTRIES_LIST.invoke(packet, list);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -2368,6 +2414,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle BEHAVIOR_TREE_MAP = NMS.getGetter(Brain.class, "f");
 
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
+
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);
     private static final Map<Class<?>, net.minecraft.world.entity.EntityType<?>> CITIZENS_ENTITY_TYPES = Maps
@@ -2407,8 +2454,9 @@ public class NMSImpl implements NMSBridge {
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(ChunkMap.class, "P");
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(ChunkMap.class, "P");
-    private static final MethodHandle PLAYERINFO_ENTRIES = NMS.getFinalSetter(ClientboundPlayerInfoUpdatePacket.class,
-            "b");
+    private static final MethodHandle PLAYER_INFO_ENTRIES_LIST = NMS
+            .getFinalSetter(ClientboundPlayerInfoUpdatePacket.class, "b");
+    private static final MethodHandle PLAYERINFO_ENTRIES = PLAYER_INFO_ENTRIES_LIST;
     private static MethodHandle PORTAL_ENTRANCE_POS_GETTER = NMS.getGetter(Entity.class, "ai");
     private static MethodHandle PORTAL_ENTRANCE_POS_SETTER = NMS.getSetter(Entity.class, "ai");
     private static final MethodHandle PUFFERFISH_C = NMS.getSetter(Pufferfish.class, "bX");

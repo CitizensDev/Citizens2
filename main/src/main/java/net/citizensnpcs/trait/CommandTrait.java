@@ -206,7 +206,9 @@ public class CommandTrait extends Trait {
     }
 
     private String describe(NPCCommand command) {
-        String output = "<br>    - " + command.command + " [" + StringHelper.wrap(command.cooldown)
+        String output = "<br>    - " + command.command + " ["
+                + StringHelper.wrap(
+                        command.cooldown != 0 ? command.cooldown : Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong())
                 + "s] [<click:run_command:/npc cmd remove " + command.id
                 + "><hover:show_text:Remove this command><red>-</hover></click>]";
         if (command.globalCooldown > 0) {
@@ -649,7 +651,8 @@ public class CommandTrait extends Trait {
             long currentTimeSec = System.currentTimeMillis() / 1000;
             String commandKey = command.getEncodedKey();
             if (lastUsed.containsKey(commandKey)) {
-                long deadline = ((Number) lastUsed.get(commandKey)).longValue() + command.cooldown + globalDelay;
+                long deadline = ((Number) lastUsed.get(commandKey)).longValue()
+                        + (command.cooldown != 0 ? command.cooldown : globalDelay);
                 if (currentTimeSec < deadline) {
                     long seconds = deadline - currentTimeSec;
                     trait.sendErrorMessage(player, CommandTraitError.ON_COOLDOWN,
@@ -693,8 +696,8 @@ public class CommandTrait extends Trait {
                 String commandKey = command.getEncodedKey();
                 commandKeys.add(commandKey);
                 Number number = lastUsed.get(commandKey);
-                if (number != null && number.longValue() + command.cooldown
-                        + Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong() <= currentTimeSec) {
+                if (number != null && number.longValue() + (command.cooldown != 0 ? command.cooldown
+                        : Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong()) <= currentTimeSec) {
                     lastUsed.remove(commandKey);
                 }
                 if (globalCooldowns != null) {

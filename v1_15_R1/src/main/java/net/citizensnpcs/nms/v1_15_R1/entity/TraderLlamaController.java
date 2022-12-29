@@ -54,7 +54,6 @@ public class TraderLlamaController extends MobEntityController {
 
     public static class EntityTraderLlamaNPC extends EntityLlamaTrader implements NPCHolder {
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityTraderLlamaNPC(EntityTypes<? extends EntityLlamaTrader> types, World world) {

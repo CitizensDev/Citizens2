@@ -80,7 +80,7 @@ public class ShopTrait extends Trait {
 
     @Override
     public void onRemove() {
-        shops.deleteShop(npc.getUniqueId().toString());
+        shops.deleteShop(getDefaultShop());
     }
 
     public void onRightClick(Player player) {

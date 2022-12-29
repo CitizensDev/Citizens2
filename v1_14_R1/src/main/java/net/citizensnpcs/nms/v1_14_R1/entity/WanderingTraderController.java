@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
+import java.lang.invoke.MethodHandle;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -16,6 +17,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.BlockPosition;
 import net.minecraft.server.v1_14_R1.DamageSource;
@@ -49,9 +51,7 @@ public class WanderingTraderController extends MobEntityController {
 
     public static class EntityWanderingTraderNPC extends EntityVillagerTrader implements NPCHolder {
         private TreeMap<?, ?> behaviorMap;
-
         private boolean blockingATrade;
-
         private boolean blockTrades = true;
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
@@ -249,6 +249,12 @@ public class WanderingTraderController extends MobEntityController {
             }
             super.mobTick();
             if (npc != null) {
+                try {
+                    if (bB != null) {
+                        bB.invoke(this, 10); // DespawnDelay
+                    }
+                } catch (Throwable e) {
+                }
                 npc.update();
             }
         }
@@ -271,6 +277,8 @@ public class WanderingTraderController extends MobEntityController {
         public void setBlockTrades(boolean blocked) {
             this.blockTrades = blocked;
         }
+
+        private static final MethodHandle bB = NMS.getSetter(EntityVillagerTrader.class, "bB");
     }
 
     public static class WanderingTraderNPC extends CraftWanderingTrader implements NPCHolder {

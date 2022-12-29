@@ -37,17 +37,19 @@ import net.citizensnpcs.util.Util;
 @TraitName("bossbar")
 public class BossBarTrait extends Trait {
     private BossBar barCache;
-    @Persist("color")
+    @Persist
     private BarColor color = BarColor.PURPLE;
-    @Persist("flags")
+    @Persist
     private List<BarFlag> flags = Lists.newArrayList();
-    @Persist("style")
+    @Persist
+    private int range = -1;
+    @Persist
     private BarStyle style = BarStyle.SOLID;
-    @Persist("title")
+    @Persist
     private String title = "";
-    @Persist("track")
+    @Persist
     private String track;
-    @Persist("visible")
+    @Persist
     private boolean visible = true;
 
     public BossBarTrait() {
@@ -70,6 +72,10 @@ public class BossBarTrait extends Trait {
 
     public List<BarFlag> getFlags() {
         return flags;
+    }
+
+    public int getRange() {
+        return range;
     }
 
     public BarStyle getStyle() {
@@ -99,11 +105,11 @@ public class BossBarTrait extends Trait {
 
     @Override
     public void onDespawn() {
-        if (barCache != null) {
-            barCache.removeAll();
-            barCache.hide();
-            barCache = null;
-        }
+        if (barCache == null)
+            return;
+        barCache.removeAll();
+        barCache.hide();
+        barCache = null;
     }
 
     @Override
@@ -159,7 +165,7 @@ public class BossBarTrait extends Trait {
         if (barCache != null) {
             barCache.removeAll();
             for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
-                    Setting.BOSSBAR_RANGE.asInt())) {
+                    range > 0 ? range : Setting.BOSSBAR_RANGE.asInt())) {
                 barCache.addPlayer(player);
             }
         }
@@ -175,6 +181,10 @@ public class BossBarTrait extends Trait {
 
     public void setFlags(List<BarFlag> flags) {
         this.flags = flags;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
     }
 
     public void setStyle(BarStyle style) {
@@ -195,7 +205,7 @@ public class BossBarTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "bossbar --style [style] --color [color] --title [title] --visible [visible] --flags [flags] --track [health | placeholder]",
+            usage = "bossbar --style [style] --color [color] --title [title] --visible [visible] --flags [flags] --track [health | placeholder] --range [range]",
             desc = "Edit bossbar properties",
             modifiers = { "bossbar" },
             min = 1,
@@ -203,7 +213,8 @@ public class BossBarTrait extends Trait {
     @Requirements(selected = true, ownership = true)
     public static void bossbar(CommandContext args, CommandSender sender, NPC npc, @Flag("style") BarStyle style,
             @Flag("track") String track, @Flag("color") BarColor color, @Flag("visible") Boolean visible,
-            @Flag("title") String title, @Flag("flags") String flags) throws CommandException {
+            @Flag("range") Integer range, @Flag("title") String title, @Flag("flags") String flags)
+            throws CommandException {
         BossBarTrait trait = npc.getOrAddTrait(BossBarTrait.class);
         if (style != null) {
             trait.setStyle(style);
@@ -219,6 +230,9 @@ public class BossBarTrait extends Trait {
         }
         if (visible != null) {
             trait.setVisible(visible);
+        }
+        if (range != null) {
+            trait.setRange(range);
         }
         if (flags != null) {
             List<BarFlag> parsed = Lists.newArrayList();

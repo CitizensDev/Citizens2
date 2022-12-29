@@ -50,13 +50,16 @@ public class ProtocolLibListener {
         } catch (Throwable t) {
             VIA_ENABLED = false;
         }
-        manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.MONITOR, Server.PLAYER_INFO) {
+        manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Server.PLAYER_INFO) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 int version = VIA_ENABLED ? Via.getAPI().getPlayerVersion(event.getPlayer())
                         : manager.getProtocolVersion(event.getPlayer());
-                List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists()
-                        .readSafely(version < 761 ? 0 : 1);
+                if (version >= 761) {
+                    NMS.onPlayerInfoAdd(event.getPlayer(), event.getPacket().getHandle());
+                    return;
+                }
+                List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists().readSafely(0);
                 if (list == null)
                     return;
                 boolean changed = false;
@@ -86,7 +89,7 @@ public class ProtocolLibListener {
                     changed = true;
                 }
                 if (changed) {
-                    event.getPacket().getPlayerInfoDataLists().write(version < 761 ? 0 : 1, list);
+                    event.getPacket().getPlayerInfoDataLists().write(0, list);
                 }
             }
         });

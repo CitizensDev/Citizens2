@@ -428,7 +428,8 @@ public class NPCCommands {
             min = 1,
             flags = "lrpos",
             permission = "citizens.npc.command")
-    public void command(CommandContext args, CommandSender sender, NPC npc, @Flag("permissions") String permissions,
+    public void command(CommandContext args, CommandSender sender, NPC npc,
+            @Flag(value = { "permissions", "permission" }) String permissions,
             @Flag(value = "cooldown", defValue = "0") int cooldown,
             @Flag(value = "gcooldown", defValue = "0") int gcooldown, @Flag(value = "n", defValue = "-1") int n,
             @Flag(value = "delay", defValue = "0") int delay,
@@ -455,7 +456,7 @@ public class NPCCommands {
             if (permissions != null) {
                 perms.addAll(Arrays.asList(permissions.split(",")));
             }
-            if (command.startsWith("npc select")) {
+            if (command.toLowerCase().startsWith("npc select")) {
                 throw new CommandException("npc select not currently supported within commands. Use --id <id> instead");
             }
             try {
@@ -620,7 +621,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --registry [registry name])",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name])",
             desc = "Create a new NPC",
             flags = "bustc",
             modifiers = { "create" },
@@ -629,8 +630,9 @@ public class NPCCommands {
     @Requirements
     public void create(CommandContext args, CommandSender sender, NPC npc, @Flag("at") Location at,
             @Flag(value = "type", defValue = "PLAYER") EntityType type, @Flag("trait") String traits,
-            @Flag("item") String item, @Flag("template") String templateName, @Flag("registry") String registryName)
-            throws CommandException {
+            @Flag(value = "nameplate", completions = { "true", "false", "hover" }) String nameplate,
+            @Flag("temporaryticks") Integer temporaryTicks, @Flag("item") String item,
+            @Flag("template") String templateName, @Flag("registry") String registryName) throws CommandException {
         String name = args.getJoinedStrings(1).trim();
         if (args.hasValueFlag("type")) {
             if (type == null) {
@@ -662,7 +664,7 @@ public class NPCCommands {
             }
         }
 
-        if (args.hasFlag('t')) {
+        if (args.hasFlag('t') || temporaryTicks != null) {
             registry = temporaryRegistry;
         }
 
@@ -690,9 +692,22 @@ public class NPCCommands {
             npc.data().set(NPC.SILENT_METADATA, true);
         }
 
-        // Initialize necessary traits
+        if (nameplate != null) {
+            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE,
+                    nameplate.equalsIgnoreCase("hover") ? nameplate.toLowerCase() : Boolean.parseBoolean(nameplate));
+        }
+
         if (!Setting.SERVER_OWNS_NPCS.asBoolean()) {
             npc.getOrAddTrait(Owner.class).setOwner(sender);
+        }
+
+        if (temporaryTicks != null) {
+            final NPC temp = npc;
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                if (temporaryRegistry.getByUniqueId(temp.getUniqueId()) == temp) {
+                    temp.destroy();
+                }
+            }, temporaryTicks);
         }
 
         npc.getOrAddTrait(MobType.class).setType(type);
@@ -1656,6 +1671,7 @@ public class NPCCommands {
             old = old.equals("hover") ? "true" : "" + !Boolean.parseBoolean(old);
         }
         npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, old);
+        npc.data().set(NPC.Metadata.FORCE_PACKET_UPDATE, true);
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_SET, old);
     }
 
@@ -2376,11 +2392,15 @@ public class NPCCommands {
             shop = shops.getShop(args.getString(2).toLowerCase());
         }
         if (action.equalsIgnoreCase("delete")) {
-            if (args.argsLength() != 3)
+            if (args.argsLength() != 3 || shop == null)
                 throw new CommandUsageException();
-            shops.deleteShop(args.getString(2).toLowerCase());
+            if (!sender.hasPermission("citizens.admin") && (!sender.hasPermission("citizens.npc.shop.edit")
+                    || !sender.hasPermission("citizens.npc.shop.edit." + shop.getName())))
+                throw new NoPermissionsException();
+            shops.deleteShop(shop);
             return;
         }
+
         if (shop == null)
             throw new CommandUsageException();
         if (action.equalsIgnoreCase("edit")) {

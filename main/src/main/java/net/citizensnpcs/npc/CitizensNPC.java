@@ -464,8 +464,8 @@ public class CitizensNPC extends AbstractNPC {
 
             boolean isLiving = getEntity() instanceof LivingEntity;
             int packetUpdateDelay = data().get(NPC.Metadata.PACKET_UPDATE_DELAY, Setting.PACKET_UPDATE_DELAY.asInt());
-            if (updateCounter++ > packetUpdateDelay) {
-                if (Setting.KEEP_CHUNKS_LOADED.asBoolean()) {
+            if (updateCounter++ > packetUpdateDelay || data().has(NPC.Metadata.FORCE_PACKET_UPDATE)) {
+                if (data().get(NPC.KEEP_CHUNK_LOADED_METADATA, Setting.KEEP_CHUNKS_LOADED.asBoolean())) {
                     ChunkCoord currentCoord = new ChunkCoord(getStoredLocation());
                     if (!currentCoord.equals(cachedCoord)) {
                         resetCachedCoord();
@@ -478,6 +478,7 @@ public class CitizensNPC extends AbstractNPC {
                     updateScoreboard();
                 }
                 updateCounter = 0;
+                data().remove(NPC.Metadata.FORCE_PACKET_UPDATE);
             }
 
             updateCustomNameVisibility();
