@@ -1102,8 +1102,8 @@ public class NMSImpl implements NMSBridge {
             if (Setting.DISABLE_TABLIST.asBoolean() != data.listed()) {
                 list.set(i,
                         new ClientboundPlayerInfoUpdatePacket.Entry(data.profileId(), data.profile(),
-                                Setting.DISABLE_TABLIST.asBoolean(), data.latency(), data.gameMode(),
-                                Setting.DISABLE_TABLIST.asBoolean() ? data.displayName() : Component.empty(),
+                                !Setting.DISABLE_TABLIST.asBoolean(), data.latency(), data.gameMode(),
+                                !Setting.DISABLE_TABLIST.asBoolean() ? data.displayName() : Component.empty(),
                                 data.chatSession()));
                 changed = true;
             }
