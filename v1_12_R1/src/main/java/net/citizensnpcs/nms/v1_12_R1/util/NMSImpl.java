@@ -472,13 +472,8 @@ public class NMSImpl implements NMSBridge {
     public List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null || handle.passengers == null)
-            return Lists.newArrayList();
-        return Lists.transform(handle.passengers, new Function<Entity, org.bukkit.entity.Entity>() {
-            @Override
-            public org.bukkit.entity.Entity apply(Entity input) {
-                return input.getBukkitEntity();
-            }
-        });
+            return Collections.emptyList();
+        return Lists.transform(handle.passengers, input -> input.getBukkitEntity());
     }
 
     @Override
@@ -966,7 +961,7 @@ public class NMSImpl implements NMSBridge {
             if (!removeFromPlayerList) {
                 return;
             }
-            Entity entity1 = entity.getVehicle();
+            Entity entity1 = entity.bJ();
             if (entity1 != null) {
                 if ((entity1.dead) || (!entity1.w(entity))) {
                     entity.stopRiding();

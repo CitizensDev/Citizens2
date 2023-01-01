@@ -898,7 +898,7 @@ public class NMSImpl implements NMSBridge {
             if (!removeFromPlayerList) {
                 return;
             }
-            Entity entity1 = entity.getVehicle();
+            Entity entity1 = entity.bB();
             if (entity1 != null) {
                 if ((entity1.dead) || (!entity1.w(entity))) {
                     entity.stopRiding();
@@ -906,7 +906,7 @@ public class NMSImpl implements NMSBridge {
             } else {
                 if (!entity.dead) {
                     try {
-                        entity.world.entityJoinedWorld(entity, true);
+                        entity.world.g(entity);
                     } catch (Throwable throwable) {
                         CrashReport crashreport = CrashReport.a(throwable, "Ticking player");
                         CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Player being ticked");

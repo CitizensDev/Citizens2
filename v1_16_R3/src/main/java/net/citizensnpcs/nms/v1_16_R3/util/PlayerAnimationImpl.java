@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.EntityPose;
 import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayOutAnimation;
@@ -22,7 +23,7 @@ public class PlayerAnimationImpl {
         }
         switch (animation) {
             case SNEAK:
-                player.getBukkitEntity().setSneaking(true);
+                player.setPose(EntityPose.CROUCHING);
                 sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
                         radius);
                 break;
@@ -43,7 +44,7 @@ public class PlayerAnimationImpl {
                         radius);
                 break;
             case STOP_SNEAKING:
-                player.getBukkitEntity().setSneaking(false);
+                player.setPose(EntityPose.STANDING);
                 sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
                         radius);
                 break;

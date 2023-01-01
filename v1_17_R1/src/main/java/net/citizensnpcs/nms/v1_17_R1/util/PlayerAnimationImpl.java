@@ -12,6 +12,7 @@ import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Pose;
 
 public class PlayerAnimationImpl {
     public static void play(PlayerAnimation animation, Player bplayer, int radius) {
@@ -22,7 +23,7 @@ public class PlayerAnimationImpl {
         }
         switch (animation) {
             case SNEAK:
-                player.getBukkitEntity().setSneaking(true);
+                player.setPose(Pose.CROUCHING);
                 sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData(), true),
                         player, radius);
                 break;
@@ -43,7 +44,7 @@ public class PlayerAnimationImpl {
                         player, radius);
                 break;
             case STOP_SNEAKING:
-                player.getBukkitEntity().setSneaking(false);
+                player.setPose(Pose.STANDING);
                 sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData(), true),
                         player, radius);
                 break;

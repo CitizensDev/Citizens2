@@ -15,7 +15,7 @@ import net.citizensnpcs.util.NMS;
 
 @TraitName("sittrait")
 public class SitTrait extends Trait {
-    private NPC holder;
+    private NPC chair;
     @Persist
     private Location sittingAt;
 
@@ -29,9 +29,12 @@ public class SitTrait extends Trait {
 
     @Override
     public void onDespawn() {
-        if (holder != null) {
-            holder.destroy();
-            holder = null;
+        if (chair != null) {
+            if (chair.getEntity() != null) {
+                chair.getEntity().eject();
+            }
+            chair.destroy();
+            chair = null;
         }
     }
 
@@ -42,26 +45,28 @@ public class SitTrait extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || !isSitting()) {
+        if (!npc.isSpawned() || !isSitting())
             return;
-        }
 
-        if (holder == null) {
-            NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("PlayerAnimationImpl");
+        if (chair == null) {
+            NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("SitRegistry");
             if (registry == null) {
-                registry = CitizensAPI.createNamedNPCRegistry("PlayerAnimationImpl", new MemoryNPCDataStore());
+                registry = CitizensAPI.createNamedNPCRegistry("SitRegistry", new MemoryNPCDataStore());
             }
-            holder = registry.createNPC(EntityType.ARMOR_STAND, "");
-            holder.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntity(npc);
-            holder.spawn(sittingAt);
+            chair = registry.createNPC(EntityType.ARMOR_STAND, "");
+            chair.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntity(npc);
+            if (!chair.spawn(sittingAt)) {
+                chair = null;
+                return;
+            }
         }
 
-        if (holder.getEntity() != null && !NMS.getPassengers(holder.getEntity()).contains(npc.getEntity())) {
-            NMS.mount(holder.getEntity(), npc.getEntity());
+        if (chair.isSpawned() && !NMS.getPassengers(chair.getEntity()).contains(npc.getEntity())) {
+            NMS.mount(chair.getEntity(), npc.getEntity());
         }
 
-        if (holder.getStoredLocation() != null && holder.getStoredLocation().distance(sittingAt) > 0.05) {
-            holder.teleport(sittingAt, TeleportCause.PLUGIN);
+        if (chair.getStoredLocation() != null && chair.getStoredLocation().distance(sittingAt) > 0.05) {
+            chair.teleport(sittingAt, TeleportCause.PLUGIN);
         }
     }
 
