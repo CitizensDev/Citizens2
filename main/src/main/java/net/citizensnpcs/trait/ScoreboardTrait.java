@@ -27,6 +27,7 @@ public class ScoreboardTrait extends Trait {
     private boolean changed;
     @Persist
     private ChatColor color;
+    private String lastName;
     private final PerPlayerMetadata<Boolean> metadata;
     private ChatColor previousGlowingColor;
     @Persist
@@ -81,9 +82,7 @@ public class ScoreboardTrait extends Trait {
     @Override
     public void onDespawn() {
         previousGlowingColor = null;
-        if (npc.getEntity() == null)
-            return;
-        String name = npc.getEntity() instanceof Player ? npc.getEntity().getName() : npc.getUniqueId().toString();
+        String name = lastName;
         String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
         if (teamName.isEmpty())
             return;
@@ -129,9 +128,17 @@ public class ScoreboardTrait extends Trait {
             return;
 
         if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                metadata.remove(player.getUniqueId(), team.getName());
+                NMS.sendTeamPacket(player, team, 1);
+            }
             team.unregister();
             npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
             return;
+        }
+
+        if (npc.isSpawned()) {
+            lastName = npc.getEntity() instanceof Player ? npc.getEntity().getName() : npc.getUniqueId().toString();
         }
 
         Set<String> newTags = new HashSet<String>(tags);

@@ -484,9 +484,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         shops.loadFromDisk();
         shops.load();
 
-        locationLookup.cancel();
-        locationLookup = new LocationLookup();
-        locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
         Template.shutdown();
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
