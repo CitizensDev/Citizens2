@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -36,9 +39,11 @@ import net.citizensnpcs.api.gui.MenuPattern;
 import net.citizensnpcs.api.gui.MenuSlot;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.persistence.Persistable;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.trait.shop.CommandAction;
@@ -243,13 +248,15 @@ public class ShopTrait extends Trait {
         }
     }
 
-    public static class NPCShopItem implements Cloneable {
+    public static class NPCShopItem implements Cloneable, Persistable {
+        @Persist
+        private String clickMessage;
+        @Persist
+        private String clickToConfirmMessage;
         @Persist
         private final List<NPCShopAction> cost = Lists.newArrayList();
         @Persist
         private ItemStack display;
-        @Persist
-        private String message;
         @Persist
         private final List<NPCShopAction> result = Lists.newArrayList();
 
@@ -308,35 +315,67 @@ public class ShopTrait extends Trait {
             ItemStack stack = display.clone();
             ItemMeta meta = stack.getItemMeta();
             if (meta.hasDisplayName()) {
-                meta.setDisplayName(Placeholders.replace(meta.getDisplayName(), player));
+                meta.setDisplayName(placeholders(meta.getDisplayName(), player));
             }
             if (!meta.hasLore()) {
                 List<String> lore = Lists.newArrayList();
                 if (cost.size() > 0) {
-                    result.forEach((a) -> lore.add(a.describe()));
+                    result.forEach(a -> lore.add(a.describe()));
                 }
                 if (result.size() > 0) {
-                    result.forEach((a) -> lore.add(a.describe()));
+                    result.forEach(a -> lore.add(a.describe()));
                 }
             }
             if (meta.hasLore()) {
-                meta.setLore(Lists.transform(meta.getLore(), line -> Placeholders.replace(line, player)));
+                meta.setLore(Lists.transform(meta.getLore(), line -> placeholders(line, player)));
             }
             stack.setItemMeta(meta);
             return stack;
         }
 
-        public void onClick(NPCShop shop, CitizensInventoryClickEvent event) {
+        @Override
+        public void load(DataKey key) {
+            if (key.keyExists("message")) {
+                clickMessage = key.getString("message");
+                key.removeKey("message");
+            }
+        }
+
+        public void onClick(NPCShop shop, CitizensInventoryClickEvent event, boolean secondClick) {
+            if (clickToConfirmMessage != null && !secondClick) {
+                Messaging.sendColorless(event.getWhoClicked(),
+                        placeholders(clickToConfirmMessage, (Player) event.getWhoClicked()));
+                return;
+            }
             List<Transaction> take = execute(cost, action -> action.take(event.getWhoClicked()));
             if (take == null)
                 return;
             if (execute(result, action -> action.grant(event.getWhoClicked())) == null) {
                 take.forEach(a -> a.rollback());
             }
-            if (message != null) {
-                Messaging.sendColorless(event.getWhoClicked(), message);
+            if (clickMessage != null) {
+                Messaging.sendColorless(event.getWhoClicked(),
+                        Placeholders.replace(clickMessage, (Player) event.getWhoClicked()));
             }
         }
+
+        private String placeholders(String string, Player player) {
+            string = Placeholders.replace(string, player);
+            StringBuffer sb = new StringBuffer();
+            Matcher matcher = PLACEHOLDER_REGEX.matcher(string);
+            while (matcher.find()) {
+                matcher.appendReplacement(sb, Joiner.on(", ").join(
+                        Iterables.transform(matcher.group(1).equals("cost") ? cost : result, NPCShopAction::describe)));
+            }
+            matcher.appendTail(sb);
+            return sb.toString();
+        }
+
+        @Override
+        public void save(DataKey key) {
+        }
+
+        private static final Pattern PLACEHOLDER_REGEX = Pattern.compile("<(cost|result)>", Pattern.CASE_INSENSITIVE);
     }
 
     @Menu(title = "NPC Shop Item Editor", type = InventoryType.CHEST, dimensions = { 6, 9 })
@@ -368,12 +407,22 @@ public class ShopTrait extends Trait {
             if (modified.display != null) {
                 ctx.getSlot(9 * 4 + 4).setItemStack(modified.display);
             }
-            ctx.getSlot(9 * 3 + 4).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
-                    "Set message to send on click, currently:", modified.message);
-            ctx.getSlot(9 * 3 + 4).setClickHandler(
-                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.message, s -> {
-                        modified.message = s;
-                        ctx.getSlot(9 * 3 + 4).setDescription(modified.message);
+            ctx.getSlot(9 * 3 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
+                    "Set message to send on click, currently:",
+                    modified.clickMessage == null ? "Unset" : modified.clickMessage);
+            ctx.getSlot(9 * 3 + 3).setClickHandler(
+                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.clickMessage, s -> {
+                        modified.clickMessage = s;
+                        ctx.getSlot(9 * 3 + 3).setDescription(modified.clickMessage);
+                    })));
+
+            ctx.getSlot(9 * 3 + 5).setItemStack(new ItemStack(Util.getFallbackMaterial("FEATHER", "SIGN")),
+                    "Set click to confirm message.", "You can use <cost> or <result> placeholders.\nCurrently:\n"
+                            + (modified.clickToConfirmMessage == null ? "Unset" : modified.clickToConfirmMessage));
+            ctx.getSlot(9 * 3 + 5).setClickHandler(
+                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.clickToConfirmMessage, s -> {
+                        modified.clickToConfirmMessage = s;
+                        ctx.getSlot(9 * 3 + 5).setDescription(modified.clickToConfirmMessage);
                     })));
             int pos = 0;
             for (GUI template : NPCShopAction.getGUIs()) {
@@ -425,7 +474,7 @@ public class ShopTrait extends Trait {
                             }));
         }
 
-        @MenuSlot(slot = { 4, 3 }, material = Material.FEATHER, amount = 1, title = "<f>Set name")
+        @MenuSlot(slot = { 4, 3 }, material = Material.NAME_TAG, amount = 1, title = "<f>Set name")
         public void onEditName(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             if (modified.display == null)
@@ -587,6 +636,7 @@ public class ShopTrait extends Trait {
     public static class NPCShopViewer extends InventoryMenuPage {
         private MenuContext ctx;
         private int currentPage = 0;
+        private NPCShopItem lastClickedItem;
         private final Player player;
         private final NPCShop shop;
 
@@ -612,7 +662,8 @@ public class ShopTrait extends Trait {
                 ctx.getSlot(i).setItemStack(item.getDisplayItem(player));
                 ctx.getSlot(i).setClickHandler(evt -> {
                     evt.setCancelled(true);
-                    item.onClick(shop, evt);
+                    item.onClick(shop, evt, lastClickedItem == item);
+                    lastClickedItem = item;
                 });
             }
 

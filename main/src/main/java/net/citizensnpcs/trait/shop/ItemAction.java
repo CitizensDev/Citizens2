@@ -88,6 +88,9 @@ public class ItemAction extends NPCShopAction {
 
     @Override
     public String describe() {
+        if (items.size() == 1) {
+            return items.get(0).getAmount() + " " + Util.prettyEnum(items.get(0).getType());
+        }
         String description = items.size() + " items";
         for (int i = 0; i < items.size(); i++) {
             ItemStack item = items.get(i);

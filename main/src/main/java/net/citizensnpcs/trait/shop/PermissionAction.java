@@ -169,7 +169,7 @@ public class PermissionAction extends NPCShopAction {
                 PermissionAction old = (PermissionAction) previous;
                 description = old.describe();
             }
-            return Util.createItem(Util.getFallbackMaterial("OAK_SIGN", "SIGN"), "Permission", description);
+            return Util.createItem(Material.PAPER, "Permission", description);
         }
 
         @Override
