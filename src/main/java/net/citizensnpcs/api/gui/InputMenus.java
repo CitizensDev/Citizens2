@@ -173,7 +173,11 @@ public class InputMenus {
         @ClickHandler(slot = { 0, 2 })
         public void save(InventoryMenuSlot slot, CitizensInventoryClickEvent evt) {
             evt.setCancelled(true);
-            if (callback.apply(slot.getCurrentItem().getItemMeta().getDisplayName())) {
+            String res = slot.getCurrentItem().getItemMeta().getDisplayName();
+            if (res != null && (res.isEmpty() || res.equalsIgnoreCase("Not set") || res.equalsIgnoreCase("null"))) {
+                res = null;
+            }
+            if (callback.apply(res)) {
                 ctx.getMenu().transitionBack();
             }
         }

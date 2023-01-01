@@ -54,6 +54,8 @@ public class PersistenceLoader {
     }
 
     private static class PersistField {
+        private boolean checkedForDefault;
+        private Object defaultValue;
         private final Persister<?> delegate;
         private final Field field;
         private final String key;
@@ -100,8 +102,30 @@ public class PersistenceLoader {
             return field.getType();
         }
 
+        public boolean isDefault(Object value) {
+            return false;
+            // return defaultValue != null && defaultValue.equals(value);
+        }
+
         public boolean isRequired() {
             return persistAnnotation.required();
+        }
+
+        public void populateDefault(Object instance) {
+            if (checkedForDefault)
+                return;
+
+            try {
+                defaultValue = field.get(instance);
+                checkedForDefault = true;
+                if (defaultValue != null && !defaultValue.getClass().isPrimitive() && !(defaultValue instanceof Number)
+                        && !(defaultValue instanceof Enum) && !(defaultValue instanceof Boolean)
+                        && !(defaultValue instanceof String)) {
+                    defaultValue = null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         public void set(Object instance, Object value) {
@@ -441,13 +465,19 @@ public class PersistenceLoader {
     public static <T> T load(Class<? extends T> clazz, DataKey root) {
         T instance = null;
         try {
-            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-                if (constructor.getParameterCount() == 0) {
-                    constructor.setAccessible(true);
-                    instance = (T) constructor.newInstance();
-                    break;
+            Constructor<?> constructor = constructorCache.get(clazz);
+            if (constructor == null) {
+                for (Constructor<?> cons : clazz.getDeclaredConstructors()) {
+                    if (cons.getParameterCount() == 0) {
+                        cons.setAccessible(true);
+                        constructor = cons;
+                        constructorCache.put(clazz, constructor);
+                        break;
+                    }
                 }
             }
+
+            instance = (T) constructor.newInstance();
         } catch (Exception e) {
             Messaging.severe("Error creating instance for " + clazz + " using " + root);
             e.printStackTrace();
@@ -474,6 +504,7 @@ public class PersistenceLoader {
         PersistField[] fields = getFields(clazz);
         for (PersistField field : fields) {
             try {
+                field.populateDefault(instance);
                 deserialise(field, instance, field.get(instance), field.getDataKey(root));
             } catch (Exception e) {
                 if (e != loadException) {
@@ -572,6 +603,10 @@ public class PersistenceLoader {
 
     @SuppressWarnings("unchecked")
     private static void serialiseValue(PersistField field, DataKey root, Object value) {
+        if (field.isDefault(value)) {
+            root.removeKey("");
+            return;
+        }
         if (field.delegate != null) {
             ((Persister<Object>) field.delegate).save(value, root);
         } else if (value instanceof Enum) {
@@ -584,9 +619,9 @@ public class PersistenceLoader {
         }
     }
 
-    private static final Map<Class<?>, PersistField[]> fieldCache = new WeakHashMap<Class<?>, PersistField[]>();
-
-    private static final Map<Class<? extends Persister<?>>, Persister<?>> loadedDelegates = new WeakHashMap<Class<? extends Persister<?>>, Persister<?>>();
+    private static Map<Class<?>, Constructor<?>> constructorCache = new WeakHashMap<>();
+    private static final Map<Class<?>, PersistField[]> fieldCache = new WeakHashMap<>();
+    private static final Map<Class<? extends Persister<?>>, Persister<?>> loadedDelegates = new WeakHashMap<>();
     private static final Exception loadException = new Exception() {
         @SuppressWarnings("unused")
         public void fillInStackTrace(StackTraceElement[] elements) {
@@ -594,8 +629,8 @@ public class PersistenceLoader {
 
         private static final long serialVersionUID = -4245839150826112365L;
     };
-    private static final Map<Class<?>, Class<? extends Persister<?>>> persistRedirects = new WeakHashMap<Class<?>, Class<? extends Persister<?>>>();
-    private static final Map<Class<?>, PersisterRegistry<?>> registries = new WeakHashMap<Class<?>, PersisterRegistry<?>>();
+    private static final Map<Class<?>, Class<? extends Persister<?>>> persistRedirects = new WeakHashMap<>();
+    private static final Map<Class<?>, PersisterRegistry<?>> registries = new WeakHashMap<>();
 
     static {
         registerPersistDelegate(Location.class, LocationPersister.class);
