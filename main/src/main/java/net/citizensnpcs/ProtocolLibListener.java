@@ -108,7 +108,6 @@ public class ProtocolLibListener {
                         PacketRotationSession session = trait.getPacketSession(event.getPlayer());
                         if (session == null || !session.isActive())
                             return;
-
                         PacketContainer packet = event.getPacket();
                         PacketType type = event.getPacketType();
                         if (type == Server.ENTITY_HEAD_ROTATION) {
@@ -127,6 +126,8 @@ public class ProtocolLibListener {
                             packet.getFloat().write(0, session.getBodyYaw());
                             packet.getFloat().write(1, session.getPitch());
                         }
+
+                        session.onPacketOverwritten();
                     }
                 });
     }

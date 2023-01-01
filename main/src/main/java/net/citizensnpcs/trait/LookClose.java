@@ -106,6 +106,7 @@ public class LookClose extends Trait implements Toggleable {
             for (UUID uuid : Sets.newHashSet(Sets.difference(sessions.keySet(), seen))) {
                 sessions.remove(uuid).end();
             }
+            return;
         } else if (sessions.size() > 0) {
             for (PacketRotationSession session : sessions.values()) {
                 session.end();

@@ -145,7 +145,7 @@ public class RotationTrait extends Trait {
     public static class PacketRotationSession {
         private boolean ended;
         private final RotationSession session;
-        private RotationTriple triple;
+        private PacketRotationTriple triple;
 
         public PacketRotationSession(RotationSession session) {
             this.session = session;
@@ -180,6 +180,12 @@ public class RotationTrait extends Trait {
             return !ended && session.isActive();
         }
 
+        public void onPacketOverwritten() {
+            if (triple == null)
+                return;
+            triple.record();
+        }
+
         public void run(Entity entity) {
             if (triple == null) {
                 triple = new PacketRotationTriple(entity);
@@ -192,13 +198,25 @@ public class RotationTrait extends Trait {
     }
 
     private static class PacketRotationTriple extends EntityRotation {
+        private float lastBodyYaw;
+        private float lastHeadYaw;
+        private float lastPitch;
+
         public PacketRotationTriple(Entity entity) {
             super(entity);
         }
 
         @Override
         public void apply() {
-            // NMS.sendRotationNearby(entity, bodyYaw, headYaw, pitch);
+            if (Math.abs(lastBodyYaw - bodyYaw) + Math.abs(lastHeadYaw - headYaw) + Math.abs(pitch - lastPitch) > 1) {
+                NMS.sendRotationNearby(entity, bodyYaw, headYaw, pitch);
+            }
+        }
+
+        public void record() {
+            lastBodyYaw = bodyYaw;
+            lastHeadYaw = headYaw;
+            lastPitch = pitch;
         }
     }
 
