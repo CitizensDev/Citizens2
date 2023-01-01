@@ -257,6 +257,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public boolean isSpawned();
 
+    public boolean isUpdating(NPCUpdate update);
+
     /**
      * Loads the {@link NPC} from the given {@link DataKey}. This reloads all traits, respawns the NPC and sets it up
      * for execution. Should not be called often.
@@ -284,6 +286,8 @@ public interface NPC extends Agent, Cloneable {
      *            The root data key
      */
     public void save(DataKey key);
+
+    public void scheduleUpdate(NPCUpdate update);
 
     /**
      * Sets whether to always use a name hologram instead of the in-built Minecraft name.
@@ -572,125 +576,25 @@ public interface NPC extends Agent, Cloneable {
         public String getKey() {
             return key;
         }
+
+        public static Metadata byKey(String name) {
+            for (Metadata v : NPC.Metadata.values()) {
+                if (v.key.equals(name))
+                    return v;
+            }
+            return null;
+        }
+
+        public static Metadata byName(String name) {
+            try {
+                return valueOf(name);
+            } catch (IllegalArgumentException iae) {
+                return null;
+            }
+        }
     }
 
-    public static final String ALWAYS_USE_NAME_HOLOGRAM_METADATA = "always-use-name-hologram";
-    /**
-     * The Minecraft ambient sound played. String - Minecraft sound name
-     */
-    public static final String AMBIENT_SOUND_METADATA = "ambient-sound";
-    /**
-     * Whether the NPC is collidable with Players or not. Boolean.
-     */
-    public static final String COLLIDABLE_METADATA = "collidable";
-    /**
-     * Whether the NPC can damage other Entities. Boolean.
-     */
-    public static final String DAMAGE_OTHERS_METADATA = "damage-others";
-    /**
-     * The Minecraft sound played when the NPC dies. String - Minecraft sound name.
-     */
-    public static final String DEATH_SOUND_METADATA = "death-sound";
-    /**
-     * Whether the NPC is 'protected' i.e. invulnerable to damage. Boolean.
-     */
-    public static final String DEFAULT_PROTECTED_METADATA = "protected";
-    public static final String DISABLE_DEFAULT_STUCK_ACTION_METADATA = "disable-default-stuck-action";
-    /**
-     * Whether the NPC drops its inventory after death. Boolean.
-     */
-    public static final String DROPS_ITEMS_METADATA = "drops-items";
-    /**
-     * Whether the NPC is 'flyable' i.e. will fly when pathfinding. Boolean.
-     */
-    public static final String FLYABLE_METADATA = "flyable";
-    /**
-     * Whether the NPC is currently glowing. Boolean.
-     */
-    public static final String GLOWING_METADATA = "glowing";
-    /**
-     * The Minecraft sound to play when hurt. String - Minecraft sound name.
-     */
-    public static final String HURT_SOUND_METADATA = "hurt-sound";
-    /**
-     * The Item amount. Integer.
-     */
-    public static final String ITEM_AMOUNT_METADATA = "item-type-amount";
-    /**
-     * The Item data. Byte.
-     */
-    public static final String ITEM_DATA_METADATA = "item-type-data";
-    /**
-     * The Item ID. String.
-     */
-    public static final String ITEM_ID_METADATA = "item-type-id";
-    /**
-     * Whether to keep chunk loaded. Boolean.
-     */
-    public static final String KEEP_CHUNK_LOADED_METADATA = "keep-chunk-loaded";
-    /**
-     * Whether the NPC is leashable. Boolean.
-     */
-    public static final String LEASH_PROTECTED_METADATA = "protected-leash";
-    /**
-     * The Minecart item data. Byte.
-     */
-    public static final String MINECART_ITEM_DATA_METADATA = "minecart-item-data";
-    /**
-     * The Minecart item name.
-     */
-    public static final String MINECART_ITEM_METADATA = "minecart-item-name";
-    /**
-     * The Minecart item offset as defined by Minecraft. {@link Minecart#setDisplayBlockOffset(int)}
-     */
-    public static final String MINECART_OFFSET_METADATA = "minecart-item-offset";
-    /**
-     * Whether the NPC's nameplate should be visible. Boolean.
-     */
-    public static final String NAMEPLATE_VISIBLE_METADATA = "nameplate-visible";
-    /**
-     * Whether to open doors while pathfinding. Boolean.
-     */
-    public static final String PATHFINDER_OPEN_DOORS_METADATA = "pathfinder-open-doors";
-    /**
-     * Whether to remove players from the player list. Boolean defaults to true.
-     */
-    public static final String REMOVE_FROM_PLAYERLIST_METADATA = "removefromplayerlist";
-    /**
-     * The Integer delay to respawn in ticks after death. Only works if non-zero.
-     */
-    public static final String RESPAWN_DELAY_METADATA = "respawn-delay";
-    /**
-     * The fake NPC scoreboard team name because Minecraft requires a team name. Usually will be a random UUID in String
-     * form.
-     */
-    public static final String SCOREBOARD_FAKE_TEAM_NAME_METADATA = "fake-scoreboard-team-name";
-    /**
-     * Whether to save / persist across server restarts. Boolean.
-     */
-    public static final String SHOULD_SAVE_METADATA = "should-save";
-    /**
-     * Whether to suppress sounds. Boolean.
-     */
-    public static final String SILENT_METADATA = "silent-sounds";
-    /**
-     * Whether to sneak. Boolean.
-     */
-    public static final String SNEAKING_METADATA = "citizens-sneaking";
-    /**
-     * Whether to allow swimming. Boolean.
-     */
-    public static final String SWIMMING_METADATA = "swim";
-    /**
-     * Whether to prevent NPC being targeted by hostile mobs. Boolean.
-     */
-    public static final String TARGETABLE_METADATA = "protected-target";
-    /**
-     * Whether to use Minecraft AI. Boolean.
-     */
-    public static final String USE_MINECRAFT_AI_METADATA = "minecraft-ai";
-    /**
-     * Whether to block Minecraft villager trades. Boolean defaults to true.
-     */
-    public static final String VILLAGER_BLOCK_TRADES = "villager-trades";
+    public enum NPCUpdate {
+        PACKET;
+    }
 }

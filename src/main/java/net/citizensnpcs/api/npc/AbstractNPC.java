@@ -56,15 +56,15 @@ public abstract class AbstractNPC implements NPC {
     private final int id;
     private Supplier<ItemStack> itemProvider = () -> {
         Material id = Material.STONE;
-        int data = data().get(NPC.ITEM_DATA_METADATA, data().get("falling-block-data", 0));
-        if (data().has(NPC.ITEM_ID_METADATA)) {
-            id = Material.getMaterial(data().<String> get(NPC.ITEM_ID_METADATA), false);
+        int data = data().get(NPC.Metadata.ITEM_DATA, data().get("falling-block-data", 0));
+        if (data().has(NPC.Metadata.ITEM_ID)) {
+            id = Material.getMaterial(data().<String> get(NPC.Metadata.ITEM_ID), false);
         }
         if (id == Material.AIR) {
             id = Material.STONE;
             Messaging.severe(getId(), "invalid Material: converted to stone");
         }
-        return new org.bukkit.inventory.ItemStack(id, data().get(NPC.ITEM_AMOUNT_METADATA, 1), (short) data);
+        return new org.bukkit.inventory.ItemStack(id, data().get(NPC.Metadata.ITEM_AMOUNT, 1), (short) data);
     };
     private final MetadataStore metadata = new SimpleMetadataStore() {
         @Override
@@ -323,12 +323,12 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public boolean isFlyable() {
-        return data().get(NPC.FLYABLE_METADATA, false);
+        return data().get(NPC.Metadata.FLYABLE, false);
     }
 
     @Override
     public boolean isProtected() {
-        return data().get(NPC.DEFAULT_PROTECTED_METADATA, true);
+        return data().get(NPC.Metadata.DEFAULT_PROTECTED, true);
     }
 
     @Override
@@ -409,21 +409,21 @@ public abstract class AbstractNPC implements NPC {
     public boolean requiresNameHologram() {
         return getEntityType() != EntityType.ARMOR_STAND
                 && ((name.length() > 16 && getEntityType() == EntityType.PLAYER)
-                        || data().get(NPC.ALWAYS_USE_NAME_HOLOGRAM_METADATA, false)
+                        || data().get(NPC.Metadata.ALWAYS_USE_NAME_HOLOGRAM, false)
                         || (coloredNameStringCache != null && coloredNameStringCache.contains("§x"))
                         || !Placeholders.replace(name, null, this).equals(name));
     }
 
     @Override
     public void save(DataKey root) {
-        if (!metadata.get(NPC.SHOULD_SAVE_METADATA, true))
+        if (!metadata.get(NPC.Metadata.SHOULD_SAVE, true))
             return;
 
         metadata.saveTo(root.getRelative("metadata"));
         root.setString("name", name);
         root.setString("uuid", uuid.toString());
 
-        if (data().has(NPC.ITEM_ID_METADATA)) {
+        if (data().has(NPC.Metadata.ITEM_ID)) {
             ItemStack stack = itemProvider.get();
             ItemStorage.saveItem(root.getRelative("itemprovider"), stack);
         } else {
@@ -458,12 +458,12 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void setAlwaysUseNameHologram(boolean use) {
-        data().setPersistent(NPC.ALWAYS_USE_NAME_HOLOGRAM_METADATA, use);
+        data().setPersistent(NPC.Metadata.ALWAYS_USE_NAME_HOLOGRAM, use);
     }
 
     @Override
     public void setFlyable(boolean flyable) {
-        data().setPersistent(NPC.FLYABLE_METADATA, flyable);
+        data().setPersistent(NPC.Metadata.FLYABLE, flyable);
     }
 
     @Override
@@ -503,12 +503,12 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void setProtected(boolean isProtected) {
-        data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, isProtected);
+        data().setPersistent(NPC.Metadata.DEFAULT_PROTECTED, isProtected);
     }
 
     @Override
     public void setUseMinecraftAI(boolean use) {
-        data().setPersistent(NPC.USE_MINECRAFT_AI_METADATA, use);
+        data().setPersistent(NPC.Metadata.USE_MINECRAFT_AI, use);
     }
 
     private void teleport(final Entity entity, Location location, int delay) {
@@ -581,6 +581,6 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public boolean useMinecraftAI() {
-        return data().get(NPC.USE_MINECRAFT_AI_METADATA, false);
+        return data().get(NPC.Metadata.USE_MINECRAFT_AI, false);
     }
 }

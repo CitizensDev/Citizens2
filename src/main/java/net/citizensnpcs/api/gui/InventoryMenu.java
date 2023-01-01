@@ -217,9 +217,9 @@ public class InventoryMenu implements Listener, Runnable {
             return;
         }
 
-        if (!isOurInventory(clicked)) {
+        if (!isOurInventory(clicked))
             return;
-        }
+
         switch (event.getAction()) {
             case COLLECT_TO_CURSOR:
                 event.setCancelled(true);
@@ -230,8 +230,10 @@ public class InventoryMenu implements Listener, Runnable {
             default:
                 break;
         }
+
         if (event.getSlot() < 0)
             return;
+
         InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
         CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(event, pickupAmount);
         PageContext pg = page;

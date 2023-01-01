@@ -24,6 +24,16 @@ public interface Navigator {
     void cancelNavigation(CancelReason reason);
 
     /**
+     * @see #canNavigateTo(Location, NavigatorParameters)
+     */
+    boolean canNavigateTo(Location dest);
+
+    /**
+     * Returns whether the NPC can navigate to the given destination with the navigator parameters.
+     */
+    boolean canNavigateTo(Location dest, NavigatorParameters params);
+
+    /**
      * Returns the {@link NavigatorParameters} local to this navigator. These parameters are copied to local target
      * parameters when a new target is started.
      *

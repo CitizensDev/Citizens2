@@ -110,17 +110,17 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                         if (next.getY() > prev.getY()) {
                             npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
                             if (sneakingForScaffolding) {
-                                npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = false);
+                                npc.data().set(NPC.Metadata.SNEAKING, sneakingForScaffolding = false);
                             }
                         } else if ((isScaffolding(in) || isScaffolding(next.getType()))) {
                             if (loc.distance(next.getLocation().add(0.5, 1, 0.5)) < 0.4) {
-                                npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = true);
+                                npc.data().set(NPC.Metadata.SNEAKING, sneakingForScaffolding = true);
                             }
                         } else if (next.getY() < prev.getY()) {
                             npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(-0.2));
                         }
                     } else if (sneakingForScaffolding) {
-                        npc.data().set(NPC.SNEAKING_METADATA, sneakingForScaffolding = false);
+                        npc.data().set(NPC.Metadata.SNEAKING, sneakingForScaffolding = false);
                     }
                 }
             });
@@ -128,7 +128,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 @Override
                 public void onCompletion(CancelReason cancelReason) {
                     npc.data().set("running-ladder", false);
-                    npc.data().set(NPC.SNEAKING_METADATA, false);
+                    npc.data().set(NPC.Metadata.SNEAKING, false);
                 }
             });
             added = true;
