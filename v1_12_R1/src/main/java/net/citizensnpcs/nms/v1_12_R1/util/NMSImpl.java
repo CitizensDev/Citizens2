@@ -959,8 +959,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void playerTick(Player entity) {
-        ((EntityPlayer) getHandle(entity)).playerTick();
+    public Runnable playerTicker(Player entity) {
+        return ((EntityPlayer) getHandle(entity))::playerTick;
     }
 
     @Override
@@ -1795,7 +1795,7 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
-    public static SoundEffect getSoundEffect(NPC npc, SoundEffect snd, String meta) {
+    public static SoundEffect getSoundEffect(NPC npc, SoundEffect snd, NPC.Metadata meta) {
         return npc == null || !npc.data().has(meta) ? snd
                 : SoundEffect.a.get(new MinecraftKey(npc.data().get(meta, snd == null ? "" : snd.toString())));
     }
@@ -1824,9 +1824,9 @@ public class NMSImpl implements NMSBridge {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
             return;
-        Material mat = Material.getMaterial(npc.data().get(NPC.MINECART_ITEM_METADATA, ""));
-        int data = npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0);
-        int offset = npc.data().get(NPC.MINECART_OFFSET_METADATA, 0);
+        Material mat = Material.getMaterial(npc.data().get(NPC.Metadata.MINECART_ITEM, ""));
+        int data = npc.data().get(NPC.Metadata.MINECART_ITEM_DATA, 0);
+        int offset = npc.data().get(NPC.Metadata.MINECART_OFFSET, 0);
         minecart.a(mat != null);
         if (mat != null) {
             minecart.setDisplayBlock(Block.getById(mat.getId()).fromLegacyData(data));

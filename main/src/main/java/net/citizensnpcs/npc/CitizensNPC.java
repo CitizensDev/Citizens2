@@ -48,6 +48,7 @@ import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.ScoreboardTrait;
+import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
@@ -79,7 +80,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
         if (reason == DespawnReason.CHUNK_UNLOAD) {
-            event.setCancelled(data().get(NPC.KEEP_CHUNK_LOADED_METADATA, Setting.KEEP_CHUNKS_LOADED.asBoolean()));
+            event.setCancelled(data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean()));
         }
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() && reason != DespawnReason.DEATH) {
@@ -160,6 +161,13 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public boolean isUpdating(NPCUpdate update) {
+        return update == NPCUpdate.PACKET
+                ? updateCounter > data().get(NPC.Metadata.PACKET_UPDATE_DELAY, Setting.PACKET_UPDATE_DELAY.asInt())
+                : false;
+    }
+
+    @Override
     public void load(final DataKey root) {
         super.load(root);
         // Spawn the NPC
@@ -195,9 +203,16 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public void save(DataKey root) {
         super.save(root);
-        if (!data().get(NPC.SHOULD_SAVE_METADATA, true))
+        if (!data().get(NPC.Metadata.SHOULD_SAVE, true))
             return;
         navigator.save(root.getRelative("navigator"));
+    }
+
+    @Override
+    public void scheduleUpdate(NPCUpdate update) {
+        if (update == NPCUpdate.PACKET) {
+            updateCounter = data().get(NPC.Metadata.PACKET_UPDATE_DELAY, Setting.PACKET_UPDATE_DELAY.asInt()) + 1;
+        }
     }
 
     @Override
@@ -407,13 +422,16 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public void teleport(Location location, TeleportCause reason) {
-        super.teleport(location, reason);
         if (!isSpawned())
             return;
+        if (hasTrait(SitTrait.class)) {
+            getOrAddTrait(SitTrait.class).setSitting(location);
+        }
         Location npcLoc = getEntity().getLocation(CACHE_LOCATION);
-        if (isSpawned() && npcLoc.getWorld() == location.getWorld() && npcLoc.distanceSquared(location) < 1) {
+        if (isSpawned() && npcLoc.getWorld() == location.getWorld() && npcLoc.distance(location) < 1) {
             NMS.setHeadYaw(getEntity(), location.getYaw());
         }
+        super.teleport(location, reason);
     }
 
     @Override
@@ -463,9 +481,8 @@ public class CitizensNPC extends AbstractNPC {
             }
 
             boolean isLiving = getEntity() instanceof LivingEntity;
-            int packetUpdateDelay = data().get(NPC.Metadata.PACKET_UPDATE_DELAY, Setting.PACKET_UPDATE_DELAY.asInt());
-            if (updateCounter++ > packetUpdateDelay || data().has(NPC.Metadata.FORCE_PACKET_UPDATE)) {
-                if (data().get(NPC.KEEP_CHUNK_LOADED_METADATA, Setting.KEEP_CHUNKS_LOADED.asBoolean())) {
+            if (isUpdating(NPCUpdate.PACKET)) {
+                if (data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean())) {
                     ChunkCoord currentCoord = new ChunkCoord(getStoredLocation());
                     if (!currentCoord.equals(cachedCoord)) {
                         resetCachedCoord();
@@ -478,7 +495,6 @@ public class CitizensNPC extends AbstractNPC {
                     updateScoreboard();
                 }
                 updateCounter = 0;
-                data().remove(NPC.Metadata.FORCE_PACKET_UPDATE);
             }
 
             updateCustomNameVisibility();
@@ -502,13 +518,15 @@ public class CitizensNPC extends AbstractNPC {
                 }
             }
 
-            if (SUPPORT_SILENT && data().has(NPC.SILENT_METADATA)) {
+            if (SUPPORT_SILENT && data().has(NPC.Metadata.SILENT)) {
                 try {
                     getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.Metadata.SILENT).toString()));
                 } catch (NoSuchMethodError e) {
                     SUPPORT_SILENT = false;
                 }
             }
+
+            updateCounter++;
         } catch (Exception ex) {
             Throwable error = Throwables.getRootCause(ex);
             Messaging.logTr(Messages.EXCEPTION_UPDATING_NPC, getId(), error.getMessage());
@@ -542,8 +560,8 @@ public class CitizensNPC extends AbstractNPC {
             return;
         if (!Util.isAlwaysFlyable(type))
             return;
-        if (!data().has(NPC.FLYABLE_METADATA)) {
-            data().setPersistent(NPC.FLYABLE_METADATA, true);
+        if (!data().has(NPC.Metadata.FLYABLE)) {
+            data().setPersistent(NPC.Metadata.FLYABLE, true);
         }
         if (!hasTrait(Gravity.class)) {
             getOrAddTrait(Gravity.class).setEnabled(true);
@@ -580,6 +598,8 @@ public class CitizensNPC extends AbstractNPC {
     private static boolean SUPPORT_GLOWING = true;
     private static boolean SUPPORT_NODAMAGE_TICKS = true;
     private static boolean SUPPORT_PICKUP_ITEMS = true;
+
     private static boolean SUPPORT_SILENT = true;
+
     private static boolean SUPPORT_USE_ITEM = true;
 }

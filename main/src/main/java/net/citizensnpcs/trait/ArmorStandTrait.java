@@ -142,12 +142,12 @@ public class ArmorStandTrait extends Trait {
         setMarker(true);
         setVisible(false);
         npc.setProtected(true);
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
     }
 
     public void setAsPointEntityWithName() {
         setAsPointEntity();
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, true);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
     }
 
     /**

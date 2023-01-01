@@ -53,7 +53,6 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
     protected void setBlockDamage(int modifiedDamage) {
         ((ServerLevel) getHandle().level).destroyBlockProgress(getHandle().getId(), new BlockPos(x, y, z),
                 modifiedDamage);
-        // TODO: check this works
     }
 
     private float strengthMod(BlockState block) {

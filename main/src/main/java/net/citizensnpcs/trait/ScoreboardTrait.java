@@ -54,7 +54,7 @@ public class ScoreboardTrait extends Trait {
 
     public void createTeam(String entityName) {
         String teamName = Util.getTeamName(npc.getUniqueId());
-        npc.data().set(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, teamName);
+        npc.data().set(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, teamName);
         Scoreboard scoreboard = Util.getDummyScoreboard();
         Team team = scoreboard.getTeam(teamName);
         if (team == null) {
@@ -84,11 +84,11 @@ public class ScoreboardTrait extends Trait {
         if (npc.getEntity() == null)
             return;
         String name = npc.getEntity() instanceof Player ? npc.getEntity().getName() : npc.getUniqueId().toString();
-        String teamName = npc.data().get(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA, "");
+        String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
         if (teamName.isEmpty())
             return;
         Team team = Util.getDummyScoreboard().getTeam(teamName);
-        npc.data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+        npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
         if (team == null)
             return;
         if (team.hasEntry(name)) {
@@ -132,7 +132,7 @@ public class ScoreboardTrait extends Trait {
 
         if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             team.unregister();
-            npc.data().remove(NPC.SCOREBOARD_FAKE_TEAM_NAME_METADATA);
+            npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
             return;
         }
 
@@ -173,7 +173,7 @@ public class ScoreboardTrait extends Trait {
 
         if (SUPPORT_COLLIDABLE_SETOPTION) {
             try {
-                OptionStatus collide = npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA, !npc.isProtected())
+                OptionStatus collide = npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected())
                         ? OptionStatus.ALWAYS
                         : OptionStatus.NEVER;
                 if (collide != team.getOption(Option.COLLISION_RULE)) {

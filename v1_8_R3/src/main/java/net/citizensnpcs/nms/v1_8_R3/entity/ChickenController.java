@@ -87,12 +87,12 @@ public class ChickenController extends MobEntityController {
 
         @Override
         protected String bo() {
-            return NMSImpl.getSoundEffect(npc, super.bo(), NPC.HURT_SOUND_METADATA);
+            return NMSImpl.getSoundEffect(npc, super.bo(), NPC.Metadata.HURT_SOUND);
         }
 
         @Override
         protected String bp() {
-            return NMSImpl.getSoundEffect(npc, super.bp(), NPC.DEATH_SOUND_METADATA);
+            return NMSImpl.getSoundEffect(npc, super.bp(), NPC.Metadata.DEATH_SOUND);
         }
 
         @Override
@@ -100,7 +100,7 @@ public class ChickenController extends MobEntityController {
             if (npc == null)
                 return super.cc();
             boolean protectedDefault = npc.isProtected();
-            if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+            if (!protectedDefault || !npc.data().get(NPC.Metadata.LEASH_PROTECTED, protectedDefault))
                 return super.cc();
             if (super.cc()) {
                 unleash(true, false); // clearLeash with client update
@@ -204,7 +204,7 @@ public class ChickenController extends MobEntityController {
 
         @Override
         protected String z() {
-            return NMSImpl.getSoundEffect(npc, super.z(), NPC.AMBIENT_SOUND_METADATA);
+            return NMSImpl.getSoundEffect(npc, super.z(), NPC.Metadata.AMBIENT_SOUND);
         }
     }
 }

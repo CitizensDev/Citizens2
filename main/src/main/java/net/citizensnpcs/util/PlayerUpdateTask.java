@@ -11,6 +11,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.npc.ai.NPCHolder;
+
 public class PlayerUpdateTask extends BukkitRunnable {
     @Override
     public void cancel() {
@@ -43,14 +47,35 @@ public class PlayerUpdateTask extends BukkitRunnable {
             PLAYERS.remove(entity.getUniqueId());
         }
         for (Entity entity : PLAYERS_PENDING_ADD) {
-            PLAYERS.put(entity.getUniqueId(), (Player) entity);
+            PlayerTick rm = PLAYERS.remove(entity.getUniqueId());
+            if (rm != null) {
+                NPC old = ((NPCHolder) rm).getNPC();
+                NPC next = ((NPCHolder) entity).getNPC();
+                Messaging.severe(old == next ? "Player registered twice"
+                        : "Player registered twice with different NPC instances", rm.entity.getUniqueId());
+                rm.entity.remove();
+            }
+            PLAYERS.put(entity.getUniqueId(), new PlayerTick((Player) entity));
         }
         PLAYERS_PENDING_ADD.clear();
         PLAYERS_PENDING_REMOVE.clear();
 
-        for (Player entity : PLAYERS.values()) {
+        PLAYERS.values().forEach(Runnable::run);
+    }
+
+    private static class PlayerTick implements Runnable {
+        Player entity;
+        Runnable tick;
+
+        public PlayerTick(Player player) {
+            entity = player;
+            tick = NMS.playerTicker(player);
+        }
+
+        @Override
+        public void run() {
             if (entity.isValid()) {
-                NMS.playerTick(entity);
+                tick.run();
             }
         }
     }
@@ -76,10 +101,10 @@ public class PlayerUpdateTask extends BukkitRunnable {
         PLAYERS_PENDING_ADD.add(entity);
     }
 
-    private static Map<UUID, org.bukkit.entity.Player> PLAYERS = new HashMap<UUID, org.bukkit.entity.Player>();
-    private static List<org.bukkit.entity.Entity> PLAYERS_PENDING_ADD = new ArrayList<org.bukkit.entity.Entity>();
-    private static List<org.bukkit.entity.Entity> PLAYERS_PENDING_REMOVE = new ArrayList<org.bukkit.entity.Entity>();
-    private static Map<UUID, org.bukkit.entity.Entity> TICKERS = new HashMap<UUID, org.bukkit.entity.Entity>();
-    private static List<org.bukkit.entity.Entity> TICKERS_PENDING_ADD = new ArrayList<org.bukkit.entity.Entity>();
-    private static List<org.bukkit.entity.Entity> TICKERS_PENDING_REMOVE = new ArrayList<org.bukkit.entity.Entity>();
+    private static Map<UUID, PlayerTick> PLAYERS = new HashMap<>();
+    private static List<Entity> PLAYERS_PENDING_ADD = new ArrayList<>();
+    private static List<Entity> PLAYERS_PENDING_REMOVE = new ArrayList<>();
+    private static Map<UUID, Entity> TICKERS = new HashMap<>();
+    private static List<Entity> TICKERS_PENDING_ADD = new ArrayList<>();
+    private static List<Entity> TICKERS_PENDING_REMOVE = new ArrayList<>();
 }

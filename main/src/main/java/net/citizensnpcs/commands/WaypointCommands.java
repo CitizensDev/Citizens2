@@ -64,9 +64,9 @@ public class WaypointCommands {
             max = 1,
             permission = "citizens.waypoints.disableteleport")
     public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        npc.data().setPersistent(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA,
-                !npc.data().get(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA, false));
-        if (npc.data().get(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA, false)) {
+        npc.data().setPersistent(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION,
+                !npc.data().get(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION, false));
+        if (npc.data().get(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION, false)) {
             npc.getNavigator().getDefaultParameters().stuckAction(null);
             Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_DISABLED, npc.getName());
         } else {
@@ -103,8 +103,8 @@ public class WaypointCommands {
             max = 1,
             permission = "citizens.waypoints.opendoors")
     public void openDoors(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        boolean opensDoors = !npc.data().get(NPC.PATHFINDER_OPEN_DOORS_METADATA, false);
-        npc.data().setPersistent(NPC.PATHFINDER_OPEN_DOORS_METADATA, opensDoors);
+        boolean opensDoors = !npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, false);
+        npc.data().setPersistent(NPC.Metadata.PATHFINDER_OPEN_DOORS, opensDoors);
         Messaging.sendTr(sender,
                 opensDoors ? Messages.PATHFINDER_OPEN_DOORS_ENABLED : Messages.PATHFINDER_OPEN_DOORS_DISABLED,
                 npc.getName());

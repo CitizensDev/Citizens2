@@ -34,9 +34,11 @@ import net.citizensnpcs.api.gui.Menu;
 import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.gui.MenuPattern;
 import net.citizensnpcs.api.gui.MenuSlot;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.trait.shop.CommandAction;
@@ -109,11 +111,17 @@ public class ShopTrait extends Trait {
             this.name = name;
         }
 
+        public boolean canEdit(NPC npc, Player sender) {
+            return sender.hasPermission("citizens.admin") || sender.hasPermission("citizens.npc.shop.edit")
+                    || sender.hasPermission("citizens.npc.shop.edit." + getName())
+                    || npc.getOrAddTrait(Owner.class).isOwnedBy(sender);
+        }
+
         public void display(Player sender) {
             if (viewPermission != null && !sender.hasPermission(viewPermission))
                 return;
             if (pages.size() == 0) {
-                Messaging.send(sender, "<red>Empty shop");
+                Messaging.sendError(sender, "Empty shop");
                 return;
             }
             InventoryMenu.createSelfRegistered(new NPCShopViewer(this, sender)).present(sender);

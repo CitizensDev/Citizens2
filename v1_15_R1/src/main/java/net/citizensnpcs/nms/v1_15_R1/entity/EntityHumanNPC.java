@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
@@ -22,6 +21,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.nms.v1_15_R1.network.EmptyNetHandler;
@@ -78,7 +78,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private PlayerlistTracker playerlistTracker;
     private final SkinPacketTracker skinTracker;
-    private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
@@ -224,7 +223,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public IChatBaseComponent getPlayerListName() {
-        if (npc.data().get(NPC.REMOVE_FROM_PLAYERLIST_METADATA, Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
+        if (Setting.DISABLE_TABLIST.asBoolean()) {
             return new ChatComponentText("");
         }
         return super.getPlayerListName();
@@ -246,12 +245,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     protected SoundEffect getSoundDeath() {
-        return NMSImpl.getSoundEffect(npc, super.getSoundDeath(), NPC.DEATH_SOUND_METADATA);
+        return NMSImpl.getSoundEffect(npc, super.getSoundDeath(), NPC.Metadata.DEATH_SOUND);
     }
 
     @Override
     protected SoundEffect getSoundHurt(DamageSource damagesource) {
-        return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.HURT_SOUND_METADATA);
+        return NMSImpl.getSoundEffect(npc, super.getSoundHurt(damagesource), NPC.Metadata.HURT_SOUND);
     }
 
     @Override
@@ -312,7 +311,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     @Override
     public boolean isCollidable() {
         return npc == null ? super.isCollidable()
-                : npc.data().has(NPC.COLLIDABLE_METADATA) ? npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA)
+                : npc.data().has(NPC.Metadata.COLLIDABLE) ? npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE)
                         : !npc.isProtected();
     }
 
@@ -425,9 +424,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (npc == null)
             return;
         noclip = isSpectator();
-        if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
-            updateEffects = true;
-        }
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
 
         boolean navigating = npc.getNavigator().isNavigating();
@@ -449,16 +445,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 }
             }
         }
-        /*
-         double diff = this.yaw - this.aK;
-         if (diff != 40 && diff != -40) {
-         ++this.yawUpdateRequiredTicks;
-         }
-         if (this.yawUpdateRequiredTicks > 5) {
-         this.yaw = (diff > -40 && diff < 0) || (diff > 0 && diff > 40) ? this.aK - 40 : this.aK + 40;
-         this.yawUpdateRequiredTicks = 0;
-         }
-         */
     }
 
     public void updateAI() {
@@ -467,10 +453,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     private void updatePackets(boolean navigating) {
-        if (updateCounter++ <= npc.data().<Integer> get(NPC.Metadata.PACKET_UPDATE_DELAY,
-                Setting.PACKET_UPDATE_DELAY.asInt()))
+        if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
-        updateCounter = 0;
+        updateEffects = true;
         boolean itemChanged = false;
         for (EnumItemSlot slot : EnumItemSlot.values()) {
             ItemStack equipment = getEquipment(slot);
@@ -545,12 +530,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         @Override
         public void removeMetadata(String metadataKey, Plugin owningPlugin) {
             cserver.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
-        }
-
-        @Override
-        public void setGameMode(GameMode mode) {
-            super.setGameMode(mode);
-            getHandle().noclip = mode == GameMode.SPECTATOR;
         }
 
         @Override

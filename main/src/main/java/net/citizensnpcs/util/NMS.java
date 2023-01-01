@@ -486,8 +486,8 @@ public class NMS {
         BRIDGE.playAnimation(animation, player, radius);
     }
 
-    public static void playerTick(Player entity) {
-        BRIDGE.playerTick(entity);
+    public static Runnable playerTicker(Player entity) {
+        return BRIDGE.playerTicker(entity);
     }
 
     public static void registerEntityClass(Class<?> clazz) {
@@ -689,6 +689,7 @@ public class NMS {
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
+
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {

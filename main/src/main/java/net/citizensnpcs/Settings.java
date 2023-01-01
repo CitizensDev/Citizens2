@@ -166,8 +166,6 @@ public class Settings {
         STORAGE_TYPE("storage.type", "yaml"),
         SUBPLUGIN_FOLDER("subplugins.folder", "plugins"),
         TABLIST_REMOVE_PACKET_DELAY("npc.tablist.remove-packet-delay", 1),
-        TALK_CLOSE_MAXIMUM_COOLDOWN("npc.text.max-talk-cooldown", 5),
-        TALK_CLOSE_MINIMUM_COOLDOWN("npc.text.min-talk-cooldown", 10),
         TALK_CLOSE_TO_NPCS("npc.chat.options.talk-to-npcs", true),
         TALK_ITEM("npc.text.talk-item", "*"),
         USE_BOAT_CONTROLS("npc.controllable.use-boat-controls", true),

@@ -17,6 +17,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.AStarMachine;
+import net.citizensnpcs.api.astar.AStarMachine.AStarState;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.BlockSource;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
@@ -30,12 +31,10 @@ import net.citizensnpcs.util.Util;
 
 public class AStarNavigationStrategy extends AbstractPathStrategy {
     private final Location destination;
-    private int iterations;
     private final NPC npc;
     private final NavigatorParameters params;
     private Path plan;
-    private boolean planned = false;
-    private AStarMachine<VectorNode, Path>.AStarState state;
+    private AStarPlanner planner;
     private Vector vector;
 
     public AStarNavigationStrategy(NPC npc, Iterable<Vector> path, NavigatorParameters params) {
@@ -44,7 +43,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.params = params;
         this.destination = list.get(list.size() - 1).toLocation(npc.getStoredLocation().getWorld());
         this.npc = npc;
-        setPlan(new Path(list));
+        this.plan = new Path(list);
     }
 
     public AStarNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
@@ -69,71 +68,28 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         return destination;
     }
 
-    public void initialisePathfinder() {
-        params.examiner(new BlockExaminer() {
-            @Override
-            public float getCost(BlockSource source, PathPoint point) {
-                Vector pos = point.getVector();
-                Material above = source.getMaterialAt(pos.setY(pos.getY() + 1));
-                return params.avoidWater() && (MinecraftBlockExaminer.isLiquid(above)
-                        || MinecraftBlockExaminer.isLiquidOrInLiquid(pos.toLocation(source.getWorld()).getBlock())) ? 1F
-                                : 0F;
-            }
-
-            @Override
-            public PassableState isPassable(BlockSource source, PathPoint point) {
-                return PassableState.IGNORE;
-            }
-        });
-        Location location = npc.getEntity().getLocation();
-        VectorGoal goal = new VectorGoal(destination, (float) params.pathDistanceMargin());
-        state = ASTAR.getStateFor(goal,
-                new VectorNode(goal, location, new NMSChunkBlockSource(location, params.range()), params.examiners()));
-    }
-
-    public void setPlan(Path path) {
-        this.plan = path;
-        this.planned = true;
-        if (plan == null || plan.isComplete()) {
-            setCancelReason(CancelReason.STUCK);
-        } else {
-            vector = plan.getCurrentVector();
-            if (params.debug()) {
-                plan.debug();
-            }
-        }
-    }
-
     @Override
     public void stop() {
         if (plan != null && params.debug()) {
             plan.debugEnd();
         }
-        state = null;
         plan = null;
     }
 
     @Override
     public boolean update() {
-        if (!planned) {
-            if (state == null) {
-                initialisePathfinder();
+        if (plan == null) {
+            if (planner == null) {
+                planner = new AStarPlanner(params, npc.getStoredLocation(), destination);
             }
-            int maxIterations = Setting.MAXIMUM_ASTAR_ITERATIONS.asInt();
-            int iterationsPerTick = Setting.ASTAR_ITERATIONS_PER_TICK.asInt();
-            Path plan = ASTAR.run(state, iterationsPerTick);
-            if (plan == null) {
-                if (state.isEmpty()) {
-                    setCancelReason(CancelReason.STUCK);
-                }
-                if (iterationsPerTick > 0 && maxIterations > 0) {
-                    iterations += iterationsPerTick;
-                    if (iterations > maxIterations) {
-                        setCancelReason(CancelReason.STUCK);
-                    }
-                }
-            } else {
-                setPlan(plan);
+            CancelReason reason = planner.tick(Setting.ASTAR_ITERATIONS_PER_TICK.asInt(),
+                    Setting.MAXIMUM_ASTAR_ITERATIONS.asInt());
+            if (reason != null) {
+                setCancelReason(reason);
+            }
+            plan = planner.plan;
+            if (plan != null) {
+                planner = null;
             }
         }
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
@@ -141,7 +97,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location loc = npc.getEntity().getLocation(NPC_LOCATION);
         /* Proper door movement - gets stuck on corners at times
-        
+
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
@@ -182,6 +138,65 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         plan.run(npc);
         return false;
+    }
+
+    public static class AStarPlanner {
+        Location from;
+        int iterations;
+        NavigatorParameters params;
+        Path plan;
+        AStarState state;
+        Location to;
+
+        public AStarPlanner(NavigatorParameters params, Location from, Location to) {
+            this.params = params;
+            this.from = from;
+            this.to = to;
+            params.examiner(new BlockExaminer() {
+                @Override
+                public float getCost(BlockSource source, PathPoint point) {
+                    Vector pos = point.getVector();
+                    Material above = source.getMaterialAt(pos.setY(pos.getY() + 1));
+                    return params.avoidWater() && (MinecraftBlockExaminer.isLiquid(above)
+                            || MinecraftBlockExaminer.isLiquidOrInLiquid(pos.toLocation(source.getWorld()).getBlock()))
+                                    ? 1F
+                                    : 0F;
+                }
+
+                @Override
+                public PassableState isPassable(BlockSource source, PathPoint point) {
+                    return PassableState.IGNORE;
+                }
+            });
+        }
+
+        public CancelReason tick(int iterationsPerTick, int maxIterations) {
+            if (plan != null)
+                return null;
+            if (state == null) {
+                VectorGoal goal = new VectorGoal(to, (float) params.pathDistanceMargin());
+                state = ASTAR.getStateFor(goal,
+                        new VectorNode(goal, from, new NMSChunkBlockSource(from, params.range()), params.examiners()));
+            }
+            Path plan = ASTAR.run(state, iterationsPerTick);
+            if (plan == null) {
+                if (state.isEmpty()) {
+                    return CancelReason.STUCK;
+                }
+                if (iterationsPerTick > 0 && maxIterations > 0) {
+                    iterations += iterationsPerTick;
+                    if (iterations > maxIterations) {
+                        return CancelReason.STUCK;
+                    }
+                }
+            } else {
+                this.plan = plan;
+                if (params.debug()) {
+                    plan.debug();
+                }
+            }
+            return null;
+        }
     }
 
     private static final AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();

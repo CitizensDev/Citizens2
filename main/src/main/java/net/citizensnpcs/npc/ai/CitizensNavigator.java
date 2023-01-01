@@ -36,6 +36,8 @@ import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.npc.ai.AStarNavigationStrategy.AStarPlanner;
+import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.trait.RotationTrait.RotationParams;
@@ -65,7 +67,7 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     public CitizensNavigator(NPC npc) {
         this.npc = npc;
-        if (npc.data().get(NPC.DISABLE_DEFAULT_STUCK_ACTION_METADATA, false)) {
+        if (npc.data().get(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION, false)) {
             defaultParams.stuckAction(null);
         }
         defaultParams.examiner(new SwimmingExaminer(npc));
@@ -79,6 +81,23 @@ public class CitizensNavigator implements Navigator, Runnable {
     @Override
     public void cancelNavigation(CancelReason reason) {
         stopNavigating(reason);
+    }
+
+    @Override
+    public boolean canNavigateTo(Location dest) {
+        return canNavigateTo(dest, defaultParams.clone());
+    }
+
+    @Override
+    public boolean canNavigateTo(Location dest, NavigatorParameters params) {
+        if (defaultParams.useNewPathfinder()) {
+            AStarPlanner planner = new AStarPlanner(params, npc.getStoredLocation(), dest);
+            planner.tick(Setting.MAXIMUM_ASTAR_ITERATIONS.asInt(), Setting.MAXIMUM_ASTAR_ITERATIONS.asInt());
+            return planner.plan != null;
+        } else {
+            MCNavigator nav = NMS.getTargetNavigator(npc.getEntity(), dest, params);
+            return nav.getCancelReason() == null;
+        }
     }
 
     @Override
@@ -419,8 +438,7 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     private void switchParams() {
         localParams = defaultParams.clone();
-        if (!npc.data().has(NPC.PATHFINDER_OPEN_DOORS_METADATA) ? Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean()
-                : npc.data().<Boolean> get(NPC.PATHFINDER_OPEN_DOORS_METADATA)) {
+        if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
             localParams.examiner(new DoorExaminer());
         }
         if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {

@@ -96,7 +96,6 @@ import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.ShopTrait;
-import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -237,7 +236,7 @@ public class EventListen implements Listener {
                 npc = CitizensAPI.getNPCRegistry().getNPC(((EntityDamageByEntityEvent) event).getDamager());
                 if (npc == null)
                     return;
-                event.setCancelled(!npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true));
+                event.setCancelled(!npc.data().get(NPC.Metadata.DAMAGE_OTHERS, true));
                 NPCDamageEntityEvent damageEvent = new NPCDamageEntityEvent(npc, (EntityDamageByEntityEvent) event);
                 Bukkit.getPluginManager().callEvent(damageEvent);
             }
@@ -278,7 +277,7 @@ public class EventListen implements Listener {
             return;
         }
 
-        if (!npc.data().get(NPC.DROPS_ITEMS_METADATA, false)) {
+        if (!npc.data().get(NPC.Metadata.DROPS_ITEMS, false)) {
             event.getDrops().clear();
         }
 
@@ -286,7 +285,7 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
 
-        int delay = npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1);
+        int delay = npc.data().get(NPC.Metadata.RESPAWN_DELAY, -1);
         if (delay < 0)
             return;
         int deathAnimationTicks = event.getEntity() instanceof LivingEntity ? 20 : 2;
@@ -323,7 +322,7 @@ public class EventListen implements Listener {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getTarget());
         if (npc == null)
             return;
-        event.setCancelled(!npc.data().get(NPC.TARGETABLE_METADATA, !npc.isProtected()));
+        event.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
@@ -453,7 +452,7 @@ public class EventListen implements Listener {
             return;
         }
         boolean leashProtected = npc.isProtected();
-        if (npc.data().get(NPC.LEASH_PROTECTED_METADATA, leashProtected)) {
+        if (npc.data().get(NPC.Metadata.LEASH_PROTECTED, leashProtected)) {
             event.setCancelled(true);
         }
     }
@@ -486,11 +485,6 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getPlayer());
-        if (event.getCause() == TeleportCause.PLUGIN && npc != null) {
-            if (npc.hasTrait(SitTrait.class)) {
-                npc.getOrAddTrait(SitTrait.class).setSitting(event.getTo());
-            }
-        }
         if (event.getCause() == TeleportCause.PLUGIN && !event.getPlayer().hasMetadata("citizens-force-teleporting")
                 && npc != null && Setting.PLAYER_TELEPORT_DELAY.asInt() > 0) {
             event.setCancelled(true);

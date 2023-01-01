@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
@@ -152,12 +151,11 @@ public class Text extends Trait implements Runnable, Listener {
 
     @EventHandler
     private void onRightClick(NPCRightClickEvent event) {
-        if (!event.getNPC().equals(npc))
+        if (!event.getNPC().equals(npc) || text.size() == 0)
             return;
         String localPattern = itemInHandPattern.equals("default") ? Setting.TALK_ITEM.asString() : itemInHandPattern;
         if (Util.matchesItemInHand(event.getClicker(), localPattern) && !shouldTalkClose()) {
-            sendCooldownMessage(event.getClicker());
-            event.setCancelled(true);
+            talk(event.getClicker());
         }
     }
 
@@ -174,16 +172,13 @@ public class Text extends Trait implements Runnable, Listener {
 
     @Override
     public void run() {
-        if (!npc.isSpawned())
-            return;
-
-        if (!talkClose)
+        if (!npc.isSpawned() || !talkClose || text.size() == 0)
             return;
 
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(), range)) {
             if (player.getGameMode() == GameMode.SPECTATOR)
                 continue;
-            sendCooldownMessage(player);
+            talk(player);
         }
     }
 
@@ -200,26 +195,6 @@ public class Text extends Trait implements Runnable, Listener {
         for (int i = 0; i < text.size(); i++) {
             key.setString("text." + String.valueOf(i), text.get(i));
         }
-    }
-
-    private void sendCooldownMessage(Player player) {
-        Long cooldown = cooldowns.get(player.getUniqueId());
-        if (cooldown != null) {
-            if (System.currentTimeMillis() < cooldown)
-                return;
-
-            cooldowns.remove(player.getUniqueId());
-        }
-
-        sendText(player);
-
-        int secondsDelta = delay != -1 ? delay
-                : RANDOM.nextInt(Setting.TALK_CLOSE_MAXIMUM_COOLDOWN.asInt())
-                        + Setting.TALK_CLOSE_MINIMUM_COOLDOWN.asInt();
-        if (secondsDelta <= 0)
-            return;
-        long millisecondsDelta = TimeUnit.MILLISECONDS.convert(secondsDelta, TimeUnit.SECONDS);
-        cooldowns.put(player.getUniqueId(), System.currentTimeMillis() + millisecondsDelta);
     }
 
     boolean sendPage(CommandSender player, int page) {
@@ -292,9 +267,20 @@ public class Text extends Trait implements Runnable, Listener {
         return talkClose;
     }
 
-    @Deprecated
-    public boolean toggle() {
-        return toggleTalkClose();
+    private void talk(Player player) {
+        Long cooldown = cooldowns.get(player.getUniqueId());
+        if (cooldown != null) {
+            if (System.currentTimeMillis() < cooldown)
+                return;
+
+            cooldowns.remove(player.getUniqueId());
+        }
+
+        sendText(player);
+
+        if (delay <= 0)
+            return;
+        cooldowns.put(player.getUniqueId(), System.currentTimeMillis() + (delay * 50));
     }
 
     /**

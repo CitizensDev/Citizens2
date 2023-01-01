@@ -130,7 +130,7 @@ public interface NMSBridge {
 
     public void playAnimation(PlayerAnimation animation, Player player, int radius);
 
-    public void playerTick(Player entity);
+    public Runnable playerTicker(Player entity);
 
     public void registerEntityClass(Class<?> clazz);
 
@@ -146,9 +146,9 @@ public interface NMSBridge {
 
     public void sendPositionUpdate(Player excluding, Entity from, Location location);
 
-    public void sendRotationNearby(Entity from, float bodyYaw, float headYaw, float pitch);
+    public void sendRotationNearby(Entity from, float bodyYaw, float headYaw, float pitch);;
 
-    public boolean sendTabListAdd(Player recipient, Player listPlayer);;
+    public boolean sendTabListAdd(Player recipient, Player listPlayer);
 
     public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);
 
@@ -166,13 +166,13 @@ public interface NMSBridge {
         throw new UnsupportedOperationException();
     }
 
-    public void setCustomName(Entity entity, Object component, String string);
+    public void setCustomName(Entity entity, Object component, String string);;
 
-    public void setDestination(Entity entity, double x, double y, double z, float speed);;
+    public void setDestination(Entity entity, double x, double y, double z, float speed);
 
     public void setEndermanAngry(Enderman enderman, boolean angry);
 
-    public void setHeadYaw(Entity entity, float yaw);
+    public void setHeadYaw(Entity entity, float yaw);;
 
     public void setKnockbackResistance(LivingEntity entity, double d);;
 
@@ -180,13 +180,13 @@ public interface NMSBridge {
         throw new UnsupportedOperationException();
     };
 
-    public void setNavigationTarget(Entity handle, Entity target, float speed);;
+    public void setNavigationTarget(Entity handle, Entity target, float speed);
 
-    public void setNoGravity(Entity entity, boolean nogravity);
+    public void setNoGravity(Entity entity, boolean nogravity);;
 
     public default void setPandaSitting(Entity entity, boolean sitting) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     public default void setPeekShulker(Entity entity, int peek) {
         throw new UnsupportedOperationException();

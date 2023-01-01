@@ -110,7 +110,7 @@ public class PandaController extends MobEntityController {
 
         @Override
         protected SoundEvent getAmbientSound() {
-            return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.AMBIENT_SOUND_METADATA);
+            return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
         }
 
         @Override
@@ -123,12 +123,12 @@ public class PandaController extends MobEntityController {
 
         @Override
         protected SoundEvent getDeathSound() {
-            return NMSImpl.getSoundEffect(npc, super.getDeathSound(), NPC.DEATH_SOUND_METADATA);
+            return NMSImpl.getSoundEffect(npc, super.getDeathSound(), NPC.Metadata.DEATH_SOUND);
         }
 
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
-            return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.HURT_SOUND_METADATA);
+            return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
         }
 
         @Override

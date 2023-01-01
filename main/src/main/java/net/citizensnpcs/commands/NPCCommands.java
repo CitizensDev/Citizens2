@@ -78,6 +78,7 @@ import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -394,11 +395,11 @@ public class NPCCommands {
             permission = "citizens.npc.chunkload")
     @Requirements(selected = true, ownership = true)
     public void chunkload(CommandContext args, CommandSender sender, NPC npc) {
-        boolean enabled = !npc.data().get(NPC.KEEP_CHUNK_LOADED_METADATA, Setting.KEEP_CHUNKS_LOADED.asBoolean());
+        boolean enabled = !npc.data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean());
         if (args.hasFlag('t')) {
-            npc.data().set(NPC.KEEP_CHUNK_LOADED_METADATA, enabled);
+            npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, enabled);
         } else {
-            npc.data().setPersistent(NPC.KEEP_CHUNK_LOADED_METADATA, enabled);
+            npc.data().setPersistent(NPC.Metadata.KEEP_CHUNK_LOADED, enabled);
         }
         Messaging.sendTr(sender, enabled ? Messages.CHUNKLOAD_SET : Messages.CHUNKLOAD_UNSET, npc.getName());
     }
@@ -689,7 +690,7 @@ public class NPCCommands {
         }
 
         if (args.hasFlag('s')) {
-            npc.data().set(NPC.SILENT_METADATA, true);
+            npc.data().set(NPC.Metadata.SILENT, true);
         }
 
         if (nameplate != null) {
@@ -1270,11 +1271,11 @@ public class NPCCommands {
             flags = "t",
             permission = "citizens.npc.leashable")
     public void leashable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean vulnerable = !npc.data().get(NPC.LEASH_PROTECTED_METADATA, true);
+        boolean vulnerable = !npc.data().get(NPC.Metadata.LEASH_PROTECTED, true);
         if (args.hasFlag('t')) {
-            npc.data().set(NPC.LEASH_PROTECTED_METADATA, vulnerable);
+            npc.data().set(NPC.Metadata.LEASH_PROTECTED, vulnerable);
         } else {
-            npc.data().setPersistent(NPC.LEASH_PROTECTED_METADATA, vulnerable);
+            npc.data().setPersistent(NPC.Metadata.LEASH_PROTECTED, vulnerable);
         }
         String key = vulnerable ? Messages.LEASHABLE_STOPPED : Messages.LEASHABLE_SET;
         Messaging.sendTr(sender, key, npc.getName());
@@ -1527,15 +1528,15 @@ public class NPCCommands {
             Material material = Material.matchMaterial(item);
             if (material == null)
                 throw new CommandException();
-            npc.data().setPersistent(NPC.MINECART_ITEM_METADATA, material.name());
-            npc.data().setPersistent(NPC.MINECART_ITEM_DATA_METADATA, data);
+            npc.data().setPersistent(NPC.Metadata.MINECART_ITEM, material.name());
+            npc.data().setPersistent(NPC.Metadata.MINECART_ITEM_DATA, data);
         }
         if (args.hasValueFlag("offset")) {
-            npc.data().setPersistent(NPC.MINECART_OFFSET_METADATA, args.getFlagInteger("offset"));
+            npc.data().setPersistent(NPC.Metadata.MINECART_OFFSET, args.getFlagInteger("offset"));
         }
 
-        Messaging.sendTr(sender, Messages.MINECART_SET, npc.data().get(NPC.MINECART_ITEM_METADATA, ""),
-                npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0), npc.data().get(NPC.MINECART_OFFSET_METADATA, 0));
+        Messaging.sendTr(sender, Messages.MINECART_SET, npc.data().get(NPC.Metadata.MINECART_ITEM, ""),
+                npc.data().get(NPC.Metadata.MINECART_ITEM_DATA, 0), npc.data().get(NPC.Metadata.MINECART_OFFSET, 0));
     }
 
     @Command(
@@ -1611,9 +1612,9 @@ public class NPCCommands {
     public void moveto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (!npc.isSpawned()) {
             npc.spawn(npc.getOrAddTrait(CurrentLocation.class).getLocation(), SpawnReason.COMMAND);
-        }
-        if (!npc.isSpawned()) {
-            throw new CommandException("NPC could not be spawned.");
+            if (!npc.isSpawned()) {
+                throw new CommandException("NPC could not be spawned.");
+            }
         }
         Location current = npc.getEntity().getLocation();
         Location to;
@@ -1671,7 +1672,7 @@ public class NPCCommands {
             old = old.equals("hover") ? "true" : "" + !Boolean.parseBoolean(old);
         }
         npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, old);
-        npc.data().set(NPC.Metadata.FORCE_PACKET_UPDATE, true);
+        npc.scheduleUpdate(NPCUpdate.PACKET);
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_SET, old);
     }
 
@@ -1767,8 +1768,8 @@ public class NPCCommands {
             permission = "citizens.npc.passive")
     public void passive(CommandContext args, CommandSender sender, NPC npc, @Flag("set") Boolean set)
             throws CommandException {
-        boolean passive = set != null ? set : !npc.data().get(NPC.DAMAGE_OTHERS_METADATA, true);
-        npc.data().setPersistent(NPC.DAMAGE_OTHERS_METADATA, passive);
+        boolean passive = set != null ? set : !npc.data().get(NPC.Metadata.DAMAGE_OTHERS, true);
+        npc.data().setPersistent(NPC.Metadata.DAMAGE_OTHERS, passive);
         Messaging.sendTr(sender, passive ? Messages.PASSIVE_SET : Messages.PASSIVE_UNSET, npc.getName());
     }
 
@@ -1914,14 +1915,14 @@ public class NPCCommands {
             permission = "citizens.npc.playerlist")
     @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
     public void playerlist(CommandContext args, CommandSender sender, NPC npc) {
-        boolean remove = !npc.data().get(NPC.REMOVE_FROM_PLAYERLIST_METADATA,
+        boolean remove = !npc.data().get(NPC.Metadata.REMOVE_FROM_PLAYERLIST,
                 Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
         if (args.hasFlag('a')) {
             remove = false;
         } else if (args.hasFlag('r')) {
             remove = true;
         }
-        npc.data().setPersistent(NPC.REMOVE_FROM_PLAYERLIST_METADATA, remove);
+        npc.data().setPersistent(NPC.Metadata.REMOVE_FROM_PLAYERLIST, remove);
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getOrAddTrait(CurrentLocation.class).getLocation(), SpawnReason.RESPAWN);
@@ -2184,10 +2185,10 @@ public class NPCCommands {
     public void respawn(CommandContext args, CommandSender sender, NPC npc) {
         if (args.argsLength() > 1) {
             int delay = args.getTicks(1);
-            npc.data().setPersistent(NPC.RESPAWN_DELAY_METADATA, delay);
+            npc.data().setPersistent(NPC.Metadata.RESPAWN_DELAY, delay);
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, delay);
         } else {
-            Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.RESPAWN_DELAY_METADATA, -1));
+            Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.Metadata.RESPAWN_DELAY, -1));
         }
     }
 
@@ -2391,21 +2392,17 @@ public class NPCCommands {
         if (args.argsLength() == 3) {
             shop = shops.getShop(args.getString(2).toLowerCase());
         }
-        if (action.equalsIgnoreCase("delete")) {
-            if (args.argsLength() != 3 || shop == null)
-                throw new CommandUsageException();
-            if (!sender.hasPermission("citizens.admin") && (!sender.hasPermission("citizens.npc.shop.edit")
-                    || !sender.hasPermission("citizens.npc.shop.edit." + shop.getName())))
-                throw new NoPermissionsException();
-            shops.deleteShop(shop);
-            return;
-        }
-
         if (shop == null)
             throw new CommandUsageException();
-        if (action.equalsIgnoreCase("edit")) {
-            if (!sender.hasPermission("citizens.admin") && (!sender.hasPermission("citizens.npc.shop.edit")
-                    || !sender.hasPermission("citizens.npc.shop.edit." + shop.getName())))
+
+        if (action.equalsIgnoreCase("delete")) {
+            if (args.argsLength() != 3)
+                throw new CommandUsageException();
+            if (!shop.canEdit(npc, sender))
+                throw new NoPermissionsException();
+            shops.deleteShop(shop);
+        } else if (action.equalsIgnoreCase("edit")) {
+            if (!shop.canEdit(npc, sender))
                 throw new NoPermissionsException();
             shop.displayEditor(npc == null ? null : npc.getOrAddTrait(ShopTrait.class), sender);
         } else if (action.equalsIgnoreCase("show")) {
@@ -2580,9 +2577,9 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, livingEntity = true)
     public void sound(CommandContext args, CommandSender sender, NPC npc, @Flag("death") String death,
             @Flag("ambient") String ambient, @Flag("hurt") String hurt) throws CommandException {
-        String ambientSound = npc.data().get(NPC.AMBIENT_SOUND_METADATA);
-        String deathSound = npc.data().get(NPC.DEATH_SOUND_METADATA);
-        String hurtSound = npc.data().get(NPC.HURT_SOUND_METADATA);
+        String ambientSound = npc.data().get(NPC.Metadata.AMBIENT_SOUND);
+        String deathSound = npc.data().get(NPC.Metadata.DEATH_SOUND);
+        String hurtSound = npc.data().get(NPC.Metadata.HURT_SOUND);
         if (args.getValueFlags().size() == 0 && args.getFlags().size() == 0) {
             Messaging.sendTr(sender, Messages.SOUND_INFO, npc.getName(), ambientSound, hurtSound, deathSound);
             return;
@@ -2590,14 +2587,14 @@ public class NPCCommands {
 
         if (args.hasFlag('n')) {
             ambientSound = deathSound = hurtSound = "";
-            npc.data().setPersistent(NPC.SILENT_METADATA, true);
+            npc.data().setPersistent(NPC.Metadata.SILENT, true);
         }
         if (args.hasFlag('s')) {
-            npc.data().setPersistent(NPC.SILENT_METADATA, !npc.data().get(NPC.SILENT_METADATA, false));
+            npc.data().setPersistent(NPC.Metadata.SILENT, !npc.data().get(NPC.Metadata.SILENT, false));
         }
         if (args.hasFlag('d')) {
             ambientSound = deathSound = hurtSound = null;
-            npc.data().setPersistent(NPC.SILENT_METADATA, false);
+            npc.data().setPersistent(NPC.Metadata.SILENT, false);
         } else {
             if (death != null) {
                 deathSound = death.equals("d") ? null : NMS.getSound(death);
@@ -2610,19 +2607,19 @@ public class NPCCommands {
             }
         }
         if (deathSound == null) {
-            npc.data().remove(NPC.DEATH_SOUND_METADATA);
+            npc.data().remove(NPC.Metadata.DEATH_SOUND);
         } else {
-            npc.data().setPersistent(NPC.DEATH_SOUND_METADATA, deathSound);
+            npc.data().setPersistent(NPC.Metadata.DEATH_SOUND, deathSound);
         }
         if (hurtSound == null) {
-            npc.data().remove(NPC.HURT_SOUND_METADATA);
+            npc.data().remove(NPC.Metadata.HURT_SOUND);
         } else {
-            npc.data().setPersistent(NPC.HURT_SOUND_METADATA, hurtSound);
+            npc.data().setPersistent(NPC.Metadata.HURT_SOUND, hurtSound);
         }
         if (ambientSound == null) {
-            npc.data().remove(NPC.AMBIENT_SOUND_METADATA);
+            npc.data().remove(NPC.Metadata.AMBIENT_SOUND);
         } else {
-            npc.data().setPersistent(NPC.AMBIENT_SOUND_METADATA, ambientSound);
+            npc.data().setPersistent(NPC.Metadata.AMBIENT_SOUND, ambientSound);
         }
 
         if (ambientSound != null && ambientSound.isEmpty()) {
@@ -2637,7 +2634,7 @@ public class NPCCommands {
         if ((!Strings.isNullOrEmpty(ambientSound) && !ambientSound.equals("none"))
                 || (!Strings.isNullOrEmpty(deathSound) && !deathSound.equals("none"))
                 || (!Strings.isNullOrEmpty(hurtSound) && !hurtSound.equals("none"))) {
-            npc.data().setPersistent(NPC.SILENT_METADATA, false);
+            npc.data().setPersistent(NPC.Metadata.SILENT, false);
         }
         Messaging.sendTr(sender, Messages.SOUND_SET, npc.getName(), ambientSound, hurtSound, deathSound);
     }
@@ -2717,7 +2714,7 @@ public class NPCCommands {
             } else {
                 Player player = Bukkit.getPlayerExact(target);
                 if (player != null) {
-                    context.addRecipient((Entity) player);
+                    context.addRecipient(player);
                 }
             }
         }
@@ -2802,11 +2799,11 @@ public class NPCCommands {
             flags = "t",
             permission = "citizens.npc.targetable")
     public void targetable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean targetable = !npc.data().get(NPC.TARGETABLE_METADATA, npc.isProtected());
+        boolean targetable = !npc.data().get(NPC.Metadata.TARGETABLE, npc.isProtected());
         if (args.hasFlag('t')) {
-            npc.data().set(NPC.TARGETABLE_METADATA, targetable);
+            npc.data().set(NPC.Metadata.TARGETABLE, targetable);
         } else {
-            npc.data().setPersistent(NPC.TARGETABLE_METADATA, targetable);
+            npc.data().setPersistent(NPC.Metadata.TARGETABLE, targetable);
         }
         Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());
     }
@@ -3021,9 +3018,9 @@ public class NPCCommands {
     public void vulnerable(CommandContext args, CommandSender sender, NPC npc) {
         boolean vulnerable = !npc.isProtected();
         if (args.hasFlag('t')) {
-            npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
+            npc.data().set(NPC.Metadata.DEFAULT_PROTECTED, vulnerable);
         } else {
-            npc.data().setPersistent(NPC.DEFAULT_PROTECTED_METADATA, vulnerable);
+            npc.data().setPersistent(NPC.Metadata.DEFAULT_PROTECTED, vulnerable);
         }
         String key = vulnerable ? Messages.VULNERABLE_STOPPED : Messages.VULNERABLE_SET;
         Messaging.sendTr(sender, key, npc.getName());

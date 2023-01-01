@@ -1102,8 +1102,8 @@ public class NMSImpl implements NMSBridge {
             if (Setting.DISABLE_TABLIST.asBoolean() != data.listed()) {
                 list.set(i,
                         new ClientboundPlayerInfoUpdatePacket.Entry(data.profileId(), data.profile(),
-                                Setting.DISABLE_TABLIST.asBoolean(), data.latency(), data.gameMode(),
-                                Setting.DISABLE_TABLIST.asBoolean() ? data.displayName() : Component.empty(),
+                                !Setting.DISABLE_TABLIST.asBoolean(), data.latency(), data.gameMode(),
+                                !Setting.DISABLE_TABLIST.asBoolean() ? data.displayName() : Component.empty(),
                                 data.chatSession()));
                 changed = true;
             }
@@ -1185,8 +1185,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void playerTick(Player entity) {
-        ((ServerPlayer) getHandle(entity)).doTick();
+    public Runnable playerTicker(Player entity) {
+        return ((ServerPlayer) getHandle(entity))::doTick;
     }
 
     @Override
@@ -1611,7 +1611,7 @@ public class NMSImpl implements NMSBridge {
                     throw new ReportedException(crashreport);
                 }
             }
-            boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get(NPC.REMOVE_FROM_PLAYERLIST_METADATA,
+            boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.REMOVE_FROM_PLAYERLIST,
                     Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
             if (!entity.isAlive()) {
                 ((ServerLevel) entity.level).getChunkSource().removeEntity(entity);
@@ -2146,7 +2146,7 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
-    public static SoundEvent getSoundEffect(NPC npc, SoundEvent snd, String meta) {
+    public static SoundEvent getSoundEffect(NPC npc, SoundEvent snd, NPC.Metadata meta) {
         return npc == null || !npc.data().has(meta) ? snd
                 : BuiltInRegistries.SOUND_EVENT
                         .get(new ResourceLocation(npc.data().get(meta, snd == null ? "" : snd.toString())));
@@ -2165,7 +2165,7 @@ public class NMSImpl implements NMSBridge {
         if (npc == null)
             return superLeashed;
         boolean protectedDefault = npc.isProtected();
-        if (!protectedDefault || !npc.data().get(NPC.LEASH_PROTECTED_METADATA, protectedDefault))
+        if (!protectedDefault || !npc.data().get(NPC.Metadata.LEASH_PROTECTED, protectedDefault))
             return superLeashed;
         if (superLeashed) {
             entity.dropLeash(true, false); // clearLeash with client update
@@ -2178,9 +2178,9 @@ public class NMSImpl implements NMSBridge {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
             return;
-        Material mat = Material.getMaterial(npc.data().get(NPC.MINECART_ITEM_METADATA, ""), false);
-        int data = npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0); // TODO: migration for this
-        int offset = npc.data().get(NPC.MINECART_OFFSET_METADATA, 0);
+        Material mat = Material.getMaterial(npc.data().get(NPC.Metadata.MINECART_ITEM, ""), false);
+        int data = npc.data().get(NPC.Metadata.MINECART_ITEM_DATA, 0); // TODO: migration for this
+        int offset = npc.data().get(NPC.Metadata.MINECART_OFFSET, 0);
         minecart.setCustomDisplay(mat != null);
         if (mat != null) {
             minecart.setDisplayBlockState(BuiltInRegistries.BLOCK.byId(mat.getId()).defaultBlockState());

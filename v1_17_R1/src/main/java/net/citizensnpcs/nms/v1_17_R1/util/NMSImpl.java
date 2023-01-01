@@ -1097,8 +1097,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void playerTick(Player entity) {
-        ((ServerPlayer) getHandle(entity)).doTick();
+    public Runnable playerTicker(Player entity) {
+        return ((ServerPlayer) getHandle(entity))::doTick;
     }
 
     @Override
@@ -2008,7 +2008,7 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
-    public static SoundEvent getSoundEffect(NPC npc, SoundEvent snd, String meta) {
+    public static SoundEvent getSoundEffect(NPC npc, SoundEvent snd, NPC.Metadata meta) {
         return npc == null || !npc.data().has(meta) ? snd
                 : Registry.SOUND_EVENT
                         .get(new ResourceLocation(npc.data().get(meta, snd == null ? "" : snd.toString())));
@@ -2027,9 +2027,9 @@ public class NMSImpl implements NMSBridge {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
             return;
-        Material mat = Material.getMaterial(npc.data().get(NPC.MINECART_ITEM_METADATA, ""));
-        int data = npc.data().get(NPC.MINECART_ITEM_DATA_METADATA, 0); // TODO: migration for this
-        int offset = npc.data().get(NPC.MINECART_OFFSET_METADATA, 0);
+        Material mat = Material.getMaterial(npc.data().get(NPC.Metadata.MINECART_ITEM, ""));
+        int data = npc.data().get(NPC.Metadata.MINECART_ITEM_DATA, 0); // TODO: migration for this
+        int offset = npc.data().get(NPC.Metadata.MINECART_OFFSET, 0);
         minecart.setCustomDisplay(mat != null);
         if (mat != null) {
             minecart.setDisplayBlockState(Registry.BLOCK.byId(mat.getId()).defaultBlockState());

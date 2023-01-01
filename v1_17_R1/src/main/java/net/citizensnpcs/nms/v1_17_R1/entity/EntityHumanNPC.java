@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
@@ -27,6 +26,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.nms.v1_17_R1.network.EmptyNetHandler;
@@ -87,7 +87,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     private PlayerlistTracker playerlistTracker;
     private final SkinPacketTracker skinTracker;
     private EmptyServerStatsCounter statsCache;
-    private int updateCounter = 0;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, ServerLevel world, GameProfile gameProfile, NPC npc) {
         super(minecraftServer, world, gameProfile);
@@ -237,12 +236,12 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     protected SoundEvent getDeathSound() {
-        return NMSImpl.getSoundEffect(npc, super.getDeathSound(), NPC.DEATH_SOUND_METADATA);
+        return NMSImpl.getSoundEffect(npc, super.getDeathSound(), NPC.Metadata.DEATH_SOUND);
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damagesource) {
-        return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.HURT_SOUND_METADATA);
+        return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
     }
 
     public PlayerMoveControl getMoveControl() {
@@ -288,7 +287,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public Component getTabListDisplayName() {
-        if (npc.data().get(NPC.REMOVE_FROM_PLAYERLIST_METADATA, Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean())) {
+        if (Setting.DISABLE_TABLIST.asBoolean()) {
             return new TextComponent("");
         }
         return super.getTabListDisplayName();
@@ -375,7 +374,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     @Override
     public boolean isPushable() {
         return npc == null ? super.isPushable()
-                : npc.data().has(NPC.COLLIDABLE_METADATA) ? npc.data().<Boolean> get(NPC.COLLIDABLE_METADATA)
+                : npc.data().has(NPC.Metadata.COLLIDABLE) ? npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE)
                         : !npc.isProtected();
     }
 
@@ -480,9 +479,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (npc == null)
             return;
         noPhysics = isSpectator();
-        if (updateCounter + 1 > Setting.PACKET_UPDATE_DELAY.asInt()) {
-            effectsDirty = true;
-        }
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
 
         updatePackets(npc.getNavigator().isNavigating());
@@ -505,10 +501,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     private void updatePackets(boolean navigating) {
-        if (updateCounter++ <= npc.data().<Integer> get(NPC.Metadata.PACKET_UPDATE_DELAY,
-                Setting.PACKET_UPDATE_DELAY.asInt()))
+        if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
-        updateCounter = 0;
+        effectsDirty = true;
         boolean itemChanged = false;
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack equipment = getItemBySlot(slot);
@@ -584,12 +579,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         @Override
         public void removeMetadata(String metadataKey, Plugin owningPlugin) {
             cserver.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
-        }
-
-        @Override
-        public void setGameMode(GameMode mode) {
-            super.setGameMode(mode);
-            getHandle().noPhysics = mode == GameMode.SPECTATOR;
         }
 
         @Override

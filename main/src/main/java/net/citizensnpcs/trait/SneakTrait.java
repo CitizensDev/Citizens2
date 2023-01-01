@@ -28,9 +28,9 @@ public class SneakTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.data().has(NPC.SNEAKING_METADATA)) {
-            setSneaking(npc.data().get(NPC.SNEAKING_METADATA));
-            npc.data().remove(NPC.SNEAKING_METADATA);
+        if (npc.data().has(NPC.Metadata.SNEAKING)) {
+            setSneaking(npc.data().get(NPC.Metadata.SNEAKING));
+            npc.data().remove(NPC.Metadata.SNEAKING);
         }
     }
 
