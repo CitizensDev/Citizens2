@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
@@ -147,7 +148,7 @@ public class Equipment extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || !(npc.getEntity() instanceof LivingEntity))
+        if (!npc.isSpawned() || !(npc.getEntity() instanceof LivingEntity) || !npc.isUpdating(NPCUpdate.PACKET))
             return;
         if (npc.getEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getEntity();

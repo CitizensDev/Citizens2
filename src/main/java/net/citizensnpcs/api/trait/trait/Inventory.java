@@ -13,11 +13,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -30,7 +32,7 @@ import net.citizensnpcs.api.util.ItemStorage;
 @TraitName("inventory")
 public class Inventory extends Trait {
     private ItemStack[] contents;
-    private int t;
+    private InventoryCloseListener listener;
     private org.bukkit.inventory.Inventory view;
     private final Set<InventoryView> views = new HashSet<InventoryView>();
 
@@ -48,36 +50,14 @@ public class Inventory extends Trait {
         if (view != null && !views.isEmpty()) {
             return view.getContents();
         }
+        if (npc.isSpawned()) {
+            saveContents(npc.getEntity());
+        }
         return contents;
     }
 
     public org.bukkit.inventory.Inventory getInventoryView() {
         return view;
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void inventoryCloseEvent(InventoryCloseEvent event) {
-        if (!views.contains(event.getView()))
-            return;
-        ItemStack[] contents = event.getInventory().getContents();
-        for (int i = 0; i < contents.length; i++) {
-            this.contents[i] = contents[i];
-            if (i == 0) {
-                if (npc.getEntity() instanceof LivingEntity) {
-                    npc.getOrAddTrait(Equipment.class).setItemInHand(contents[i]);
-                }
-            }
-        }
-        if (npc.getEntity() instanceof InventoryHolder) {
-            try {
-                int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getStorageContents().length;
-                ((InventoryHolder) npc.getEntity()).getInventory().setStorageContents(Arrays.copyOf(contents, maxSize));
-            } catch (NoSuchMethodError e) {
-                int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getContents().length;
-                ((InventoryHolder) npc.getEntity()).getInventory().setContents(Arrays.copyOf(contents, maxSize));
-            }
-        }
-        views.remove(event.getView());
     }
 
     @Override
@@ -119,6 +99,10 @@ public class Inventory extends Trait {
     }
 
     public void openInventory(Player sender) {
+        if (listener != null) {
+            listener = new InventoryCloseListener();
+            Bukkit.getPluginManager().registerEvents(listener, CitizensAPI.getPlugin());
+        }
         for (int i = 0; i < view.getSize(); i++) {
             if (i >= contents.length)
                 break;
@@ -137,10 +121,6 @@ public class Inventory extends Trait {
 
     @Override
     public void run() {
-        if (t++ > 10) {
-            saveContents(npc.getEntity());
-            t = 0;
-        }
         if (views.isEmpty())
             return;
         Iterator<InventoryView> itr = views.iterator();
@@ -155,6 +135,9 @@ public class Inventory extends Trait {
 
     @Override
     public void save(DataKey key) {
+        if (npc.isSpawned()) {
+            saveContents(npc.getEntity());
+        }
         int slot = 0;
         for (ItemStack item : contents) {
             // Clear previous items to avoid conflicts
@@ -242,6 +225,11 @@ public class Inventory extends Trait {
         } else {
             throw new IndexOutOfBoundsException();
         }
+
+        if (npc.getEntity() instanceof InventoryHolder) {
+            ((InventoryHolder) npc.getEntity()).getInventory().setItem(slot, item);
+        }
+
         if (slot == 0 && npc.getEntity() instanceof LivingEntity) {
             npc.getOrAddTrait(Equipment.class).setItemInHand(item);
         }
@@ -261,6 +249,34 @@ public class Inventory extends Trait {
     @Override
     public String toString() {
         return "Inventory{" + Arrays.toString(contents) + "}";
+    }
+
+    private class InventoryCloseListener implements Listener {
+        @EventHandler(ignoreCancelled = true)
+        public void inventoryCloseEvent(InventoryCloseEvent event) {
+            if (!views.contains(event.getView()))
+                return;
+            ItemStack[] contents = event.getInventory().getContents();
+            for (int i = 0; i < contents.length; i++) {
+                Inventory.this.contents[i] = contents[i];
+                if (i == 0) {
+                    if (npc.getEntity() instanceof LivingEntity) {
+                        npc.getOrAddTrait(Equipment.class).setItemInHand(contents[i]);
+                    }
+                }
+            }
+            if (npc.getEntity() instanceof InventoryHolder) {
+                try {
+                    int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getStorageContents().length;
+                    ((InventoryHolder) npc.getEntity()).getInventory()
+                            .setStorageContents(Arrays.copyOf(contents, maxSize));
+                } catch (NoSuchMethodError e) {
+                    int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getContents().length;
+                    ((InventoryHolder) npc.getEntity()).getInventory().setContents(Arrays.copyOf(contents, maxSize));
+                }
+            }
+            views.remove(event.getView());
+        }
     }
 
     private static boolean SUPPORT_ABSTRACT_HORSE = true;
