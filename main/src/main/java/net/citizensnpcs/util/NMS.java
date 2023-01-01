@@ -657,10 +657,6 @@ public class NMS {
         BRIDGE.sleep(entity, sleep);
     }
 
-    public static boolean tick(Entity next) {
-        return BRIDGE.tick(next);
-    }
-
     public static void trySwim(org.bukkit.entity.Entity entity) {
         trySwim(entity, SwimmingExaminer.isWaterMob(entity) ? 0.02F : 0.04F);
     }

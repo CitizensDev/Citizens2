@@ -237,8 +237,6 @@ import net.minecraft.server.v1_14_R1.ContainerAnvil;
 import net.minecraft.server.v1_14_R1.Containers;
 import net.minecraft.server.v1_14_R1.ControllerJump;
 import net.minecraft.server.v1_14_R1.ControllerMove;
-import net.minecraft.server.v1_14_R1.CrashReport;
-import net.minecraft.server.v1_14_R1.CrashReportSystemDetails;
 import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.DataWatcherObject;
 import net.minecraft.server.v1_14_R1.EnchantmentManager;
@@ -294,7 +292,6 @@ import net.minecraft.server.v1_14_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_14_R1.PlayerChunkMap;
 import net.minecraft.server.v1_14_R1.PlayerChunkMap.EntityTracker;
 import net.minecraft.server.v1_14_R1.RegistryBlocks;
-import net.minecraft.server.v1_14_R1.ReportedException;
 import net.minecraft.server.v1_14_R1.ScoreboardTeam;
 import net.minecraft.server.v1_14_R1.SoundEffect;
 import net.minecraft.server.v1_14_R1.Vec3D;
@@ -1386,44 +1383,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean tick(org.bukkit.entity.Entity next) {
-        Entity entity = NMSImpl.getHandle(next);
-        Entity entity1 = entity.getVehicle();
-        if (entity1 != null) {
-            if ((entity1.dead) || (!entity1.w(entity))) {
-                entity.stopRiding();
-            }
-        } else {
-            if (!entity.dead) {
-                try {
-                    ((WorldServer) entity.world).entityJoinedWorld(entity);
-                } catch (Throwable throwable) {
-                    CrashReport crashreport = CrashReport.a(throwable, "Ticking player");
-                    CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Player being ticked");
-
-                    entity.appendEntityCrashDetails(crashreportsystemdetails);
-                    throw new ReportedException(crashreport);
-                }
-            }
-            boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get("removefromplayerlist",
-                    Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-            if (entity.dead) {
-                ((WorldServer) entity.world).removeEntity(entity);
-                return true;
-            } else if (!removeFromPlayerList) {
-                if (!entity.world.getPlayers().contains(entity)) {
-                    List list = entity.world.getPlayers();
-                    list.add(entity);
-                }
-                return true;
-            } else {
-                entity.world.getPlayers().remove(entity);
-            }
-        }
-        return false;
     }
 
     @Override

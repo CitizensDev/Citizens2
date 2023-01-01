@@ -249,9 +249,6 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
-import net.minecraft.CrashReport;
-import net.minecraft.CrashReportCategory;
-import net.minecraft.ReportedException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.PositionImpl;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -1590,43 +1587,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void sleep(org.bukkit.entity.Player player, boolean sleeping) {
         getHandle(player).setPose(sleeping ? Pose.SLEEPING : Pose.STANDING);
-    }
-
-    @Override
-    public boolean tick(org.bukkit.entity.Entity next) {
-        Entity entity = NMSImpl.getHandle(next);
-        Entity entity1 = entity.getVehicle();
-        if (entity1 != null) {
-            if ((!entity1.isAlive()) || (!entity1.hasPassenger(entity))) {
-                entity.stopRiding();
-            }
-        } else {
-            if (entity.isAlive()) {
-                try {
-                    ((ServerLevel) entity.level).tickNonPassenger(entity);
-                } catch (Throwable throwable) {
-                    CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
-                    CrashReportCategory crashreportsystemdetails = crashreport.addCategory("Player being ticked");
-                    entity.fillCrashReportCategory(crashreportsystemdetails);
-                    throw new ReportedException(crashreport);
-                }
-            }
-            boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.REMOVE_FROM_PLAYERLIST,
-                    Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-            if (!entity.isAlive()) {
-                ((ServerLevel) entity.level).getChunkSource().removeEntity(entity);
-                return true;
-            } else if (!removeFromPlayerList) {
-                if (!entity.level.players().contains(entity)) {
-                    List list = entity.level.players();
-                    list.add(entity);
-                }
-                return true;
-            } else {
-                entity.level.players().remove(entity);
-            }
-        }
-        return false;
     }
 
     @Override

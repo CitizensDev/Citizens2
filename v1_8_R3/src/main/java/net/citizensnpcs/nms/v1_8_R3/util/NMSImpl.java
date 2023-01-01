@@ -162,7 +162,6 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
-import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.AttributeInstance;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
@@ -238,7 +237,6 @@ public class NMSImpl implements NMSBridge {
         } else if (!handle.world.players.contains(handle)) {
             handle.world.players.add(handle);
         }
-        PlayerUpdateTask.addOrRemove(entity, remove);
     }
 
     @Override
@@ -832,8 +830,36 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public Runnable playerTicker(Player entity) {
-        return ((EntityPlayer) getHandle(entity))::l;
+    public Runnable playerTicker(Player next) {
+        return () -> {
+            EntityPlayer entity = (EntityPlayer) getHandle(next);
+            boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get("removefromplayerlist",
+                    Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
+            entity.l();
+            if (!removeFromPlayerList) {
+                return;
+            }
+            if (!entity.dead) {
+                try {
+                    entity.world.g(entity);
+                } catch (Throwable throwable) {
+                    CrashReport crashreport = CrashReport.a(throwable, "Ticking player");
+                    CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Player being ticked");
+
+                    entity.appendEntityCrashDetails(crashreportsystemdetails);
+                    throw new ReportedException(crashreport);
+                }
+            }
+            if (entity.dead) {
+                entity.world.removeEntity(entity);
+            } else if (!removeFromPlayerList) {
+                if (!entity.world.players.contains(entity)) {
+                    entity.world.players.add(entity);
+                }
+            } else {
+                entity.world.players.remove(entity);
+            }
+        };
     }
 
     @Override
@@ -1198,37 +1224,6 @@ public class NMSImpl implements NMSBridge {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean tick(org.bukkit.entity.Entity next) {
-        Entity entity = NMSImpl.getHandle(next);
-        if (!entity.dead) {
-            try {
-                entity.world.g(entity);
-            } catch (Throwable throwable) {
-                CrashReport crashreport = CrashReport.a(throwable, "Ticking player");
-                CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Player being ticked");
-
-                entity.appendEntityCrashDetails(crashreportsystemdetails);
-                throw new ReportedException(crashreport);
-            }
-        }
-        boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get("removefromplayerlist",
-                Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-        if (entity.dead) {
-            entity.world.removeEntity(entity);
-            return true;
-        } else if (!removeFromPlayerList) {
-            if (!entity.world.players.contains(entity)) {
-                entity.world.players.add((EntityHuman) entity);
-            }
-            return true;
-        } else {
-            entity.world.players.remove(entity);
-        }
-
-        return false;
     }
 
     @Override
