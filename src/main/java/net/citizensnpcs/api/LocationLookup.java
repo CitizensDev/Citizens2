@@ -12,12 +12,13 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Maps;
 
 import ch.ethz.globis.phtree.PhTreeF;
 
-public class LocationLookup implements Runnable {
+public class LocationLookup extends BukkitRunnable {
     private final Map<String, PerPlayerMetadata<?>> metadata = Maps.newHashMap();
     private final Map<UUID, PhTreeF<Player>> worlds = Maps.newHashMap();
 
