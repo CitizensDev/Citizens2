@@ -89,18 +89,16 @@ public class ScoreboardTrait extends Trait {
             return;
         Team team = Util.getDummyScoreboard().getTeam(teamName);
         npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
-        if (team == null)
+        if (team == null || !team.hasEntry(name))
             return;
-        if (team.hasEntry(name)) {
-            if (team.getSize() == 1) {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    metadata.remove(player.getUniqueId(), team.getName());
-                    NMS.sendTeamPacket(player, team, 1);
-                }
-                team.unregister();
-            } else {
-                team.removeEntry(name);
+        if (team.getSize() == 1) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                metadata.remove(player.getUniqueId(), team.getName());
+                NMS.sendTeamPacket(player, team, 1);
             }
+            team.unregister();
+        } else {
+            team.removeEntry(name);
         }
     }
 

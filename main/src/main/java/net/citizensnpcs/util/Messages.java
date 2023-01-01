@@ -141,6 +141,8 @@ public class Messages {
     public static final String GUIDED_WAYPOINT_EDITOR_ALREADY_TAKEN = "citizens.editors.waypoints.guided.already-taken";
     public static final String GUIDED_WAYPOINT_EDITOR_BEGIN = "citizens.editors.waypoints.guided.begin";
     public static final String GUIDED_WAYPOINT_EDITOR_END = "citizens.editors.waypoints.guided.end";
+    public static final String HEADONLY_SET = "citizens.commands.npc.lookclose.headonly-set";
+    public static final String HEADONLY_UNSET = "citizens.commands.npc.lookclose.headonly-unset";
     public static final String HOLOGRAM_CLEARED = "citizens.commands.npc.hologram.cleared";
     public static final String HOLOGRAM_DESCRIBE_HEADER = "citizens.commands.npc.hologram.text-describe-header";
     public static final String HOLOGRAM_DIRECTION_SET = "citizens.commands.npc.hologram.direction-set";

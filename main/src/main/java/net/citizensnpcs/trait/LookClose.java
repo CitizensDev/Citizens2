@@ -43,6 +43,8 @@ public class LookClose extends Trait implements Toggleable {
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     @Persist
     private boolean enableRandomLook = Setting.DEFAULT_RANDOM_LOOK_CLOSE.asBoolean();
+    @Persist("headonly")
+    private boolean headOnly;
     private Player lookingAt;
     @Persist("perplayer")
     private boolean perPlayer;
@@ -97,8 +99,9 @@ public class LookClose extends Trait implements Toggleable {
             for (Player player : nearbyPlayers) {
                 PacketRotationSession session = sessions.get(player.getUniqueId());
                 if (session == null) {
-                    sessions.put(player.getUniqueId(), session = npc.getOrAddTrait(RotationTrait.class)
-                            .createPacketSession(new RotationParams().uuidFilter(player.getUniqueId()).persist(true)));
+                    sessions.put(player.getUniqueId(),
+                            session = npc.getOrAddTrait(RotationTrait.class).createPacketSession(new RotationParams()
+                                    .headOnly(headOnly).uuidFilter(player.getUniqueId()).persist(true)));
                 }
                 session.getSession().rotateToFace(player);
                 seen.add(player.getUniqueId());
@@ -196,6 +199,10 @@ public class LookClose extends Trait implements Toggleable {
         return enabled;
     }
 
+    public boolean isHeadOnly() {
+        return headOnly;
+    }
+
     private boolean isInvisible(Player player) {
         return player.getGameMode() == GameMode.SPECTATOR || player.hasPotionEffect(PotionEffectType.INVISIBILITY)
                 || isPluginVanished(player) || !canSee(player);
@@ -280,7 +287,9 @@ public class LookClose extends Trait implements Toggleable {
         if (lookingAt == null)
             return;
 
-        Util.faceEntity(npc.getEntity(), lookingAt);
+        RotationTrait rot = npc.getOrAddTrait(RotationTrait.class);
+        rot.getGlobalParameters().headOnly(headOnly);
+        rot.getPhysicalSession().rotateToFace(lookingAt);
 
         if (npc.getEntity().getType().name().equals("SHULKER")) {
             boolean wasSilent = npc.getEntity().isSilent();
@@ -298,6 +307,10 @@ public class LookClose extends Trait implements Toggleable {
 
     public void setDisableWhileNavigating(boolean set) {
         disableWhileNavigating = set;
+    }
+
+    public void setHeadOnly(boolean headOnly) {
+        this.headOnly = headOnly;
     }
 
     public void setPerPlayer(boolean perPlayer) {

@@ -318,6 +318,13 @@ public class RotationTrait extends Trait {
             return target + clamp(diff, -maxRotPerTick, maxRotPerTick);
         }
 
+        /*
+         *  public Vector3 SuperSmoothVector3Lerp( Vector3 pastPosition, Vector3 pastTargetPosition, Vector3 targetPosition, float time, float speed ){
+         Vector3 f = pastPosition - pastTargetPosition + (targetPosition - pastTargetPosition) / (speed * time);
+         return targetPosition - (targetPosition - pastTargetPosition) / (speed*time) + f * Mathf.Exp(-speed*time);
+         }
+         */
+
         @Override
         public void save(DataKey key) {
             if (headOnly) {
@@ -352,13 +359,6 @@ public class RotationTrait extends Trait {
                 key.removeKey("yawRange");
             }
         }
-
-        /*
-         *  public Vector3 SuperSmoothVector3Lerp( Vector3 pastPosition, Vector3 pastTargetPosition, Vector3 targetPosition, float time, float speed ){
-         Vector3 f = pastPosition - pastTargetPosition + (targetPosition - pastTargetPosition) / (speed * time);
-         return targetPosition - (targetPosition - pastTargetPosition) / (speed*time) + f * Mathf.Exp(-speed*time);
-         }
-         */
 
         public RotationParams uuidFilter(List<UUID> uuids) {
             this.uuidFilter = uuids;
@@ -456,12 +456,12 @@ public class RotationTrait extends Trait {
                     : Util.clamp(params.rotateHeadYawTowards(t, rot.headYaw, getTargetYaw()));
 
             if (!params.headOnly) {
-                float d = Util.clamp(rot.headYaw - 35);
+                float d = Util.clamp(rot.headYaw - 20);
                 if (d > rot.bodyYaw) {
                     rot.bodyYaw = d;
                 }
                 if (d != rot.bodyYaw) {
-                    d = Util.clamp(rot.headYaw + 35);
+                    d = Util.clamp(rot.headYaw + 20);
                     if (d < rot.bodyYaw) {
                         rot.bodyYaw = d;
                     }
