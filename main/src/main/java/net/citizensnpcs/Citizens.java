@@ -403,7 +403,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
 
         locationLookup = new LocationLookup();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, locationLookup, 0, 5);
+        locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
 
         speechFactory = new CitizensSpeechFactory();
         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
@@ -484,8 +484,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         shops.loadFromDisk();
         shops.load();
 
+        locationLookup.cancel();
         locationLookup = new LocationLookup();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, locationLookup, 0, 5);
+        locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
         Template.shutdown();
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
