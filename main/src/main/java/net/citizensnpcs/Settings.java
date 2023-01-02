@@ -110,6 +110,8 @@ public class Settings {
                 value = list;
             }
         },
+        DEFAULT_TEXT_DELAY_MAX("npc.text.default-random-text-delay-max", 40),
+        DEFAULT_TEXT_DELAY_MIN("npc.text.default-random-text-delay-min", 20),
         DEFAULT_TEXT_SPEECH_BUBBLE_TICKS("npc.text.speech-bubble-ticks", 50),
         DISABLE_LOOKCLOSE_WHILE_NAVIGATING("npc.default.look-close.disable-while-navigating", true),
         DISABLE_MC_NAVIGATION_FALLBACK("npc.pathfinding.disable-mc-fallback-navigation", true),
