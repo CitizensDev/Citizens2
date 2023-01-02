@@ -19,12 +19,6 @@ public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
     protected boolean i;
 
     @Override
-    public void a() {
-        this.a = null;
-        this.b = null;
-    }
-
-    @Override
     public void a(boolean paramBoolean) {
         this.g = paramBoolean;
     }

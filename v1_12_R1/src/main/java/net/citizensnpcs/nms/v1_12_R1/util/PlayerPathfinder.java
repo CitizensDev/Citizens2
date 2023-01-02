@@ -26,18 +26,18 @@ public class PlayerPathfinder extends Pathfinder {
 
     public PathEntity a(IBlockAccess paramIBlockAccess, EntityHumanNPC paramEntityInsentient,
             BlockPosition paramBlockPosition, float paramFloat) {
-        return a(paramIBlockAccess, paramEntityInsentient, paramBlockPosition.getX() + 0.5F,
+        return pa(paramIBlockAccess, paramEntityInsentient, paramBlockPosition.getX() + 0.5F,
                 paramBlockPosition.getY() + 0.5F, paramBlockPosition.getZ() + 0.5F, paramFloat);
     }
 
-    private PathEntity a(IBlockAccess paramIBlockAccess, EntityHumanNPC paramEntityInsentient, double paramDouble1,
+    private PathEntity pa(IBlockAccess paramIBlockAccess, EntityHumanNPC paramEntityInsentient, double paramDouble1,
             double paramDouble2, double paramDouble3, float paramFloat) {
         this.a.a();
         this.d.a(paramIBlockAccess, paramEntityInsentient);
         PathPoint localPathPoint1 = this.d.b();
         PathPoint localPathPoint2 = this.d.a(paramDouble1, paramDouble2, paramDouble3);
 
-        PathEntity localPathEntity = a(localPathPoint1, localPathPoint2, paramFloat);
+        PathEntity localPathEntity = pa(localPathPoint1, localPathPoint2, paramFloat);
 
         this.d.a();
         return localPathEntity;
@@ -45,11 +45,11 @@ public class PlayerPathfinder extends Pathfinder {
 
     public PathEntity a(IBlockAccess paramIBlockAccess, EntityHumanNPC paramEntityInsentient, Entity paramEntity,
             float paramFloat) {
-        return a(paramIBlockAccess, paramEntityInsentient, paramEntity.locX, paramEntity.getBoundingBox().b,
+        return pa(paramIBlockAccess, paramEntityInsentient, paramEntity.locX, paramEntity.getBoundingBox().b,
                 paramEntity.locZ, paramFloat);
     }
 
-    private PathEntity a(PathPoint paramPathPoint1, PathPoint paramPathPoint2) {
+    private PathEntity pa(PathPoint paramPathPoint1, PathPoint paramPathPoint2) {
         int i = 1;
         PathPoint localPathPoint = paramPathPoint2;
         while (localPathPoint.h != null) {
@@ -66,7 +66,7 @@ public class PlayerPathfinder extends Pathfinder {
         return new PathEntity(arrayOfPathPoint);
     }
 
-    private PathEntity a(PathPoint paramPathPoint1, PathPoint paramPathPoint2, float paramFloat) {
+    private PathEntity pa(PathPoint paramPathPoint1, PathPoint paramPathPoint2, float paramFloat) {
         paramPathPoint1.e = 0.0F;
         paramPathPoint1.f = paramPathPoint1.c(paramPathPoint2);
         paramPathPoint1.g = paramPathPoint1.f;
@@ -117,7 +117,7 @@ public class PlayerPathfinder extends Pathfinder {
         if (localObject1 == paramPathPoint1) {
             return null;
         }
-        Object localObject2 = a(paramPathPoint1, (PathPoint) localObject1);
+        Object localObject2 = pa(paramPathPoint1, (PathPoint) localObject1);
 
         return (PathEntity) localObject2;
     }
