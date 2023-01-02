@@ -189,7 +189,7 @@ public class ShopTrait extends Trait {
                 NPCShopItem item = shopPage.getItem(i);
 
                 if (item != null) {
-                    slot.setItemStack(item.display);
+                    slot.setItemStack(item.getDisplayItem(null));
                 }
 
                 final int idx = i;
@@ -405,7 +405,7 @@ public class ShopTrait extends Trait {
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
             if (modified.display != null) {
-                ctx.getSlot(9 * 4 + 4).setItemStack(modified.display);
+                ctx.getSlot(9 * 4 + 4).setItemStack(modified.getDisplayItem(null));
             }
             ctx.getSlot(9 * 3 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
                     "Set message to send on click, currently:",

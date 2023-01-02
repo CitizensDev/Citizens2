@@ -109,6 +109,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private NPCSelector selector;
     private StoredShops shops;
     private final SkullMetaProvider skullMetaProvider = new SkullMetaProvider() {
+        private boolean SUPPORT_OWNER_PROFILE = true;
+
         @Override
         public String getTexture(SkullMeta meta) {
             GameProfile profile = NMS.getProfile(meta);
@@ -118,8 +120,22 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         @Override
         public void setTexture(String string, SkullMeta meta) {
-            UUID uuid = meta.getOwningPlayer() == null ? UUID.randomUUID() : meta.getOwningPlayer().getUniqueId();
-            NMS.setProfile(meta, new GameProfile(uuid, string));
+            GameProfile profile = NMS.getProfile(meta);
+            if (profile == null) {
+                if (SUPPORT_OWNER_PROFILE) {
+                    try {
+                        profile = new GameProfile(meta.getOwnerProfile().getUniqueId(),
+                                meta.getOwnerProfile().getName());
+                    } catch (Exception e) {
+                        SUPPORT_OWNER_PROFILE = false;
+                    }
+                }
+                if (profile == null) {
+                    profile = new GameProfile(UUID.randomUUID(), null);
+                }
+            }
+            profile.getProperties().put("textures", new Property("textures", string));
+            NMS.setProfile(meta, profile);
         }
     };
     private CitizensSpeechFactory speechFactory;
