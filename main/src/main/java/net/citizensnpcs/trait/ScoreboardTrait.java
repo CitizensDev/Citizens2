@@ -88,7 +88,7 @@ public class ScoreboardTrait extends Trait {
             return;
         Team team = Util.getDummyScoreboard().getTeam(teamName);
         npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
-        if (team == null || !team.hasEntry(name))
+        if (team == null || name == null || !team.hasEntry(name))
             return;
         if (team.getSize() == 1) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -138,7 +138,9 @@ public class ScoreboardTrait extends Trait {
         }
 
         if (npc.isSpawned()) {
-            lastName = npc.getEntity() instanceof Player ? npc.getEntity().getName() : npc.getUniqueId().toString();
+            lastName = npc.getEntity() instanceof Player && npc.getEntity().getName() != null
+                    ? npc.getEntity().getName()
+                    : npc.getUniqueId().toString();
         }
 
         Set<String> newTags = new HashSet<String>(tags);
