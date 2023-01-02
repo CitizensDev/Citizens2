@@ -103,9 +103,7 @@ public abstract class AbstractNPC implements NPC {
         this.uuid = uuid;
         this.id = id;
         this.registry = registry;
-        this.name = name;
-        coloredNameStringCache = Messaging.parseComponents(name);
-        coloredNameComponentCache = Messaging.minecraftComponentFromRawMessage(name);
+        setNameInternal(name);
         CitizensAPI.getTraitFactory().addDefaultTraits(this);
     }
 
@@ -338,7 +336,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void load(final DataKey root) {
-        name = root.getString("name");
+        setNameInternal(root.getString("name"));
         if (root.keyExists("itemprovider")) {
             ItemStack item = ItemStorage.loadItemStack(root.getRelative("itemprovider"));
             itemProvider = () -> item;
@@ -484,9 +482,7 @@ public abstract class AbstractNPC implements NPC {
 
         NPCRenameEvent event = new NPCRenameEvent(this, this.name, name);
         Bukkit.getPluginManager().callEvent(event);
-        this.name = event.getNewName();
-        coloredNameComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
-        coloredNameStringCache = Messaging.parseComponents(this.name);
+        setNameInternal(event.getNewName());
 
         if (!isSpawned())
             return;
@@ -499,6 +495,12 @@ public abstract class AbstractNPC implements NPC {
             despawn(DespawnReason.PENDING_RESPAWN);
             spawn(old);
         }
+    }
+
+    private void setNameInternal(String name) {
+        this.name = name;
+        coloredNameComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
+        coloredNameStringCache = Messaging.parseComponents(this.name);
     }
 
     @Override

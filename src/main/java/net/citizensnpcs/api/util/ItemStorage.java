@@ -113,6 +113,7 @@ public class ItemStorage {
                 ItemMeta meta = (ItemMeta) inp.readObject();
                 res.setItemMeta(meta);
                 Bukkit.getPluginManager().callEvent(new CitizensDeserialiseMetaEvent(root, res));
+
                 return;
             } catch (IOException e1) {
                 e1.printStackTrace();

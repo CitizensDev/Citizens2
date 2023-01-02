@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -127,6 +128,12 @@ public class Messaging {
     public static void debug(Object... msg) {
         if (isDebugging()) {
             DEBUG_LOGGER.log(Level.INFO, "[Citizens] " + SPACE.join(msg));
+        }
+    }
+
+    public static void idebug(Supplier<String> msg) {
+        if (isDebugging()) {
+            DEBUG_LOGGER.log(Level.INFO, "[Citizens] " + msg);
         }
     }
 
