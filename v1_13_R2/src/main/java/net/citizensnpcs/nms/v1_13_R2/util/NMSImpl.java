@@ -96,6 +96,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
+import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.nms.v1_13_R2.entity.BatController;
 import net.citizensnpcs.nms.v1_13_R2.entity.BlazeController;
@@ -195,6 +196,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.PacketNPC.EntityPacketTracker;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.LlamaTrait;
@@ -359,6 +361,46 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).getControllerMove().f = false;
         }
+    }
+
+    @Override
+    public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        // TODO: configuration / use minecraft defaults for this
+        int visibleDistance = handle instanceof EntityPlayer ? 512 : 80;
+        int updateInterval = handle instanceof EntityPlayer ? 2 : 3;
+        boolean deltaTracking = handle instanceof EntityPlayer ? false : true;
+        EntityTrackerEntry tracker = new EntityTrackerEntry(handle, visibleDistance,
+                handle.world.getMinecraftServer().getPlayerList().getFurthestViewableBlock(), updateInterval,
+                deltaTracking);
+        return new EntityPacketTracker() {
+            @Override
+            public void link(Player player) {
+                EntityPlayer p = (EntityPlayer) getHandle(player);
+                handle.dead = false;
+                tracker.updatePlayer(p);
+                tracker.trackedPlayers.add(p);
+            }
+
+            @Override
+            public void remove() {
+                for (EntityPlayer link : tracker.trackedPlayers) {
+                    unlink(link.getBukkitEntity());
+                }
+            }
+
+            @Override
+            public void run() {
+                tracker.a();
+            }
+
+            @Override
+            public void unlink(Player player) {
+                EntityPlayer p = (EntityPlayer) getHandle(player);
+                tracker.a(p);
+                tracker.trackedPlayers.remove(p);
+            }
+        };
     }
 
     @Override
@@ -1189,6 +1231,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setBoundingBox(org.bukkit.entity.Entity entity, BoundingBox box) {
+        NMSImpl.getHandle(entity).a(new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ));
+    }
+
+    @Override
     public void setCustomName(org.bukkit.entity.Entity entity, Object component, String string) {
         getHandle(entity).setCustomName((IChatBaseComponent) component);
     }
@@ -1203,6 +1250,11 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setMoveDestination(x, y, z, speed);
         }
+    }
+
+    @Override
+    public void setDimensions(org.bukkit.entity.Entity bentity, EntityDim desired) {
+        setSize(getHandle(bentity), desired.width, desired.height, false);
     }
 
     @Override

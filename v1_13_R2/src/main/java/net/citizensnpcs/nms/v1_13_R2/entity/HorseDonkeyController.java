@@ -43,9 +43,9 @@ public class HorseDonkeyController extends MobEntityController {
     }
 
     @Override
-    public void spawn(Location at, NPC npc) {
+    public void create(Location at, NPC npc) {
         npc.addTrait(HorseModifiers.class);
-        super.spawn(at, npc);
+        super.create(at, npc);
     }
 
     public static class EntityHorseDonkeyNPC extends EntityHorseDonkey implements NPCHolder {

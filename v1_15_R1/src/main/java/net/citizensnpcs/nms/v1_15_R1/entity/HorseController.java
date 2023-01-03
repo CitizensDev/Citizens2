@@ -42,14 +42,14 @@ public class HorseController extends MobEntityController {
     }
 
     @Override
-    public Horse getBukkitEntity() {
-        return (Horse) super.getBukkitEntity();
+    public void create(Location at, NPC npc) {
+        npc.getOrAddTrait(HorseModifiers.class);
+        super.create(at, npc);
     }
 
     @Override
-    public void spawn(Location at, NPC npc) {
-        npc.getOrAddTrait(HorseModifiers.class);
-        super.spawn(at, npc);
+    public Horse getBukkitEntity() {
+        return (Horse) super.getBukkitEntity();
     }
 
     public static class EntityHorseNPC extends EntityHorse implements NPCHolder {

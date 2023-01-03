@@ -192,9 +192,7 @@ public class Skin {
                             }
                         }, delay);
 
-                        if (Messaging.isDebugging()) {
-                            Messaging.debug("Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
-                        }
+                        Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
                         break;
                     case SUCCESS:
                         GameProfile profile = request.getProfile();
@@ -210,15 +208,11 @@ public class Skin {
     private void fetchForced() {
         final int maxRetries = Setting.MAX_NPC_SKIN_RETRIES.asInt();
         if (maxRetries > -1 && fetchRetries >= maxRetries) {
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Reached max skin fetch retries for '" + skinName + "'");
-            }
+            Messaging.idebug(() -> "Reached max skin fetch retries for '" + skinName + "'");
             return;
         }
         if (skinName.length() < 3 || skinName.length() > 16) {
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Skin name invalid length '" + skinName + "'");
-            }
+            Messaging.idebug(() -> "Skin name invalid length '" + skinName + "'");
             return;
         }
 
@@ -250,9 +244,7 @@ public class Skin {
                             }
                         }, delay);
 
-                        if (Messaging.isDebugging()) {
-                            Messaging.debug("Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
-                        }
+                        Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
                         break;
                     case SUCCESS:
                         GameProfile profile = request.getProfile();

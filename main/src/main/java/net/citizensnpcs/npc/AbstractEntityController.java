@@ -3,9 +3,11 @@ package net.citizensnpcs.npc;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
 
 public abstract class AbstractEntityController implements EntityController {
     private Entity bukkitEntity;
@@ -17,7 +19,17 @@ public abstract class AbstractEntityController implements EntityController {
         NMS.registerEntityClass(clazz);
     }
 
+    @Override
+    public void create(Location at, NPC npc) {
+        bukkitEntity = createEntity(at, npc);
+    }
+
     protected abstract Entity createEntity(Location at, NPC npc);
+
+    @Override
+    public void die() {
+        bukkitEntity = null;
+    }
 
     @Override
     public Entity getBukkitEntity() {
@@ -31,7 +43,7 @@ public abstract class AbstractEntityController implements EntityController {
         if (bukkitEntity instanceof Player) {
             NMS.removeFromWorld(bukkitEntity);
             NMS.remove(bukkitEntity);
-            setEntity(null);
+            bukkitEntity = null;
         } else {
             bukkitEntity.remove();
             bukkitEntity = null;
@@ -39,12 +51,7 @@ public abstract class AbstractEntityController implements EntityController {
     }
 
     @Override
-    public void setEntity(Entity entity) {
-        this.bukkitEntity = entity;
-    }
-
-    @Override
-    public void spawn(Location at, NPC npc) {
-        bukkitEntity = createEntity(at, npc);
+    public boolean spawn(Location at) {
+        return !Util.isLoaded(at) ? false : NMS.addEntityToWorld(bukkitEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
     }
 }

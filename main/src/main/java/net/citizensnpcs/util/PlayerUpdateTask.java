@@ -12,7 +12,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.PacketNPC;
 
 public class PlayerUpdateTask extends BukkitRunnable {
     @Override
@@ -28,14 +30,18 @@ public class PlayerUpdateTask extends BukkitRunnable {
         }
         for (Entity entity : PLAYERS_PENDING_ADD) {
             PlayerTick rm = PLAYERS.remove(entity.getUniqueId());
+            NPC next = ((NPCHolder) entity).getNPC();
             if (rm != null) {
-                NPC old = ((NPCHolder) rm).getNPC();
-                NPC next = ((NPCHolder) entity).getNPC();
+                NPC old = ((NPCHolder) rm.entity).getNPC();
                 Messaging.severe(old == next ? "Player registered twice"
                         : "Player registered twice with different NPC instances", rm.entity.getUniqueId());
                 rm.entity.remove();
             }
-            PLAYERS.put(entity.getUniqueId(), new PlayerTick((Player) entity));
+            if (next.hasTrait(PacketNPC.class)) {
+                PLAYERS.put(entity.getUniqueId(), new PlayerTick(entity, () -> ((CitizensNPC) next).update()));
+            } else {
+                PLAYERS.put(entity.getUniqueId(), new PlayerTick((Player) entity));
+            }
         }
         PLAYERS_PENDING_ADD.clear();
         PLAYERS_PENDING_REMOVE.clear();
@@ -44,19 +50,25 @@ public class PlayerUpdateTask extends BukkitRunnable {
     }
 
     private static class PlayerTick implements Runnable {
-        Player entity;
-        Runnable tick;
+        private final Entity entity;
+        private final Runnable tick;
+
+        public PlayerTick(Entity entity, Runnable tick) {
+            this.entity = entity;
+            this.tick = tick;
+        }
 
         public PlayerTick(Player player) {
-            entity = player;
-            tick = NMS.playerTicker(player);
+            this(player, () -> {
+                if (player.isValid()) {
+                    NMS.playerTicker(player);
+                }
+            });
         }
 
         @Override
         public void run() {
-            if (entity.isValid()) {
-                tick.run();
-            }
+            tick.run();
         }
     }
 

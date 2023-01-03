@@ -155,9 +155,7 @@ class ProfileFetchThread implements Runnable {
 
             @Override
             public void onProfileLookupSucceeded(final GameProfile profile) {
-                if (Messaging.isDebugging()) {
-                    Messaging.debug("Fetched profile " + profile.getId() + " for player " + profile.getName());
-                }
+                Messaging.idebug(() -> "Fetched profile " + profile.getId() + " for player " + profile.getName());
 
                 ProfileRequest request = findRequest(profile.getName(), requests);
                 if (request == null)

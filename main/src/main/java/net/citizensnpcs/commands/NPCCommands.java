@@ -86,6 +86,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.trait.trait.Speech;
+import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.Placeholders;
@@ -100,6 +101,7 @@ import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.BoundingBoxTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.CommandTrait.CommandTraitError;
@@ -1045,6 +1047,29 @@ public class NPCCommands {
             permission = "citizens.npc.gui")
     public void gui(CommandContext args, Player sender, NPC npc) {
         InventoryMenu.createSelfRegistered(new NPCConfigurator(npc)).present(sender);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "hitbox --scale [scale] --width/height [value]",
+            desc = "Sets the NPC hitbox",
+            modifiers = { "hitbox" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.hitbox")
+    public void hitbox(CommandContext args, CommandSender sender, NPC npc, @Flag("scale") Float scale,
+            @Flag("width") Float width, @Flag("height") Float height) {
+        if (scale != null) {
+            npc.getOrAddTrait(BoundingBoxTrait.class).setScale(scale);
+        }
+        if (width != null) {
+            npc.getOrAddTrait(BoundingBoxTrait.class).setWidth(width);
+        }
+        if (height != null) {
+            npc.getOrAddTrait(BoundingBoxTrait.class).setHeight(height);
+        }
+        EntityDim dim = npc.getOrAddTrait(BoundingBoxTrait.class).getAdjustedBoundingBox();
+        Messaging.sendTr(sender, Messages.BOUNDING_BOX_SET, "width " + dim.width + " height " + dim.height);
     }
 
     @Command(

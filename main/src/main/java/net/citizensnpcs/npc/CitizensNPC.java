@@ -12,7 +12,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -47,6 +46,7 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
+import net.citizensnpcs.trait.PacketNPC;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SneakTrait;
@@ -63,10 +63,9 @@ public class CitizensNPC extends AbstractNPC {
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
 
-    public CitizensNPC(UUID uuid, int id, String name, EntityController entityController, NPCRegistry registry) {
+    public CitizensNPC(UUID uuid, int id, String name, EntityController controller, NPCRegistry registry) {
         super(uuid, id, name, registry);
-        Preconditions.checkNotNull(entityController);
-        this.entityController = entityController;
+        setEntityController(controller);
     }
 
     @Override
@@ -109,7 +108,7 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         if (reason == DespawnReason.DEATH) {
-            entityController.setEntity(null);
+            entityController.die();
         } else {
             entityController.remove();
         }
@@ -139,6 +138,10 @@ public class CitizensNPC extends AbstractNPC {
         return entityController == null ? null : entityController.getBukkitEntity();
     }
 
+    public EntityController getEntityController() {
+        return entityController;
+    }
+
     @Override
     public Navigator getNavigator() {
         return navigator;
@@ -157,7 +160,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean isSpawned() {
-        return getEntity() != null && NMS.isValid(getEntity());
+        return getEntity() != null && (hasTrait(PacketNPC.class) || NMS.isValid(getEntity()));
     }
 
     @Override
@@ -225,7 +228,7 @@ public class CitizensNPC extends AbstractNPC {
 
     public void setEntityController(EntityController newController) {
         Preconditions.checkNotNull(newController);
-        boolean wasSpawned = isSpawned();
+        boolean wasSpawned = entityController == null ? false : isSpawned();
         Location prev = null;
         if (wasSpawned) {
             prev = getEntity().getLocation(CACHE_LOCATION);
@@ -287,7 +290,7 @@ public class CitizensNPC extends AbstractNPC {
         }
 
         getOrAddTrait(CurrentLocation.class).setLocation(at);
-        entityController.spawn(at.clone(), this);
+        entityController.create(at.clone(), this);
         getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         Collection<Trait> onPreSpawn = traits.values();
@@ -300,8 +303,8 @@ public class CitizensNPC extends AbstractNPC {
             }
         }
 
-        boolean loaded = Util.isLoaded(at);
-        boolean couldSpawn = !loaded ? false : NMS.addEntityToWorld(getEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
+        boolean loaded = Messaging.isDebugging() ? false : Util.isLoaded(at);
+        boolean couldSpawn = entityController.spawn(at);
 
         if (!couldSpawn) {
             if (Messaging.isDebugging()) {
@@ -598,7 +601,6 @@ public class CitizensNPC extends AbstractNPC {
     private static boolean SUPPORT_GLOWING = true;
     private static boolean SUPPORT_NODAMAGE_TICKS = true;
     private static boolean SUPPORT_PICKUP_ITEMS = true;
-
     private static boolean SUPPORT_SILENT = true;
 
     private static boolean SUPPORT_USE_ITEM = true;

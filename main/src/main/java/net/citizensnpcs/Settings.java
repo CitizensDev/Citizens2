@@ -29,7 +29,6 @@ public class Settings {
             }
         }
         updateMessagingSettings();
-
         save();
     }
 

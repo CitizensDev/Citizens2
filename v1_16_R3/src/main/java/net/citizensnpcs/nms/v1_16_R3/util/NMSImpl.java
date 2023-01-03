@@ -58,6 +58,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.HttpAuthenticationService;
@@ -94,6 +95,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
+import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.nms.v1_16_R3.entity.BatController;
 import net.citizensnpcs.nms.v1_16_R3.entity.BeeController;
@@ -206,6 +208,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.PacketNPC.EntityPacketTracker;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
@@ -276,6 +279,7 @@ import net.minecraft.server.v1_16_R3.EntityRabbit;
 import net.minecraft.server.v1_16_R3.EntityShulker;
 import net.minecraft.server.v1_16_R3.EntitySize;
 import net.minecraft.server.v1_16_R3.EntityTameableAnimal;
+import net.minecraft.server.v1_16_R3.EntityTrackerEntry;
 import net.minecraft.server.v1_16_R3.EntityTurtle;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.EntityWither;
@@ -422,6 +426,46 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).getControllerMove().f = false;
         }
+    }
+
+    @Override
+    public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        Set<EntityPlayer> linked = Sets.newIdentityHashSet();
+        EntityTrackerEntry tracker = new EntityTrackerEntry((WorldServer) handle.world, handle,
+                handle.getEntityType().getUpdateInterval(), handle.getEntityType().isDeltaTracking(), packet -> {
+                    for (EntityPlayer link : linked) {
+                        link.playerConnection.sendPacket(packet);
+                    }
+                }, linked);
+        return new EntityPacketTracker() {
+            @Override
+            public void link(Player player) {
+                EntityPlayer p = (EntityPlayer) getHandle(player);
+                handle.dead = false;
+                tracker.b(p);
+                linked.add(p);
+            }
+
+            @Override
+            public void remove() {
+                for (EntityPlayer link : linked) {
+                    unlink(link.getBukkitEntity());
+                }
+            }
+
+            @Override
+            public void run() {
+                tracker.a();
+            }
+
+            @Override
+            public void unlink(Player player) {
+                EntityPlayer p = (EntityPlayer) getHandle(player);
+                tracker.a(p);
+                linked.remove(p);
+            }
+        };
     }
 
     @Override
@@ -1254,6 +1298,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setBoundingBox(org.bukkit.entity.Entity entity, BoundingBox box) {
+        NMSImpl.getHandle(entity).a(new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ));
+    }
+
+    @Override
     public void setCustomName(org.bukkit.entity.Entity entity, Object component, String string) {
         getHandle(entity).setCustomName((IChatBaseComponent) component);
     }
@@ -1268,6 +1317,11 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setMoveDestination(x, y, z, speed);
         }
+    }
+
+    @Override
+    public void setDimensions(org.bukkit.entity.Entity entity, EntityDim desired) {
+        setSize(getHandle(entity), new EntitySize(desired.width, desired.height, true));
     }
 
     @Override
@@ -2136,6 +2190,7 @@ public class NMSImpl implements NMSBridge {
     public static void setSize(Entity entity, EntitySize size) {
         try {
             SIZE_FIELD_SETTER.invoke(entity, size);
+            HEAD_HEIGHT.invoke(entity, HEAD_HEIGHT_METHOD.invoke(entity, entity.getPose(), entity.a(entity.getPose())));
         } catch (Throwable e) {
             e.printStackTrace();
         }

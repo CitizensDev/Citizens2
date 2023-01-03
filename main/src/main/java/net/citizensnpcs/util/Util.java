@@ -351,10 +351,8 @@ public class Util {
             cmd += " --id <id>";
         }
         String interpolatedCommand = Placeholders.replace(cmd, clicker, npc);
-        if (Messaging.isDebugging()) {
-            Messaging.debug("Running command " + interpolatedCommand + " on NPC " + (npc == null ? -1 : npc.getId())
-                    + " clicker " + clicker);
-        }
+        Messaging.idebug(() -> "Running command " + interpolatedCommand + " on NPC " + (npc == null ? -1 : npc.getId())
+                + " clicker " + clicker);
 
         if (!player) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);

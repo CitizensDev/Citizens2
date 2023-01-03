@@ -55,6 +55,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -349,14 +350,12 @@ public class EventListen implements Listener {
     public void onNPCDespawn(NPCDespawnEvent event) {
         if (event.getReason() == DespawnReason.PLUGIN || event.getReason() == DespawnReason.REMOVAL
                 || event.getReason() == DespawnReason.RELOAD) {
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Preventing further respawns of", event.getNPC(),
-                        "due to DespawnReason." + event.getReason());
-            }
+            Messaging.idebug(() -> Joiner.on(' ').join("Preventing further respawns of", event.getNPC(),
+                    "due to DespawnReason." + event.getReason()));
             toRespawn.values().remove(event.getNPC());
-        } else if (Messaging.isDebugging()) {
-            Messaging.debug("Removing", event.getNPC(),
-                    "from skin tracker due to DespawnReason." + event.getReason().name());
+        } else {
+            Messaging.idebug(() -> Joiner.on(' ').join("Removing", event.getNPC(),
+                    "from skin tracker due to DespawnReason." + event.getReason().name()));
         }
         skinUpdateTracker.onNPCDespawn(event.getNPC());
     }
@@ -369,9 +368,8 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCSpawn(NPCSpawnEvent event) {
         skinUpdateTracker.onNPCSpawn(event.getNPC());
-        if (Messaging.isDebugging()) {
-            Messaging.debug("Removing respawns of", event.getNPC(), "due to SpawnReason." + event.getReason());
-        }
+        Messaging.idebug(() -> Joiner.on(' ').join("Removing respawns of", event.getNPC(),
+                "due to SpawnReason." + event.getReason()));
         toRespawn.values().remove(event.getNPC());
     }
 
@@ -631,28 +629,20 @@ public class EventListen implements Listener {
         for (int i = 0; i < ids.size(); i++) {
             NPC npc = ids.get(i);
             if (npc.getOwningRegistry().getById(npc.getId()) != npc) {
-                if (Messaging.isDebugging()) {
-                    Messaging.debug("Prevented deregistered NPC from respawning", npc);
-                }
+                Messaging.idebug(() -> "Prevented deregistered NPC from respawning " + npc);
                 continue;
             }
             if (npc.isSpawned()) {
-                if (Messaging.isDebugging()) {
-                    Messaging.debug("Can't respawn NPC", npc, ": already spawned");
-                }
+                Messaging.idebug(() -> "Can't respawn NPC " + npc + ": already spawned");
                 continue;
             }
             boolean success = spawn(npc);
             if (!success) {
                 ids.remove(i--);
-                if (Messaging.isDebugging()) {
-                    Messaging.debug("Couldn't respawn", npc, "during", event, "at", coord);
-                }
+                Messaging.idebug(() -> Joiner.on(' ').join("Couldn't respawn", npc, "during", event, "at", coord));
                 continue;
             }
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Spawned", npc, "during", event, "at", coord);
-            }
+            Messaging.idebug(() -> Joiner.on(' ').join("Spawned", npc, "during", event, "at", coord));
         }
         for (NPC npc : ids) {
             toRespawn.remove(coord, npc);
@@ -662,9 +652,7 @@ public class EventListen implements Listener {
     private boolean spawn(NPC npc) {
         Location spawn = npc.getOrAddTrait(CurrentLocation.class).getLocation();
         if (spawn == null) {
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Couldn't find a spawn location for despawned NPC", npc);
-            }
+            Messaging.idebug(() -> Joiner.on(' ').join("Couldn't find a spawn location for despawned NPC", npc));
             return false;
         }
         return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
@@ -687,9 +675,7 @@ public class EventListen implements Listener {
         for (NPC npc : toDespawn) {
             if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
                 if (!(event instanceof Cancellable)) {
-                    if (Messaging.isDebugging()) {
-                        Messaging.debug("Reloading chunk because", npc, "couldn't despawn");
-                    }
+                    Messaging.idebug(() -> Joiner.on(' ').join("Reloading chunk because", npc, "couldn't despawn"));
                     loadChunk = true;
                     toRespawn.put(coord, npc);
                     continue;
@@ -700,17 +686,13 @@ public class EventListen implements Listener {
                 return;
             }
             toRespawn.put(coord, npc);
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Despawned", npc, "due to chunk unload at", coord);
-            }
+            Messaging.idebug(() -> Joiner.on(' ').join("Despawned", npc, "due to chunk unload at", coord));
         }
         if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
             new Exception("CITIZENS CHUNK UNLOAD DEBUG " + coord).printStackTrace();
         }
         if (loadChunk) {
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Loading chunk in 10 ticks due to forced chunk load at", coord);
-            }
+            Messaging.idebug(() -> Joiner.on(' ').join("Loading chunk in 10 ticks due to forced chunk load at", coord));
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
@@ -722,6 +704,5 @@ public class EventListen implements Listener {
         }
     }
 
-    private static boolean SUPPORT_OWNING_PLAYER = true;
     private static boolean SUPPORT_STOP_USE_ITEM = true;
 }

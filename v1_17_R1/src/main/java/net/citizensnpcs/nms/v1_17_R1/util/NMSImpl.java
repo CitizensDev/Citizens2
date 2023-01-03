@@ -55,6 +55,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.HttpAuthenticationService;
@@ -91,6 +92,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
+import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.nms.v1_17_R1.entity.AxolotlController;
 import net.citizensnpcs.nms.v1_17_R1.entity.BatController;
@@ -208,6 +210,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.PacketNPC.EntityPacketTracker;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
@@ -253,8 +256,10 @@ import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -437,6 +442,46 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).getMoveControl().moving = false;
         }
+    }
+
+    @Override
+    public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity) {
+        Entity handle = getHandle(entity);
+        Set<ServerPlayerConnection> linked = Sets.newIdentityHashSet();
+        ServerEntity tracker = new ServerEntity((ServerLevel) handle.level, handle, handle.getType().updateInterval(),
+                handle.getType().trackDeltas(), packet -> {
+                    for (ServerPlayerConnection link : linked) {
+                        link.send(packet);
+                    }
+                }, linked);
+        return new EntityPacketTracker() {
+            @Override
+            public void link(Player player) {
+                ServerPlayer p = (ServerPlayer) getHandle(player);
+                handle.unsetRemoved();
+                tracker.addPairing(p);
+                linked.add(p.connection);
+            }
+
+            @Override
+            public void remove() {
+                for (ServerPlayerConnection link : linked) {
+                    unlink(link.getPlayer().getBukkitEntity());
+                }
+            }
+
+            @Override
+            public void run() {
+                tracker.sendChanges();
+            }
+
+            @Override
+            public void unlink(Player player) {
+                ServerPlayer p = (ServerPlayer) getHandle(player);
+                tracker.removePairing(p);
+                linked.remove(p.connection);
+            }
+        };
     }
 
     @Override
@@ -1250,6 +1295,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setBoundingBox(org.bukkit.entity.Entity entity, BoundingBox box) {
+        NMSImpl.getHandle(entity).setBoundingBox(new AABB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ));
+    }
+
+    @Override
     public void setCustomName(org.bukkit.entity.Entity entity, Object component, String string) {
         getHandle(entity).setCustomName((Component) component);
     }
@@ -1264,6 +1314,11 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof EntityHumanNPC) {
             ((EntityHumanNPC) handle).setMoveDestination(x, y, z, speed);
         }
+    }
+
+    @Override
+    public void setDimensions(org.bukkit.entity.Entity entity, EntityDim desired) {
+        setSize(getHandle(entity), new EntityDimensions(desired.width, desired.height, true));
     }
 
     @Override
@@ -2139,6 +2194,9 @@ public class NMSImpl implements NMSBridge {
     public static void setSize(Entity entity, EntityDimensions size) {
         try {
             SIZE_FIELD_SETTER.invoke(entity, size);
+
+            HEAD_HEIGHT.invoke(entity,
+                    HEAD_HEIGHT_METHOD.invoke(entity, entity.getPose(), entity.getDimensions(entity.getPose())));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -2185,7 +2243,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.SHULKER, EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(Brain.class, "f");
-
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);

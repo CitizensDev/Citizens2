@@ -119,7 +119,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
 
         @Override
-        public void setTexture(String string, SkullMeta meta) {
+        public void setTexture(String texture, SkullMeta meta) {
             GameProfile profile = NMS.getProfile(meta);
             if (profile == null) {
                 if (SUPPORT_OWNER_PROFILE) {
@@ -134,7 +134,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     profile = new GameProfile(UUID.randomUUID(), null);
                 }
             }
-            profile.getProperties().put("textures", new Property("textures", string));
+            profile.getProperties().put("textures", new Property("textures", texture));
             NMS.setProfile(meta, profile);
         }
     };

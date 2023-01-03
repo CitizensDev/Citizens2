@@ -5,7 +5,6 @@ import java.lang.invoke.MethodHandle;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -339,14 +338,10 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 AttributeSupplier provider = (AttributeSupplier) ATTRIBUTE_SUPPLIER.invoke(getAttributes());
                 Map<Attribute, AttributeInstance> all = Maps
                         .newHashMap((Map<Attribute, AttributeInstance>) ATTRIBUTE_PROVIDER_MAP.invoke(provider));
-                all.put(Attributes.FOLLOW_RANGE,
-                        new AttributeInstance(Attributes.FOLLOW_RANGE, new Consumer<AttributeInstance>() {
-                            @Override
-                            public void accept(AttributeInstance att) {
-                                throw new UnsupportedOperationException(
-                                        "Tried to change value for default attribute instance FOLLOW_RANGE");
-                            }
-                        }));
+                all.put(Attributes.FOLLOW_RANGE, new AttributeInstance(Attributes.FOLLOW_RANGE, att -> {
+                    throw new UnsupportedOperationException(
+                            "Tried to change value for default attribute instance FOLLOW_RANGE");
+                }));
                 ATTRIBUTE_PROVIDER_MAP_SETTER.invoke(provider, ImmutableMap.copyOf(all));
             } catch (Throwable e) {
                 e.printStackTrace();

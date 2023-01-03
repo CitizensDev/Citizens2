@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -137,15 +138,16 @@ public class BossBarTrait extends Trait {
                     }
                 }
                 bar.setProgress(entity.getHealth() / maxHealth);
-            } else {
+            } else if (track != null && !track.isEmpty()) {
                 String replaced = Placeholders.replace(track,
                         npc.getEntity() instanceof Player ? (Player) npc.getEntity() : null);
-                if (!track.equals(replaced)) {
-                    try {
-                        bar.setProgress(Double.parseDouble(replaced));
-                    } catch (NumberFormatException ex) {
-                    }
+                Double number = Doubles.tryParse(replaced);
+                if (number == null)
+                    return;
+                if (number >= 1 && number <= 100) {
+                    number /= 100.0;
                 }
+                bar.setProgress(number);
             }
         }
         bar.setTitle(title);

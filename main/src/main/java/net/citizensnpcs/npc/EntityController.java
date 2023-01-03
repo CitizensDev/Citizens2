@@ -6,11 +6,13 @@ import org.bukkit.entity.Entity;
 import net.citizensnpcs.api.npc.NPC;
 
 public interface EntityController {
+    void create(Location at, NPC npc);
+
+    void die();
+
     Entity getBukkitEntity();
 
     void remove();
 
-    void setEntity(Entity entity);
-
-    void spawn(Location at, NPC npc);
+    boolean spawn(Location at);
 }

@@ -40,10 +40,12 @@ import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.BoundingBox;
+import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.PacketNPC.EntityPacketTracker;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 
 public class NMS {
@@ -346,6 +348,10 @@ public class NMS {
         return BRIDGE.getPassengers(entity);
     }
 
+    public static EntityPacketTracker getPlayerTracker(Entity entity) {
+        return BRIDGE.createPacketTracker(entity);
+    }
+
     public static GameProfile getProfile(Player player) {
         return BRIDGE.getProfile(player);
     }
@@ -546,6 +552,10 @@ public class NMS {
         BRIDGE.setBodyYaw(entity, yaw);
     }
 
+    public static void setBoundingBox(Entity entity, BoundingBox box) {
+        BRIDGE.setBoundingBox(entity, box);
+    }
+
     public static void setCamelPose(Entity entity, CamelPose pose) {
         BRIDGE.setCamelPose(entity, pose);
     }
@@ -556,6 +566,10 @@ public class NMS {
 
     public static void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {
         BRIDGE.setDestination(entity, x, y, z, speed);
+    }
+
+    public static void setDimensions(Entity entity, EntityDim desired) {
+        BRIDGE.setDimensions(entity, desired);
     }
 
     public static void setEndermanAngry(Enderman enderman, boolean angry) {
@@ -685,7 +699,6 @@ public class NMS {
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
-
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {
