@@ -133,7 +133,7 @@ public class Messaging {
 
     public static void idebug(Supplier<String> msg) {
         if (isDebugging()) {
-            DEBUG_LOGGER.log(Level.INFO, "[Citizens] " + msg);
+            DEBUG_LOGGER.log(Level.INFO, "[Citizens] " + msg.get());
         }
     }
 
