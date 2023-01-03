@@ -99,6 +99,9 @@ public class Inventory extends Trait {
     }
 
     public void openInventory(Player sender) {
+        if (npc.isSpawned()) {
+            saveContents(npc.getEntity());
+        }
         if (listener != null) {
             listener = new InventoryCloseListener();
             Bukkit.getPluginManager().registerEvents(listener, CitizensAPI.getPlugin());

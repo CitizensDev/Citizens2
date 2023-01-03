@@ -114,6 +114,12 @@ public class Equipment extends Trait {
     }
 
     @Override
+    public void onAttach() {
+        npc.scheduleUpdate(NPCUpdate.PACKET);
+        run();
+    }
+
+    @Override
     @SuppressWarnings("deprecation")
     public void onSpawn() {
         if (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof ArmorStand))
@@ -148,7 +154,7 @@ public class Equipment extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || !(npc.getEntity() instanceof LivingEntity) || !npc.isUpdating(NPCUpdate.PACKET))
+        if (!(npc.getEntity() instanceof LivingEntity) || !npc.isUpdating(NPCUpdate.PACKET))
             return;
         if (npc.getEntity() instanceof Enderman) {
             Enderman enderman = (Enderman) npc.getEntity();
