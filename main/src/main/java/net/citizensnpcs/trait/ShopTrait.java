@@ -617,7 +617,7 @@ public class ShopTrait extends Trait {
                             shop.type == ShopType.COMMAND)));
         }
 
-        @MenuSlot(slot = { 0, 8 }, material = Material.COMMAND_BLOCK, amount = 1)
+        @MenuSlot(slot = { 0, 8 }, compatMaterial = { "COMMAND_BLOCK", "COMMAND" }, amount = 1)
         public void onToggleRightClick(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             if (trait == null)

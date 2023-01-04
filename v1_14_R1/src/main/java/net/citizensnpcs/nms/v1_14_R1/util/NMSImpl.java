@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -424,9 +425,11 @@ public class NMSImpl implements NMSBridge {
             }
 
             @Override
-            public void remove() {
-                for (EntityPlayer link : linked) {
-                    unlink(link.getBukkitEntity());
+            public void unlinkAll(Consumer<Player> callback) {
+                for (EntityPlayer link : Lists.newArrayList(linked)) {
+                    Player entity = link.getBukkitEntity();
+                    unlink(entity);
+                    callback.accept(entity);
                 }
             }
 

@@ -234,6 +234,10 @@ public class CitizensNPC extends AbstractNPC {
             prev = getEntity().getLocation(CACHE_LOCATION);
             despawn(DespawnReason.PENDING_RESPAWN);
         }
+        PacketNPC packet = getTraitNullable(PacketNPC.class);
+        if (packet != null) {
+            newController = packet.wrap(newController);
+        }
         entityController = newController;
         if (wasSpawned) {
             spawn(prev, SpawnReason.RESPAWN);
@@ -333,7 +337,7 @@ public class CitizensNPC extends AbstractNPC {
 
             @Override
             public void accept(Runnable cancel) {
-                if (getEntity() == null || !getEntity().isValid()) {
+                if (getEntity() == null || (!hasTrait(PacketNPC.class) && !getEntity().isValid())) {
                     if (timer++ > Setting.ENTITY_SPAWN_WAIT_TICKS.asInt()) {
                         Messaging.debug("Couldn't spawn ", CitizensNPC.this, "waited", timer,
                                 "ticks but entity not added to world");

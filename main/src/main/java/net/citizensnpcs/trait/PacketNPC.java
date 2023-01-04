@@ -1,15 +1,16 @@
 package net.citizensnpcs.trait;
 
+import java.util.function.Consumer;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.LocationLookup.PerPlayerMetadata;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.EntityController;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerUpdateTask;
@@ -17,6 +18,7 @@ import net.citizensnpcs.util.PlayerUpdateTask;
 @TraitName("packet")
 public class PacketNPC extends Trait {
     private EntityPacketTracker playerTracker;
+    private boolean spawned = false;
 
     public PacketNPC() {
         super("packet");
@@ -25,26 +27,36 @@ public class PacketNPC extends Trait {
     @Override
     public void onSpawn() {
         playerTracker = NMS.getPlayerTracker(npc.getEntity());
+        spawned = true;
     }
 
     @Override
     public void run() {
-        wrap((CitizensNPC) npc);
-        if (!npc.isSpawned())
+        if (!spawned)
             return;
+        PerPlayerMetadata<Boolean> ppm = CitizensAPI.getLocationLookup().registerMetadata("packetnpc", null);
         for (Player nearby : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getStoredLocation(), 64)) {
-            if (!nearby.hasMetadata(npc.getUniqueId().toString())) {
+            if (!ppm.has(nearby.getUniqueId(), npc.getUniqueId().toString())) {
                 playerTracker.link(nearby);
-                nearby.setMetadata(npc.getUniqueId().toString(), new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+                ppm.set(nearby.getUniqueId(), npc.getUniqueId().toString(), true);
             }
         }
         playerTracker.run();
     }
 
-    private void wrap(CitizensNPC npc) {
-        if (!(npc.getEntityController() instanceof PacketController)) {
-            npc.setEntityController(new PacketController(npc.getEntityController()));
+    public EntityController wrap(EntityController controller) {
+        if (!(controller instanceof PacketController)) {
+            return new PacketController(controller);
         }
+        return controller;
+    }
+
+    public static interface EntityPacketTracker extends Runnable {
+        public void link(Player player);
+
+        public void unlinkAll(Consumer<Player> callback);
+
+        public void unlink(Player player);
     }
 
     private class PacketController implements EntityController {
@@ -61,6 +73,13 @@ public class PacketNPC extends Trait {
 
         @Override
         public void die() {
+            base.die();
+            if (!spawned)
+                return;
+            PlayerUpdateTask.deregisterPlayer(getBukkitEntity());
+            PerPlayerMetadata<Boolean> ppm = CitizensAPI.getLocationLookup().registerMetadata("packetnpc", null);
+            playerTracker.unlinkAll(player -> ppm.remove(player.getUniqueId(), npc.getUniqueId().toString()));
+            spawned = false;
         }
 
         @Override
@@ -70,9 +89,13 @@ public class PacketNPC extends Trait {
 
         @Override
         public void remove() {
+            if (!spawned)
+                return;
             PlayerUpdateTask.deregisterPlayer(getBukkitEntity());
-            playerTracker.remove();
+            PerPlayerMetadata<Boolean> ppm = CitizensAPI.getLocationLookup().registerMetadata("packetnpc", null);
+            playerTracker.unlinkAll(player -> ppm.remove(player.getUniqueId(), npc.getUniqueId().toString()));
             base.remove();
+            spawned = false;
         }
 
         @Override
@@ -81,13 +104,5 @@ public class PacketNPC extends Trait {
             PlayerUpdateTask.registerPlayer(getBukkitEntity());
             return true;
         }
-    }
-
-    public static interface EntityPacketTracker extends Runnable {
-        public void link(Player player);
-
-        public void remove();
-
-        public void unlink(Player player);
     }
 }
