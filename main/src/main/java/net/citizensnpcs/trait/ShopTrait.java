@@ -595,7 +595,7 @@ public class ShopTrait extends Trait {
             ctx.getMenu().transition(new NPCShopContentsEditor(shop));
         }
 
-        @MenuSlot(slot = { 0, 2 }, material = Material.OAK_SIGN, amount = 1)
+        @MenuSlot(slot = { 0, 2 }, compatMaterial = { "OAK_SIGN", "SIGN" }, amount = 1)
         public void onPermissionChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             ctx.getMenu().transition(InputMenus.stringSetter(shop::getRequiredPermission, shop::setPermission));
         }
