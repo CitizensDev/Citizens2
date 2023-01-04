@@ -274,7 +274,7 @@ public class InventoryMenu implements Listener, Runnable {
                 InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
                         toNPC ? i : event.getRawSlot(), event.getClick(),
                         toNPC ? InventoryAction.PLACE_ALL : InventoryAction.PICKUP_ALL);
-                onInventoryClick(e);
+                handleClick(e);
                 if (toNPC) {
                     event.getView().setCursor(null);
                 }
@@ -297,7 +297,7 @@ public class InventoryMenu implements Listener, Runnable {
                 }
                 InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
                         toNPC ? i : event.getRawSlot(), event.getClick(), action);
-                onInventoryClick(e);
+                handleClick(e);
                 if (toNPC) {
                     event.getView().setCursor(null);
                 }
