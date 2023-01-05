@@ -89,10 +89,6 @@ public final class CitizensAPI {
         return getImplementation().getOwningClassLoader();
     }
 
-    public static InventoryHelper getInventoryHelper() {
-        return getImplementation().getInventoryHelper();
-    }
-
     public static LocationLookup getLocationLookup() {
         return getImplementation().getLocationLookup();
     }
@@ -109,6 +105,10 @@ public final class CitizensAPI {
      */
     public static NPCRegistry getNamedNPCRegistry(String name) {
         return getImplementation().getNamedNPCRegistry(name);
+    }
+
+    public static NMSHelper getNMSHelper() {
+        return getImplementation().getNMSHelper();
     }
 
     public static Iterable<NPCRegistry> getNPCRegistries() {
@@ -146,10 +146,6 @@ public final class CitizensAPI {
      */
     public static File getScriptFolder() {
         return getImplementation().getScriptFolder();
-    }
-
-    public static SkullMetaProvider getSkullMetaProvider() {
-        return instance.getSkullMetaProvider();
     }
 
     /**

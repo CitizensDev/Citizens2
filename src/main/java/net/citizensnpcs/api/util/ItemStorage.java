@@ -216,7 +216,7 @@ public class ItemStorage {
             }
 
             if (root.keyExists("skull.texture") && !root.getString("skull.texture").isEmpty()) {
-                CitizensAPI.getSkullMetaProvider().setTexture(root.getString("skull.texture", ""), meta);
+                CitizensAPI.getNMSHelper().setTexture(root.getString("skull.texture", ""), meta);
             }
 
             res.setItemMeta(meta);

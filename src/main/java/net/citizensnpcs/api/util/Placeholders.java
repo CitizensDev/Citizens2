@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -22,8 +23,13 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 
 public class Placeholders {
+    private static OfflinePlayer getPlayer(BlockCommandSender sender) {
+        return CitizensAPI.getNMSHelper().getPlayer(sender);
+    }
+
     public static String replace(String text, CommandSender sender, NPC npc) {
-        text = replace(text, sender instanceof OfflinePlayer ? (OfflinePlayer) sender : null);
+        text = replace(text, sender instanceof OfflinePlayer ? (OfflinePlayer) sender
+                : sender instanceof BlockCommandSender ? getPlayer((BlockCommandSender) sender) : null);
         if (npc == null || text == null) {
             return text;
         }

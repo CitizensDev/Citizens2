@@ -44,8 +44,6 @@ public interface CitizensPlugin extends Plugin {
      */
     public NPCSelector getDefaultNPCSelector();
 
-    public InventoryHelper getInventoryHelper();
-
     /**
      * Gets the Citizens {@link LocationLookup}
      *
@@ -61,6 +59,8 @@ public interface CitizensPlugin extends Plugin {
      *         not found
      */
     public NPCRegistry getNamedNPCRegistry(String name);
+
+    public NMSHelper getNMSHelper();
 
     /**
      * Get all registered {@link NPCRegistry}s.
@@ -80,11 +80,6 @@ public interface CitizensPlugin extends Plugin {
      * @return The folder for storing scripts
      */
     public File getScriptFolder();
-
-    /**
-     * @return The Skull ItemMeta provider
-     */
-    public SkullMetaProvider getSkullMetaProvider();
 
     /**
      * Gets the SpeechFactory.

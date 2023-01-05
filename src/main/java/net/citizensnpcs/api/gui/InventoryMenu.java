@@ -274,7 +274,7 @@ public class InventoryMenu implements Listener, Runnable {
                 InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
                         toNPC ? i : event.getRawSlot(), event.getClick(),
                         toNPC ? InventoryAction.PLACE_ALL : InventoryAction.PICKUP_ALL);
-                handleClick(e);
+                onInventoryClick(e);
                 if (toNPC) {
                     event.getView().setCursor(null);
                 }
@@ -297,7 +297,7 @@ public class InventoryMenu implements Listener, Runnable {
                 }
                 InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
                         toNPC ? i : event.getRawSlot(), event.getClick(), action);
-                handleClick(e);
+                onInventoryClick(e);
                 if (toNPC) {
                     event.getView().setCursor(null);
                 }
@@ -323,8 +323,13 @@ public class InventoryMenu implements Listener, Runnable {
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (page == null || transitioning || closingViews)
+        if (page == null || transitioning || closingViews) {
+            if (transitioning && isOurInventory(
+                    event.getClickedInventory() != null ? event.getClickedInventory() : event.getInventory())) {
+                event.setCancelled(true);
+            }
             return;
+        }
         delayViewerChanges = true;
         try {
             handleClick(event);
@@ -354,7 +359,7 @@ public class InventoryMenu implements Listener, Runnable {
 
     private InventoryView openInventory(HumanEntity player, Inventory inventory, String title) {
         if (inventory.getType() == InventoryType.ANVIL) {
-            return CitizensAPI.getInventoryHelper().openAnvilInventory((Player) player, inventory, title);
+            return CitizensAPI.getNMSHelper().openAnvilInventory((Player) player, inventory, title);
         } else {
             return player.openInventory(inventory);
         }
@@ -594,7 +599,7 @@ public class InventoryMenu implements Listener, Runnable {
 
     void updateTitle(String newTitle) {
         for (InventoryView view : views) {
-            CitizensAPI.getInventoryHelper().updateInventoryTitle((Player) view.getPlayer(), view, newTitle);
+            CitizensAPI.getNMSHelper().updateInventoryTitle((Player) view.getPlayer(), view, newTitle);
         }
     }
 
