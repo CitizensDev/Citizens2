@@ -23,7 +23,6 @@ import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.viaversion.viaversion.api.Via;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -45,16 +44,10 @@ public class ProtocolLibListener {
         flagsClass = MinecraftReflection.getMinecraftClass("EnumPlayerTeleportFlags",
                 "PacketPlayOutPosition$EnumPlayerTeleportFlags",
                 "network.protocol.game.PacketPlayOutPosition$EnumPlayerTeleportFlags");
-        try {
-            Via.getAPI();
-        } catch (Throwable t) {
-            VIA_ENABLED = false;
-        }
         manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Server.PLAYER_INFO) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                int version = VIA_ENABLED ? Via.getAPI().getPlayerVersion(event.getPlayer())
-                        : manager.getProtocolVersion(event.getPlayer());
+                int version = manager.getProtocolVersion(event.getPlayer());
                 if (version >= 761) {
                     NMS.onPlayerInfoAdd(event.getPlayer(), event.getPacket().getHandle());
                     return;
@@ -172,5 +165,4 @@ public class ProtocolLibListener {
     }
 
     private static boolean LOGGED_ERROR = false;
-    private static boolean VIA_ENABLED = true;
 }
