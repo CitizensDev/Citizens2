@@ -603,7 +603,7 @@ public class ShopTrait extends Trait {
         @MenuSlot(slot = { 0, 6 }, material = Material.NAME_TAG, amount = 1)
         public void onSetTitle(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             ctx.getMenu().transition(InputMenus.stringSetter(() -> shop.title, newTitle -> {
-                shop.title = newTitle.isEmpty() ? null : newTitle;
+                shop.title = newTitle;
             }));
         }
 
@@ -613,8 +613,8 @@ public class ShopTrait extends Trait {
                 shop.type = chosen.getValue();
             }, Choice.<ShopType> of(ShopType.BUY, Material.DIAMOND, "Players buy items", shop.type == ShopType.BUY),
                     Choice.of(ShopType.SELL, Material.EMERALD, "Players sell items", shop.type == ShopType.SELL),
-                    Choice.of(ShopType.COMMAND, Material.ENDER_EYE, "Clicks trigger commands only",
-                            shop.type == ShopType.COMMAND)));
+                    Choice.of(ShopType.COMMAND, Util.getFallbackMaterial("ENDER_EYE", "ENDER_PEARL"),
+                            "Clicks trigger commands only", shop.type == ShopType.COMMAND)));
         }
 
         @MenuSlot(slot = { 0, 8 }, compatMaterial = { "COMMAND_BLOCK", "COMMAND" }, amount = 1)

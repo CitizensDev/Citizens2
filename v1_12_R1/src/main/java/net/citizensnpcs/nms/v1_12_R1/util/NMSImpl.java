@@ -979,10 +979,10 @@ public class NMSImpl implements NMSBridge {
         container.getBukkitView().setItem(0, anvil.getItem(0));
         container.getBukkitView().setItem(1, anvil.getItem(1));
         container.checkReachable = false;
-        container.addSlotListener(handle);
         handle.playerConnection
                 .sendPacket(new PacketPlayOutOpenWindow(container.windowId, "minecraft:anvil", new ChatMessage(title)));
         handle.activeContainer = container;
+        handle.syncInventory();
         return container.getBukkitView();
     }
 

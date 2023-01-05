@@ -210,8 +210,9 @@ public class ItemAction extends NPCShopAction {
                 base.requireUndamaged = res;
                 return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
             }, base.requireUndamaged));
-            ctx.getSlot(3 * 9 + 2).setItemStack(new ItemStack(Material.COMPARATOR), "Compare item similarity",
-                    base.compareSimilarity ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
+            ctx.getSlot(3 * 9 + 2).setItemStack(
+                    new ItemStack(Util.getFallbackMaterial("COMPARATOR", "REDSTONE_COMPARATOR")),
+                    "Compare item similarity", base.compareSimilarity ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
             ctx.getSlot(3 * 9 + 2).addClickHandler(new BooleanSlotHandler((res) -> {
                 base.compareSimilarity = res;
                 return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
@@ -221,7 +222,7 @@ public class ItemAction extends NPCShopAction {
             ctx.getSlot(3 * 9 + 3)
                     .addClickHandler((event) -> ctx.getMenu()
                             .transition(InputMenus.stringSetter(() -> Joiner.on(',').join(base.metaFilter),
-                                    res -> base.metaFilter = Arrays.asList(res.split(",")))));
+                                    res -> base.metaFilter = res == null ? null : Arrays.asList(res.split(",")))));
         }
 
         @Override

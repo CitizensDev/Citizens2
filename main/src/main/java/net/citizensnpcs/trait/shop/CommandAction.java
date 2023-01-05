@@ -136,7 +136,7 @@ public class CommandAction extends NPCShopAction {
                 CommandAction old = (CommandAction) previous;
                 description = old.describe();
             }
-            return Util.createItem(Material.COMMAND_BLOCK, "Command", description);
+            return Util.createItem(Util.getFallbackMaterial("COMMAND_BLOCK", "COMMAND"), "Command", description);
         }
 
         @Override
