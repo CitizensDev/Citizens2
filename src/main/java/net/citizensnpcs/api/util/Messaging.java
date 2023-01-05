@@ -101,6 +101,8 @@ public class Messaging {
     }
 
     private static String convertLegacyCodes(String message) {
+        if (message == null)
+            return null;
         message = ChatColor.translateAlternateColorCodes('&', message);
         Matcher m = HEX_MATCHER.matcher(message);
         StringBuffer sb = new StringBuffer();
