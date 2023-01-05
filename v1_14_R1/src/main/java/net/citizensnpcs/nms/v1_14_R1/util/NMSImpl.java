@@ -26,11 +26,13 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_14_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_14_R1.boss.CraftBossBar;
+import org.bukkit.craftbukkit.v1_14_R1.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftWither;
@@ -425,15 +427,6 @@ public class NMSImpl implements NMSBridge {
             }
 
             @Override
-            public void unlinkAll(Consumer<Player> callback) {
-                for (EntityPlayer link : Lists.newArrayList(linked)) {
-                    Player entity = link.getBukkitEntity();
-                    unlink(entity);
-                    callback.accept(entity);
-                }
-            }
-
-            @Override
             public void run() {
                 tracker.a();
             }
@@ -443,6 +436,15 @@ public class NMSImpl implements NMSBridge {
                 EntityPlayer p = (EntityPlayer) getHandle(player);
                 tracker.a(p);
                 linked.remove(p);
+            }
+
+            @Override
+            public void unlinkAll(Consumer<Player> callback) {
+                for (EntityPlayer link : Lists.newArrayList(linked)) {
+                    Player entity = link.getBukkitEntity();
+                    unlink(entity);
+                    callback.accept(entity);
+                }
             }
         };
     }
@@ -618,6 +620,12 @@ public class NMSImpl implements NMSBridge {
         } catch (Exception e) {
             throw new CommandException(Messages.INVALID_SOUND);
         }
+    }
+
+    @Override
+    public org.bukkit.entity.Entity getSource(BlockCommandSender sender) {
+        Entity source = ((CraftBlockCommandSender) sender).getWrapper().getEntity();
+        return source != null ? source.getBukkitEntity() : null;
     }
 
     @Override

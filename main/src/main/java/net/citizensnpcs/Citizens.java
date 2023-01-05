@@ -10,7 +10,10 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryType;
@@ -34,9 +37,8 @@ import net.byteflux.libby.logging.LogLevel;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
-import net.citizensnpcs.api.InventoryHelper;
 import net.citizensnpcs.api.LocationLookup;
-import net.citizensnpcs.api.SkullMetaProvider;
+import net.citizensnpcs.api.NMSHelper;
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.Injector;
@@ -86,36 +88,26 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private boolean enabled;
-    private final InventoryHelper inventoryHelper = new InventoryHelper() {
-        @Override
-        public InventoryView openAnvilInventory(Player player, Inventory inventory, String title) {
-            return NMS.openAnvilInventory(player, inventory, title);
-        }
+    private LocationLookup locationLookup;
+    private final NMSHelper nmsHelper = new NMSHelper() {
+        private boolean SUPPORT_OWNER_PROFILE = true;
 
         @Override
-        public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
-            if (view.getTopInventory().getType() == InventoryType.CRAFTING
-                    || view.getTopInventory().getType() == InventoryType.CREATIVE
-                    || view.getTopInventory().getType() == InventoryType.PLAYER)
-                return;
-            NMS.updateInventoryTitle(player, view, newTitle);
+        public OfflinePlayer getPlayer(BlockCommandSender sender) {
+            Entity entity = NMS.getSource(sender);
+            return entity != null && entity instanceof OfflinePlayer ? (OfflinePlayer) entity : null;
         }
-    };
-    private LocationLookup locationLookup;
-    private CitizensNPCRegistry npcRegistry;
-    private ProtocolLibListener protocolListener;
-    private boolean saveOnDisable = true;
-    private NPCDataStore saves;
-    private NPCSelector selector;
-    private StoredShops shops;
-    private final SkullMetaProvider skullMetaProvider = new SkullMetaProvider() {
-        private boolean SUPPORT_OWNER_PROFILE = true;
 
         @Override
         public String getTexture(SkullMeta meta) {
             GameProfile profile = NMS.getProfile(meta);
             return profile == null ? null
                     : Iterables.getFirst(profile.getProperties().get("textures"), new Property("", "")).getValue();
+        }
+
+        @Override
+        public InventoryView openAnvilInventory(Player player, Inventory inventory, String title) {
+            return NMS.openAnvilInventory(player, inventory, title);
         }
 
         @Override
@@ -137,7 +129,22 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             profile.getProperties().put("textures", new Property("textures", texture));
             NMS.setProfile(meta, profile);
         }
+
+        @Override
+        public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+            if (view.getTopInventory().getType() == InventoryType.CRAFTING
+                    || view.getTopInventory().getType() == InventoryType.CREATIVE
+                    || view.getTopInventory().getType() == InventoryType.PLAYER)
+                return;
+            NMS.updateInventoryTitle(player, view, newTitle);
+        }
     };
+    private CitizensNPCRegistry npcRegistry;
+    private ProtocolLibListener protocolListener;
+    private boolean saveOnDisable = true;
+    private NPCDataStore saves;
+    private NPCSelector selector;
+    private StoredShops shops;
     private CitizensSpeechFactory speechFactory;
     private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
     private CitizensTraitFactory traitFactory;
@@ -230,11 +237,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
     public LocationLookup getLocationLookup() {
         return locationLookup;
     }
@@ -244,6 +246,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (name.equals(npcRegistry.getName()))
             return npcRegistry;
         return storedRegistries.get(name);
+    }
+
+    @Override
+    public NMSHelper getNMSHelper() {
+        return nmsHelper;
     }
 
     @Override
@@ -300,11 +307,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     public StoredShops getShops() {
         return shops;
-    }
-
-    @Override
-    public SkullMetaProvider getSkullMetaProvider() {
-        return skullMetaProvider;
     }
 
     @Override

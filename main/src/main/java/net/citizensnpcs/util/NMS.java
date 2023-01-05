@@ -11,6 +11,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
@@ -377,6 +378,10 @@ public class NMS {
 
     public static String getSound(String flag) throws CommandException {
         return BRIDGE.getSound(flag);
+    }
+
+    public static Entity getSource(BlockCommandSender sender) {
+        return BRIDGE.getSource(sender);
     }
 
     public static float getSpeedFor(NPC npc) {

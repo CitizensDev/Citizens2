@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
@@ -91,6 +92,8 @@ public interface NMSBridge {
 
     public String getSound(String flag) throws CommandException;
 
+    public Entity getSource(BlockCommandSender sender);
+
     public float getSpeedFor(NPC npc);
 
     public float getStepHeight(Entity entity);
@@ -146,9 +149,9 @@ public interface NMSBridge {
 
     public void removeFromWorld(org.bukkit.entity.Entity entity);
 
-    public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity);
+    public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity);;
 
-    public void replaceTrackerEntry(Player player);;
+    public void replaceTrackerEntry(Player player);
 
     public void sendPositionUpdate(Player excluding, Entity from, Location location);
 
@@ -164,25 +167,25 @@ public interface NMSBridge {
 
     public default void setAllayDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
-    }
+    };
 
-    public void setBodyYaw(Entity entity, float yaw);;
+    public void setBodyYaw(Entity entity, float yaw);
 
     public void setBoundingBox(Entity entity, BoundingBox box);
 
     public default void setCamelPose(Entity entity, CamelPose pose) {
         throw new UnsupportedOperationException();
-    }
+    };
 
     public void setCustomName(Entity entity, Object component, String string);;
 
     public void setDestination(Entity entity, double x, double y, double z, float speed);;
 
-    public void setDimensions(Entity entity, EntityDim desired);;
+    public void setDimensions(Entity entity, EntityDim desired);
 
-    public void setEndermanAngry(Enderman enderman, boolean angry);
+    public void setEndermanAngry(Enderman enderman, boolean angry);;
 
-    public void setHeadYaw(Entity entity, float yaw);;
+    public void setHeadYaw(Entity entity, float yaw);
 
     public void setKnockbackResistance(LivingEntity entity, double d);
 
