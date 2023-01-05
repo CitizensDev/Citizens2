@@ -1977,8 +1977,8 @@ public class NMSImpl implements NMSBridge {
     private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "i");
     private static final Field RABBIT_FIELD = NMS.getField(EntityRabbit.class, "bx");
     private static final Random RANDOM = Util.getFastRandom();
-    private static final MethodHandle REPAIR_INVENTORY = NMS.getGetter(ContainerAnvil.class, "g");
-    private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "h");
+    private static final MethodHandle REPAIR_INVENTORY = NMS.getGetter(ContainerAnvil.class, "h");
+    private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "g");
     private static Field SKULL_PROFILE_FIELD;
     private static MethodHandle TEAM_FIELD;
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
