@@ -370,7 +370,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             }
             moveOnCurrentHeading();
         }
-        NMSImpl.updateAI(this);
+
+        updateAI();
 
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             ct();

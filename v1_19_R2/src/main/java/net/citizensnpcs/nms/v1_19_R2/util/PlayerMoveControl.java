@@ -103,7 +103,6 @@ public class PlayerMoveControl extends MoveControl {
 
     @Override
     public void tick() {
-
         this.entity.zza = 0;
         if (this.moving) {
             this.moving = false;

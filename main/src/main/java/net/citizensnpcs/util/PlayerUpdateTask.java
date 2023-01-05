@@ -59,11 +59,7 @@ public class PlayerUpdateTask extends BukkitRunnable {
         }
 
         public PlayerTick(Player player) {
-            this(player, () -> {
-                if (player.isValid()) {
-                    NMS.playerTicker(player);
-                }
-            });
+            this(player, NMS.playerTicker(player));
         }
 
         @Override

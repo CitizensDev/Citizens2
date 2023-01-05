@@ -80,7 +80,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
     public boolean update() {
         if (plan == null) {
             if (planner == null) {
-                planner = new AStarPlanner(params, npc.getStoredLocation(), destination);
+                planner = new AStarPlanner(params, npc.getEntity().getLocation(NPC_LOCATION), destination);
             }
             CancelReason reason = planner.tick(Setting.ASTAR_ITERATIONS_PER_TICK.asInt(),
                     Setting.MAXIMUM_ASTAR_ITERATIONS.asInt());
@@ -98,7 +98,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location loc = npc.getEntity().getLocation(NPC_LOCATION);
         /* Proper door movement - gets stuck on corners at times
-        
+
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
@@ -169,16 +169,14 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                     return PassableState.IGNORE;
                 }
             });
+            VectorGoal goal = new VectorGoal(to, (float) params.pathDistanceMargin());
+            state = ASTAR.getStateFor(goal,
+                    new VectorNode(goal, from, new NMSChunkBlockSource(from, params.range()), params.examiners()));
         }
 
         public CancelReason tick(int iterationsPerTick, int maxIterations) {
-            if (plan != null)
+            if (this.plan != null)
                 return null;
-            if (state == null) {
-                VectorGoal goal = new VectorGoal(to, (float) params.pathDistanceMargin());
-                state = ASTAR.getStateFor(goal,
-                        new VectorNode(goal, from, new NMSChunkBlockSource(from, params.range()), params.examiners()));
-            }
             Path plan = ASTAR.run(state, iterationsPerTick);
             if (plan == null) {
                 if (state.isEmpty()) {

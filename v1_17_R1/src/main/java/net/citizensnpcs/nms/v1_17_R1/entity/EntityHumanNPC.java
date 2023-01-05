@@ -189,7 +189,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             }
             moveOnCurrentHeading();
         }
-        NMSImpl.updateAI(this);
+        updateAI();
 
         if (isSpectator()) {
             this.noPhysics = true;
