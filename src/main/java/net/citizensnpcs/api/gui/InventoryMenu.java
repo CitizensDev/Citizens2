@@ -240,6 +240,7 @@ public class InventoryMenu implements Listener, Runnable {
         slot.onClick(ev);
         pickupAmount = -1;
         pg.page.onClick(slot, event);
+
         if (pg != page) {
             // transitioned during event
             event.setCancelled(true);
@@ -265,7 +266,11 @@ public class InventoryMenu implements Listener, Runnable {
         int amount = event.getCurrentItem().getAmount();
         ItemStack merging = new ItemStack(event.getCurrentItem().clone());
         ItemStack[] contents = dest.getContents();
+        PageContext pg = page;
         for (int i = 0; i < contents.length; i++) {
+            if (pg != page) {
+                break;
+            }
             if (contents[i] == null || contents[i].getType() == Material.AIR) {
                 merging.setAmount(amount);
                 if (toNPC) {
