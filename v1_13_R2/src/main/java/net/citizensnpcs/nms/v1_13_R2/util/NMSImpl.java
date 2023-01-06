@@ -996,6 +996,7 @@ public class NMSImpl implements NMSBridge {
             public void d() {
                 super.d();
                 levelCost = 0;
+                getBukkitView().getTopInventory().setItem(2, CraftItemStack.asCraftMirror(slots.get(2).getItem()));
             }
 
             @Override

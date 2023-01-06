@@ -825,18 +825,13 @@ public class NMSImpl implements NMSBridge {
             private CraftInventoryView bukkitEntity;
 
             @Override
-            public boolean a(EntityHuman entityhuman) {
-                return true;
-            }
-
-            @Override
-            public void b() {
-                this.a = 0;
-                super.b();
-            }
-
-            @Override
             public void b(EntityHuman entityhuman) {
+            }
+
+            @Override
+            public void e() {
+                super.e();
+                getBukkitView().getTopInventory().setItem(2, CraftItemStack.asCraftMirror(c.get(2).getItem()));
             }
 
             @Override
@@ -1376,8 +1371,8 @@ public class NMSImpl implements NMSBridge {
 
         @Override
         public void setItem(int slot, org.bukkit.inventory.ItemStack item) {
-            super.setItem(slot, item);
             wrapped.setItem(slot, item);
+            super.setItem(slot, item);
         }
     }
 

@@ -954,6 +954,7 @@ public class NMSImpl implements NMSBridge {
             public void e() {
                 super.e();
                 levelCost = 0;
+                getBukkitView().getTopInventory().setItem(2, CraftItemStack.asCraftMirror(slots.get(2).getItem()));
             }
 
             @Override
@@ -1513,8 +1514,8 @@ public class NMSImpl implements NMSBridge {
 
         @Override
         public void setItem(int slot, org.bukkit.inventory.ItemStack item) {
-            super.setItem(slot, item);
             wrapped.setItem(slot, item);
+            super.setItem(slot, item);
         }
     }
 
