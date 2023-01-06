@@ -3,6 +3,7 @@ package net.citizensnpcs.trait.shop;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
@@ -21,6 +22,10 @@ import net.citizensnpcs.util.Util;
 public class CommandAction extends NPCShopAction {
     @Persist
     public List<String> commands = Lists.newArrayList();
+    @Persist
+    public boolean op = false;
+    @Persist
+    public boolean server = false;
 
     public CommandAction() {
     }
@@ -62,13 +67,13 @@ public class CommandAction extends NPCShopAction {
         Player player = (Player) entity;
         return Transaction.create(() -> true, () -> {
             for (String command : commands) {
-                Util.runCommand(null, player, command, false, true);
+                Util.runCommand(null, player, command, op, !server);
             }
         }, () -> {
         });
     }
 
-    @Menu(title = "Command editor", dimensions = { 3, 9 })
+    @Menu(title = "Command editor", dimensions = { 4, 9 })
     public static class CommandActionEditor extends InventoryMenuPage {
         private CommandAction base;
         private Consumer<NPCShopAction> callback;
@@ -115,6 +120,19 @@ public class CommandAction extends NPCShopAction {
                             }));
                 });
             }
+            ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("COMMAND_BLOCK", "COMMAND")),
+                    "Run commands as server", base.server ? ChatColor.GREEN + "On" : ChatColor.RED + "OFF");
+            ctx.getSlot(3 * 9 + 3).addClickHandler(InputMenus.clickToggle((res) -> {
+                base.server = res;
+                return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
+            }, base.server));
+            ctx.getSlot(3 * 9 + 4).setItemStack(
+                    new ItemStack(Util.getFallbackMaterial("COMPARATOR", "REDSTONE_COMPARATOR")), "Run commands as op",
+                    base.op ? ChatColor.GREEN + "On" : ChatColor.RED + "OFF");
+            ctx.getSlot(3 * 9 + 4).addClickHandler(InputMenus.clickToggle((res) -> {
+                base.op = res;
+                return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
+            }, base.server));
         }
 
         @Override

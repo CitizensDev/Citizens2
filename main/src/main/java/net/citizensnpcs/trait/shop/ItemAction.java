@@ -18,7 +18,6 @@ import org.bukkit.inventory.meta.Damageable;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-import net.citizensnpcs.api.gui.BooleanSlotHandler;
 import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.gui.InventoryMenuSlot;
@@ -206,14 +205,14 @@ public class ItemAction extends NPCShopAction {
 
             ctx.getSlot(3 * 9 + 1).setItemStack(new ItemStack(Material.ANVIL), "Must have no damage",
                     base.requireUndamaged ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
-            ctx.getSlot(3 * 9 + 1).addClickHandler(new BooleanSlotHandler((res) -> {
+            ctx.getSlot(3 * 9 + 1).addClickHandler(InputMenus.clickToggle((res) -> {
                 base.requireUndamaged = res;
                 return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
             }, base.requireUndamaged));
             ctx.getSlot(3 * 9 + 2).setItemStack(
                     new ItemStack(Util.getFallbackMaterial("COMPARATOR", "REDSTONE_COMPARATOR")),
                     "Compare item similarity", base.compareSimilarity ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
-            ctx.getSlot(3 * 9 + 2).addClickHandler(new BooleanSlotHandler((res) -> {
+            ctx.getSlot(3 * 9 + 2).addClickHandler(InputMenus.clickToggle((res) -> {
                 base.compareSimilarity = res;
                 return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
             }, base.compareSimilarity));
