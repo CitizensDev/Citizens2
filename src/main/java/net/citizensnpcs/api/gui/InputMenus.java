@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +22,27 @@ import net.citizensnpcs.api.gui.InputMenus.Choice.Type;
 import net.citizensnpcs.api.util.Messaging;
 
 public class InputMenus {
+    public static class BooleanSlotHandler implements Consumer<CitizensInventoryClickEvent> {
+        private final Function<Boolean, String> transformer;
+        private boolean value;
+
+        public BooleanSlotHandler(Function<Boolean, String> transformer) {
+            this(transformer, false);
+        }
+
+        public BooleanSlotHandler(Function<Boolean, String> transformer, boolean initial) {
+            this.transformer = transformer;
+            this.value = initial;
+        }
+
+        @Override
+        public void accept(CitizensInventoryClickEvent event) {
+            value = !value;
+            event.setCurrentItemDescription(transformer.apply(value));
+            event.setResult(Result.DENY);
+        }
+    }
+
     public static class Choice<T> {
         private boolean active;
         private String description;
@@ -183,6 +205,10 @@ public class InputMenus {
                 ctx.getMenu().transitionBack();
             }
         }
+    }
+
+    public static BooleanSlotHandler clickToggle(Function<Boolean, String> transformer, boolean initialValue) {
+        return new BooleanSlotHandler(transformer, initialValue);
     }
 
     public static InventoryMenuPage filteredStringSetter(Supplier<String> initialValue,
