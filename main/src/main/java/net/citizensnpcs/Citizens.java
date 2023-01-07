@@ -432,10 +432,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         selector = new NPCSelector(this);
 
         Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        Plugin papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
+        if (papi != null && papi.isEnabled()) {
             new CitizensPlaceholders(selector).register();
         }
-        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
+        Plugin plib = Bukkit.getPluginManager().getPlugin("ProtocolLib");
+        if (plib != null && plib.isEnabled()) {
             protocolListener = new ProtocolLibListener(this);
         }
 
