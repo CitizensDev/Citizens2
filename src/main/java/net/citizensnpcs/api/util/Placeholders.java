@@ -41,7 +41,7 @@ public class Placeholders {
             if (group.equals("id")) {
                 replacement = Integer.toString(npc.getId());
             } else if (group.equals("npc")) {
-                replacement = npc.getName();
+                replacement = npc.getFullName();
             } else if (group.equals("owner")) {
                 replacement = npc.getOrAddTrait(Owner.class).getOwner();
             }
