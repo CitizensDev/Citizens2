@@ -237,11 +237,6 @@ class ProfileFetchThread implements Runnable {
     }
 
     private static void sendResult(final ProfileFetchHandler handler, final ProfileRequest request) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                handler.onResult(request);
-            }
-        }, 1);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> handler.onResult(request), 1);
     }
 }

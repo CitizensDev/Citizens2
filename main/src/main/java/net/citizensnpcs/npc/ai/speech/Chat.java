@@ -29,16 +29,14 @@ public class Chat implements VocalChord {
 
         // chat to the world with CHAT_FORMAT and CHAT_RANGE settings
         if (!context.hasRecipients()) {
-            String text = Setting.CHAT_FORMAT.asString().replace("<npc>", npc.getName()).replace("<text>",
-                    context.getMessage());
+            String text = Setting.CHAT_FORMAT.asString().replace("<text>", context.getMessage());
             talkToBystanders(npc, text, context);
             return;
         }
 
         // Assumed recipients at this point
         else if (context.size() <= 1) {
-            String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<npc>", npc.getName()).replace("<text>",
-                    context.getMessage());
+            String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<text>", context.getMessage());
             String targetName = "";
             // For each recipient
             for (Talkable entity : context) {
@@ -49,15 +47,14 @@ public class Chat implements VocalChord {
             if (!Setting.CHAT_BYSTANDERS_HEAR_TARGETED_CHAT.asBoolean())
                 return;
             // Format message with config setting and send to bystanders
-            String bystanderText = Setting.CHAT_FORMAT_TO_BYSTANDERS.asString().replace("<npc>", npc.getName())
-                    .replace("<target>", targetName).replace("<text>", context.getMessage());
+            String bystanderText = Setting.CHAT_FORMAT_TO_BYSTANDERS.asString().replace("<target>", targetName)
+                    .replace("<text>", context.getMessage());
             talkToBystanders(npc, bystanderText, context);
             return;
         }
 
         else { // Multiple recipients
-            String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<npc>", npc.getName()).replace("<text>",
-                    context.getMessage());
+            String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<text>", context.getMessage());
             List<String> targetNames = new ArrayList<String>();
             // Talk to each recipient
             for (Talkable entity : context) {
@@ -97,8 +94,7 @@ public class Chat implements VocalChord {
             }
 
             String bystanderText = Setting.CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS.asString()
-                    .replace("<npc>", npc.getName()).replace("<targets>", targets)
-                    .replace("<text>", context.getMessage());
+                    .replace("<targets>", targets).replace("<text>", context.getMessage());
             talkToBystanders(npc, bystanderText, context);
         }
     }

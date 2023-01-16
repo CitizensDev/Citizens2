@@ -53,7 +53,7 @@ public class TalkableEntity implements Talkable {
     @Override
     public String getName() {
         if (CitizensAPI.getNPCRegistry().isNPC(entity)) {
-            return CitizensAPI.getNPCRegistry().getNPC(entity).getName();
+            return CitizensAPI.getNPCRegistry().getNPC(entity).getFullName();
         } else if (entity instanceof Player) {
             return ((Player) entity).getName();
         } else {
