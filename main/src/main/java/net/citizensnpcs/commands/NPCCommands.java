@@ -226,6 +226,20 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "aggressive [true|false]",
+            desc = "Sets the aggressive status of the entity",
+            modifiers = { "aggressive" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.aggressive")
+    public void aggressive(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Boolean aggressive) {
+        boolean aggro = aggressive != null ? aggressive : !npc.data().get(NPC.Metadata.AGGRESSIVE, false);
+        npc.data().set(NPC.Metadata.AGGRESSIVE, aggro);
+        NMS.setAggressive(npc.getEntity(), aggro);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "ai (true|false)",
             desc = "Sets whether the NPC should use vanilla AI",
             modifiers = { "ai" },

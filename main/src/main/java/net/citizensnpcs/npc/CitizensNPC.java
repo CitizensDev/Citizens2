@@ -387,6 +387,8 @@ public class CitizensNPC extends AbstractNPC {
                     if (type == EntityType.PLAYER) {
                         NMS.replaceTrackerEntry((Player) getEntity());
                         PlayerUpdateTask.registerPlayer(getEntity());
+                    } else if (data().has(NPC.Metadata.AGGRESSIVE)) {
+                        NMS.setAggressive(entity, data().<Boolean> get(NPC.Metadata.AGGRESSIVE));
                     }
 
                     if (SUPPORT_NODAMAGE_TICKS && (Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt() != 20

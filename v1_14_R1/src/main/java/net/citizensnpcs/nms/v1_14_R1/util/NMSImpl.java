@@ -1257,6 +1257,14 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setAggressive(org.bukkit.entity.Entity entity, boolean aggro) {
+        Entity handle = getHandle(entity);
+        if (!(handle instanceof EntityInsentient))
+            return;
+        ((EntityInsentient) handle).q(aggro);
+    }
+
+    @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).yaw = yaw;
     }

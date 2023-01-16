@@ -554,6 +554,10 @@ public class NMS {
         BRIDGE.sendTeamPacket(recipient, team, mode);
     }
 
+    public static void setAggressive(Entity entity, boolean aggro) {
+        BRIDGE.setAggressive(entity, aggro);
+    }
+
     public static void setAllayDancing(Entity entity, boolean dancing) {
         BRIDGE.setAllayDancing(entity, dancing);
     }
@@ -709,6 +713,7 @@ public class NMS {
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
+
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {

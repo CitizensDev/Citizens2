@@ -1409,6 +1409,14 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setAggressive(org.bukkit.entity.Entity entity, boolean aggro) {
+        Entity handle = getHandle(entity);
+        if (!(handle instanceof Mob))
+            return;
+        ((Mob) handle).setAggressive(aggro);
+    }
+
+    @Override
     public void setAllayDancing(org.bukkit.entity.Entity entity, boolean dancing) {
         Allay allay = (Allay) getHandle(entity);
         allay.setDancing(dancing);
@@ -2438,7 +2446,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
-
     private static final MethodHandle BEHAVIOR_TREE_MAP = NMS.getGetter(Brain.class, "f");
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
