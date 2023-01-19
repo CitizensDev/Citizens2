@@ -396,6 +396,7 @@ public interface NPC extends Agent, Cloneable {
     public enum Metadata {
         /** The activation range. Integer, defaults to the configured activation range. */
         ACTIVATION_RANGE("activation-range"),
+        AGGRESSIVE("entity-aggressive"),
         ALWAYS_USE_NAME_HOLOGRAM("always-use-name-hologram"),
         /**
          * The Minecraft ambient sound played. String - Minecraft sound name
@@ -476,11 +477,11 @@ public interface NPC extends Agent, Cloneable {
          * Whether the NPC's nameplate should be visible. Boolean.
          */
         NAMEPLATE_VISIBLE("nameplate-visible"),
+
         /**
          * The packet update delay. Integer defaults to setting value.
          */
         PACKET_UPDATE_DELAY("packet-update-delay"),
-
         /**
          * Whether to open doors while pathfinding. Boolean.
          */
