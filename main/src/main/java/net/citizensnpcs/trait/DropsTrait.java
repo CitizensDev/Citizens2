@@ -48,7 +48,7 @@ public class DropsTrait extends Trait {
         Random random = Util.getFastRandom();
         for (ItemDrop drop : drops) {
             if (random.nextDouble() < drop.chance) {
-                event.getDrops().add(drop.drop);
+                event.getDrops().add(drop.drop.clone());
             }
         }
     }
@@ -117,7 +117,7 @@ public class DropsTrait extends Trait {
                     ItemStack stack = inventory.getItem(slot);
                     if (stack == null || stack.getType() == Material.AIR)
                         continue;
-                    drops.add(new ItemDrop(stack, chances.getOrDefault(slot, 1.0)));
+                    drops.add(new ItemDrop(stack.clone(), chances.getOrDefault(slot, 1.0)));
                 }
             }
             this.trait.drops = drops;
