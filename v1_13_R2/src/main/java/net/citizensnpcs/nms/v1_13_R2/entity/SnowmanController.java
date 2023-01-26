@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
-import java.lang.reflect.Method;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -15,7 +13,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.DamageSource;
@@ -190,27 +187,6 @@ public class SnowmanController extends MobEntityController {
         }
 
         @Override
-        public void movementTick() {
-            boolean allowsGriefing = this.world.getGameRules().getBoolean("mobGriefing");
-            if (npc != null) {
-                this.world.getGameRules().set("mobGriefing", "false", this.world.getMinecraftServer());
-            }
-            try {
-                super.movementTick();
-            } catch (NoSuchMethodError ex) {
-                try {
-                    MOVEMENT_TICK.invoke(this);
-                } catch (Throwable ex2) {
-                    ex2.printStackTrace();
-                }
-            }
-            if (npc != null) {
-                this.world.getGameRules().set("mobGriefing", Boolean.toString(allowsGriefing),
-                        this.world.getMinecraftServer());
-            }
-        }
-
-        @Override
         protected boolean n(Entity entity) {
             if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
                 return !npc.isProtected();
@@ -235,8 +211,6 @@ public class SnowmanController extends MobEntityController {
                 return false;
             }
         }
-
-        private static final Method MOVEMENT_TICK = NMS.getMethod(EntitySnowman.class, "k", false);
     }
 
     public static class SnowmanNPC extends CraftSnowman implements NPCHolder {

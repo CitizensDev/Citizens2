@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_19_R2.entity;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameRule;
 import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftSnowman;
@@ -52,18 +51,6 @@ public class SnowmanController extends MobEntityController {
         public EntitySnowmanNPC(EntityType<? extends SnowGolem> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-        }
-
-        @Override
-        public void aiStep() {
-            boolean allowsGriefing = this.level.getWorld().getGameRuleValue(GameRule.MOB_GRIEFING);
-            if (npc != null) {
-                this.level.getWorld().setGameRule(GameRule.MOB_GRIEFING, false);
-            }
-            super.aiStep();
-            if (npc != null) {
-                this.level.getWorld().setGameRule(GameRule.MOB_GRIEFING, allowsGriefing);
-            }
         }
 
         @Override

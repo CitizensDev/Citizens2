@@ -24,7 +24,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.SnowGolem;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -50,18 +49,6 @@ public class SnowmanController extends MobEntityController {
         public EntitySnowmanNPC(EntityType<? extends SnowGolem> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
-        }
-
-        @Override
-        public void aiStep() {
-            boolean allowsGriefing = this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-            if (npc != null) {
-                this.level.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(false, getServer());
-            }
-            super.aiStep();
-            if (npc != null) {
-                this.level.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(allowsGriefing, getServer());
-            }
         }
 
         @Override

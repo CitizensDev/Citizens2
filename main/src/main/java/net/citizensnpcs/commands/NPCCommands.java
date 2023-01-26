@@ -123,6 +123,7 @@ import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.OcelotModifiers;
+import net.citizensnpcs.trait.PacketNPC;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
@@ -638,9 +639,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name])",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name])",
             desc = "Create a new NPC",
-            flags = "bustc",
+            flags = "bustpc",
             modifiers = { "create" },
             min = 2,
             permission = "citizens.npc.create")
@@ -728,6 +729,10 @@ public class NPCCommands {
         }
 
         npc.getOrAddTrait(MobType.class).setType(type);
+
+        if (args.hasFlag('p')) {
+            npc.addTrait(PacketNPC.class);
+        }
 
         Location spawnLoc = null;
         if (sender instanceof Player) {

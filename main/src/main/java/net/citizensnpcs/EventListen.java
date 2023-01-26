@@ -13,12 +13,14 @@ import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCombustByBlockEvent;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
@@ -209,6 +211,16 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onCommandSenderCreateNPC(CommandSenderCreateNPCEvent event) {
         checkCreationEvent(event);
+    }
+
+    @EventHandler
+    public void onEntityBlockForm(EntityBlockFormEvent event) {
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
+        if (npc == null)
+            return;
+        if (npc.getEntity() instanceof Snowman) {
+            event.setCancelled(true);
+        }
     }
 
     /*
