@@ -300,7 +300,6 @@ import net.minecraft.server.v1_16_R3.MobEffects;
 import net.minecraft.server.v1_16_R3.NavigationAbstract;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutEntityLook;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_16_R3.PacketPlayOutOpenWindow;
@@ -1241,11 +1240,15 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void sendRotationNearby(org.bukkit.entity.Entity from, float bodyYaw, float headYaw, float pitch) {
         Entity handle = getHandle(from);
-        Packet<?>[] packets = new Packet[] {
-                new PacketPlayOutEntityLook(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
-                        (byte) (pitch * 256.0F / 360.0F), isOnGround(from)),
+        float oldBody = handle.yaw;
+        float oldPitch = handle.pitch;
+        handle.yaw = bodyYaw;
+        handle.pitch = pitch;
+        Packet<?>[] packets = new Packet[] { new PacketPlayOutEntityTeleport(handle),
                 new PacketPlayOutEntityHeadRotation(handle, (byte) (headYaw * 256.0F / 360.0F)) };
         sendPacketsNearby(null, from.getLocation(), packets);
+        handle.yaw = oldBody;
+        handle.pitch = oldPitch;
     }
 
     @Override

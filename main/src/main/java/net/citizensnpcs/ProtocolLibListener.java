@@ -101,6 +101,7 @@ public class ProtocolLibListener {
                         PacketRotationSession session = trait.getPacketSession(event.getPlayer());
                         if (session == null || !session.isActive())
                             return;
+
                         PacketContainer packet = event.getPacket();
                         PacketType type = event.getPacketType();
                         if (type == Server.ENTITY_HEAD_ROTATION) {

@@ -263,7 +263,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -1320,11 +1319,16 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void sendRotationNearby(org.bukkit.entity.Entity from, float bodyYaw, float headYaw, float pitch) {
         Entity handle = getHandle(from);
-        Packet<?>[] packets = new Packet[] {
-                new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
-                        (byte) (pitch * 256.0F / 360.0F), handle.onGround),
-                new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)) };
-        sendPacketsNearby(null, from.getLocation(), packets);
+        float oldBody = handle.getYRot();
+        float oldPitch = handle.getXRot();
+        handle.setYBodyRot(bodyYaw);
+        handle.setXRot(pitch);
+        sendPacketsNearby(null, from.getLocation(), new Packet[] { new ClientboundTeleportEntityPacket(handle),
+                // new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
+                // (byte) (pitch * 256.0F / 360.0F), handle.onGround),
+                new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)) });
+        handle.setYBodyRot(oldBody);
+        handle.setXRot(oldPitch);
     }
 
     @Override
@@ -1354,11 +1358,11 @@ public class NMSImpl implements NMSBridge {
 
         NMSImpl.sendPacket(recipient, packet);
 
-        if (VIA_ENABLED == true) {
+       /* if (VIA_ENABLED == true) {
             int version = Via.getAPI().getPlayerVersion(recipient);
             return version < 761;
-        }
-        return false;
+        }*/
+        return true;
     }
 
     @Override
