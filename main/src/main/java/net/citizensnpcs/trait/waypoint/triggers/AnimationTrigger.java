@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -16,13 +17,13 @@ import net.citizensnpcs.util.PlayerAnimation;
 
 public class AnimationTrigger implements WaypointTrigger {
     @Persist(required = true)
-    private List<PlayerAnimation> animations;
+    private final List<PlayerAnimation> animations;
+    @Persist
+    private final Location at;
 
-    public AnimationTrigger() {
-    }
-
-    public AnimationTrigger(Collection<PlayerAnimation> collection) {
+    public AnimationTrigger(Collection<PlayerAnimation> collection, Location loc) {
         animations = Lists.newArrayList(collection);
+        at = loc;
     }
 
     @Override
@@ -34,6 +35,9 @@ public class AnimationTrigger implements WaypointTrigger {
     public void onWaypointReached(NPC npc, Location waypoint) {
         if (npc.getEntity().getType() != EntityType.PLAYER)
             return;
+        if (at != null) {
+            npc.teleport(at, TeleportCause.PLUGIN);
+        }
         Player player = (Player) npc.getEntity();
         for (PlayerAnimation animation : animations) {
             animation.play(player);

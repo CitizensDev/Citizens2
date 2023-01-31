@@ -78,20 +78,21 @@ public class ShopTrait extends Trait {
     }
 
     public NPCShop getDefaultShop() {
-        return shops.npcShops.computeIfAbsent(npc.getUniqueId().toString(), (s) -> new NPCShop(s));
+        return shops.npcShops.computeIfAbsent(npc.getUniqueId().toString(), NPCShop::new);
     }
 
     public NPCShop getShop(String name) {
-        return shops.globalShops.computeIfAbsent(name, (s) -> new NPCShop(s));
+        return shops.globalShops.computeIfAbsent(name, NPCShop::new);
     }
 
     @Override
     public void onRemove() {
+        Messaging.debug("Removing", npc, "default shop due to onRemove");
         shops.deleteShop(getDefaultShop());
     }
 
     public void onRightClick(Player player) {
-        if (rightClickShop == null)
+        if (rightClickShop == null || rightClickShop.isEmpty())
             return;
         NPCShop shop = shops.globalShops.getOrDefault(rightClickShop, getDefaultShop());
         shop.display(player);

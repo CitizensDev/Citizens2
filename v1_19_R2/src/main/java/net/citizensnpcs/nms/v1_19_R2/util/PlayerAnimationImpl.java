@@ -2,10 +2,8 @@ package net.citizensnpcs.nms.v1_19_R2.util;
 
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Maps;
 
@@ -38,35 +36,13 @@ public class PlayerAnimationImpl {
                 break;
             case START_USE_MAINHAND_ITEM:
                 player.startUsingItem(InteractionHand.MAIN_HAND);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        player.startUsingItem(InteractionHand.MAIN_HAND);
-                        sendEntityData(radius, player);
-                        if (!player.getBukkitEntity().hasMetadata("citizens-using-item-id")) {
-                            player.getBukkitEntity().setMetadata("citizens-using-item-id",
-                                    new FixedMetadataValue(CitizensAPI.getPlugin(), getTaskId()));
-                        }
-                    }
-                }.runTaskTimer(CitizensAPI.getPlugin(), player.getUseItemRemainingTicks() - 1,
-                        player.getUseItemRemainingTicks() - 1);
                 sendEntityData(radius, player);
                 break;
             case START_USE_OFFHAND_ITEM:
                 player.startUsingItem(InteractionHand.OFF_HAND);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        player.startUsingItem(InteractionHand.OFF_HAND);
-                        sendEntityData(radius, player);
-                        if (!player.getBukkitEntity().hasMetadata("citizens-using-item-id")) {
-                            player.getBukkitEntity().setMetadata("citizens-using-item-id",
-                                    new FixedMetadataValue(CitizensAPI.getPlugin(), getTaskId()));
-                        }
-                    }
-                }.runTaskTimer(CitizensAPI.getPlugin(), player.getUseItemRemainingTicks() - 1,
-                        player.getUseItemRemainingTicks() - 1);
                 sendEntityData(radius, player);
+                player.getBukkitEntity().setMetadata("citizens-using-item-remaining-ticks",
+                        new FixedMetadataValue(CitizensAPI.getPlugin(), player.getUseItemRemainingTicks()));
                 break;
             case STOP_SNEAKING:
                 player.setPose(Pose.STANDING);
@@ -74,11 +50,6 @@ public class PlayerAnimationImpl {
                 break;
             case STOP_USE_ITEM:
                 player.stopUsingItem();
-                if (player.getBukkitEntity().hasMetadata("citizens-using-item-id")) {
-                    Bukkit.getScheduler()
-                            .cancelTask(player.getBukkitEntity().getMetadata("citizens-using-item-id").get(0).asInt());
-                    player.getBukkitEntity().removeMetadata("citizens-using-item-id", CitizensAPI.getPlugin());
-                }
                 sendEntityData(radius, player);
                 break;
             default:

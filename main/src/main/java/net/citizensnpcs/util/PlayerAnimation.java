@@ -1,5 +1,6 @@
 package net.citizensnpcs.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -83,15 +84,45 @@ public enum PlayerAnimation {
         } else if (this == SLEEP) {
             if (player instanceof NPCHolder) {
                 ((NPCHolder) player).getNPC().getOrAddTrait(SleepTrait.class).setSleeping(player.getLocation());
-                return;
+            } else {
+                NMS.sleep(player, true);
             }
-            NMS.sleep(player, true);
+            return;
         } else if (this == STOP_SLEEPING) {
             if (player instanceof NPCHolder) {
                 ((NPCHolder) player).getNPC().getOrAddTrait(SleepTrait.class).setSleeping(null);
-                return;
+            } else {
+                NMS.sleep(player, false);
             }
-            NMS.sleep(player, false);
+            return;
+        } else if (this == START_USE_MAINHAND_ITEM || this == START_USE_OFFHAND_ITEM) {
+            NMS.playAnimation(this, player, radius);
+            if (player.hasMetadata("citizens-using-item-remaining-ticks")) {
+                int remainingTicks = player.getMetadata("citizens-using-item-remaining-ticks").get(0).asInt();
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!NMS.isValid(player)) {
+                            cancel();
+                            return;
+                        }
+                        NMS.playAnimation(PlayerAnimation.this, player, radius);
+                        if (!player.hasMetadata("citizens-using-item-id")) {
+                            player.setMetadata("citizens-using-item-id",
+                                    new FixedMetadataValue(CitizensAPI.getPlugin(), getTaskId()));
+                        }
+                    }
+                }.runTaskTimer(CitizensAPI.getPlugin(), Math.max(0, remainingTicks + 1),
+                        Math.max(1, remainingTicks + 1));
+            }
+            return;
+        } else if (this == STOP_USE_ITEM) {
+            NMS.playAnimation(this, player, radius);
+            if (player.hasMetadata("citizens-using-item-id")) {
+                Bukkit.getScheduler().cancelTask(player.getMetadata("citizens-using-item-id").get(0).asInt());
+                player.removeMetadata("citizens-using-item-id", CitizensAPI.getPlugin());
+            }
+            return;
         }
         NMS.playAnimation(this, player, radius);
     }
