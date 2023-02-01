@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -90,15 +91,17 @@ public class ScoreboardTrait extends Trait {
         npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
         if (team == null || name == null || !team.hasEntry(name))
             return;
-        if (team.getSize() == 1) {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                metadata.remove(player.getUniqueId(), team.getName());
-                NMS.sendTeamPacket(player, team, 1);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            if (team.getSize() == 1) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    metadata.remove(player.getUniqueId(), team.getName());
+                    NMS.sendTeamPacket(player, team, 1);
+                }
+                team.unregister();
+            } else {
+                team.removeEntry(name);
             }
-            team.unregister();
-        } else {
-            team.removeEntry(name);
-        }
+        }, npc.getEntity() instanceof LivingEntity ? 20 : 2);
     }
 
     @Override
