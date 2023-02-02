@@ -92,6 +92,8 @@ public class ScoreboardTrait extends Trait {
         if (team == null || name == null || !team.hasEntry(name))
             return;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            if (npc.isSpawned())
+                return;
             if (team.getSize() == 1) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     metadata.remove(player.getUniqueId(), team.getName());
