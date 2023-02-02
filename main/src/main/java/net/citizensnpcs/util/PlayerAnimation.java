@@ -95,8 +95,14 @@ public enum PlayerAnimation {
                 NMS.sleep(player, false);
             }
             return;
-        } else if (this == START_USE_MAINHAND_ITEM || this == START_USE_OFFHAND_ITEM) {
+        } else if (this == STOP_USE_ITEM || this == START_USE_MAINHAND_ITEM || this == START_USE_OFFHAND_ITEM) {
             NMS.playAnimation(this, player, radius);
+            if (player.hasMetadata("citizens-using-item-id")) {
+                Bukkit.getScheduler().cancelTask(player.getMetadata("citizens-using-item-id").get(0).asInt());
+                player.removeMetadata("citizens-using-item-id", CitizensAPI.getPlugin());
+            }
+            if (this == STOP_USE_ITEM)
+                return;
             if (player.hasMetadata("citizens-using-item-remaining-ticks")) {
                 int remainingTicks = player.getMetadata("citizens-using-item-remaining-ticks").get(0).asInt();
                 new BukkitRunnable() {
@@ -106,6 +112,7 @@ public enum PlayerAnimation {
                             cancel();
                             return;
                         }
+                        NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, radius);
                         NMS.playAnimation(PlayerAnimation.this, player, radius);
                         if (!player.hasMetadata("citizens-using-item-id")) {
                             player.setMetadata("citizens-using-item-id",
@@ -114,13 +121,6 @@ public enum PlayerAnimation {
                     }
                 }.runTaskTimer(CitizensAPI.getPlugin(), Math.max(0, remainingTicks + 1),
                         Math.max(1, remainingTicks + 1));
-            }
-            return;
-        } else if (this == STOP_USE_ITEM) {
-            NMS.playAnimation(this, player, radius);
-            if (player.hasMetadata("citizens-using-item-id")) {
-                Bukkit.getScheduler().cancelTask(player.getMetadata("citizens-using-item-id").get(0).asInt());
-                player.removeMetadata("citizens-using-item-id", CitizensAPI.getPlugin());
             }
             return;
         }

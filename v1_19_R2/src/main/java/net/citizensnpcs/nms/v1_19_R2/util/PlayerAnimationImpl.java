@@ -37,6 +37,8 @@ public class PlayerAnimationImpl {
             case START_USE_MAINHAND_ITEM:
                 player.startUsingItem(InteractionHand.MAIN_HAND);
                 sendEntityData(radius, player);
+                player.getBukkitEntity().setMetadata("citizens-using-item-remaining-ticks",
+                        new FixedMetadataValue(CitizensAPI.getPlugin(), player.getUseItemRemainingTicks()));
                 break;
             case START_USE_OFFHAND_ITEM:
                 player.startUsingItem(InteractionHand.OFF_HAND);
