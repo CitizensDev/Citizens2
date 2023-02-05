@@ -118,6 +118,7 @@ import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HologramTrait.HologramDirection;
+import net.citizensnpcs.trait.HomeTrait;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.MirrorTrait;
@@ -1160,6 +1161,47 @@ public class NPCCommands {
                     : HologramDirection.TOP_DOWN;
             trait.setDirection(direction);
             Messaging.sendTr(sender, Messages.HOLOGRAM_DIRECTION_SET, Util.prettyEnum(direction));
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "homeloc --location [loc] --delay [delay] -h(ere) -p(athfind) -t(eleport)",
+            desc = "Controls home location",
+            modifiers = { "home" },
+            min = 1,
+            max = 1,
+            flags = "pth",
+            permission = "citizens.npc.home")
+    @Requirements(ownership = true, selected = true)
+    public void home(CommandContext args, CommandSender sender, NPC npc, @Flag("location") Location loc,
+            @Flag("delay") Integer delay) throws CommandException {
+        HomeTrait trait = npc.getOrAddTrait(HomeTrait.class);
+        String output = "";
+        if (args.hasFlag('h')) {
+            if (!(sender instanceof Player))
+                throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_MUST_BE_LIVING_ENTITY));
+            trait.setHomeLocation(((Player) sender).getLocation());
+            output += Messaging.tr(Messages.HOME_TRAIT_LOCATION_SET, Util.prettyPrintLocation(trait.getHomeLocation()));
+        }
+        if (loc != null) {
+            trait.setHomeLocation(loc);
+            output += Messaging.tr(Messages.HOME_TRAIT_LOCATION_SET, Util.prettyPrintLocation(trait.getHomeLocation()));
+        }
+        if (args.hasFlag('p')) {
+            trait.setReturnStrategy(HomeTrait.ReturnStrategy.PATHFIND);
+            output += Messaging.tr(Messages.HOME_TRAIT_PATHFIND_SET, npc.getName());
+        }
+        if (args.hasFlag('t')) {
+            trait.setReturnStrategy(HomeTrait.ReturnStrategy.TELEPORT);
+            output += Messaging.tr(Messages.HOME_TRAIT_TELEPORT_SET, npc.getName());
+        }
+        if (delay != null) {
+            trait.setDelayTicks(delay);
+            output += Messaging.tr(Messages.HOME_TRAIT_DELAY_SET, delay);
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output);
         }
     }
 

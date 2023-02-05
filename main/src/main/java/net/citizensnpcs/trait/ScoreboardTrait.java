@@ -94,6 +94,11 @@ public class ScoreboardTrait extends Trait {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             if (npc.isSpawned())
                 return;
+            try {
+                team.getSize();
+            } catch (IllegalStateException ex) {
+                return;
+            }
             if (team.getSize() == 1) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     metadata.remove(player.getUniqueId(), team.getName());

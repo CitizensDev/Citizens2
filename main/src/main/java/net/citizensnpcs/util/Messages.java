@@ -154,6 +154,10 @@ public class Messages {
     public static final String HOLOGRAM_LINE_SET = "citizens.commands.npc.hologram.text-set";
     public static final String HOLOGRAM_TEXT_MISSING = "citizens.commands.npc.hologram.text-missing";
     public static final String HOLOGRAM_TEXT_REMOVED = "citizens.commands.npc.hologram.text-removed";
+    public static final String HOME_TRAIT_DELAY_SET = "citizens.commands.npc.home.delay-set";
+    public static final String HOME_TRAIT_LOCATION_SET = "citizens.commands.npc.home.home-set";
+    public static final String HOME_TRAIT_PATHFIND_SET = "citizens.commands.npc.home.pathfind-set";
+    public static final String HOME_TRAIT_TELEPORT_SET = "citizens.commands.npc.home.teleport-set";
     public static final String HORSE_CHEST_SET = "citizens.commands.npc.horse.chest-set";
     public static final String HORSE_CHEST_UNSET = "citizens.commands.npc.horse.chest-unset";
     public static final String HORSE_COLOR_SET = "citizens.commands.npc.horse.color-set";
