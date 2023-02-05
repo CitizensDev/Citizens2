@@ -111,7 +111,7 @@ public class Messaging {
         }
         m.appendTail(sb);
 
-        m = HEX_CODE_MATCHER.matcher(message);
+        m = HEX_CODE_MATCHER.matcher(sb.toString());
         sb = new StringBuffer();
         while (m.find()) {
             m.appendReplacement(sb, "<$1>");
