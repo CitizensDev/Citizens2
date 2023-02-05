@@ -12,6 +12,8 @@ public class HomeTrait extends Trait {
     @Persist
     private int delay = -1;
     @Persist
+    private double distance = -1;
+    @Persist
     private Location location;
     @Persist
     private ReturnStrategy strategy = ReturnStrategy.TELEPORT;
@@ -23,6 +25,10 @@ public class HomeTrait extends Trait {
 
     public int getDelayTicks() {
         return delay;
+    }
+
+    public double getDistanceBlocks() {
+        return distance;
     }
 
     public Location getHomeLocation() {
@@ -42,18 +48,24 @@ public class HomeTrait extends Trait {
         }
         t++;
         if (t > delay || delay == -1) {
-            if (strategy == ReturnStrategy.TELEPORT) {
-                npc.teleport(location, TeleportCause.PLUGIN);
-            } else if (strategy == ReturnStrategy.PATHFIND) {
-                npc.getNavigator().setTarget(location);
-                npc.getNavigator().getLocalParameters().distanceMargin(0.9).pathDistanceMargin(0)
-                        .destinationTeleportMargin(1);
+            if (distance == -1 || npc.getStoredLocation().distance(location) >= distance) {
+                if (strategy == ReturnStrategy.TELEPORT) {
+                    npc.teleport(location, TeleportCause.PLUGIN);
+                } else if (strategy == ReturnStrategy.PATHFIND) {
+                    npc.getNavigator().setTarget(location);
+                    npc.getNavigator().getLocalParameters().distanceMargin(0.9).pathDistanceMargin(0)
+                            .destinationTeleportMargin(1);
+                }
             }
         }
     }
 
     public void setDelayTicks(int delay) {
         this.delay = delay;
+    }
+
+    public void setDistanceBlocks(double distance) {
+        this.distance = distance;
     }
 
     public void setHomeLocation(Location location) {

@@ -1166,7 +1166,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "homeloc --location [loc] --delay [delay] -h(ere) -p(athfind) -t(eleport)",
+            usage = "homeloc --location [loc] --delay [delay] --distance [distance] -h(ere) -p(athfind) -t(eleport)",
             desc = "Controls home location",
             modifiers = { "home" },
             min = 1,
@@ -1175,7 +1175,7 @@ public class NPCCommands {
             permission = "citizens.npc.home")
     @Requirements(ownership = true, selected = true)
     public void home(CommandContext args, CommandSender sender, NPC npc, @Flag("location") Location loc,
-            @Flag("delay") Integer delay) throws CommandException {
+            @Flag("delay") Integer delay, @Flag("distance") Double distance) throws CommandException {
         HomeTrait trait = npc.getOrAddTrait(HomeTrait.class);
         String output = "";
         if (args.hasFlag('h')) {
@@ -1186,22 +1186,27 @@ public class NPCCommands {
         }
         if (loc != null) {
             trait.setHomeLocation(loc);
-            output += Messaging.tr(Messages.HOME_TRAIT_LOCATION_SET, Util.prettyPrintLocation(trait.getHomeLocation()));
+            output += " "
+                    + Messaging.tr(Messages.HOME_TRAIT_LOCATION_SET, Util.prettyPrintLocation(trait.getHomeLocation()));
+        }
+        if (distance != null) {
+            trait.setDistanceBlocks(distance);
+            output += " " + Messaging.tr(Messages.HOME_TRAIT_DISTANCE_SET, trait.getDistanceBlocks());
         }
         if (args.hasFlag('p')) {
             trait.setReturnStrategy(HomeTrait.ReturnStrategy.PATHFIND);
-            output += Messaging.tr(Messages.HOME_TRAIT_PATHFIND_SET, npc.getName());
+            output += " " + Messaging.tr(Messages.HOME_TRAIT_PATHFIND_SET, npc.getName());
         }
         if (args.hasFlag('t')) {
             trait.setReturnStrategy(HomeTrait.ReturnStrategy.TELEPORT);
-            output += Messaging.tr(Messages.HOME_TRAIT_TELEPORT_SET, npc.getName());
+            output += " " + Messaging.tr(Messages.HOME_TRAIT_TELEPORT_SET, npc.getName());
         }
         if (delay != null) {
             trait.setDelayTicks(delay);
-            output += Messaging.tr(Messages.HOME_TRAIT_DELAY_SET, delay);
+            output += " " + Messaging.tr(Messages.HOME_TRAIT_DELAY_SET, delay);
         }
         if (!output.isEmpty()) {
-            Messaging.send(sender, output);
+            Messaging.send(sender, output.trim());
         }
     }
 
