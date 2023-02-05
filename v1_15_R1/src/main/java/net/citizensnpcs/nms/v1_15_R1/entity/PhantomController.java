@@ -25,7 +25,6 @@ import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityPhantom;
 import net.minecraft.server.v1_15_R1.EntityTypes;
-import net.minecraft.server.v1_15_R1.EnumDifficulty;
 import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.IBlockData;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
@@ -59,7 +58,6 @@ public class PhantomController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                setNoAI(true);
                 this.oldMoveController = this.moveController;
                 this.oldLookController = this.lookController;
                 this.moveController = new ControllerMove(this);
@@ -212,6 +210,11 @@ public class PhantomController extends MobEntityController {
         }
 
         @Override
+        protected boolean J() {
+            return npc != null ? false : super.J();
+        }
+
+        @Override
         public void movementTick() {
             super.movementTick();
             if (npc != null) {
@@ -219,12 +222,10 @@ public class PhantomController extends MobEntityController {
                 if (npc.useMinecraftAI() && this.moveController != this.oldMoveController) {
                     this.moveController = this.oldMoveController;
                     this.lookController = this.oldLookController;
-                    setNoAI(false);
                 }
                 if (!npc.useMinecraftAI() && this.moveController == this.oldMoveController) {
                     this.moveController = new PlayerControllerMove(this);
                     this.lookController = new ControllerLook(this);
-                    setNoAI(true);
                 }
                 if (npc.isProtected()) {
                     this.setOnFire(0);
@@ -239,19 +240,6 @@ public class PhantomController extends MobEntityController {
                 return !npc.isProtected();
             }
             return super.n(entity);
-        }
-
-        @Override
-        public void tick() {
-            // avoid suicide
-            boolean resetDifficulty = this.world.getDifficulty() == EnumDifficulty.PEACEFUL;
-            if (npc != null && resetDifficulty) {
-                this.world.getWorldData().setDifficulty(EnumDifficulty.NORMAL);
-            }
-            super.tick();
-            if (npc != null && resetDifficulty) {
-                this.world.getWorldData().setDifficulty(EnumDifficulty.PEACEFUL);
-            }
         }
     }
 

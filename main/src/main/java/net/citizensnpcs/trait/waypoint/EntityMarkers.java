@@ -73,6 +73,7 @@ public class EntityMarkers<T> {
      */
     public Entity spawnMarker(World world, Location at) {
         NPC npc = registry.createNPC(type, "");
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(at.clone().add(0.5, 0, 0.5), SpawnReason.CREATE);
         return npc.getEntity();
     }

@@ -53,7 +53,6 @@ public class PhantomController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                setNoAI(true);
                 this.moveController = new ControllerMove(this);
                 this.lookController = new ControllerLook(this);
                 // TODO: phantom pitch reversed

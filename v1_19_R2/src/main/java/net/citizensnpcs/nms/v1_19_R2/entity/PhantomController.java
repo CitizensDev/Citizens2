@@ -22,7 +22,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -34,7 +33,6 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.phys.Vec3;
 
 public class PhantomController extends MobEntityController {
@@ -49,7 +47,6 @@ public class PhantomController extends MobEntityController {
 
     public static class EntityPhantomNPC extends Phantom implements NPCHolder {
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
         private LookControl oldLookController;
         private MoveControl oldMoveController;
@@ -62,7 +59,6 @@ public class PhantomController extends MobEntityController {
             super(types, level);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                setNoAi(true);
                 this.oldMoveController = this.moveControl;
                 this.oldLookController = this.lookControl;
                 this.moveControl = new MoveControl(this);
@@ -79,15 +75,13 @@ public class PhantomController extends MobEntityController {
                 if (npc.useMinecraftAI() && this.moveControl != this.oldMoveController) {
                     this.moveControl = this.oldMoveController;
                     this.lookControl = this.oldLookController;
-                    setNoAi(false);
                 }
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
                     this.moveControl = new PlayerMoveControl(this);
                     this.lookControl = new LookControl(this);
-                    setNoAi(true);
                 }
                 if (npc.isProtected()) {
-                    this.setSecondsOnFire(0);
+                    setSecondsOnFire(0);
                 }
                 npc.update();
             }
@@ -230,23 +224,15 @@ public class PhantomController extends MobEntityController {
         }
 
         @Override
+        protected boolean shouldDespawnInPeaceful() {
+            return npc != null ? false : super.shouldDespawnInPeaceful();
+        }
+
+        @Override
         public Entity teleportTo(ServerLevel worldserver, PositionImpl location) {
             if (npc == null)
                 return super.teleportTo(worldserver, location);
             return NMSImpl.teleportAcrossWorld(this, worldserver, location);
-        }
-
-        @Override
-        public void tick() {
-            // avoid suicide
-            boolean resetDifficulty = npc != null && this.level.getDifficulty() == Difficulty.PEACEFUL;
-            if (resetDifficulty) {
-                ((WorldData) this.level.getLevelData()).setDifficulty(Difficulty.NORMAL);
-            }
-            super.tick();
-            if (resetDifficulty) {
-                ((WorldData) this.level.getLevelData()).setDifficulty(Difficulty.PEACEFUL);
-            }
         }
 
         @Override

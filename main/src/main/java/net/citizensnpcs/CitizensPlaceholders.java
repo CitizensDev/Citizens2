@@ -34,7 +34,7 @@ public class CitizensPlaceholders extends PlaceholderExpansion {
             return null;
 
         if (params.equalsIgnoreCase("citizens_selected_npc_name")) {
-            return selector.getSelected((CommandSender) player).getName();
+            return selector.getSelected((CommandSender) player).getFullName();
         }
 
         if (params.equalsIgnoreCase("citizens_selected_npc_id")) {

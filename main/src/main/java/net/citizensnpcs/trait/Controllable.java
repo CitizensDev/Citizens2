@@ -158,19 +158,23 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return true;
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerInteract(PlayerInteractEvent event) {
         if (!npc.isSpawned() || !enabled)
             return;
         Action performed = event.getAction();
-        if (NMS.getPassengers(npc.getEntity()).contains(npc.getEntity()))
+        if (!NMS.getPassengers(npc.getEntity()).contains(event.getPlayer()))
             return;
         switch (performed) {
             case RIGHT_CLICK_BLOCK:
+                if (event.isCancelled())
+                    return;
             case RIGHT_CLICK_AIR:
                 controller.rightClick(event);
                 break;
             case LEFT_CLICK_BLOCK:
+                if (event.isCancelled())
+                    return;
             case LEFT_CLICK_AIR:
                 controller.leftClick(event);
                 break;
@@ -393,7 +397,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
         @Override
         public void rightClick(PlayerInteractEvent event) {
-            npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(-0.3F));
+            npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(-0.25F));
         }
 
         @Override
@@ -411,9 +415,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, 1F);
             boolean shouldJump = NMS.shouldJump(rider);
             if (shouldJump) {
-                npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3F));
+                npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.25F));
             }
             npc.getEntity().setVelocity(npc.getEntity().getVelocity().multiply(new Vector(1, 0.98, 1)));
+            setMountedYaw(npc.getEntity());
         }
     }
 
@@ -456,6 +461,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         registerControllerType(EntityType.WITHER, PlayerInputAirController.class);
         try {
             registerControllerType(EntityType.valueOf("PARROT"), PlayerInputAirController.class);
+        } catch (IllegalArgumentException ex) {
+        }
+        try {
+            registerControllerType(EntityType.valueOf("PHANTOM"), PlayerInputAirController.class);
         } catch (IllegalArgumentException ex) {
         }
         registerControllerType(EntityType.UNKNOWN, LookAirController.class);

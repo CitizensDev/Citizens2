@@ -39,9 +39,9 @@ public class Chat implements VocalChord {
             String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<text>", context.getMessage());
             String targetName = "";
             // For each recipient
-            for (Talkable entity : context) {
-                entity.talkTo(context, text, this);
-                targetName = entity.getName();
+            for (Talkable talkable : context) {
+                talkable.talkTo(context, text, this);
+                targetName = talkable.getName();
             }
             // Check if bystanders hear targeted chat
             if (!Setting.CHAT_BYSTANDERS_HEAR_TARGETED_CHAT.asBoolean())
@@ -57,9 +57,9 @@ public class Chat implements VocalChord {
             String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<text>", context.getMessage());
             List<String> targetNames = new ArrayList<String>();
             // Talk to each recipient
-            for (Talkable entity : context) {
-                entity.talkTo(context, text, this);
-                targetNames.add(entity.getName());
+            for (Talkable talkable : context) {
+                talkable.talkTo(context, text, this);
+                targetNames.add(talkable.getName());
             }
 
             if (!Setting.CHAT_BYSTANDERS_HEAR_TARGETED_CHAT.asBoolean())
