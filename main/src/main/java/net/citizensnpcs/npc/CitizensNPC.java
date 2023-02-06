@@ -480,14 +480,23 @@ public class CitizensNPC extends AbstractNPC {
                 }
             }
 
-            navigator.run();
-            if (SUPPORT_GLOWING) {
+            if (SUPPORT_GLOWING && data().has(NPC.Metadata.GLOWING)) {
                 try {
                     getEntity().setGlowing(data().get(NPC.Metadata.GLOWING, false));
                 } catch (NoSuchMethodError e) {
                     SUPPORT_GLOWING = false;
                 }
             }
+
+            if (SUPPORT_SILENT && data().has(NPC.Metadata.SILENT)) {
+                try {
+                    getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.Metadata.SILENT).toString()));
+                } catch (NoSuchMethodError e) {
+                    SUPPORT_SILENT = false;
+                }
+            }
+
+            navigator.run();
 
             boolean isLiving = getEntity() instanceof LivingEntity;
             if (isUpdating(NPCUpdate.PACKET)) {
@@ -524,14 +533,6 @@ public class CitizensNPC extends AbstractNPC {
                 updateUsingItemState((Player) getEntity());
                 if (data().has(NPC.Metadata.SNEAKING) && !hasTrait(SneakTrait.class)) {
                     addTrait(SneakTrait.class);
-                }
-            }
-
-            if (SUPPORT_SILENT && data().has(NPC.Metadata.SILENT)) {
-                try {
-                    getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.Metadata.SILENT).toString()));
-                } catch (NoSuchMethodError e) {
-                    SUPPORT_SILENT = false;
                 }
             }
 
