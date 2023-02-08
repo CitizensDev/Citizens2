@@ -496,8 +496,6 @@ public class CitizensNPC extends AbstractNPC {
                 }
             }
 
-            navigator.run();
-
             boolean isLiving = getEntity() instanceof LivingEntity;
             if (isUpdating(NPCUpdate.PACKET)) {
                 if (data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean())) {
@@ -535,6 +533,8 @@ public class CitizensNPC extends AbstractNPC {
                     addTrait(SneakTrait.class);
                 }
             }
+
+            navigator.run();
 
             updateCounter++;
         } catch (Exception ex) {

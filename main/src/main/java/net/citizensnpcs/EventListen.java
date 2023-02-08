@@ -387,6 +387,7 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        skinUpdateTracker.removePlayer(event.getPlayer().getUniqueId());
         if (CitizensAPI.getNPCRegistry().getNPC(event.getPlayer()) == null)
             return;
         NMS.removeFromServerPlayerList(event.getPlayer());
