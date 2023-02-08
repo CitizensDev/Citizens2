@@ -566,7 +566,11 @@ public interface NPC extends Agent, Cloneable {
         /**
          * Whether to block Minecraft villager trades. Boolean defaults to true.
          */
-        VILLAGER_BLOCK_TRADES("villager-trades");
+        VILLAGER_BLOCK_TRADES("villager-trades"),
+        /**
+         * Speed modifier in water, percentage.
+         */
+        WATER_SPEED_MODIFIER("water-speed-modifier");
 
         private final String key;
 
