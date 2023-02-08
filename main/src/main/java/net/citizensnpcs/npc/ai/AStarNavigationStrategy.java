@@ -5,7 +5,6 @@ import java.util.List;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
@@ -131,9 +130,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             NMS.setDestination(npc.getEntity(), dest.getX(), dest.getY(), dest.getZ(), params.speed());
         } else {
             Vector dir = dest.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
-            Block in = npc.getEntity().getLocation().getBlock();
-            if ((dY >= 1 && Math.sqrt(xzDistance) <= 0.4)
-                    || (dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrInLiquid(in))) {
+            boolean liquidOrInLiquid = MinecraftBlockExaminer.isLiquidOrInLiquid(NPC_LOCATION.getBlock());
+            if ((dY >= 1 && Math.sqrt(xzDistance) <= 0.4) || (dY >= 0.2 && liquidOrInLiquid)) {
                 dir.add(new Vector(0, 0.75, 0));
             }
             npc.getEntity().setVelocity(dir);

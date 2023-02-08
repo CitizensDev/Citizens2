@@ -43,19 +43,18 @@ public class HorseController extends MobEntityController {
     }
 
     @Override
-    public org.bukkit.entity.Horse getBukkitEntity() {
-        return (org.bukkit.entity.Horse) super.getBukkitEntity();
-    }
-
-    @Override
     public void create(Location at, NPC npc) {
         npc.getOrAddTrait(HorseModifiers.class);
         super.create(at, npc);
     }
 
+    @Override
+    public org.bukkit.entity.Horse getBukkitEntity() {
+        return (org.bukkit.entity.Horse) super.getBukkitEntity();
+    }
+
     public static class EntityHorseNPC extends Horse implements NPCHolder {
         private double baseMovementSpeed;
-
         private boolean calledNMSHeight = false;
         private final CitizensNPC npc;
         private boolean riding;

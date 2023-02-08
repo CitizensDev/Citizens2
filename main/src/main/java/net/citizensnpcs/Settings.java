@@ -154,6 +154,7 @@ public class Settings {
         NPC_SKIN_ROTATION_UPDATE_DEGREES("npc.skins.rotation-update-degrees", 90f),
         NPC_SKIN_USE_LATEST("npc.skins.use-latest-by-default", false),
         NPC_SKIN_VIEW_DISTANCE("npc.skins.view-distance", 100D),
+        NPC_WATER_SPEED_MODIFIER("npc.movement.water-speed-modifier", 1.25F),
         PACKET_UPDATE_DELAY("npc.packets.update-delay", 30),
         PLACEHOLDER_SKIN_UPDATE_FREQUENCY("npc.skins.placeholder-update-frequency-ticks", 5 * 60 * 20),
         PLAYER_TELEPORT_DELAY("npc.teleport-delay", "npc.delay-player-teleport-ticks", -1),

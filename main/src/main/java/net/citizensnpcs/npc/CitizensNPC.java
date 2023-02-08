@@ -468,6 +468,8 @@ public class CitizensNPC extends AbstractNPC {
 
             if (navigator.isNavigating()) {
                 if (data().get(NPC.Metadata.SWIMMING, true)) {
+                    getEntity().setVelocity(getEntity().getVelocity().multiply(data()
+                            .get(NPC.Metadata.WATER_SPEED_MODIFIER, Setting.NPC_WATER_SPEED_MODIFIER.asFloat())));
                     Location currentDest = navigator.getPathStrategy().getCurrentDestination();
                     if (currentDest == null || currentDest.getY() > getStoredLocation().getY()) {
                         NMS.trySwim(getEntity());

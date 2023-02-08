@@ -1301,7 +1301,7 @@ public class NMSImpl implements NMSBridge {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null)
             return;
-        if (RANDOM.nextFloat() < 0.8F && (handle.W() || handle.ab())) {
+        if (RANDOM.nextFloat() <= 0.85F && (handle.W() || handle.ab())) {
             handle.motY += power;
         }
     }

@@ -1547,7 +1547,7 @@ public class NMSImpl implements NMSBridge {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null)
             return;
-        if (RANDOM.nextFloat() < 0.8F && handle.isInWater()) {
+        if (RANDOM.nextFloat() <= 0.85F && handle.isInWater()) {
             handle.setDeltaMovement(handle.getDeltaMovement().x, handle.getDeltaMovement().y + power,
                     handle.getDeltaMovement().z);
         }
