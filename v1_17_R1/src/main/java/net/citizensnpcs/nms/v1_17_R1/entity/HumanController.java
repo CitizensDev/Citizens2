@@ -32,12 +32,6 @@ public class HumanController extends AbstractEntityController {
         String coloredName = npc.getFullName();
         String name = coloredName.length() > 16 ? coloredName.substring(0, 16) : coloredName;
         UUID uuid = npc.getUniqueId();
-        if (uuid.version() == 4) { // clear version
-            long msb = uuid.getMostSignificantBits();
-            msb &= ~0x0000000000004000L;
-            msb |= 0x0000000000002000L;
-            uuid = new UUID(msb, uuid.getLeastSignificantBits());
-        }
 
         String teamName = Util.getTeamName(uuid);
         if (npc.requiresNameHologram()) {

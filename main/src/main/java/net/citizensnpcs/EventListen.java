@@ -632,6 +632,7 @@ public class EventListen implements Listener {
                 Messaging.debug("Despawned", npc, "due to world unload at", event.getWorld().getName());
             }
         }
+        CitizensAPI.getLocationLookup().onWorldUnload(event);
     }
 
     private void respawnAllFromCoord(ChunkCoord coord, Event event) {

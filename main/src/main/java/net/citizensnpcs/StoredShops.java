@@ -30,7 +30,7 @@ public class StoredShops {
     }
 
     public NPCShop getGlobalShop(String name) {
-        return globalShops.computeIfAbsent(name, s -> new NPCShop(s));
+        return globalShops.computeIfAbsent(name, NPCShop::new);
     }
 
     public NPCShop getShop(String name) {
