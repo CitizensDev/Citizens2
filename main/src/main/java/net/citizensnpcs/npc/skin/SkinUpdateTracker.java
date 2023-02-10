@@ -342,9 +342,7 @@ public class SkinUpdateTracker {
                 return;
 
             List<SkinnableEntity> nearby = new ArrayList<SkinnableEntity>(10);
-            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-
-            for (Player player : players) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasMetadata("NPC"))
                     continue;
 
@@ -417,6 +415,12 @@ public class SkinUpdateTracker {
         boolean shouldUpdate(Player player) {
             Location currentLoc = player.getLocation(CACHE_LOCATION);
 
+            // make sure player is in same world
+            if (!currentLoc.getWorld().equals(this.location.getWorld())) {
+                hardReset(player);
+                return true;
+            }
+
             if (!hasMoved) {
                 hasMoved = true;
                 return true;
@@ -440,12 +444,6 @@ public class SkinUpdateTracker {
                 }
             }
 
-            // make sure player is in same world
-            if (!currentLoc.getWorld().equals(this.location.getWorld())) {
-                reset(player);
-                return true;
-            }
-
             // update every time a player moves a certain distance
             if (currentLoc.distance(this.location) > MOVEMENT_SKIN_UPDATE_DISTANCE) {
                 reset(player);
@@ -467,7 +465,7 @@ public class SkinUpdateTracker {
     }
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static final float FIELD_OF_VIEW = 70f;
+    private static final float FIELD_OF_VIEW = 70F;
     private static final int MOVEMENT_SKIN_UPDATE_DISTANCE = 25;
     private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }
