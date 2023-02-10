@@ -671,7 +671,7 @@ public class CommandTrait extends Trait {
                 }
                 trait.globalCooldowns.remove(commandKey);
             }
-            int timesUsed = nUsed.getOrDefault(commandKey, 0) + 1;
+            int timesUsed = nUsed.getOrDefault(commandKey, 0);
             if (command.n > 0 && command.n <= timesUsed) {
                 trait.sendErrorMessage(player, CommandTraitError.MAXIMUM_TIMES_USED, null, command.n);
                 return false;
@@ -683,7 +683,7 @@ public class CommandTrait extends Trait {
                 trait.globalCooldowns.put(commandKey, currentTimeSec);
             }
             if (command.n > 0) {
-                nUsed.put(commandKey, timesUsed);
+                nUsed.put(commandKey, timesUsed + 1);
             }
             lastUsedId = command.id;
             return true;
