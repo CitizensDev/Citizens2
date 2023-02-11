@@ -3,7 +3,7 @@ package net.citizensnpcs.api.exception;
 /**
  * Thrown when an NPC fails to load properly.
  */
-public class NPCLoadException extends NPCException {
+public class NPCLoadException extends Exception {
     public NPCLoadException(String msg) {
         super(msg);
     }
