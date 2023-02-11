@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -170,6 +171,7 @@ public class SkinUpdateTracker {
      */
     public void onNPCDespawn(NPC npc) {
         Preconditions.checkNotNull(npc);
+        playerTrackers.remove(npc.getUniqueId());
         SkinnableEntity skinnable = getSkinnable(npc);
         if (skinnable == null)
             return;
@@ -268,16 +270,8 @@ public class SkinUpdateTracker {
      * </p>
      */
     public void reset() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasMetadata("NPC"))
-                continue;
-
-            PlayerTracker tracker = playerTrackers.get(player.getUniqueId());
-            if (tracker == null)
-                continue;
-
-            tracker.hardReset(player);
-        }
+        navigating.clear();
+        playerTrackers.clear();
     }
 
     // hard reset players near a skinnable NPC
@@ -342,7 +336,9 @@ public class SkinUpdateTracker {
                 return;
 
             List<SkinnableEntity> nearby = new ArrayList<SkinnableEntity>(10);
+            Set<UUID> seen = Sets.newHashSet();
             for (Player player : Bukkit.getOnlinePlayers()) {
+                seen.add(player.getUniqueId());
                 if (player.hasMetadata("NPC"))
                     continue;
 
@@ -356,6 +352,7 @@ public class SkinUpdateTracker {
 
                 nearby.clear();
             }
+            playerTrackers.keySet().removeIf(uuid -> !seen.contains(uuid));
         }
     }
 
