@@ -240,6 +240,8 @@ public class Messages {
     public static final String METRICS_ERROR_NOTIFICATION = "citizens.notifications.metrics-load-error";
     public static final String MINECART_SET = "citizens.commands.npc.minecart.set";
     public static final String MINIMUM_COST_REQUIRED = "citizens.economy.minimum-cost-required";
+    public static final String MIRROR_NAME_SET = "citizens.commands.npc.mirror.namemirror-set";
+    public static final String MIRROR_NAME_UNSET = "citizens.commands.npc.mirror.namemirror-unset";
     public static final String MIRROR_SET = "citizens.commands.npc.mirror.set";
     public static final String MIRROR_UNSET = "citizens.commands.npc.mirror.unset";
     public static final String MISSING_TP_CURSOR_BLOCK = "citizens.commands.npc.tphere.missing-cursor-block";

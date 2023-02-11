@@ -189,6 +189,7 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.PacketNPC.EntityPacketTracker;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
+import net.citizensnpcs.trait.versioned.EnderDragonTrait;
 import net.citizensnpcs.trait.versioned.LlamaTrait;
 import net.citizensnpcs.trait.versioned.PolarBearTrait;
 import net.citizensnpcs.trait.versioned.ShulkerTrait;
@@ -746,6 +747,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        registerTraitWithCommand(manager, EnderDragonTrait.class);
         registerTraitWithCommand(manager, BossBarTrait.class);
         registerTraitWithCommand(manager, LlamaTrait.class);
         registerTraitWithCommand(manager, PolarBearTrait.class);

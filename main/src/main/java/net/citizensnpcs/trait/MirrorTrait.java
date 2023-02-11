@@ -12,6 +12,8 @@ import net.citizensnpcs.api.trait.TraitName;
 public class MirrorTrait extends Trait {
     @Persist
     private boolean enabled;
+    @Persist
+    private boolean mirrorName;
 
     public MirrorTrait() {
         super("mirrortrait");
@@ -25,11 +27,19 @@ public class MirrorTrait extends Trait {
         return enabled;
     }
 
+    public boolean mirrorName() {
+        return mirrorName;
+    }
+
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
+    }
+
+    public void setMirrorName(boolean mirror) {
+        mirrorName = mirror;
     }
 }

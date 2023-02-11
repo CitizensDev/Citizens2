@@ -1638,17 +1638,23 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             modifiers = { "mirror" },
-            usage = "mirror",
+            usage = "mirror --name [true|false]",
             desc = "Controls mirroring of NPC skins and more",
             min = 1,
             max = 1,
             permission = "citizens.npc.mirror")
     @Requirements(selected = true, ownership = true)
-    public void mirror(CommandContext args, CommandSender sender, NPC npc) {
+    public void mirror(CommandContext args, CommandSender sender, NPC npc, @Flag("name") Boolean name) {
         MirrorTrait trait = npc.getOrAddTrait(MirrorTrait.class);
-        boolean enabled = !trait.isEnabled();
-        trait.setEnabled(enabled);
-        Messaging.sendTr(sender, enabled ? Messages.MIRROR_SET : Messages.MIRROR_UNSET, npc.getName());
+        if (name != null) {
+            trait.setEnabled(true);
+            trait.setMirrorName(name);
+            Messaging.sendTr(sender, name ? Messages.MIRROR_NAME_SET : Messages.MIRROR_NAME_UNSET, npc.getName());
+        } else {
+            boolean enabled = !trait.isEnabled();
+            trait.setEnabled(enabled);
+            Messaging.sendTr(sender, enabled ? Messages.MIRROR_SET : Messages.MIRROR_UNSET, npc.getName());
+        }
     }
 
     @Command(

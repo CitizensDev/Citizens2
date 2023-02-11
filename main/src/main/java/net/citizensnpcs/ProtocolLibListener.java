@@ -19,6 +19,8 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
@@ -57,24 +59,31 @@ public class ProtocolLibListener {
                     return;
                 boolean changed = false;
                 for (int i = 0; i < list.size(); i++) {
-                    PlayerInfoData data = list.get(i);
-                    if (data == null)
+                    PlayerInfoData info = list.get(i);
+                    if (info == null)
                         continue;
-                    if (data.getProfile().getUUID().version() != 2)
-                        continue;
-                    NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(data.getProfile().getUUID());
+                    NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(info.getProfile().getUUID());
                     if (npc == null || !npc.isSpawned())
                         continue;
                     MirrorTrait trait = npc.getTraitNullable(MirrorTrait.class);
                     if (trait == null || !trait.isMirroring(event.getPlayer()))
                         continue;
                     GameProfile profile = NMS.getProfile(event.getPlayer());
+                    if (trait.mirrorName()) {
+                        list.set(i,
+                                new PlayerInfoData(
+                                        WrappedGameProfile.fromPlayer(event.getPlayer()).withId(
+                                                info.getProfile().getId()),
+                                        info.getLatency(), info.getGameMode(),
+                                        WrappedChatComponent.fromText(event.getPlayer().getDisplayName())));
+                        continue;
+                    }
                     Collection<Property> textures = profile.getProperties().get("textures");
                     if (textures == null || textures.size() == 0)
                         continue;
-                    data.getProfile().getProperties().clear();
+                    info.getProfile().getProperties().clear();
                     for (String key : profile.getProperties().keySet()) {
-                        data.getProfile().getProperties().putAll(key,
+                        info.getProfile().getProperties().putAll(key,
                                 Iterables.transform(profile.getProperties().get(key),
                                         skin -> new WrappedSignedProperty(skin.getName(), skin.getValue(),
                                                 skin.getSignature())));

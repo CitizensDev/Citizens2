@@ -233,6 +233,7 @@ import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.CamelTrait;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.CatTrait;
+import net.citizensnpcs.trait.versioned.EnderDragonTrait;
 import net.citizensnpcs.trait.versioned.FoxTrait;
 import net.citizensnpcs.trait.versioned.FrogTrait;
 import net.citizensnpcs.trait.versioned.GoatTrait;
@@ -889,6 +890,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        registerTraitWithCommand(manager, EnderDragonTrait.class);
         registerTraitWithCommand(manager, AllayTrait.class);
         registerTraitWithCommand(manager, AxolotlTrait.class);
         registerTraitWithCommand(manager, BeeTrait.class);
@@ -1143,32 +1145,38 @@ public class NMSImpl implements NMSBridge {
         List<ClientboundPlayerInfoUpdatePacket.Entry> list = Lists.newArrayList(packet.entries());
         boolean changed = false;
         for (int i = 0; i < list.size(); i++) {
-            ClientboundPlayerInfoUpdatePacket.Entry data = list.get(i);
-            if (data == null)
+            ClientboundPlayerInfoUpdatePacket.Entry info = list.get(i);
+            if (info == null)
                 continue;
-            if (data.profileId().version() != 2)
-                continue;
-            NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(data.profileId());
+            NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(info.profileId());
             if (npc == null || !npc.isSpawned())
                 continue;
-            if (Setting.DISABLE_TABLIST.asBoolean() != data.listed()) {
+            if (Setting.DISABLE_TABLIST.asBoolean() != info.listed()) {
                 list.set(i,
-                        new ClientboundPlayerInfoUpdatePacket.Entry(data.profileId(), data.profile(),
-                                !Setting.DISABLE_TABLIST.asBoolean(), data.latency(), data.gameMode(),
-                                !Setting.DISABLE_TABLIST.asBoolean() ? data.displayName() : Component.empty(),
-                                data.chatSession()));
+                        new ClientboundPlayerInfoUpdatePacket.Entry(info.profileId(), info.profile(),
+                                !Setting.DISABLE_TABLIST.asBoolean(), info.latency(), info.gameMode(),
+                                !Setting.DISABLE_TABLIST.asBoolean() ? info.displayName() : Component.empty(),
+                                info.chatSession()));
                 changed = true;
             }
             MirrorTrait trait = npc.getTraitNullable(MirrorTrait.class);
             if (trait == null || !trait.isMirroring(player))
                 continue;
             GameProfile profile = NMS.getProfile(player);
+            if (trait.mirrorName()) {
+                list.set(i,
+                        new ClientboundPlayerInfoUpdatePacket.Entry(info.profileId(), profile,
+                                !Setting.DISABLE_TABLIST.asBoolean(), info.latency(), info.gameMode(),
+                                Component.literal(profile.getName()), info.chatSession()));
+                changed = true;
+                continue;
+            }
             Collection<Property> textures = profile.getProperties().get("textures");
             if (textures == null || textures.size() == 0)
                 continue;
-            data.profile().getProperties().clear();
+            info.profile().getProperties().clear();
             for (String key : profile.getProperties().keySet()) {
-                data.profile().getProperties().putAll(key, profile.getProperties().get(key));
+                info.profile().getProperties().putAll(key, profile.getProperties().get(key));
             }
             changed = true;
         }
