@@ -137,7 +137,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
                 setMetadata(npc, block);
                 selectors.add(toName(block));
                 if (block.getBlockData() instanceof org.bukkit.block.data.Directional) {
-                    block = block.getRelative(((org.bukkit.block.data.Directional) block.getState()).getFacing());
+                    block = block.getRelative(((org.bukkit.block.data.Directional) block.getBlockData()).getFacing());
                     if (!block.getType().name().contains("COMMAND_BLOCK")) {
                         block = null;
                     }
