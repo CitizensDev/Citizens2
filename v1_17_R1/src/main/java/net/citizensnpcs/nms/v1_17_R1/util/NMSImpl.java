@@ -2074,8 +2074,8 @@ public class NMSImpl implements NMSBridge {
         network.address = socketAddress;
     }
 
-    public static boolean isLeashed(NPC npc, Mob entity) {
-        return NMS.isLeashed(npc, entity::isLeashed, () -> entity.dropLeash(true, false));
+    public static boolean isLeashed(NPC npc, Supplier<Boolean> isLeashed, Mob entity) {
+        return NMS.isLeashed(npc, isLeashed, () -> entity.dropLeash(true, false));
     }
 
     @SuppressWarnings("deprecation")

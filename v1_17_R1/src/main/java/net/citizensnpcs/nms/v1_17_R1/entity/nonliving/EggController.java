@@ -25,7 +25,6 @@ import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 public class EggController extends AbstractEntityController {
     public EggController() {

@@ -27,7 +27,6 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 public class PolarBearController extends MobEntityController {
     public PolarBearController() {
@@ -112,16 +111,7 @@ public class PolarBearController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            if (npc == null) {
-                return super.isLeashed();
-            }
-            boolean protectedDefault = npc.isProtected();
-            if (!protectedDefault || !npc.data().get(NPC.Metadata.LEASH_PROTECTED, protectedDefault))
-                return super.isLeashed();
-            if (super.isLeashed()) {
-                dropLeash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
+            return NMSImpl.isLeashed(npc, super::isLeashed, this);
         }
 
         @Override

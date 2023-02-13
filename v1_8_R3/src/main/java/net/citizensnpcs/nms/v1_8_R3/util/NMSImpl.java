@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -1664,8 +1665,8 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static boolean isLeashed(NPC npc, EntityInsentient entity) {
-        return NMS.isLeashed(npc, entity::cc, () -> entity.unleash(true, false));
+    public static boolean isLeashed(NPC npc, Supplier<Boolean> isLeashed, EntityInsentient entity) {
+        return NMS.isLeashed(npc, isLeashed, () -> entity.unleash(true, false));
     }
 
     public static boolean isNavigationFinished(NavigationAbstract navigation) {

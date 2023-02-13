@@ -82,16 +82,7 @@ public class BatController extends MobEntityController {
 
         @Override
         public boolean cc() {
-            if (npc == null) {
-                return super.cc();
-            }
-            boolean protectedDefault = npc.isProtected();
-            if (!protectedDefault || !npc.data().get(NPC.Metadata.LEASH_PROTECTED, protectedDefault))
-                return super.cc();
-            if (super.cc()) {
-                unleash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
+            return NMSImpl.isLeashed(npc, super::cc, this);
         }
 
         @Override

@@ -20,7 +20,6 @@ import net.minecraft.world.entity.vehicle.MinecartTNT;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 public class MinecartTNTController extends MobEntityController {
     public MinecartTNTController() {

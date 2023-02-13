@@ -28,7 +28,6 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 public class BlazeController extends MobEntityController {
     public BlazeController() {
@@ -116,7 +115,7 @@ public class BlazeController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            return NMSImpl.isLeashed(npc, this);
+            return NMSImpl.isLeashed(npc, super::isLeashed, this);
         }
 
         @Override

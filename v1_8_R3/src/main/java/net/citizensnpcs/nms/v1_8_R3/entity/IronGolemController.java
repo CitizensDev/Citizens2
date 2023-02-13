@@ -74,7 +74,7 @@ public class IronGolemController extends MobEntityController {
 
         @Override
         public boolean cc() {
-            return NMSImpl.isLeashed(npc, this);
+            return NMSImpl.isLeashed(npc, super::cc, this);
         }
 
         @Override

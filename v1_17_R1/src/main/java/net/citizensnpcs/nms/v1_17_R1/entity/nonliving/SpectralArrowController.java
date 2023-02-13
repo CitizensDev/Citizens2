@@ -23,7 +23,6 @@ import net.minecraft.world.entity.projectile.SpectralArrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 public class SpectralArrowController extends MobEntityController {
     public SpectralArrowController() {

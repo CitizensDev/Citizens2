@@ -2101,8 +2101,8 @@ public class NMSImpl implements NMSBridge {
         network.socketAddress = socketAddress;
     }
 
-    public static boolean isLeashed(NPC npc, EntityInsentient entity) {
-        return NMS.isLeashed(npc, entity::isLeashed, () -> entity.unleash(true, false));
+    public static boolean isLeashed(NPC npc, Supplier<Boolean> isLeashed, EntityInsentient entity) {
+        return NMS.isLeashed(npc, isLeashed, () -> entity.unleash(true, false));
     }
 
     public static boolean isNavigationFinished(NavigationAbstract navigation) {

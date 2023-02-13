@@ -121,7 +121,7 @@ public class PlayerMoveControl extends MoveControl {
             }
             float movement = (float) (this.speedMod * this.entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue());
             this.entity.setSpeed(movement);
-            this.entity.zza = movement;
+            // this.entity.zza = movement;
             if (shouldJump() || (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 0.4D)) {
                 this.jumpTicks = jumpTicks();
                 this.jumpTicks /= 3;

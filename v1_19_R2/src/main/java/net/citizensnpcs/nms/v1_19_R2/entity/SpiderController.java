@@ -128,7 +128,7 @@ public class SpiderController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            return NMSImpl.isLeashed(npc, this);
+            return NMSImpl.isLeashed(npc, super::isLeashed, this);
         }
 
         @Override
