@@ -1,6 +1,6 @@
 package net.citizensnpcs.trait;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.bukkit.Location;
@@ -15,7 +15,7 @@ import net.citizensnpcs.api.util.EntityDim;
 @TraitName("boundingbox")
 public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     private EntityDim base;
-    private BiFunction<Location, EntityDim, BoundingBox> function;
+    private Function<EntityDim, BoundingBox> function;
     @Persist
     private float height = -1;
     @Persist
@@ -29,10 +29,10 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
 
     @Override
     public BoundingBox get() {
-        if (function != null) {
-            return function.apply(npc.getStoredLocation(), getAdjustedBoundingBox());
-        }
         Location location = npc.getEntity().getLocation();
+        if (function != null) {
+            return function.apply(getAdjustedBoundingBox()).add(location);
+        }
         EntityDim dim = getAdjustedBoundingBox();
         return new BoundingBox(location.getX() - dim.width / 2, location.getY(), location.getZ() - dim.width / 2,
                 location.getX() + dim.width / 2, location.getY() + dim.height, location.getZ() + dim.width / 2);
@@ -62,7 +62,7 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         npc.data().set(NPC.Metadata.BOUNDING_BOX_FUNCTION, this);
     }
 
-    public void setBoundingBoxFunction(BiFunction<Location, EntityDim, BoundingBox> func) {
+    public void setBoundingBoxFunction(Function<EntityDim, BoundingBox> func) {
         this.function = func;
     }
 
