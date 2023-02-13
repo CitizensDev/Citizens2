@@ -11,6 +11,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_19_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -27,6 +28,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class FallingBlockController extends AbstractEntityController {
@@ -73,6 +75,11 @@ public class FallingBlockController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        protected AABB makeBoundingBox() {
+            return NMSBoundingBox.makeBB(npc, super.makeBoundingBox());
         }
 
         @Override

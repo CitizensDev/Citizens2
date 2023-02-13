@@ -98,9 +98,9 @@ public class HologramTrait extends Trait {
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
             NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", new ItemStack(item, 1));
-            if (itemMatcher.groupCount() > 1) {
+            if (itemMatcher.group(2) != null) {
                 itemNPC.getOrAddTrait(ScoreboardTrait.class)
-                        .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2)));
+                        .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
             }
             itemNPC.spawn(currentLoc);
             ((ArmorStand) hologramNPC.getEntity()).addPassenger(itemNPC.getEntity());
@@ -405,5 +405,5 @@ public class HologramTrait extends Trait {
         }
     }
 
-    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)>|<item:(.*?):(.*?)>");
+    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)([:].*?)?>");
 }

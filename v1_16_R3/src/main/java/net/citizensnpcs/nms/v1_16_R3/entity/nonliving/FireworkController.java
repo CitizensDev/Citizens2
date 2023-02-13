@@ -10,10 +10,12 @@ import org.bukkit.util.Vector;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v1_16_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_16_R3.AxisAlignedBB;
 import net.minecraft.server.v1_16_R3.EntityFireworks;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.FluidType;
@@ -42,6 +44,11 @@ public class FireworkController extends MobEntityController {
         public EntityFireworkNPC(EntityTypes<? extends EntityFireworks> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void a(AxisAlignedBB bb) {
+            super.a(NMSBoundingBox.makeBB(npc, bb));
         }
 
         @Override

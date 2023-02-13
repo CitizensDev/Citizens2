@@ -1331,10 +1331,12 @@ public class NMSImpl implements NMSBridge {
         float oldPitch = handle.getXRot();
         handle.setYBodyRot(bodyYaw);
         handle.setXRot(pitch);
-        sendPacketsNearby(null, from.getLocation(), new Packet[] { new ClientboundTeleportEntityPacket(handle),
-                // new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
+        sendPacketsNearby(null, from.getLocation(), new ClientboundTeleportEntityPacket(handle), // new
+                                                                                                 // ClientboundMoveEntityPacket.Rot(handle.getId(),
+                                                                                                 // (byte) (bodyYaw *
+                                                                                                 // 256.0F / 360.0F),
                 // (byte) (pitch * 256.0F / 360.0F), handle.onGround),
-                new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)) });
+                new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
         handle.setYBodyRot(oldBody);
         handle.setXRot(oldPitch);
     }
@@ -2204,19 +2206,6 @@ public class NMSImpl implements NMSBridge {
             private static final long serialVersionUID = 8207338859896320185L;
         };
         network.address = socketAddress;
-    }
-
-    public static boolean isLeashed(Mob entity, boolean superLeashed) {
-        NPC npc = ((NPCHolder) entity).getNPC();
-        if (npc == null)
-            return superLeashed;
-        boolean protectedDefault = npc.isProtected();
-        if (!protectedDefault || !npc.data().get(NPC.Metadata.LEASH_PROTECTED, protectedDefault))
-            return superLeashed;
-        if (superLeashed) {
-            entity.dropLeash(true, false); // clearLeash with client update
-        }
-        return false; // shouldLeash
     }
 
     @SuppressWarnings("deprecation")

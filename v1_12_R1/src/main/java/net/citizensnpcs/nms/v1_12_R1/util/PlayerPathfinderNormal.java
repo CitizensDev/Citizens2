@@ -41,15 +41,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         return a(MathHelper.floor(paramDouble1), MathHelper.floor(paramDouble2), MathHelper.floor(paramDouble3));
     }
 
-    private PathType pa(EntityHumanNPC paramEntityInsentient, BlockPosition paramBlockPosition) {
-        return pa(paramEntityInsentient, paramBlockPosition.getX(), paramBlockPosition.getY(),
-                paramBlockPosition.getZ());
-    }
-
-    private PathType pa(EntityHumanNPC paramEntityInsentient, int paramInt1, int paramInt2, int paramInt3) {
-        return a(this.a, paramInt1, paramInt2, paramInt3, paramEntityInsentient, this.d, this.e, this.f, d(), c());
-    }
-
     @Override
     public void a(IBlockAccess paramIBlockAccess, EntityHumanNPC paramEntityInsentient) {
         super.a(paramIBlockAccess, paramEntityInsentient);
@@ -192,82 +183,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         return paramPathType;
     }
 
-    private PathPoint pa(int paramInt1, int paramInt2, int paramInt3, int paramInt4, double paramDouble,
-            EnumDirection paramEnumDirection) {
-        PathPoint localPathPoint = null;
-
-        BlockPosition localBlockPosition1 = new BlockPosition(paramInt1, paramInt2, paramInt3);
-        BlockPosition localBlockPosition2 = localBlockPosition1.down();
-        double d1 = paramInt2 - (1.0D - this.a.getType(localBlockPosition2).e(this.a, localBlockPosition2).e);
-        if (d1 - paramDouble > 1.125D) {
-            return null;
-        }
-        PathType localPathType1 = pa(this.b, paramInt1, paramInt2, paramInt3);
-
-        float f = this.b.a(localPathType1);
-        double d2 = this.b.width / 2.0D;
-        if (f >= 0.0F) {
-            localPathPoint = a(paramInt1, paramInt2, paramInt3);
-            localPathPoint.m = localPathType1;
-            localPathPoint.l = Math.max(localPathPoint.l, f);
-        }
-        if (localPathType1 == PathType.WALKABLE) {
-            return localPathPoint;
-        }
-        if ((localPathPoint == null) && (paramInt4 > 0) && (localPathType1 != PathType.FENCE)
-                && (localPathType1 != PathType.TRAPDOOR)) {
-            localPathPoint = pa(paramInt1, paramInt2 + 1, paramInt3, paramInt4 - 1, paramDouble, paramEnumDirection);
-            if ((localPathPoint != null)
-                    && ((localPathPoint.m == PathType.OPEN) || (localPathPoint.m == PathType.WALKABLE))
-                    && (this.b.width < 1.0F)) {
-                double d3 = paramInt1 - paramEnumDirection.getAdjacentX() + 0.5D;
-                double d4 = paramInt3 - paramEnumDirection.getAdjacentZ() + 0.5D;
-
-                AxisAlignedBB localAxisAlignedBB1 = new AxisAlignedBB(d3 - d2, paramInt2 + 0.001D, d4 - d2, d3 + d2,
-                        paramInt2 + this.b.length, d4 + d2);
-                AxisAlignedBB localAxisAlignedBB2 = this.a.getType(localBlockPosition1).e(this.a, localBlockPosition1);
-
-                AxisAlignedBB localAxisAlignedBB3 = localAxisAlignedBB1.b(0.0D, localAxisAlignedBB2.e - 0.002D, 0.0D);
-                if (this.b.world.a(localAxisAlignedBB3)) {
-                    localPathPoint = null;
-                }
-            }
-        }
-        if (localPathType1 == PathType.OPEN) {
-            AxisAlignedBB localAxisAlignedBB4 = new AxisAlignedBB(paramInt1 - d2 + 0.5D, paramInt2 + 0.001D,
-                    paramInt3 - d2 + 0.5D, paramInt1 + d2 + 0.5D, paramInt2 + this.b.length, paramInt3 + d2 + 0.5D);
-            if (this.b.world.a(localAxisAlignedBB4)) {
-                return null;
-            }
-            if (this.b.width >= 1.0F) {
-                PathType localPathType2 = pa(this.b, paramInt1, paramInt2 - 1, paramInt3);
-                if (localPathType2 == PathType.BLOCKED) {
-                    localPathPoint = a(paramInt1, paramInt2, paramInt3);
-                    localPathPoint.m = PathType.WALKABLE;
-                    localPathPoint.l = Math.max(localPathPoint.l, f);
-                    return localPathPoint;
-                }
-            }
-            int i = 0;
-            while ((paramInt2 > 0) && (localPathType1 == PathType.OPEN)) {
-                paramInt2--;
-                if (i++ >= Setting.MC_NAVIGATION_MAX_FALL_DISTANCE.asInt()) {
-                    return null;
-                }
-                localPathType1 = pa(this.b, paramInt1, paramInt2, paramInt3);
-                f = this.b.a(localPathType1);
-                if ((localPathType1 != PathType.OPEN) && (f >= 0.0F)) {
-                    localPathPoint = a(paramInt1, paramInt2, paramInt3);
-                    localPathPoint.m = localPathType1;
-                    localPathPoint.l = Math.max(localPathPoint.l, f);
-                } else if (f < 0.0F) {
-                    return null;
-                }
-            }
-        }
-        return localPathPoint;
-    }
-
     @Override
     public int a(PathPoint[] paramArrayOfPathPoint, PathPoint paramPathPoint1, PathPoint paramPathPoint2,
             float paramFloat) {
@@ -388,6 +303,91 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             }
         }
         return a(localObject1.getX(), i, localObject1.getZ());
+    }
+
+    private PathType pa(EntityHumanNPC paramEntityInsentient, BlockPosition paramBlockPosition) {
+        return pa(paramEntityInsentient, paramBlockPosition.getX(), paramBlockPosition.getY(),
+                paramBlockPosition.getZ());
+    }
+
+    private PathType pa(EntityHumanNPC paramEntityInsentient, int paramInt1, int paramInt2, int paramInt3) {
+        return a(this.a, paramInt1, paramInt2, paramInt3, paramEntityInsentient, this.d, this.e, this.f, d(), c());
+    }
+
+    private PathPoint pa(int paramInt1, int paramInt2, int paramInt3, int paramInt4, double paramDouble,
+            EnumDirection paramEnumDirection) {
+        PathPoint localPathPoint = null;
+
+        BlockPosition localBlockPosition1 = new BlockPosition(paramInt1, paramInt2, paramInt3);
+        BlockPosition localBlockPosition2 = localBlockPosition1.down();
+        double d1 = paramInt2 - (1.0D - this.a.getType(localBlockPosition2).e(this.a, localBlockPosition2).e);
+        if (d1 - paramDouble > 1.125D) {
+            return null;
+        }
+        PathType localPathType1 = pa(this.b, paramInt1, paramInt2, paramInt3);
+
+        float f = this.b.a(localPathType1);
+        double d2 = this.b.width / 2.0D;
+        if (f >= 0.0F) {
+            localPathPoint = a(paramInt1, paramInt2, paramInt3);
+            localPathPoint.m = localPathType1;
+            localPathPoint.l = Math.max(localPathPoint.l, f);
+        }
+        if (localPathType1 == PathType.WALKABLE) {
+            return localPathPoint;
+        }
+        if ((localPathPoint == null) && (paramInt4 > 0) && (localPathType1 != PathType.FENCE)
+                && (localPathType1 != PathType.TRAPDOOR)) {
+            localPathPoint = pa(paramInt1, paramInt2 + 1, paramInt3, paramInt4 - 1, paramDouble, paramEnumDirection);
+            if ((localPathPoint != null)
+                    && ((localPathPoint.m == PathType.OPEN) || (localPathPoint.m == PathType.WALKABLE))
+                    && (this.b.width < 1.0F)) {
+                double d3 = paramInt1 - paramEnumDirection.getAdjacentX() + 0.5D;
+                double d4 = paramInt3 - paramEnumDirection.getAdjacentZ() + 0.5D;
+
+                AxisAlignedBB localAxisAlignedBB1 = new AxisAlignedBB(d3 - d2, paramInt2 + 0.001D, d4 - d2, d3 + d2,
+                        paramInt2 + this.b.length, d4 + d2);
+                AxisAlignedBB localAxisAlignedBB2 = this.a.getType(localBlockPosition1).e(this.a, localBlockPosition1);
+
+                AxisAlignedBB localAxisAlignedBB3 = localAxisAlignedBB1.b(0.0D, localAxisAlignedBB2.e - 0.002D, 0.0D);
+                if (this.b.world.a(localAxisAlignedBB3)) {
+                    localPathPoint = null;
+                }
+            }
+        }
+        if (localPathType1 == PathType.OPEN) {
+            AxisAlignedBB localAxisAlignedBB4 = new AxisAlignedBB(paramInt1 - d2 + 0.5D, paramInt2 + 0.001D,
+                    paramInt3 - d2 + 0.5D, paramInt1 + d2 + 0.5D, paramInt2 + this.b.length, paramInt3 + d2 + 0.5D);
+            if (this.b.world.a(localAxisAlignedBB4)) {
+                return null;
+            }
+            if (this.b.width >= 1.0F) {
+                PathType localPathType2 = pa(this.b, paramInt1, paramInt2 - 1, paramInt3);
+                if (localPathType2 == PathType.BLOCKED) {
+                    localPathPoint = a(paramInt1, paramInt2, paramInt3);
+                    localPathPoint.m = PathType.WALKABLE;
+                    localPathPoint.l = Math.max(localPathPoint.l, f);
+                    return localPathPoint;
+                }
+            }
+            int i = 0;
+            while ((paramInt2 > 0) && (localPathType1 == PathType.OPEN)) {
+                paramInt2--;
+                if (i++ >= Setting.MC_NAVIGATION_MAX_FALL_DISTANCE.asInt()) {
+                    return null;
+                }
+                localPathType1 = pa(this.b, paramInt1, paramInt2, paramInt3);
+                f = this.b.a(localPathType1);
+                if ((localPathType1 != PathType.OPEN) && (f >= 0.0F)) {
+                    localPathPoint = a(paramInt1, paramInt2, paramInt3);
+                    localPathPoint.m = localPathType1;
+                    localPathPoint.l = Math.max(localPathPoint.l, f);
+                } else if (f < 0.0F) {
+                    return null;
+                }
+            }
+        }
+        return localPathPoint;
     }
 
     protected PathType pb(IBlockAccess paramIBlockAccess, int paramInt1, int paramInt2, int paramInt3) {

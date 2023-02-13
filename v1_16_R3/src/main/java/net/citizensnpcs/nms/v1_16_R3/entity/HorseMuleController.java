@@ -8,10 +8,9 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMule;
 import org.bukkit.entity.Mule;
 import org.bukkit.util.Vector;
 
-import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
-import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v1_16_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -19,6 +18,7 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_16_R3.AxisAlignedBB;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.DataWatcherObject;
@@ -42,21 +42,19 @@ public class HorseMuleController extends MobEntityController {
     }
 
     @Override
-    public Mule getBukkitEntity() {
-        return (Mule) super.getBukkitEntity();
-    }
-
-    @Override
     public void create(Location at, NPC npc) {
         npc.getOrAddTrait(HorseModifiers.class);
         super.create(at, npc);
     }
 
+    @Override
+    public Mule getBukkitEntity() {
+        return (Mule) super.getBukkitEntity();
+    }
+
     public static class EntityHorseMuleNPC extends EntityHorseMule implements NPCHolder {
         private double baseMovementSpeed;
-
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -71,6 +69,11 @@ public class HorseMuleController extends MobEntityController {
                 ((Mule) getBukkitEntity()).setDomestication(((Mule) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
+        }
+
+        @Override
+        public void a(AxisAlignedBB bb) {
+            super.a(NMSBoundingBox.makeBB(npc, bb));
         }
 
         @Override
@@ -93,12 +96,8 @@ public class HorseMuleController extends MobEntityController {
 
         @Override
         public void a(float strength, double dx, double dz) {
-            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
-            Bukkit.getPluginManager().callEvent(event);
-            Vector kb = event.getKnockbackVector();
-            if (!event.isCancelled()) {
-                super.a((float) event.getStrength(), kb.getX(), kb.getZ());
-            }
+            NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a((float) evt.getStrength(),
+                    evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
         @Override
@@ -151,15 +150,7 @@ public class HorseMuleController extends MobEntityController {
 
         @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
-            if (npc == null) {
-                super.enderTeleportTo(d0, d1, d2);
-                return;
-            }
-            NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
-            Bukkit.getPluginManager().callEvent(event);
-            if (!event.isCancelled()) {
-                super.enderTeleportTo(d0, d1, d2);
-            }
+            NMS.enderTeleportTo(npc, d0, d1, d2, () -> super.enderTeleportTo(d0, d1, d2));
         }
 
         @Override
@@ -223,15 +214,7 @@ public class HorseMuleController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            if (npc == null)
-                return super.isLeashed();
-            boolean protectedDefault = npc.isProtected();
-            if (!protectedDefault || !npc.data().get(NPC.Metadata.LEASH_PROTECTED, protectedDefault))
-                return super.isLeashed();
-            if (super.isLeashed()) {
-                unleash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
+            return NMS.isLeashed(npc, super::isLeashed, () -> unleash(true, false));
         }
 
         @Override

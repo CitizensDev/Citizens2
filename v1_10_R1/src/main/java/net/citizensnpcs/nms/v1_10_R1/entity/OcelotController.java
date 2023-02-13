@@ -7,13 +7,14 @@ import org.bukkit.craftbukkit.v1_10_R1.entity.CraftOcelot;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.util.Vector;
 
-import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
-import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_10_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_10_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_10_R1.AxisAlignedBB;
 import net.minecraft.server.v1_10_R1.BlockPosition;
 import net.minecraft.server.v1_10_R1.Entity;
 import net.minecraft.server.v1_10_R1.EntityOcelot;
@@ -45,6 +46,11 @@ public class OcelotController extends MobEntityController {
         }
 
         @Override
+        public void a(AxisAlignedBB bb) {
+            super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
         public void a(boolean flag) {
             float oldw = width;
             float oldl = length;
@@ -64,12 +70,8 @@ public class OcelotController extends MobEntityController {
 
         @Override
         public void a(Entity entity, float strength, double dx, double dz) {
-            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
-            Bukkit.getPluginManager().callEvent(event);
-            Vector kb = event.getKnockbackVector();
-            if (!event.isCancelled()) {
-                super.a(entity, (float) event.getStrength(), kb.getX(), kb.getZ());
-            }
+            NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
+                    evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
         @Override
@@ -112,13 +114,7 @@ public class OcelotController extends MobEntityController {
 
         @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
-            if (npc == null)
-                super.enderTeleportTo(d0, d1, d2);
-            NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
-            Bukkit.getPluginManager().callEvent(event);
-            if (!event.isCancelled()) {
-                super.enderTeleportTo(d0, d1, d2);
-            }
+            NMS.enderTeleportTo(npc, d0, d1, d2, () -> super.enderTeleportTo(d0, d1, d2));
         }
 
         @Override

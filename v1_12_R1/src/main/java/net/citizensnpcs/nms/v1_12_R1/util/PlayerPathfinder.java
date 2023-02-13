@@ -30,6 +30,12 @@ public class PlayerPathfinder extends Pathfinder {
                 paramBlockPosition.getY() + 0.5F, paramBlockPosition.getZ() + 0.5F, paramFloat);
     }
 
+    public PathEntity a(IBlockAccess paramIBlockAccess, EntityHumanNPC paramEntityInsentient, Entity paramEntity,
+            float paramFloat) {
+        return pa(paramIBlockAccess, paramEntityInsentient, paramEntity.locX, paramEntity.getBoundingBox().b,
+                paramEntity.locZ, paramFloat);
+    }
+
     private PathEntity pa(IBlockAccess paramIBlockAccess, EntityHumanNPC paramEntityInsentient, double paramDouble1,
             double paramDouble2, double paramDouble3, float paramFloat) {
         this.a.a();
@@ -41,12 +47,6 @@ public class PlayerPathfinder extends Pathfinder {
 
         this.d.a();
         return localPathEntity;
-    }
-
-    public PathEntity a(IBlockAccess paramIBlockAccess, EntityHumanNPC paramEntityInsentient, Entity paramEntity,
-            float paramFloat) {
-        return pa(paramIBlockAccess, paramEntityInsentient, paramEntity.locX, paramEntity.getBoundingBox().b,
-                paramEntity.locZ, paramFloat);
     }
 
     private PathEntity pa(PathPoint paramPathPoint1, PathPoint paramPathPoint2) {

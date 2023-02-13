@@ -1237,10 +1237,12 @@ public class NMSImpl implements NMSBridge {
         float oldPitch = handle.getXRot();
         handle.setYBodyRot(bodyYaw);
         handle.setXRot(pitch);
-        sendPacketsNearby(null, from.getLocation(), new Packet[] { new ClientboundTeleportEntityPacket(handle),
-                // new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
+        sendPacketsNearby(null, from.getLocation(), new ClientboundTeleportEntityPacket(handle), // new
+                                                                                                 // ClientboundMoveEntityPacket.Rot(handle.getId(),
+                                                                                                 // (byte) (bodyYaw *
+                                                                                                 // 256.0F / 360.0F),
                 // (byte) (pitch * 256.0F / 360.0F), handle.onGround),
-                new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)) });
+                new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
         handle.setYBodyRot(oldBody);
         handle.setXRot(oldPitch);
     }

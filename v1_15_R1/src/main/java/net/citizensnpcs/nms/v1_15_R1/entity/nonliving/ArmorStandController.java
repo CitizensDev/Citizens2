@@ -12,10 +12,12 @@ import org.bukkit.util.Vector;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_15_R1.AxisAlignedBB;
 import net.minecraft.server.v1_15_R1.EntityArmorStand;
 import net.minecraft.server.v1_15_R1.EntityHuman;
 import net.minecraft.server.v1_15_R1.EntityTypes;
@@ -53,6 +55,11 @@ public class ArmorStandController extends MobEntityController {
         public EntityArmorStandNPC(EntityTypes<? extends EntityArmorStand> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void a(AxisAlignedBB bb) {
+            super.a(NMSBoundingBox.makeBB(npc, bb));
         }
 
         @Override

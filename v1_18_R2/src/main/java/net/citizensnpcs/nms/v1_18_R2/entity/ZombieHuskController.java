@@ -6,13 +6,13 @@ import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHusk;
 import org.bukkit.util.Vector;
 
-import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
-import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v1_18_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -28,6 +28,7 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class ZombieHuskController extends MobEntityController {
@@ -93,15 +94,7 @@ public class ZombieHuskController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            if (npc == null) {
-                super.dismountTo(d0, d1, d2);
-                return;
-            }
-            NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
-            Bukkit.getPluginManager().callEvent(event);
-            if (!event.isCancelled()) {
-                super.dismountTo(d0, d1, d2);
-            }
+            NMS.enderTeleportTo(npc, d0, d1, d2, () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override
@@ -134,25 +127,18 @@ public class ZombieHuskController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            if (npc == null)
-                return super.isLeashed();
-            boolean protectedDefault = npc.isProtected();
-            if (!protectedDefault || !npc.data().get(NPC.Metadata.LEASH_PROTECTED, protectedDefault))
-                return super.isLeashed();
-            if (super.isLeashed()) {
-                dropLeash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
+            return NMS.isLeashed(npc, super::isLeashed, () -> dropLeash(true, false));
         }
 
         @Override
         public void knockback(double strength, double dx, double dz) {
-            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
-            Bukkit.getPluginManager().callEvent(event);
-            Vector kb = event.getKnockbackVector();
-            if (!event.isCancelled()) {
-                super.knockback(event.getStrength(), kb.getX(), kb.getZ());
-            }
+            NMS.callKnockbackEvent(npc, (float) strength, dx, dz, (evt) -> super.knockback((float) evt.getStrength(),
+                    evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
+        }
+
+        @Override
+        protected AABB makeBoundingBox() {
+            return NMSBoundingBox.makeBB(npc, super.makeBoundingBox());
         }
 
         @Override

@@ -12,11 +12,13 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_8_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.EntityFallingBlock;
 import net.minecraft.server.v1_8_R3.IBlockData;
@@ -58,6 +60,11 @@ public class FallingBlockController extends AbstractEntityController {
         public EntityFallingBlockNPC(World world, NPC npc, double d0, double d1, double d2, IBlockData data) {
             super(world, d0, d1, d2, data);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void a(AxisAlignedBB bb) {
+            super.a(NMSBoundingBox.makeBB(npc, bb));
         }
 
         @Override

@@ -11,6 +11,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_17_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class ItemController extends AbstractEntityController {
@@ -68,6 +70,11 @@ public class ItemController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        protected AABB makeBoundingBox() {
+            return NMSBoundingBox.makeBB(npc, super.makeBoundingBox());
         }
 
         @Override

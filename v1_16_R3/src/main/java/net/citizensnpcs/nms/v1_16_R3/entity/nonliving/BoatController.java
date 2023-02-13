@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v1_16_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -49,6 +50,7 @@ public class BoatController extends MobEntityController {
         private double aC;
 
         private float aD;
+
         private EnumStatus aE;
         private EnumStatus aF;
         private double ap;
@@ -62,6 +64,11 @@ public class BoatController extends MobEntityController {
         public EntityBoatNPC(EntityTypes<? extends EntityBoat> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public void a(AxisAlignedBB bb) {
+            super.a(NMSBoundingBox.makeBB(npc, bb));
         }
 
         @Override

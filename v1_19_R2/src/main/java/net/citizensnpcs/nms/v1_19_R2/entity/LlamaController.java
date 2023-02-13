@@ -7,10 +7,9 @@ import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftLlama;
 import org.bukkit.util.Vector;
 
-import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
-import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v1_19_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -33,6 +32,7 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class LlamaController extends MobEntityController {
@@ -41,19 +41,18 @@ public class LlamaController extends MobEntityController {
     }
 
     @Override
-    public org.bukkit.entity.Llama getBukkitEntity() {
-        return (org.bukkit.entity.Llama) super.getBukkitEntity();
-    }
-
-    @Override
     public void create(Location at, NPC npc) {
         npc.getOrAddTrait(HorseModifiers.class);
         super.create(at, npc);
     }
 
+    @Override
+    public org.bukkit.entity.Llama getBukkitEntity() {
+        return (org.bukkit.entity.Llama) super.getBukkitEntity();
+    }
+
     public static class EntityLlamaNPC extends Llama implements NPCHolder {
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityLlamaNPC(EntityType<? extends Llama> types, Level level) {
@@ -115,15 +114,7 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            if (npc == null) {
-                super.dismountTo(d0, d1, d2);
-                return;
-            }
-            NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
-            Bukkit.getPluginManager().callEvent(event);
-            if (!event.isCancelled()) {
-                super.dismountTo(d0, d1, d2);
-            }
+            NMS.enderTeleportTo(npc, d0, d1, d2, () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override
@@ -156,17 +147,18 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            return NMSImpl.isLeashed(this, super.isLeashed());
+            return NMS.isLeashed(npc, super::isLeashed, () -> dropLeash(true, false));
         }
 
         @Override
         public void knockback(double strength, double dx, double dz) {
-            NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
-            Bukkit.getPluginManager().callEvent(event);
-            Vector kb = event.getKnockbackVector();
-            if (!event.isCancelled()) {
-                super.knockback(event.getStrength(), kb.getX(), kb.getZ());
-            }
+            NMS.callKnockbackEvent(npc, (float) strength, dx, dz, (evt) -> super.knockback((float) evt.getStrength(),
+                    evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
+        }
+
+        @Override
+        protected AABB makeBoundingBox() {
+            return NMSBoundingBox.makeBB(npc, super.makeBoundingBox());
         }
 
         @Override

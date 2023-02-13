@@ -7,7 +7,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -35,6 +38,8 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
@@ -70,12 +75,33 @@ public class NMS {
         BRIDGE.attack(attacker, bukkitTarget);
     }
 
+    public static void callKnockbackEvent(NPC npc, float strength, double dx, double dz,
+            Consumer<NPCKnockbackEvent> cb) {
+        NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            cb.accept(event);
+        }
+    }
+
     public static void cancelMoveDestination(Entity entity) {
         BRIDGE.cancelMoveDestination(entity);
     }/*
      * Yggdrasil's default implementation of this method silently fails instead of throwing
      * an Exception like it should.
      */
+
+    public static void enderTeleportTo(NPC npc, double x, double y, double z, Runnable cb) {
+        if (npc == null) {
+            cb.run();
+            return;
+        }
+        NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            cb.run();
+        }
+    }
 
     public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {
         return BRIDGE.fillProfileProperties(profile, requireSecure);
@@ -431,6 +457,18 @@ public class NMS {
             ADD_OPENS.invoke(GET_MODULE.invoke(from), from.getPackage().getName(), GET_MODULE.invoke(to));
         } catch (Exception e) {
         }
+    }
+
+    public static boolean isLeashed(NPC npc, Supplier<Boolean> isLeashed, Runnable unleash) {
+        if (npc == null)
+            return isLeashed.get();
+        boolean protectedDefault = npc.isProtected();
+        if (!protectedDefault || !npc.data().get(NPC.Metadata.LEASH_PROTECTED, protectedDefault))
+            return isLeashed.get();
+        if (isLeashed.get()) {
+            unleash.run();
+        }
+        return false;
     }
 
     public static boolean isOnGround(org.bukkit.entity.Entity entity) {
