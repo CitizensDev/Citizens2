@@ -39,7 +39,6 @@ public class VillagerController extends MobEntityController {
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
         private boolean blockingATrade;
-
         private final CitizensNPC npc;
 
         public EntityVillagerNPC(World world) {
@@ -170,15 +169,7 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            if (npc == null)
-                return super.isLeashed();
-            boolean protectedDefault = npc.isProtected();
-            if (!protectedDefault || !npc.data().get(NPC.Metadata.LEASH_PROTECTED, protectedDefault))
-                return super.isLeashed();
-            if (super.isLeashed()) {
-                unleash(true, false); // clearLeash with client update
-            }
-            return false; // shouldLeash
+            return NMSImpl.isLeashed(npc, this);
         }
 
         @Override

@@ -2064,6 +2064,10 @@ public class NMSImpl implements NMSBridge {
         network.address = socketAddress;
     }
 
+    public static boolean isLeashed(NPC npc, Mob entity) {
+        return NMS.isLeashed(npc, entity::isLeashed, () -> entity.dropLeash(true, false));
+    }
+
     @SuppressWarnings("deprecation")
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
@@ -2268,7 +2272,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
-
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(Brain.class, "f");
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,

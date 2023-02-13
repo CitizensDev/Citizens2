@@ -2059,6 +2059,10 @@ public class NMSImpl implements NMSBridge {
         network.socketAddress = socketAddress;
     }
 
+    public static boolean isLeashed(NPC npc, EntityInsentient entity) {
+        return NMS.isLeashed(npc, entity::isLeashed, () -> entity.unleash(true, false));
+    }
+
     public static boolean isNavigationFinished(NavigationAbstract navigation) {
         return navigation.m();
     }
@@ -2271,7 +2275,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.SHULKER, EntityType.PHANTOM);
 
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "e");
-
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(PlayerChunkMap.class, "a",
             true, EntityPlayer.class, boolean.class);

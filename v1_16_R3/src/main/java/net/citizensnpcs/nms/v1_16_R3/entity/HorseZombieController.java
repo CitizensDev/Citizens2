@@ -54,11 +54,8 @@ public class HorseZombieController extends MobEntityController {
 
     public static class EntityHorseZombieNPC extends EntityHorseZombie implements NPCHolder {
         private double baseMovementSpeed;
-
         boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityHorseZombieNPC(EntityTypes<? extends EntityHorseZombie> types, World world) {
@@ -218,7 +215,7 @@ public class HorseZombieController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            return NMS.isLeashed(npc, super::isLeashed, () -> unleash(true, false));
+            return NMSImpl.isLeashed(npc, this);
         }
 
         @Override

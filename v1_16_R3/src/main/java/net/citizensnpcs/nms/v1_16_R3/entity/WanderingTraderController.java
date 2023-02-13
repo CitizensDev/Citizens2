@@ -224,7 +224,7 @@ public class WanderingTraderController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            return NMS.isLeashed(npc, super::isLeashed, () -> unleash(true, false));
+            return NMSImpl.isLeashed(npc, this);
         }
 
         @Override

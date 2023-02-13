@@ -133,7 +133,7 @@ public class GuardianController extends MobEntityController {
 
         @Override
         public boolean isLeashed() {
-            return NMS.isLeashed(npc, super::isLeashed, () -> dropLeash(true, false));
+            return NMSImpl.isLeashed(npc, this);
         }
 
         @Override

@@ -2072,6 +2072,10 @@ public class NMSImpl implements NMSBridge {
         network.address = socketAddress;
     }
 
+    public static boolean isLeashed(NPC npc, Mob entity) {
+        return NMS.isLeashed(npc, entity::isLeashed, () -> entity.dropLeash(true, false));
+    }
+
     @SuppressWarnings("deprecation")
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();

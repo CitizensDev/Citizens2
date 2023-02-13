@@ -1975,6 +1975,10 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static boolean isLeashed(NPC npc, EntityInsentient entity) {
+        return NMS.isLeashed(npc, entity::isLeashed, () -> entity.unleash(true, false));
+    }
+
     public static boolean isNavigationFinished(NavigationAbstract navigation) {
         return navigation.p();
     }
@@ -2101,7 +2105,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST, EntityType.SHULKER,
             EntityType.PHANTOM);
-
     private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "e", false,
             double.class, double.class, double.class);
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
@@ -2126,13 +2129,9 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle REPAIR_INVENTORY = NMS.getGetter(ContainerAnvil.class, "repairInventory");
     private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "resultInventory");
     private static Field SKULL_PROFILE_FIELD;
-
     private static MethodHandle TEAM_FIELD;
-
     private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
-
     private static final Field WITHER_BOSS_BAR_FIELD = NMS.getField(EntityWither.class, "bL", false);
-
     static {
         try {
             ENTITY_FISH_NUM_IN_SCHOOL = NMS.getField(Class.forName("net.minecraft.server.v1_13_R2.EntityFishSchool"),

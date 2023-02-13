@@ -1664,6 +1664,10 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static boolean isLeashed(NPC npc, EntityInsentient entity) {
+        return NMS.isLeashed(npc, entity::cc, () -> entity.unleash(true, false));
+    }
+
     public static boolean isNavigationFinished(NavigationAbstract navigation) {
         return navigation.m();
     }

@@ -97,7 +97,7 @@ public class CreeperController extends MobEntityController {
 
         @Override
         public boolean cc() {
-            return NMS.isLeashed(npc, super::cc, () -> unleash(true, false));
+            return NMSImpl.isLeashed(npc, this);
         }
 
         @Override
