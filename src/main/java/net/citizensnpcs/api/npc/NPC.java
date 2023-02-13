@@ -402,6 +402,7 @@ public interface NPC extends Agent, Cloneable {
          * The Minecraft ambient sound played. String - Minecraft sound name
          */
         AMBIENT_SOUND("ambient-sound"),
+        BOUNDING_BOX_FUNCTION("bounding-box-function"),
         /**
          * Whether the NPC is collidable with Players or not. Boolean.
          */
@@ -473,11 +474,11 @@ public interface NPC extends Agent, Cloneable {
          * The Minecart item offset as defined by Minecraft. {@link Minecart#setDisplayBlockOffset(int)}
          */
         MINECART_OFFSET("minecart-item-offset"),
+
         /**
          * Whether the NPC's nameplate should be visible. Boolean.
          */
         NAMEPLATE_VISIBLE("nameplate-visible"),
-
         /**
          * The packet update delay. Integer defaults to setting value.
          */

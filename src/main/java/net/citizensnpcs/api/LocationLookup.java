@@ -111,6 +111,9 @@ public class LocationLookup extends BukkitRunnable {
         }
 
         public void set(UUID key, String value, T marker) {
+            if (marker instanceof Location || marker instanceof World) {
+                throw new IllegalArgumentException("Invalid marker");
+            }
             sent.computeIfAbsent(key, (k) -> Maps.newHashMap()).put(value, marker);
         }
     }
