@@ -105,7 +105,7 @@ public class EnderSignalController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
-            return NMSImpl.fluidPush(npc, this, Tag, d0);
+            return NMSImpl.fluidPush(npc, this, () -> super.updateFluidHeightAndDoFluidPushing(Tag, d0));
         }
     }
 }

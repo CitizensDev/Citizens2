@@ -100,7 +100,7 @@ public class WanderingTraderController extends MobEntityController {
 
         @Override
         public boolean a(Tag<FluidType> tag, double d0) {
-            return NMSImpl.fluidPush(npc, this, tag, d0);
+            return NMSImpl.fluidPush(npc, this, () -> super.a(tag, d0));
         }
 
         @Override

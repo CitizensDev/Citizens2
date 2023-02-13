@@ -190,7 +190,7 @@ public class ZombieController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            return NMSImpl.fluidPush(npc, this, tagkey, d0);
+            return NMSImpl.fluidPush(npc, this, () -> super.updateFluidHeightAndDoFluidPushing(tagkey, d0));
         }
     }
 

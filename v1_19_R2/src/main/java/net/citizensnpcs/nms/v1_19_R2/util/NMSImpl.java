@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -334,7 +335,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
@@ -2017,9 +2017,9 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
-    public static boolean fluidPush(NPC npc, Entity entity, net.minecraft.tags.TagKey<Fluid> tag, double d0) {
+    public static boolean fluidPush(NPC npc, Entity entity, Supplier<Boolean> func) {
         Vec3 old = entity.getDeltaMovement().add(0, 0, 0);
-        boolean res = entity.updateFluidHeightAndDoFluidPushing(tag, d0);
+        boolean res = func.get();
         if (!npc.isPushableByFluids()) {
             entity.setDeltaMovement(old);
         }

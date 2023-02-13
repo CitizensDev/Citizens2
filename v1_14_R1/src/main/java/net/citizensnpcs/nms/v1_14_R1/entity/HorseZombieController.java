@@ -112,7 +112,7 @@ public class HorseZombieController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            return NMSImpl.fluidPush(npc, this, tag);
+            return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
         }
 
         @Override

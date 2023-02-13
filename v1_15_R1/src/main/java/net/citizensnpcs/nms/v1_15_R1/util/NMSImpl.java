@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -280,7 +281,6 @@ import net.minecraft.server.v1_15_R1.EntityTurtle;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.EntityWither;
 import net.minecraft.server.v1_15_R1.EnumMoveType;
-import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.GenericAttributes;
 import net.minecraft.server.v1_15_R1.IBlockData;
 import net.minecraft.server.v1_15_R1.IChatBaseComponent;
@@ -1854,9 +1854,9 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
-    public static boolean fluidPush(NPC npc, Entity entity, net.minecraft.server.v1_15_R1.Tag<FluidType> tag) {
+    public static boolean fluidPush(NPC npc, Entity entity, Supplier<Boolean> func) {
         Vec3D old = entity.getMot().add(0, 0, 0);
-        boolean res = entity.b(tag);
+        boolean res = func.get();
         if (!npc.isPushableByFluids()) {
             entity.setMot(old);
         }
