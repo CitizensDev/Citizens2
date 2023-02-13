@@ -98,6 +98,7 @@ public class HologramTrait extends Trait {
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
             NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", new ItemStack(item, 1));
+            itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
                 itemNPC.getOrAddTrait(ScoreboardTrait.class)
                         .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));

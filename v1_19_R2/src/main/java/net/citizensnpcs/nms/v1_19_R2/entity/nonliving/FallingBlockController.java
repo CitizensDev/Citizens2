@@ -138,12 +138,7 @@ public class FallingBlockController extends AbstractEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
+            return NMSImpl.fluidPush(npc, this, tagkey, d0);
         }
 
         private static final double EPSILON = 0.001;

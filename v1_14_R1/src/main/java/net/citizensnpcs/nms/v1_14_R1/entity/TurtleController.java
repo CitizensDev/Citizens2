@@ -86,12 +86,7 @@ public class TurtleController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            Vec3D old = getMot().add(0, 0, 0);
-            boolean res = super.b(tag);
-            if (!npc.isPushableByFluids()) {
-                this.setMot(old);
-            }
-            return res;
+            return NMSImpl.fluidPush(npc, this, tag);
         }
 
         @Override

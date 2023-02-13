@@ -312,6 +312,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
@@ -1872,6 +1873,15 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
+    public static boolean fluidPush(NPC npc, Entity entity, net.minecraft.tags.Tag<Fluid> tag, double d0) {
+        Vec3 old = entity.getDeltaMovement().add(0, 0, 0);
+        boolean res = entity.updateFluidHeightAndDoFluidPushing(tag, d0);
+        if (!npc.isPushableByFluids()) {
+            entity.setDeltaMovement(old);
+        }
+        return res;
+    }
+
     public static void flyingMoveLogic(LivingEntity entity, Vec3 vec3d) {
         if (entity.isEffectiveAi() || entity.isControlledByLocalInstance()) {
             double d0 = 0.08D;
@@ -2267,7 +2277,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cr");
-
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,

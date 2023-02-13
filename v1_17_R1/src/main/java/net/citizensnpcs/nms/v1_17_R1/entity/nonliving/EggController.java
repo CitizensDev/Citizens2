@@ -122,12 +122,7 @@ public class EggController extends AbstractEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
-            Vec3 old = getDeltaMovement().add(0, 0, 0);
-            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
-            if (!npc.isPushableByFluids()) {
-                setDeltaMovement(old);
-            }
-            return res;
+            return NMSImpl.fluidPush(npc, this, Tag, d0);
         }
     }
 }

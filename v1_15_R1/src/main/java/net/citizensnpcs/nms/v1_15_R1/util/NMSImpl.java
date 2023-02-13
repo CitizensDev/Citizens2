@@ -280,6 +280,7 @@ import net.minecraft.server.v1_15_R1.EntityTurtle;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.EntityWither;
 import net.minecraft.server.v1_15_R1.EnumMoveType;
+import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.GenericAttributes;
 import net.minecraft.server.v1_15_R1.IBlockData;
 import net.minecraft.server.v1_15_R1.IChatBaseComponent;
@@ -1851,6 +1852,15 @@ public class NMSImpl implements NMSBridge {
             return new EndTag();
         }
         return null;
+    }
+
+    public static boolean fluidPush(NPC npc, Entity entity, net.minecraft.server.v1_15_R1.Tag<FluidType> tag) {
+        Vec3D old = entity.getMot().add(0, 0, 0);
+        boolean res = entity.b(tag);
+        if (!npc.isPushableByFluids()) {
+            entity.setMot(old);
+        }
+        return res;
     }
 
     public static void flyingMoveLogic(EntityLiving entity, Vec3D vec3d) {

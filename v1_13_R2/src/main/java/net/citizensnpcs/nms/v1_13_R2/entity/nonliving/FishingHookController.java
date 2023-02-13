@@ -14,6 +14,7 @@ import com.mojang.authlib.GameProfile;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSBoundingBox;
+import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
@@ -58,16 +59,7 @@ public class FishingHookController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            double mx = motX;
-            double my = motY;
-            double mz = motZ;
-            boolean res = super.b(tag);
-            if (!npc.isPushableByFluids()) {
-                motX = mx;
-                motY = my;
-                motZ = mz;
-            }
-            return res;
+            return NMSImpl.fluidPush(npc, this, tag);
         }
 
         @Override

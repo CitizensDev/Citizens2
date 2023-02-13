@@ -90,16 +90,7 @@ public class PhantomController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            double mx = motX;
-            double my = motY;
-            double mz = motZ;
-            boolean res = super.b(tag);
-            if (!npc.isPushableByFluids()) {
-                motX = mx;
-                motY = my;
-                motZ = mz;
-            }
-            return res;
+            return NMSImpl.fluidPush(npc, this, tag);
         }
 
         @Override

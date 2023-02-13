@@ -24,7 +24,6 @@ import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.FluidType;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.Tag;
-import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.World;
 
 public class ItemFrameController extends MobEntityController {
@@ -65,12 +64,7 @@ public class ItemFrameController extends MobEntityController {
 
         @Override
         public boolean a(Tag<FluidType> tag, double d0) {
-            Vec3D old = getMot().add(0, 0, 0);
-            boolean res = super.a(tag, d0);
-            if (!npc.isPushableByFluids()) {
-                this.setMot(old);
-            }
-            return res;
+            return NMSImpl.fluidPush(npc, this, tag, d0);
         }
 
         @Override
