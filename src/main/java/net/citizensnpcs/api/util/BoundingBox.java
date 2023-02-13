@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.util;
 
+import org.bukkit.Location;
+
 public class BoundingBox {
     public final double maxX;
     public final double maxY;
@@ -19,6 +21,11 @@ public class BoundingBox {
 
     public BoundingBox add(int x, int y, int z) {
         return new BoundingBox(minX + x, minY + y, minZ + z, maxX + x, maxY + y, maxZ + z);
+    }
+
+    public BoundingBox add(Location location) {
+        return new BoundingBox(minX + location.getX(), minY + location.getY(), minZ + location.getZ(),
+                maxX + location.getX(), maxY + location.getY(), maxZ + location.getZ());
     }
 
     @Override
