@@ -513,22 +513,22 @@ public abstract class AbstractNPC implements NPC {
         data().setPersistent(NPC.Metadata.USE_MINECRAFT_AI, use);
     }
 
-    private void teleport(final Entity entity, Location location, int delay) {
+    private void teleport(final Entity entity, Location location, int delay, TeleportCause cause) {
         final Entity passenger = entity.getPassenger();
         entity.eject();
         if (!location.getWorld().equals(entity.getWorld())) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
                 public void run() {
-                    entity.teleport(location);
+                    entity.teleport(location, cause);
                 }
             }, delay++);
         } else {
-            entity.teleport(location);
+            entity.teleport(location, cause);
         }
         if (passenger == null)
             return;
-        teleport(passenger, location, delay++);
+        teleport(passenger, location, delay++, cause);
         Runnable task = new Runnable() {
             @Override
             public void run() {
@@ -555,7 +555,7 @@ public abstract class AbstractNPC implements NPC {
             entity = entity.getVehicle();
         }
         location.getBlock().getChunk();
-        teleport(entity, location, 5);
+        teleport(entity, location, 5, cause);
     }
 
     protected void unloadEvents() {
