@@ -32,6 +32,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
+import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -339,6 +340,14 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onItemDespawn(ItemDespawnEvent event) {
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
+        if (npc == null)
+            return;
+        event.setCancelled(true);
+    }
+
     @EventHandler
     public void onNavigationBegin(NavigationBeginEvent event) {
         skinUpdateTracker.onNPCNavigationBegin(event.getNPC());
@@ -413,7 +422,7 @@ public class EventListen implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked());
         if (npc == null || Util.isOffHand(event)) {
@@ -612,7 +621,7 @@ public class EventListen implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
         for (NPC npc : getAllNPCs()) {
             if (npc == null || !npc.isSpawned() || !npc.getEntity().getWorld().equals(event.getWorld()))
