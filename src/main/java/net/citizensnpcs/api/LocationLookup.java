@@ -1,8 +1,9 @@
 package net.citizensnpcs.api;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -15,7 +16,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import ch.ethz.globis.phtree.PhTreeF;
 
@@ -70,11 +73,16 @@ public class LocationLookup extends BukkitRunnable {
 
     @Override
     public void run() {
-        Bukkit.getServer().getWorlds().forEach(this::updateWorld);
+        Set<UUID> seen = Sets.newHashSet();
+        for (World world : Bukkit.getServer().getWorlds()) {
+            seen.add(world.getUID());
+            updateWorld(world);
+        }
+        worlds.keySet().removeIf(k -> !seen.contains(k));
     }
 
     private void updateWorld(World world) {
-        List<Player> players = world.getPlayers();
+        Collection<Player> players = Collections2.filter(world.getPlayers(), p -> !p.hasMetadata("NPC"));
         if (players.isEmpty()) {
             worlds.remove(world.getUID());
             return;
@@ -83,8 +91,6 @@ public class LocationLookup extends BukkitRunnable {
         tree.clear();
         Location loc = new Location(null, 0, 0, 0);
         for (Player player : players) {
-            if (player.hasMetadata("NPC"))
-                continue;
             player.getLocation(loc);
             tree.put(new double[] { loc.getX(), loc.getY(), loc.getZ() }, player);
         }
