@@ -130,7 +130,15 @@ public class HologramTrait extends Trait {
     }
 
     private double getHeight(int lineNumber) {
-        return getLineHeight() * (lastNameplateVisible ? lineNumber + 1 : lineNumber);
+        double base = (lastNameplateVisible ? 0 : -getLineHeight());
+        for (int i = 0; i <= lineNumber; i++) {
+            HologramLine line = lines.get(i);
+            base += line.mb + getLineHeight();
+            if (i != lineNumber) {
+                base += line.mt;
+            }
+        }
+        return base;
     }
 
     /**
@@ -156,7 +164,7 @@ public class HologramTrait extends Trait {
     }
 
     private double getMaxHeight() {
-        return getLineHeight() * (lines.size() + (lastNameplateVisible ? 1 : -1));
+        return (lastNameplateVisible ? getLineHeight() : 0) + getHeight(lines.size() - 1);
     }
 
     /**
@@ -371,6 +379,7 @@ public class HologramTrait extends Trait {
 
     private class HologramLine {
         NPC hologram;
+        double mb, mt;
         boolean persist;
         String text;
         int ticks;
@@ -383,6 +392,10 @@ public class HologramTrait extends Trait {
             this.text = text;
             this.persist = persist;
             this.ticks = ticks;
+            if (ITEM_MATCHER.matcher(text).matches()) {
+                mb = 0.21;
+                mt = 0.07;
+            }
         }
 
         public void removeNPC() {
