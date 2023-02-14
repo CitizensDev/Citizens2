@@ -326,7 +326,7 @@ public class CitizensNPC extends AbstractNPC {
             skinnable.getSkinTracker().onSpawnNPC();
         }
 
-        getEntity().teleport(at);
+        teleport(at, TeleportCause.PLUGIN);
 
         NMS.setHeadYaw(getEntity(), at.getYaw());
         NMS.setBodyYaw(getEntity(), at.getYaw());
@@ -468,8 +468,8 @@ public class CitizensNPC extends AbstractNPC {
 
             if (navigator.isNavigating()) {
                 if (data().get(NPC.Metadata.SWIMMING, true)) {
-                    getEntity().setVelocity(getEntity().getVelocity().multiply(data()
-                            .get(NPC.Metadata.WATER_SPEED_MODIFIER, Setting.NPC_WATER_SPEED_MODIFIER.asFloat())));
+                    getEntity().setVelocity(getEntity().getVelocity().multiply(
+                            data().get(NPC.Metadata.WATER_SPEED_MODIFIER, Setting.NPC_WATER_SPEED_MODIFIER.asFloat())));
                     Location currentDest = navigator.getPathStrategy().getCurrentDestination();
                     if (currentDest == null || currentDest.getY() > getStoredLocation().getY()) {
                         NMS.trySwim(getEntity());

@@ -54,9 +54,9 @@ public class PacketNPC extends Trait {
     public static interface EntityPacketTracker extends Runnable {
         public void link(Player player);
 
-        public void unlinkAll(Consumer<Player> callback);
-
         public void unlink(Player player);
+
+        public void unlinkAll(Consumer<Player> callback);
     }
 
     private class PacketController implements EntityController {
