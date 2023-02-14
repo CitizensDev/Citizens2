@@ -62,11 +62,12 @@ public class VillagerTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "villager (--level level) (--type type) (--profession profession)",
+            usage = "villager (--level level) (--type type) (--profession profession) -s(hake head)",
             desc = "Sets villager modifiers",
             modifiers = { "villager" },
             min = 1,
             max = 1,
+            flags = "s",
             permission = "citizens.npc.villager")
     @Requirements(selected = true, ownership = true, types = EntityType.VILLAGER)
     public static void villager(CommandContext args, CommandSender sender, NPC npc,
@@ -96,6 +97,9 @@ public class VillagerTrait extends Trait {
             }
             npc.getOrAddTrait(VillagerProfession.class).setProfession(profession);
             output += " " + Messaging.tr(Messages.PROFESSION_SET, npc.getName(), args.getFlag("profession"));
+        }
+        if (args.hasFlag('s')) {
+            ((Villager) npc.getEntity()).shakeHead();
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());

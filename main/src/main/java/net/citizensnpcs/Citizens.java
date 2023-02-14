@@ -588,11 +588,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (saves == null)
             return;
         saves.storeAll(npcRegistry);
-        shops.saveShops();
+        shops.storeShops();
         if (async) {
-            saves.saveToDisk();
             new Thread(() -> {
                 shops.saveToDisk();
+                saves.saveToDiskImmediate();
             }).start();
         } else {
             shops.saveToDisk();

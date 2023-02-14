@@ -1,7 +1,9 @@
 package net.citizensnpcs.trait;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -106,8 +108,13 @@ public class LookClose extends Trait implements Toggleable {
                 session.getSession().rotateToFace(player);
                 seen.add(player.getUniqueId());
             }
-            for (UUID uuid : Sets.newHashSet(Sets.difference(sessions.keySet(), seen))) {
-                sessions.remove(uuid).end();
+            for (Iterator<Entry<UUID, PacketRotationSession>> iterator = sessions.entrySet().iterator(); iterator
+                    .hasNext();) {
+                Entry<UUID, PacketRotationSession> entry = iterator.next();
+                if (!seen.contains(entry.getKey())) {
+                    entry.getValue().end();
+                    iterator.remove();
+                }
             }
             return;
         } else if (sessions.size() > 0) {

@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.trait.ShopTrait.NPCShop;
@@ -22,6 +23,10 @@ public class StoredShops {
     }
 
     public void deleteShop(NPCShop shop) {
+        if (Messaging.isDebugging()) {
+            Messaging.debug("Deleting shop", shop.getName());
+            new Exception().printStackTrace();
+        }
         if (npcShops.values().contains(shop)) {
             npcShops.values().remove(shop);
         } else {
@@ -41,18 +46,22 @@ public class StoredShops {
     }
 
     public void load() {
+        Messaging.debug("Loading shops...", globalShops.size(), npcShops.size());
         PersistenceLoader.load(this, storage.getKey(""));
     }
 
     public boolean loadFromDisk() {
+        Messaging.debug("Loading shops from disk...");
         return storage.load();
     }
 
-    public void saveShops() {
-        PersistenceLoader.save(this, storage.getKey(""));
+    public void saveToDisk() {
+        Messaging.debug("Saving shops to disk...");
+        storage.save();
     }
 
-    public void saveToDisk() {
-        storage.save();
+    public void storeShops() {
+        Messaging.debug("Saving shops...", globalShops.size(), npcShops.size());
+        PersistenceLoader.save(this, storage.getKey(""));
     }
 }
