@@ -26,7 +26,11 @@ public class PandaTrait extends Trait {
     @Persist
     private Panda.Gene mainGene = Panda.Gene.NORMAL;
     @Persist
+    private boolean rolling;
+    @Persist
     private boolean sitting;
+    @Persist
+    private boolean sneezing;
 
     public PandaTrait() {
         super("pandatrait");
@@ -40,8 +44,16 @@ public class PandaTrait extends Trait {
         return mainGene;
     }
 
+    public boolean isRolling() {
+        return rolling;
+    }
+
     public boolean isSitting() {
         return sitting;
+    }
+
+    public boolean isSneezing() {
+        return sneezing;
     }
 
     @Override
@@ -50,6 +62,14 @@ public class PandaTrait extends Trait {
             Panda panda = (Panda) npc.getEntity();
             panda.setMainGene(mainGene);
             NMS.setPandaSitting(npc.getEntity(), sitting);
+            if (SUPPORT_ROLLING_SNEEZING) {
+                try {
+                    panda.setRolling(rolling);
+                    panda.setSneezing(sneezing);
+                } catch (Throwable t) {
+                    SUPPORT_ROLLING_SNEEZING = false;
+                }
+            }
             if (hiddenGene != null) {
                 panda.setHiddenGene(hiddenGene);
             }
@@ -64,20 +84,36 @@ public class PandaTrait extends Trait {
         this.mainGene = gene;
     }
 
+    public void setRolling(boolean rolling) {
+        this.rolling = rolling;
+    }
+
     public void setSitting(boolean sitting) {
         this.sitting = sitting;
+    }
+
+    public void setSneezing(boolean sneezing) {
+        this.sneezing = sneezing;
+    }
+
+    public boolean toggleRolling() {
+        return rolling = !rolling;
     }
 
     public boolean toggleSitting() {
         return sitting = !sitting;
     }
 
+    public boolean toggleSneezing() {
+        return sneezing = !sneezing;
+    }
+
     @Command(
             aliases = { "npc" },
-            usage = "panda --gene (main gene) --hiddengene (hidden gene) -s(itting)",
+            usage = "panda --gene (main gene) --hiddengene (hidden gene) -s(itting) -n -r(olling)",
             desc = "Sets panda modifiers",
             modifiers = { "panda" },
-            flags = "s",
+            flags = "srn",
             min = 1,
             max = 1,
             permission = "citizens.npc.panda")
@@ -106,11 +142,21 @@ public class PandaTrait extends Trait {
             boolean isSitting = trait.toggleSitting();
             output += ' ' + Messaging.tr(isSitting ? Messages.PANDA_SITTING : Messages.PANDA_STOPPED_SITTING);
         }
+        if (args.hasFlag('r')) {
+            boolean isRolling = trait.toggleRolling();
+            output += ' ' + Messaging.tr(isRolling ? Messages.PANDA_ROLLING : Messages.PANDA_STOPPED_ROLLING);
+        }
+        if (args.hasFlag('n')) {
+            boolean isSneezing = trait.toggleSneezing();
+            output += ' ' + Messaging.tr(isSneezing ? Messages.PANDA_SNEEZING : Messages.PANDA_STOPPED_SNEEZING);
+        }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
         } else {
             throw new CommandUsageException();
         }
     }
+
+    private static boolean SUPPORT_ROLLING_SNEEZING = true;
 
 }
