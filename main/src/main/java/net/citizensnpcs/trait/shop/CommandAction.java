@@ -54,7 +54,7 @@ public class CommandAction extends NPCShopAction {
         Player player = (Player) entity;
         return Transaction.create(() -> true, () -> {
             for (String command : commands) {
-                Util.runCommand(null, player, command, false, true);
+                Util.runCommand(null, player, command, op, !server);
             }
         }, () -> {
         });
