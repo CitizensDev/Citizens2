@@ -164,6 +164,7 @@ public class AllayController extends MobEntityController {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
                     NMSImpl.sendPacketNearby(null, getBukkitEntity().getLocation(),
                             new ClientboundSetEquipmentPacket(getId(), Lists.newArrayList(
+                                    Pair.of(EquipmentSlot.OFFHAND, this.getItemInHand(InteractionHand.OFF_HAND)),
                                     Pair.of(EquipmentSlot.MAINHAND, this.getItemInHand(InteractionHand.MAIN_HAND)))));
                 });
                 return InteractionResult.FAIL;
