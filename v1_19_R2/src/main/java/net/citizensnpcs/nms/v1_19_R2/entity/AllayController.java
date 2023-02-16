@@ -59,6 +59,7 @@ public class AllayController extends MobEntityController {
 
     public static class EntityAllayNPC extends Allay implements NPCHolder {
         private final CitizensNPC npc;
+        private int taskId = -1;
 
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level) {
             this(types, level, null);
@@ -161,12 +162,19 @@ public class AllayController extends MobEntityController {
         protected InteractionResult mobInteract(Player var0, InteractionHand var1) {
             if (npc != null && npc.isProtected()) {
                 // prevent clientside prediction
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-                    NMSImpl.sendPacketNearby(null, getBukkitEntity().getLocation(),
-                            new ClientboundSetEquipmentPacket(getId(), Lists.newArrayList(
-                                    Pair.of(EquipmentSlot.OFFHAND, this.getItemInHand(InteractionHand.OFF_HAND)),
-                                    Pair.of(EquipmentSlot.MAINHAND, this.getItemInHand(InteractionHand.MAIN_HAND)))));
-                });
+                if (taskId != -1) {
+                    taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                        NMSImpl.sendPacket((org.bukkit.entity.Player) var0.getBukkitEntity(),
+                                new ClientboundSetEquipmentPacket(getId(),
+                                        Lists.newArrayList(
+                                                Pair.of(EquipmentSlot.OFFHAND,
+                                                        this.getItemInHand(InteractionHand.OFF_HAND)),
+                                                Pair.of(EquipmentSlot.MAINHAND,
+                                                        this.getItemInHand(InteractionHand.MAIN_HAND)))));
+                        ((org.bukkit.entity.Player) var0.getBukkitEntity()).updateInventory();
+                        taskId = -1;
+                    });
+                }
                 return InteractionResult.FAIL;
             }
             return super.mobInteract(var0, var1);
