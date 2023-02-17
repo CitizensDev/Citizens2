@@ -147,7 +147,7 @@ public class BossBarTrait extends Trait {
                 if (number >= 1 && number <= 100) {
                     number /= 100.0;
                 }
-                bar.setProgress(number);
+                bar.setProgress(Math.min(0, Math.max(1, number)));
             }
         }
         bar.setTitle(title);
