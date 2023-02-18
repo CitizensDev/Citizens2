@@ -1,5 +1,6 @@
 package net.citizensnpcs.commands;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.command.exception.CommandUsageException;
 import net.citizensnpcs.api.hpastar.HPAGraph;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
@@ -50,7 +52,9 @@ public class WaypointCommands {
         if (world == null)
             throw new CommandException(Messages.WORLD_NOT_FOUND);
         Location loc = new Location(world, args.getInteger(1), args.getInteger(2), args.getInteger(3));
-        int idx = index == null ? waypoints.size() : index;
+        if (index == null) {
+            index = waypoints.size();
+        }
         waypoints.add(index, new Waypoint(loc));
         Messaging.sendTr(sender, Messages.WAYPOINT_ADDED, Util.prettyPrintLocation(loc), index);
     }
@@ -132,5 +136,41 @@ public class WaypointCommands {
         if (!success)
             throw new CommandException("Provider not found.");
         Messaging.sendTr(sender, Messages.WAYPOINT_PROVIDER_SET, args.getString(1));
+    }
+
+    @Command(
+            aliases = { "waypoints", "waypoint", "wp" },
+            usage = "remove (x y z world) (--index idx)",
+            desc = "Adds a waypoint at a point",
+            modifiers = { "remove" },
+            min = 1,
+            max = 5,
+            permission = "citizens.waypoints.remove")
+    public void remove(CommandContext args, CommandSender sender, NPC npc, @Flag("index") Integer index)
+            throws CommandException {
+        WaypointProvider provider = npc.getOrAddTrait(Waypoints.class).getCurrentProvider();
+        if (!(provider instanceof LinearWaypointProvider))
+            throw new CommandException();
+        List<Waypoint> waypoints = (List<Waypoint>) ((LinearWaypointProvider) provider).waypoints();
+        if (index != null && index >= 0 && index < waypoints.size()) {
+            waypoints.remove((int) index);
+            Messaging.sendTr(sender, Messages.WAYPOINT_REMOVED, index);
+        } else {
+            if (args.argsLength() < 4)
+                throw new CommandUsageException();
+            World world = args.argsLength() > 4 ? Bukkit.getWorld(args.getString(4))
+                    : npc.getStoredLocation().getWorld();
+            if (world == null)
+                throw new CommandException(Messages.WORLD_NOT_FOUND);
+
+            Location loc = new Location(world, args.getInteger(1), args.getInteger(2), args.getInteger(3));
+            for (Iterator<Waypoint> iterator = waypoints.iterator(); iterator.hasNext();) {
+                Waypoint wp = iterator.next();
+                if (wp.getLocation().equals(loc)) {
+                    iterator.remove();
+                }
+            }
+            Messaging.sendTr(sender, Messages.WAYPOINT_REMOVED, Util.prettyPrintLocation(loc));
+        }
     }
 }

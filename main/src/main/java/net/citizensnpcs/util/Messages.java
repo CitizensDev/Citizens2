@@ -425,6 +425,7 @@ public class Messages {
     public static final String WANDER_WAYPOINTS_WORLDGUARD_REGION_SET = "citizens.editors.waypoints.wander.worldguard-region-set";
     public static final String WAYPOINT_ADDED = "citizens.commands.waypoints.add.waypoint-added";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
+    public static final String WAYPOINT_REMOVED = "citizens.commands.waypoints.waypoint-removed";
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
     public static final String WAYPOINT_TELEPORTING_ENABLED = "citizens.commands.waypoints.disableteleporting.enabled";
     public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";
