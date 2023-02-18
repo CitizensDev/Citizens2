@@ -42,7 +42,7 @@ public class EnderSignalController extends MobEntityController {
         }
     }
 
-    public static class EntityEnderSignalNPC extends EyeOfEnder implements NPCHolder {
+    public static class EntityEnderSignalNPC extends EyeOfEnder implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityEnderSignalNPC(EntityType<? extends EyeOfEnder> types, Level level) {

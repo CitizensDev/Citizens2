@@ -35,7 +35,7 @@ public class MarkerController extends MobEntityController {
         return (org.bukkit.entity.Marker) super.getBukkitEntity();
     }
 
-    public static class EntityMarkerNPC extends Marker implements NPCHolder {
+    public static class EntityMarkerNPC extends Marker implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityMarkerNPC(EntityType<? extends Marker> types, Level level) {

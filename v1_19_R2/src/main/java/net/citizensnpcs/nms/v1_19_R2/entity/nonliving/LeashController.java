@@ -36,7 +36,7 @@ public class LeashController extends MobEntityController {
         return (LeashHitch) super.getBukkitEntity();
     }
 
-    public static class EntityLeashNPC extends LeashFenceKnotEntity implements NPCHolder {
+    public static class EntityLeashNPC extends LeashFenceKnotEntity implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityLeashNPC(EntityType<? extends LeashFenceKnotEntity> types, Level level) {

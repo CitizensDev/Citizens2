@@ -36,7 +36,7 @@ public class ThrownTridentController extends MobEntityController {
         return (Trident) super.getBukkitEntity();
     }
 
-    public static class EntityThrownTridentNPC extends ThrownTrident implements NPCHolder {
+    public static class EntityThrownTridentNPC extends ThrownTrident implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityThrownTridentNPC(EntityType<? extends ThrownTrident> types, Level level) {

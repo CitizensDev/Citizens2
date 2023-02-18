@@ -41,7 +41,7 @@ public class SquidController extends MobEntityController {
         return (org.bukkit.entity.Squid) super.getBukkitEntity();
     }
 
-    public static class EntitySquidNPC extends Squid implements NPCHolder {
+    public static class EntitySquidNPC extends Squid implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntitySquidNPC(EntityType<? extends Squid> types, Level level) {
@@ -94,7 +94,7 @@ public class SquidController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc, d0, d1, d2, () -> super.dismountTo(d0, d1, d2));
+            NMS.enderTeleportTo(npc,  () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override

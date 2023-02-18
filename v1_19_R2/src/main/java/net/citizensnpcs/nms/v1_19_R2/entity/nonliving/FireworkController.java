@@ -36,7 +36,7 @@ public class FireworkController extends MobEntityController {
         return (Firework) super.getBukkitEntity();
     }
 
-    public static class EntityFireworkNPC extends FireworkRocketEntity implements NPCHolder {
+    public static class EntityFireworkNPC extends FireworkRocketEntity implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityFireworkNPC(EntityType<? extends FireworkRocketEntity> types, Level level) {

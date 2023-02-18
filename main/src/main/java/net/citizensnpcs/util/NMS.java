@@ -91,7 +91,7 @@ public class NMS {
      * an Exception like it should.
      */
 
-    public static void enderTeleportTo(NPC npc, double x, double y, double z, Runnable cb) {
+    public static void enderTeleportTo(NPC npc, Runnable cb) {
         if (npc == null) {
             cb.run();
             return;

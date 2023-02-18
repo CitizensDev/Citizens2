@@ -48,7 +48,7 @@ public class BoatController extends MobEntityController {
         }
     }
 
-    public static class EntityBoatNPC extends Boat implements NPCHolder {
+    public static class EntityBoatNPC extends Boat implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private double aC;
         private float aD;
         private Status aE;

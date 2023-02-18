@@ -35,7 +35,7 @@ public class PaintingController extends MobEntityController {
         return (org.bukkit.entity.Painting) super.getBukkitEntity();
     }
 
-    public static class EntityPaintingNPC extends Painting implements NPCHolder {
+    public static class EntityPaintingNPC extends Painting implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityPaintingNPC(EntityType<? extends Painting> types, Level level) {

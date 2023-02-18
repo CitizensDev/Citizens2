@@ -35,7 +35,7 @@ public class TippedArrowController extends MobEntityController {
         return (org.bukkit.entity.Arrow) super.getBukkitEntity();
     }
 
-    public static class EntityTippedArrowNPC extends Arrow implements NPCHolder {
+    public static class EntityTippedArrowNPC extends Arrow implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityTippedArrowNPC(EntityType<? extends Arrow> types, Level level) {

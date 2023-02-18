@@ -46,7 +46,7 @@ public class CaveSpiderController extends MobEntityController {
         }
     }
 
-    public static class EntityCaveSpiderNPC extends CaveSpider implements NPCHolder {
+    public static class EntityCaveSpiderNPC extends CaveSpider implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityCaveSpiderNPC(EntityType<? extends CaveSpider> types, Level level) {
@@ -99,7 +99,7 @@ public class CaveSpiderController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc, d0, d1, d2, () -> super.dismountTo(d0, d1, d2));
+            NMS.enderTeleportTo(npc,  () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override

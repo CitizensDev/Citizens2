@@ -35,7 +35,7 @@ public class ExperienceOrbController extends MobEntityController {
         return (org.bukkit.entity.ExperienceOrb) super.getBukkitEntity();
     }
 
-    public static class EntityExperienceOrbNPC extends ExperienceOrb implements NPCHolder {
+    public static class EntityExperienceOrbNPC extends ExperienceOrb implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityExperienceOrbNPC(EntityType<? extends ExperienceOrb> types, Level level) {

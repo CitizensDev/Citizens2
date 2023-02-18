@@ -49,7 +49,7 @@ public class SalmonController extends MobEntityController {
         return (org.bukkit.entity.Salmon) super.getBukkitEntity();
     }
 
-    public static class EntitySalmonNPC extends Salmon implements NPCHolder {
+    public static class EntitySalmonNPC extends Salmon implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
         private MoveControl oldMoveController;
 
@@ -128,7 +128,7 @@ public class SalmonController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc, d0, d1, d2, () -> super.dismountTo(d0, d1, d2));
+            NMS.enderTeleportTo(npc,  () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override

@@ -33,7 +33,7 @@ public class MinecartRideableController extends MobEntityController {
         return (org.bukkit.entity.Minecart) super.getBukkitEntity();
     }
 
-    public static class EntityMinecartRideableNPC extends Minecart implements NPCHolder {
+    public static class EntityMinecartRideableNPC extends Minecart implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityMinecartRideableNPC(EntityType<? extends Minecart> types, Level level) {

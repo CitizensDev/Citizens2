@@ -39,7 +39,7 @@ public class WitherController extends MobEntityController {
         return (org.bukkit.entity.Wither) super.getBukkitEntity();
     }
 
-    public static class EntityWitherNPC extends WitherBoss implements NPCHolder {
+    public static class EntityWitherNPC extends WitherBoss implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
         private final CitizensNPC npc;
 
         public EntityWitherNPC(EntityType<? extends WitherBoss> types, Level level) {
@@ -81,7 +81,7 @@ public class WitherController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc, d0, d1, d2, () -> super.dismountTo(d0, d1, d2));
+            NMS.enderTeleportTo(npc,  () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override
