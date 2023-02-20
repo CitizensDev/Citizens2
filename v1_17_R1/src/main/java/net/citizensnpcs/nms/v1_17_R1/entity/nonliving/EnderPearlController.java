@@ -40,7 +40,13 @@ public class EnderPearlController extends MobEntityController {
         }
     }
 
-    public static class EntityEnderPearlNPC extends ThrownEnderpearl implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityEnderPearlNPC extends ThrownEnderpearl implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
 
         public EntityEnderPearlNPC(EntityType<? extends ThrownEnderpearl> types, Level level) {

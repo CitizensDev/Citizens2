@@ -57,7 +57,7 @@ public class AxolotlController extends MobEntityController {
         }
     }
 
-    public static class EntityAxolotlNPC extends Axolotl implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityAxolotlNPC extends Axolotl implements NPCHolder {
         private final CitizensNPC npc;
 
         private MoveControl oldMoveController;
@@ -109,7 +109,7 @@ public class AxolotlController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc,  () -> super.dismountTo(d0, d1, d2));
+            NMS.enderTeleportTo(npc, () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override
@@ -146,6 +146,12 @@ public class AxolotlController extends MobEntityController {
         }
 
         @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
+        @Override
         public void knockback(double strength, double dx, double dz) {
             NMS.callKnockbackEvent(npc, (float) strength, dx, dz, (evt) -> super.knockback((float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
@@ -157,7 +163,7 @@ public class AxolotlController extends MobEntityController {
         }
 
         @Override
-        protected Brain makeBrain(Dynamic dynamic) {
+        protected Brain<?> makeBrain(Dynamic<?> dynamic) {
             if (npc == null || npc.useMinecraftAI()) {
                 return super.makeBrain(dynamic);
             }

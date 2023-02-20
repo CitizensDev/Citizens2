@@ -36,7 +36,13 @@ public class ThrownPotionController extends MobEntityController {
         return (org.bukkit.entity.ThrownPotion) super.getBukkitEntity();
     }
 
-    public static class EntityThrownPotionNPC extends ThrownPotion implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityThrownPotionNPC extends ThrownPotion implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
 
         public EntityThrownPotionNPC(EntityType<? extends ThrownPotion> types, Level level) {

@@ -51,7 +51,13 @@ public class HorseController extends MobEntityController {
         return (org.bukkit.entity.Horse) super.getBukkitEntity();
     }
 
-    public static class EntityHorseNPC extends Horse implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityHorseNPC extends Horse implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private double baseMovementSpeed;
 
         private boolean calledNMSHeight = false;
@@ -136,7 +142,7 @@ public class HorseController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc,  () -> super.dismountTo(d0, d1, d2));
+            NMS.enderTeleportTo(npc, () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override

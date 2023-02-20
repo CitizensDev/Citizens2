@@ -49,7 +49,13 @@ public class TropicalFishController extends MobEntityController {
         return (org.bukkit.entity.TropicalFish) super.getBukkitEntity();
     }
 
-    public static class EntityTropicalFishNPC extends TropicalFish implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityTropicalFishNPC extends TropicalFish implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
         private MoveControl oldMoveController;
 
@@ -130,7 +136,7 @@ public class TropicalFishController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc,  () -> super.dismountTo(d0, d1, d2));
+            NMS.enderTeleportTo(npc, () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override

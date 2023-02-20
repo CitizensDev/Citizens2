@@ -49,7 +49,13 @@ public class ChestBoatController extends MobEntityController {
         }
     }
 
-    public static class EntityChestBoatNPC extends ChestBoat implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityChestBoatNPC extends ChestBoat implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private double aC;
         private float aD;
         private Status aE;

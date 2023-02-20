@@ -46,6 +46,7 @@ public class HologramTrait extends Trait {
     private final List<HologramLine> lines = Lists.newArrayList();
     private NPC nameNPC;
     private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
+    private int t;
 
     public HologramTrait() {
         super("hologramtrait");
@@ -268,6 +269,11 @@ public class HologramTrait extends Trait {
         boolean updatePosition = currentLoc.getWorld() != npc.getStoredLocation().getWorld()
                 || currentLoc.distance(npc.getStoredLocation()) >= 0.001 || lastNameplateVisible != nameplateVisible
                 || Math.abs(lastEntityHeight - getEntityHeight()) >= 0.05;
+        boolean updateName = false;
+        if (t++ >= Setting.HOLOGRAM_UPDATE_RATE_TICKS.asInt() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
+            t = 0;
+            updateName = true;
+        }
         lastNameplateVisible = nameplateVisible;
 
         if (updatePosition) {
@@ -279,7 +285,9 @@ public class HologramTrait extends Trait {
             if (updatePosition) {
                 nameNPC.teleport(currentLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
             }
-            nameNPC.setName(Placeholders.replace(npc.getRawName(), null, npc));
+            if (updateName) {
+                nameNPC.setName(Placeholders.replace(npc.getRawName(), null, npc));
+            }
         }
 
         for (int i = 0; i < lines.size(); i++) {
@@ -305,6 +313,8 @@ public class HologramTrait extends Trait {
                 text = null;
             }
 
+            if (!updateName)
+                continue;
             if (text != null && !ChatColor.stripColor(Messaging.parseComponents(text)).isEmpty()) {
                 hologramNPC.setName(Placeholders.replace(text, null, npc));
                 hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);

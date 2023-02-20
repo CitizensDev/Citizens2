@@ -29,7 +29,13 @@ public class MinecartHopperController extends MobEntityController {
         return (Minecart) super.getBukkitEntity();
     }
 
-    public static class EntityMinecartHopperNPC extends MinecartHopper implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityMinecartHopperNPC extends MinecartHopper implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
 
         public EntityMinecartHopperNPC(EntityType<? extends MinecartHopper> types, Level level) {

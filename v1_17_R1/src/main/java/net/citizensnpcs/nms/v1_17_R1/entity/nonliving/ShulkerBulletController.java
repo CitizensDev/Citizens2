@@ -33,7 +33,13 @@ public class ShulkerBulletController extends MobEntityController {
         return (org.bukkit.entity.ShulkerBullet) super.getBukkitEntity();
     }
 
-    public static class EntityShulkerBulletNPC extends ShulkerBullet implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityShulkerBulletNPC extends ShulkerBullet implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
 
         public EntityShulkerBulletNPC(EntityType<? extends ShulkerBullet> types, Level level) {

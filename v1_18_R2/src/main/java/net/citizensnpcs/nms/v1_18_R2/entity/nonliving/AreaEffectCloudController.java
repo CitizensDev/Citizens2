@@ -41,7 +41,13 @@ public class AreaEffectCloudController extends MobEntityController {
         }
     }
 
-    public static class EntityAreaEffectCloudNPC extends AreaEffectCloud implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityAreaEffectCloudNPC extends AreaEffectCloud implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
 
         public EntityAreaEffectCloudNPC(EntityType<? extends AreaEffectCloud> types, Level level) {

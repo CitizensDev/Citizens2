@@ -33,7 +33,13 @@ public class WitherSkullController extends MobEntityController {
         return (org.bukkit.entity.WitherSkull) super.getBukkitEntity();
     }
 
-    public static class EntityWitherSkullNPC extends WitherSkull implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityWitherSkullNPC extends WitherSkull implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
 
         public EntityWitherSkullNPC(EntityType<? extends WitherSkull> types, Level level) {

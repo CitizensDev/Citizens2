@@ -48,7 +48,13 @@ public class VillagerController extends MobEntityController {
         return (org.bukkit.entity.Villager) super.getBukkitEntity();
     }
 
-    public static class EntityVillagerNPC extends Villager implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityVillagerNPC extends Villager implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private boolean blockingATrade;
 
         boolean calledNMSHeight = false;
@@ -110,7 +116,7 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public void dismountTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc,  () -> super.dismountTo(d0, d1, d2));
+            NMS.enderTeleportTo(npc, () -> super.dismountTo(d0, d1, d2));
         }
 
         @Override

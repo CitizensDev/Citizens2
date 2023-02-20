@@ -35,7 +35,13 @@ public class SmallFireballController extends MobEntityController {
         return (org.bukkit.entity.SmallFireball) super.getBukkitEntity();
     }
 
-    public static class EntitySmallFireballNPC extends SmallFireball implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntitySmallFireballNPC extends SmallFireball implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
 
         public EntitySmallFireballNPC(EntityType<? extends SmallFireball> types, Level level) {

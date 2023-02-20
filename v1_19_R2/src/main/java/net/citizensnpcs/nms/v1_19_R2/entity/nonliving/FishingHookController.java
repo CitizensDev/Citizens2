@@ -21,7 +21,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.PositionImpl;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
@@ -44,7 +43,7 @@ public class FishingHookController extends MobEntityController {
         return (FishHook) super.getBukkitEntity();
     }
 
-    public static class EntityFishingHookNPC extends FishingHook implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityFishingHookNPC extends FishingHook implements NPCHolder {
         private final CitizensNPC npc;
 
         public EntityFishingHookNPC(EntityType<? extends FishingHook> types, Level level) {
@@ -52,7 +51,7 @@ public class FishingHookController extends MobEntityController {
         }
 
         public EntityFishingHookNPC(EntityType<? extends FishingHook> types, Level level, NPC npc) {
-            super(new ServerPlayer(MinecraftServer.getServer(), (ServerLevel) level,
+            super(new ServerPlayer(((ServerLevel) level).getServer(), (ServerLevel) level,
                     new GameProfile(UUID.randomUUID(), "dummyfishhook")) {
             }, level, 0, 0);
             this.npc = (CitizensNPC) npc;
@@ -77,6 +76,12 @@ public class FishingHookController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

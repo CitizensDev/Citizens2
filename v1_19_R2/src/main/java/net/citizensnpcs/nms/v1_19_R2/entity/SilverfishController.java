@@ -43,7 +43,13 @@ public class SilverfishController extends MobEntityController {
         return (org.bukkit.entity.Silverfish) super.getBukkitEntity();
     }
 
-    public static class EntitySilverfishNPC extends Silverfish implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntitySilverfishNPC extends Silverfish implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
 
         public EntitySilverfishNPC(EntityType<? extends Silverfish> types, Level level) {

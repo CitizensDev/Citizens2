@@ -33,7 +33,13 @@ public class LargeFireballController extends MobEntityController {
         return (org.bukkit.entity.LargeFireball) super.getBukkitEntity();
     }
 
-    public static class EntityLargeFireballNPC extends LargeFireball implements NPCHolder {@Override public boolean isPushable() { return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected()); }
+    public static class EntityLargeFireballNPC extends LargeFireball implements NPCHolder {
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
         private final CitizensNPC npc;
 
         public EntityLargeFireballNPC(EntityType<? extends LargeFireball> types, Level level) {
