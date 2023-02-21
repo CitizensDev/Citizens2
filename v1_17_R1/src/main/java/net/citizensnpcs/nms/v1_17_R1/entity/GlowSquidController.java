@@ -41,12 +41,6 @@ public class GlowSquidController extends MobEntityController {
     }
 
     public static class EntityGlowSquidNPC extends GlowSquid implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityGlowSquidNPC(EntityType<? extends GlowSquid> types, Level level) {
@@ -133,6 +127,12 @@ public class GlowSquidController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

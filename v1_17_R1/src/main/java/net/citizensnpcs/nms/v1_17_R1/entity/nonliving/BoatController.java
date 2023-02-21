@@ -47,22 +47,16 @@ public class BoatController extends MobEntityController {
     }
 
     public static class EntityBoatNPC extends Boat implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private double aC;
 
         private float aD;
 
         private Status aE;
+
         private Status aF;
         private double ap;
         private double ar;
         private final CitizensNPC npc;
-
         public EntityBoatNPC(EntityType<? extends Boat> types, Level level) {
             this(types, level, null);
         }
@@ -99,6 +93,12 @@ public class BoatController extends MobEntityController {
                 return Status.ON_LAND;
             }
             return Status.IN_AIR;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

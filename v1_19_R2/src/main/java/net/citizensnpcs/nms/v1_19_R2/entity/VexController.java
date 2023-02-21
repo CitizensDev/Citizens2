@@ -40,12 +40,6 @@ public class VexController extends MobEntityController {
     }
 
     public static class EntityVexNPC extends Vex implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityVexNPC(EntityType<? extends Vex> types, Level level) {
@@ -120,6 +114,12 @@ public class VexController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

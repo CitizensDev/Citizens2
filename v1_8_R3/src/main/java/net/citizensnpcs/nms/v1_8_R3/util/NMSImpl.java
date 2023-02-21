@@ -55,6 +55,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -452,7 +453,7 @@ public class NMSImpl implements NMSBridge {
         Entity passenger = NMSImpl.getHandle(entity).passenger;
         if (passenger == null)
             return Collections.emptyList();
-        return Lists.<org.bukkit.entity.Entity> newArrayList(passenger.getBukkitEntity());
+        return ImmutableList.of(passenger.getBukkitEntity());
     }
 
     @Override
@@ -1115,6 +1116,12 @@ public class NMSImpl implements NMSBridge {
     public void setKnockbackResistance(LivingEntity entity, double d) {
         EntityLiving handle = NMSImpl.getHandle(entity);
         handle.getAttributeInstance(GenericAttributes.c).setValue(d);
+    }
+
+    @Override
+    public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
+        getHandle(entity).setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(),
+                location.getPitch());
     }
 
     @Override

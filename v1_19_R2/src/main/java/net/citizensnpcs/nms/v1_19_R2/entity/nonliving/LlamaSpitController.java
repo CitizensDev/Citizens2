@@ -48,12 +48,6 @@ public class LlamaSpitController extends AbstractEntityController {
     }
 
     public static class EntityLlamaSpitNPC extends LlamaSpit implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityLlamaSpitNPC(EntityType<? extends LlamaSpit> types, Level level) {
@@ -81,6 +75,12 @@ public class LlamaSpitController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

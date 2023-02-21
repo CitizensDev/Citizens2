@@ -636,6 +636,10 @@ public class NMS {
         BRIDGE.setKnockbackResistance(entity, d);
     }
 
+    public static void setLocationDirectly(Entity entity, Location location) {
+        BRIDGE.setLocationDirectly(entity, location);
+    }
+
     public static void setLyingDown(Entity cat, boolean lying) {
         BRIDGE.setLyingDown(cat, lying);
     }

@@ -36,12 +36,6 @@ public class TippedArrowController extends MobEntityController {
     }
 
     public static class EntityTippedArrowNPC extends Arrow implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityTippedArrowNPC(EntityType<? extends Arrow> types, Level level) {
@@ -64,6 +58,12 @@ public class TippedArrowController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

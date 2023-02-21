@@ -35,12 +35,6 @@ public class SpectralArrowController extends MobEntityController {
     }
 
     public static class EntitySpectralArrowNPC extends SpectralArrow implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntitySpectralArrowNPC(EntityType<? extends SpectralArrow> types, Level level) {
@@ -63,6 +57,12 @@ public class SpectralArrowController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

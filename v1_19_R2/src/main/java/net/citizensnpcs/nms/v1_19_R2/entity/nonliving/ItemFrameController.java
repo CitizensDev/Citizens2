@@ -47,12 +47,6 @@ public class ItemFrameController extends MobEntityController {
     }
 
     public static class EntityItemFrameNPC extends ItemFrame implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityItemFrameNPC(EntityType<? extends ItemFrame> types, Level level) {
@@ -75,6 +69,12 @@ public class ItemFrameController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

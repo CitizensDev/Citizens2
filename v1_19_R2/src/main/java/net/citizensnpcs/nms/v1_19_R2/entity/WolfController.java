@@ -46,15 +46,9 @@ public class WolfController extends MobEntityController {
     }
 
     public static class EntityWolfNPC extends Wolf implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         boolean calledNMSHeight = false;
-        private final CitizensNPC npc;
 
+        private final CitizensNPC npc;
         public EntityWolfNPC(EntityType<? extends Wolf> types, Level level) {
             this(types, level, null);
         }
@@ -139,6 +133,12 @@ public class WolfController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

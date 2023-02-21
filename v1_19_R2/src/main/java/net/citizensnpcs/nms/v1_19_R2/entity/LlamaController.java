@@ -52,15 +52,9 @@ public class LlamaController extends MobEntityController {
     }
 
     public static class EntityLlamaNPC extends Llama implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         boolean calledNMSHeight = false;
-        private final CitizensNPC npc;
 
+        private final CitizensNPC npc;
         public EntityLlamaNPC(EntityType<? extends Llama> types, Level level) {
             this(types, level, null);
         }
@@ -154,6 +148,12 @@ public class LlamaController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

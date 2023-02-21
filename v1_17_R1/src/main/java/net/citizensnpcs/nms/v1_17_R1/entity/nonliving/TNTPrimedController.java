@@ -35,12 +35,6 @@ public class TNTPrimedController extends MobEntityController {
     }
 
     public static class EntityTNTPrimedNPC extends PrimedTnt implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityTNTPrimedNPC(EntityType<? extends PrimedTnt> types, Level level) {
@@ -63,6 +57,12 @@ public class TNTPrimedController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

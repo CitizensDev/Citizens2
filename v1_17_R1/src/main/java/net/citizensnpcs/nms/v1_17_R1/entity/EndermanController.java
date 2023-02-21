@@ -50,12 +50,6 @@ public class EndermanController extends MobEntityController {
     }
 
     public static class EntityEndermanNPC extends EnderMan implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityEndermanNPC(EntityType<? extends EnderMan> types, Level level) {
@@ -146,6 +140,12 @@ public class EndermanController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

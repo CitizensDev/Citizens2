@@ -50,15 +50,9 @@ public class CreeperController extends MobEntityController {
     }
 
     public static class EntityCreeperNPC extends Creeper implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private boolean allowPowered;
-        private final CitizensNPC npc;
 
+        private final CitizensNPC npc;
         public EntityCreeperNPC(EntityType<? extends Creeper> types, Level level) {
             this(types, level, null);
         }
@@ -143,6 +137,12 @@ public class CreeperController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

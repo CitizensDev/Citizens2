@@ -58,15 +58,9 @@ public class AllayController extends MobEntityController {
     }
 
     public static class EntityAllayNPC extends Allay implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
-        private int taskId = -1;
 
+        private int taskId = -1;
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level) {
             this(types, level, null);
         }
@@ -151,6 +145,12 @@ public class AllayController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

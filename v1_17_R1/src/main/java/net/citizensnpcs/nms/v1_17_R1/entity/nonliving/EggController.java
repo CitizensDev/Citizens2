@@ -50,12 +50,6 @@ public class EggController extends AbstractEntityController {
     }
 
     public static class EntityEggNPC extends ThrownEgg implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityEggNPC(EntityType<? extends ThrownEgg> types, Level level) {
@@ -83,6 +77,12 @@ public class EggController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

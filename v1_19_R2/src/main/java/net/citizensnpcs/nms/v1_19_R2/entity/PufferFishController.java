@@ -53,15 +53,9 @@ public class PufferFishController extends MobEntityController {
     }
 
     public static class EntityPufferFishNPC extends Pufferfish implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
-        private MoveControl oldMoveController;
 
+        private MoveControl oldMoveController;
         public EntityPufferFishNPC(EntityType<? extends Pufferfish> types, Level level) {
             this(types, level, null);
         }
@@ -179,6 +173,12 @@ public class PufferFishController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

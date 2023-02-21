@@ -50,15 +50,9 @@ public class SalmonController extends MobEntityController {
     }
 
     public static class EntitySalmonNPC extends Salmon implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
-        private MoveControl oldMoveController;
 
+        private MoveControl oldMoveController;
         public EntitySalmonNPC(EntityType<? extends Salmon> types, Level level) {
             this(types, level, null);
         }
@@ -168,6 +162,12 @@ public class SalmonController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

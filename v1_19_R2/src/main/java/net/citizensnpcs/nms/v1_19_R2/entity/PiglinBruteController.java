@@ -43,12 +43,6 @@ public class PiglinBruteController extends MobEntityController {
     }
 
     public static class EntityPiglinBruteNPC extends PiglinBrute implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityPiglinBruteNPC(EntityType<? extends PiglinBrute> types, Level level) {
@@ -138,6 +132,12 @@ public class PiglinBruteController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

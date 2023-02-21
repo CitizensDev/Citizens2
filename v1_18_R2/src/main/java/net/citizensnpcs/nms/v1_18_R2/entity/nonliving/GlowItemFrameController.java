@@ -47,12 +47,6 @@ public class GlowItemFrameController extends MobEntityController {
     }
 
     public static class EntityGlowItemFrameNPC extends GlowItemFrame implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityGlowItemFrameNPC(EntityType<? extends GlowItemFrame> types, Level level) {
@@ -75,6 +69,12 @@ public class GlowItemFrameController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

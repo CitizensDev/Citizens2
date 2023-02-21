@@ -30,6 +30,7 @@ import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
+import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.BlockBreaker;
@@ -437,8 +438,19 @@ public class CitizensNPC extends AbstractNPC {
             getOrAddTrait(SitTrait.class).setSitting(location);
         }
         Location npcLoc = getEntity().getLocation(CACHE_LOCATION);
-        if (isSpawned() && npcLoc.getWorld() == location.getWorld() && npcLoc.distance(location) < 1) {
-            NMS.setHeadYaw(getEntity(), location.getYaw());
+        if (isSpawned() && npcLoc.getWorld() == location.getWorld()) {
+            if (npcLoc.distance(location) < 1) {
+                NMS.setHeadYaw(getEntity(), location.getYaw());
+            }
+            if (getEntity().getType() == EntityType.PLAYER && !getEntity().isInsideVehicle()
+                    && NMS.getPassengers(getEntity()).size() == 0) {
+                NPCTeleportEvent event = new NPCTeleportEvent(this, location);
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled())
+                    return;
+                NMS.setLocationDirectly(getEntity(), location);
+                return;
+            }
         }
         super.teleport(location, reason);
     }

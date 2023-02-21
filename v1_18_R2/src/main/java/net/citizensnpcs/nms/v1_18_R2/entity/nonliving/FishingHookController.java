@@ -45,12 +45,6 @@ public class FishingHookController extends MobEntityController {
     }
 
     public static class EntityFishingHookNPC extends FishingHook implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityFishingHookNPC(EntityType<? extends FishingHook> types, Level level) {
@@ -83,6 +77,12 @@ public class FishingHookController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

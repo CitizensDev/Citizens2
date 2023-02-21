@@ -30,12 +30,6 @@ public class MinecartTNTController extends MobEntityController {
     }
 
     public static class EntityMinecartTNTNPC extends MinecartTNT implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityMinecartTNTNPC(EntityType<? extends MinecartTNT> types, Level level) {
@@ -50,6 +44,12 @@ public class MinecartTNTController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

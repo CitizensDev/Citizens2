@@ -43,12 +43,6 @@ public class SkeletonWitherController extends MobEntityController {
     }
 
     public static class EntitySkeletonWitherNPC extends WitherSkeleton implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntitySkeletonWitherNPC(EntityType<? extends WitherSkeleton> types, Level level) {
@@ -135,6 +129,12 @@ public class SkeletonWitherController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

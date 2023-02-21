@@ -36,12 +36,6 @@ public class LargeFireballController extends MobEntityController {
     }
 
     public static class EntityLargeFireballNPC extends LargeFireball implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityLargeFireballNPC(EntityType<? extends LargeFireball> types, Level level) {
@@ -64,6 +58,12 @@ public class LargeFireballController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

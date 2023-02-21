@@ -39,12 +39,6 @@ public class PolarBearController extends MobEntityController {
     }
 
     public static class EntityPolarBearNPC extends PolarBear implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         boolean calledNMSHeight = false;
 
         private final CitizensNPC npc;
@@ -118,6 +112,12 @@ public class PolarBearController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

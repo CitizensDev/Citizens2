@@ -49,12 +49,6 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends Villager implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private boolean blockingATrade;
 
         boolean calledNMSHeight = false;
@@ -150,6 +144,12 @@ public class VillagerController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

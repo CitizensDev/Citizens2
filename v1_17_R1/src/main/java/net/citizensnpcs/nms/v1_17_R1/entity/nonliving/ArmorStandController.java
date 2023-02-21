@@ -45,12 +45,6 @@ public class ArmorStandController extends MobEntityController {
     }
 
     public static class EntityArmorStandNPC extends ArmorStand implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityArmorStandNPC(EntityType<? extends ArmorStand> types, Level level) {
@@ -84,6 +78,12 @@ public class ArmorStandController extends MobEntityController {
                     (org.bukkit.entity.Player) entityhuman.getBukkitEntity(), getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);
             return event.isCancelled() ? InteractionResult.FAIL : InteractionResult.SUCCESS;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

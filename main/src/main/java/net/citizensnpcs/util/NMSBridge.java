@@ -192,6 +192,8 @@ public interface NMSBridge {
 
     public void setKnockbackResistance(LivingEntity entity, double d);
 
+    public void setLocationDirectly(Entity entity, Location location);
+
     public default void setLyingDown(Entity cat, boolean lying) {
         throw new UnsupportedOperationException();
     }

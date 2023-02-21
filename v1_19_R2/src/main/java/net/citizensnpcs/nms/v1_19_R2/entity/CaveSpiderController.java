@@ -49,12 +49,6 @@ public class CaveSpiderController extends MobEntityController {
     }
 
     public static class EntityCaveSpiderNPC extends CaveSpider implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityCaveSpiderNPC(EntityType<? extends CaveSpider> types, Level level) {
@@ -141,6 +135,12 @@ public class CaveSpiderController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

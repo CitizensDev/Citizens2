@@ -48,18 +48,12 @@ public class WanderingTraderController extends MobEntityController {
     }
 
     public static class EntityWanderingTraderNPC extends WanderingTrader implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private boolean blockingATrade;
 
         private boolean blockTrades = true;
+
         boolean calledNMSHeight = false;
         private final CitizensNPC npc;
-
         public EntityWanderingTraderNPC(EntityType<? extends WanderingTrader> types, Level level) {
             this(types, level, null);
         }
@@ -151,6 +145,12 @@ public class WanderingTraderController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

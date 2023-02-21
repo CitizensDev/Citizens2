@@ -1376,6 +1376,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
+        getHandle(entity).moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
+                location.getPitch());
+    }
+
+    @Override
     public void setLyingDown(org.bukkit.entity.Entity cat, boolean lying) {
         ((Cat) getHandle(cat)).setLying(lying);
     }

@@ -53,12 +53,6 @@ public class HorseDonkeyController extends MobEntityController {
     }
 
     public static class EntityHorseDonkeyNPC extends Donkey implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private double baseMovementSpeed;
 
         boolean calledNMSHeight = false;
@@ -184,6 +178,12 @@ public class HorseDonkeyController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

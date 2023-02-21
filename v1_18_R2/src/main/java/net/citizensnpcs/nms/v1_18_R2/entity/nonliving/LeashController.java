@@ -37,12 +37,6 @@ public class LeashController extends MobEntityController {
     }
 
     public static class EntityLeashNPC extends LeashFenceKnotEntity implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityLeashNPC(EntityType<? extends LeashFenceKnotEntity> types, Level level) {
@@ -65,6 +59,12 @@ public class LeashController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

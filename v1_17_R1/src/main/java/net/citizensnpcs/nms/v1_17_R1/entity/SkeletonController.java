@@ -41,12 +41,6 @@ public class SkeletonController extends MobEntityController {
     }
 
     public static class EntitySkeletonNPC extends Skeleton implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntitySkeletonNPC(EntityType<? extends Skeleton> types, Level level) {
@@ -133,6 +127,12 @@ public class SkeletonController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

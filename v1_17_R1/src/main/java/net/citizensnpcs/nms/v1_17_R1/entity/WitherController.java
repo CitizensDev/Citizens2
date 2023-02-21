@@ -38,12 +38,6 @@ public class WitherController extends MobEntityController {
     }
 
     public static class EntityWitherNPC extends WitherBoss implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityWitherNPC(EntityType<? extends WitherBoss> types, Level level) {
@@ -130,6 +124,12 @@ public class WitherController extends MobEntityController {
         public boolean isPowered() {
             return npc == null || !npc.data().has("wither-arrow-shield") ? super.isPowered()
                     : npc.data().get("wither-arrow-shield");
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

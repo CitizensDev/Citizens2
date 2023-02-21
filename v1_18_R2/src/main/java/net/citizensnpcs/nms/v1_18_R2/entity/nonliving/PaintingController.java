@@ -36,12 +36,6 @@ public class PaintingController extends MobEntityController {
     }
 
     public static class EntityPaintingNPC extends Painting implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityPaintingNPC(EntityType<? extends Painting> types, Level level) {
@@ -64,6 +58,12 @@ public class PaintingController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

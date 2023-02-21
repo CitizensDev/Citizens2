@@ -47,15 +47,9 @@ public class TurtleController extends MobEntityController {
     }
 
     public static class EntityTurtleNPC extends Turtle implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
-        private JumpControl oldJumpController;
 
+        private JumpControl oldJumpController;
         private MoveControl oldMoveController;
 
         public EntityTurtleNPC(EntityType<? extends Turtle> types, Level level) {
@@ -156,6 +150,12 @@ public class TurtleController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

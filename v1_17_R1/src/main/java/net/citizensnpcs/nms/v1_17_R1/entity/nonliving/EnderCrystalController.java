@@ -40,12 +40,6 @@ public class EnderCrystalController extends MobEntityController {
     }
 
     public static class EntityEnderCrystalNPC extends EndCrystal implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderCrystalNPC(EntityType<? extends EndCrystal> types, Level level) {
@@ -68,6 +62,12 @@ public class EnderCrystalController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

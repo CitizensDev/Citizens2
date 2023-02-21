@@ -32,12 +32,6 @@ public class MinecartSpawnerController extends MobEntityController {
     }
 
     public static class EntityMinecartSpawnerNPC extends MinecartSpawner implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityMinecartSpawnerNPC(EntityType<? extends MinecartSpawner> types, Level level) {
@@ -52,6 +46,12 @@ public class MinecartSpawnerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

@@ -53,12 +53,6 @@ public class FallingBlockController extends AbstractEntityController {
     }
 
     public static class EntityFallingBlockNPC extends FallingBlockEntity implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityFallingBlockNPC(EntityType<? extends FallingBlockEntity> types, Level level) {
@@ -81,6 +75,12 @@ public class FallingBlockController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

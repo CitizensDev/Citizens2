@@ -48,12 +48,6 @@ public class ItemController extends AbstractEntityController {
     }
 
     public static class EntityItemNPC extends ItemEntity implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityItemNPC(EntityType<? extends ItemEntity> types, Level level) {
@@ -77,6 +71,12 @@ public class ItemController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

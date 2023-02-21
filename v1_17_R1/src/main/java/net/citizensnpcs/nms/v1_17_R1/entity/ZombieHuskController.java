@@ -41,12 +41,6 @@ public class ZombieHuskController extends MobEntityController {
     }
 
     public static class EntityZombieHuskNPC extends Husk implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityZombieHuskNPC(EntityType<? extends Husk> types, Level level) {
@@ -133,6 +127,12 @@ public class ZombieHuskController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

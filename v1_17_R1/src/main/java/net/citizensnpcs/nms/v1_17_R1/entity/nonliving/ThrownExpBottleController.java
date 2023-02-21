@@ -35,12 +35,6 @@ public class ThrownExpBottleController extends MobEntityController {
     }
 
     public static class EntityThrownExpBottleNPC extends ThrownExperienceBottle implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private final CitizensNPC npc;
 
         public EntityThrownExpBottleNPC(EntityType<? extends ThrownExperienceBottle> types, Level level) {
@@ -63,6 +57,12 @@ public class ThrownExpBottleController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

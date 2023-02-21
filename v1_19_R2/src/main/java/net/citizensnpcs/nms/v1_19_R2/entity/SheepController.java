@@ -44,15 +44,9 @@ public class SheepController extends MobEntityController {
     }
 
     public static class EntitySheepNPC extends Sheep implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         boolean calledNMSHeight = false;
-        private final CitizensNPC npc;
 
+        private final CitizensNPC npc;
         public EntitySheepNPC(EntityType<? extends Sheep> types, Level level) {
             this(types, level, null);
         }
@@ -137,6 +131,12 @@ public class SheepController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override

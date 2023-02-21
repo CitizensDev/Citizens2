@@ -50,17 +50,11 @@ public class DolphinController extends MobEntityController {
     }
 
     public static class EntityDolphinNPC extends Dolphin implements NPCHolder {
-        @Override
-        public boolean isPushable() {
-            return npc == null ? super.isPushable()
-                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
-        }
-
         private boolean inProtectedTick;
 
         private final CitizensNPC npc;
-        private MoveControl oldMoveController;
 
+        private MoveControl oldMoveController;
         public EntityDolphinNPC(EntityType<? extends Dolphin> types, Level level) {
             this(types, level, null);
         }
@@ -147,6 +141,12 @@ public class DolphinController extends MobEntityController {
         @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
         }
 
         @Override
