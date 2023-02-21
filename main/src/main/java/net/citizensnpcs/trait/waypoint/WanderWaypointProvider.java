@@ -113,18 +113,14 @@ public class WanderWaypointProvider
             @Override
             public void begin() {
                 Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_BEGIN, pathfind ? "<green>" : "<red>");
-                if (currentGoal != null) {
-                    currentGoal.pause();
-                }
+                setPaused(true);
             }
 
             @Override
             public void end() {
                 Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_END);
                 editingRegions = false;
-                if (currentGoal != null) {
-                    currentGoal.unpause();
-                }
+                setPaused(false);
                 markers.destroyMarkers();
             }
 
@@ -308,6 +304,9 @@ public class WanderWaypointProvider
         if (currentGoal == null) {
             currentGoal = WanderGoal.builder(npc).xrange(xrange).yrange(yrange).fallback(this).tree(this).delay(delay)
                     .worldguardRegion(getWorldGuardRegion()).build();
+            if (paused) {
+                currentGoal.pause();
+            }
         }
         Iterator<GoalEntry> itr = npc.getDefaultGoalController().iterator();
         while (itr.hasNext()) {
