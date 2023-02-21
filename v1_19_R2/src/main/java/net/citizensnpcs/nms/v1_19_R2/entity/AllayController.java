@@ -61,6 +61,7 @@ public class AllayController extends MobEntityController {
         private final CitizensNPC npc;
 
         private int taskId = -1;
+
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level) {
             this(types, level, null);
         }
@@ -179,7 +180,7 @@ public class AllayController extends MobEntityController {
                                                         this.getItemInHand(InteractionHand.MAIN_HAND)))));
                         ((org.bukkit.entity.Player) var0.getBukkitEntity()).updateInventory();
                         taskId = -1;
-                    });
+                    }, 5);
                 }
                 return InteractionResult.FAIL;
             }
