@@ -105,6 +105,8 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
 
     @Override
     public BehaviorStatus run() {
+        if (paused)
+            return BehaviorStatus.SUCCESS;
         if (pathfind) {
             if (!npc.getNavigator().isNavigating() || forceFinish) {
                 return BehaviorStatus.SUCCESS;
