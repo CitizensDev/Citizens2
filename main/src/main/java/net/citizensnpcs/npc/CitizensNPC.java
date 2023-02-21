@@ -2,6 +2,7 @@ package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -196,9 +197,9 @@ public class CitizensNPC extends AbstractNPC {
     private void resetCachedCoord() {
         if (cachedCoord == null)
             return;
-        CHUNK_LOADERS.remove(NPC_METADATA_MARKER, CHUNK_LOADERS);
-        CHUNK_LOADERS.remove(cachedCoord, this);
-        if (CHUNK_LOADERS.get(cachedCoord).size() == 0) {
+        Set<NPC> npcs = CHUNK_LOADERS.get(cachedCoord);
+        npcs.remove(this);
+        if (npcs.size() == 0) {
             cachedCoord.setForceLoaded(false);
         }
         cachedCoord = null;
@@ -296,7 +297,7 @@ public class CitizensNPC extends AbstractNPC {
 
         getOrAddTrait(CurrentLocation.class).setLocation(at);
         entityController.create(at.clone(), this);
-        getEntity().setMetadata(NPC_METADATA_MARKER, new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+        getEntity().setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         Collection<Trait> onPreSpawn = traits.values();
         for (Trait trait : onPreSpawn.toArray(new Trait[onPreSpawn.size()])) {
@@ -618,11 +619,9 @@ public class CitizensNPC extends AbstractNPC {
 
     private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
-    private static final String NPC_METADATA_MARKER = "NPC";
     private static boolean SUPPORT_GLOWING = true;
     private static boolean SUPPORT_NODAMAGE_TICKS = true;
     private static boolean SUPPORT_PICKUP_ITEMS = true;
     private static boolean SUPPORT_SILENT = true;
-
     private static boolean SUPPORT_USE_ITEM = true;
 }
