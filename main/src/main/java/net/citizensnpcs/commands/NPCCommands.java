@@ -125,6 +125,7 @@ import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.PacketNPC;
+import net.citizensnpcs.trait.PausePathfindingTrait;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
@@ -1970,6 +1971,36 @@ public class NPCCommands {
             loc.setZ(args.getDouble(3));
         }
         npc.getNavigator().setTarget(loc);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "pausepathfinding --onrightclick [true|false] --when_player_within [range in blocks] --pauseticks [ticks]",
+            desc = "Sets pathfinding pause",
+            modifiers = { "pausepathfinding" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.pausepathfinding")
+    public void pausepathfinding(CommandContext args, CommandSender sender, NPC npc,
+            @Flag("onrightclick") Boolean rightclick, @Flag("when_player_within") Double playerRange,
+            @Flag("pauseticks") Integer ticks) throws CommandException {
+        PausePathfindingTrait trait = npc.getOrAddTrait(PausePathfindingTrait.class);
+        if (playerRange != null) {
+            if (playerRange <= 0)
+                throw new CommandException("Invalid range");
+            trait.setPlayerRangeBlocks(playerRange);
+            Messaging.sendTr(sender, Messages.PAUSEPATHFINDING_RANGE_SET, npc.getName(), playerRange);
+        }
+        if (rightclick != null) {
+            trait.setRightClick(rightclick);
+            Messaging.sendTr(sender,
+                    rightclick ? Messages.PAUSEPATHFINDING_RIGHTCLICK_SET : Messages.PAUSEPATHFINDING_RIGHTCLICK_SET,
+                    npc.getName());
+        }
+        if (ticks != null) {
+            trait.setPauseTicks(ticks);
+            Messaging.sendTr(sender, Messages.PAUSEPATHFINDING_TICKS_SET, npc.getName(), ticks);
+        }
     }
 
     @Command(

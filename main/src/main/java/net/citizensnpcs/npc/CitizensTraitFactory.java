@@ -40,6 +40,7 @@ import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.PacketNPC;
+import net.citizensnpcs.trait.PausePathfindingTrait;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
@@ -92,6 +93,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(OcelotModifiers.class));
         registerTrait(TraitInfo.create(Owner.class));
         registerTrait(TraitInfo.create(PacketNPC.class));
+        registerTrait(TraitInfo.create(PausePathfindingTrait.class));
         registerTrait(TraitInfo.create(Poses.class));
         registerTrait(TraitInfo.create(Powered.class));
         registerTrait(TraitInfo.create(RabbitType.class));
