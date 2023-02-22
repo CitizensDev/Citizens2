@@ -1,9 +1,7 @@
 package net.citizensnpcs.nms.v1_11_R1.util;
 
 import java.lang.reflect.Field;
-
 import org.bukkit.entity.Player;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_11_R1.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -34,11 +32,9 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                             || (tracker.attachedToPlayer))) {
                 if ((tracker instanceof SkinnableEntity)) {
                     SkinnableEntity skinnable = (SkinnableEntity) tracker;
-
                     Player player = skinnable.getBukkitEntity();
                     if (!entityplayer.getBukkitEntity().canSee(player))
                         return;
-
                     skinnable.getSkinTracker().updateViewer(entityplayer.getBukkitEntity());
                 }
             }

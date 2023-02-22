@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftGhast;
 import org.bukkit.entity.Ghast;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_10_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_10_R1.util.NMSImpl;

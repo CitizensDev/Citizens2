@@ -9,7 +9,6 @@ import org.bukkit.craftbukkit.v1_19_R2.entity.CraftFallingBlock;
 import org.bukkit.craftbukkit.v1_19_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSImpl;

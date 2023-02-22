@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftRavager;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSBoundingBox;
@@ -44,9 +43,8 @@ public class RavagerController extends MobEntityController {
     }
 
     public static class EntityRavagerNPC extends Ravager implements NPCHolder {
-        boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
+
         public EntityRavagerNPC(EntityType<? extends Ravager> types, Level level) {
             this(types, level, null);
         }
@@ -166,13 +164,11 @@ public class RavagerController extends MobEntityController {
 
         @Override
         public void onSyncedDataUpdated(EntityDataAccessor<?> datawatcherobject) {
-            if (npc != null && !calledNMSHeight) {
-                calledNMSHeight = true;
-                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
-                calledNMSHeight = false;
+            if (npc == null) {
+                super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
-            super.onSyncedDataUpdated(datawatcherobject);
+            NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
         @Override

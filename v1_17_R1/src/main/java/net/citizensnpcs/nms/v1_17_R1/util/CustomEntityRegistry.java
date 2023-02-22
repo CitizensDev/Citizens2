@@ -7,12 +7,10 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Lifecycle;
-
 import net.citizensnpcs.util.NMS;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
@@ -194,7 +192,6 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
         if (entities.containsKey(key)) {
             return entities.get(key);
         }
-
         return wrapped.get(key);
     }
 
@@ -203,7 +200,6 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
         if (entityIds.containsKey(key)) {
             return entityIds.get(key);
         }
-
         return wrapped.getId((EntityType) key);
     }
 
@@ -212,7 +208,6 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
         if (entityClasses.containsKey(value)) {
             return entityClasses.get(value);
         }
-
         return wrapped.getKey((EntityType) value);
     }
 
@@ -226,7 +221,6 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
         if (entities.containsKey(var0)) {
             return Optional.of(entities.get(var0));
         }
-
         return this.wrapped.getOptional(var0);
     }
 
@@ -267,7 +261,6 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
     private static final MethodHandle IREGISTRY_RESOURCE_KEY = NMS.getGetter(Registry.class, "b");
     private static final BiMap<EntityType, Class<?>> minecraftClassMap = HashBiMap.create();
     static {
-
         minecraftClassMap.put(EntityType.AREA_EFFECT_CLOUD, AreaEffectCloud.class);
         minecraftClassMap.put(EntityType.ARMOR_STAND, ArmorStand.class);
         minecraftClassMap.put(EntityType.ARROW, Arrow.class);

@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_19_R2.util;
 
 import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
-
 import net.citizensnpcs.util.AbstractBlockBreaker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -87,12 +86,10 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
                 }
                 f *= f1;
             }
-
             if (handle.isEyeInFluid(FluidTags.WATER) && !EnchantmentHelper.hasAquaAffinity(handle)) {
                 f /= 5.0F;
             }
         }
-
         if (!entity.isOnGround()) {
             f /= 5.0F;
         }

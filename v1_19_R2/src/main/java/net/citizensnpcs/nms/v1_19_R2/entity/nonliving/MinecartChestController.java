@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftMinecartChest;
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_19_R2.util.ForwardingNPCHolder;
@@ -115,7 +114,6 @@ public class MinecartChestController extends MobEntityController {
         public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
             return NMSImpl.fluidPush(npc, this, () -> super.updateFluidHeightAndDoFluidPushing(tagkey, d0));
         }
-
     }
 
     public static class MinecartChestNPC extends CraftMinecartChest implements ForwardingNPCHolder {

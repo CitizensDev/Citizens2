@@ -200,7 +200,6 @@ public class PlayerNavigation extends NavigationAbstract {
     protected boolean a(Vec3D paramVec3D1, Vec3D paramVec3D2, int paramInt1, int paramInt2, int paramInt3) {
         int i = MathHelper.floor(paramVec3D1.x);
         int j = MathHelper.floor(paramVec3D1.z);
-
         double d1 = paramVec3D2.x - paramVec3D1.x;
         double d2 = paramVec3D2.z - paramVec3D1.z;
         double d3 = d1 * d1 + d2 * d2;
@@ -210,7 +209,6 @@ public class PlayerNavigation extends NavigationAbstract {
         double d4 = 1.0D / Math.sqrt(d3);
         d1 *= d4;
         d2 *= d4;
-
         paramInt1 += 2;
         paramInt3 += 2;
         if (!a(i, (int) paramVec3D1.y, j, paramInt1, paramInt2, paramInt3, paramVec3D1, d1, d2)) {
@@ -218,10 +216,8 @@ public class PlayerNavigation extends NavigationAbstract {
         }
         paramInt1 -= 2;
         paramInt3 -= 2;
-
         double d5 = 1.0D / Math.abs(d1);
         double d6 = 1.0D / Math.abs(d2);
-
         double d7 = i - paramVec3D1.x;
         double d8 = j - paramVec3D1.z;
         if (d1 >= 0.0D) {
@@ -232,7 +228,6 @@ public class PlayerNavigation extends NavigationAbstract {
         }
         d7 /= d1;
         d8 /= d2;
-
         int k = d1 < 0.0D ? -1 : 1;
         int m = d2 < 0.0D ? -1 : 1;
         int n = MathHelper.floor(paramVec3D2.x);
@@ -264,12 +259,10 @@ public class PlayerNavigation extends NavigationAbstract {
             return this.c;
         }
         this.q = paramBlockPosition;
-
         float f1 = h();
         this.b.methodProfiler.a("pathfind");
         BlockPosition localBlockPosition = new BlockPosition(this.a);
         int i1 = (int) (f1 + 8.0F);
-
         ChunkCache localChunkCache = new ChunkCache(this.b, localBlockPosition.a(-i1, -i1, -i1),
                 localBlockPosition.a(i1, i1, i1), 0);
         PathEntity localPathEntity = this.r.a(localChunkCache, this.a, this.q, f1);
@@ -286,12 +279,10 @@ public class PlayerNavigation extends NavigationAbstract {
             return this.c;
         }
         this.q = localBlockPosition1;
-
         float f1 = h();
         this.b.methodProfiler.a("pathfind");
         BlockPosition localBlockPosition2 = new BlockPosition(this.a).up();
         int i1 = (int) (f1 + 16.0F);
-
         ChunkCache localChunkCache = new ChunkCache(this.b, localBlockPosition2.a(-i1, -i1, -i1),
                 localBlockPosition2.a(i1, i1, i1), 0);
         PathEntity localPathEntity = this.r.a(localChunkCache, this.a, paramEntity, f1);
@@ -344,7 +335,6 @@ public class PlayerNavigation extends NavigationAbstract {
         for (int i = 0; i < this.c.d(); i++) {
             localPathPoint = this.c.a(i);
             Object localObject = i + 1 < this.c.d() ? this.c.a(i + 1) : null;
-
             IBlockData localIBlockData = this.b
                     .getType(new BlockPosition(localPathPoint.a, localPathPoint.b, localPathPoint.c));
             Block localBlock = localIBlockData.getBlock();
@@ -443,14 +433,12 @@ public class PlayerNavigation extends NavigationAbstract {
         AxisAlignedBB localAxisAlignedBB = this.b.getType((BlockPosition) localObject).d(this.b,
                 (BlockPosition) localObject);
         localVec3D = localVec3D.a(0.0D, 1.0D - localAxisAlignedBB.e, 0.0D);
-
         this.a.getControllerMove().a(localVec3D.x, localVec3D.y, localVec3D.z, this.d);
     }
 
     @Override
     protected void m() {
         Vec3D localVec3D1 = c();
-
         int i1 = this.c.d();
         for (int i2 = this.c.e(); i2 < this.c.d(); i2++) {
             if (this.c.a(i2).b != Math.floor(localVec3D1.y)) {

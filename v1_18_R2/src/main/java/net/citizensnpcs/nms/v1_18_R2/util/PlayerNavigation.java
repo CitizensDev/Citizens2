@@ -3,9 +3,7 @@ package net.citizensnpcs.nms.v1_18_R2.util;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import com.google.common.collect.ImmutableSet;
-
 import net.citizensnpcs.Settings;
 import net.citizensnpcs.nms.v1_18_R2.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;
@@ -134,6 +132,7 @@ public class PlayerNavigation extends PathNavigation {
     protected boolean canUpdatePath() {
         return (this.mob.isOnGround() || isInLiquid() || this.mob.isPassenger());
     }
+
     /*
     private boolean canWalkAbove(int var0, int var1, int var2, int var3, int var4, int var5, Vec3 var6, double var7,
             double var9) {
@@ -148,7 +147,7 @@ public class PlayerNavigation extends PathNavigation {
         }
         return true;
     }
-
+    
     private boolean canWalkOn(int var0, int var1, int var2, int var3, int var4, int var5, Vec3 var6, double var7,
             double var9) {
         int var11 = var0 - var3 / 2;
@@ -176,9 +175,7 @@ public class PlayerNavigation extends PathNavigation {
             }
         }
         return true;
-    }*/
-
-    @Override
+    }*/ @Override
     public Path createPath(BlockPos var0, int var1) {
         if (this.level.getBlockState(var0).isAir()) {
             BlockPos var2 = var0.below();

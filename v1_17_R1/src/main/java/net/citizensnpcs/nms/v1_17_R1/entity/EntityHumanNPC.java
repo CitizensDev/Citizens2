@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
@@ -15,13 +14,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
@@ -91,7 +88,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     public EntityHumanNPC(MinecraftServer minecraftServer, ServerLevel world, GameProfile gameProfile, NPC npc) {
         super(minecraftServer, world, gameProfile);
         this.npc = (CitizensNPC) npc;
-
         if (npc != null) {
             skinTracker = new SkinPacketTracker(this);
             try {
@@ -177,12 +173,10 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 && SpigotUtil.checkYSafe(getY(), getBukkitEntity().getWorld())) {
             moveWithFallDamage(Vec3.ZERO);
         }
-
         Vec3 mot = getDeltaMovement();
         if (Math.abs(mot.x) < EPSILON && Math.abs(mot.y) < EPSILON && Math.abs(mot.z) < EPSILON) {
             setDeltaMovement(Vec3.ZERO);
         }
-
         if (navigating) {
             if (!navigation.isDone()) {
                 navigation.tick();
@@ -190,16 +184,13 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             moveOnCurrentHeading();
         }
         updateAI();
-
         if (isSpectator()) {
             this.noPhysics = true;
             this.onGround = false;
         }
-
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             pushEntities();
         }
-
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected())) {
             AABB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().isRemoved()) {
@@ -207,7 +198,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             } else {
                 axisalignedbb = this.getBoundingBox().inflate(1.0, 0.5, 1.0);
             }
-
             for (Entity entity : this.level.getEntities(this, axisalignedbb)) {
                 entity.playerTouch(this);
             }
@@ -322,7 +312,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         } catch (IOException e) {
             // swallow
         }
-
         AttributeInstance range = getAttribute(Attributes.FOLLOW_RANGE);
         if (range == null) {
             try {
@@ -345,14 +334,12 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
         getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3D);
         range.setBaseValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
-
         controllerJump = new PlayerControllerJump(this);
         controllerMove = new PlayerMoveControl(this);
         navigation = new PlayerNavigation(this, level);
         this.invulnerableTime = 0;
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
-
         EmptyAdvancementDataPlayer.clear(this.getAdvancements());
         NMSImpl.setAdvancement(this.getBukkitEntity(),
                 new EmptyAdvancementDataPlayer(minecraftServer.getFixerUpper(), minecraftServer.getPlayerList(),
@@ -480,9 +467,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             return;
         noPhysics = isSpectator();
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
-
         updatePackets(npc.getNavigator().isNavigating());
-
         npc.update();
     }
 
@@ -516,7 +501,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
         if (!itemChanged)
             return;
-
         Location current = getBukkitEntity().getLocation(packetLocationCache);
         List<Pair<EquipmentSlot, ItemStack>> vals = Lists.newArrayList();
         for (EquipmentSlot slot : EquipmentSlot.values()) {

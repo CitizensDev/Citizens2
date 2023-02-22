@@ -59,7 +59,6 @@ public class AllayController extends MobEntityController {
 
     public static class EntityAllayNPC extends Allay implements NPCHolder {
         private final CitizensNPC npc;
-
         private int taskId = -1;
 
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level) {
@@ -169,7 +168,7 @@ public class AllayController extends MobEntityController {
         protected InteractionResult mobInteract(Player var0, InteractionHand var1) {
             if (npc != null && npc.isProtected()) {
                 // prevent clientside prediction
-                if (taskId != -1) {
+                if (taskId == -1) {
                     taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
                         NMSImpl.sendPacket((org.bukkit.entity.Player) var0.getBukkitEntity(),
                                 new ClientboundSetEquipmentPacket(getId(),
@@ -180,7 +179,7 @@ public class AllayController extends MobEntityController {
                                                         this.getItemInHand(InteractionHand.MAIN_HAND)))));
                         ((org.bukkit.entity.Player) var0.getBukkitEntity()).updateInventory();
                         taskId = -1;
-                    }, 5);
+                    }, 2);
                 }
                 return InteractionResult.FAIL;
             }

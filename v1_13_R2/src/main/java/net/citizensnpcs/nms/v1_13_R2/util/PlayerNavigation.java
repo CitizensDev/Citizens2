@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
 import java.lang.reflect.Method;
-
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
@@ -184,7 +183,6 @@ public class PlayerNavigation extends NavigationAbstract {
     protected boolean a(Vec3D paramVec3D1, Vec3D paramVec3D2, int paramInt1, int paramInt2, int paramInt3) {
         int i = MathHelper.floor(paramVec3D1.x);
         int j = MathHelper.floor(paramVec3D1.z);
-
         double d1 = paramVec3D2.x - paramVec3D1.x;
         double d2 = paramVec3D2.z - paramVec3D1.z;
         double d3 = d1 * d1 + d2 * d2;
@@ -194,7 +192,6 @@ public class PlayerNavigation extends NavigationAbstract {
         double d4 = 1.0D / Math.sqrt(d3);
         d1 *= d4;
         d2 *= d4;
-
         paramInt1 += 2;
         paramInt3 += 2;
         if (!a(i, (int) paramVec3D1.y, j, paramInt1, paramInt2, paramInt3, paramVec3D1, d1, d2)) {
@@ -202,10 +199,8 @@ public class PlayerNavigation extends NavigationAbstract {
         }
         paramInt1 -= 2;
         paramInt3 -= 2;
-
         double d5 = 1.0D / Math.abs(d1);
         double d6 = 1.0D / Math.abs(d2);
-
         double d7 = i - paramVec3D1.x;
         double d8 = j - paramVec3D1.z;
         if (d1 >= 0.0D) {
@@ -216,7 +211,6 @@ public class PlayerNavigation extends NavigationAbstract {
         }
         d7 /= d1;
         d8 /= d2;
-
         int k = d1 < 0.0D ? -1 : 1;
         int m = d2 < 0.0D ? -1 : 1;
         int n = MathHelper.floor(paramVec3D2.x);
@@ -326,7 +320,6 @@ public class PlayerNavigation extends NavigationAbstract {
         }
         Vec3D localVec3D = this.c.a(this.a);
         Object localObject = new BlockPosition(localVec3D);
-
         this.a.getControllerMove().a(localVec3D.x,
                 this.b.getType(((BlockPosition) localObject).down()).isAir() ? localVec3D.y
                         : PathfinderNormal.a(this.b, (BlockPosition) localObject),
@@ -402,7 +395,6 @@ public class PlayerNavigation extends NavigationAbstract {
     @Override
     protected void o() {
         Vec3D localVec3D1 = c();
-
         int i1 = this.c.d();
         for (int i2 = this.c.e(); i2 < this.c.d(); i2++) {
             if (this.c.a(i2).b != Math.floor(localVec3D1.y)) {
@@ -461,7 +453,6 @@ public class PlayerNavigation extends NavigationAbstract {
             return this.c;
         }
         this.q = paramBlockPosition;
-
         float f1 = j();
         try {
             this.b.methodProfiler.enter("pathfind");
@@ -474,7 +465,6 @@ public class PlayerNavigation extends NavigationAbstract {
         }
         BlockPosition localBlockPosition = new BlockPosition(this.a);
         int i1 = (int) (f1 + 8.0F);
-
         ChunkCache localChunkCache = new ChunkCache(this.b, localBlockPosition.a(-i1, -i1, -i1),
                 localBlockPosition.a(i1, i1, i1), 0);
         PathEntity localPathEntity = this.r.a(localChunkCache, this.a, this.q, f1);
@@ -497,7 +487,6 @@ public class PlayerNavigation extends NavigationAbstract {
         for (int i1 = 0; i1 < this.c.d(); i1++) {
             PathPoint localPathPoint = this.c.a(i1);
             Object localObject = i1 + 1 < this.c.d() ? this.c.a(i1 + 1) : null;
-
             IBlockData localIBlockData = this.b
                     .getType(new BlockPosition(localPathPoint.a, localPathPoint.b, localPathPoint.c));
             Block localBlock = localIBlockData.getBlock();
@@ -557,8 +546,6 @@ public class PlayerNavigation extends NavigationAbstract {
     }
 
     private static final Method GET_MONOTONIC_MILLIS = NMS.getMethod(SystemUtils.class, "b", false);
-
     private static final Method PROFILER_ENTER = NMS.getMethod(MethodProfiler.class, "a", false, String.class);
-
     private static final Method PROFILER_EXIT = NMS.getMethod(MethodProfiler.class, "e", false);
 }

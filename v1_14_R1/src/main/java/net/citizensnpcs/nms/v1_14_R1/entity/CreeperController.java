@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftCreeper;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.entity.Creeper;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
@@ -57,7 +56,6 @@ public class CreeperController extends MobEntityController {
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHolder {
         private boolean allowPowered;
-
         private final CitizensNPC npc;
 
         public EntityCreeperNPC(EntityTypes<? extends EntityCreeper> types, World world) {

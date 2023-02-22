@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftCat;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.entity.Cat;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
@@ -56,8 +55,6 @@ public class CatController extends MobEntityController {
     }
 
     public static class EntityCatNPC extends EntityCat implements NPCHolder {
-        boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityCatNPC(EntityTypes<? extends EntityCat> types, World world) {
@@ -76,12 +73,11 @@ public class CatController extends MobEntityController {
 
         @Override
         public void a(DataWatcherObject<?> datawatcherobject) {
-            if (npc != null && !calledNMSHeight) {
-                calledNMSHeight = true;
-                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
-                calledNMSHeight = false;
+            if (npc == null) {
+                super.a(datawatcherobject);
+                return;
             }
-            super.a(datawatcherobject);
+            NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
         @Override

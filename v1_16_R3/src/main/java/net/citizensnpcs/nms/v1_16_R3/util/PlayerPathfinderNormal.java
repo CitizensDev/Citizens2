@@ -1,12 +1,10 @@
 package net.citizensnpcs.nms.v1_16_R3.util;
 
 import java.util.EnumSet;
-
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_16_R3.entity.EntityHumanNPC;
 import net.minecraft.server.v1_16_R3.AxisAlignedBB;
@@ -38,7 +36,6 @@ import net.minecraft.server.v1_16_R3.VoxelShape;
 
 public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     protected float j;
-
     private final Long2ObjectMap<PathType> k = new Long2ObjectOpenHashMap();
     private final Object2BooleanMap<AxisAlignedBB> l = new Object2BooleanOpenHashMap();
 

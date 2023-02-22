@@ -7,7 +7,6 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftDonkey;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.entity.Donkey;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
@@ -54,11 +53,7 @@ public class HorseDonkeyController extends MobEntityController {
 
     public static class EntityHorseDonkeyNPC extends EntityHorseDonkey implements NPCHolder {
         private double baseMovementSpeed;
-
-        boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityHorseDonkeyNPC(EntityTypes<? extends EntityHorseDonkey> types, World world) {
@@ -81,13 +76,11 @@ public class HorseDonkeyController extends MobEntityController {
 
         @Override
         public void a(DataWatcherObject<?> datawatcherobject) {
-            if (npc != null && !calledNMSHeight) {
-                calledNMSHeight = true;
-                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
-                calledNMSHeight = false;
+            if (npc == null) {
+                super.a(datawatcherobject);
+                return;
             }
-
-            super.a(datawatcherobject);
+            NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
         @Override
@@ -249,7 +242,6 @@ public class HorseDonkeyController extends MobEntityController {
     }
 
     public static class HorseDonkeyNPC extends CraftDonkey implements ForwardingNPCHolder {
-
         public HorseDonkeyNPC(EntityHorseDonkeyNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
         }

@@ -1,11 +1,8 @@
 package net.citizensnpcs.nms.v1_15_R1.util;
 
 import java.util.EnumMap;
-
 import org.bukkit.entity.Player;
-
 import com.google.common.collect.Maps;
-
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
 import net.minecraft.server.v1_15_R1.EnumHand;
@@ -67,7 +64,6 @@ public class PlayerAnimationImpl {
     }
 
     private static EnumMap<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);
-
     static {
         DEFAULTS.put(PlayerAnimation.ARM_SWING, 0);
         DEFAULTS.put(PlayerAnimation.HURT, 1);

@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftSlime;
 import org.bukkit.entity.Slime;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
@@ -46,7 +45,6 @@ public class SlimeController extends MobEntityController {
 
     public static class EntitySlimeNPC extends EntitySlime implements NPCHolder {
         private final CitizensNPC npc;
-
         private ControllerMove oldMoveController;
 
         public EntitySlimeNPC(EntityTypes<? extends EntitySlime> types, World world) {
@@ -221,7 +219,6 @@ public class SlimeController extends MobEntityController {
     }
 
     public static class SlimeNPC extends CraftSlime implements ForwardingNPCHolder {
-
         public SlimeNPC(EntitySlimeNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
         }

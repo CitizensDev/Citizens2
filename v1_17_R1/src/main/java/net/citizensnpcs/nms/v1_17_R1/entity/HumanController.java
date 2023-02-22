@@ -1,15 +1,12 @@
 package net.citizensnpcs.nms.v1_17_R1.entity;
 
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
 import com.mojang.authlib.GameProfile;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -32,24 +29,19 @@ public class HumanController extends AbstractEntityController {
         String coloredName = npc.getFullName();
         String name = coloredName.length() > 16 ? coloredName.substring(0, 16) : coloredName;
         UUID uuid = npc.getUniqueId();
-
         String teamName = Util.getTeamName(uuid);
         if (npc.requiresNameHologram()) {
             name = teamName;
         }
-
         if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             npc.getOrAddTrait(ScoreboardTrait.class).createTeam(teamName);
         }
-
         final GameProfile profile = new GameProfile(uuid, name);
         final EntityHumanNPC handle = new EntityHumanNPC(MinecraftServer.getServer(), nmsWorld, profile, npc);
-
         Skin skin = handle.getSkinTracker().getSkin();
         if (skin != null) {
             skin.apply(handle);
         }
-
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
             @Override
             public void run() {
@@ -61,9 +53,7 @@ public class HumanController extends AbstractEntityController {
                 NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
             }
         }, 20);
-
         handle.getBukkitEntity().setSleepingIgnored(true);
-
         return handle.getBukkitEntity();
     }
 

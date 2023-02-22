@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_10_R1.util;
 
 import java.util.EnumSet;
 import java.util.HashSet;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_10_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_10_R1.AxisAlignedBB;
@@ -89,7 +88,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             boolean paramBoolean2) {
         EnumSet<PathType> localEnumSet = EnumSet.noneOf(PathType.class);
         Object localObject1 = PathType.BLOCKED;
-
         double d = paramEntityInsentient.width / 2.0D;
         BlockPosition localBlockPosition = new BlockPosition(paramEntityInsentient);
         for (int i = paramInt1; i < paramInt1 + paramInt4; i++) {
@@ -147,7 +145,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             boolean paramBoolean2) {
         EnumSet<PathType> localEnumSet = EnumSet.noneOf(PathType.class);
         Object localObject1 = PathType.BLOCKED;
-
         double d = paramEntityInsentient.width / 2.0D;
         BlockPosition localBlockPosition = new BlockPosition(paramEntityInsentient);
         for (int i = paramInt1; i < paramInt1 + paramInt4; i++) {
@@ -202,7 +199,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     private PathPoint a(int paramInt1, int paramInt2, int paramInt3, int paramInt4, double paramDouble,
             EnumDirection paramEnumDirection) {
         PathPoint localPathPoint = null;
-
         BlockPosition localBlockPosition1 = new BlockPosition(paramInt1, paramInt2, paramInt3);
         BlockPosition localBlockPosition2 = localBlockPosition1.down();
         double d1 = paramInt2 - (1.0D - this.a.getType(localBlockPosition2).c(this.a, localBlockPosition2).e);
@@ -227,11 +223,9 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     && ((localPathPoint.m == PathType.OPEN) || (localPathPoint.m == PathType.WALKABLE))) {
                 double d3 = paramInt1 - paramEnumDirection.getAdjacentX() + 0.5D;
                 double d4 = paramInt3 - paramEnumDirection.getAdjacentZ() + 0.5D;
-
                 AxisAlignedBB localAxisAlignedBB1 = new AxisAlignedBB(d3 - d2, paramInt2 + 0.001D, d4 - d2, d3 + d2,
                         paramInt2 + this.b.length, d4 + d2);
                 AxisAlignedBB localAxisAlignedBB2 = this.a.getType(localBlockPosition1).c(this.a, localBlockPosition1);
-
                 AxisAlignedBB localAxisAlignedBB3 = localAxisAlignedBB1.a(0.0D, localAxisAlignedBB2.e - 0.002D, 0.0D);
                 if (this.b.world.b(localAxisAlignedBB3)) {
                     localPathPoint = null;
@@ -268,7 +262,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     public int a(PathPoint[] paramArrayOfPathPoint, PathPoint paramPathPoint1, PathPoint paramPathPoint2,
             float paramFloat) {
         int i = 0;
-
         int k = 0;
         PathType localPathType = a(this.b, paramPathPoint1.a, paramPathPoint1.b + 1, paramPathPoint1.c);
         if (this.b.a(localPathType) >= 0.0F) {
@@ -277,7 +270,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         BlockPosition localBlockPosition = new BlockPosition(paramPathPoint1.a, paramPathPoint1.b, paramPathPoint1.c)
                 .down();
         double d = paramPathPoint1.b - (1.0D - this.a.getType(localBlockPosition).c(this.a, localBlockPosition).e);
-
         PathPoint localPathPoint1 = a(paramPathPoint1.a, paramPathPoint1.b, paramPathPoint1.c + 1, k, d,
                 EnumDirection.SOUTH);
         PathPoint localPathPoint2 = a(paramPathPoint1.a - 1, paramPathPoint1.b, paramPathPoint1.c, k, d,
@@ -391,7 +383,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         IBlockData localIBlockData = paramIBlockAccess.getType(localBlockPosition);
         Block localBlock1 = localIBlockData.getBlock();
         Material localMaterial = localIBlockData.getMaterial();
-
         PathType localPathType1 = PathType.BLOCKED;
         if ((localBlock1 == Blocks.TRAPDOOR) || (localBlock1 == Blocks.IRON_TRAPDOOR)
                 || (localBlock1 == Blocks.WATERLILY)) {

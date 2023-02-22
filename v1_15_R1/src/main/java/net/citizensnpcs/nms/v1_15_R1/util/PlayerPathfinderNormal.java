@@ -3,9 +3,7 @@ package net.citizensnpcs.nms.v1_15_R1.util;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import com.google.common.collect.Sets;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_15_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_15_R1.AxisAlignedBB;
@@ -72,20 +70,16 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         if (var4 == PathType.DOOR_WOOD_CLOSED && var1 && var2) {
             var4 = PathType.WALKABLE;
         }
-
         if (var4 == PathType.DOOR_OPEN && !var2) {
             var4 = PathType.BLOCKED;
         }
-
         if (var4 == PathType.RAIL && !(var0.getType(var3).getBlock() instanceof BlockMinecartTrackAbstract)
                 && !(var0.getType(var3.down()).getBlock() instanceof BlockMinecartTrackAbstract)) {
             var4 = PathType.FENCE;
         }
-
         if (var4 == PathType.LEAVES) {
             var4 = PathType.BLOCKED;
         }
-
         return var4;
     }
 
@@ -106,18 +100,15 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         } else {
             PathType var15 = PathType.BLOCKED;
             Iterator<PathType> var17 = var10.iterator();
-
             while (var17.hasNext()) {
                 PathType var18 = var17.next();
                 if (var4.a(var18) < 0.0F) {
                     return var18;
                 }
-
                 if (var4.a(var18) >= var4.a(var15)) {
                     var15 = var18;
                 }
             }
-
             if (var11 == PathType.OPEN && var4.a(var15) == 0.0F) {
                 return PathType.OPEN;
             } else {
@@ -139,18 +130,15 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         } else {
             PathType var15 = PathType.BLOCKED;
             Iterator<PathType> var17 = var10.iterator();
-
             while (var17.hasNext()) {
                 PathType var18 = var17.next();
                 if (var4.a(var18) < 0.0F) {
                     return var18;
                 }
-
                 if (var4.a(var18) >= var4.a(var15)) {
                     var15 = var18;
                 }
             }
-
             if (var11 == PathType.OPEN && var4.a(var15) == 0.0F) {
                 return PathType.OPEN;
             } else {
@@ -172,12 +160,10 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     if (var12 == 0 && var13 == 0 && var14 == 0) {
                         var10 = var18;
                     }
-
                     var9.add(var18);
                 }
             }
         }
-
         return var10;
     }
 
@@ -196,7 +182,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 var7.l = var11;
                 var7.k = Math.max(var7.k, var12);
             }
-
             if (var11 == PathType.WALKABLE) {
                 return var7;
             } else {
@@ -217,32 +202,27 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                         }
                     }
                 }
-
                 if (var11 == PathType.WATER && !this.e()) {
                     if (this.a(this.b, var0, var1 - 1, var2) != PathType.WATER) {
                         return var7;
                     }
-
                     while (var1 > 0) {
                         --var1;
                         var11 = this.a(this.b, var0, var1, var2);
                         if (var11 != PathType.WATER) {
                             return var7;
                         }
-
                         var7 = this.a(var0, var1, var2);
                         var7.l = var11;
                         var7.k = Math.max(var7.k, this.b.a(var11));
                     }
                 }
-
                 if (var11 == PathType.OPEN) {
                     AxisAlignedBB var15 = new AxisAlignedBB(var0 - var13 + 0.5D, var1 + 0.001D, var2 - var13 + 0.5D,
                             var0 + var13 + 0.5D, var1 + this.b.getHeight(), var2 + var13 + 0.5D);
                     if (!this.a.getCubes(this.b, var15)) {
                         return null;
                     }
-
                     if (this.b.getWidth() >= 1.0F) {
                         PathType var16 = this.a(this.b, var0, var1 - 1, var2);
                         if (var16 == PathType.BLOCKED) {
@@ -252,10 +232,8 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                             return var7;
                         }
                     }
-
                     int var16 = 0;
                     int var17 = var1;
-
                     while (var11 == PathType.OPEN) {
                         --var1;
                         PathPoint var18;
@@ -265,14 +243,12 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                             var18.k = -1.0F;
                             return var18;
                         }
-
                         var18 = this.a(var0, var1, var2);
                         if (var16++ >= Setting.MC_NAVIGATION_MAX_FALL_DISTANCE.asInt()) {
                             var18.l = PathType.BLOCKED;
                             var18.k = -1.0F;
                             return var18;
                         }
-
                         var11 = this.a(this.b, var0, var1, var2);
                         var12 = this.b.a(var11);
                         if (var11 != PathType.OPEN && var12 >= 0.0F) {
@@ -281,7 +257,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                             var18.k = Math.max(var18.k, var12);
                             break;
                         }
-
                         if (var12 < 0.0F) {
                             var18.l = PathType.BLOCKED;
                             var18.k = -1.0F;
@@ -289,7 +264,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                         }
                     }
                 }
-
                 return var7;
             }
         }
@@ -322,48 +296,39 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 var3 = MathHelper.d(Math.max(1.0F, this.b.H));
             }
         }
-
         double var5 = a(this.a, (new BlockPosition(var1.a, var1.b, var1.c)));
         PathPoint var7 = this.a(var1.a, var1.b, var1.c + 1, var3, var5, EnumDirection.SOUTH);
         if (var7 != null && !var7.i && var7.k >= 0.0F) {
             var0[var2++] = var7;
         }
-
         PathPoint var8 = this.a(var1.a - 1, var1.b, var1.c, var3, var5, EnumDirection.WEST);
         if (var8 != null && !var8.i && var8.k >= 0.0F) {
             var0[var2++] = var8;
         }
-
         PathPoint var9 = this.a(var1.a + 1, var1.b, var1.c, var3, var5, EnumDirection.EAST);
         if (var9 != null && !var9.i && var9.k >= 0.0F) {
             var0[var2++] = var9;
         }
-
         PathPoint var10 = this.a(var1.a, var1.b, var1.c - 1, var3, var5, EnumDirection.NORTH);
         if (var10 != null && !var10.i && var10.k >= 0.0F) {
             var0[var2++] = var10;
         }
-
         PathPoint var11 = this.a(var1.a - 1, var1.b, var1.c - 1, var3, var5, EnumDirection.NORTH);
         if (this.a(var1, var8, var10, var11)) {
             var0[var2++] = var11;
         }
-
         PathPoint var12 = this.a(var1.a + 1, var1.b, var1.c - 1, var3, var5, EnumDirection.NORTH);
         if (this.a(var1, var9, var10, var12)) {
             var0[var2++] = var12;
         }
-
         PathPoint var13 = this.a(var1.a - 1, var1.b, var1.c + 1, var3, var5, EnumDirection.SOUTH);
         if (this.a(var1, var8, var7, var13)) {
             var0[var2++] = var13;
         }
-
         PathPoint var14 = this.a(var1.a + 1, var1.b, var1.c + 1, var3, var5, EnumDirection.SOUTH);
         if (this.a(var1, var9, var7, var14)) {
             var0[var2++] = var14;
         }
-
         return var2;
     }
 
@@ -374,13 +339,11 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         if (this.e() && this.b.isInWater()) {
             var0 = MathHelper.floor(this.b.locY());
             MutableBlockPosition varx = new MutableBlockPosition(this.b.locX(), var0, this.b.locZ());
-
             for (IBlockData var2 = this.a.getType(varx); var2.getBlock() == Blocks.WATER
                     || var2.getFluid() == FluidTypes.WATER.a(false); var2 = this.a.getType(varx)) {
                 ++var0;
                 varx.c(this.b.locX(), var0, this.b.locZ());
             }
-
             --var0;
         } else if (this.b.onGround) {
             var0 = MathHelper.floor(this.b.locY() + 0.5D);
@@ -389,10 +352,8 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     this.b); (this.a.getType(var1).isAir() || this.a.getType(var1).a(this.a, var1, PathMode.LAND))
                             && var1.getY() > 0; var1 = var1.down()) {
             }
-
             var0 = var1.up().getY();
         }
-
         var1 = new BlockPosition(this.b);
         PathType var2 = this.a(this.b, var1.getX(), var0, var1.getZ());
         if (this.b.a(var2) < 0.0F) {
@@ -402,7 +363,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             var3.add(new BlockPosition(this.b.getBoundingBox().maxX, var0, this.b.getBoundingBox().minZ));
             var3.add(new BlockPosition(this.b.getBoundingBox().maxX, var0, this.b.getBoundingBox().maxZ));
             Iterator<BlockPosition> var5 = var3.iterator();
-
             while (var5.hasNext()) {
                 BlockPosition varb = var5.next();
                 PathType var6 = this.a(this.b, varb);
@@ -411,7 +371,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 }
             }
         }
-
         return this.a(var1.getX(), var0, var1.getZ());
     }
 
@@ -424,7 +383,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     public static PathType a(IBlockAccess var0, int var1, int var2, int var3, PathType var4) {
         PooledBlockPosition var5 = PooledBlockPosition.r();
         Throwable var6 = null;
-
         try {
             for (int var7 = -1; var7 <= 1; ++var7) {
                 for (int var8 = -1; var8 <= 1; ++var8) {
@@ -459,9 +417,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     var5.close();
                 }
             }
-
         }
-
         return var4;
     }
 
@@ -476,24 +432,19 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             if (var6 == PathType.DAMAGE_FIRE || var5 == Blocks.MAGMA_BLOCK || var5 == Blocks.CAMPFIRE) {
                 var4 = PathType.DAMAGE_FIRE;
             }
-
             if (var6 == PathType.DAMAGE_CACTUS) {
                 var4 = PathType.DAMAGE_CACTUS;
             }
-
             if (var6 == PathType.DAMAGE_OTHER) {
                 var4 = PathType.DAMAGE_OTHER;
             }
-
             if (var6 == PathType.STICKY_HONEY) {
                 var4 = PathType.STICKY_HONEY;
             }
         }
-
         if (var4 == PathType.WALKABLE) {
             var4 = a(var0, var1, var2, var3, var4);
         }
-
         return var4;
     }
 
@@ -542,5 +493,4 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             return PathType.TRAPDOOR;
         }
     }
-
 }

@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPhantom;
 import org.bukkit.entity.Phantom;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
@@ -46,9 +45,7 @@ public class PhantomController extends MobEntityController {
 
     public static class EntityPhantomNPC extends EntityPhantom implements NPCHolder {
         private final CitizensNPC npc;
-
         private ControllerLook oldLookController;
-
         private ControllerMove oldMoveController;
 
         public EntityPhantomNPC(EntityTypes<? extends EntityPhantom> types, World world) {

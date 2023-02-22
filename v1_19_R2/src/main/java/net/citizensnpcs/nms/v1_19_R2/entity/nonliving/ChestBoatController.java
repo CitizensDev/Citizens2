@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftChestBoat;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_19_R2.util.ForwardingNPCHolder;
@@ -51,13 +50,13 @@ public class ChestBoatController extends MobEntityController {
 
     public static class EntityChestBoatNPC extends ChestBoat implements NPCHolder {
         private double aC;
-
         private float aD;
         private Status aE;
         private Status aF;
         private double ap;
         private double ar;
         private final CitizensNPC npc;
+
         public EntityChestBoatNPC(EntityType<? extends Boat> types, Level level) {
             this(types, level, null);
         }

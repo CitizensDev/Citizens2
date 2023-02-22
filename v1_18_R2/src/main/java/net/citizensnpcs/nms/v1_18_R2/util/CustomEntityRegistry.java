@@ -9,12 +9,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Lifecycle;
-
 import net.citizensnpcs.util.NMS;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.MappedRegistry;
@@ -204,7 +202,6 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
         if (entities.containsKey(key)) {
             return entities.get(key);
         }
-
         return wrapped.get(key);
     }
 
@@ -223,7 +220,6 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
         if (entityIds.containsKey(key)) {
             return entityIds.get(key);
         }
-
         return wrapped.getId((EntityType) key);
     }
 
@@ -232,7 +228,6 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
         if (entityClasses.containsKey(value)) {
             return entityClasses.get(value);
         }
-
         return wrapped.getKey((EntityType) value);
     }
 
@@ -246,7 +241,6 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
         if (entities.containsKey(var0)) {
             return Optional.of(entities.get(var0));
         }
-
         return this.wrapped.getOptional(var0);
     }
 

@@ -7,7 +7,6 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftSkeletonHorse;
 import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSBoundingBox;
@@ -54,11 +53,7 @@ public class HorseSkeletonController extends MobEntityController {
 
     public static class EntityHorseSkeletonNPC extends EntityHorseSkeleton implements NPCHolder {
         private double baseMovementSpeed;
-
-        boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityHorseSkeletonNPC(EntityTypes<? extends EntityHorseSkeleton> types, World world) {
@@ -82,13 +77,11 @@ public class HorseSkeletonController extends MobEntityController {
 
         @Override
         public void a(DataWatcherObject<?> datawatcherobject) {
-            if (npc != null && !calledNMSHeight) {
-                calledNMSHeight = true;
-                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
-                calledNMSHeight = false;
+            if (npc == null) {
+                super.a(datawatcherobject);
+                return;
             }
-
-            super.a(datawatcherobject);
+            NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
         @Override

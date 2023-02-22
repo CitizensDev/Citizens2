@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_15_R1.network;
 
 import java.io.IOException;
-
 import io.netty.util.concurrent.GenericFutureListener;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.minecraft.server.v1_15_R1.EnumProtocolDirection;

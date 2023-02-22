@@ -3,12 +3,10 @@ package net.citizensnpcs.nms.v1_19_R2.entity;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 import org.bukkit.entity.Entity;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSImpl;
@@ -34,16 +32,15 @@ public abstract class MobEntityController extends AbstractEntityController {
         if (entity instanceof Mob) {
             NMSImpl.clearGoals(npc, ((Mob) entity).goalSelector, ((Mob) entity).targetSelector);
         }
-        entity.absMoveTo(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
-
-        // entity.onGround isn't updated right away - we approximate here so
+        entity.absMoveTo(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch()); // entity.onGround isn't updated
+                                                                                       // right away - we approximate
+                                                                                       // here so
         // that things like pathfinding still work *immediately* after spawn.
         org.bukkit.Material beneath = at.getBlock().getRelative(BlockFace.DOWN).getType();
         if (beneath.isSolid()) {
             entity.setOnGround(true);
         }
         entity.setUUID(npc.getUniqueId());
-
         if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             npc.getOrAddTrait(ScoreboardTrait.class).createTeam(npc.getUniqueId().toString());
         }

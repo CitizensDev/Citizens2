@@ -33,7 +33,6 @@ public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
         this.a = paramIBlockAccess;
         this.b = paramEntityInsentient;
         this.c.c();
-
         this.d = MathHelper.d(paramEntityInsentient.width + 1.0F);
         this.e = MathHelper.d(paramEntityInsentient.length + 1.0F);
         this.f = MathHelper.d(paramEntityInsentient.width + 1.0F);

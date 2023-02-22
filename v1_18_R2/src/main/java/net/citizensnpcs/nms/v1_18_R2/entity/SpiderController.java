@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftSpider;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSBoundingBox;
@@ -207,7 +206,6 @@ public class SpiderController extends MobEntityController {
         public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
             return NMSImpl.fluidPush(npc, this, () -> super.updateFluidHeightAndDoFluidPushing(tagkey, d0));
         }
-
     }
 
     public static class SpiderNPC extends CraftSpider implements ForwardingNPCHolder {

@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R3.util;
 
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
-
 import net.citizensnpcs.util.AbstractBlockBreaker;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.EnchantmentManager;
@@ -87,11 +86,9 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
                 }
                 f *= f1;
             }
-
             if (handle.a(TagsFluid.WATER) && !EnchantmentManager.h(handle)) {
                 f /= 5.0F;
             }
-
         }
         if (!getHandle().isOnGround()) {
             f /= 5.0F;

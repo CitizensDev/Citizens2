@@ -7,7 +7,6 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftMule;
 import org.bukkit.entity.Mule;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSImpl;
@@ -46,9 +45,7 @@ public class HorseMuleController extends MobEntityController {
 
     public static class EntityHorseMuleNPC extends EntityHorseMule implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityHorseMuleNPC(World world) {
@@ -71,13 +68,11 @@ public class HorseMuleController extends MobEntityController {
 
         @Override
         public void a(boolean flag) {
-            float oldw = width;
-            float oldl = length;
-            super.a(flag);
-            if (oldw != width || oldl != length) {
-                this.setPosition(locX - 0.01, locY, locZ - 0.01);
-                this.setPosition(locX + 0.01, locY, locZ + 0.01);
+            if (npc == null) {
+                super.a(flag);
+                return;
             }
+            NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
         @Override

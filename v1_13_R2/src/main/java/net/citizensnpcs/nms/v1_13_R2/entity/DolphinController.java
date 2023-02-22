@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_13_R2.entity.CraftDolphin;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
 import org.bukkit.entity.Dolphin;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
@@ -55,7 +54,6 @@ public class DolphinController extends MobEntityController {
 
     public static class EntityDolphinNPC extends EntityDolphin implements NPCHolder {
         private boolean inProtectedTick;
-
         private final CitizensNPC npc;
 
         public EntityDolphinNPC(World world) {

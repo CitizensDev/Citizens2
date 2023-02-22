@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_15_R1.util;
 
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
 import net.citizensnpcs.nms.v1_15_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_15_R1.ChunkCache;
 import net.minecraft.server.v1_15_R1.MathHelper;
@@ -71,5 +70,4 @@ public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
     public boolean e() {
         return this.i;
     }
-
 }

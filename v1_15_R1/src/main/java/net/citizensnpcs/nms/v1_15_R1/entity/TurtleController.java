@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftTurtle;
 import org.bukkit.entity.Turtle;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
@@ -47,9 +46,7 @@ public class TurtleController extends MobEntityController {
 
     public static class EntityTurtleNPC extends EntityTurtle implements NPCHolder {
         private final CitizensNPC npc;
-
         private ControllerJump oldJumpController;
-
         private ControllerMove oldMoveController;
 
         public EntityTurtleNPC(EntityTypes<? extends EntityTurtle> types, World world) {

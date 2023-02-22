@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_18_R2.util;
 
 import java.util.EnumSet;
-
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
@@ -509,5 +508,4 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
         return (var0.is(BlockTags.FIRE) || var0.is(Blocks.LAVA) || var0.is(Blocks.MAGMA_BLOCK)
                 || CampfireBlock.isLitCampfire(var0) || var0.is(Blocks.LAVA_CAULDRON));
     }
-
 }

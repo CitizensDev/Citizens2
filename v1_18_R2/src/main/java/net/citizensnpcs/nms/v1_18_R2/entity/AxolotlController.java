@@ -5,9 +5,7 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftAxolotl;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.util.Vector;
-
 import com.mojang.serialization.Dynamic;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSBoundingBox;
@@ -59,7 +57,6 @@ public class AxolotlController extends MobEntityController {
 
     public static class EntityAxolotlNPC extends Axolotl implements NPCHolder {
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
 
         public EntityAxolotlNPC(EntityType<? extends Axolotl> types, Level level) {

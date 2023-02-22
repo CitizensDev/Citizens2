@@ -1,12 +1,9 @@
 package net.citizensnpcs.nms.v1_17_R1.util;
 
 import java.util.EnumMap;
-
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-
 import com.google.common.collect.Maps;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.network.protocol.Packet;

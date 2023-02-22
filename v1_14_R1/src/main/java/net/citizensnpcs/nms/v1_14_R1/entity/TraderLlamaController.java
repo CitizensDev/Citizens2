@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
 import java.lang.invoke.MethodHandle;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
@@ -9,7 +8,6 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftTraderLlama;
 import org.bukkit.entity.TraderLlama;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
@@ -52,8 +50,6 @@ public class TraderLlamaController extends MobEntityController {
     }
 
     public static class EntityTraderLlamaNPC extends EntityLlamaTrader implements NPCHolder {
-        boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityTraderLlamaNPC(EntityTypes<? extends EntityLlamaTrader> types, World world) {
@@ -76,13 +72,11 @@ public class TraderLlamaController extends MobEntityController {
 
         @Override
         public void a(DataWatcherObject<?> datawatcherobject) {
-            if (npc != null && !calledNMSHeight) {
-                calledNMSHeight = true;
-                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
-                calledNMSHeight = false;
+            if (npc == null) {
+                super.a(datawatcherobject);
+                return;
             }
-
-            super.a(datawatcherobject);
+            NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
         @Override

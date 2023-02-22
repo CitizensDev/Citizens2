@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_8_R3.util;
 
 import java.util.List;
-
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
 import net.minecraft.server.v1_8_R3.AttributeInstance;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
@@ -41,7 +40,6 @@ public class PlayerNavigation extends NavigationAbstract {
         this.c = world;
         this.a = entityinsentient.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         this.a.setValue(24);
-
         this.s = new PlayerPathfinderNormal();
         this.s.a(true);
         this.j = new PlayerPathfinder(this.s);
@@ -62,7 +60,6 @@ public class PlayerNavigation extends NavigationAbstract {
         this.c.methodProfiler.a("pathfind");
         BlockPosition localBlockPosition = new BlockPosition(this.b);
         int k = (int) (f1 + 8.0F);
-
         ChunkCache localChunkCache = new ChunkCache(this.c, localBlockPosition.a(-k, -k, -k),
                 localBlockPosition.a(k, k, k), 0);
         PathEntity localPathEntity = this.j.a(localChunkCache, this.b, paramBlockPosition, f1);
@@ -95,7 +92,6 @@ public class PlayerNavigation extends NavigationAbstract {
         this.c.methodProfiler.a("pathfind");
         BlockPosition localBlockPosition = new BlockPosition(this.b).up();
         int k = (int) (f1 + 16.0F);
-
         ChunkCache localChunkCache = new ChunkCache(this.c, localBlockPosition.a(-k, -k, -k),
                 localBlockPosition.a(k, k, k), 0);
         PathEntity localPathEntity = this.j.a(localChunkCache, this.b, paramEntity, f1);
@@ -176,7 +172,6 @@ public class PlayerNavigation extends NavigationAbstract {
     protected boolean a(Vec3D paramVec3D1, Vec3D paramVec3D2, int paramInt1, int paramInt2, int paramInt3) {
         int i = MathHelper.floor(paramVec3D1.a);
         int j = MathHelper.floor(paramVec3D1.c);
-
         double d1 = paramVec3D2.a - paramVec3D1.a;
         double d2 = paramVec3D2.c - paramVec3D1.c;
         double d3 = d1 * d1 + d2 * d2;
@@ -186,7 +181,6 @@ public class PlayerNavigation extends NavigationAbstract {
         double d4 = 1.0D / Math.sqrt(d3);
         d1 *= d4;
         d2 *= d4;
-
         paramInt1 += 2;
         paramInt3 += 2;
         if (!a(i, (int) paramVec3D1.b, j, paramInt1, paramInt2, paramInt3, paramVec3D1, d1, d2)) {
@@ -194,10 +188,8 @@ public class PlayerNavigation extends NavigationAbstract {
         }
         paramInt1 -= 2;
         paramInt3 -= 2;
-
         double d5 = 1.0D / Math.abs(d1);
         double d6 = 1.0D / Math.abs(d2);
-
         double d7 = i * 1 - paramVec3D1.a;
         double d8 = j * 1 - paramVec3D1.c;
         if (d1 >= 0.0D) {
@@ -208,7 +200,6 @@ public class PlayerNavigation extends NavigationAbstract {
         }
         d7 /= d1;
         d8 /= d2;
-
         int k = d1 < 0.0D ? -1 : 1;
         int m = d2 < 0.0D ? -1 : 1;
         int n = MathHelper.floor(paramVec3D2.a);
@@ -352,7 +343,6 @@ public class PlayerNavigation extends NavigationAbstract {
     @Override
     protected void l() {
         Vec3D localVec3D1 = c();
-
         int k = this.d.d();
         for (int m = this.d.e(); m < this.d.d(); m++) {
             if (this.d.a(m).b != (int) localVec3D1.b) {

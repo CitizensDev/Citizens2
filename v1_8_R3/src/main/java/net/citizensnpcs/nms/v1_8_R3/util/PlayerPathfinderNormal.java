@@ -115,7 +115,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     public int a(PathPoint[] paramArrayOfPathPoint, Entity paramEntity, PathPoint paramPathPoint1,
             PathPoint paramPathPoint2, float paramFloat) {
         int k = 0;
-
         int m = 0;
         if (a(paramEntity, paramPathPoint1.a, paramPathPoint1.b + 1, paramPathPoint1.c) == 1) {
             m = 1;
@@ -168,7 +167,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             boolean paramBoolean3) {
         int k = 0;
         BlockPosition localBlockPosition = new BlockPosition(paramEntity);
-
         BlockPosition.MutableBlockPosition localMutableBlockPosition = new BlockPosition.MutableBlockPosition();
         for (int m = paramInt1; m < paramInt1 + paramInt4; m++) {
             for (int n = paramInt2; n < paramInt2 + paramInt5; n++) {

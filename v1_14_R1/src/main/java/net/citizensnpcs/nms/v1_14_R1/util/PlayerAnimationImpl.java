@@ -1,11 +1,8 @@
 package net.citizensnpcs.nms.v1_14_R1.util;
 
 import java.util.EnumMap;
-
 import org.bukkit.entity.Player;
-
 import com.google.common.collect.Maps;
-
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.server.v1_14_R1.EntityPlayer;
 import net.minecraft.server.v1_14_R1.EnumHand;

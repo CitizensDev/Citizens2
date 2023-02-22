@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftWitherSkeleton;
 import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;

@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftTadpole;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSBoundingBox;
@@ -52,8 +51,8 @@ public class TadpoleController extends MobEntityController {
 
     public static class EntityTadpoleNPC extends Tadpole implements NPCHolder {
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
+
         public EntityTadpoleNPC(EntityType<? extends Tadpole> types, Level level) {
             this(types, level, null);
         }

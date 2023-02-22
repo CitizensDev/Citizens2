@@ -7,12 +7,10 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Lifecycle;
-
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_16_R3.*;
 
@@ -36,7 +34,6 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
         if (entityIds.containsKey(key)) {
             return entityIds.get(key);
         }
-
         return wrapped.a((EntityTypes) key);
     }
 
@@ -87,7 +84,6 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
         if (entities.containsKey(key)) {
             return entities.get(key);
         }
-
         return wrapped.get(key);
     }
 
@@ -96,7 +92,6 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
         if (entityClasses.containsKey(value)) {
             return entityClasses.get(value);
         }
-
         return wrapped.getKey((EntityTypes) value);
     }
 
@@ -105,7 +100,6 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
         if (entities.containsKey(var0)) {
             return Optional.of(entities.get(var0));
         }
-
         return this.wrapped.getOptional(var0);
     }
 

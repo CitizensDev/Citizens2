@@ -8,14 +8,10 @@
 		<artifactId>citizens-parent</artifactId>
 		<version>2.0.30-SNAPSHOT</version>
 	</parent>
-	<artifactId>citizens-v1_10_R1</artifactId>
-
-	<properties>
+	<artifactId>citizens-v1_10_R1</artifactId>	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<craftbukkit.version>1.10.2-R0.1-SNAPSHOT</craftbukkit.version>
-	</properties>
-
-	<dependencies>
+	</properties>	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>citizens-main</artifactId>
@@ -30,13 +26,9 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-	</dependencies>
-
-	<build>
+	</dependencies>	<build>
 		<defaultGoal>clean package install</defaultGoal>
-		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-
-		<plugins>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -45,9 +37,7 @@
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
-			</plugin>
-
-            <plugin>
+			</plugin>            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>3.0.0</version>
@@ -63,9 +53,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.2.0</version>
-			</plugin>
-
-			<plugin>
+			</plugin>			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.3.0</version>

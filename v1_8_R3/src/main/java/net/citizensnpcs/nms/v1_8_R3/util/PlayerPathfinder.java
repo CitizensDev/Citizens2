@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_8_R3.util;
 
 import java.lang.reflect.Field;
-
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.Entity;
@@ -31,10 +30,8 @@ public class PlayerPathfinder {
         } catch (IllegalAccessException e1) {
             e1.printStackTrace();
         }
-
         this.a.a();
         this.a.a(paramPathPoint1);
-
         Object localObject = paramPathPoint1;
         while (!this.a.e()) {
             PathPoint localPathPoint1 = this.a.c();
@@ -45,7 +42,6 @@ public class PlayerPathfinder {
                 localObject = localPathPoint1;
             }
             localPathPoint1.i = true;
-
             int i = this.c.a(this.b, paramEntity, localPathPoint1, paramPathPoint2, paramFloat);
             for (int j = 0; j < i; j++) {
                 PathPoint localPathPoint2 = this.b[j];
@@ -89,9 +85,7 @@ public class PlayerPathfinder {
         this.c.a(paramIBlockAccess, paramEntity);
         PathPoint localPathPoint1 = this.c.a(paramEntity);
         PathPoint localPathPoint2 = this.c.a(paramEntity, paramDouble1, paramDouble2, paramDouble3);
-
         PathEntity localPathEntity = a(paramEntity, localPathPoint1, localPathPoint2, paramFloat);
-
         this.c.a();
         return localPathEntity;
     }

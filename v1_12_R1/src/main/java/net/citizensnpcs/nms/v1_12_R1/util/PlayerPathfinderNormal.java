@@ -2,9 +2,7 @@ package net.citizensnpcs.nms.v1_12_R1.util;
 
 import java.util.EnumSet;
 import java.util.HashSet;
-
 import com.google.common.collect.Sets;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_12_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_12_R1.AxisAlignedBB;
@@ -65,7 +63,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             }
         }
         localPathType1 = a(paramIBlockAccess, paramInt1, paramInt2, paramInt3, localPathType1);
-
         return localPathType1;
     }
 
@@ -74,9 +71,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             boolean paramBoolean2) {
         EnumSet<PathType> localEnumSet = EnumSet.noneOf(PathType.class);
         PathType localPathType1 = PathType.BLOCKED;
-
         BlockPosition localBlockPosition = new BlockPosition(paramEntityInsentient);
-
         localPathType1 = a(paramIBlockAccess, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6,
                 paramBoolean1, paramBoolean2, localEnumSet, localPathType1, localBlockPosition);
         if (localEnumSet.contains(PathType.FENCE)) {
@@ -103,9 +98,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             boolean paramBoolean2) {
         EnumSet<PathType> localEnumSet = EnumSet.noneOf(PathType.class);
         PathType localPathType1 = PathType.BLOCKED;
-
         BlockPosition localBlockPosition = new BlockPosition(paramEntityInsentient);
-
         localPathType1 = a(paramIBlockAccess, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6,
                 paramBoolean1, paramBoolean2, localEnumSet, localPathType1, localBlockPosition);
         if (localEnumSet.contains(PathType.FENCE)) {
@@ -135,7 +128,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     int n = i + paramInt1;
                     int i1 = k + paramInt2;
                     int i2 = m + paramInt3;
-
                     PathType localPathType = a(paramIBlockAccess, n, i1, i2);
                     if ((localPathType == PathType.DOOR_WOOD_CLOSED) && (paramBoolean1) && (paramBoolean2)) {
                         localPathType = PathType.WALKABLE;
@@ -187,7 +179,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     public int a(PathPoint[] paramArrayOfPathPoint, PathPoint paramPathPoint1, PathPoint paramPathPoint2,
             float paramFloat) {
         int i = 0;
-
         int k = 0;
         PathType localPathType = pa(this.b, paramPathPoint1.a, paramPathPoint1.b + 1, paramPathPoint1.c);
         if (this.b.a(localPathType) >= 0.0F) {
@@ -196,7 +187,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         BlockPosition localBlockPosition = new BlockPosition(paramPathPoint1.a, paramPathPoint1.b, paramPathPoint1.c)
                 .down();
         double d = paramPathPoint1.b - (1.0D - this.a.getType(localBlockPosition).e(this.a, localBlockPosition).e);
-
         PathPoint localPathPoint1 = pa(paramPathPoint1.a, paramPathPoint1.b, paramPathPoint1.c + 1, k, d,
                 EnumDirection.SOUTH);
         PathPoint localPathPoint2 = pa(paramPathPoint1.a - 1, paramPathPoint1.b, paramPathPoint1.c, k, d,
@@ -317,7 +307,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     private PathPoint pa(int paramInt1, int paramInt2, int paramInt3, int paramInt4, double paramDouble,
             EnumDirection paramEnumDirection) {
         PathPoint localPathPoint = null;
-
         BlockPosition localBlockPosition1 = new BlockPosition(paramInt1, paramInt2, paramInt3);
         BlockPosition localBlockPosition2 = localBlockPosition1.down();
         double d1 = paramInt2 - (1.0D - this.a.getType(localBlockPosition2).e(this.a, localBlockPosition2).e);
@@ -325,7 +314,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             return null;
         }
         PathType localPathType1 = pa(this.b, paramInt1, paramInt2, paramInt3);
-
         float f = this.b.a(localPathType1);
         double d2 = this.b.width / 2.0D;
         if (f >= 0.0F) {
@@ -344,11 +332,9 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     && (this.b.width < 1.0F)) {
                 double d3 = paramInt1 - paramEnumDirection.getAdjacentX() + 0.5D;
                 double d4 = paramInt3 - paramEnumDirection.getAdjacentZ() + 0.5D;
-
                 AxisAlignedBB localAxisAlignedBB1 = new AxisAlignedBB(d3 - d2, paramInt2 + 0.001D, d4 - d2, d3 + d2,
                         paramInt2 + this.b.length, d4 + d2);
                 AxisAlignedBB localAxisAlignedBB2 = this.a.getType(localBlockPosition1).e(this.a, localBlockPosition1);
-
                 AxisAlignedBB localAxisAlignedBB3 = localAxisAlignedBB1.b(0.0D, localAxisAlignedBB2.e - 0.002D, 0.0D);
                 if (this.b.world.a(localAxisAlignedBB3)) {
                     localPathPoint = null;

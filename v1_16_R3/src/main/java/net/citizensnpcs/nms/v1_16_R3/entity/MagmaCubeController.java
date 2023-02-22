@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMagmaCube;
 import org.bukkit.entity.MagmaCube;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSBoundingBox;
@@ -46,7 +45,6 @@ public class MagmaCubeController extends MobEntityController {
 
     public static class EntityMagmaCubeNPC extends EntityMagmaCube implements NPCHolder {
         private final CitizensNPC npc;
-
         private ControllerMove oldMoveController;
 
         public EntityMagmaCubeNPC(EntityTypes<? extends EntityMagmaCube> types, World world) {

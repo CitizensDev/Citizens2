@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftSquid;
 import org.bukkit.entity.Squid;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
@@ -197,7 +196,6 @@ public class SquidController extends MobEntityController {
     }
 
     public static class SquidNPC extends CraftSquid implements ForwardingNPCHolder {
-
         public SquidNPC(EntitySquidNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
         }

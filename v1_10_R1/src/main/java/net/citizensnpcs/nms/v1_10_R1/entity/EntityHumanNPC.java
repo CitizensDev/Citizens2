@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -14,10 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
@@ -78,7 +75,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
         super(minecraftServer, world, gameProfile, playerInteractManager);
-
         this.npc = (CitizensNPC) npc;
         if (npc != null) {
             skinTracker = new SkinPacketTracker(this);
@@ -259,20 +255,16 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         } catch (IOException e) {
             // swallow
         }
-
         AttributeInstance range = getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         if (range == null) {
             range = getAttributeMap().b(GenericAttributes.FOLLOW_RANGE);
         }
         range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
-
         controllerJump = new PlayerControllerJump(this);
         controllerMove = new PlayerControllerMove(this);
         navigation = new PlayerNavigation(this, world);
         invulnerableTicks = 0;
-        NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
-
-        setSkinFlags((byte) 0xFF);
+        NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing setSkinFlags((byte) 0xFF);
     }
 
     @Override
@@ -309,13 +301,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             }
             moveOnCurrentHeading();
         }
-
         updateAI();
-
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             cs();
         }
-
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected())) {
             AxisAlignedBB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().dead) {
@@ -323,7 +312,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             } else {
                 axisalignedbb = this.getBoundingBox().grow(1.0, 0.5, 1.0);
             }
-
             for (Entity entity : this.world.getEntities(this, axisalignedbb)) {
                 if (!entity.dead) {
                     entity.d(this);
@@ -339,9 +327,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return;
         this.noclip = isSpectator();
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", bukkitEntity);
-
         updatePackets(npc.getNavigator().isNavigating());
-
         npc.update();
     }
 
@@ -375,7 +361,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     private void moveWithFallDamage(float mx, float my) {
         double y = this.locY;
-
         g(mx, my);
         if (!npc.isProtected()) {
             a(this.locY - y, onGround);

@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPillager;
 import org.bukkit.entity.Pillager;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
@@ -42,8 +41,6 @@ public class PillagerController extends MobEntityController {
     }
 
     public static class EntityPillagerNPC extends EntityPillager implements NPCHolder {
-        boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityPillagerNPC(EntityTypes<? extends EntityPillager> types, World world) {
@@ -62,12 +59,11 @@ public class PillagerController extends MobEntityController {
 
         @Override
         public void a(DataWatcherObject<?> datawatcherobject) {
-            if (npc != null && !calledNMSHeight) {
-                calledNMSHeight = true;
-                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
-                calledNMSHeight = false;
+            if (npc == null) {
+                super.a(datawatcherobject);
+                return;
             }
-            super.a(datawatcherobject);
+            NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
         @Override

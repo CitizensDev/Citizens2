@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftWarden;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSBoundingBox;
@@ -94,7 +93,6 @@ public class WardenController extends MobEntityController {
                 return;
             }
             NMSImpl.updateMinecraftAIState(npc, this);
-
             if (npc.useMinecraftAI()) {
                 super.customServerAiStep();
             } else {

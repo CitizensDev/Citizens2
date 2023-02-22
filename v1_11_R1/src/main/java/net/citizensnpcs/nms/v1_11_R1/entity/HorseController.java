@@ -7,7 +7,6 @@ import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftHorse;
 import org.bukkit.entity.Horse;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_11_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_11_R1.util.NMSImpl;
@@ -63,13 +62,11 @@ public class HorseController extends MobEntityController {
 
         @Override
         public void a(boolean flag) {
-            float oldw = width;
-            float oldl = length;
-            super.a(flag);
-            if (oldw != width || oldl != length) {
-                this.setPosition(locX - 0.01, locY, locZ - 0.01);
-                this.setPosition(locX + 0.01, locY, locZ + 0.01);
+            if (npc == null) {
+                super.a(flag);
+                return;
             }
+            NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
         @Override

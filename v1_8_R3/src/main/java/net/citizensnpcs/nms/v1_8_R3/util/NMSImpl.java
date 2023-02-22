@@ -17,7 +17,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -52,7 +51,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -67,7 +65,6 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UUIDTypeAdapter;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.LocationLookup.PerPlayerMetadata;
@@ -255,18 +252,14 @@ public class NMSImpl implements NMSBridge {
             PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
             return;
         }
-
         AttributeInstance attackDamage = handle.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE);
         float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;
-
         if (target instanceof EntityLiving) {
             f += EnchantmentManager.a(handle.bA(), target.getMonsterType());
             i += EnchantmentManager.a(handle);
         }
-
         boolean flag = target.damageEntity(DamageSource.mobAttack(handle), f);
-
         if (!flag)
             return;
         if (i > 0) {
@@ -275,13 +268,10 @@ public class NMSImpl implements NMSBridge {
             handle.motX *= 0.6D;
             handle.motZ *= 0.6D;
         }
-
         int fireAspectLevel = EnchantmentManager.getFireAspectEnchantmentLevel(handle);
-
         if (fireAspectLevel > 0) {
             target.setOnFire(fireAspectLevel * 4);
         }
-
         if (ENTITY_ATTACK_A != null) {
             try {
                 ENTITY_ATTACK_A.invoke(handle, handle, target);
@@ -349,29 +339,22 @@ public class NMSImpl implements NMSBridge {
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Exception {
         if (Bukkit.isPrimaryThread())
             throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
-
         MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().aD();
-
         if (!(sessionService instanceof YggdrasilMinecraftSessionService)) {
             return sessionService.fillProfileProperties(profile, requireSecure);
         }
         YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
                 .getAuthenticationService();
-
         URL url = HttpAuthenticationService
                 .constantURL(getAuthServerBaseUrl() + UUIDTypeAdapter.fromUUID(profile.getId()));
-
         url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
-
         MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse) MAKE_REQUEST.invoke(auth,
                 url, null, MinecraftProfilePropertiesResponse.class);
         if (response == null)
             return profile;
-
         GameProfile result = new GameProfile(response.getId(), response.getName());
         result.getProperties().putAll(response.getProperties());
         profile.getProperties().putAll(response.getProperties());
-
         return result;
     }
 
@@ -754,10 +737,8 @@ public class NMSImpl implements NMSBridge {
             xDiff = to.getX() - fromLocation.getX();
             yDiff = to.getY() - fromLocation.getY();
             zDiff = to.getZ() - fromLocation.getZ();
-
             double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
             double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
-
             double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
             double pitch = Math.toDegrees(Math.acos(yDiff / distanceY)) - 90;
             if (zDiff < 0.0)
@@ -898,7 +879,6 @@ public class NMSImpl implements NMSBridge {
                 } catch (Throwable throwable) {
                     CrashReport crashreport = CrashReport.a(throwable, "Ticking player");
                     CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Player being ticked");
-
                     entity.appendEntityCrashDetails(crashreportsystemdetails);
                     throw new ReportedException(crashreport);
                 }
@@ -945,7 +925,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void removeFromWorld(org.bukkit.entity.Entity entity) {
         Preconditions.checkNotNull(entity);
-
         Entity nmsEntity = ((CraftEntity) entity).getHandle();
         nmsEntity.world.removeEntity(nmsEntity);
     }
@@ -1011,9 +990,7 @@ public class NMSImpl implements NMSBridge {
     public boolean sendTabListAdd(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
-
         EntityPlayer entity = ((CraftPlayer) listPlayer).getHandle();
-
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entity));
         return true;
@@ -1023,14 +1000,12 @@ public class NMSImpl implements NMSBridge {
     public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(skinnableNPCs);
-
         EntityPlayer[] entities = new EntityPlayer[skinnableNPCs.size()];
         int i = 0;
         for (SkinnableEntity skinnable : skinnableNPCs) {
             entities[i] = (EntityPlayer) skinnable;
             i++;
         }
-
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entities));
     }
@@ -1039,9 +1014,7 @@ public class NMSImpl implements NMSBridge {
     public void sendTabListRemove(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
-
         EntityPlayer entity = ((CraftPlayer) listPlayer).getHandle();
-
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
     }
@@ -1050,11 +1023,9 @@ public class NMSImpl implements NMSBridge {
     public void sendTeamPacket(Player recipient, Team team, int mode) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(team);
-
         if (TEAM_FIELD == null) {
             TEAM_FIELD = NMS.getField(team.getClass(), "team");
         }
-
         try {
             ScoreboardTeam nmsTeam = (ScoreboardTeam) TEAM_FIELD.get(team);
             sendPacket(recipient, new PacketPlayOutScoreboardTeam(nmsTeam, mode));
@@ -1465,6 +1436,16 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static void checkAndUpdateHeight(EntityLiving living, boolean flag, Consumer<Boolean> cb) {
+        float oldw = living.width;
+        float oldl = living.length;
+        cb.accept(flag);
+        if (oldw != living.width || living.length != oldl) {
+            living.setPosition(living.locX - 0.01, living.locY, living.locZ - 0.01);
+            living.setPosition(living.locX + 0.01, living.locY, living.locZ + 0.01);
+        }
+    }
+
     public static void clearGoals(PathfinderGoalSelector... goalSelectors) {
         if (GOAL_FIELD == null || goalSelectors == null)
             return;
@@ -1513,7 +1494,6 @@ public class NMSImpl implements NMSBridge {
             List<Tag> converted = Lists.newArrayList();
             if (list.size() > 0) {
                 Class<? extends Tag> tagType = convertNBT("", list.get(0)).getClass();
-
                 for (int i = 0; i < list.size(); i++) {
                     converted.add(convertNBT("", list.get(i)));
                 }
@@ -1628,7 +1608,6 @@ public class NMSImpl implements NMSBridge {
         entity.aA = entity.aB;
         double d0 = entity.locX - entity.lastX;
         double d1 = entity.locZ - entity.lastZ;
-
         float f2 = MathHelper.sqrt(d0 * d0 + d1 * d1) * 4.0F;
         if (f2 > 1.0F) {
             f2 = 1.0F;
@@ -1732,7 +1711,6 @@ public class NMSImpl implements NMSBridge {
     public static void setSize(Entity entity, float f, float f1, boolean justCreated) {
         if ((f != entity.width) || (f1 != entity.length)) {
             float f2 = entity.width;
-
             entity.width = f;
             entity.length = f1;
             entity.a(new AxisAlignedBB(entity.getBoundingBox().a, entity.getBoundingBox().b, entity.getBoundingBox().c,
@@ -1796,7 +1774,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
-
         try {
             MAKE_REQUEST = YggdrasilAuthenticationService.class.getDeclaredMethod("makeRequest", URL.class,
                     Object.class, Class.class);

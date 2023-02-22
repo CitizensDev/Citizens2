@@ -8,11 +8,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_17_R1.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;

@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftTropicalFish;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSBoundingBox;
@@ -51,8 +50,8 @@ public class TropicalFishController extends MobEntityController {
 
     public static class EntityTropicalFishNPC extends TropicalFish implements NPCHolder {
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
+
         public EntityTropicalFishNPC(EntityType<? extends TropicalFish> types, Level level) {
             this(types, level, null);
         }

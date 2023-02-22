@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMinecartChest;
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
@@ -99,7 +98,6 @@ public class MinecartChestController extends MobEntityController {
                 NMSImpl.minecartItemLogic(this);
             }
         }
-
     }
 
     public static class MinecartChestNPC extends CraftMinecartChest implements ForwardingNPCHolder {

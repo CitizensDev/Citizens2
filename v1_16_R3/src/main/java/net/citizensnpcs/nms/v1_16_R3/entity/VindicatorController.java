@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftVindicator;
 import org.bukkit.entity.Vindicator;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSBoundingBox;
@@ -43,8 +42,6 @@ public class VindicatorController extends MobEntityController {
     }
 
     public static class EntityVindicatorNPC extends EntityVindicator implements NPCHolder {
-        boolean calledNMSHeight = false;
-
         private final CitizensNPC npc;
 
         public EntityVindicatorNPC(EntityTypes<? extends EntityVindicator> types, World world) {
@@ -63,13 +60,11 @@ public class VindicatorController extends MobEntityController {
 
         @Override
         public void a(DataWatcherObject<?> datawatcherobject) {
-            if (npc != null && !calledNMSHeight) {
-                calledNMSHeight = true;
-                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
-                calledNMSHeight = false;
+            if (npc == null) {
+                super.a(datawatcherobject);
+                return;
             }
-
-            super.a(datawatcherobject);
+            NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
         @Override

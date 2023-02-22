@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,7 +54,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -70,7 +68,6 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UUIDTypeAdapter;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -348,7 +345,6 @@ public class NMSImpl implements NMSBridge {
         } else if (!handle.world.getPlayers().contains(handle)) {
             ((List) handle.world.getPlayers()).add(handle);
         }
-
         try {
             CHUNKMAP_UPDATE_PLAYER_STATUS.invoke(((WorldServer) handle.world).getChunkProvider().playerChunkMap, handle,
                     !remove);
@@ -371,14 +367,11 @@ public class NMSImpl implements NMSBridge {
         AttributeInstance attackDamage = handle.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE);
         float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;
-
         if (target instanceof EntityLiving) {
             f += EnchantmentManager.a(handle.getItemInMainHand(), target.getMonsterType());
             i += EnchantmentManager.a(Enchantments.KNOCKBACK, handle);
         }
-
         boolean flag = target.damageEntity(DamageSource.mobAttack(handle), f);
-
         if (!flag)
             return;
         if (i > 0) {
@@ -386,9 +379,7 @@ public class NMSImpl implements NMSBridge {
                     Math.cos(handle.yaw * Math.PI / 180.0F) * i * 0.5F);
             handle.setMot(handle.getMot().d(0.6, 1, 0.6));
         }
-
         int fireAspectLevel = EnchantmentManager.getFireAspectEnchantmentLevel(handle);
-
         if (fireAspectLevel > 0) {
             target.setOnFire(fireAspectLevel * 4);
         }
@@ -454,7 +445,6 @@ public class NMSImpl implements NMSBridge {
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {
         if (Bukkit.isPrimaryThread())
             throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
-
         MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer()
                 .getMinecraftSessionService();
         if (!(sessionService instanceof YggdrasilMinecraftSessionService)) {
@@ -462,21 +452,16 @@ public class NMSImpl implements NMSBridge {
         }
         YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
                 .getAuthenticationService();
-
         URL url = HttpAuthenticationService
                 .constantURL(getAuthServerBaseUrl() + UUIDTypeAdapter.fromUUID(profile.getId()));
-
         url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
-
         MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse) MAKE_REQUEST.invoke(auth,
                 url, null, MinecraftProfilePropertiesResponse.class);
         if (response == null)
             return profile;
-
         GameProfile result = new GameProfile(response.getId(), response.getName());
         result.getProperties().putAll(response.getProperties());
         profile.getProperties().putAll(response.getProperties());
-
         return result;
     }
 
@@ -742,7 +727,6 @@ public class NMSImpl implements NMSBridge {
                     EntitySize size = null;
                     try {
                         size = (EntitySize) SIZE_FIELD_GETTER.invoke(handle);
-
                         if (handle instanceof EntityHorse) {
                             SIZE_FIELD_SETTER.invoke(handle,
                                     new EntitySize(Math.min(0.99F, size.width), size.height, false));
@@ -979,10 +963,8 @@ public class NMSImpl implements NMSBridge {
             xDiff = to.getX() - fromLocation.getX();
             yDiff = to.getY() - fromLocation.getY();
             zDiff = to.getZ() - fromLocation.getZ();
-
             double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
             double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
-
             double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
             double pitch = Math.toDegrees(Math.acos(yDiff / distanceY))
                     - (handle.getBukkitEntity().getType() == EntityType.PHANTOM ? 45 : 90);
@@ -1003,7 +985,6 @@ public class NMSImpl implements NMSBridge {
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerLook().a(to.getX(), to.getY(), to.getZ(),
                     ((EntityInsentient) handle).dB(), ((EntityInsentient) handle).M());
-
             while (((EntityLiving) handle).aM >= 180F) {
                 ((EntityLiving) handle).aM -= 360F;
             }
@@ -1120,7 +1101,6 @@ public class NMSImpl implements NMSBridge {
     public void registerEntityClass(Class<?> clazz) {
         if (ENTITY_REGISTRY == null)
             return;
-
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
             EntityTypes<?> type = ENTITY_REGISTRY.findType(search);
@@ -1154,7 +1134,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void removeFromWorld(org.bukkit.entity.Entity entity) {
         Preconditions.checkNotNull(entity);
-
         Entity nmsEntity = ((CraftEntity) entity).getHandle();
         ((WorldServer) nmsEntity.world).removeEntity(nmsEntity);
     }
@@ -1176,7 +1155,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void replaceTrackerEntry(Player player) {
         WorldServer server = (WorldServer) NMSImpl.getHandle(player).getWorld();
-
         EntityTracker entry = server.getChunkProvider().playerChunkMap.trackedEntities.get(player.getEntityId());
         if (entry == null)
             return;
@@ -1210,9 +1188,7 @@ public class NMSImpl implements NMSBridge {
     public boolean sendTabListAdd(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
-
         EntityPlayer entity = ((CraftPlayer) listPlayer).getHandle();
-
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entity));
         return true;
@@ -1222,14 +1198,12 @@ public class NMSImpl implements NMSBridge {
     public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(skinnableNPCs);
-
         EntityPlayer[] entities = new EntityPlayer[skinnableNPCs.size()];
         int i = 0;
         for (SkinnableEntity skinnable : skinnableNPCs) {
             entities[i] = (EntityPlayer) skinnable;
             i++;
         }
-
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entities));
     }
@@ -1238,9 +1212,7 @@ public class NMSImpl implements NMSBridge {
     public void sendTabListRemove(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
-
         EntityPlayer entity = ((CraftPlayer) listPlayer).getHandle();
-
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entity));
     }
@@ -1249,11 +1221,9 @@ public class NMSImpl implements NMSBridge {
     public void sendTeamPacket(Player recipient, Team team, int mode) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(team);
-
         if (TEAM_FIELD == null) {
             TEAM_FIELD = NMS.getGetter(team.getClass(), "team");
         }
-
         try {
             ScoreboardTeam nmsTeam = (ScoreboardTeam) TEAM_FIELD.invoke(team);
             sendPacket(recipient, new PacketPlayOutScoreboardTeam(nmsTeam, mode));
@@ -1379,7 +1349,6 @@ public class NMSImpl implements NMSBridge {
                 return;
             }
         }
-
         try {
             SKULL_PROFILE_FIELD.set(meta, profile);
         } catch (Exception e) {
@@ -1723,18 +1692,18 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static void checkAndUpdateHeight(EntityLiving living, DataWatcherObject<?> datawatcherobject) {
+    public static void checkAndUpdateHeight(EntityLiving living, DataWatcherObject<?> datawatcherobject,
+            Consumer<DataWatcherObject<?>> cb) {
         EntitySize size;
         try {
             size = (EntitySize) SIZE_FIELD_GETTER.invoke(living);
         } catch (Throwable e) {
             e.printStackTrace();
-            living.a(datawatcherobject);
             return;
         }
         float oldw = size.width;
         float oldl = size.height;
-        living.a(datawatcherobject);
+        cb.accept(datawatcherobject);
         if (oldw != size.width || size.height != oldl) {
             living.setPosition(living.locX - 0.01, living.locY, living.locZ - 0.01);
             living.setPosition(living.locX + 0.01, living.locY, living.locZ + 0.01);
@@ -1791,7 +1760,6 @@ public class NMSImpl implements NMSBridge {
             List<Tag> converted = Lists.newArrayList();
             if (list.size() > 0) {
                 Class<? extends Tag> tagType = convertNBT("", list.get(0)).getClass();
-
                 for (int i = 0; i < list.size(); i++) {
                     converted.add(convertNBT("", list.get(i)));
                 }
@@ -1825,7 +1793,6 @@ public class NMSImpl implements NMSBridge {
                 d0 = 0.01D;
                 entity.fallDistance = 0.0F;
             }
-
             double d1;
             float f1;
             double d2;
@@ -1841,7 +1808,6 @@ public class NMSImpl implements NMSBridge {
                     if (!entity.isNoGravity()) {
                         entity.setMot(entity.getMot().add(0.0D, -d0 / 4.0D, 0.0D));
                     }
-
                     vec3d4 = entity.getMot();
                     if (entity.positionChanged
                             && entity.d(vec3d4.x, vec3d4.y + 0.6000000238418579D - entity.locY + d1, vec3d4.z)) {
@@ -1852,7 +1818,6 @@ public class NMSImpl implements NMSBridge {
                     if (vec3d4.y > -0.5D) {
                         entity.fallDistance = 1.0F;
                     }
-
                     vec3d5 = entity.getLookDirection();
                     f1 = entity.pitch * 0.017453292F;
                     double d3 = Math.sqrt(vec3d5.x * vec3d5.x + vec3d5.z * vec3d5.z);
@@ -1866,17 +1831,14 @@ public class NMSImpl implements NMSBridge {
                         d5 = vec3d4.y * -0.1D * f3;
                         vec3d4 = vec3d4.add(vec3d5.x * d5 / d3, d5, vec3d5.z * d5 / d3);
                     }
-
                     if (f1 < 0.0F && d3 > 0.0D) {
                         d5 = d4 * (-MathHelper.sin(f1)) * 0.04D;
                         vec3d4 = vec3d4.add(-vec3d5.x * d5 / d3, d5 * 3.2D, -vec3d5.z * d5 / d3);
                     }
-
                     if (d3 > 0.0D) {
                         vec3d4 = vec3d4.add((vec3d5.x / d3 * d4 - vec3d4.x) * 0.1D, 0.0D,
                                 (vec3d5.z / d3 * d4 - vec3d4.z) * 0.1D);
                     }
-
                     entity.setMot(vec3d4.d(0.9900000095367432D, 0.9800000190734863D, 0.9900000095367432D));
                     entity.move(EnumMoveType.SELF, entity.getMot());
                     if (entity.positionChanged && !entity.world.isClientSide) {
@@ -1892,7 +1854,6 @@ public class NMSImpl implements NMSBridge {
                             entity.damageEntity(DamageSource.FLY_INTO_WALL, f4);
                         }
                     }
-
                     if (entity.onGround && !entity.world.isClientSide && entity.getFlag(7)
                             && !CraftEventFactory.callToggleGlideEvent(entity, false).isCancelled()) {
                         entity.setFlag(7, false);
@@ -1917,7 +1878,6 @@ public class NMSImpl implements NMSBridge {
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
-
                     double d7 = vec3d2.y;
                     if (entity.hasEffect(MobEffects.LEVITATION)) {
                         d7 += (0.05D * (entity.getEffect(MobEffects.LEVITATION).getAmplifier() + 1) - vec3d2.y) * 0.2D;
@@ -1931,7 +1891,6 @@ public class NMSImpl implements NMSBridge {
                     } else if (!entity.isNoGravity()) {
                         d7 -= d0;
                     }
-
                     entity.setMot(vec3d2.x * f1, d7 * 0.9800000190734863D, vec3d2.z * f1);
                 }
             } else {
@@ -1942,27 +1901,22 @@ public class NMSImpl implements NMSBridge {
                 if (f2 > 3.0F) {
                     f2 = 3.0F;
                 }
-
                 if (!entity.onGround) {
                     f2 *= 0.5F;
                 }
-
                 if (f2 > 0.0F) {
                     f1 += (0.54600006F - f1) * f2 / 3.0F;
                     f += (entity.db() - f) * f2 / 3.0F;
                 }
-
                 if (entity.hasEffect(MobEffects.DOLPHINS_GRACE)) {
                     f1 = 0.96F;
                 }
-
                 entity.a(f, vec3d);
                 entity.move(EnumMoveType.SELF, entity.getMot());
                 vec3d5 = entity.getMot();
                 if (entity.positionChanged && entity.isClimbing()) {
                     vec3d5 = new Vec3D(vec3d5.x, 0.2D, vec3d5.z);
                 }
-
                 entity.setMot(vec3d5.d(f1, 0.800000011920929D, f1));
                 if (!entity.isNoGravity() && !entity.isSprinting()) {
                     vec3d2 = entity.getMot();
@@ -1971,10 +1925,8 @@ public class NMSImpl implements NMSBridge {
                     } else {
                         d2 = vec3d2.y - d0 / 16.0D;
                     }
-
                     entity.setMot(vec3d2.x, d2, vec3d2.z);
                 }
-
                 vec3d2 = entity.getMot();
                 if (entity.positionChanged
                         && entity.d(vec3d2.x, vec3d2.y + 0.6000000238418579D - entity.locY + d1, vec3d2.z)) {
@@ -1982,7 +1934,6 @@ public class NMSImpl implements NMSBridge {
                 }
             }
         }
-
         entity.aE = entity.aF;
         d0 = entity.locX - entity.lastX;
         double d8 = entity.locZ - entity.lastZ;
@@ -1991,7 +1942,6 @@ public class NMSImpl implements NMSBridge {
         if (f > 1.0F) {
             f = 1.0F;
         }
-
         entity.aF += (f - entity.aF) * 0.4F;
         entity.aG += entity.aF;
     }
@@ -2221,12 +2171,10 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
             "advancementDataPlayer");
-
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST, EntityType.SHULKER,
             EntityType.PHANTOM);
-
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "c");
     private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
             "c", false, double.class, double.class, double.class);
@@ -2277,7 +2225,6 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getSetter(Entity.class, "size");
     private static Field SKULL_PROFILE_FIELD;
     private static MethodHandle TEAM_FIELD;
-
     static {
         try {
             ENTITY_REGISTRY = new CustomEntityRegistry(

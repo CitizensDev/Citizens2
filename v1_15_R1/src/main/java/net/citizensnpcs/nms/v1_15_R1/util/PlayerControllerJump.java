@@ -18,5 +18,4 @@ public class PlayerControllerJump {
     public void jump() {
         this.a = true;
     }
-
 }

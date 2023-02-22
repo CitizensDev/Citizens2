@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_19_R2.util;
 
 import java.util.Random;
-
 import net.citizensnpcs.nms.v1_19_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.util.Mth;
@@ -62,23 +61,18 @@ public class PlayerMoveControl extends MoveControl {
     @Override
     protected float rotlerp(float f, float f1, float f2) {
         float f3 = Mth.wrapDegrees(f1 - f);
-
         if (f3 > f2) {
             f3 = f2;
         }
-
         if (f3 < -f2) {
             f3 = -f2;
         }
-
         float f4 = f + f3;
-
         if (f4 < 0.0F)
             f4 += 360.0F;
         else if (f4 > 360.0F) {
             f4 -= 360.0F;
         }
-
         return f4;
     }
 

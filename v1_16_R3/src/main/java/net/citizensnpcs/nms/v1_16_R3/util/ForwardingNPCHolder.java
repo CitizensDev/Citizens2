@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_16_R3.util;
 
 import org.bukkit.entity.Entity;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;

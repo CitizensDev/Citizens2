@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftMinecartChest;
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSBoundingBox;
@@ -97,7 +96,6 @@ public class MinecartChestController extends MobEntityController {
                 NMSImpl.minecartItemLogic(this);
             }
         }
-
     }
 
     public static class MinecartChestNPC extends CraftMinecartChest implements NPCHolder {

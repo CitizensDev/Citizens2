@@ -1,10 +1,8 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
 import java.lang.reflect.Field;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;

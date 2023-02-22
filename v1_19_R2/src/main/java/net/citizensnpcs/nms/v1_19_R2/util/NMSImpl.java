@@ -17,7 +17,6 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -54,7 +53,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -71,7 +69,6 @@ import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UUIDTypeAdapter;
 import com.viaversion.viaversion.api.Via;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -394,7 +391,6 @@ public class NMSImpl implements NMSBridge {
         } else if (!handle.level.players().contains(handle)) {
             ((List) handle.level.players()).add(handle);
         }
-
         try {
             CHUNKMAP_UPDATE_PLAYER_STATUS.invoke(((ServerLevel) handle.level).getChunkSource().chunkMap, handle,
                     !remove);
@@ -420,26 +416,20 @@ public class NMSImpl implements NMSBridge {
         AttributeInstance attackDamage = source.getAttribute(Attributes.ATTACK_DAMAGE);
         float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;
-
         f += EnchantmentHelper.getDamageBonus(source.getMainHandItem(), target.getMobType());
         i += EnchantmentHelper.getKnockbackBonus(source);
-
         boolean flag = target.hurt(DamageSource.mobAttack(source), f);
-
         if (!flag)
             return;
-
         if (i > 0) {
             target.knockback(-Math.sin(source.getYRot() * Math.PI / 180.0F) * i * 0.5F, 0.1D,
                     Math.cos(source.getYRot() * Math.PI / 180.0F) * i * 0.5F);
             source.setDeltaMovement(source.getDeltaMovement().multiply(0.6, 1, 0.6));
         }
-
         int fireAspectLevel = EnchantmentHelper.getFireAspect(source);
         if (fireAspectLevel > 0) {
             target.setSecondsOnFire(fireAspectLevel * 4, false);
         }
-
         if (target instanceof ServerPlayer) {
             ServerPlayer entityhuman = (ServerPlayer) target;
             ItemStack itemstack = source.getMainHandItem();
@@ -453,7 +443,6 @@ public class NMSImpl implements NMSBridge {
                 }
             }
         }
-
         EnchantmentHelper.doPostHurtEffects(source, target);
         EnchantmentHelper.doPostDamageEffects(target, source);
     }
@@ -518,28 +507,22 @@ public class NMSImpl implements NMSBridge {
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {
         if (Bukkit.isPrimaryThread())
             throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
-
         MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().getSessionService();
         if (!(sessionService instanceof YggdrasilMinecraftSessionService)) {
             return sessionService.fillProfileProperties(profile, requireSecure);
         }
         YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
                 .getAuthenticationService();
-
         URL url = HttpAuthenticationService
                 .constantURL(getAuthServerBaseUrl() + UUIDTypeAdapter.fromUUID(profile.getId()));
-
         url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
-
         MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse) MAKE_REQUEST.invoke(auth,
                 url, null, MinecraftProfilePropertiesResponse.class);
         if (response == null)
             return profile;
-
         GameProfile result = new GameProfile(response.getId(), response.getName());
         result.getProperties().putAll(response.getProperties());
         profile.getProperties().putAll(response.getProperties());
-
         return result;
     }
 
@@ -667,7 +650,6 @@ public class NMSImpl implements NMSBridge {
                 return null;
             }
         }
-
         try {
             return (GameProfile) SKULL_META_PROFILE.invoke(meta);
         } catch (Throwable e) {
@@ -799,7 +781,6 @@ public class NMSImpl implements NMSBridge {
                     EntityDimensions size = null;
                     try {
                         size = (EntityDimensions) SIZE_FIELD_GETTER.invoke(handle);
-
                         if (handle instanceof AbstractHorse) {
                             SIZE_FIELD_SETTER.invoke(handle,
                                     new EntityDimensions(Math.min(0.99F, size.width), size.height, false));
@@ -829,7 +810,6 @@ public class NMSImpl implements NMSBridge {
                         }
                     }
                 }
-
                 navigation.setSpeedModifier(params.speed());
                 return navigation.isDone();
             }
@@ -914,7 +894,6 @@ public class NMSImpl implements NMSBridge {
         registerTraitWithCommand(manager, SnowmanTrait.class);
         registerTraitWithCommand(manager, TropicalFishTrait.class);
         registerTraitWithCommand(manager, VillagerTrait.class);
-
         try {
             Via.getAPI();
             VIA_ENABLED = true;
@@ -1063,7 +1042,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void look(org.bukkit.entity.Entity entity, Location to, boolean headOnly, boolean immediate) {
         Entity handle = NMSImpl.getHandle(entity);
-
         if (immediate || headOnly || BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
                 || (!(handle instanceof Mob) && !(handle instanceof EntityHumanNPC))) {
             Location fromLocation = entity.getLocation(FROM_LOCATION);
@@ -1071,10 +1049,8 @@ public class NMSImpl implements NMSBridge {
             xDiff = to.getX() - fromLocation.getX();
             yDiff = to.getY() - fromLocation.getY();
             zDiff = to.getZ() - fromLocation.getZ();
-
             double distanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
             double distanceY = Math.sqrt(distanceXZ * distanceXZ + yDiff * yDiff);
-
             double yaw = distanceXZ == 0 ? 0 : Math.toDegrees(Math.acos(xDiff / distanceXZ));
             double pitch = distanceY == 0 ? 0
                     : Math.toDegrees(Math.acos(yDiff / distanceY))
@@ -1096,7 +1072,6 @@ public class NMSImpl implements NMSBridge {
         if (handle instanceof Mob) {
             ((Mob) handle).getLookControl().setLookAt(to.getX(), to.getY(), to.getZ(), ((Mob) handle).getHeadRotSpeed(),
                     ((Mob) handle).getMaxHeadXRot());
-
             while (((LivingEntity) handle).yHeadRot >= 180F) {
                 ((LivingEntity) handle).yHeadRot -= 360F;
             }
@@ -1111,7 +1086,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void look(org.bukkit.entity.Entity from, org.bukkit.entity.Entity to) {
         Entity handle = NMSImpl.getHandle(from), target = NMSImpl.getHandle(to);
-
         if (BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
                 || (!(handle instanceof Mob) && !(handle instanceof EntityHumanNPC))) {
             if (to instanceof org.bukkit.entity.LivingEntity) {
@@ -1254,7 +1228,6 @@ public class NMSImpl implements NMSBridge {
     public void registerEntityClass(Class<?> clazz) {
         if (ENTITY_REGISTRY == null)
             return;
-
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
             net.minecraft.world.entity.EntityType<?> type = ENTITY_REGISTRY.findType(search);
@@ -1288,7 +1261,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void removeFromWorld(org.bukkit.entity.Entity entity) {
         Preconditions.checkNotNull(entity);
-
         Entity nmsEntity = ((CraftEntity) entity).getHandle();
         ((ServerLevel) nmsEntity.level).getChunkSource().removeEntity(nmsEntity);
     }
@@ -1309,7 +1281,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void replaceTrackerEntry(Player player) {
         ServerLevel server = (ServerLevel) NMSImpl.getHandle(player).level;
-
         TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(player.getEntityId());
         if (entry == null)
             return;
@@ -1346,33 +1317,25 @@ public class NMSImpl implements NMSBridge {
     public boolean sendTabListAdd(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
-
         ServerPlayer from = ((CraftPlayer) listPlayer).getHandle();
-
         ClientboundPlayerInfoUpdatePacket packet = ClientboundPlayerInfoUpdatePacket
                 .createPlayerInitializing(Arrays.asList(from));
-
         boolean list = from instanceof NPCHolder
                 ? !((NPCHolder) from).getNPC().data().get("removefromtablist", Setting.DISABLE_TABLIST.asBoolean())
                 : false;
-
         ClientboundPlayerInfoUpdatePacket.Entry entry = new ClientboundPlayerInfoUpdatePacket.Entry(from.getUUID(),
                 from.getGameProfile(), list, from.latency, from.gameMode.getGameModeForPlayer(),
                 list ? from.getTabListDisplayName() : Component.empty(),
                 from.getChatSession() == null ? null : from.getChatSession().asData());
-
         try {
             PLAYERINFO_ENTRIES.invoke(packet, Lists.newArrayList(entry));
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
-        NMSImpl.sendPacket(recipient, packet);
-
-        /* if (VIA_ENABLED == true) {
-            int version = Via.getAPI().getPlayerVersion(recipient);
-            return version < 761;
-        }*/
+        NMSImpl.sendPacket(recipient, packet); /* if (VIA_ENABLED == true) {
+                                               int version = Via.getAPI().getPlayerVersion(recipient);
+                                               return version < 761;
+                                               }*/
         return true;
     }
 
@@ -1380,14 +1343,12 @@ public class NMSImpl implements NMSBridge {
     public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(skinnableNPCs);
-
         ServerPlayer[] entities = new ServerPlayer[skinnableNPCs.size()];
         int i = 0;
         for (SkinnableEntity skinnable : skinnableNPCs) {
             entities[i] = (ServerPlayer) skinnable;
             i++;
         }
-
         NMSImpl.sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(
                 skinnableNPCs.stream().map(e -> ((ServerPlayer) e).getUUID()).collect(Collectors.toList())));
     }
@@ -1396,7 +1357,6 @@ public class NMSImpl implements NMSBridge {
     public void sendTabListRemove(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
-
         NMSImpl.sendPacket(recipient,
                 new ClientboundPlayerInfoRemovePacket(Arrays.asList(getHandle(listPlayer).getUUID())));
     }
@@ -1405,11 +1365,9 @@ public class NMSImpl implements NMSBridge {
     public void sendTeamPacket(Player recipient, Team team, int mode) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(team);
-
         if (TEAM_FIELD == null) {
             TEAM_FIELD = NMS.getGetter(team.getClass(), "team");
         }
-
         try {
             PlayerTeam nmsTeam = (PlayerTeam) TEAM_FIELD.invoke(team);
             if (mode == 1) {
@@ -1936,7 +1894,8 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static void checkAndUpdateHeight(LivingEntity living, EntityDataAccessor<?> datawatcherobject) {
+    public static void checkAndUpdateHeight(LivingEntity living, EntityDataAccessor<?> datawatcherobject,
+            Consumer<EntityDataAccessor<?>> cb) {
         EntityDimensions size;
         try {
             size = (EntityDimensions) SIZE_FIELD_GETTER.invoke(living);
@@ -1946,7 +1905,7 @@ public class NMSImpl implements NMSBridge {
         }
         float oldw = size.width;
         float oldl = size.height;
-        living.onSyncedDataUpdated(datawatcherobject);
+        cb.accept(datawatcherobject);
         if (oldw != size.width || size.height != oldl) {
             living.setPos(living.getX() - 0.01, living.getY(), living.getZ() - 0.01);
             living.setPos(living.getX() + 0.01, living.getY(), living.getZ() + 0.01);
@@ -2008,7 +1967,6 @@ public class NMSImpl implements NMSBridge {
             List<Tag> converted = Lists.newArrayList();
             if (list.size() > 0) {
                 Class<? extends Tag> tagType = convertNBT("", list.get(0)).getClass();
-
                 for (int i = 0; i < list.size(); i++) {
                     converted.add(convertNBT("", list.get(i)));
                 }
@@ -2274,7 +2232,6 @@ public class NMSImpl implements NMSBridge {
             try {
                 Collection<?> list = selector.getAvailableGoals();
                 list.clear();
-
                 Collection old = npc.data().get("selector" + i);
                 if (old != null) {
                     list.addAll(old);
@@ -2424,7 +2381,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return handle;
     }
 
@@ -2522,7 +2478,6 @@ public class NMSImpl implements NMSBridge {
     private static MethodHandle SKULL_META_PROFILE;
     private static MethodHandle TEAM_FIELD;
     private static Boolean VIA_ENABLED = null;
-
     static {
         try {
             ENTITY_REGISTRY = new CustomEntityRegistry(BuiltInRegistries.ENTITY_TYPE);

@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftCreeper;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSBoundingBox;
@@ -51,8 +50,8 @@ public class CreeperController extends MobEntityController {
 
     public static class EntityCreeperNPC extends Creeper implements NPCHolder {
         private boolean allowPowered;
-
         private final CitizensNPC npc;
+
         public EntityCreeperNPC(EntityType<? extends Creeper> types, Level level) {
             this(types, level, null);
         }

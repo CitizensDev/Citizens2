@@ -1,9 +1,7 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
 import java.util.Set;
-
 import com.google.common.collect.Sets;
-
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
 import net.minecraft.server.v1_13_R2.BlockPosition;
@@ -38,9 +36,7 @@ public class PlayerPathfinder extends Pathfinder {
         this.d.a(paramIBlockAccess, paramEntityInsentient);
         PathPoint localPathPoint1 = this.d.b();
         PathPoint localPathPoint2 = this.d.a(paramDouble1, paramDouble2, paramDouble3);
-
         PathEntity localPathEntity = a(localPathPoint1, localPathPoint2, paramFloat);
-
         this.d.a();
         return localPathEntity;
     }
@@ -64,9 +60,7 @@ public class PlayerPathfinder extends Pathfinder {
         this.d.a(paramIBlockAccess, paramEntityInsentient);
         PathPoint localPathPoint1 = this.d.b();
         PathPoint localPathPoint2 = this.d.a(paramDouble1, paramDouble2, paramDouble3);
-
         PathEntity localPathEntity = a(localPathPoint1, localPathPoint2, paramFloat);
-
         this.d.a();
         return localPathEntity;
     }
@@ -99,11 +93,9 @@ public class PlayerPathfinder extends Pathfinder {
         paramPathPoint1.e = 0.0F;
         paramPathPoint1.f = paramPathPoint1.c(paramPathPoint2);
         paramPathPoint1.g = paramPathPoint1.f;
-
         this.a.a();
         this.b.clear();
         this.a.a(paramPathPoint1);
-
         Object localObject1 = paramPathPoint1;
         int i = 0;
         while (!this.a.e()) {
@@ -120,15 +112,12 @@ public class PlayerPathfinder extends Pathfinder {
                 localObject1 = localObject2;
             }
             ((PathPoint) localObject2).i = true;
-
             int j = this.d.a(this.c, (PathPoint) localObject2, paramPathPoint2, paramFloat);
             for (int k = 0; k < j; k++) {
                 PathPoint localPathPoint = this.c[k];
-
                 float f1 = ((PathPoint) localObject2).c(localPathPoint);
                 localPathPoint.j = (((PathPoint) localObject2).j + f1);
                 localPathPoint.k = (f1 + localPathPoint.l);
-
                 float f2 = ((PathPoint) localObject2).e + localPathPoint.k;
                 if ((localPathPoint.j < paramFloat) && ((!localPathPoint.a()) || (f2 < localPathPoint.e))) {
                     localPathPoint.h = ((PathPoint) localObject2);
@@ -147,7 +136,6 @@ public class PlayerPathfinder extends Pathfinder {
             return null;
         }
         Object localObject2 = a(paramPathPoint1, (PathPoint) localObject1);
-
         return (PathEntity) localObject2;
     }
 }

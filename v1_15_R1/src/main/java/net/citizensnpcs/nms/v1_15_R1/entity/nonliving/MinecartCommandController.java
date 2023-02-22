@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftMinecartCommand;
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;

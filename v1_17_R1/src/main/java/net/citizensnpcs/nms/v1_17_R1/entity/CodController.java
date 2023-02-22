@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftCod;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSBoundingBox;
@@ -55,7 +54,6 @@ public class CodController extends MobEntityController {
 
     public static class EntityCodNPC extends Cod implements NPCHolder {
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
 
         public EntityCodNPC(EntityType<? extends Cod> types, Level level) {

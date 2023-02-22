@@ -1,14 +1,12 @@
 package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftVillager;
 import org.bukkit.entity.Villager;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSImpl;
@@ -42,7 +40,6 @@ public class VillagerController extends MobEntityController {
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
         private boolean blockingATrade;
-
         private final CitizensNPC npc;
 
         public EntityVillagerNPC(World world) {
@@ -61,13 +58,11 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public void a(boolean flag) {
-            float oldw = width;
-            float oldl = length;
-            super.a(flag);
-            if (oldw != width || oldl != length) {
-                this.setPosition(locX - 0.01, locY, locZ - 0.01);
-                this.setPosition(locX + 0.01, locY, locZ + 0.01);
+            if (npc == null) {
+                super.a(flag);
+                return;
             }
+            NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
         @Override

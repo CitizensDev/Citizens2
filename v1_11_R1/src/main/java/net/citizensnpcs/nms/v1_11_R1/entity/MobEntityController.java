@@ -4,12 +4,10 @@ import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_11_R1.CraftWorld;
 import org.bukkit.entity.Entity;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_11_R1.util.NMSImpl;
@@ -34,9 +32,10 @@ public abstract class MobEntityController extends AbstractEntityController {
         if (entity instanceof EntityInsentient) {
             NMSImpl.clearGoals(((EntityInsentient) entity).goalSelector, ((EntityInsentient) entity).targetSelector);
         }
-        entity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
-
-        // entity.onGround isn't updated right away - we approximate here so
+        entity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch()); // entity.onGround
+                                                                                                 // isn't updated right
+                                                                                                 // away - we
+                                                                                                 // approximate here so
         // that things like pathfinding still work *immediately* after spawn.
         org.bukkit.Material beneath = at.getBlock().getRelative(BlockFace.DOWN).getType();
         if (beneath.isSolid()) {

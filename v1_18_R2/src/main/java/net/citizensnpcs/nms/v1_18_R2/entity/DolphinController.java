@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftDolphin;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSBoundingBox;
@@ -51,10 +50,9 @@ public class DolphinController extends MobEntityController {
 
     public static class EntityDolphinNPC extends Dolphin implements NPCHolder {
         private boolean inProtectedTick;
-
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
+
         public EntityDolphinNPC(EntityType<? extends Dolphin> types, Level level) {
             this(types, level, null);
         }

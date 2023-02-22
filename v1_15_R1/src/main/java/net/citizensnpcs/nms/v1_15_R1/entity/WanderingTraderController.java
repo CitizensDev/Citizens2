@@ -2,14 +2,12 @@ package net.citizensnpcs.nms.v1_15_R1.entity;
 
 import java.lang.invoke.MethodHandle;
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftWanderingTrader;
 import org.bukkit.entity.WanderingTrader;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
@@ -51,9 +49,7 @@ public class WanderingTraderController extends MobEntityController {
 
     public static class EntityWanderingTraderNPC extends EntityVillagerTrader implements NPCHolder {
         private boolean blockingATrade;
-
         private boolean blockTrades = true;
-        boolean calledNMSHeight = false;
         private final CitizensNPC npc;
 
         public EntityWanderingTraderNPC(EntityTypes<? extends EntityVillagerTrader> types, World world) {
@@ -72,13 +68,11 @@ public class WanderingTraderController extends MobEntityController {
 
         @Override
         public void a(DataWatcherObject<?> datawatcherobject) {
-            if (npc != null && !calledNMSHeight) {
-                calledNMSHeight = true;
-                NMSImpl.checkAndUpdateHeight(this, datawatcherobject);
-                calledNMSHeight = false;
+            if (npc == null) {
+                super.a(datawatcherobject);
+                return;
             }
-
-            super.a(datawatcherobject);
+            NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
         @Override

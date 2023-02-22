@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftSpider;
 import org.bukkit.entity.Spider;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
@@ -194,7 +193,6 @@ public class SpiderController extends MobEntityController {
                 NMSImpl.setSize(this, justCreated);
             }
         }
-
     }
 
     public static class SpiderNPC extends CraftSpider implements ForwardingNPCHolder {

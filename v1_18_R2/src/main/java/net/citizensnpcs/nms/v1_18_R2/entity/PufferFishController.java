@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPufferFish;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSBoundingBox;
@@ -53,7 +52,6 @@ public class PufferFishController extends MobEntityController {
 
     public static class EntityPufferFishNPC extends Pufferfish implements NPCHolder {
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
 
         public EntityPufferFishNPC(EntityType<? extends Pufferfish> types, Level level) {

@@ -9,10 +9,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_14_R1.BlockPosition;
@@ -35,7 +33,6 @@ public class PlayerPathfinder extends Pathfinder {
         super(var0, var1);
         this.e = var0;
         this.d = var1;
-
     }
 
     public PathEntity a(IWorldReader var0, EntityHumanNPC var1, Set<BlockPosition> var2, float var3, int var4) {
@@ -67,12 +64,10 @@ public class PlayerPathfinder extends Pathfinder {
         List var3 = Lists.newArrayList();
         PathPoint var4 = var0;
         var3.add(0, var0);
-
         while (var4.h != null) {
             var4 = var4.h;
             var3.add(0, var4);
         }
-
         return new PathEntity(var3, var1, var2);
     }
 
@@ -85,13 +80,11 @@ public class PlayerPathfinder extends Pathfinder {
         this.b.clear();
         this.a.a(var0);
         int var5 = 0;
-
         while (!this.a.e()) {
             ++var5;
             if (var5 >= this.d) {
                 break;
             }
-
             PathPoint var6 = this.a.c();
             var6.i = true;
             var4.stream().filter((var2x) -> {
@@ -100,10 +93,8 @@ public class PlayerPathfinder extends Pathfinder {
             if (var4.stream().anyMatch(PathDestination::f)) {
                 break;
             }
-
             if (var6.a(var0) < var2) {
                 int var7 = this.e.a(this.c, var6);
-
                 for (int var8 = 0; var8 < var7; ++var8) {
                     PathPoint var9 = this.c[var8];
                     float var10 = var6.a(var9);
@@ -123,7 +114,6 @@ public class PlayerPathfinder extends Pathfinder {
                 }
             }
         }
-
         Stream var6;
         if (var4.stream().anyMatch(PathDestination::f)) {
             var6 = var4.stream().filter(PathDestination::f).map((var1x) -> {
@@ -132,7 +122,6 @@ public class PlayerPathfinder extends Pathfinder {
         } else {
             var6 = getFallbackDestinations(var1, var4);
         }
-
         Optional var7 = var6.findFirst();
         if (!var7.isPresent()) {
             return null;
@@ -144,14 +133,12 @@ public class PlayerPathfinder extends Pathfinder {
 
     private float a(PathPoint var0, Set var1) {
         float var2 = Float.MAX_VALUE;
-
         float var5;
         for (Iterator var4 = var1.iterator(); var4.hasNext(); var2 = Math.min(var5, var2)) {
             PathDestination var3 = (PathDestination) var4.next();
             var5 = var0.a(var3);
             var3.a(var5, var0);
         }
-
         return var2;
     }
 

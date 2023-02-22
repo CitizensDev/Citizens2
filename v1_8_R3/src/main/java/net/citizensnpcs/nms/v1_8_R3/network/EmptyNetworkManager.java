@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_8_R3.network;
 
 import java.io.IOException;
-
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
 import net.minecraft.server.v1_8_R3.EnumProtocolDirection;
 import net.minecraft.server.v1_8_R3.NetworkManager;

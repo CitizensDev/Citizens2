@@ -1,10 +1,8 @@
 package net.citizensnpcs.nms.v1_18_R2.util;
 
 import java.lang.invoke.MethodHandle;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -55,7 +53,6 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
             return;
         this.lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
-
     }
 
     private static int getE(TrackedEntity entry) {

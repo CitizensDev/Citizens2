@@ -2,11 +2,9 @@ package net.citizensnpcs.nms.v1_17_R1.util;
 
 import java.util.Collections;
 import java.util.Set;
-
 import com.google.common.base.Optional;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.DataFixer;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.minecraft.SharedConstants;
 import net.minecraft.nbt.CompoundTag;

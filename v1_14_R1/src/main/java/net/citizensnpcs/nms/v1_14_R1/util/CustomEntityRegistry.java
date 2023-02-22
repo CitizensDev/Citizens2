@@ -6,11 +6,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-
 import net.minecraft.server.v1_14_R1.*;
 
 @SuppressWarnings("rawtypes")
@@ -30,7 +28,6 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
         if (entityIds.containsKey(key)) {
             return entityIds.get(key);
         }
-
         return wrapped.a((EntityTypes) key);
     }
 
@@ -66,7 +63,6 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
         if (entities.containsKey(key)) {
             return entities.get(key);
         }
-
         return wrapped.get(key);
     }
 
@@ -75,7 +71,6 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
         if (entityClasses.containsKey(value)) {
             return entityClasses.get(value);
         }
-
         return wrapped.getKey((EntityTypes) value);
     }
 
@@ -84,7 +79,6 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
         if (entities.containsKey(var0)) {
             return Optional.of(entities.get(var0));
         }
-
         return Optional.ofNullable(this.wrapped.get(var0));
     }
 
@@ -101,11 +95,10 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
     public void put(int entityId, MinecraftKey key, EntityTypes entityClass) {
         entities.put(key, entityClass);
         entityIds.put(entityClass, entityId);
-    }
-
-    // replace regex
+    } // replace regex
     // ([A-Z_]+).*?a\(E(.*?)::new.*?$
     // minecraftClassMap.put(EntityTypes.\1, E\2.class);
+
     private static final BiMap<EntityTypes, Class<?>> minecraftClassMap = HashBiMap.create();
     static {
         minecraftClassMap.put(EntityTypes.AREA_EFFECT_CLOUD, EntityAreaEffectCloud.class);

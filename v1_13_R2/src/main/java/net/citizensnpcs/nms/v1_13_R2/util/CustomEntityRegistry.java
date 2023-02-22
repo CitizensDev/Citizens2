@@ -5,11 +5,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-
 import net.minecraft.server.v1_13_R2.EntityTypes;
 import net.minecraft.server.v1_13_R2.MinecraftKey;
 import net.minecraft.server.v1_13_R2.RegistryMaterials;
@@ -30,7 +28,6 @@ public class CustomEntityRegistry extends RegistryMaterials implements Supplier<
         if (entityIds.containsKey(key)) {
             return entityIds.get(key);
         }
-
         return wrapped.a((EntityTypes) key);
     }
 
@@ -63,7 +60,6 @@ public class CustomEntityRegistry extends RegistryMaterials implements Supplier<
         if (entities.containsKey(key)) {
             return entities.get(key);
         }
-
         return wrapped.get(key);
     }
 
@@ -72,7 +68,6 @@ public class CustomEntityRegistry extends RegistryMaterials implements Supplier<
         if (entityClasses.containsKey(value)) {
             return entityClasses.get(value);
         }
-
         return wrapped.getKey((EntityTypes) value);
     }
 

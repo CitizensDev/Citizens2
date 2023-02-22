@@ -7,7 +7,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftWolf;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
@@ -53,13 +52,11 @@ public class WolfController extends MobEntityController {
 
         @Override
         public void a(boolean flag) {
-            float oldw = width;
-            float oldl = length;
-            super.a(flag);
-            if (oldw != width || oldl != length) {
-                this.setPosition(locX - 0.01, locY, locZ - 0.01);
-                this.setPosition(locX + 0.01, locY, locZ + 0.01);
+            if (npc == null) {
+                super.a(flag);
+                return;
             }
+            NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
         @Override
@@ -200,6 +197,5 @@ public class WolfController extends MobEntityController {
         public void setSitting(boolean sitting) {
             getHandle().setSitting(sitting);
         }
-
     }
 }

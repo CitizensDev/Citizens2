@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPigZombie;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSBoundingBox;
@@ -31,7 +30,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class PigZombieController extends MobEntityController {
-
     public PigZombieController() {
         super(EntityPigZombieNPC.class);
     }

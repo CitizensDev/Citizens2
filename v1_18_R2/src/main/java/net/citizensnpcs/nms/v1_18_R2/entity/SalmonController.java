@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftSalmon;
 import org.bukkit.util.Vector;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSBoundingBox;
@@ -50,7 +49,6 @@ public class SalmonController extends MobEntityController {
 
     public static class EntitySalmonNPC extends Salmon implements NPCHolder {
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
 
         public EntitySalmonNPC(EntityType<? extends Salmon> types, Level level) {

@@ -4,9 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import com.google.common.collect.ImmutableSet;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_15_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_15_R1.AttributeInstance;
@@ -88,25 +86,20 @@ public class PlayerNavigation extends NavigationAbstract {
         if (this.b.getType(var0).isAir()) {
             for (var2 = var0.down(); var2.getY() > 0 && this.b.getType(var2).isAir(); var2 = var2.down()) {
             }
-
             if (var2.getY() > 0) {
                 return supera(var2.up(), var1);
             }
-
             while (var2.getY() < this.b.getBuildHeight() && this.b.getType(var2).isAir()) {
                 var2 = var2.up();
             }
-
             var0 = var2;
         }
-
         if (!this.b.getType(var0).getMaterial().isBuildable()) {
             return supera(var0, var1);
         } else {
             for (var2 = var0.up(); var2.getY() < this.b.getBuildHeight()
                     && this.b.getType(var2).getMaterial().isBuildable(); var2 = var2.up()) {
             }
-
             return supera(var2, var1);
         }
     }
@@ -162,13 +155,11 @@ public class PlayerNavigation extends NavigationAbstract {
                         if ((var19 == PathType.WATER) || (var19 == PathType.LAVA) || (var19 == PathType.OPEN)) {
                             return false;
                         }
-
                         var19 = this.o.a(this.b, var13, var1, var14, this.a, var3, var4, var5, true, true);
                         float var20 = this.a.a(var19);
                         if (var20 < 0.0F || var20 >= 8.0F) {
                             return false;
                         }
-
                         if (var19 == PathType.DAMAGE_FIRE || var19 == PathType.DANGER_FIRE
                                 || var19 == PathType.DAMAGE_OTHER) {
                             return false;
@@ -176,7 +167,6 @@ public class PlayerNavigation extends NavigationAbstract {
                     }
                 }
             }
-
             return true;
         }
     }
@@ -190,7 +180,6 @@ public class PlayerNavigation extends NavigationAbstract {
             if (!var0.a(this.c)) {
                 this.c = var0;
             }
-
             if (this.m()) {
                 return false;
             } else {
@@ -230,7 +219,6 @@ public class PlayerNavigation extends NavigationAbstract {
                 this.q = var8.k();
                 this.r = var3;
             }
-
             return var8;
         }
     }
@@ -246,11 +234,9 @@ public class PlayerNavigation extends NavigationAbstract {
             if (var0.distanceSquared(this.g) < 2.25D) {
                 this.o();
             }
-
             this.f = this.e;
             this.g = var0;
         }
-
         if (this.c != null && !this.c.b()) {
             Vec3D var1 = this.c.g();
             if (var1.equals(this.h)) {
@@ -260,17 +246,14 @@ public class PlayerNavigation extends NavigationAbstract {
                 double var2 = var0.f(this.h);
                 this.k = this.a.dt() > 0.0F ? var2 / this.a.dt() * 1000.0D : 0.0D;
             }
-
             if (this.k > 0.0D && this.i > this.k * 3.0D) {
                 this.h = Vec3D.a;
                 this.i = 0L;
                 this.k = 0.0D;
                 this.o();
             }
-
             this.j = SystemUtils.getMonotonicMillis();
         }
-
     }
 
     @Override
@@ -300,11 +283,9 @@ public class PlayerNavigation extends NavigationAbstract {
                 if (var7 >= 0.0D) {
                     ++var19;
                 }
-
                 if (var9 >= 0.0D) {
                     ++var21;
                 }
-
                 var19 /= var7;
                 var21 /= var9;
                 int var23 = var7 < 0.0D ? -1 : 1;
@@ -313,12 +294,10 @@ public class PlayerNavigation extends NavigationAbstract {
                 int var26 = MathHelper.floor(var1.z);
                 int var27 = var25 - var5;
                 int var28 = var26 - var6;
-
                 do {
                     if (var27 * var23 <= 0 && var28 * var24 <= 0) {
                         return true;
                     }
-
                     if (var19 < var21) {
                         var19 += var15;
                         var5 += var23;
@@ -329,7 +308,6 @@ public class PlayerNavigation extends NavigationAbstract {
                         var28 = var26 - var6;
                     }
                 } while (this.a(var5, MathHelper.floor(var0.y), var6, var2, var3, var4, var0, var7, var9));
-
                 return false;
             }
         }
@@ -349,7 +327,6 @@ public class PlayerNavigation extends NavigationAbstract {
             if (var0.a(var2, this.c.e() - this.c.f())) {
                 this.j();
             }
-
         }
     }
 
@@ -357,7 +334,6 @@ public class PlayerNavigation extends NavigationAbstract {
             double var9) {
         Iterator var12 = BlockPosition.a(new BlockPosition(var0, var1, var2),
                 new BlockPosition(var0 + var3 - 1, var1 + var4 - 1, var2 + var5 - 1)).iterator();
-
         double var13;
         double var15;
         BlockPosition var11;
@@ -365,12 +341,10 @@ public class PlayerNavigation extends NavigationAbstract {
             if (!var12.hasNext()) {
                 return true;
             }
-
             var11 = (BlockPosition) var12.next();
             var13 = var11.getX() + 0.5D - var6.x;
             var15 = var11.getZ() + 0.5D - var6.z;
         } while (var13 * var7 + var15 * var9 < 0.0D || this.b.getType(var11).a(this.b, var11, PathMode.LAND));
-
         return false;
     }
 
@@ -380,7 +354,6 @@ public class PlayerNavigation extends NavigationAbstract {
         if (this.m) {
             this.j();
         }
-
         if (!this.m()) {
             Vec3D var0;
             if (this.a()) {
@@ -393,7 +366,6 @@ public class PlayerNavigation extends NavigationAbstract {
                     this.c.c(this.c.f() + 1);
                 }
             }
-
             if (!this.m()) {
                 var0 = this.c.a(this.a);
                 BlockPosition var1 = new BlockPosition(var0);
@@ -424,7 +396,6 @@ public class PlayerNavigation extends NavigationAbstract {
             if (this.b.f(new BlockPosition(this.a.locX(), this.a.locY() + 0.5D, this.a.locZ()))) {
                 return;
             }
-
             for (int var0 = 0; var0 < this.c.e(); ++var0) {
                 PathPoint var1 = this.c.a(var0);
                 if (this.b.f(new BlockPosition(var1.a, var1.b, var1.c))) {
@@ -433,7 +404,6 @@ public class PlayerNavigation extends NavigationAbstract {
                 }
             }
         }
-
     }
 
     @Override
@@ -463,7 +433,6 @@ public class PlayerNavigation extends NavigationAbstract {
         } else {
             this.m = true;
         }
-
     }
 
     @Override
@@ -480,7 +449,6 @@ public class PlayerNavigation extends NavigationAbstract {
                 && Math.abs(this.a.locY() - var1.y) < 1.0D) {
             this.c.c(this.c.f() + 1);
         }
-
         this.a(var0);
     }
 
@@ -536,7 +504,6 @@ public class PlayerNavigation extends NavigationAbstract {
                     }
                 }
             }
-
         }
     }
 
@@ -545,17 +512,14 @@ public class PlayerNavigation extends NavigationAbstract {
             int var0 = MathHelper.floor(this.a.locY());
             Block var1 = this.b.getType(new BlockPosition(this.a.locX(), var0, this.a.locZ())).getBlock();
             int var2 = 0;
-
             do {
                 if (var1 != Blocks.WATER) {
                     return var0;
                 }
-
                 ++var0;
                 var1 = this.b.getType(new BlockPosition(this.a.locX(), var0, this.a.locZ())).getBlock();
                 ++var2;
             } while (var2 <= 16);
-
             return MathHelper.floor(this.a.locY());
         } else {
             return MathHelper.floor(this.a.locY() + 0.5D);

@@ -1,10 +1,8 @@
 package net.citizensnpcs.nms.v1_19_R2.util;
 
 import java.lang.invoke.MethodHandle;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -38,14 +36,12 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
         if (entityplayer == null)
             return;
         boolean sendTabRemove = NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
-
         if (!sendTabRemove || !Setting.DISABLE_TABLIST.asBoolean()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
                     () -> NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0)),
                     1);
             return;
         }
-
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
             NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0));
