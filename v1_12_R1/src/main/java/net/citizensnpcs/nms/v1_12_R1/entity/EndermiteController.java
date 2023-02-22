@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEndermite;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.entity.Endermite;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSImpl;

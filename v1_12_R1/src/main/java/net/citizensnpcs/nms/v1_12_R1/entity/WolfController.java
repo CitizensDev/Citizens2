@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftWolf;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_12_R1.util.NMSImpl;

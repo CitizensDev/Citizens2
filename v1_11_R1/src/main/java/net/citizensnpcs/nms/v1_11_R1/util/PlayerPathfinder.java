@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_11_R1.util;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import net.citizensnpcs.nms.v1_11_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_11_R1.BlockPosition;
 import net.minecraft.server.v1_11_R1.Entity;

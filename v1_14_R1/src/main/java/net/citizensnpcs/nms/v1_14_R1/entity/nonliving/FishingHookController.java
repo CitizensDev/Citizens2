@@ -1,13 +1,16 @@
 package net.citizensnpcs.nms.v1_14_R1.entity.nonliving;
 
 import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftFishHook;
 import org.bukkit.entity.FishHook;
 import org.bukkit.util.Vector;
+
 import com.mojang.authlib.GameProfile;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSBoundingBox;

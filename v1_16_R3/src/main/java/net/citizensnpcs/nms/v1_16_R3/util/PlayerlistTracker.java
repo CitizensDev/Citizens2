@@ -1,8 +1,10 @@
 package net.citizensnpcs.nms.v1_16_R3.util;
 
 import java.lang.invoke.MethodHandle;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;

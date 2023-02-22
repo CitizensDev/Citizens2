@@ -1,7 +1,9 @@
 package net.citizensnpcs.nms.v1_17_R1.util;
 
 import org.bukkit.entity.Entity;
+
 import com.google.common.base.Joiner;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;

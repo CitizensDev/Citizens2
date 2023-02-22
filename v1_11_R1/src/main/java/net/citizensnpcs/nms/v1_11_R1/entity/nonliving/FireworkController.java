@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftFirework;
 import org.bukkit.entity.Firework;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_11_R1.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_11_R1.util.NMSBoundingBox;

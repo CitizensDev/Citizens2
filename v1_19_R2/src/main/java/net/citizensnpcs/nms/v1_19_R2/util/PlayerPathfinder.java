@@ -8,8 +8,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_19_R2.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;

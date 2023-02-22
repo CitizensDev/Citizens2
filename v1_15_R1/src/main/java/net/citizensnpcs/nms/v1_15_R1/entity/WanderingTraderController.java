@@ -2,12 +2,14 @@ package net.citizensnpcs.nms.v1_15_R1.entity;
 
 import java.lang.invoke.MethodHandle;
 import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftWanderingTrader;
 import org.bukkit.entity.WanderingTrader;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;

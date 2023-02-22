@@ -1,12 +1,14 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
 import java.lang.reflect.Method;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftShulker;
 import org.bukkit.entity.Shulker;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;

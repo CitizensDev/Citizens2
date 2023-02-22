@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_11_R1.util;
 
 import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
+
 import net.citizensnpcs.util.AbstractBlockBreaker;
 import net.minecraft.server.v1_11_R1.BlockPosition;
 import net.minecraft.server.v1_11_R1.EnchantmentManager;

@@ -3,7 +3,9 @@ package net.citizensnpcs.nms.v1_14_R1.util;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
+
 import com.google.common.collect.Sets;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_14_R1.AxisAlignedBB;

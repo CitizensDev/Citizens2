@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_10_R1.util;
 
 import java.util.EnumSet;
 import java.util.HashSet;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_10_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_10_R1.AxisAlignedBB;

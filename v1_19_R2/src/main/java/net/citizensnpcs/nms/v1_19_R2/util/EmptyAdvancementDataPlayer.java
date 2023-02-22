@@ -3,7 +3,9 @@ package net.citizensnpcs.nms.v1_19_R2.util;
 import java.io.File;
 import java.lang.invoke.MethodHandle;
 import java.util.Set;
+
 import com.mojang.datafixers.DataFixer;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.advancements.Advancement;

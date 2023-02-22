@@ -3,6 +3,7 @@ package net.citizensnpcs.nms.v1_14_R1.util;
 import java.io.File;
 import java.lang.invoke.MethodHandle;
 import java.util.Set;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_14_R1.Advancement;

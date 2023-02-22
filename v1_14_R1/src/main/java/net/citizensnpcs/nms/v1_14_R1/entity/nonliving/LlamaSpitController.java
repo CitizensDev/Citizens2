@@ -9,6 +9,7 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftLlamaSpit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LlamaSpit;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;

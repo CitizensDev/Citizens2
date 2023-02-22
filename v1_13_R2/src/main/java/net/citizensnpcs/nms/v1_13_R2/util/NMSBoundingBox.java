@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_13_R2.util;
 
 import java.lang.reflect.Field;
 import java.util.function.Supplier;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.util.NMS;

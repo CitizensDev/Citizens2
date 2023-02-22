@@ -6,9 +6,11 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+
 import net.minecraft.server.v1_14_R1.*;
 
 @SuppressWarnings("rawtypes")
@@ -96,8 +98,8 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
         entities.put(key, entityClass);
         entityIds.put(entityClass, entityId);
     } // replace regex
-    // ([A-Z_]+).*?a\(E(.*?)::new.*?$
-    // minecraftClassMap.put(EntityTypes.\1, E\2.class);
+      // ([A-Z_]+).*?a\(E(.*?)::new.*?$
+      // minecraftClassMap.put(EntityTypes.\1, E\2.class);
 
     private static final BiMap<EntityTypes, Class<?>> minecraftClassMap = HashBiMap.create();
     static {

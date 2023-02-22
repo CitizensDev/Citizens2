@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftItemFrame;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSBoundingBox;

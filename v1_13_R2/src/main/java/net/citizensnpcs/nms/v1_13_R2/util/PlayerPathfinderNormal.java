@@ -4,7 +4,9 @@ import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
+
 import com.google.common.collect.Sets;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;

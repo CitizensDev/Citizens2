@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftVindicator;
 import org.bukkit.entity.Vindicator;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;

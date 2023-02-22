@@ -1,9 +1,12 @@
 package net.citizensnpcs.nms.v1_18_R2.util;
 
 import java.util.Map;
+
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+
 import com.google.common.collect.Maps;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.network.protocol.Packet;

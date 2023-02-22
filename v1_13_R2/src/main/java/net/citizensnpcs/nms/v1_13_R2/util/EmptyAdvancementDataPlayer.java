@@ -3,6 +3,7 @@ package net.citizensnpcs.nms.v1_13_R2.util;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Set;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_13_R2.Advancement;

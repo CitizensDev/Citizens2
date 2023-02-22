@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_19_R2.util;
 
 import com.mojang.datafixers.DataFixer;
+
 import net.citizensnpcs.api.CitizensAPI;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.level.ServerPlayer;

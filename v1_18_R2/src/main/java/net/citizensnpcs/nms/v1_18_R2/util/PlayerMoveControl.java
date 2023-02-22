@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_18_R2.util;
 
 import java.util.Random;
+
 import net.citizensnpcs.nms.v1_18_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.util.Mth;

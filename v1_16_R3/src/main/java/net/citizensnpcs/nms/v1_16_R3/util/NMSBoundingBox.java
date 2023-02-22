@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_16_R3.util;
 
 import java.util.function.Supplier;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.minecraft.server.v1_16_R3.AxisAlignedBB;

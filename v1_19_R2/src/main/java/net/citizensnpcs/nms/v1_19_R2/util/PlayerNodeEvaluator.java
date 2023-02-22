@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_19_R2.util;
 
 import java.util.EnumSet;
+
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;

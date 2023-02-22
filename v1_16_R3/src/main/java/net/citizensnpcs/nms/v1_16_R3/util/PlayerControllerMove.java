@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_16_R3.util;
 
 import java.util.Random;
+
 import net.citizensnpcs.nms.v1_16_R3.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_16_R3.AttributeModifiable;

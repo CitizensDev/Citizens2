@@ -1,7 +1,9 @@
 package net.citizensnpcs.nms.v1_12_R1.util;
 
 import java.util.Set;
+
 import com.google.common.collect.Sets;
+
 import net.citizensnpcs.nms.v1_12_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.Entity;

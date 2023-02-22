@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftBoat;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.Boat;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.entity.MobEntityController;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;

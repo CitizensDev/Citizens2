@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_17_R1.network;
 
 import java.io.IOException;
+
 import io.netty.util.concurrent.GenericFutureListener;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
 import net.minecraft.network.Connection;

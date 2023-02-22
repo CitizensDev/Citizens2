@@ -1,7 +1,9 @@
 package net.citizensnpcs.nms.v1_10_R1.util;
 
 import java.lang.reflect.Field;
+
 import org.bukkit.entity.Player;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_10_R1.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;

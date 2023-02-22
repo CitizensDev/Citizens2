@@ -4,7 +4,9 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import com.google.common.collect.ImmutableSet;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_14_R1.AttributeInstance;

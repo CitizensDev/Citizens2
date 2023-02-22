@@ -3,10 +3,12 @@ package net.citizensnpcs.nms.v1_17_R1.entity;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.WeakHashMap;
+
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.entity.Entity;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;

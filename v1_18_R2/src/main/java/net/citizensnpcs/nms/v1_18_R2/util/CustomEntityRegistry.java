@@ -9,10 +9,12 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Lifecycle;
+
 import net.citizensnpcs.util.NMS;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.MappedRegistry;

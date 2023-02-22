@@ -9,6 +9,7 @@ import org.bukkit.craftbukkit.v1_18_R2.entity.CraftItem;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Item;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSImpl;
