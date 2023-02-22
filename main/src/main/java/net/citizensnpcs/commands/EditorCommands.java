@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
+import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.editor.CopierEditor;
 import net.citizensnpcs.editor.Editor;
@@ -35,7 +36,9 @@ public class EditorCommands {
             min = 1,
             max = 1,
             permission = "citizens.npc.edit.equip")
-    public void equip(CommandContext args, Player player, NPC npc) {
+    public void equip(CommandContext args, Player player, NPC npc) throws CommandException {
+        if (!npc.isSpawned())
+            throw new CommandException("NPC must be spawned");
         Editor.enterOrLeave(player, new EquipmentEditor(player, npc));
     }
 
