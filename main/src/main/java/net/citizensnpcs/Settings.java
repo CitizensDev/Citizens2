@@ -163,7 +163,7 @@ public class Settings {
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
         SCOREBOARD_SEND_TICKS("npc.scoreboard-teams.packet-send-ticks", 1),
         SELECTION_ITEM("npc.selection.item", "stick"),
-        SELECTION_MESSAGE("npc.selection.message", "Selected [[<npc>]] (ID <id>)."),
+        SELECTION_MESSAGE("npc.selection.message", "Selected [[<npc>]] (ID [[<id>]])."),
         SERVER_OWNS_NPCS("npc.server-ownership", false),
         STORAGE_FILE("storage.file", "saves.yml"),
         STORAGE_TYPE("storage.type", "yaml"),

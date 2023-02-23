@@ -2,7 +2,7 @@ package net.citizensnpcs.util;
 
 public class StringHelper {
     public static String wrap(Object string) {
-        return "[[" + string.toString() + "]]";
+        return "<yellow>" + string.toString() + "</yellow>";
     }
 
     public static String wrap(Object string, String colour) {
@@ -10,6 +10,6 @@ public class StringHelper {
     }
 
     public static String wrapHeader(Object string) {
-        return "[[=====[ ]]" + string.toString() + "[[ ]=====";
+        return "<yellow>=====[ </yellow>" + string.toString() + "<yellow> ]=====";
     }
 }
