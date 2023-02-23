@@ -328,8 +328,7 @@ public class CitizensNPC extends AbstractNPC {
             skinnable.getSkinTracker().onSpawnNPC();
         }
 
-        teleport(at, TeleportCause.PLUGIN);
-
+        NMS.setLocationDirectly(getEntity(), at);
         NMS.setHeadYaw(getEntity(), at.getYaw());
         NMS.setBodyYaw(getEntity(), at.getYaw());
 

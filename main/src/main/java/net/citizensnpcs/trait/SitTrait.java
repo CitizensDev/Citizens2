@@ -55,7 +55,7 @@ public class SitTrait extends Trait {
             }
             chair = registry.createNPC(EntityType.ARMOR_STAND, "");
             chair.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntity(npc);
-            if (!chair.spawn(sittingAt)) {
+            if (!chair.spawn(sittingAt.clone())) {
                 chair = null;
                 return;
             }
@@ -66,7 +66,7 @@ public class SitTrait extends Trait {
         }
 
         if (chair.getStoredLocation() != null && chair.getStoredLocation().distance(sittingAt) > 0.05) {
-            chair.teleport(sittingAt, TeleportCause.PLUGIN);
+            chair.teleport(sittingAt.clone(), TeleportCause.PLUGIN);
         }
     }
 

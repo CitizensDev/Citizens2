@@ -122,12 +122,12 @@ public class ArmorStandTrait extends Trait {
     }
 
     public void setAsHelperEntity(NPC parent) {
-        npc.addTrait(new ClickRedirectTrait(npc));
+        npc.addTrait(new ClickRedirectTrait(parent));
         setAsPointEntity();
     }
 
     public void setAsHelperEntityWithName(NPC parent) {
-        npc.addTrait(new ClickRedirectTrait(npc));
+        npc.addTrait(new ClickRedirectTrait(parent));
         setAsPointEntityWithName();
     }
 

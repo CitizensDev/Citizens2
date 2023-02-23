@@ -25,7 +25,6 @@ public class StoredShops {
     public void deleteShop(NPCShop shop) {
         if (Messaging.isDebugging()) {
             Messaging.debug("Deleting shop", shop.getName());
-            new Exception().printStackTrace();
         }
         if (npcShops.values().contains(shop)) {
             npcShops.values().remove(shop);

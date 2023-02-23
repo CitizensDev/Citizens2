@@ -272,6 +272,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         Vector vel = handle.getVelocity();
         double oldSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
         double horizontal = NMS.getHorizontalMovement(passenger);
+        if (Math.abs(Math.abs(horizontal) - 0.98) > 0.02)
+            return speed;
         double yaw = passenger.getLocation().getYaw();
         if (horizontal > 0.0D) {
             double dXcos = -Math.sin(yaw * Math.PI / 180.0F);
