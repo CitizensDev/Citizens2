@@ -470,11 +470,11 @@ public interface NPC extends Agent, Cloneable {
          * The Minecart item data. Byte.
          */
         MINECART_ITEM_DATA("minecart-item-data"),
+
         /**
          * The Minecart item offset as defined by Minecraft. {@link Minecart#setDisplayBlockOffset(int)}
          */
         MINECART_OFFSET("minecart-item-offset"),
-
         /**
          * Whether the NPC's nameplate should be visible. Boolean.
          */

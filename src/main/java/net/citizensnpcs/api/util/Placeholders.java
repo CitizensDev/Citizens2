@@ -12,6 +12,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -19,12 +21,39 @@ import com.google.common.collect.Lists;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.CitizensDisableEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 
-public class Placeholders {
+public class Placeholders implements Listener {
+    public static interface PlaceholderFunction {
+        public String apply(NPC npc, CommandSender sender, String input);
+    }
+
+    private static class PlaceholderProvider {
+        PlaceholderFunction func;
+        Pattern regex;
+
+        PlaceholderProvider(Pattern regex, PlaceholderFunction func) {
+            this.regex = regex;
+            this.func = func;
+        }
+    }
+
     private static OfflinePlayer getPlayer(BlockCommandSender sender) {
         return CitizensAPI.getNMSHelper().getPlayer(sender);
+    }
+
+    @EventHandler
+    private static void onCitizensDisable(CitizensDisableEvent event) {
+        PLACEHOLDERS.clear();
+    }
+
+    public static void registerNPCPlaceholder(Pattern regex, PlaceholderFunction func) {
+        if (regex.pattern().charAt(0) != '<') {
+            regex = Pattern.compile('<' + regex.pattern() + '>', regex.flags());
+        }
+        PLACEHOLDERS.add(new PlaceholderProvider(regex, func));
     }
 
     public static String replace(String text, CommandSender sender, NPC npc) {
@@ -49,6 +78,16 @@ public class Placeholders {
             out.append(replacement);
         }
         matcher.appendTail(out);
+        for (PlaceholderProvider entry : PLACEHOLDERS) {
+            matcher = entry.regex.matcher(out.toString());
+            out = new StringBuffer();
+            while (matcher.find()) {
+                String group = matcher.group().substring(1, matcher.group().length() - 1);
+                matcher.appendReplacement(out, "");
+                out.append(entry.func.apply(npc, sender, group));
+            }
+            matcher.appendTail(out);
+        }
         return out.toString();
     }
 
@@ -130,6 +169,7 @@ public class Placeholders {
 
     private static final Pattern PLACEHOLDER_MATCHER = Pattern.compile("<(id|npc|owner)>");
     private static boolean PLACEHOLDERAPI_ENABLED = true;
+    private static final List<PlaceholderProvider> PLACEHOLDERS = Lists.newArrayList();
     private static final Pattern PLAYER_PLACEHOLDER_MATCHER = Pattern.compile(
             "(<player>|<p>|@p|%player%|<random_player>|<random_npc>|<random_npc_id>|<nearest_player>|<world>)");
     private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", "@p", "%player%" };
