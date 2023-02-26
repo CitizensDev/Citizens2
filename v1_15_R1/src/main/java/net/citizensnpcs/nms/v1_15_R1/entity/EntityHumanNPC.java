@@ -422,7 +422,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
         npc.update();
-        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected())) {
+        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
             AxisAlignedBB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().dead) {
                 axisalignedbb = this.getBoundingBox().b(this.getVehicle().getBoundingBox()).grow(1.0, 0.0, 1.0);

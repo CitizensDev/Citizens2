@@ -195,7 +195,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             pushEntities();
         }
-        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected())) {
+        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
             AABB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().isRemoved()) {
                 axisalignedbb = this.getBoundingBox().minmax(this.getVehicle().getBoundingBox()).inflate(1.0, 0.0, 1.0);

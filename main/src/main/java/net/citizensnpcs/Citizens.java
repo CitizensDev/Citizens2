@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -58,6 +59,7 @@ import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.NBTStorage;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.api.util.YamlStorage;
@@ -75,6 +77,8 @@ import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.npc.ai.speech.CitizensSpeechFactory;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
+import net.citizensnpcs.trait.ClickRedirectTrait;
+import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -432,6 +436,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         selector = new NPCSelector(this);
 
         Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
+        Bukkit.getPluginManager().registerEvents(new Placeholders(), this);
+        Placeholders.registerNPCPlaceholder(Pattern.compile("command_[a-zA-Z_0-9]+"), (npc, sender, input) -> {
+            npc = npc.hasTrait(ClickRedirectTrait.class) ? npc.getTraitNullable(ClickRedirectTrait.class).getNPC()
+                    : npc;
+            CommandTrait trait = npc.getTraitNullable(CommandTrait.class);
+            return trait == null ? "" : trait.fillPlaceholder(sender, input);
+        });
         Plugin papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
         if (papi != null && papi.isEnabled()) {
             new CitizensPlaceholders(selector).register();

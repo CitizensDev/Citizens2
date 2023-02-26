@@ -25,7 +25,6 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
@@ -310,18 +309,14 @@ public class HologramTrait extends Trait {
 
             String text = line.text;
             if (ITEM_MATCHER.matcher(text).matches()) {
-                text = null;
+                hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+                continue;
             }
 
             if (!updateName)
                 continue;
-            if (text != null && !ChatColor.stripColor(Messaging.parseComponents(text)).isEmpty()) {
-                hologramNPC.setName(Placeholders.replace(text, null, npc));
-                hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
-            } else {
-                hologramNPC.setName("");
-                hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, "hover");
-            }
+            hologramNPC.setName(Placeholders.replace(text, null, npc));
+            hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, npc.getRawName().length() > 0);
         }
     }
 
@@ -399,7 +394,7 @@ public class HologramTrait extends Trait {
         }
 
         public HologramLine(String text, boolean persist, int ticks) {
-            this.text = text;
+            this.text = text == null ? "" : text;
             this.persist = persist;
             this.ticks = ticks;
             if (ITEM_MATCHER.matcher(text).matches()) {

@@ -316,6 +316,10 @@ public class CommandTrait extends Trait {
         }
     }
 
+    public String fillPlaceholder(CommandSender sender, String input) {
+        return null;
+    }
+
     public double getCost() {
         return cost;
     }

@@ -378,7 +378,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
             collideNearby();
         }
-        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, !npc.isProtected())) {
+        if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
             AxisAlignedBB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().dead) {
                 axisalignedbb = this.getBoundingBox().b(this.getVehicle().getBoundingBox()).grow(1.0, 0.0, 1.0);

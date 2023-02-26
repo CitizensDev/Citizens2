@@ -8,9 +8,6 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 
-/**
- * Persists data related to {@link ArmorStand} NPCs.
- */
 @TraitName("armorstandtrait")
 public class ArmorStandTrait extends Trait {
     @Persist
