@@ -140,7 +140,7 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public boolean isNavigating() {
-        return executing != null;
+        return executing != null && !isPaused();
     }
 
     @Override
