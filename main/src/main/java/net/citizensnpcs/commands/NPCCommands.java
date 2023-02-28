@@ -1975,14 +1975,14 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pausepathfinding --onrightclick [true|false] --when_player_within [range in blocks] --pauseticks [ticks]",
+            usage = "pausepathfinding --onrightclick [true|false] --when-player-within [range in blocks] --pauseticks [ticks]",
             desc = "Sets pathfinding pause",
             modifiers = { "pausepathfinding" },
             min = 1,
             max = 1,
             permission = "citizens.npc.pausepathfinding")
     public void pausepathfinding(CommandContext args, CommandSender sender, NPC npc,
-            @Flag("onrightclick") Boolean rightclick, @Flag("when_player_within") Double playerRange,
+            @Flag("onrightclick") Boolean rightclick, @Flag("when-player-within") Double playerRange,
             @Flag("pauseticks") Integer ticks) throws CommandException {
         PausePathfindingTrait trait = npc.getOrAddTrait(PausePathfindingTrait.class);
         if (playerRange != null) {
