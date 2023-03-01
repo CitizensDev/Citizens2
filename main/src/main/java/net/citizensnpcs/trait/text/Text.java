@@ -156,6 +156,7 @@ public class Text extends Trait implements Runnable, Listener {
         String localPattern = itemInHandPattern.equals("default") ? Setting.TALK_ITEM.asString() : itemInHandPattern;
         if (Util.matchesItemInHand(event.getClicker(), localPattern) && !shouldTalkClose()) {
             talk(event.getClicker());
+            event.setDelayedCancellation(true);
         }
     }
 

@@ -28,6 +28,7 @@ public class PausePathfindingTrait extends Trait {
         if (!rightclick || event.getNPC() != npc)
             return;
         pause();
+        event.setDelayedCancellation(true);
     }
 
     private void pause() {

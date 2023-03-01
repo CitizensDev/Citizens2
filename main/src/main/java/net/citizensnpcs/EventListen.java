@@ -452,9 +452,14 @@ public class EventListen implements Listener {
         }
         if (npc.hasTrait(CommandTrait.class)) {
             npc.getTraitNullable(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
+            rightClickEvent.setDelayedCancellation(true);
         }
         if (npc.hasTrait(ShopTrait.class)) {
             npc.getTraitNullable(ShopTrait.class).onRightClick(player);
+            rightClickEvent.setDelayedCancellation(true);
+        }
+        if (rightClickEvent.isDelayedCancellation()) {
+            event.setCancelled(true);
         }
     }
 

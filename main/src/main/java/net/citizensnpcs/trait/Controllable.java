@@ -188,6 +188,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         if (!enabled || !npc.isSpawned() || !event.getNPC().equals(npc))
             return;
         controller.rightClickEntity(event);
+        event.setDelayedCancellation(true);
     }
 
     @Override
