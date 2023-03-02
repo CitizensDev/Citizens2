@@ -224,9 +224,6 @@ public class EventListen implements Listener {
         }
     }
 
-    /*
-     * Entity events
-     */
     @EventHandler
     public void onEntityCombust(EntityCombustEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());

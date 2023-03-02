@@ -183,6 +183,7 @@ public class ShopTrait extends Trait {
 
         public void changePage(int newPage) {
             this.page = newPage;
+            ctx.setTitle("NPC Shop Contents Editor Page " + newPage);
             NPCShopPage shopPage = shop.getOrCreatePage(page);
             for (int i = 0; i < ctx.getInventory().getSize(); i++) {
                 InventoryMenuSlot slot = ctx.getSlot(i);

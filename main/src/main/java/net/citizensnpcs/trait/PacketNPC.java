@@ -2,12 +2,15 @@ package net.citizensnpcs.trait;
 
 import java.util.function.Consumer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.LocationLookup.PerPlayerMetadata;
+import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -22,6 +25,13 @@ public class PacketNPC extends Trait {
 
     public PacketNPC() {
         super("packet");
+    }
+
+    @Override
+    public void onRemove() {
+        npc.despawn(DespawnReason.PENDING_RESPAWN);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                () -> npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN));
     }
 
     @Override

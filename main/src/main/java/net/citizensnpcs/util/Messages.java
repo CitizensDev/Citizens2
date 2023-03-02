@@ -273,6 +273,8 @@ public class Messages {
     public static final String NPC_NOT_DAMAGEABLE = "citizens.commands.npc.hurt.not-damageable";
     public static final String NPC_NOT_FOUND = "citizens.notifications.npc-not-found";
     public static final String NPC_OWNER = "citizens.commands.npc.owner.owner";
+    public static final String NPC_PACKET_DISABLED = "citizens.commands.npc.packet.disabled";
+    public static final String NPC_PACKET_ENABLED = "citizens.commands.npc.packet.enabled";
     public static final String NPC_PROTECTED = "citizens.commands.npc.hurt.protected";
     public static final String NPC_REMOVED = "citizens.commands.npc.remove.removed";
     public static final String NPC_RENAMED = "citizens.commands.npc.rename.renamed";

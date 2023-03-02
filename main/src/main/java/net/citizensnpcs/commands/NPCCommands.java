@@ -1863,6 +1863,28 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "packet --enabled [true|false]",
+            desc = "Controls packet NPC settings",
+            modifiers = { "packet" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.packet")
+    @Requirements(selected = true, ownership = true)
+    public void packet(CommandContext args, CommandSender sender, NPC npc, @Flag("enabled") Boolean explicit)
+            throws CommandException {
+        if (explicit != null) {
+            if (explicit) {
+                npc.getOrAddTrait(PacketNPC.class);
+                Messaging.sendTr(sender, Messages.NPC_PACKET_ENABLED, npc.getName());
+            } else {
+                npc.removeTrait(PacketNPC.class);
+                Messaging.sendTr(sender, Messages.NPC_PACKET_DISABLED, npc.getName());
+            }
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "passive (--set [true|false])",
             desc = "Sets whether an NPC damages other entities or not",
             modifiers = { "passive" },
