@@ -165,6 +165,13 @@ public class CreeperController extends MobEntityController {
         }
 
         @Override
+        public void ignite() {
+            if (npc == null || !npc.isProtected()) {
+                super.ignite();
+            }
+        }
+
+        @Override
         public boolean isClimbing() {
             if (npc == null || !npc.isFlyable()) {
                 return super.isClimbing();

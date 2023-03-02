@@ -134,6 +134,13 @@ public class CreeperController extends MobEntityController {
         }
 
         @Override
+        public void ignite() {
+            if (npc == null || !npc.isProtected()) {
+                super.ignite();
+            }
+        }
+
+        @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
         }

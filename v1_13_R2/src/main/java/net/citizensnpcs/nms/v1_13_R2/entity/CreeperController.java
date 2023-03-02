@@ -135,6 +135,13 @@ public class CreeperController extends MobEntityController {
         }
 
         @Override
+        public void dB() {
+            if (npc == null || !npc.isProtected()) {
+                super.dB();
+            }
+        }
+
+        @Override
         public void enderTeleportTo(double d0, double d1, double d2) {
             NMS.enderTeleportTo(npc, () -> super.enderTeleportTo(d0, d1, d2));
         }

@@ -112,6 +112,13 @@ public class CreeperController extends MobEntityController {
         }
 
         @Override
+        public void dh() {
+            if (npc == null || !npc.isProtected()) {
+                super.dh();
+            }
+        }
+
+        @Override
         public void e(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
