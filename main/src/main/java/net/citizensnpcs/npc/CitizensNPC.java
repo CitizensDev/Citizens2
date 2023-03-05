@@ -27,6 +27,7 @@ import net.citizensnpcs.NPCNeedsRespawnEvent;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
+import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
@@ -478,8 +479,10 @@ public class CitizensNPC extends AbstractNPC {
                 }
             }
 
+            boolean canSwim = data().get(NPC.Metadata.SWIMMING, SwimmingExaminer.isWaterMob(getEntity()));
+            boolean inLiquid = MinecraftBlockExaminer.isLiquid(getEntity().getLocation().getBlock().getType());
             if (navigator.isNavigating()) {
-                if (data().get(NPC.Metadata.SWIMMING, true)) {
+                if (canSwim && inLiquid) {
                     getEntity().setVelocity(getEntity().getVelocity().multiply(
                             data().get(NPC.Metadata.WATER_SPEED_MODIFIER, Setting.NPC_WATER_SPEED_MODIFIER.asFloat())));
                     Location currentDest = navigator.getPathStrategy().getCurrentDestination();
@@ -487,7 +490,7 @@ public class CitizensNPC extends AbstractNPC {
                         NMS.trySwim(getEntity());
                     }
                 }
-            } else if (data().<Boolean> get(NPC.Metadata.SWIMMING, !SwimmingExaminer.isWaterMob(getEntity()))) {
+            } else if (canSwim && inLiquid) {
                 Gravity trait = getTraitNullable(Gravity.class);
                 if (trait == null || trait.hasGravity()) {
                     NMS.trySwim(getEntity());
@@ -538,12 +541,12 @@ public class CitizensNPC extends AbstractNPC {
                         SUPPORT_PICKUP_ITEMS = false;
                     }
                 }
-            }
 
-            if (isLiving && getEntity() instanceof Player) {
-                updateUsingItemState((Player) getEntity());
-                if (data().has(NPC.Metadata.SNEAKING) && !hasTrait(SneakTrait.class)) {
-                    addTrait(SneakTrait.class);
+                if (getEntity() instanceof Player) {
+                    updateUsingItemState((Player) getEntity());
+                    if (data().has(NPC.Metadata.SNEAKING) && !hasTrait(SneakTrait.class)) {
+                        addTrait(SneakTrait.class);
+                    }
                 }
             }
 

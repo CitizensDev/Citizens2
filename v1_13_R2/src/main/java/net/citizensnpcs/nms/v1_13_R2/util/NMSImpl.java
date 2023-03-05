@@ -200,7 +200,6 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.citizensnpcs.trait.PacketNPC.EntityPacketTracker;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.EnderDragonTrait;
@@ -214,6 +213,7 @@ import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.trait.versioned.SpellcasterTrait;
 import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.util.EmptyChannel;
+import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
@@ -1700,6 +1700,9 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static boolean fluidPush(NPC npc, Entity entity, Supplier<Boolean> func) {
+        if (npc == null) {
+            return func.get();
+        }
         double mx = entity.motX;
         double my = entity.motY;
         double mz = entity.motZ;

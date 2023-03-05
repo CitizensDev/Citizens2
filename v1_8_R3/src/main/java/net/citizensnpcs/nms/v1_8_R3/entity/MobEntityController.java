@@ -4,10 +4,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.WeakHashMap;
+
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Entity;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
@@ -32,22 +34,22 @@ public abstract class MobEntityController extends AbstractEntityController {
         if (entity instanceof EntityInsentient) {
             NMSImpl.clearGoals(((EntityInsentient) entity).goalSelector, ((EntityInsentient) entity).targetSelector);
         }
-        entity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch()); // entity.onGround
-                                                                                                 // isn't updated right
-                                                                                                 // away - we
-                                                                                                 // approximate here so
-        // that things like pathfinding still work *immediately* after spawn.
-        org.bukkit.Material beneath = at.getBlock().getRelative(BlockFace.DOWN).getType();
-        if (beneath.isSolid()) {
-            entity.onGround = true;
-        }
-        try {
-            UUID_FIELD.set(entity, npc.getUniqueId());
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-            npc.getOrAddTrait(ScoreboardTrait.class).createTeam(npc.getUniqueId().toString());
+        entity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
+        if (npc != null) {
+            // entity.onGround isn't updated right away - we approximate here so
+            // that things like pathfinding still work *immediately* after spawn.
+            org.bukkit.Material beneath = at.getBlock().getRelative(BlockFace.DOWN).getType();
+            if (beneath.isSolid()) {
+                entity.onGround = true;
+            }
+            try {
+                UUID_FIELD.set(entity, npc.getUniqueId());
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+                npc.getOrAddTrait(ScoreboardTrait.class).createTeam(npc.getUniqueId().toString());
+            }
         }
         return entity.getBukkitEntity();
     }

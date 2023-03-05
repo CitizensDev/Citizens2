@@ -39,7 +39,6 @@ import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.citizensnpcs.trait.PacketNPC.EntityPacketTracker;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 
 public interface NMSBridge {

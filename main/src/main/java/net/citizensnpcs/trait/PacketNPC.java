@@ -1,7 +1,5 @@
 package net.citizensnpcs.trait;
 
-import java.util.function.Consumer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -15,12 +13,13 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.npc.EntityController;
+import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerUpdateTask;
 
 @TraitName("packet")
 public class PacketNPC extends Trait {
-    private EntityPacketTracker playerTracker;
+    private EntityPacketTracker packetTracker;
     private boolean spawned = false;
 
     public PacketNPC() {
@@ -36,7 +35,7 @@ public class PacketNPC extends Trait {
 
     @Override
     public void onSpawn() {
-        playerTracker = NMS.getPlayerTracker(npc.getEntity());
+        packetTracker = NMS.createPacketTracker(npc.getEntity());
         spawned = true;
     }
 
@@ -45,13 +44,13 @@ public class PacketNPC extends Trait {
         if (!spawned)
             return;
         PerPlayerMetadata<Boolean> ppm = CitizensAPI.getLocationLookup().registerMetadata("packetnpc", null);
-        for (Player nearby : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getStoredLocation(), 64)) {
+        for (Player nearby : CitizensAPI.getLocationLookup().getNearbyPlayers(npc)) {
             if (!ppm.has(nearby.getUniqueId(), npc.getUniqueId().toString())) {
-                playerTracker.link(nearby);
+                packetTracker.link(nearby);
                 ppm.set(nearby.getUniqueId(), npc.getUniqueId().toString(), true);
             }
         }
-        playerTracker.run();
+        packetTracker.run();
     }
 
     public EntityController wrap(EntityController controller) {
@@ -59,14 +58,6 @@ public class PacketNPC extends Trait {
             return new PacketController(controller);
         }
         return controller;
-    }
-
-    public static interface EntityPacketTracker extends Runnable {
-        public void link(Player player);
-
-        public void unlink(Player player);
-
-        public void unlinkAll(Consumer<Player> callback);
     }
 
     private class PacketController implements EntityController {
@@ -88,7 +79,7 @@ public class PacketNPC extends Trait {
                 return;
             PlayerUpdateTask.deregisterPlayer(getBukkitEntity());
             PerPlayerMetadata<Boolean> ppm = CitizensAPI.getLocationLookup().registerMetadata("packetnpc", null);
-            playerTracker.unlinkAll(player -> ppm.remove(player.getUniqueId(), npc.getUniqueId().toString()));
+            packetTracker.unlinkAll(player -> ppm.remove(player.getUniqueId(), npc.getUniqueId().toString()));
             spawned = false;
         }
 
@@ -103,14 +94,14 @@ public class PacketNPC extends Trait {
                 return;
             PlayerUpdateTask.deregisterPlayer(getBukkitEntity());
             PerPlayerMetadata<Boolean> ppm = CitizensAPI.getLocationLookup().registerMetadata("packetnpc", null);
-            playerTracker.unlinkAll(player -> ppm.remove(player.getUniqueId(), npc.getUniqueId().toString()));
+            packetTracker.unlinkAll(player -> ppm.remove(player.getUniqueId(), npc.getUniqueId().toString()));
             base.remove();
             spawned = false;
         }
 
         @Override
         public boolean spawn(Location at) {
-            base.getBukkitEntity().teleport(at);
+            NMS.setLocationDirectly(base.getBukkitEntity(), at);
             PlayerUpdateTask.registerPlayer(getBukkitEntity());
             return true;
         }

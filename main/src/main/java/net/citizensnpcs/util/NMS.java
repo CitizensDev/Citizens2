@@ -51,7 +51,6 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.citizensnpcs.trait.PacketNPC.EntityPacketTracker;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 
 public class NMS {
@@ -375,7 +374,7 @@ public class NMS {
         return BRIDGE.getPassengers(entity);
     }
 
-    public static EntityPacketTracker getPlayerTracker(Entity entity) {
+    public static EntityPacketTracker createPacketTracker(Entity entity) {
         return BRIDGE.createPacketTracker(entity);
     }
 

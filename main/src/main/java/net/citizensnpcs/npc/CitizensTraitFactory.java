@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
@@ -66,7 +67,7 @@ public class CitizensTraitFactory implements TraitFactory {
     private final List<TraitInfo> defaultTraits = Lists.newArrayList();
     private final Map<String, TraitInfo> registered = Maps.newHashMap();
 
-    public CitizensTraitFactory() {
+    public CitizensTraitFactory(Citizens plugin) {
         registerTrait(TraitInfo.create(Age.class));
         registerTrait(TraitInfo.create(ArmorStandTrait.class));
         registerTrait(TraitInfo.create(Anchors.class));

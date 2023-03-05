@@ -60,6 +60,13 @@ public class ProfileFetcher {
         initThread();
     }
 
+    public static void shutdown() {
+        if (THREAD_TASK != null) {
+            THREAD_TASK.cancel();
+            THREAD_TASK = null;
+        }
+    }
+
     private static ProfileFetchThread PROFILE_THREAD;
     private static BukkitTask THREAD_TASK;
 }

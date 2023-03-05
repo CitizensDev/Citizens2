@@ -98,6 +98,7 @@ import net.citizensnpcs.commands.history.RemoveNPCHistoryItem;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
+import net.citizensnpcs.npc.ai.FallingExaminer;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
@@ -641,7 +642,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name])",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
             desc = "Create a new NPC",
             flags = "bustpc",
             modifiers = { "create" },
@@ -1872,14 +1873,16 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true)
     public void packet(CommandContext args, CommandSender sender, NPC npc, @Flag("enabled") Boolean explicit)
             throws CommandException {
-        if (explicit != null) {
-            if (explicit) {
-                npc.getOrAddTrait(PacketNPC.class);
-                Messaging.sendTr(sender, Messages.NPC_PACKET_ENABLED, npc.getName());
-            } else {
-                npc.removeTrait(PacketNPC.class);
-                Messaging.sendTr(sender, Messages.NPC_PACKET_DISABLED, npc.getName());
-            }
+        if (explicit == null) {
+            explicit = !npc.hasTrait(PacketNPC.class);
+        }
+
+        if (explicit) {
+            npc.getOrAddTrait(PacketNPC.class);
+            Messaging.sendTr(sender, Messages.NPC_PACKET_ENABLED, npc.getName());
+        } else {
+            npc.removeTrait(PacketNPC.class);
+            Messaging.sendTr(sender, Messages.NPC_PACKET_DISABLED, npc.getName());
         }
     }
 
@@ -1900,7 +1903,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --use-new-finder [true|false]",
+            usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --use-new-finder [true|false] --falling-distance [distance]",
             desc = "Sets an NPC's pathfinding options",
             modifiers = { "pathopt", "po", "patho" },
             min = 1,
@@ -1909,8 +1912,8 @@ public class NPCCommands {
     public void pathfindingOptions(CommandContext args, CommandSender sender, NPC npc,
             @Flag({ "avoid-water" }) Boolean avoidwater, @Flag("stationary-ticks") Integer stationaryTicks,
             @Flag("distance-margin") Double distanceMargin, @Flag("path-distance-margin") Double pathDistanceMargin,
-            @Flag("attack-range") Double attackRange, @Flag("use-new-finder") Boolean useNewFinder)
-            throws CommandException {
+            @Flag("attack-range") Double attackRange, @Flag("use-new-finder") Boolean useNewFinder,
+            @Flag("falling-distance") Integer fallingDistance) throws CommandException {
         String output = "";
         if (avoidwater != null) {
             npc.getNavigator().getDefaultParameters().avoidWater(avoidwater);
@@ -1946,6 +1949,10 @@ public class NPCCommands {
         if (useNewFinder != null) {
             npc.getNavigator().getDefaultParameters().useNewPathfinder(useNewFinder);
             output += Messaging.tr(Messages.PATHFINDING_OPTIONS_USE_NEW_FINDER, npc.getName(), useNewFinder);
+        }
+        if (fallingDistance != null) {
+            npc.getNavigator().getDefaultParameters().examiner(new FallingExaminer(fallingDistance));
+            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_FALLING_DISTANCE_SET, npc.getName(), fallingDistance);
         }
         if (output.isEmpty()) {
             throw new CommandUsageException();

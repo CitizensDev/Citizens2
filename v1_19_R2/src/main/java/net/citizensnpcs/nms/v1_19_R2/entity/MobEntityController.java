@@ -34,18 +34,20 @@ public abstract class MobEntityController extends AbstractEntityController {
         if (entity instanceof Mob) {
             NMSImpl.clearGoals(npc, ((Mob) entity).goalSelector, ((Mob) entity).targetSelector);
         }
-        entity.absMoveTo(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch()); // entity.onGround isn't updated
-                                                                                       // right away - we approximate
-                                                                                       // here so
-        // that things like pathfinding still work *immediately* after spawn.
-        org.bukkit.Material beneath = at.getBlock().getRelative(BlockFace.DOWN).getType();
-        if (beneath.isSolid()) {
-            entity.setOnGround(true);
+        entity.absMoveTo(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
+        if (npc != null) {
+            // entity.onGround isn't updated right away - we approximate here so
+            // that things like pathfinding still work *immediately* after spawn.
+            org.bukkit.Material beneath = at.getBlock().getRelative(BlockFace.DOWN).getType();
+            if (beneath.isSolid()) {
+                entity.setOnGround(true);
+            }
+            entity.setUUID(npc.getUniqueId());
+            if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
+                npc.getOrAddTrait(ScoreboardTrait.class).createTeam(npc.getUniqueId().toString());
+            }
         }
-        entity.setUUID(npc.getUniqueId());
-        if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
-            npc.getOrAddTrait(ScoreboardTrait.class).createTeam(npc.getUniqueId().toString());
-        }
+
         return entity.getBukkitEntity();
     }
 

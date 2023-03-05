@@ -388,6 +388,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         locationLookup = null;
         enabled = false;
         saveOnDisable = true;
+        ProfileFetcher.shutdown();
+        Skin.clearCache();
         Template.shutdown();
         NMS.shutdown();
         CitizensAPI.shutdown();
@@ -429,7 +431,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         speechFactory = new CitizensSpeechFactory();
         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
-        traitFactory = new CitizensTraitFactory();
+        traitFactory = new CitizensTraitFactory(this);
         traitFactory.registerTrait(TraitInfo.create(ShopTrait.class).withSupplier(() -> {
             return new ShopTrait(shops);
         }));
@@ -507,6 +509,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs(false);
         ProfileFetcher.reset();
         Skin.clearCache();
+
         getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
 
         saves.reloadFromSource();
