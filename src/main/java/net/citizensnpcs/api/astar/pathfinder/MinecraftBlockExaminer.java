@@ -51,25 +51,26 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
-        if (!SpigotUtil.checkYSafe(pos.getBlockY(), source.getWorld())) {
+        if (!SpigotUtil.checkYSafe(pos.getBlockY(), source.getWorld()))
             return PassableState.UNPASSABLE;
-        }
+
         Block above = source.getBlockAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
         Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
         Block in = source.getBlockAt(pos);
         boolean canStand = canStandOn(below) || isLiquid(in.getType(), below) || isClimbable(below);
-        if (!canStand) {
+        if (!canStand)
             return PassableState.UNPASSABLE;
-        }
+
         if (isClimbable(in.getType()) && (isClimbable(above.getType()) || isClimbable(below))) {
             point.addCallback(new LadderClimber());
         } else if (!canStandIn(above) || !canStandIn(in)) {
             return PassableState.UNPASSABLE;
         }
+
         if (!canJumpOn(below)) {
-            if (point.getParentPoint() == null) {
+            if (point.getParentPoint() == null)
                 return PassableState.UNPASSABLE;
-            }
+
             Vector parentPos = point.getParentPoint().getVector();
             if ((parentPos.getX() != pos.getX() || parentPos.getZ() != pos.getZ())
                     && pos.clone().subtract(point.getParentPoint().getVector()).getY() == 1) {

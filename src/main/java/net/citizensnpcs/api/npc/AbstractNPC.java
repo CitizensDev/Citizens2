@@ -501,9 +501,6 @@ public abstract class AbstractNPC implements NPC {
         this.name = name;
         coloredNameComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
         coloredNameStringCache = Messaging.parseComponents(this.name);
-        Messaging.idebug(() -> {
-            return "Parsed name " + getId() + ": " + coloredNameStringCache + " " + coloredNameComponentCache;
-        });
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import ch.ethz.globis.phtree.PhTreeF;
+import net.citizensnpcs.api.npc.NPC;
 
 public class LocationLookup extends BukkitRunnable {
     private final Map<String, PerPlayerMetadata<?>> metadata = Maps.newHashMap();
@@ -35,6 +36,10 @@ public class LocationLookup extends BukkitRunnable {
         if (tree == null)
             return Collections.emptyList();
         return () -> tree.rangeQuery(dist, base.getX(), base.getY(), base.getZ());
+    }
+
+    public Iterable<Player> getNearbyPlayers(NPC npc) {
+        return getNearbyPlayers(npc.getStoredLocation(), npc.data().get(NPC.Metadata.TRACKING_RANGE, 64));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

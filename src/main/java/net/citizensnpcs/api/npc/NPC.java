@@ -298,13 +298,11 @@ public interface NPC extends Agent, Cloneable {
     public void setAlwaysUseNameHologram(boolean use);
 
     /**
-     * Sets the {@link EntityType} of this NPC. Currently only accepts <em>living</em> entity types, with scope for
-     * additional types in the future. The NPC will respawned if currently spawned, or will remain despawned otherwise.
+     * Sets the {@link EntityType} of this NPC. The NPC will respawned if currently spawned, or will remain despawned
+     * otherwise.
      *
      * @param type
      *            The new mob type
-     * @throws IllegalArgumentException
-     *             If the type is not a living entity type
      */
     public void setBukkitEntityType(EntityType type);
 

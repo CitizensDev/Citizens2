@@ -37,7 +37,7 @@ public class SimpleMetadataStore implements MetadataStore {
 
     @Override
     public <T> T get(NPC.Metadata key, T def) {
-        T t = this.get(key);
+        T t = get(key);
         return t == null ? def : t;
     }
 

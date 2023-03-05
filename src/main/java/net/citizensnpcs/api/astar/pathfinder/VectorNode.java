@@ -114,6 +114,10 @@ public class VectorNode extends AStarNode implements PathPoint {
     }
 
     public List<PathPoint> getNeighbours(BlockSource source, PathPoint point) {
+        return getNeighbours(source, point, true);
+    }
+
+    public List<PathPoint> getNeighbours(BlockSource source, PathPoint point, boolean checkPassable) {
         List<PathPoint> neighbours = Lists.newArrayList();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -127,7 +131,7 @@ public class VectorNode extends AStarNode implements PathPoint {
                     Vector mod = new Vector(location.getX() + x, modY, location.getZ() + z);
                     if (mod.equals(location))
                         continue;
-                    if (x != 0 && z != 0) {
+                    if (x != 0 && z != 0 && checkPassable) {
                         if (!isPassable(point.createAtOffset(new Vector(location.getX() + x, modY, location.getZ())))
                                 || !isPassable(
                                         point.createAtOffset(new Vector(location.getX(), modY, location.getZ() + z)))) {
@@ -161,8 +165,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        return prime + ((location == null) ? 0 : location.hashCode());
+        return 31 + ((location == null) ? 0 : location.hashCode());
     }
 
     public float heuristicDistance(Vector goal) {
