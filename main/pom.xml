@@ -158,6 +158,14 @@
                     <include>*.properties</include>
                 </includes>
             </resource>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>..</directory>
+                <includes>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <plugin>
