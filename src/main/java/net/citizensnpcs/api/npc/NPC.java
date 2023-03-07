@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
@@ -234,6 +235,15 @@ public interface NPC extends Agent, Cloneable {
      * @return Whether this NPC is flyable
      */
     public boolean isFlyable();
+
+    /**
+     * Returns whether the given player can see the NPC (i.e. receive packets about it).
+     *
+     * @param player
+     *            The player to check
+     * @return Whether the NPC is hidden from the player
+     */
+    public boolean isHiddenFrom(Player player);
 
     /**
      * Gets whether this NPC is protected from damage, movement and other events that players and mobs use to change the

@@ -13,12 +13,12 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -41,6 +41,7 @@ import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
+import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
@@ -325,6 +326,12 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public boolean isHiddenFrom(Player player) {
+        PlayerFilter filter = getTraitNullable(PlayerFilter.class);
+        return filter != null ? filter.isHidden(player) : false;
+    }
+
+    @Override
     public boolean isProtected() {
         return data().get(NPC.Metadata.DEFAULT_PROTECTED, true);
     }
@@ -345,12 +352,8 @@ public abstract class AbstractNPC implements NPC {
 
         String traitNames = root.getString("traitnames");
         Set<DataKey> keys = Sets.newHashSet(root.getRelative("traits").getSubKeys());
-        Iterables.addAll(keys, Iterables.transform(Splitter.on(',').split(traitNames), new Function<String, DataKey>() {
-            @Override
-            public DataKey apply(String input) {
-                return root.getRelative("traits." + input);
-            }
-        }));
+        Iterables.addAll(keys,
+                Iterables.transform(Splitter.on(',').split(traitNames), input -> root.getRelative("traits." + input)));
         DataKey locationKey = root.getRelative("traits.location");
         if (locationKey.keyExists()) {
             loadTraitFromKey(locationKey);
