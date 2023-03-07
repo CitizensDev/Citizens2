@@ -20,7 +20,6 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.trait.trait.Speech;
-import net.citizensnpcs.model.ModelTrait;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
@@ -91,7 +90,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Inventory.class));
         registerTrait(TraitInfo.create(LookClose.class));
         registerTrait(TraitInfo.create(MirrorTrait.class));
-        registerTrait(TraitInfo.create(ModelTrait.class).withSupplier(() -> new ModelTrait(plugin.getModelRegistry())));
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());
         registerTrait(TraitInfo.create(OcelotModifiers.class));
