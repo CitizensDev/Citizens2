@@ -38,7 +38,6 @@ import net.citizensnpcs.nms.v1_19_R2.util.NMSImpl;
 import net.citizensnpcs.nms.v1_19_R2.util.PlayerControllerJump;
 import net.citizensnpcs.nms.v1_19_R2.util.PlayerMoveControl;
 import net.citizensnpcs.nms.v1_19_R2.util.PlayerNavigation;
-import net.citizensnpcs.nms.v1_19_R2.util.PlayerlistTracker;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinPacketTracker;
@@ -54,7 +53,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -89,7 +87,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
-    private PlayerlistTracker playerlistTracker;
     private boolean setBukkitEntity;
     private final SkinPacketTracker skinTracker;
     private EmptyServerStatsCounter statsCache;
@@ -108,14 +105,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         } else {
             skinTracker = null;
         }
-    }
-
-    @Override
-    public boolean broadcastToPlayer(ServerPlayer entityplayer) {
-        if (npc != null && playerlistTracker == null) {
-            return false;
-        }
-        return super.broadcastToPlayer(entityplayer);
     }
 
     public boolean canCutCorner(BlockPathTypes pathtype) {
@@ -211,14 +200,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 entity.playerTouch(this);
             }
         }
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        if (playerlistTracker != null) {
-            playerlistTracker.updateLastPlayer();
-        }
-        return super.getAddEntityPacket();
     }
 
     @Override
@@ -468,10 +449,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     @Override
     public void setSkinPersistent(String skinName, String signature, String data) {
         npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(skinName, signature, data);
-    }
-
-    public void setTracked(PlayerlistTracker tracker) {
-        playerlistTracker = tracker;
     }
 
     @Override

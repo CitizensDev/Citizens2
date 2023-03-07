@@ -84,6 +84,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.EntityDim;
@@ -642,7 +643,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --model [model name] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
             desc = "Create a new NPC",
             flags = "bustpc",
             modifiers = { "create" },
@@ -652,7 +653,7 @@ public class NPCCommands {
     public void create(CommandContext args, CommandSender sender, NPC npc, @Flag("at") Location at,
             @Flag(value = "type", defValue = "PLAYER") EntityType type, @Flag("trait") String traits,
             @Flag(value = "nameplate", completions = { "true", "false", "hover" }) String nameplate,
-            @Flag("temporaryticks") Integer temporaryTicks, @Flag("item") String item,
+            @Flag("temporaryticks") Integer temporaryTicks, @Flag("item") String item, @Flag("model") String model,
             @Flag("template") String templateName, @Flag("registry") String registryName) throws CommandException {
         String name = args.getJoinedStrings(1).trim();
         if (args.hasValueFlag("type")) {
@@ -687,6 +688,10 @@ public class NPCCommands {
 
         if (args.hasFlag('t') || temporaryTicks != null) {
             registry = temporaryRegistry;
+        }
+
+        if (model != null) {
+            type = EntityType.ARMOR_STAND;
         }
 
         if (item != null) {
@@ -2064,6 +2069,31 @@ public class NPCCommands {
             return;
         }
         animation.play((Player) npc.getEntity(), 64);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "playerfilter --hide [uuid] --unhide [uuid] --only [uuid]",
+            desc = "Sets the NPC filter",
+            modifiers = { "playerfilter" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.playerfilter")
+    public void playerfilter(CommandContext args, CommandSender sender, NPC npc, @Flag("hide") UUID hide,
+            @Flag("unhide") UUID unhide, @Flag("only") UUID only) {
+        PlayerFilter trait = npc.getOrAddTrait(PlayerFilter.class);
+        if (hide != null) {
+            trait.hide(hide);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_HIDDEN, hide, npc.getName());
+        }
+        if (unhide != null) {
+            trait.unhide(unhide);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_UNHIDDEN, unhide, npc.getName());
+        }
+        if (only != null) {
+            trait.only(only);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_ONLY_ADDED, only, npc.getName());
+        }
     }
 
     @Command(

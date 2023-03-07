@@ -160,6 +160,7 @@ public class Settings {
         PLACEHOLDER_SKIN_UPDATE_FREQUENCY("npc.skins.placeholder-update-frequency-ticks", 5 * 60 * 20),
         PLAYER_TELEPORT_DELAY("npc.teleport-delay", "npc.delay-player-teleport-ticks", -1),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("npc.player.remove-from-list", true),
+        RESOURCE_PACK_PATH("general.resource-pack-path", "plugins/Citizens/resourcepack"),
         SAVE_TASK_DELAY("storage.save-task.delay", 20 * 60 * 60),
         SCOREBOARD_SEND_TICKS("npc.scoreboard-teams.packet-send-ticks", 1),
         SELECTION_ITEM("npc.selection.item", "stick"),

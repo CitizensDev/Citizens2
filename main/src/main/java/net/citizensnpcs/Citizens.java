@@ -70,6 +70,7 @@ import net.citizensnpcs.commands.TemplateCommands;
 import net.citizensnpcs.commands.TraitCommands;
 import net.citizensnpcs.commands.WaypointCommands;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.model.ModelRegistry;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
@@ -93,6 +94,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private Settings config;
     private boolean enabled;
     private LocationLookup locationLookup;
+    private ModelRegistry modelRegistry;
     private final NMSHelper nmsHelper = new NMSHelper() {
         private boolean SUPPORT_OWNER_PROFILE = true;
 
@@ -245,6 +247,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return locationLookup;
     }
 
+    public ModelRegistry getModelRegistry() {
+        return modelRegistry;
+    }
+
     @Override
     public NPCRegistry getNamedNPCRegistry(String name) {
         if (name.equals(npcRegistry.getName()))
@@ -384,6 +390,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Editor.leaveAll();
         despawnNPCs(saveOnDisable);
         HandlerList.unregisterAll(this);
+        modelRegistry.reset();
         npcRegistry = null;
         locationLookup = null;
         enabled = false;
@@ -436,6 +443,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return new ShopTrait(shops);
         }));
         selector = new NPCSelector(this);
+        modelRegistry = new ModelRegistry();
 
         Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
         Bukkit.getPluginManager().registerEvents(new Placeholders(), this);
@@ -509,8 +517,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs(false);
         ProfileFetcher.reset();
         Skin.clearCache();
+        modelRegistry.reset();
 
         getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
+
+        modelRegistry.load(new File(Setting.RESOURCE_PACK_PATH.asString()), new File(getDataFolder(), "models"));
 
         saves.reloadFromSource();
         saves.loadInto(npcRegistry);
@@ -617,6 +628,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private class CitizensLoadTask implements Runnable {
         @Override
         public void run() {
+            modelRegistry.load(new File(Setting.RESOURCE_PACK_PATH.asString()), new File(getDataFolder(), "models"));
             saves.loadInto(npcRegistry);
             shops.load();
 

@@ -392,8 +392,9 @@ public class NMSImpl implements NMSBridge {
             ((Mob) handle).doHurtTarget(target);
             return;
         }
-        AttributeInstance attackDamage = handle.getAttribute(Attributes.ATTACK_DAMAGE);
-        float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
+        float f = (float) (handle.getAttributes().hasAttribute(Attributes.ATTACK_DAMAGE)
+                ? handle.getAttributeValue(Attributes.ATTACK_DAMAGE)
+                : 1f);
         int i = 0;
         f += EnchantmentHelper.getDamageBonus(handle.getMainHandItem(), target.getMobType());
         i += EnchantmentHelper.getKnockbackBonus(handle);
@@ -1193,15 +1194,15 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void replaceTrackerEntry(Player player) {
-        ServerLevel server = (ServerLevel) NMSImpl.getHandle(player).level;
-        TrackedEntity entry = server.getChunkProvider().chunkMap.G.get(player.getEntityId());
+    public void replaceTrackerEntry(org.bukkit.entity.Entity entity) {
+        ServerLevel server = (ServerLevel) NMSImpl.getHandle(entity).level;
+        TrackedEntity entry = server.getChunkProvider().chunkMap.G.get(entity.getEntityId());
         if (entry == null)
             return;
         PlayerlistTracker replace = new PlayerlistTracker(server.getChunkProvider().chunkMap, entry);
-        server.getChunkProvider().chunkMap.G.put(player.getEntityId(), replace);
-        if (getHandle(player) instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) getHandle(player)).setTracked(replace);
+        server.getChunkProvider().chunkMap.G.put(entity.getEntityId(), replace);
+        if (getHandle(entity) instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) getHandle(entity)).setTracked(replace);
         }
     }
 

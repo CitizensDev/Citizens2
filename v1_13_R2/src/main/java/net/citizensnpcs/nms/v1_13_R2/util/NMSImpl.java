@@ -1129,13 +1129,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void replaceTrackerEntry(Player player) {
-        WorldServer server = (WorldServer) NMSImpl.getHandle(player).getWorld();
-        EntityTrackerEntry entry = server.getTracker().trackedEntities.get(player.getEntityId());
+    public void replaceTrackerEntry(org.bukkit.entity.Entity entity) {
+        WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
+        EntityTrackerEntry entry = server.getTracker().trackedEntities.get(entity.getEntityId());
         if (entry == null)
             return;
         PlayerlistTrackerEntry replace = new PlayerlistTrackerEntry(entry);
-        server.getTracker().trackedEntities.a(player.getEntityId(), replace);
+        server.getTracker().trackedEntities.a(entity.getEntityId(), replace);
         if (TRACKED_ENTITY_SET != null) {
             try {
                 Set<Object> set = (Set<Object>) TRACKED_ENTITY_SET.get(server.getTracker());
@@ -1147,8 +1147,8 @@ public class NMSImpl implements NMSBridge {
                 e.printStackTrace();
             }
         }
-        if (getHandle(player) instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) getHandle(player)).setTracked(replace);
+        if (getHandle(entity) instanceof EntityHumanNPC) {
+            ((EntityHumanNPC) getHandle(entity)).setTracked(replace);
         }
     }
 

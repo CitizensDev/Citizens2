@@ -3,6 +3,7 @@ package net.citizensnpcs.nms.v1_15_R1.util;
 import java.lang.invoke.MethodHandle;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
@@ -31,7 +32,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
     }
 
     public void updateLastPlayer() {
-        if (tracker.dead)
+        if (tracker.dead || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         final EntityPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
@@ -48,6 +49,9 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
         if (!(entityplayer instanceof EntityHumanNPC)) {
+            if (tracker instanceof NPCHolder
+                    && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity()))
+                return;
             // prevent updates to NPC "viewers"
             this.lastUpdatedPlayer = entityplayer;
             super.updatePlayer(entityplayer);

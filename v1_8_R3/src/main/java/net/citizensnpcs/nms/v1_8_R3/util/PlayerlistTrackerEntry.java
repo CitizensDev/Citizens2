@@ -1,8 +1,11 @@
 package net.citizensnpcs.nms.v1_8_R3.util;
 
 import java.lang.reflect.Field;
+
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -22,7 +25,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     public PlayerlistTrackerEntry(EntityTrackerEntry entry) {
-        this(getTracker(entry), getB(entry), getC(entry), getU(entry));
+        this(entry.tracker, getB(entry), getC(entry), getU(entry));
     }
 
     public boolean isUpdating() {
@@ -32,7 +35,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public void updateLastPlayer() {
         if (lastUpdatedPlayer == null)
             return;
-        final Entity tracker = getTracker(this);
+        if (tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+            return;
         final EntityPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         lastUpdatedPlayer = null;
@@ -52,6 +56,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         // prevent updates to NPC "viewers"
         if (entityplayer instanceof EntityHumanNPC)
             return;
+        if (tracker instanceof NPCHolder && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity()))
+            return;
         lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
         lastUpdatedPlayer = null;
@@ -59,7 +65,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     private static int getB(EntityTrackerEntry entry) {
         try {
-            Entity entity = getTracker(entry);
+            Entity entity = entry.tracker;
             if (entity instanceof NPCHolder) {
                 return ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.TRACKING_RANGE, (Integer) B.get(entry));
             }
@@ -83,17 +89,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         return 0;
     }
 
-    private static Entity getTracker(EntityTrackerEntry entry) {
-        try {
-            return (Entity) TRACKER.get(entry);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     private static boolean getU(EntityTrackerEntry entry) {
         try {
             return (Boolean) U.get(entry);
@@ -107,6 +102,5 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     private static Field B = NMS.getField(EntityTrackerEntry.class, "b");
     private static Field C = NMS.getField(EntityTrackerEntry.class, "c");
-    private static Field TRACKER = NMS.getField(EntityTrackerEntry.class, "tracker");
     private static Field U = NMS.getField(EntityTrackerEntry.class, "u");
 }

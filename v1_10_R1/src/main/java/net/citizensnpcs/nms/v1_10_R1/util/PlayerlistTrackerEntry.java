@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_10_R1.util;
 
 import java.lang.reflect.Field;
 
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -28,6 +29,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         if (entityplayer instanceof EntityHumanNPC)
             return;
         Entity tracker = getTracker(this);
+        if (tracker instanceof NPCHolder && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity()))
+            return;
+        if (tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+            return;
         if (entityplayer != tracker && c(entityplayer)) {
             if (!this.trackedPlayers.contains(entityplayer)
                     && ((entityplayer.x().getPlayerChunkMap().a(entityplayer, tracker.ac, tracker.ae))

@@ -378,6 +378,8 @@ public class CitizensNPC extends AbstractNPC {
                 }
 
                 EntityType type = getEntity().getType();
+                NMS.replaceTracker(getEntity());
+
                 if (type.isAlive()) {
                     LivingEntity entity = (LivingEntity) getEntity();
                     entity.setRemoveWhenFarAway(false);
@@ -387,7 +389,6 @@ public class CitizensNPC extends AbstractNPC {
                     }
 
                     if (type == EntityType.PLAYER) {
-                        NMS.replaceTrackerEntry((Player) getEntity());
                         PlayerUpdateTask.registerPlayer(getEntity());
                     } else if (data().has(NPC.Metadata.AGGRESSIVE)) {
                         NMS.setAggressive(entity, data().<Boolean> get(NPC.Metadata.AGGRESSIVE));

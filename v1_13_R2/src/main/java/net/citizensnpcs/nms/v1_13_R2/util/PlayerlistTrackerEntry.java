@@ -3,6 +3,7 @@ package net.citizensnpcs.nms.v1_13_R2.util;
 import java.lang.reflect.Field;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
@@ -17,9 +18,11 @@ import net.minecraft.server.v1_13_R2.EntityTrackerEntry;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private EntityPlayer lastUpdatedPlayer;
+    private final Entity tracker;
 
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {
         super(entity, i, j, k, flag);
+        tracker = getTracker(this);
     }
 
     public PlayerlistTrackerEntry(EntityTrackerEntry entry) {
@@ -31,9 +34,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     public void updateLastPlayer() {
-        if (lastUpdatedPlayer == null)
+        if (tracker.dead || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
-        final Entity tracker = getTracker(this);
         final EntityPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         lastUpdatedPlayer = null;
@@ -51,6 +53,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public void updatePlayer(final EntityPlayer entityplayer) {
         // prevent updates to NPC "viewers"
         if (entityplayer instanceof EntityHumanNPC)
+            return;
+        if (tracker instanceof NPCHolder && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity()))
             return;
         lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);

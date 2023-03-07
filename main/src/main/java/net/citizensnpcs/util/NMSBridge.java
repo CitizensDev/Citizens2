@@ -150,7 +150,7 @@ public interface NMSBridge {
 
     public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity);;
 
-    public void replaceTrackerEntry(Player player);
+    public void replaceTrackerEntry(Entity entity);
 
     public void sendPositionUpdate(Player excluding, Entity from, Location location);
 

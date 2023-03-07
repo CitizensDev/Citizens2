@@ -90,6 +90,10 @@ public class NMS {
      * an Exception like it should.
      */
 
+    public static EntityPacketTracker createPacketTracker(Entity entity) {
+        return BRIDGE.createPacketTracker(entity);
+    }
+
     public static void enderTeleportTo(NPC npc, Runnable cb) {
         if (npc == null) {
             cb.run();
@@ -227,6 +231,18 @@ public class NMS {
             found.setAccessible(true);
         }
         return found;
+    }
+
+    public static MethodHandle getFirstFinalSetter(Class<?> clazz, Class<?> type) {
+        try {
+            Field found = getFirstFieldMatchingType(clazz, type, false);
+            if (found == null)
+                return null;
+            return getFinalSetter(clazz, found.getName());
+        } catch (Exception e) {
+            Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
+        }
+        return null;
     }
 
     public static MethodHandle getFirstGetter(Class<?> clazz, Class<?> type) {
@@ -372,10 +388,6 @@ public class NMS {
 
     public static List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
         return BRIDGE.getPassengers(entity);
-    }
-
-    public static EntityPacketTracker createPacketTracker(Entity entity) {
-        return BRIDGE.createPacketTracker(entity);
     }
 
     public static GameProfile getProfile(Player player) {
@@ -563,8 +575,8 @@ public class NMS {
         BRIDGE.removeHookIfNecessary(npcRegistry, entity);
     }
 
-    public static void replaceTrackerEntry(Player player) {
-        BRIDGE.replaceTrackerEntry(player);
+    public static void replaceTracker(Entity entity) {
+        BRIDGE.replaceTrackerEntry(entity);
     }
 
     public static void sendPositionUpdate(Player excluding, org.bukkit.entity.Entity from, Location location) {

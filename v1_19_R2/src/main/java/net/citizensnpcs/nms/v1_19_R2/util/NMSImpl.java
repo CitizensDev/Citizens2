@@ -416,8 +416,9 @@ public class NMSImpl implements NMSBridge {
             ((Mob) source).doHurtTarget(target);
             return;
         }
-        AttributeInstance attackDamage = source.getAttribute(Attributes.ATTACK_DAMAGE);
-        float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
+        float f = (float) (source.getAttributes().hasAttribute(Attributes.ATTACK_DAMAGE)
+                ? source.getAttributeValue(Attributes.ATTACK_DAMAGE)
+                : 1f);
         int i = 0;
         f += EnchantmentHelper.getDamageBonus(source.getMainHandItem(), target.getMobType());
         i += EnchantmentHelper.getKnockbackBonus(source);
@@ -1282,16 +1283,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void replaceTrackerEntry(Player player) {
-        ServerLevel server = (ServerLevel) NMSImpl.getHandle(player).level;
-        TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(player.getEntityId());
+    public void replaceTrackerEntry(org.bukkit.entity.Entity entity) {
+        ServerLevel server = (ServerLevel) NMSImpl.getHandle(entity).level;
+        TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
         if (entry == null)
             return;
-        PlayerlistTracker replace = new PlayerlistTracker(server.getChunkSource().chunkMap, entry);
-        server.getChunkSource().chunkMap.entityMap.put(player.getEntityId(), replace);
-        if (getHandle(player) instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) getHandle(player)).setTracked(replace);
-        }
+        CitizensEntityTracker replace = new CitizensEntityTracker(server.getChunkSource().chunkMap, entry);
+        server.getChunkSource().chunkMap.entityMap.put(entity.getEntityId(), replace);
     }
 
     @Override
@@ -1306,10 +1304,8 @@ public class NMSImpl implements NMSBridge {
         float oldPitch = handle.getXRot();
         handle.setYBodyRot(bodyYaw);
         handle.setXRot(pitch);
-        sendPacketsNearby(null, from.getLocation(), new ClientboundTeleportEntityPacket(handle), // new
-                                                                                                 // ClientboundMoveEntityPacket.Rot(handle.getId(),
-                                                                                                 // (byte) (bodyYaw *
-                                                                                                 // 256.0F / 360.0F),
+        sendPacketsNearby(null, from.getLocation(), new ClientboundTeleportEntityPacket(handle),
+                // new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
                 // (byte) (pitch * 256.0F / 360.0F), handle.onGround),
                 new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
         handle.setYBodyRot(oldBody);

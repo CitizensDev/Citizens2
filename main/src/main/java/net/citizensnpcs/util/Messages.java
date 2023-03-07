@@ -318,6 +318,9 @@ public class Messages {
     public static final String PIGLIN_DANCING_SET = "citizens.commands.npc.piglin.dancing-set";
     public static final String PIGLIN_DANCING_UNSET = "citizens.commands.npc.piglin.dancing-unset";
     public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
+    public static final String PLAYERFILTER_PLAYER_HIDDEN = "citizens.commands.npc.playerfilter.hidden";
+    public static final String PLAYERFILTER_PLAYER_ONLY_ADDED = "citizens.commands.npc.playerfilter.only-added";
+    public static final String PLAYERFILTER_PLAYER_UNHIDDEN = "citizens.commands.npc.playerfilter.unhidden";
     public static final String POLAR_BEAR_REARING = "citizens.commands.npc.polarbear.rearing-set";
     public static final String POLAR_BEAR_STOPPED_REARING = "citizens.commands.npc.polarbear.rearing-unset";
     public static final String POSE_ADDED = "citizens.commands.npc.pose.added";

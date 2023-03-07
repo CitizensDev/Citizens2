@@ -1,9 +1,13 @@
 package net.citizensnpcs.nms.v1_19_R2.util;
 
 import java.lang.invoke.MethodHandle;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import com.google.common.collect.ForwardingSet;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -18,25 +22,44 @@ import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
-public class PlayerlistTracker extends ChunkMap.TrackedEntity {
+public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
     private ServerPlayer lastUpdatedPlayer;
     private final Entity tracker;
 
-    public PlayerlistTracker(ChunkMap map, Entity entity, int i, int j, boolean flag) {
+    public CitizensEntityTracker(ChunkMap map, Entity entity, int i, int j, boolean flag) {
         map.super(entity, i, j, flag);
         this.tracker = entity;
+        try {
+            Set set = (Set) TRACKING_SET_GETTER.invoke(this);
+            TRACKING_SET_SETTER.invoke(this, new ForwardingSet() {
+                @Override
+                public boolean add(Object conn) {
+                    boolean res = super.add(conn);
+                    if (res) {
+                        updateLastPlayer();
+                    }
+                    return res;
+                }
+
+                @Override
+                protected Set delegate() {
+                    return set;
+                }
+            });
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
-    public PlayerlistTracker(ChunkMap map, TrackedEntity entry) {
+    public CitizensEntityTracker(ChunkMap map, TrackedEntity entry) {
         this(map, getTracker(entry), getTrackingDistance(entry), getE(entry), getF(entry));
     }
 
     public void updateLastPlayer() {
-        if (tracker.isRemoved())
+        if (tracker.isRemoved() || lastUpdatedPlayer == null
+                || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         final ServerPlayer entityplayer = lastUpdatedPlayer;
-        if (entityplayer == null)
-            return;
         boolean sendTabRemove = NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         if (!sendTabRemove || !Setting.DISABLE_TABLIST.asBoolean()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
@@ -54,6 +77,9 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
     public void updatePlayer(final ServerPlayer entityplayer) {
         if (entityplayer instanceof EntityHumanNPC) // prevent updates to NPC "viewers"
             return;
+        if (tracker instanceof NPCHolder && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity()))
+            return;
+
         this.lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
     }
@@ -104,4 +130,6 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
     private static final MethodHandle TRACKER = NMS.getFirstGetter(TrackedEntity.class, Entity.class);
     private static final MethodHandle TRACKER_ENTRY = NMS.getFirstGetter(TrackedEntity.class, ServerEntity.class);
     private static final MethodHandle TRACKING_RANGE = NMS.getFirstGetter(TrackedEntity.class, int.class);
+    private static final MethodHandle TRACKING_SET_GETTER = NMS.getFirstGetter(TrackedEntity.class, Set.class);
+    private static final MethodHandle TRACKING_SET_SETTER = NMS.getFirstFinalSetter(TrackedEntity.class, Set.class);
 }
