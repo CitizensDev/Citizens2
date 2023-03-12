@@ -55,6 +55,7 @@ public class CodController extends MobEntityController {
 
     public static class EntityCodNPC extends EntityCod implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerMove oldMoveController;
 
         public EntityCodNPC(EntityTypes<? extends EntityCod> types, World world) {
@@ -110,6 +111,11 @@ public class CodController extends MobEntityController {
         @Override
         public boolean b(Tag<FluidType> tag) {
             return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        }
+
+        @Override
+        public int bD() {
+            return NMS.getFallDistance(npc, super.bD());
         }
 
         @Override

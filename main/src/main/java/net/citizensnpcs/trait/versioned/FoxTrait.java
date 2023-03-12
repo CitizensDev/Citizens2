@@ -86,29 +86,33 @@ public class FoxTrait extends Trait {
             permission = "citizens.npc.fox")
     @Requirements(selected = true, ownership = true, types = EntityType.FOX)
     public static void fox(CommandContext args, CommandSender sender, NPC npc, @Flag("sleeping") Boolean sleeping,
-            @Flag("sitting") Boolean sitting, @Flag("crouching") Boolean crouching) throws CommandException {
+            @Flag("sitting") Boolean sitting, @Flag("crouching") Boolean crouching,
+            @Flag(value = "type", completions = { "RED", "SNOW" }) String rawtype) throws CommandException {
         FoxTrait trait = npc.getOrAddTrait(FoxTrait.class);
         String output = "";
-        if (args.hasValueFlag("type")) {
+        if (rawtype != null) {
             Fox.Type type = Util.matchEnum(Fox.Type.values(), args.getFlag("type"));
             if (type == null) {
                 throw new CommandUsageException(
                         Messaging.tr(Messages.INVALID_FOX_TYPE, Util.listValuesPretty(Fox.Type.values())), null);
             }
             trait.setType(type);
-            output += ' ' + Messaging.tr(Messages.FOX_TYPE_SET, args.getFlag("type"));
+            output += ' ' + Messaging.tr(Messages.FOX_TYPE_SET, args.getFlag("type"), npc.getName());
         }
         if (sleeping != null) {
             trait.setSleeping(sleeping);
-            output += ' ' + Messaging.tr(sleeping ? Messages.FOX_SLEEPING_SET : Messages.FOX_SLEEPING_UNSET);
+            output += ' '
+                    + Messaging.tr(sleeping ? Messages.FOX_SLEEPING_SET : Messages.FOX_SLEEPING_UNSET, npc.getName());
         }
         if (sitting != null) {
             trait.setSitting(sitting);
-            output += ' ' + Messaging.tr(sitting ? Messages.FOX_SITTING_SET : Messages.FOX_SITTING_UNSET);
+            output += ' '
+                    + Messaging.tr(sitting ? Messages.FOX_SITTING_SET : Messages.FOX_SITTING_UNSET, npc.getName());
         }
         if (crouching != null) {
             trait.setCrouching(crouching);
-            output += ' ' + Messaging.tr(crouching ? Messages.FOX_CROUCHING_SET : Messages.FOX_CROUCHING_UNSET);
+            output += ' ' + Messaging.tr(crouching ? Messages.FOX_CROUCHING_SET : Messages.FOX_CROUCHING_UNSET,
+                    npc.getName());
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());

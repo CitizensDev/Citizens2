@@ -53,6 +53,7 @@ public class PufferFishController extends MobEntityController {
 
     public static class EntityPufferFishNPC extends EntityPufferFish implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerMove oldMoveController;
 
         public EntityPufferFishNPC(EntityTypes<? extends EntityPufferFish> types, World world) {
@@ -116,6 +117,11 @@ public class PufferFishController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

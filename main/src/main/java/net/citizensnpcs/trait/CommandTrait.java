@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -206,13 +207,17 @@ public class CommandTrait extends Trait {
     }
 
     private String describe(NPCCommand command) {
-        String output = "<br>    - " + command.command + " ["
-                + StringHelper.wrap(
-                        command.cooldown != 0 ? command.cooldown : Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong())
-                + "s] [<click:run_command:/npc cmd remove " + command.id
-                + "><hover:show_text:Remove this command><red>-</hover></click>]";
+        String output = Messaging.tr(Messages.COMMAND_DESCRIBE_TEMPLATE, command.command, StringHelper.wrap(
+                command.cooldown != 0 ? command.cooldown : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()),
+                command.id);
         if (command.globalCooldown > 0) {
             output += "[global " + StringHelper.wrap(command.globalCooldown) + "s]";
+        }
+        if (command.delay > 0) {
+            output += "[delay " + StringHelper.wrap(command.delay) + "t]";
+        }
+        if (command.n > 0) {
+            output += "[" + StringHelper.wrap(command.n) + " uses]";
         }
         if (command.op) {
             output += " -o";
@@ -568,6 +573,10 @@ public class CommandTrait extends Trait {
             return this;
         }
 
+        public NPCCommandBuilder cooldown(Duration cd) {
+            return cooldown((int) TimeUnit.SECONDS.convert(cd));
+        }
+
         public NPCCommandBuilder cooldown(int cooldown) {
             this.cooldown = cooldown;
             return this;
@@ -576,6 +585,10 @@ public class CommandTrait extends Trait {
         public NPCCommandBuilder delay(int delay) {
             this.delay = delay;
             return this;
+        }
+
+        public NPCCommandBuilder globalCooldown(Duration cd) {
+            return globalCooldown((int) TimeUnit.SECONDS.convert(cd));
         }
 
         public NPCCommandBuilder globalCooldown(int cooldown) {
@@ -651,7 +664,7 @@ public class CommandTrait extends Trait {
                     return false;
                 }
             }
-            long globalDelay = Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong();
+            long globalDelay = Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds();
             long currentTimeSec = System.currentTimeMillis() / 1000;
             String commandKey = command.getEncodedKey();
             if (lastUsed.containsKey(commandKey)) {
@@ -701,7 +714,7 @@ public class CommandTrait extends Trait {
                 commandKeys.add(commandKey);
                 Number number = lastUsed.get(commandKey);
                 if (number != null && number.longValue() + (command.cooldown != 0 ? command.cooldown
-                        : Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong()) <= currentTimeSec) {
+                        : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()) <= currentTimeSec) {
                     lastUsed.remove(commandKey);
                 }
                 if (globalCooldowns != null) {
@@ -731,7 +744,7 @@ public class CommandTrait extends Trait {
         public static boolean requiresTracking(NPCCommand command) {
             return command.globalCooldown > 0 || command.cooldown > 0 || command.n > 0
                     || (command.perms != null && command.perms.size() > 0)
-                    || Setting.NPC_COMMAND_GLOBAL_COMMAND_DELAY.asLong() > 0;
+                    || Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds() > 0;
         }
     }
 

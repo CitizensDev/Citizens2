@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_8_R3.util;
 
 import java.util.List;
+
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
 import net.minecraft.server.v1_8_R3.AttributeInstance;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;

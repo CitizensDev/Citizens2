@@ -70,7 +70,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
     @Override
     public void stop() {
         if (plan != null && params.debug()) {
-            plan.debugEnd();
+            Util.sendBlockChanges(plan.getBlocks(npc.getEntity().getWorld()), null);
         }
         plan = null;
     }
@@ -122,6 +122,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             vector = plan.getCurrentVector();
             return false;
         }
+
         if (params.debug()) {
             npc.getEntity().getWorld().playEffect(dest, Effect.ENDER_SIGNAL, 0);
         }
@@ -191,7 +192,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             } else {
                 this.plan = plan;
                 if (params.debug()) {
-                    plan.debug();
+                    Util.sendBlockChanges(plan.getBlocks(to.getWorld()),
+                            Util.getFallbackMaterial("DANDELION", "YELLOW_FLOWER"));
                 }
             }
             return null;

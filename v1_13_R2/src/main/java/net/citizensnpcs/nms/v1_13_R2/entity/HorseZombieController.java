@@ -50,6 +50,7 @@ public class HorseZombieController extends MobEntityController {
 
     public static class EntityHorseZombieNPC extends EntityHorseZombie implements NPCHolder {
         private double baseMovementSpeed;
+
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -106,6 +107,11 @@ public class HorseZombieController extends MobEntityController {
         @Override
         public boolean b(Tag<FluidType> tag) {
             return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        }
+
+        @Override
+        public int bn() {
+            return NMS.getFallDistance(npc, super.bn());
         }
 
         @Override

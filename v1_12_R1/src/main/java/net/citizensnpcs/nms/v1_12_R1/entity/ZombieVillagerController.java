@@ -74,6 +74,11 @@ public class ZombieVillagerController extends MobEntityController {
         }
 
         @Override
+        public int bg() {
+            return NMS.getFallDistance(npc, super.bg());
+        }
+
+        @Override
         public SoundEffect cf() {
             return NMSImpl.getSoundEffect(npc, super.cf(), NPC.Metadata.DEATH_SOUND);
         }

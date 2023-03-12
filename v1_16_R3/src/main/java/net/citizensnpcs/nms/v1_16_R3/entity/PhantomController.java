@@ -47,6 +47,7 @@ public class PhantomController extends MobEntityController {
 
     public static class EntityPhantomNPC extends EntityPhantom implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerLook oldLookController;
         private ControllerMove oldMoveController;
 
@@ -104,6 +105,11 @@ public class PhantomController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

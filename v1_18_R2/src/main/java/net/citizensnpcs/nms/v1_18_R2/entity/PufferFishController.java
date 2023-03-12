@@ -53,6 +53,7 @@ public class PufferFishController extends MobEntityController {
 
     public static class EntityPufferFishNPC extends Pufferfish implements NPCHolder {
         private final CitizensNPC npc;
+
         private MoveControl oldMoveController;
 
         public EntityPufferFishNPC(EntityType<? extends Pufferfish> types, Level level) {
@@ -162,6 +163,11 @@ public class PufferFishController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

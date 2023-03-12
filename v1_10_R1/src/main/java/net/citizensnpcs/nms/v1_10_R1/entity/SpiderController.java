@@ -64,6 +64,11 @@ public class SpiderController extends MobEntityController {
         }
 
         @Override
+        public int aY() {
+            return NMS.getFallDistance(npc, super.aY());
+        }
+
+        @Override
         protected SoundEffect bV() {
             return NMSImpl.getSoundEffect(npc, super.bV(), NPC.Metadata.DEATH_SOUND);
         }

@@ -9,7 +9,6 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
 import net.citizensnpcs.api.command.Command;
@@ -31,9 +30,6 @@ import net.citizensnpcs.util.Util;
 
 @Requirements(ownership = true, selected = true)
 public class WaypointCommands {
-    public WaypointCommands(Citizens plugin) {
-    }
-
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "add [x] [y] [z] (world) (--index idx)",

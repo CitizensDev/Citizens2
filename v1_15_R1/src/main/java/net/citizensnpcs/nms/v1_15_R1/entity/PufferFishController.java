@@ -52,6 +52,7 @@ public class PufferFishController extends MobEntityController {
 
     public static class EntityPufferFishNPC extends EntityPufferFish implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerMove oldMoveController;
 
         public EntityPufferFishNPC(EntityTypes<? extends EntityPufferFish> types, World world) {
@@ -115,6 +116,11 @@ public class PufferFishController extends MobEntityController {
         @Override
         public boolean b(Tag<FluidType> tag) {
             return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        }
+
+        @Override
+        public int bD() {
+            return NMS.getFallDistance(npc, super.bD());
         }
 
         @Override

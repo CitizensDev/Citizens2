@@ -7,7 +7,6 @@ import java.util.Iterator;
 
 import com.google.common.collect.Sets;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
@@ -286,7 +285,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     int var22 = 0;
                     while (var2 > 0 && var12 == PathType.OPEN) {
                         --var2;
-                        if (var22++ >= Setting.MC_NAVIGATION_MAX_FALL_DISTANCE.asInt()) {
+                        if (var22++ >= b.bn()) {
                             return null;
                         }
                         var12 = this.a(this.b, var1, var2, var3);

@@ -120,6 +120,11 @@ public class IllusionerController extends MobEntityController {
         }
 
         @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
+        }
+
+        @Override
         public NPC getNPC() {
             return npc;
         }

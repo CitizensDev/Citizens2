@@ -1,6 +1,5 @@
 package net.citizensnpcs.nms.v1_8_R3.util;
 
-import net.citizensnpcs.Settings.Setting;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockCobbleWall;
 import net.minecraft.server.v1_8_R3.BlockDoor;
@@ -85,7 +84,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     return null;
                 }
                 if (n == 1) {
-                    if (m++ >= Setting.MC_NAVIGATION_MAX_FALL_DISTANCE.asInt()) {
+                    if (m++ >= paramEntity.aE()) {
                         return null;
                     }
                     paramInt2--;

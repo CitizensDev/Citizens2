@@ -47,6 +47,7 @@ public class TurtleController extends MobEntityController {
 
     public static class EntityTurtleNPC extends Turtle implements NPCHolder {
         private final CitizensNPC npc;
+
         private JumpControl oldJumpController;
         private MoveControl oldMoveController;
 
@@ -138,6 +139,11 @@ public class TurtleController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

@@ -53,6 +53,7 @@ public class VillagerController extends MobEntityController {
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
         private boolean blockingATrade;
+
         private final CitizensNPC npc;
 
         public EntityVillagerNPC(EntityTypes<? extends EntityVillager> types, World world) {
@@ -117,6 +118,11 @@ public class VillagerController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

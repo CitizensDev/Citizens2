@@ -54,6 +54,7 @@ public class HorseController extends MobEntityController {
 
     public static class EntityHorseNPC extends EntityHorse implements NPCHolder {
         private double baseMovementSpeed;
+
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -109,6 +110,11 @@ public class HorseController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

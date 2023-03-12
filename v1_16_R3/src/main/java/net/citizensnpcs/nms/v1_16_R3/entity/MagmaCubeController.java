@@ -46,6 +46,7 @@ public class MagmaCubeController extends MobEntityController {
 
     public static class EntityMagmaCubeNPC extends EntityMagmaCube implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerMove oldMoveController;
 
         public EntityMagmaCubeNPC(EntityTypes<? extends EntityMagmaCube> types, World world) {
@@ -91,6 +92,11 @@ public class MagmaCubeController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

@@ -51,6 +51,7 @@ public class VillagerController extends MobEntityController {
 
     public static class EntityVillagerNPC extends Villager implements NPCHolder {
         private boolean blockingATrade;
+
         private final CitizensNPC npc;
 
         public EntityVillagerNPC(EntityType<? extends Villager> types, Level level) {
@@ -132,6 +133,11 @@ public class VillagerController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

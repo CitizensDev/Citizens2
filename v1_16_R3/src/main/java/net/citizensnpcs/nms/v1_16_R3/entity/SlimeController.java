@@ -46,6 +46,7 @@ public class SlimeController extends MobEntityController {
 
     public static class EntitySlimeNPC extends EntitySlime implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerMove oldMoveController;
 
         public EntitySlimeNPC(EntityTypes<? extends EntitySlime> types, World world) {
@@ -91,6 +92,11 @@ public class SlimeController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

@@ -313,6 +313,7 @@ public class NMSImpl implements NMSBridge {
                 handle.dead = false;
                 tracker.updatePlayer(p);
                 tracker.trackedPlayers.add(p);
+                handle.dead = true;
             }
 
             @Override
@@ -332,7 +333,9 @@ public class NMSImpl implements NMSBridge {
                 for (EntityPlayer link : Lists.newArrayList(tracker.trackedPlayers)) {
                     Player entity = link.getBukkitEntity();
                     unlink(entity);
-                    callback.accept(entity);
+                    if (callback != null) {
+                        callback.accept(entity);
+                    }
                 }
             }
         };
@@ -565,10 +568,6 @@ public class NMSImpl implements NMSBridge {
             @Override
             public boolean update() {
                 if (params.speed() != lastSpeed) {
-                    if (Messaging.isDebugging() && lastSpeed > 0) {
-                        Messaging.debug(
-                                "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change");
-                    }
                     Entity handle = getHandle(entity);
                     float oldWidth = handle.width;
                     if (handle instanceof EntityHorse) {

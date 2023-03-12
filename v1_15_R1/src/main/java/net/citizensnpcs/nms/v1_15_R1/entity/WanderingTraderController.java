@@ -51,6 +51,7 @@ public class WanderingTraderController extends MobEntityController {
 
     public static class EntityWanderingTraderNPC extends EntityVillagerTrader implements NPCHolder {
         private boolean blockingATrade;
+
         private boolean blockTrades = true;
         private final CitizensNPC npc;
 
@@ -113,6 +114,11 @@ public class WanderingTraderController extends MobEntityController {
         @Override
         public boolean b(Tag<FluidType> tag) {
             return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        }
+
+        @Override
+        public int bD() {
+            return NMS.getFallDistance(npc, super.bD());
         }
 
         @Override

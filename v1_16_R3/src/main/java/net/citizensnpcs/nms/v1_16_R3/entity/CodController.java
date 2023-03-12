@@ -56,6 +56,7 @@ public class CodController extends MobEntityController {
 
     public static class EntityCodNPC extends EntityCod implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerMove oldMoveController;
 
         public EntityCodNPC(EntityTypes<? extends EntityCod> types, World world) {
@@ -111,6 +112,11 @@ public class CodController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

@@ -82,6 +82,11 @@ public class BatController extends MobEntityController {
         }
 
         @Override
+        public int bn() {
+            return NMS.getFallDistance(npc, super.bn());
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_13_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.

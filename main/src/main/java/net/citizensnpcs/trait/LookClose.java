@@ -51,7 +51,7 @@ public class LookClose extends Trait implements Toggleable {
     @Persist("perplayer")
     private boolean perPlayer;
     @Persist
-    private int randomLookDelay = Setting.DEFAULT_RANDOM_LOOK_DELAY.asInt();
+    private int randomLookDelay = Setting.DEFAULT_RANDOM_LOOK_DELAY.asTicks();
     @Persist
     private float[] randomPitchRange = { 0, 0 };
     @Persist

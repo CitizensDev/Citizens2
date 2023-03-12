@@ -50,6 +50,7 @@ public class CreeperController extends MobEntityController {
 
     public static class EntityCreeperNPC extends Creeper implements NPCHolder {
         private boolean allowPowered;
+
         private final CitizensNPC npc;
 
         public EntityCreeperNPC(EntityType<? extends Creeper> types, Level level) {
@@ -126,6 +127,11 @@ public class CreeperController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

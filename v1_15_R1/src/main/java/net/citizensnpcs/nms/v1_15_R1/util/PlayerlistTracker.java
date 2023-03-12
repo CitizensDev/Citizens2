@@ -43,7 +43,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
             public void run() {
                 NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
             }
-        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asInt());
+        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
     }
 
     @Override

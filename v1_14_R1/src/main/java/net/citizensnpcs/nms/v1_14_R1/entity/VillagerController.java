@@ -51,6 +51,7 @@ public class VillagerController extends MobEntityController {
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
         private TreeMap<?, ?> behaviorMap;
+
         private boolean blockingATrade;
         private final CitizensNPC npc;
         private BehaviorController<EntityVillager> previousBehaviorController;
@@ -113,6 +114,11 @@ public class VillagerController extends MobEntityController {
         @Override
         public boolean b(Tag<FluidType> tag) {
             return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        }
+
+        @Override
+        public int bv() {
+            return NMS.getFallDistance(npc, super.bv());
         }
 
         @Override

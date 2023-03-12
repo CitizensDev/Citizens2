@@ -50,6 +50,7 @@ public class TropicalFishController extends MobEntityController {
 
     public static class EntityTropicalFishNPC extends EntityTropicalFish implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerMove oldMoveController;
 
         public EntityTropicalFishNPC(EntityTypes<? extends EntityTropicalFish> types, World world) {
@@ -105,6 +106,11 @@ public class TropicalFishController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

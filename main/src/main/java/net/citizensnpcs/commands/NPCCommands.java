@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -99,7 +100,6 @@ import net.citizensnpcs.commands.history.RemoveNPCHistoryItem;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
-import net.citizensnpcs.npc.ai.FallingExaminer;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
@@ -452,9 +452,9 @@ public class NPCCommands {
             permission = "citizens.npc.command")
     public void command(CommandContext args, CommandSender sender, NPC npc,
             @Flag(value = { "permissions", "permission" }) String permissions,
-            @Flag(value = "cooldown", defValue = "0") int cooldown,
-            @Flag(value = "gcooldown", defValue = "0") int gcooldown, @Flag(value = "n", defValue = "-1") int n,
-            @Flag(value = "delay", defValue = "0") int delay,
+            @Flag(value = "cooldown", defValue = "0") Duration cooldown,
+            @Flag(value = "gcooldown", defValue = "0") Duration gcooldown, @Flag(value = "n", defValue = "-1") int n,
+            @Flag(value = "delay", defValue = "0") Duration delay,
             @Arg(
                     value = 1,
                     completions = { "add", "remove", "permissions", "persistsequence", "sequential", "random",
@@ -484,7 +484,7 @@ public class NPCCommands {
             try {
                 int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
                         .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o')).cooldown(cooldown)
-                        .globalCooldown(gcooldown).n(n).delay(delay));
+                        .globalCooldown(gcooldown).n(n).delay(Util.toTicks(delay)));
                 Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
             } catch (NumberFormatException ex) {
                 throw new CommandException(CommandMessages.INVALID_NUMBER);
@@ -653,7 +653,7 @@ public class NPCCommands {
     public void create(CommandContext args, CommandSender sender, NPC npc, @Flag("at") Location at,
             @Flag(value = "type", defValue = "PLAYER") EntityType type, @Flag("trait") String traits,
             @Flag(value = "nameplate", completions = { "true", "false", "hover" }) String nameplate,
-            @Flag("temporaryticks") Integer temporaryTicks, @Flag("item") String item, @Flag("model") String model,
+            @Flag("temporaryticks") Integer temporaryTicks, @Flag("item") String item,
             @Flag("template") String templateName, @Flag("registry") String registryName) throws CommandException {
         String name = args.getJoinedStrings(1).trim();
         if (args.hasValueFlag("type")) {
@@ -688,10 +688,6 @@ public class NPCCommands {
 
         if (args.hasFlag('t') || temporaryTicks != null) {
             registry = temporaryRegistry;
-        }
-
-        if (model != null) {
-            type = EntityType.ARMOR_STAND;
         }
 
         if (item != null) {
@@ -1182,7 +1178,7 @@ public class NPCCommands {
             permission = "citizens.npc.home")
     @Requirements(ownership = true, selected = true)
     public void home(CommandContext args, CommandSender sender, NPC npc, @Flag("location") Location loc,
-            @Flag("delay") Integer delay, @Flag("distance") Double distance) throws CommandException {
+            @Flag("delay") Duration delay, @Flag("distance") Double distance) throws CommandException {
         HomeTrait trait = npc.getOrAddTrait(HomeTrait.class);
         String output = "";
         if (args.hasFlag('h')) {
@@ -1209,7 +1205,7 @@ public class NPCCommands {
             output += " " + Messaging.tr(Messages.HOME_TRAIT_TELEPORT_SET, npc.getName());
         }
         if (delay != null) {
-            trait.setDelayTicks(delay);
+            trait.setDelayTicks(Util.toTicks(delay));
             output += " " + Messaging.tr(Messages.HOME_TRAIT_DELAY_SET, delay);
         }
         if (!output.isEmpty()) {
@@ -1457,7 +1453,7 @@ public class NPCCommands {
             permission = "citizens.npc.lookclose")
     public void lookClose(CommandContext args, CommandSender sender, NPC npc,
             @Flag({ "randomlook", "rlook" }) Boolean randomlook, @Flag("range") Double range,
-            @Flag("randomlookdelay") Integer randomLookDelay, @Flag("randomyawrange") String randomYaw,
+            @Flag("randomlookdelay") Duration randomLookDelay, @Flag("randomyawrange") String randomYaw,
             @Flag("randompitchrange") String randomPitch, @Flag("randomswitchtargets") Boolean randomSwitchTargets,
             @Flag("headonly") Boolean headonly, @Flag("disablewhennavigating") Boolean disableWhenNavigating,
             @Flag("perplayer") Boolean perPlayer, @Flag("targetnpcs") Boolean targetNPCs) throws CommandException {
@@ -1511,7 +1507,7 @@ public class NPCCommands {
             toggle = false;
         }
         if (randomLookDelay != null) {
-            trait.setRandomLookDelay(Math.max(1, randomLookDelay));
+            trait.setRandomLookDelay(Math.max(1, Util.toTicks(randomLookDelay)));
             Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_DELAY_SET, npc.getName(), randomLookDelay);
             toggle = false;
         }
@@ -1915,54 +1911,63 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.pathfindingoptions")
     public void pathfindingOptions(CommandContext args, CommandSender sender, NPC npc,
-            @Flag({ "avoid-water" }) Boolean avoidwater, @Flag("stationary-ticks") Integer stationaryTicks,
-            @Flag("distance-margin") Double distanceMargin, @Flag("path-distance-margin") Double pathDistanceMargin,
-            @Flag("attack-range") Double attackRange, @Flag("use-new-finder") Boolean useNewFinder,
-            @Flag("falling-distance") Integer fallingDistance) throws CommandException {
+            @Flag("avoid-water") Boolean avoidwater, @Flag("open-doors") Boolean opendoors,
+            @Flag("stationary-ticks") Integer stationaryTicks, @Flag("distance-margin") Double distanceMargin,
+            @Flag("path-distance-margin") Double pathDistanceMargin, @Flag("attack-range") Double attackRange,
+            @Flag("use-new-finder") Boolean useNewFinder, @Flag("falling-distance") Integer fallingDistance)
+            throws CommandException {
         String output = "";
         if (avoidwater != null) {
             npc.getNavigator().getDefaultParameters().avoidWater(avoidwater);
             output += Messaging.tr(avoidwater ? Messages.PATHFINDING_OPTIONS_AVOID_WATER_SET
                     : Messages.PATHFINDING_OPTIONS_AVOID_WATER_UNSET, npc.getName());
         }
+        if (opendoors != null) {
+            npc.data().setPersistent(NPC.Metadata.PATHFINDER_OPEN_DOORS, opendoors);
+            output += Messaging.tr(opendoors ? Messages.PATHFINDING_OPTIONS_OPEN_DOORS_SET
+                    : Messages.PATHFINDING_OPTIONS_OPEN_DOORS_UNSET, npc.getName());
+        }
         if (stationaryTicks != null) {
             if (stationaryTicks < 0)
                 throw new CommandUsageException();
             npc.getNavigator().getDefaultParameters().stationaryTicks(stationaryTicks);
-            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_STATIONARY_TICKS_SET, npc.getName(), stationaryTicks);
+            output += " "
+                    + Messaging.tr(Messages.PATHFINDING_OPTIONS_STATIONARY_TICKS_SET, npc.getName(), stationaryTicks);
         }
         if (distanceMargin != null) {
             if (distanceMargin < 0)
                 throw new CommandUsageException();
             npc.getNavigator().getDefaultParameters().distanceMargin(distanceMargin);
-            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET, npc.getName(), distanceMargin);
+            output += " "
+                    + Messaging.tr(Messages.PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET, npc.getName(), distanceMargin);
 
         }
         if (pathDistanceMargin != null) {
             if (pathDistanceMargin < 0)
                 throw new CommandUsageException();
             npc.getNavigator().getDefaultParameters().pathDistanceMargin(pathDistanceMargin);
-            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET, npc.getName(),
+            output += " " + Messaging.tr(Messages.PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET, npc.getName(),
                     pathDistanceMargin);
         }
         if (attackRange != null) {
             if (attackRange < 0)
                 throw new CommandUsageException();
             npc.getNavigator().getDefaultParameters().attackRange(attackRange);
-            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_ATTACK_RANGE_SET, npc.getName(), attackRange);
+            output += " " + Messaging.tr(Messages.PATHFINDING_OPTIONS_ATTACK_RANGE_SET, npc.getName(), attackRange);
         }
         if (useNewFinder != null) {
             npc.getNavigator().getDefaultParameters().useNewPathfinder(useNewFinder);
-            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_USE_NEW_FINDER, npc.getName(), useNewFinder);
+            output += " " + Messaging.tr(Messages.PATHFINDING_OPTIONS_USE_NEW_FINDER, npc.getName(), useNewFinder);
         }
         if (fallingDistance != null) {
-            npc.getNavigator().getDefaultParameters().examiner(new FallingExaminer(fallingDistance));
-            output += Messaging.tr(Messages.PATHFINDING_OPTIONS_FALLING_DISTANCE_SET, npc.getName(), fallingDistance);
+            npc.data().set(NPC.Metadata.PATHFINDER_FALL_DISTANCE, fallingDistance);
+            output += " "
+                    + Messaging.tr(Messages.PATHFINDING_OPTIONS_FALLING_DISTANCE_SET, npc.getName(), fallingDistance);
         }
         if (output.isEmpty()) {
             throw new CommandUsageException();
         } else {
-            Messaging.send(sender, output);
+            Messaging.send(sender, output.trim());
         }
     }
 
@@ -2073,14 +2078,16 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "playerfilter --hide [uuid] --unhide [uuid] --only [uuid]",
+            usage = "playerfilter --hide [uuid] --unhide [uuid] --only [uuid] --hidegroup [group] --unhidegroup [group] --onlygroup [group] -c(lear)",
             desc = "Sets the NPC filter",
             modifiers = { "playerfilter" },
             min = 1,
             max = 1,
+            flags = "c",
             permission = "citizens.npc.playerfilter")
     public void playerfilter(CommandContext args, CommandSender sender, NPC npc, @Flag("hide") UUID hide,
-            @Flag("unhide") UUID unhide, @Flag("only") UUID only) {
+            @Flag("unhide") UUID unhide, @Flag("only") UUID only, @Flag("hidegroup") String hidegroup,
+            @Flag("unhidegroup") String unhidegroup, @Flag("onlygroup") String onlygroup) {
         PlayerFilter trait = npc.getOrAddTrait(PlayerFilter.class);
         if (hide != null) {
             trait.hide(hide);
@@ -2093,6 +2100,22 @@ public class NPCCommands {
         if (only != null) {
             trait.only(only);
             Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_ONLY_ADDED, only, npc.getName());
+        }
+        if (hidegroup != null) {
+            trait.hideGroup(hidegroup);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_GROUP_HIDDEN, hidegroup, npc.getName());
+        }
+        if (unhidegroup != null) {
+            trait.unhideGroup(unhidegroup);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_GROUP_UNHIDDEN, unhidegroup, npc.getName());
+        }
+        if (onlygroup != null) {
+            trait.onlyGroup(onlygroup);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_GROUP_ONLY_ADDED, onlygroup, npc.getName());
+        }
+        if (args.hasFlag('c')) {
+            trait.clear();
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_CLEARED, npc.getName());
         }
     }
 
@@ -2374,10 +2397,9 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.respawn")
-    public void respawn(CommandContext args, CommandSender sender, NPC npc) {
-        if (args.argsLength() > 1) {
-            int delay = args.getTicks(1);
-            npc.data().setPersistent(NPC.Metadata.RESPAWN_DELAY, delay);
+    public void respawn(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Duration delay) {
+        if (delay != null) {
+            npc.data().setPersistent(NPC.Metadata.RESPAWN_DELAY, Util.toTicks(delay));
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, delay);
         } else {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.Metadata.RESPAWN_DELAY, -1));
@@ -3025,9 +3047,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "tphere (cursor) (-c(enter))",
+            usage = "tphere (cursor) -c(enter) -f(ront)",
             desc = "Teleport a NPC to your location",
-            flags = "c",
+            flags = "cf",
             modifiers = { "tphere", "tph", "move" },
             min = 1,
             max = 2,
@@ -3052,6 +3074,10 @@ public class NPCCommands {
             to = to.getBlock().getLocation();
             to.setX(to.getX() + 0.5);
             to.setZ(to.getZ() + 0.5);
+        }
+        if (args.hasFlag('f')) {
+            to = to.clone().add(to.getDirection().setY(0));
+            to.setDirection(to.getDirection().multiply(-1)).setPitch(0);
         }
         if (!npc.isSpawned()) {
             NPCTeleportEvent event = new NPCTeleportEvent(npc, to);

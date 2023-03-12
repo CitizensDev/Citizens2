@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_8_R3.util;
 
 import java.lang.reflect.Field;
+
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.Entity;

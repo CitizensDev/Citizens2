@@ -47,6 +47,7 @@ public class TurtleController extends MobEntityController {
 
     public static class EntityTurtleNPC extends EntityTurtle implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerJump oldJumpController;
         private ControllerMove oldMoveController;
 
@@ -94,6 +95,11 @@ public class TurtleController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

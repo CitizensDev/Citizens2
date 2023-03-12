@@ -57,6 +57,7 @@ public class CreeperController extends MobEntityController {
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHolder {
         private boolean allowPowered;
+
         private final CitizensNPC npc;
 
         public EntityCreeperNPC(EntityTypes<? extends EntityCreeper> types, World world) {
@@ -96,6 +97,11 @@ public class CreeperController extends MobEntityController {
         @Override
         public boolean b(Tag<FluidType> tag) {
             return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        }
+
+        @Override
+        public int bv() {
+            return NMS.getFallDistance(npc, super.bv());
         }
 
         @Override

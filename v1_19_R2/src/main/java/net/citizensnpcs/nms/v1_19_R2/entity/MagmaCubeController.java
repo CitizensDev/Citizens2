@@ -47,6 +47,7 @@ public class MagmaCubeController extends MobEntityController {
 
     public static class EntityMagmaCubeNPC extends MagmaCube implements NPCHolder {
         private final CitizensNPC npc;
+
         private MoveControl oldMoveController;
 
         public EntityMagmaCubeNPC(EntityType<? extends MagmaCube> types, Level level) {
@@ -119,6 +120,11 @@ public class MagmaCubeController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

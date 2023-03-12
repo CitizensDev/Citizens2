@@ -76,6 +76,11 @@ public class BatController extends MobEntityController {
         }
 
         @Override
+        public int bD() {
+            return NMS.getFallDistance(npc, super.bD());
+        }
+
+        @Override
         public void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();

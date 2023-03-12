@@ -50,6 +50,7 @@ public class SalmonController extends MobEntityController {
 
     public static class EntitySalmonNPC extends EntitySalmon implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerMove oldMoveController;
 
         public EntitySalmonNPC(EntityTypes<? extends EntitySalmon> types, World world) {
@@ -105,6 +106,11 @@ public class SalmonController extends MobEntityController {
                 return super.b(f, f1);
             }
             return false;
+        }
+
+        @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
         }
 
         @Override

@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftMushroomCow;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
@@ -76,6 +77,11 @@ public class MushroomCowController extends MobEntityController {
             if (npc == null || !npc.isProtected())
                 return super.a(entityhuman);
             return false;
+        }
+
+        @Override
+        public int aE() {
+            return NMS.getFallDistance(npc, super.aE());
         }
 
         @Override

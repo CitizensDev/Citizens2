@@ -53,6 +53,7 @@ public class HorseZombieController extends MobEntityController {
 
     public static class EntityHorseZombieNPC extends ZombieHorse implements NPCHolder {
         private double baseMovementSpeed;
+
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -155,6 +156,11 @@ public class HorseZombieController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

@@ -23,7 +23,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -75,6 +74,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.gui.ForwardingInventory;
@@ -434,6 +434,7 @@ public class NMSImpl implements NMSBridge {
                 handle.dead = false;
                 tracker.b(p);
                 linked.add(p);
+                handle.dead = true;
             }
 
             @Override
@@ -453,7 +454,9 @@ public class NMSImpl implements NMSBridge {
                 for (EntityPlayer link : Lists.newArrayList(linked)) {
                     Player entity = link.getBukkitEntity();
                     unlink(entity);
-                    callback.accept(entity);
+                    if (callback != null) {
+                        callback.accept(entity);
+                    }
                 }
             }
         };
@@ -698,9 +701,20 @@ public class NMSImpl implements NMSBridge {
                 ((EntityInsentient) raw).a(PathType.WATER, oldWater + 1F);
             }
         }
+        navigation.q().b(params.hasExaminer(DoorExaminer.class));
         return new MCNavigator() {
             float lastSpeed;
             CancelReason reason;
+
+            private List<org.bukkit.block.Block> getBlocks(final org.bukkit.entity.Entity entity,
+                    final NavigationAbstract navigation) {
+                List<org.bukkit.block.Block> blocks = Lists.newArrayList();
+                for (int i = 0; i < navigation.k().e(); i++) {
+                    PathPoint pp = navigation.k().a(i);
+                    blocks.add(entity.getWorld().getBlockAt(pp.a, pp.b, pp.c));
+                }
+                return blocks;
+            }
 
             @Override
             public CancelReason getCancelReason() {
@@ -715,14 +729,8 @@ public class NMSImpl implements NMSBridge {
             @Override
             public void stop() {
                 if (params.debug() && navigation.k() != null) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.k().e(); i++) {
-                            PathPoint pp = navigation.k().a(i);
-                            org.bukkit.block.Block block = new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld())
-                                    .getBlock();
-                            player.sendBlockChange(block.getLocation(), block.getBlockData());
-                        }
-                    }
+                    List<org.bukkit.block.Block> blocks = getBlocks(entity, navigation);
+                    Util.sendBlockChanges(blocks, null);
                 }
                 if (oldWater >= 0) {
                     if (raw instanceof EntityPlayer) {
@@ -737,11 +745,6 @@ public class NMSImpl implements NMSBridge {
             @Override
             public boolean update() {
                 if (params.speed() != lastSpeed) {
-                    if (Messaging.isDebugging() && lastSpeed > 0) {
-                        Messaging.debug(
-                                "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change from",
-                                lastSpeed, "to", params.speed());
-                    }
                     Entity handle = getHandle(entity);
                     EntitySize size = null;
                     try {
@@ -766,13 +769,7 @@ public class NMSImpl implements NMSBridge {
                     lastSpeed = params.speed();
                 }
                 if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
-                    BlockData data = Material.DANDELION.createBlockData();
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.k().e(); i++) {
-                            PathPoint pp = navigation.k().a(i);
-                            player.sendBlockChange(new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld()), data);
-                        }
-                    }
+                    Util.sendBlockChanges(getBlocks(entity, navigation), Material.DANDELION);
                 }
                 navigation.a((double) params.speed());
                 return NMSImpl.isNavigationFinished(navigation);

@@ -75,6 +75,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.LocationLookup.PerPlayerMetadata;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.gui.ForwardingInventory;
@@ -332,6 +333,7 @@ public class NMSImpl implements NMSBridge {
                 handle.dead = false;
                 tracker.updatePlayer(p);
                 tracker.trackedPlayers.add(p);
+                handle.dead = true;
             }
 
             @Override
@@ -351,7 +353,9 @@ public class NMSImpl implements NMSBridge {
                 for (EntityPlayer link : Lists.newArrayList(tracker.trackedPlayers)) {
                     Player entity = link.getBukkitEntity();
                     unlink(entity);
-                    callback.accept(entity);
+                    if (callback != null) {
+                        callback.accept(entity);
+                    }
                 }
             }
         };
@@ -594,6 +598,7 @@ public class NMSImpl implements NMSBridge {
                 ((EntityInsentient) raw).a(PathType.WATER, oldWater + 1F);
             }
         }
+        navigation.q().b(params.hasExaminer(DoorExaminer.class));
         return new MCNavigator() {
             float lastSpeed;
             CancelReason reason;
@@ -623,8 +628,6 @@ public class NMSImpl implements NMSBridge {
             @Override
             public boolean update() {
                 if (params.speed() != lastSpeed && lastSpeed > 0) {
-                    Messaging.idebug(
-                            () -> "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change");
                     Entity handle = getHandle(entity);
                     float oldWidth = handle.width;
                     if (handle instanceof EntityHorse) {

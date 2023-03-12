@@ -462,7 +462,7 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        skinUpdateTracker.updatePlayer(event.getPlayer(), Setting.INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY_TICKS.asInt(),
+        skinUpdateTracker.updatePlayer(event.getPlayer(), Setting.INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY.asTicks(),
                 true);
         CitizensAPI.getLocationLookup().onJoin(event);
     }
@@ -508,7 +508,7 @@ public class EventListen implements Listener {
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getPlayer());
         if (event.getCause() == TeleportCause.PLUGIN && !event.getPlayer().hasMetadata("citizens-force-teleporting")
-                && npc != null && Setting.PLAYER_TELEPORT_DELAY.asInt() > 0) {
+                && npc != null && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
             event.setCancelled(true);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
                 @Override
@@ -518,7 +518,7 @@ public class EventListen implements Listener {
                     event.getPlayer().teleport(event.getTo());
                     event.getPlayer().removeMetadata("citizens-force-teleporting", CitizensAPI.getPlugin());
                 }
-            }, Setting.PLAYER_TELEPORT_DELAY.asInt());
+            }, Setting.PLAYER_TELEPORT_DELAY.asTicks());
         }
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
     }

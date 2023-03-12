@@ -29,9 +29,9 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         if (entityplayer instanceof EntityHumanNPC)
             return;
         Entity tracker = getTracker(this);
-        if (tracker instanceof NPCHolder && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity()))
-            return;
-        if (tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+        if ((tracker instanceof NPCHolder
+                && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity())) || tracker.dead
+                || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         if (entityplayer != tracker && c(entityplayer)) {
             if (!this.trackedPlayers.contains(entityplayer)

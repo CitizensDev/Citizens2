@@ -48,6 +48,7 @@ public class PhantomController extends MobEntityController {
 
     public static class EntityPhantomNPC extends Phantom implements NPCHolder {
         private final CitizensNPC npc;
+
         private LookControl oldLookController;
         private MoveControl oldMoveController;
 
@@ -143,6 +144,11 @@ public class PhantomController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

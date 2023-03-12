@@ -34,9 +34,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     public void updateLastPlayer() {
-        if (lastUpdatedPlayer == null)
-            return;
-        if (tracker.dead || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+        if ((lastUpdatedPlayer == null) || tracker.dead || lastUpdatedPlayer == null
+                || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         final EntityPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
@@ -48,15 +47,14 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             public void run() {
                 NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
             }
-        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asInt());
+        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
     }
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
         // prevent updates to NPC "viewers"
-        if (entityplayer instanceof EntityHumanNPC)
-            return;
-        if (tracker instanceof NPCHolder && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity()))
+        if ((entityplayer instanceof EntityHumanNPC) || (tracker instanceof NPCHolder
+                && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity())))
             return;
         lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);

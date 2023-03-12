@@ -45,6 +45,7 @@ public class SlimeController extends MobEntityController {
 
     public static class EntitySlimeNPC extends Slime implements NPCHolder {
         private final CitizensNPC npc;
+
         private MoveControl oldMoveController;
 
         public EntitySlimeNPC(EntityType<? extends Slime> types, Level level) {
@@ -117,6 +118,11 @@ public class SlimeController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

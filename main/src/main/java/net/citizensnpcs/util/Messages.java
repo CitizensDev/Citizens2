@@ -62,6 +62,7 @@ public class Messages {
     public static final String COMMAND_ADDED = "citizens.commands.npc.command.command-added";
     public static final String COMMAND_AGE_HELP = "citizens.commands.npc.age.help";
     public static final String COMMAND_COST_SET = "citizens.commands.npc.command.cost-set";
+    public static final String COMMAND_DESCRIBE_TEMPLATE = "citizens.commands.npc.command.describe-format";
     public static final String COMMAND_EXPERIENCE_COST_SET = "citizens.commands.npc.command.experience-cost-set";
     public static final String COMMAND_HELP_HEADER = "citizens.commands.help.header";
     public static final String COMMAND_HIDE_ERROR_MESSAGES_SET = "citizens.commands.npc.command.hide-error-messages-set";
@@ -304,6 +305,8 @@ public class Messages {
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_UNSET = "citizens.commands.npc.pathopt.avoid-water-unset";
     public static final String PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET = "citizens.commands.npc.pathopt.distance-margin-set";
     public static final String PATHFINDING_OPTIONS_FALLING_DISTANCE_SET = "citizens.commands.npc.pathopt.falling-distance-set";
+    public static final String PATHFINDING_OPTIONS_OPEN_DOORS_SET = "citizens.commands.npc.pathopt.open-doors-set";
+    public static final String PATHFINDING_OPTIONS_OPEN_DOORS_UNSET = "citizens.commands.npc.pathopt.avoid-water-set";
     public static final String PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET = "citizens.commands.npc.pathopt.path-distance-margin-set";
     public static final String PATHFINDING_OPTIONS_STATIONARY_TICKS_SET = "citizens.commands.npc.pathopt.stationary-ticks-set";
     public static final String PATHFINDING_OPTIONS_USE_NEW_FINDER = "citizens.commands.npc.pathopt.use-new-finder";
@@ -318,6 +321,10 @@ public class Messages {
     public static final String PIGLIN_DANCING_SET = "citizens.commands.npc.piglin.dancing-set";
     public static final String PIGLIN_DANCING_UNSET = "citizens.commands.npc.piglin.dancing-unset";
     public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
+    public static final String PLAYERFILTER_GROUP_HIDDEN = "citizens.commands.npc.playerfilter.hidden-group";
+    public static final String PLAYERFILTER_GROUP_ONLY_ADDED = "citizens.commands.npc.playerfilter.only-added-group";
+    public static final String PLAYERFILTER_GROUP_UNHIDDEN = "citizens.commands.npc.playerfilter.unhidden-group";
+    public static final String PLAYERFILTER_PLAYER_CLEARED = "citizens.commands.npc.playerfilter.cleared";
     public static final String PLAYERFILTER_PLAYER_HIDDEN = "citizens.commands.npc.playerfilter.hidden";
     public static final String PLAYERFILTER_PLAYER_ONLY_ADDED = "citizens.commands.npc.playerfilter.only-added";
     public static final String PLAYERFILTER_PLAYER_UNHIDDEN = "citizens.commands.npc.playerfilter.unhidden";

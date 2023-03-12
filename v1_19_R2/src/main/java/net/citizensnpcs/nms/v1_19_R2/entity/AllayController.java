@@ -59,6 +59,7 @@ public class AllayController extends MobEntityController {
 
     public static class EntityAllayNPC extends Allay implements NPCHolder {
         private final CitizensNPC npc;
+
         private int taskId = -1;
 
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level) {
@@ -135,6 +136,11 @@ public class AllayController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

@@ -22,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -73,6 +72,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -481,7 +481,9 @@ public class NMSImpl implements NMSBridge {
                 for (ServerPlayerConnection link : Lists.newArrayList(linked)) {
                     Player entity = link.getPlayer().getBukkitEntity();
                     unlink(entity);
-                    callback.accept(entity);
+                    if (callback != null) {
+                        callback.accept(entity);
+                    }
                 }
             }
         };
@@ -717,9 +719,19 @@ public class NMSImpl implements NMSBridge {
                 ((Mob) raw).setPathfindingMalus(BlockPathTypes.WATER, oldWater + 1F);
             }
         }
+        navigation.getNodeEvaluator().setCanOpenDoors(params.hasExaminer(DoorExaminer.class));
         return new MCNavigator() {
             float lastSpeed;
             CancelReason reason;
+
+            private List<org.bukkit.block.Block> getBlocks(final org.bukkit.entity.Entity entity, Path path) {
+                List<org.bukkit.block.Block> blocks = Lists.newArrayList();
+                for (int i = 0; i < path.getNodeCount(); i++) {
+                    Node pp = path.getNode(i);
+                    blocks.add(entity.getWorld().getBlockAt(pp.x, pp.y, pp.z));
+                }
+                return blocks;
+            }
 
             @Override
             public CancelReason getCancelReason() {
@@ -735,13 +747,8 @@ public class NMSImpl implements NMSBridge {
             public void stop() {
                 Path path = getPathEntity(navigation);
                 if (params.debug() && path != null) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < path.getNodeCount(); i++) {
-                            Node pp = path.getNode(i);
-                            org.bukkit.block.Block block = player.getWorld().getBlockAt(pp.x, pp.y, pp.z);
-                            player.sendBlockChange(block.getLocation(), block.getBlockData());
-                        }
-                    }
+                    List<org.bukkit.block.Block> blocks = getBlocks(entity, path);
+                    Util.sendBlockChanges(blocks, null);
                 }
                 if (oldWater >= 0) {
                     if (raw instanceof ServerPlayer) {
@@ -756,11 +763,6 @@ public class NMSImpl implements NMSBridge {
             @Override
             public boolean update() {
                 if (params.speed() != lastSpeed) {
-                    if (Messaging.isDebugging() && lastSpeed > 0) {
-                        Messaging.debug(
-                                "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change from",
-                                lastSpeed, "to", params.speed());
-                    }
                     Entity handle = getHandle(entity);
                     EntityDimensions size = null;
                     try {
@@ -785,14 +787,7 @@ public class NMSImpl implements NMSBridge {
                     lastSpeed = params.speed();
                 }
                 if (params.debug() && !navigation.isDone()) {
-                    BlockData data = Material.DANDELION.createBlockData();
-                    Path path = getPathEntity(navigation);
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < path.getNodeCount(); i++) {
-                            Node pp = path.getNode(i);
-                            player.sendBlockChange(new Vector(pp.x, pp.y, pp.z).toLocation(player.getWorld()), data);
-                        }
-                    }
+                    Util.sendBlockChanges(getBlocks(entity, getPathEntity(navigation)), Material.DANDELION);
                 }
                 navigation.setSpeedModifier(params.speed());
                 return navigation.isDone();

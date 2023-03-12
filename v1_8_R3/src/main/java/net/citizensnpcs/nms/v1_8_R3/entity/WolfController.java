@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftWolf;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
@@ -70,6 +71,11 @@ public class WolfController extends MobEntityController {
         public void a(Entity entity, float strength, double dx, double dz) {
             NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
+        }
+
+        @Override
+        public int aE() {
+            return NMS.getFallDistance(npc, super.aE());
         }
 
         @Override

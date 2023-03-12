@@ -50,6 +50,7 @@ public class WanderingTraderController extends MobEntityController {
 
     public static class EntityWanderingTraderNPC extends WanderingTrader implements NPCHolder {
         private boolean blockingATrade;
+
         private boolean blockTrades = true;
         private final CitizensNPC npc;
 
@@ -130,6 +131,11 @@ public class WanderingTraderController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

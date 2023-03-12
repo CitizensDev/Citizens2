@@ -75,6 +75,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.LocationLookup.PerPlayerMetadata;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.gui.ForwardingInventory;
@@ -358,6 +359,7 @@ public class NMSImpl implements NMSBridge {
                 handle.dead = false;
                 tracker.updatePlayer(p);
                 tracker.trackedPlayers.add(p);
+                handle.dead = true;
             }
 
             @Override
@@ -377,7 +379,9 @@ public class NMSImpl implements NMSBridge {
                 for (EntityPlayer link : Lists.newArrayList(tracker.trackedPlayers)) {
                     Player entity = link.getBukkitEntity();
                     unlink(entity);
-                    callback.accept(entity);
+                    if (callback != null) {
+                        callback.accept(entity);
+                    }
                 }
             }
         };
@@ -615,9 +619,20 @@ public class NMSImpl implements NMSBridge {
                 ((EntityInsentient) raw).a(PathType.WATER, oldWater + 1F);
             }
         }
+        navigation.r().b(params.hasExaminer(DoorExaminer.class));
         return new MCNavigator() {
             float lastSpeed;
             CancelReason reason;
+
+            private List<org.bukkit.block.Block> getBlocks(final org.bukkit.entity.Entity entity,
+                    final NavigationAbstract navigation) {
+                List<org.bukkit.block.Block> blocks = Lists.newArrayList();
+                for (int i = 0; i < navigation.l().d(); i++) {
+                    PathPoint pp = navigation.l().a(i);
+                    blocks.add(entity.getWorld().getBlockAt(pp.a, pp.b, pp.c));
+                }
+                return blocks;
+            }
 
             @Override
             public CancelReason getCancelReason() {
@@ -632,14 +647,8 @@ public class NMSImpl implements NMSBridge {
             @Override
             public void stop() {
                 if (params.debug() && navigation.l() != null) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.l().d(); i++) {
-                            PathPoint pp = navigation.l().a(i);
-                            org.bukkit.block.Block block = new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld())
-                                    .getBlock();
-                            player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
-                        }
-                    }
+                    List<org.bukkit.block.Block> blocks = getBlocks(entity, navigation);
+                    Util.sendBlockChanges(blocks, null);
                 }
                 if (oldWater >= 0) {
                     if (raw instanceof EntityPlayer) {
@@ -654,10 +663,6 @@ public class NMSImpl implements NMSBridge {
             @Override
             public boolean update() {
                 if (params.speed() != lastSpeed) {
-                    if (Messaging.isDebugging() && lastSpeed > 0) {
-                        Messaging.debug(
-                                "Repathfinding " + ((NPCHolder) entity).getNPC().getId() + " due to speed change");
-                    }
                     Entity handle = getHandle(entity);
                     float oldWidth = handle.width;
                     if (handle instanceof EntityHorse) {
@@ -671,13 +676,7 @@ public class NMSImpl implements NMSBridge {
                     lastSpeed = params.speed();
                 }
                 if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        for (int i = 0; i < navigation.l().d(); i++) {
-                            PathPoint pp = navigation.l().a(i);
-                            player.sendBlockChange(new Vector(pp.a, pp.b, pp.c).toLocation(player.getWorld()),
-                                    Material.YELLOW_FLOWER, (byte) 0);
-                        }
-                    }
+                    Util.sendBlockChanges(getBlocks(entity, navigation), Material.YELLOW_FLOWER);
                 }
                 navigation.a(params.speed());
                 return NMSImpl.isNavigationFinished(navigation);

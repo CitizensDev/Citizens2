@@ -116,6 +116,11 @@ public class CodController extends MobEntityController {
         }
 
         @Override
+        public int bv() {
+            return NMS.getFallDistance(npc, super.bv());
+        }
+
+        @Override
         protected void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();

@@ -51,6 +51,7 @@ public class CreeperController extends MobEntityController {
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHolder {
         private boolean allowPowered;
+
         private final CitizensNPC npc;
 
         public EntityCreeperNPC(World world) {
@@ -87,6 +88,11 @@ public class CreeperController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }
+        }
+
+        @Override
+        public int bg() {
+            return NMS.getFallDistance(npc, super.bg());
         }
 
         @Override

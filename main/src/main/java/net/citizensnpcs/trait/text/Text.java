@@ -225,7 +225,7 @@ public class Text extends Trait implements Runnable, Listener {
         if (speechBubbles) {
             HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
             trait.addTemporaryLine(Placeholders.replace(text.get(index), player),
-                    Setting.DEFAULT_TEXT_SPEECH_BUBBLE_TICKS.asInt());
+                    Setting.DEFAULT_TEXT_SPEECH_BUBBLE_DURATION.asTicks());
         } else {
             npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
         }
@@ -281,7 +281,7 @@ public class Text extends Trait implements Runnable, Listener {
 
         int delay = this.delay == -1
                 ? Setting.DEFAULT_TEXT_DELAY_MIN.asInt() + Util.getFastRandom()
-                        .nextInt(Setting.DEFAULT_TEXT_DELAY_MAX.asInt() - Setting.DEFAULT_TEXT_DELAY_MIN.asInt())
+                        .nextInt(Setting.DEFAULT_TEXT_DELAY_MAX.asTicks() - Setting.DEFAULT_TEXT_DELAY_MIN.asTicks())
                 : this.delay;
         if (delay <= 0)
             return;

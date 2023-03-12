@@ -54,6 +54,7 @@ public class HorseDonkeyController extends MobEntityController {
 
     public static class EntityHorseDonkeyNPC extends EntityHorseDonkey implements NPCHolder {
         private double baseMovementSpeed;
+
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -108,6 +109,11 @@ public class HorseDonkeyController extends MobEntityController {
         @Override
         public boolean b(Tag<FluidType> tag) {
             return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        }
+
+        @Override
+        public int bD() {
+            return NMS.getFallDistance(npc, super.bD());
         }
 
         @Override

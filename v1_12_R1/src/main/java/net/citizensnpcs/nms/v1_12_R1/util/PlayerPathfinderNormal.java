@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 import com.google.common.collect.Sets;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_12_R1.entity.EntityHumanNPC;
 import net.minecraft.server.v1_12_R1.AxisAlignedBB;
 import net.minecraft.server.v1_12_R1.Block;
@@ -361,7 +360,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             int i = 0;
             while ((paramInt2 > 0) && (localPathType1 == PathType.OPEN)) {
                 paramInt2--;
-                if (i++ >= Setting.MC_NAVIGATION_MAX_FALL_DISTANCE.asInt()) {
+                if (i++ >= b.bg()) {
                     return null;
                 }
                 localPathType1 = pa(this.b, paramInt1, paramInt2, paramInt3);

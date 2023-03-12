@@ -52,6 +52,7 @@ public class DolphinController extends MobEntityController {
 
     public static class EntityDolphinNPC extends EntityDolphin implements NPCHolder {
         private boolean inProtectedTick;
+
         private final CitizensNPC npc;
         private ControllerMove oldMoveController;
 
@@ -104,6 +105,11 @@ public class DolphinController extends MobEntityController {
         @Override
         public boolean b(Tag<FluidType> tag) {
             return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        }
+
+        @Override
+        public int bD() {
+            return NMS.getFallDistance(npc, super.bD());
         }
 
         @Override

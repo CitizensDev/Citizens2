@@ -1,12 +1,14 @@
 package net.citizensnpcs.util;
 
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.bukkit.Bukkit;
@@ -336,6 +338,10 @@ public class Util {
                 TWO_DIGIT_DECIMAL.format(to.getYaw()), TWO_DIGIT_DECIMAL.format(to.getPitch()));
     }
 
+    public static String rawtype(Enum<?>[] values) {
+        return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).toLowerCase();
+    }
+
     public static void runCommand(NPC npc, Player clicker, String command, boolean op, boolean player) {
         List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().limit(2).splitToList(command);
         String bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
@@ -380,6 +386,23 @@ public class Util {
         }
     }
 
+    public static void sendBlockChanges(List<Block> blocks, Material type) {
+        if (blocks.isEmpty())
+            return;
+        Location loc = new Location(null, 0, 0, 0);
+        for (Player player : blocks.get(0).getWorld().getPlayers()) {
+            for (Block block : blocks) {
+                if (type != null) {
+                    player.sendBlockChange(loc, type, (byte) 0);
+                } else if (SpigotUtil.isUsing1_13API()) {
+                    player.sendBlockChange(block.getLocation(loc), block.getBlockData());
+                } else {
+                    player.sendBlockChange(block.getLocation(loc), block.getType(), block.getData());
+                }
+            }
+        }
+    }
+
     /**
      * Sets the entity's yaw and pitch directly including head yaw.
      */
@@ -387,10 +410,13 @@ public class Util {
         NMS.look(entity, yaw, pitch);
     }
 
+    public static int toTicks(Duration delay) {
+        return (int) TimeUnit.MILLISECONDS.convert(delay) / 50;
+    }
+
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static String MINECRAFT_REVISION;
-    private static Boolean REQUIRES_CHANNEL_METADATA;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
     static {
         TWO_DIGIT_DECIMAL.setMaximumFractionDigits(2);

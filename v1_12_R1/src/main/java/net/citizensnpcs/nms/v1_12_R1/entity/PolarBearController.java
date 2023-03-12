@@ -65,6 +65,11 @@ public class PolarBearController extends MobEntityController {
         }
 
         @Override
+        public int bg() {
+            return NMS.getFallDistance(npc, super.bg());
+        }
+
+        @Override
         protected SoundEffect cf() {
             return NMSImpl.getSoundEffect(npc, super.cf(), NPC.Metadata.DEATH_SOUND);
         }

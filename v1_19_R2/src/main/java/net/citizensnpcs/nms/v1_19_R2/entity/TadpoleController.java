@@ -52,6 +52,7 @@ public class TadpoleController extends MobEntityController {
 
     public static class EntityTadpoleNPC extends Tadpole implements NPCHolder {
         private final CitizensNPC npc;
+
         private MoveControl oldMoveController;
 
         public EntityTadpoleNPC(EntityType<? extends Tadpole> types, Level level) {
@@ -152,6 +153,11 @@ public class TadpoleController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

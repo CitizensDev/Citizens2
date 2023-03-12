@@ -56,6 +56,7 @@ public class CodController extends MobEntityController {
 
     public static class EntityCodNPC extends Cod implements NPCHolder {
         private final CitizensNPC npc;
+
         private MoveControl oldMoveController;
 
         public EntityCodNPC(EntityType<? extends Cod> types, Level level) {
@@ -159,6 +160,11 @@ public class CodController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public int getMaxFallDistance() {
+            return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }
 
         @Override

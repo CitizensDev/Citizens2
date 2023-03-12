@@ -217,7 +217,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public void scheduleUpdate(NPCUpdate update) {
         if (update == NPCUpdate.PACKET) {
-            updateCounter = data().get(NPC.Metadata.PACKET_UPDATE_DELAY, Setting.PACKET_UPDATE_DELAY.asInt()) + 1;
+            updateCounter = data().get(NPC.Metadata.PACKET_UPDATE_DELAY, Setting.PACKET_UPDATE_DELAY.asTicks()) + 1;
         }
     }
 
@@ -340,7 +340,7 @@ public class CitizensNPC extends AbstractNPC {
             @Override
             public void accept(Runnable cancel) {
                 if (getEntity() == null || (!hasTrait(PacketNPC.class) && !getEntity().isValid())) {
-                    if (timer++ > Setting.ENTITY_SPAWN_WAIT_TICKS.asInt()) {
+                    if (timer++ > Setting.ENTITY_SPAWN_WAIT_DURATION.asTicks()) {
                         Messaging.debug("Couldn't spawn ", CitizensNPC.this, "waited", timer,
                                 "ticks but entity not added to world");
                         entityController.remove();
@@ -394,11 +394,11 @@ public class CitizensNPC extends AbstractNPC {
                         NMS.setAggressive(entity, data().<Boolean> get(NPC.Metadata.AGGRESSIVE));
                     }
 
-                    if (SUPPORT_NODAMAGE_TICKS && (Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt() != 20
+                    if (SUPPORT_NODAMAGE_TICKS && (Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks() != 20
                             || data().has(NPC.Metadata.SPAWN_NODAMAGE_TICKS))) {
                         try {
                             entity.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
-                                    Setting.DEFAULT_SPAWN_NODAMAGE_TICKS.asInt()));
+                                    Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks()));
                         } catch (NoSuchMethodError err) {
                             SUPPORT_NODAMAGE_TICKS = false;
                         }
@@ -480,10 +480,10 @@ public class CitizensNPC extends AbstractNPC {
                 }
             }
 
-            boolean canSwim = data().get(NPC.Metadata.SWIMMING, SwimmingExaminer.isWaterMob(getEntity()));
-            boolean inLiquid = MinecraftBlockExaminer.isLiquid(getEntity().getLocation().getBlock().getType());
+            boolean shouldSwim = data().get(NPC.Metadata.SWIMMING, SwimmingExaminer.isWaterMob(getEntity()))
+                    && MinecraftBlockExaminer.isLiquid(getEntity().getLocation().getBlock().getType());
             if (navigator.isNavigating()) {
-                if (canSwim && inLiquid) {
+                if (shouldSwim) {
                     getEntity().setVelocity(getEntity().getVelocity().multiply(
                             data().get(NPC.Metadata.WATER_SPEED_MODIFIER, Setting.NPC_WATER_SPEED_MODIFIER.asFloat())));
                     Location currentDest = navigator.getPathStrategy().getCurrentDestination();
@@ -491,7 +491,7 @@ public class CitizensNPC extends AbstractNPC {
                         NMS.trySwim(getEntity());
                     }
                 }
-            } else if (canSwim && inLiquid) {
+            } else if (shouldSwim) {
                 Gravity trait = getTraitNullable(Gravity.class);
                 if (trait == null || trait.hasGravity()) {
                     NMS.trySwim(getEntity());

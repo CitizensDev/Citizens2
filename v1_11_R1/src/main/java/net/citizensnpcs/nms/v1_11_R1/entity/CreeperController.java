@@ -50,6 +50,7 @@ public class CreeperController extends MobEntityController {
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHolder {
         private boolean allowPowered;
+
         private final CitizensNPC npc;
 
         public EntityCreeperNPC(World world) {
@@ -77,6 +78,11 @@ public class CreeperController extends MobEntityController {
         public void a(Entity entity, float strength, double dx, double dz) {
             NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
+        }
+
+        @Override
+        public int aY() {
+            return NMS.getFallDistance(npc, super.aY());
         }
 
         @Override

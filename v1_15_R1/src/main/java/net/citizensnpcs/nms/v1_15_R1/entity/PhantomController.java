@@ -46,6 +46,7 @@ public class PhantomController extends MobEntityController {
 
     public static class EntityPhantomNPC extends EntityPhantom implements NPCHolder {
         private final CitizensNPC npc;
+
         private ControllerLook oldLookController;
         private ControllerMove oldMoveController;
 
@@ -94,6 +95,11 @@ public class PhantomController extends MobEntityController {
         @Override
         public boolean b(Tag<FluidType> tag) {
             return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        }
+
+        @Override
+        public int bD() {
+            return NMS.getFallDistance(npc, super.bD());
         }
 
         @Override

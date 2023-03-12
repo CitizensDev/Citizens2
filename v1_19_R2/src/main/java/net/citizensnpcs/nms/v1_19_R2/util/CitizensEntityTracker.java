@@ -70,14 +70,13 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
             NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0));
-        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asInt());
+        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
     }
 
     @Override
     public void updatePlayer(final ServerPlayer entityplayer) {
-        if (entityplayer instanceof EntityHumanNPC) // prevent updates to NPC "viewers"
-            return;
-        if (tracker instanceof NPCHolder && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity()))
+        if ((entityplayer instanceof EntityHumanNPC) || (tracker instanceof NPCHolder
+                && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity())))
             return;
 
         this.lastUpdatedPlayer = entityplayer;

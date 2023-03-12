@@ -105,6 +105,11 @@ public class PufferFishController extends MobEntityController {
         }
 
         @Override
+        public int bn() {
+            return NMS.getFallDistance(npc, super.bn());
+        }
+
+        @Override
         public void c(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.c(f, f1);

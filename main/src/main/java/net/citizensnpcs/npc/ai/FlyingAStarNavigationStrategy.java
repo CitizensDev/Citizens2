@@ -95,7 +95,8 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         } else {
             vector = plan.getCurrentVector();
             if (parameters.debug()) {
-                plan.debug();
+                Util.sendBlockChanges(plan.getBlocks(npc.getEntity().getWorld()),
+                        Util.getFallbackMaterial("DANDELION", "YELLOW_FLOWER"));
             }
         }
         planned = true;
@@ -104,7 +105,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     @Override
     public void stop() {
         if (plan != null && parameters.debug()) {
-            plan.debugEnd();
+            Util.sendBlockChanges(plan.getBlocks(npc.getEntity().getWorld()), null);
         }
         plan = null;
     }

@@ -56,6 +56,11 @@ public class GhastController extends MobEntityController {
         }
 
         @Override
+        public int bg() {
+            return NMS.getFallDistance(npc, super.bg());
+        }
+
+        @Override
         public boolean cC() {
             return npc != null;
         }

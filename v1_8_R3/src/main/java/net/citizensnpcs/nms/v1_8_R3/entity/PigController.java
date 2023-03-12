@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPig;
 import org.bukkit.entity.Pig;
 import org.bukkit.util.Vector;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
@@ -69,6 +70,11 @@ public class PigController extends MobEntityController {
         public void a(Entity entity, float strength, double dx, double dz) {
             NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
+        }
+
+        @Override
+        public int aE() {
+            return NMS.getFallDistance(npc, super.aE());
         }
 
         @Override

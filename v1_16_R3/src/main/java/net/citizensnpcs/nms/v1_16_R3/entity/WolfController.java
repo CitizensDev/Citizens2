@@ -97,6 +97,11 @@ public class WolfController extends MobEntityController {
         }
 
         @Override
+        public int bP() {
+            return NMS.getFallDistance(npc, super.bP());
+        }
+
+        @Override
         public void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();

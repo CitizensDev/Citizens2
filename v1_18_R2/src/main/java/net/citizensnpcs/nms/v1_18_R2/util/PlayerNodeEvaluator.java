@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.nms.v1_18_R2.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -138,8 +137,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
                     var18.costMalus = -1.0F;
                     return var18;
                 }
-                if (var16++ >= Setting.MC_NAVIGATION_MAX_FALL_DISTANCE.asInt()
-                        || var16++ >= this.mob.getMaxFallDistance()) {
+                if (var16++ >= this.mob.getMaxFallDistance()) {
                     Node var18 = getNode(var0, var1, var2);
                     var18.type = BlockPathTypes.BLOCKED;
                     var18.costMalus = -1.0F;

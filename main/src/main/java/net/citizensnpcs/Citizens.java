@@ -622,7 +622,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
             Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
             startMetrics();
-            scheduleSaveTask(Setting.SAVE_TASK_DELAY.asInt());
+            scheduleSaveTask(Setting.SAVE_TASK_DELAY.asTicks());
             Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
             enabled = true;

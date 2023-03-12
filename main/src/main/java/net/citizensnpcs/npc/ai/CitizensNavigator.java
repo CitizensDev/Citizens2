@@ -236,7 +236,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         } else {
             root.removeKey("pathfindingrange");
         }
-        if (defaultParams.stationaryTicks() != Setting.DEFAULT_STATIONARY_TICKS.asInt()) {
+        if (defaultParams.stationaryTicks() != Setting.DEFAULT_STATIONARY_TICKS.asTicks()) {
             root.setInt("stationaryticks", defaultParams.stationaryTicks());
         } else {
             root.removeKey("stationaryticks");
@@ -438,6 +438,11 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     private void switchParams() {
         localParams = defaultParams.clone();
+        int fallDistance = npc.data().get(NPC.Metadata.PATHFINDER_FALL_DISTANCE,
+                Setting.PATHFINDER_FALL_DISTANCE.asInt());
+        if (fallDistance != -1) {
+            localParams.examiner(new FallingExaminer(fallDistance));
+        }
         if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
             localParams.examiner(new DoorExaminer());
         }

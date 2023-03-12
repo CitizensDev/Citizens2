@@ -34,6 +34,7 @@ import org.bukkit.util.Vector;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.command.CommandManager;
@@ -131,6 +132,13 @@ public class NMS {
 
     public static Location getDestination(Entity entity) {
         return BRIDGE.getDestination(entity);
+    }
+
+    public static int getFallDistance(NPC npc, int def) {
+        return npc == null ? def
+                : npc.data().get(NPC.Metadata.PATHFINDER_FALL_DISTANCE,
+                        Setting.PATHFINDER_FALL_DISTANCE.asInt() != -1 ? Setting.PATHFINDER_FALL_DISTANCE.asInt()
+                                : def);
     }
 
     public static Field getField(Class<?> clazz, String field) {
@@ -766,7 +774,6 @@ public class NMS {
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
-
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {
