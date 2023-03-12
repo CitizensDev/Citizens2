@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -178,6 +179,8 @@ public class CommandManager implements TabCompleter {
                     val = CommandContext.parseLocation(context.getSenderLocation(), val.toString());
                 } else if (desiredType == UUID.class) {
                     val = UUID.fromString(val.toString());
+                } else if (desiredType == Duration.class) {
+                    val = SpigotUtil.parseDuration(val.toString());
                 }
                 methodArgs[entry.getKey()] = val;
             }
@@ -590,7 +593,7 @@ public class CommandManager implements TabCompleter {
         this.injector = injector;
     }
 
-    public static class CommandInfo {
+    public class CommandInfo {
         private List<Annotation> annotations = Lists.newArrayList();
         private final Command commandAnnotation;
         public Object instance;
@@ -605,11 +608,11 @@ public class CommandManager implements TabCompleter {
         }
 
         public void addArgAnnotation(int idx, Class<?> paramType, Arg arg) {
-            this.methodArguments.put(idx, new InjectedCommandArgument(paramType, arg));
+            this.methodArguments.put(idx, new InjectedCommandArgument(injector, paramType, arg));
         }
 
         public void addFlagAnnotation(int idx, Class<?> paramType, Flag flag) {
-            this.methodArguments.put(idx, new InjectedCommandArgument(paramType, flag));
+            this.methodArguments.put(idx, new InjectedCommandArgument(injector, paramType, flag));
         }
 
         private Collection<String> calculateValueFlags() {
@@ -687,29 +690,21 @@ public class CommandManager implements TabCompleter {
         private final Class<?> paramType;
         private FlagValidator<?> validator;
 
-        public InjectedCommandArgument(Class<?> paramType, Arg arg) {
+        public InjectedCommandArgument(Injector injector, Class<?> paramType, Arg arg) {
             this.paramType = paramType;
             this.names = new String[] {};
             this.index = arg.value();
             this.completions = arg.completions();
             this.defaultValue = arg.defValue().isEmpty() ? null : arg.defValue();
             if (arg.validator() != FlagValidator.Identity.class) {
-                try {
-                    this.validator = arg.validator().getConstructor().newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                this.validator = (FlagValidator<?>) injector.getInstance(arg.validator());
             }
             if (arg.completionsProvider() != CompletionsProvider.Identity.class) {
-                try {
-                    this.completionsProvider = arg.completionsProvider().getConstructor().newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                this.completionsProvider = (CompletionsProvider) injector.getInstance(arg.completionsProvider());
             }
         }
 
-        public InjectedCommandArgument(Class<?> paramType, Flag flag) {
+        public InjectedCommandArgument(Injector injector, Class<?> paramType, Flag flag) {
             this.paramType = paramType;
             this.names = flag.value();
             for (int i = 0; i < this.names.length; i++) {
@@ -718,18 +713,10 @@ public class CommandManager implements TabCompleter {
             this.completions = flag.completions();
             this.defaultValue = flag.defValue().isEmpty() ? null : flag.defValue();
             if (flag.validator() != FlagValidator.Identity.class) {
-                try {
-                    this.validator = flag.validator().getConstructor().newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                this.validator = (FlagValidator<?>) injector.getInstance(flag.validator());
             }
             if (flag.completionsProvider() != CompletionsProvider.Identity.class) {
-                try {
-                    this.completionsProvider = flag.completionsProvider().getConstructor().newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                this.completionsProvider = (CompletionsProvider) injector.getInstance(flag.completionsProvider());
             }
         }
 

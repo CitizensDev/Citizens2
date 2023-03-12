@@ -1,16 +1,19 @@
 package net.citizensnpcs.api.command;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.List;
 
 import net.citizensnpcs.api.util.Messaging;
 
 public class Injector {
     private final Class<?>[] argClasses;
-    private final Object[] args;
+    private final List<Object> args;
 
     public Injector(Object... args) {
-        this.args = args;
+        this.args = Arrays.asList(args);
         argClasses = new Class[args.length];
         for (int i = 0; i < args.length; ++i) {
             argClasses[i] = args[i].getClass();
@@ -19,29 +22,24 @@ public class Injector {
 
     public Object getInstance(Class<?> clazz) {
         try {
-            Constructor<?> ctr = clazz.getConstructor(argClasses);
-            ctr.setAccessible(true);
-            return ctr.newInstance(args);
+            return LOOKUP.findConstructor(clazz, MethodType.methodType(void.class, argClasses))
+                    .invokeWithArguments(args);
         } catch (NoSuchMethodException e) {
             try {
-                return clazz.newInstance();
+                Constructor<?> ctr = clazz.getDeclaredConstructor();
+                ctr.setAccessible(true);
+                return ctr.newInstance();
             } catch (Exception ex) {
                 Messaging.severe("Error initializing commands class " + clazz + ": ");
                 ex.printStackTrace();
                 return null;
             }
-        } catch (InvocationTargetException e) {
-            Messaging.severe("Error initializing commands class " + clazz + ": ");
-            e.printStackTrace();
-            return null;
-        } catch (InstantiationException e) {
-            Messaging.severe("Error initializing commands class " + clazz + ": ");
-            e.printStackTrace();
-            return null;
-        } catch (IllegalAccessException e) {
+        } catch (Throwable e) {
             Messaging.severe("Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
             return null;
         }
     }
+
+    private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 }

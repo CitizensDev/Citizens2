@@ -4,11 +4,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
@@ -19,7 +18,6 @@ import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.astar.Plan;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.util.SpigotUtil;
 
 public class Path implements Plan {
     private List<Block> blockList;
@@ -50,29 +48,10 @@ public class Path implements Plan {
         return path.toArray(new PathEntry[path.size()]);
     }
 
-    public void debug() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            for (PathEntry entry : path) {
-                if (SpigotUtil.isUsing1_13API()) {
-                    player.sendBlockChange(entry.vector.toLocation(player.getWorld()), YELLOW_FLOWER.createBlockData());
-                } else {
-                    player.sendBlockChange(entry.vector.toLocation(player.getWorld()), YELLOW_FLOWER, (byte) 0);
-                }
-            }
-        }
-    }
-
-    public void debugEnd() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            for (PathEntry entry : path) {
-                Block block = entry.vector.toLocation(player.getWorld()).getBlock();
-                if (SpigotUtil.isUsing1_13API()) {
-                    player.sendBlockChange(block.getLocation(), block.getBlockData());
-                } else {
-                    player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
-                }
-            }
-        }
+    public List<Block> getBlocks(World world) {
+        return Arrays.asList(path).stream()
+                .map(p -> world.getBlockAt(p.vector.getBlockX(), p.vector.getBlockY(), p.vector.getBlockZ()))
+                .collect(Collectors.toList());
     }
 
     public Vector getCurrentVector() {
@@ -154,7 +133,4 @@ public class Path implements Plan {
             return vector.toString();
         }
     }
-
-    private static Material YELLOW_FLOWER = SpigotUtil.isUsing1_13API() ? Material.SUNFLOWER
-            : Material.valueOf("YELLOW_FLOWER");
 }

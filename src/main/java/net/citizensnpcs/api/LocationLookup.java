@@ -121,6 +121,12 @@ public class LocationLookup extends BukkitRunnable {
             return sent.getOrDefault(key, Collections.emptyMap()).remove(value) != null;
         }
 
+        public void removeAllValues(String value) {
+            for (Map<String, T> map : sent.values()) {
+                map.remove(value);
+            }
+        }
+
         public void set(UUID key, String value, T marker) {
             if (marker instanceof Location || marker instanceof World) {
                 throw new IllegalArgumentException("Invalid marker");

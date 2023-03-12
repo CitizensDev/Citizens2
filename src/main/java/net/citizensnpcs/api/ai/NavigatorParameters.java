@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.ai;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -318,6 +319,10 @@ public class NavigatorParameters implements Cloneable {
      */
     public BlockExaminer[] examiners() {
         return examiners.toArray(new BlockExaminer[examiners.size()]);
+    }
+
+    public boolean hasExaminer(Class<? extends BlockExaminer> clazz) {
+        return Arrays.asList(examiners).stream().anyMatch(e -> clazz.isAssignableFrom(e.getClass()));
     }
 
     /**

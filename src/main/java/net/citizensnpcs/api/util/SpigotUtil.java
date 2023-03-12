@@ -1,9 +1,14 @@
 package net.citizensnpcs.api.util;
 
+import java.time.Duration;
+import java.util.regex.Pattern;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+
+import com.google.common.primitives.Ints;
 
 public class SpigotUtil {
     public static boolean checkYSafe(double y, World world) {
@@ -48,7 +53,20 @@ public class SpigotUtil {
         return using1_13API;
     }
 
+    public static Duration parseDuration(String raw) {
+        Integer ticks = Ints.tryParse(raw.endsWith("t") ? raw.substring(0, raw.length() - 1) : raw);
+        if (ticks != null) {
+            return Duration.ofMillis(ticks * 50);
+        }
+        raw = NUMBER_MATCHER.matcher(raw).replaceFirst("P$1T").replace("min", "m").replace("hr", "h");
+        if (raw.charAt(0) != 'P') {
+            raw = "PT" + raw;
+        }
+        return Duration.parse(raw);
+    }
+
     private static int[] BUKKIT_VERSION = null;
+    private static Pattern NUMBER_MATCHER = Pattern.compile("(\\d+d)");
     private static boolean SUPPORT_WORLD_HEIGHT = true;
     private static Boolean using1_13API;
 }

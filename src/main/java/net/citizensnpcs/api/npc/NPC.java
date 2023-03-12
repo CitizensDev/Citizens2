@@ -491,6 +491,7 @@ public interface NPC extends Agent, Cloneable {
          * The packet update delay. Integer defaults to setting value.
          */
         PACKET_UPDATE_DELAY("packet-update-delay"),
+        PATHFINDER_FALL_DISTANCE("pathfinder-fall-distance"),
         /**
          * Whether to open doors while pathfinding. Boolean.
          */
