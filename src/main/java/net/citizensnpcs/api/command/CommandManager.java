@@ -241,7 +241,9 @@ public class CommandManager implements TabCompleter {
                 return false;
             } catch (WrappedCommandException ex) {
                 if (ex.getCause() instanceof NumberFormatException) {
-                    ex.printStackTrace();
+                    if (Messaging.isDebugging()) {
+                        ex.printStackTrace();
+                    }
                     Messaging.sendErrorTr(sender, CommandMessages.INVALID_NUMBER);
                 } else {
                     throw ex.getCause();
