@@ -50,10 +50,10 @@ public class CitizensNavigator implements Navigator, Runnable {
             .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat()).debug(Setting.DEBUG_PATHFINDING.asBoolean())
             .defaultAttackStrategy(MCTargetStrategy.DEFAULT_ATTACK_STRATEGY)
             .attackRange(Setting.NPC_ATTACK_DISTANCE.asDouble())
-            .updatePathRate(Setting.DEFAULT_PATHFINDER_UPDATE_PATH_RATE.asInt())
+            .updatePathRate(Setting.DEFAULT_PATHFINDER_UPDATE_PATH_RATE.asTicks())
             .distanceMargin(Setting.DEFAULT_DISTANCE_MARGIN.asDouble())
             .pathDistanceMargin(Setting.DEFAULT_PATH_DISTANCE_MARGIN.asDouble())
-            .stationaryTicks(Setting.DEFAULT_STATIONARY_TICKS.asInt()).stuckAction(TeleportStuckAction.INSTANCE)
+            .stationaryTicks(Setting.DEFAULT_STATIONARY_DURATION.asTicks()).stuckAction(TeleportStuckAction.INSTANCE)
             .examiner(new MinecraftBlockExaminer()).useNewPathfinder(Setting.USE_NEW_PATHFINDER.asBoolean())
             .straightLineTargetingDistance(Setting.DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE.asFloat())
             .destinationTeleportMargin(Setting.DEFAULT_DESTINATION_TELEPORT_MARGIN.asDouble());
@@ -236,7 +236,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         } else {
             root.removeKey("pathfindingrange");
         }
-        if (defaultParams.stationaryTicks() != Setting.DEFAULT_STATIONARY_TICKS.asTicks()) {
+        if (defaultParams.stationaryTicks() != Setting.DEFAULT_STATIONARY_DURATION.asTicks()) {
             root.setInt("stationaryticks", defaultParams.stationaryTicks());
         } else {
             root.removeKey("stationaryticks");

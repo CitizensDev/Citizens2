@@ -9,6 +9,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.md_5.bungee.api.ChatColor;
@@ -35,7 +36,8 @@ public class SkinTrait extends Trait {
     private void checkPlaceholder(boolean update) {
         if (skinName == null)
             return;
-        String filled = ChatColor.stripColor(Placeholders.replace(skinName, null, npc).toLowerCase()); 
+        String filled = ChatColor.stripColor(Placeholders.replace(skinName, null, npc).toLowerCase());
+        Messaging.idebug(() -> skinName + " " + filled + " " + filledPlaceholder);
         if (!filled.equalsIgnoreCase(skinName) && !filled.equalsIgnoreCase(filledPlaceholder)) {
             filledPlaceholder = filled;
             if (update) {
