@@ -236,7 +236,7 @@ public class Skin {
                             break;
                         }
                         fetchRetries++;
-                        long delay = Setting.NPC_SKIN_RETRY_DELAY.asLong();
+                        int delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
                         retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
                             @Override
                             public void run() {
