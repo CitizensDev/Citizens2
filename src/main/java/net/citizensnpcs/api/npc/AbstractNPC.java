@@ -520,24 +520,15 @@ public abstract class AbstractNPC implements NPC {
         final Entity passenger = entity.getPassenger();
         entity.eject();
         if (!location.getWorld().equals(entity.getWorld())) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    entity.teleport(location, cause);
-                }
-            }, delay++);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    () -> entity.teleport(location, cause), delay++);
         } else {
             entity.teleport(location, cause);
         }
         if (passenger == null)
             return;
         teleport(passenger, location, delay++, cause);
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                entity.setPassenger(passenger);
-            }
-        };
+        Runnable task = () -> entity.setPassenger(passenger);
         if (!location.getWorld().equals(entity.getWorld())) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task, delay);
         } else {
