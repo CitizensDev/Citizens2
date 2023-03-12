@@ -11,3 +11,4 @@ bin/
 dependency-reduced-pom.xml
 *.jardesc
 *.lnk
+*.bbmodel
