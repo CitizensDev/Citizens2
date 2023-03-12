@@ -251,7 +251,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         } else {
             root.removeKey("distancemargin");
         }
-        if (defaultParams.updatePathRate() != Setting.DEFAULT_PATHFINDER_UPDATE_PATH_RATE.asInt()) {
+        if (defaultParams.updatePathRate() != Setting.DEFAULT_PATHFINDER_UPDATE_PATH_RATE.asTicks()) {
             root.setInt("updatepathrate", defaultParams.updatePathRate());
         } else {
             root.removeKey("updatepathrate");

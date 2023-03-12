@@ -169,7 +169,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public boolean isUpdating(NPCUpdate update) {
         return update == NPCUpdate.PACKET
-                ? updateCounter > data().get(NPC.Metadata.PACKET_UPDATE_DELAY, Setting.PACKET_UPDATE_DELAY.asInt())
+                ? updateCounter > data().get(NPC.Metadata.PACKET_UPDATE_DELAY, Setting.PACKET_UPDATE_DELAY.asTicks())
                 : false;
     }
 

@@ -280,7 +280,7 @@ public class Text extends Trait implements Runnable, Listener {
         sendText(player);
 
         int delay = this.delay == -1
-                ? Setting.DEFAULT_TEXT_DELAY_MIN.asInt() + Util.getFastRandom()
+                ? Setting.DEFAULT_TEXT_DELAY_MIN.asTicks() + Util.getFastRandom()
                         .nextInt(Setting.DEFAULT_TEXT_DELAY_MAX.asTicks() - Setting.DEFAULT_TEXT_DELAY_MIN.asTicks())
                 : this.delay;
         if (delay <= 0)

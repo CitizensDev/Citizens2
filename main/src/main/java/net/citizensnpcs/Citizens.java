@@ -509,7 +509,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs(false);
         ProfileFetcher.reset();
         Skin.clearCache();
-
         getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
 
         saves.reloadFromSource();
