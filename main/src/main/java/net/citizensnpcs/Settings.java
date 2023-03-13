@@ -226,15 +226,11 @@ public class Settings {
             return (List<String>) value;
         }
 
-        public long asLong() {
-            return ((Number) value).longValue();
-        }
-
         public int asSeconds() {
             if (duration == null) {
                 duration = SpigotUtil.parseDuration(asString());
             }
-            return (int) TimeUnit.SECONDS.convert(duration);
+            return (int) TimeUnit.SECONDS.convert(duration.getNano(), TimeUnit.NANOSECONDS);
         }
 
         public String asString() {

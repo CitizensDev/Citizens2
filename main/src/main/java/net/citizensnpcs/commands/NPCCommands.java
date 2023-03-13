@@ -704,10 +704,9 @@ public class NPCCommands {
 
         String msg = "Created [[" + npc.getName() + "]] (ID [[" + npc.getId() + "]])";
 
-        int age = 0;
         if (args.hasFlag('b')) {
-            age = -24000;
             msg += " as a baby";
+            npc.getOrAddTrait(Age.class).setAge(-24000);
         }
 
         if (args.hasFlag('s')) {
@@ -809,8 +808,6 @@ public class NPCCommands {
 
             msg += " with templates " + builder.toString();
         }
-
-        npc.getOrAddTrait(Age.class).setAge(age);
 
         selector.select(sender, npc);
         history.add(sender, new CreateNPCHistoryItem(npc));

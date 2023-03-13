@@ -411,7 +411,7 @@ public class Util {
     }
 
     public static int toTicks(Duration delay) {
-        return (int) TimeUnit.MILLISECONDS.convert(delay) / 50;
+        return (int) TimeUnit.MILLISECONDS.convert(delay.getNano(), TimeUnit.NANOSECONDS) / 50;
     }
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
