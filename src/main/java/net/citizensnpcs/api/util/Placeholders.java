@@ -2,6 +2,7 @@ package net.citizensnpcs.api.util;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -113,28 +115,39 @@ public class Placeholders implements Listener {
                 } else {
                     switch (group) {
                         case "<random_player>":
-                            Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
+                        case "<random_world_player>":
+                            Collection<? extends Player> players = group.equals("<random_player>")
+                                    ? Bukkit.getServer().getOnlinePlayers()
+                                    : player.getPlayer().getWorld().getPlayers();
                             Player possible = Iterables.get(players, new Random().nextInt(players.size()), null);
                             if (possible != null) {
                                 replacement = possible.getName();
                             }
                             break;
                         case "<random_npc>":
+                        case "<random_npc_id>":
                             List<NPC> all = Lists.newArrayList(CitizensAPI.getNPCRegistry());
                             if (all.size() > 0) {
-                                replacement = all.get(new Random().nextInt(all.size())).getName();
+                                NPC random = all.get(new Random().nextInt(all.size()));
+                                replacement = group.equals("<random_npc>") ? random.getName()
+                                        : Integer.toString(random.getId());
                             }
                             break;
-                        case "<random_npc_id>":
-                            all = Lists.newArrayList(CitizensAPI.getNPCRegistry());
-                            if (all.size() > 0) {
-                                replacement = Integer.toString(all.get(new Random().nextInt(all.size())).getId());
+                        case "<nearest_npc_id>":
+                            Location location = player.getPlayer().getLocation();
+                            Optional<NPC> closestNPC = player.getPlayer().getNearbyEntities(12.5, 25, 12.5).stream()
+                                    .map(CitizensAPI.getNPCRegistry()::getNPC)
+                                    .filter(e -> e != null && e.getEntity() != player)
+                                    .min((a, b) -> Double.compare(a.getEntity().getLocation().distanceSquared(location),
+                                            b.getEntity().getLocation().distanceSquared(location)));
+                            if (closestNPC.isPresent()) {
+                                replacement = Integer.toString(closestNPC.get().getId());
                             }
                             break;
                         case "<nearest_player>":
                             double min = Double.MAX_VALUE;
-                            Player closest = null;
-                            Location location = player.getPlayer().getLocation();
+                            Entity closest = null;
+                            location = player.getPlayer().getLocation();
                             for (Player entity : CitizensAPI.getLocationLookup()
                                     .getNearbyPlayers(player.getPlayer().getLocation(), 25)) {
                                 if (entity == player || CitizensAPI.getNPCRegistry().isNPC(entity))
@@ -184,7 +197,7 @@ public class Placeholders implements Listener {
     private static boolean PLACEHOLDERAPI_ENABLED = true;
     private static final List<PlaceholderProvider> PLACEHOLDERS = Lists.newArrayList();
     private static final Pattern PLAYER_PLACEHOLDER_MATCHER = Pattern.compile(
-            "(<player>|<p>|@p|%player%|<random_player>|<random_npc>|<random_npc_id>|<nearest_player>|<world>)");
+            "(<player>|<p>|@p|%player%|<random_player>|<random_world_player>|<random_npc>|<random_npc_id>|<nearest_npc_id>|<nearest_player>|<world>)");
     private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", "@p", "%player%" };
     private static final Collection<String> PLAYER_VARIABLES = ImmutableSet.of("<player>", "<p>", "@p", "%player%");
 }
