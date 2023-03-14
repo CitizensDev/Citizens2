@@ -574,7 +574,7 @@ public class CommandTrait extends Trait {
         }
 
         public NPCCommandBuilder cooldown(Duration cd) {
-            return cooldown((int) TimeUnit.SECONDS.convert(cd.getNano(), TimeUnit.NANOSECONDS));
+            return cooldown(Util.convert(TimeUnit.SECONDS, cd));
         }
 
         public NPCCommandBuilder cooldown(int cooldown) {
@@ -588,7 +588,7 @@ public class CommandTrait extends Trait {
         }
 
         public NPCCommandBuilder globalCooldown(Duration cd) {
-            return globalCooldown((int) TimeUnit.SECONDS.convert(cd.getNano(), TimeUnit.NANOSECONDS));
+            return globalCooldown(Util.convert(TimeUnit.SECONDS, cd));
         }
 
         public NPCCommandBuilder globalCooldown(int cooldown) {

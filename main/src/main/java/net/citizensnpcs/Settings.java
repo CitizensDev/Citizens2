@@ -230,7 +230,7 @@ public class Settings {
             if (duration == null) {
                 duration = SpigotUtil.parseDuration(asString());
             }
-            return (int) TimeUnit.SECONDS.convert(duration.getNano(), TimeUnit.NANOSECONDS);
+            return Util.convert(TimeUnit.SECONDS, duration);
         }
 
         public String asString() {

@@ -509,7 +509,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs(false);
         ProfileFetcher.reset();
         Skin.clearCache();
-
         getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
 
         saves.reloadFromSource();
@@ -622,6 +621,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
             Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
             startMetrics();
+            System.out.println(Setting.SAVE_TASK_DELAY.asTicks());
+            System.out.println(Setting.SAVE_TASK_DELAY.asTicks() / 20);
             scheduleSaveTask(Setting.SAVE_TASK_DELAY.asTicks());
             Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);

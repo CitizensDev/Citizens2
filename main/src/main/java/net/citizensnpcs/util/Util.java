@@ -91,6 +91,11 @@ public class Util {
         return angle;
     }
 
+    public static int convert(TimeUnit unit, Duration delay) {
+        return (int) (unit.convert(delay.getSeconds(), TimeUnit.SECONDS)
+                + unit.convert(delay.getNano(), TimeUnit.NANOSECONDS));
+    }
+
     public static ItemStack createItem(Material mat, String name) {
         return createItem(mat, name, null);
     }
@@ -411,7 +416,8 @@ public class Util {
     }
 
     public static int toTicks(Duration delay) {
-        return (int) TimeUnit.MILLISECONDS.convert(delay.getNano(), TimeUnit.NANOSECONDS) / 50;
+        return (int) (TimeUnit.MILLISECONDS.convert(delay.getSeconds(), TimeUnit.SECONDS)
+                + TimeUnit.MILLISECONDS.convert(delay.getNano(), TimeUnit.NANOSECONDS)) / 50;
     }
 
     private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
