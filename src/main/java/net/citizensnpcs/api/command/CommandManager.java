@@ -428,16 +428,15 @@ public class CommandManager implements TabCompleter {
         results.addAll(cmd.getArgTabCompletions(context, sender, args.length - 1));
 
         Collection<String> valueFlags = cmd.valueFlags();
-        String lastArg = (newArgs[newArgs.length - 1].isEmpty() && newArgs.length >= 2 ? newArgs[newArgs.length - 2]
-                : newArgs[newArgs.length - 1]).toLowerCase();
+        String lastArg = (newArgs.length >= 2 ? newArgs[newArgs.length - 2] : newArgs[newArgs.length - 1])
+                .toLowerCase();
         String hyphenStrippedArg = lastArg.replaceFirst("--", "");
 
-        boolean completingFlag = lastArg.startsWith("--");
-        if (completingFlag && valueFlags.contains(hyphenStrippedArg)) {
+        if (lastArg.startsWith("--") && valueFlags.contains(hyphenStrippedArg)) {
             results.addAll(cmd.getFlagTabCompletions(context, sender, hyphenStrippedArg));
         } else {
             for (String valueFlag : valueFlags) {
-                if (completingFlag && valueFlag.startsWith(hyphenStrippedArg)) {
+                if ((newArgs[newArgs.length - 1].startsWith("--")) && valueFlag.startsWith(hyphenStrippedArg)) {
                     results.add("--" + valueFlag);
                 } else if (newArgs[newArgs.length - 1].isEmpty() && !context.hasValueFlag(valueFlag)) {
                     results.add("--" + valueFlag);
