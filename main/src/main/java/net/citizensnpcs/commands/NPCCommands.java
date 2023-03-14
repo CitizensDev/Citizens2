@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -851,16 +852,13 @@ public class NPCCommands {
             permission = "citizens.npc.despawn")
     @Requirements
     public void despawn(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
-        NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
-            @Override
-            public void run(NPC npc) throws CommandException {
-                if (npc == null) {
-                    throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, args.getString(1));
-                }
-                npc.getOrAddTrait(Spawned.class).setSpawned(false);
-                npc.despawn(DespawnReason.REMOVAL);
-                Messaging.sendTr(sender, Messages.NPC_DESPAWNED, npc.getName());
+        NPCCommandSelector.Callback callback = npc1 -> {
+            if (npc1 == null) {
+                throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, args.getString(1));
             }
+            npc1.getOrAddTrait(Spawned.class).setSpawned(false);
+            npc1.despawn(DespawnReason.REMOVAL);
+            Messaging.sendTr(sender, Messages.NPC_DESPAWNED, npc1.getName());
         };
         if (npc == null || args.argsLength() == 2) {
             if (args.argsLength() < 2) {
@@ -967,22 +965,19 @@ public class NPCCommands {
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
         if (!player.hasPlayedBefore() && !player.isOnline()) {
-            NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
-                @Override
-                public void run(NPC followingNPC) throws CommandException {
-                    if (followingNPC == null)
-                        throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
-                    if (!(sender instanceof ConsoleCommandSender)
-                            && !followingNPC.getOrAddTrait(Owner.class).isOwnedBy(sender))
-                        throw new CommandException(CommandMessages.MUST_BE_OWNER);
-                    if (followingNPC.getEntity() instanceof Player) {
-                        boolean following = followingNPC.getOrAddTrait(FollowTrait.class)
-                                .toggle((Player) followingNPC.getEntity(), protect);
-                        Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
-                                followingNPC.getName());
-                    } else {
-                        throw new CommandException();
-                    }
+            NPCCommandSelector.Callback callback = followingNPC -> {
+                if (followingNPC == null)
+                    throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
+                if (!(sender instanceof ConsoleCommandSender)
+                        && !followingNPC.getOrAddTrait(Owner.class).isOwnedBy(sender))
+                    throw new CommandException(CommandMessages.MUST_BE_OWNER);
+                if (followingNPC.getEntity() instanceof Player) {
+                    boolean following = followingNPC.getOrAddTrait(FollowTrait.class)
+                            .toggle((Player) followingNPC.getEntity(), protect);
+                    Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
+                            followingNPC.getName());
+                } else {
+                    throw new CommandException();
                 }
             };
             NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
@@ -2334,20 +2329,16 @@ public class NPCCommands {
                 Messaging.sendTr(sender, Messages.REMOVED_ALL_NPCS);
                 return;
             } else {
-                NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
-                    @Override
-                    public void run(NPC npc) throws CommandException {
-                        if (npc == null)
-                            throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
-                        if (!(sender instanceof ConsoleCommandSender)
-                                && !npc.getOrAddTrait(Owner.class).isOwnedBy(sender))
-                            throw new CommandException(CommandMessages.MUST_BE_OWNER);
-                        if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
-                            throw new NoPermissionsException();
-                        history.add(sender, new RemoveNPCHistoryItem(npc));
-                        npc.destroy(sender);
-                        Messaging.sendTr(sender, Messages.NPC_REMOVED, npc.getName(), npc.getId());
-                    }
+                NPCCommandSelector.Callback callback = npc1 -> {
+                    if (npc1 == null)
+                        throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
+                    if (!(sender instanceof ConsoleCommandSender) && !npc1.getOrAddTrait(Owner.class).isOwnedBy(sender))
+                        throw new CommandException(CommandMessages.MUST_BE_OWNER);
+                    if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
+                        throw new NoPermissionsException();
+                    history.add(sender, new RemoveNPCHistoryItem(npc1));
+                    npc1.destroy(sender);
+                    Messaging.sendTr(sender, Messages.NPC_REMOVED, npc1.getName(), npc1.getId());
                 };
                 NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
                         args.getString(1));
@@ -2511,35 +2502,27 @@ public class NPCCommands {
     public void select(CommandContext args, final CommandSender sender, final NPC npc,
             @Flag(value = "range", defValue = "10") double range, @Flag("registry") String registryName)
             throws CommandException {
-        NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
-            @Override
-            public void run(NPC toSelect) throws CommandException {
-                if (toSelect == null)
-                    throw new CommandException(Messages.NPC_NOT_FOUND);
-                if (npc != null && toSelect.getId() == npc.getId())
-                    throw new CommandException(Messages.NPC_ALREADY_SELECTED);
-                selector.select(sender, toSelect);
-                Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
-            }
+        NPCCommandSelector.Callback callback = toSelect -> {
+            if (toSelect == null)
+                throw new CommandException(Messages.NPC_NOT_FOUND);
+            if (npc != null && toSelect.getId() == npc.getId())
+                throw new CommandException(Messages.NPC_ALREADY_SELECTED);
+            selector.select(sender, toSelect);
+            Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
         };
         NPCRegistry registry = registryName != null ? CitizensAPI.getNamedNPCRegistry(registryName)
                 : CitizensAPI.getNPCRegistry();
         if (registry == null)
             throw new CommandException(Messages.UNKNOWN_NPC_REGISTRY, args.getFlag("registry"));
         if (args.argsLength() <= 1) {
-            if (!(sender instanceof Player))
+            if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
-            Entity player = (Player) sender;
             final Location location = args.getSenderLocation();
-            List<Entity> search = player.getNearbyEntities(range, range, range);
-            Collections.sort(search, (o1, o2) -> {
-                double d = o1.getLocation().distanceSquared(location) - o2.getLocation().distanceSquared(location);
-                return d > 0 ? 1 : d < 0 ? -1 : 0;
-            });
-            for (Entity possibleNPC : search) {
-                NPC test = registry.getNPC(possibleNPC);
-                if (test == null)
-                    continue;
+            List<NPC> search = location.getWorld().getNearbyEntities(location, range, range, range).stream()
+                    .map(e -> registry.getNPC(e)).filter(e -> e != null).collect(Collectors.toList());
+            Collections.sort(search, (o1, o2) -> Double.compare(o1.getEntity().getLocation().distanceSquared(location),
+                    o2.getEntity().getLocation().distanceSquared(location)));
+            for (NPC test : search) {
                 if (test.hasTrait(ClickRedirectTrait.class)) {
                     test = test.getTraitNullable(ClickRedirectTrait.class).getRedirectNPC();
                 }
@@ -2861,33 +2844,30 @@ public class NPCCommands {
             permission = "citizens.npc.spawn")
     @Requirements(ownership = true)
     public void spawn(final CommandContext args, final CommandSender sender, NPC npc) throws CommandException {
-        NPCCommandSelector.Callback callback = new NPCCommandSelector.Callback() {
-            @Override
-            public void run(NPC respawn) throws CommandException {
-                if (respawn == null) {
-                    if (args.argsLength() > 1) {
-                        throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, args.getString(1));
-                    } else {
-                        throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
-                    }
+        NPCCommandSelector.Callback callback = respawn -> {
+            if (respawn == null) {
+                if (args.argsLength() > 1) {
+                    throw new CommandException(Messages.NO_NPC_WITH_ID_FOUND, args.getString(1));
+                } else {
+                    throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
                 }
-                if (respawn.isSpawned()) {
-                    throw new CommandException(Messages.NPC_ALREADY_SPAWNED, respawn.getName());
-                }
-                Location location = respawn.getOrAddTrait(CurrentLocation.class).getLocation();
-                if (location == null || args.hasValueFlag("location")) {
-                    if (args.getSenderLocation() == null)
-                        throw new CommandException(Messages.NO_STORED_SPAWN_LOCATION);
+            }
+            if (respawn.isSpawned()) {
+                throw new CommandException(Messages.NPC_ALREADY_SPAWNED, respawn.getName());
+            }
+            Location location = respawn.getOrAddTrait(CurrentLocation.class).getLocation();
+            if (location == null || args.hasValueFlag("location")) {
+                if (args.getSenderLocation() == null)
+                    throw new CommandException(Messages.NO_STORED_SPAWN_LOCATION);
 
-                    location = args.getSenderLocation();
-                }
-                if (args.hasFlag('l') && !Util.isLoaded(location)) {
-                    location.getChunk().load();
-                }
-                if (respawn.spawn(location, SpawnReason.COMMAND)) {
-                    selector.select(sender, respawn);
-                    Messaging.sendTr(sender, Messages.NPC_SPAWNED, respawn.getName());
-                }
+                location = args.getSenderLocation();
+            }
+            if (args.hasFlag('l') && !Util.isLoaded(location)) {
+                location.getChunk().load();
+            }
+            if (respawn.spawn(location, SpawnReason.COMMAND)) {
+                selector.select(sender, respawn);
+                Messaging.sendTr(sender, Messages.NPC_SPAWNED, respawn.getName());
             }
         };
         if (args.argsLength() > 1) {
@@ -2931,7 +2911,7 @@ public class NPCCommands {
         }
 
         if (range != null) {
-            npc.getEntity().getNearbyEntities(range / 2, range, range / 2).forEach((e) -> {
+            npc.getEntity().getNearbyEntities(range, range, range).forEach(e -> {
                 if (!CitizensAPI.getNPCRegistry().isNPC(e)) {
                     context.addRecipient(e);
                 }

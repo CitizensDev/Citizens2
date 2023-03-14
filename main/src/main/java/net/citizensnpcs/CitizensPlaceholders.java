@@ -49,7 +49,7 @@ public class CitizensPlaceholders extends PlaceholderExpansion {
             case "citizens_nearest_npc_id":
                 Location location = player.getPlayer().getLocation();
 
-                Optional<NPC> closestNPC = player.getPlayer().getNearbyEntities(12.5, 25, 12.5).stream()
+                Optional<NPC> closestNPC = player.getPlayer().getNearbyEntities(25, 25, 25).stream()
                         .map(CitizensAPI.getNPCRegistry()::getNPC).filter(e -> e != null && e.getEntity() != player)
                         .min((a, b) -> Double.compare(a.getEntity().getLocation().distanceSquared(location),
                                 b.getEntity().getLocation().distanceSquared(location)));
