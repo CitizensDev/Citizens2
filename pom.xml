@@ -1,35 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <packaging>pom</packaging>
     <groupId>net.citizensnpcs</groupId>
     <artifactId>citizens-parent</artifactId>
-    <version>2.0.30-SNAPSHOT</version>
-
+    <version>2.0.31-SNAPSHOT</version>
     <properties>
         <BUILD_NUMBER>Unknown</BUILD_NUMBER>
-        <CITIZENS_VERSION>2.0.30</CITIZENS_VERSION>
+        <CITIZENS_VERSION>2.0.31</CITIZENS_VERSION>
     </properties>
-
     <distributionManagement>
         <repository>
             <id>citizens-repo</id>
             <url>https://maven.citizensnpcs.co/repo</url>
         </repository>
     </distributionManagement>
-
     <repositories>
         <repository>
             <id>citizens-repo</id>
             <url>https://maven.citizensnpcs.co/repo</url>
         </repository>
     </repositories>
-
     <build>
         <defaultGoal>clean package install</defaultGoal> 
     </build>
-
     <modules>
         <module>main</module>
         <module>v1_8_R3</module>
@@ -37,7 +31,7 @@
         <module>v1_16_R3</module>
         <module>v1_17_R1</module>
         <module>v1_18_R2</module>
-        <module>v1_19_R2</module>
+        <module>v1_19_R3</module>
         <module>dist</module>
     </modules>
 </project>

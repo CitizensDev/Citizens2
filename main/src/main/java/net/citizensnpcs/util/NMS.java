@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,6 +32,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
+import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 
@@ -52,6 +54,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
+import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
 
 public class NMS {
     private NMS() {
@@ -148,6 +151,33 @@ public class NMS {
         }
     }
 
+    private static List<Field> getFieldsMatchingType(Class<?> clazz, Class<?> type, boolean allowStatic) {
+        List<Field> found = Lists.newArrayList();
+        for (Field field : clazz.getDeclaredFields()) {
+            if (allowStatic ^ Modifier.isStatic(field.getModifiers()))
+                continue;
+            if (field.getType() == type) {
+                found.add(field);
+                field.setAccessible(true);
+            }
+        }
+        return found;
+    }
+
+    public static List<MethodHandle> getFieldsOfType(Class<?> clazz, Class<?> type) {
+        List<Field> found = getFieldsMatchingType(clazz, type, false);
+        if (found.isEmpty())
+            return null;
+        return found.stream().map(f -> {
+            try {
+                return LOOKUP.unreflectGetter(f);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            return null;
+        }).filter(f -> f != null).collect(Collectors.toList());
+    }
+
     public static MethodHandle getFinalSetter(Class<?> clazz, String field) {
         return getFinalSetter(clazz, field, true);
     }
@@ -212,28 +242,12 @@ public class NMS {
         return null;
     }
 
-    private static Field getFirstFieldMatchingType(Class<?> clazz, Class<?> type, boolean allowStatic) {
-        Field found = null;
-        for (Field field : clazz.getDeclaredFields()) {
-            if (allowStatic ^ Modifier.isStatic(field.getModifiers()))
-                continue;
-            if (field.getType() == type) {
-                found = field;
-                break;
-            }
-        }
-        if (found != null) {
-            found.setAccessible(true);
-        }
-        return found;
-    }
-
     public static MethodHandle getFirstFinalSetter(Class<?> clazz, Class<?> type) {
         try {
-            Field found = getFirstFieldMatchingType(clazz, type, false);
-            if (found == null)
+            List<Field> found = getFieldsMatchingType(clazz, type, false);
+            if (found.isEmpty())
                 return null;
-            return getFinalSetter(clazz, found.getName());
+            return getFinalSetter(clazz, found.get(0).getName());
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
         }
@@ -242,10 +256,10 @@ public class NMS {
 
     public static MethodHandle getFirstGetter(Class<?> clazz, Class<?> type) {
         try {
-            Field found = getFirstFieldMatchingType(clazz, type, false);
-            if (found == null)
+            List<Field> found = getFieldsMatchingType(clazz, type, false);
+            if (found.isEmpty())
                 return null;
-            return LOOKUP.unreflectGetter(found);
+            return LOOKUP.unreflectGetter(found.get(0));
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
         }
@@ -292,10 +306,10 @@ public class NMS {
 
     public static MethodHandle getFirstSetter(Class<?> clazz, Class<?> type) {
         try {
-            Field found = getFirstFieldMatchingType(clazz, type, false);
-            if (found == null)
+            List<Field> found = getFieldsMatchingType(clazz, type, false);
+            if (found.isEmpty())
                 return null;
-            return LOOKUP.unreflectSetter(found);
+            return LOOKUP.unreflectSetter(found.get(0));
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
         }
@@ -304,10 +318,10 @@ public class NMS {
 
     public static MethodHandle getFirstStaticGetter(Class<?> clazz, Class<?> type) {
         try {
-            Field found = getFirstFieldMatchingType(clazz, type, true);
-            if (found == null)
+            List<Field> found = getFieldsMatchingType(clazz, type, true);
+            if (found.isEmpty())
                 return null;
-            return LOOKUP.unreflectGetter(found);
+            return LOOKUP.unreflectGetter(found.get(0));
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
         }
@@ -698,6 +712,10 @@ public class NMS {
         BRIDGE.setSneaking(entity, sneaking);
     }
 
+    public static void setSnifferState(Entity entity, SnifferState state) {
+        BRIDGE.setSnifferState(entity, state);
+    }
+
     public static void setStepHeight(org.bukkit.entity.Entity entity, float height) {
         BRIDGE.setStepHeight(entity, height);
     }
@@ -757,6 +775,7 @@ public class NMS {
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
+
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {

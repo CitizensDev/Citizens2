@@ -40,6 +40,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
+import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
 
 public interface NMSBridge {
     default void activate(Entity entity) {
@@ -227,6 +228,9 @@ public interface NMSBridge {
 
     public void setSneaking(Entity entity, boolean sneaking);
 
+    public default void setSnifferState(Entity entity, SnifferState state) {
+    }
+
     public void setStepHeight(Entity entity, float height);
 
     public void setTeamNameTagVisible(Team team, boolean visible);
@@ -249,5 +253,5 @@ public interface NMSBridge {
 
     public void updateNavigationWorld(Entity entity, World world);
 
-    public void updatePathfindingRange(NPC npc, float pathfindingRange);
+    public void updatePathfindingRange(NPC npc, float pathfindingRange);;
 }

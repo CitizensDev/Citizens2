@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import java.util.Collection;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -87,8 +88,13 @@ public class HologramTrait extends Trait {
     }
 
     private NPC createHologram(String line, double heightOffset) {
-        NPC hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
-        hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
+        NPC hologramNPC = null;
+        if (SUPPORTS_TEXT_DISPLAY) {
+            hologramNPC = registry.createNPC(EntityType.TEXT_DISPLAY, line);
+        } else {
+            hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
+            hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
+        }
         if (Setting.PACKET_HOLOGRAMS.asBoolean()) {
             hologramNPC.addTrait(PacketNPC.class);
         }
@@ -107,7 +113,7 @@ public class HologramTrait extends Trait {
                         .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
             }
             itemNPC.spawn(currentLoc);
-            ((ArmorStand) hologramNPC.getEntity()).addPassenger(itemNPC.getEntity());
+            hologramNPC.getEntity().addPassenger(itemNPC.getEntity());
             itemNPC.addRunnable(new Runnable() {
                 @Override
                 public void run() {
@@ -147,9 +153,9 @@ public class HologramTrait extends Trait {
     /**
      * Note: this is implementation-specific and may be removed at a later date.
      */
-    public Collection<ArmorStand> getHologramEntities() {
+    public Collection<Entity> getHologramEntities() {
         return lines.stream().filter(l -> l.hologram != null && l.hologram.getEntity() != null)
-                .map(l -> (ArmorStand) l.hologram.getEntity()).collect(Collectors.toList());
+                .map(l -> l.hologram.getEntity()).collect(Collectors.toList());
     }
 
     /**
@@ -173,8 +179,8 @@ public class HologramTrait extends Trait {
     /**
      * Note: this is implementation-specific and may be removed at a later date.
      */
-    public ArmorStand getNameEntity() {
-        return nameNPC != null && nameNPC.isSpawned() ? ((ArmorStand) nameNPC.getEntity()) : null;
+    public Entity getNameEntity() {
+        return nameNPC != null && nameNPC.isSpawned() ? nameNPC.getEntity() : null;
     }
 
     @Override
@@ -318,7 +324,7 @@ public class HologramTrait extends Trait {
 
             if (!updateName)
                 continue;
-            hologramNPC.setName(Placeholders.replace(text, null, npc));
+            line.setText(text);
             hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, npc.getRawName().length() > 0);
         }
     }
@@ -428,4 +434,12 @@ public class HologramTrait extends Trait {
     }
 
     private static final Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)([:].*?)?>");
+    private static boolean SUPPORTS_TEXT_DISPLAY = true;
+    static {
+        try {
+            EntityType.valueOf("TEXT_DISPLAY");
+        } catch (IllegalFormatException e) {
+            SUPPORTS_TEXT_DISPLAY = false;
+        }
+    }
 }

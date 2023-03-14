@@ -363,6 +363,7 @@ public class Messages {
     public static final String SKIPPING_BROKEN_TRAIT = "citizens.notifications.skipping-broken-trait";
     public static final String SKIPPING_INVALID_ANCHOR = "citizens.notifications.skipping-invalid-anchor";
     public static final String SKIPPING_INVALID_POSE = "citizens.notifications.skipping-invalid-pose";
+    public static final String SNIFFER_STATE_SET = "citizens.commands.npc.sniffer.state-set";
     public static final String SNOWMAN_DERP_SET = "citizens.commands.npc.snowman.derp-set";
     public static final String SNOWMAN_DERP_STOPPED = "citizens.commands.npc.snowman.derp-stopped";
     public static final String SOUND_INFO = "citizens.commands.npc.sound.info";
