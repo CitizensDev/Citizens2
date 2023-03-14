@@ -90,6 +90,10 @@ public class BoundingBox {
         return new BoundingBox(minX * x, minY * y, minZ * z, maxX * x, maxY * y, maxZ * z);
     }
 
+    public EntityDim toDimensions() {
+        return new EntityDim(Math.abs(maxX - minX) * 2, Math.abs(maxY - minY));
+    }
+
     @Override
     public String toString() {
         return "BoundingBox [" + minX + ", " + minY + ", " + minZ + ", " + maxX + ", " + maxY + ", " + maxZ + "]";

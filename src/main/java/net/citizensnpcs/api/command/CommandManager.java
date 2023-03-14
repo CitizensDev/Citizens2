@@ -432,11 +432,14 @@ public class CommandManager implements TabCompleter {
                 : newArgs[newArgs.length - 1]).toLowerCase();
         String hyphenStrippedArg = lastArg.replaceFirst("--", "");
 
-        if (lastArg.startsWith("--") && valueFlags.contains(hyphenStrippedArg)) {
+        boolean completingFlag = lastArg.startsWith("--");
+        if (completingFlag && valueFlags.contains(hyphenStrippedArg)) {
             results.addAll(cmd.getFlagTabCompletions(context, sender, hyphenStrippedArg));
         } else {
             for (String valueFlag : valueFlags) {
-                if (!context.hasValueFlag(valueFlag)) {
+                if (completingFlag && valueFlag.startsWith(hyphenStrippedArg)) {
+                    results.add("--" + valueFlag);
+                } else if (newArgs[newArgs.length - 1].isEmpty() && !context.hasValueFlag(valueFlag)) {
                     results.add("--" + valueFlag);
                 }
             }
@@ -444,7 +447,7 @@ public class CommandManager implements TabCompleter {
             String flags = cmd.commandAnnotation.flags();
             for (int i = 0; i < flags.length(); i++) {
                 char c = flags.charAt(i);
-                if (!context.hasFlag(c)) {
+                if (newArgs[newArgs.length - 1].isEmpty() && !context.hasFlag(c)) {
                     results.add("-" + c);
                 }
             }
