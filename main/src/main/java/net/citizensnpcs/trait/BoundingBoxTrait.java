@@ -11,6 +11,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
+import net.citizensnpcs.util.NMS;
 
 @TraitName("boundingbox")
 public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
@@ -31,15 +32,18 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     public BoundingBox get() {
         Location location = npc.getEntity().getLocation();
         if (function != null) {
-            return function.apply(getAdjustedBoundingBox()).add(location);
+            BoundingBox bb = function.apply(getAdjustedBoundingBox());
+            NMS.setDimensions(npc.getEntity(), bb.toDimensions());
+            return bb.add(location);
         }
         EntityDim dim = getAdjustedBoundingBox();
+        NMS.setDimensions(npc.getEntity(), dim);
         return new BoundingBox(location.getX() - dim.width / 2, location.getY(), location.getZ() - dim.width / 2,
                 location.getX() + dim.width / 2, location.getY() + dim.height, location.getZ() + dim.width / 2);
     }
 
     public EntityDim getAdjustedBoundingBox() {
-        EntityDim desired = base.clone();
+        EntityDim desired = base;
         if (scale != -1) {
             desired = desired.mul(scale);
         }
@@ -70,8 +74,8 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         this.height = height;
     }
 
-    public void setScale(float s) {
-        this.scale = s;
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 
     public void setWidth(float width) {

@@ -203,33 +203,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
     }
 
-    private void enableSubPlugins() {
-        File root = new File(getDataFolder(), Setting.SUBPLUGIN_FOLDER.asString());
-        if (!root.exists() || !root.isDirectory())
-            return;
-        File[] files = root.listFiles();
-        for (File file : files) {
-            Plugin plugin;
-            try {
-                plugin = Bukkit.getPluginManager().loadPlugin(file);
-            } catch (Exception e) {
-                continue;
-            }
-            if (plugin == null)
-                continue;
-            // code beneath modified from CraftServer
-            try {
-                Messaging.logTr(Messages.LOADING_SUB_PLUGIN, plugin.getDescription().getFullName());
-                plugin.onLoad();
-            } catch (Throwable ex) {
-                Messaging.severeTr(Messages.ERROR_INITALISING_SUB_PLUGIN, ex.getMessage(),
-                        plugin.getDescription().getFullName());
-                ex.printStackTrace();
-            }
-        }
-        NMS.loadPlugins();
-    }
-
     @Override
     public CommandManager getCommandManager() {
         return commands;
@@ -457,7 +430,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         setupEconomy();
 
         registerCommands();
-        enableSubPlugins();
         NMS.load(commands);
         Template.migrate();
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -622,8 +594,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
             Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
             startMetrics();
-            System.out.println(Setting.SAVE_TASK_DELAY.asTicks());
-            System.out.println(Setting.SAVE_TASK_DELAY.asTicks() / 20);
             scheduleSaveTask(Setting.SAVE_TASK_DELAY.asTicks());
             Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);

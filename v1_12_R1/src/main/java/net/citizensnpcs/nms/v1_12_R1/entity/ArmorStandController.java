@@ -1,31 +1,27 @@
-package net.citizensnpcs.nms.v1_13_R2.entity.nonliving;
+package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.nms.v1_13_R2.entity.MobEntityController;
-import net.citizensnpcs.nms.v1_13_R2.util.NMSBoundingBox;
-import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
+import net.citizensnpcs.nms.v1_12_R1.util.NMSBoundingBox;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_13_R2.AxisAlignedBB;
-import net.minecraft.server.v1_13_R2.EntityArmorStand;
-import net.minecraft.server.v1_13_R2.EntityHuman;
-import net.minecraft.server.v1_13_R2.EnumHand;
-import net.minecraft.server.v1_13_R2.EnumInteractionResult;
-import net.minecraft.server.v1_13_R2.FluidType;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.Tag;
-import net.minecraft.server.v1_13_R2.Vec3D;
-import net.minecraft.server.v1_13_R2.World;
+import net.minecraft.server.v1_12_R1.AxisAlignedBB;
+import net.minecraft.server.v1_12_R1.EntityArmorStand;
+import net.minecraft.server.v1_12_R1.EntityHuman;
+import net.minecraft.server.v1_12_R1.EnumHand;
+import net.minecraft.server.v1_12_R1.EnumInteractionResult;
+import net.minecraft.server.v1_12_R1.NBTTagCompound;
+import net.minecraft.server.v1_12_R1.Vec3D;
+import net.minecraft.server.v1_12_R1.World;
 
 public class ArmorStandController extends MobEntityController {
     public ArmorStandController() {
@@ -80,12 +76,15 @@ public class ArmorStandController extends MobEntityController {
         }
 
         @Override
-        public boolean b(Tag<FluidType> tag) {
-            return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+        public void B_() {
+            super.B_();
+            if (npc != null) {
+                npc.update();
+            }
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_13_R2.Entity entity) {
+        public void collide(net.minecraft.server.v1_12_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -118,14 +117,6 @@ public class ArmorStandController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void tick() {
-            super.tick();
-            if (npc != null) {
-                npc.update();
-            }
         }
     }
 }

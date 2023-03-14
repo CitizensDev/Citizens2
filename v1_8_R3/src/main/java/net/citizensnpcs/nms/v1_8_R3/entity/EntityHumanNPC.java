@@ -19,7 +19,6 @@ import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -158,17 +157,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     public void e(float f, float f1) {
         if (npc == null || !npc.isFlyable()) {
             super.e(f, f1);
-        }
-    }
-
-    @Override
-    public void enderTeleportTo(double d0, double d1, double d2) {
-        if (npc == null)
-            super.enderTeleportTo(d0, d1, d2);
-        NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            super.enderTeleportTo(d0, d1, d2);
         }
     }
 

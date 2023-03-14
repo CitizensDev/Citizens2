@@ -2935,8 +2935,6 @@ public class NPCCommands {
             permission = "citizens.npc.speed")
     public void speed(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         float newSpeed = (float) Math.abs(args.getDouble(1));
-        if (newSpeed >= Setting.MAX_SPEED.asDouble())
-            throw new CommandException(Messages.SPEED_MODIFIER_ABOVE_LIMIT);
         npc.getNavigator().getDefaultParameters().speedModifier(newSpeed);
 
         Messaging.sendTr(sender, Messages.SPEED_MODIFIER_SET, newSpeed);

@@ -127,10 +127,7 @@ public class TadpoleController extends MobEntityController {
             }
         }
 
-        @Override
-        public void dismountTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc, () -> super.dismountTo(d0, d1, d2));
-        }
+        
 
         @Override
         protected SoundEvent getAmbientSound() {

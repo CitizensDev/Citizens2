@@ -134,10 +134,7 @@ public class TurtleController extends MobEntityController {
             }
         }
 
-        @Override
-        public void enderTeleportTo(double d0, double d1, double d2) {
-            NMS.enderTeleportTo(npc, () -> super.enderTeleportTo(d0, d1, d2));
-        }
+        
 
         @Override
         public CraftEntity getBukkitEntity() {

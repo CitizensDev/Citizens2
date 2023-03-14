@@ -89,6 +89,9 @@ public class HologramTrait extends Trait {
     private NPC createHologram(String line, double heightOffset) {
         NPC hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
         hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
+        if (Setting.PACKET_HOLOGRAMS.asBoolean()) {
+            hologramNPC.addTrait(PacketNPC.class);
+        }
         hologramNPC.spawn(currentLoc.clone().add(0,
                 getEntityHeight()
                         + (direction == HologramDirection.BOTTOM_UP ? heightOffset : getMaxHeight() - heightOffset),
@@ -269,8 +272,7 @@ public class HologramTrait extends Trait {
                 || currentLoc.distance(npc.getStoredLocation()) >= 0.001 || lastNameplateVisible != nameplateVisible
                 || Math.abs(lastEntityHeight - getEntityHeight()) >= 0.05;
         boolean updateName = false;
-        if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks()
-                + Util.getFastRandom().nextInt(3) /* add some jitter */) {
+        if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
             t = 0;
             updateName = true;
         }

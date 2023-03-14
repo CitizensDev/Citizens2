@@ -52,7 +52,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
@@ -101,6 +100,7 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.nms.v1_10_R1.entity.ArmorStandController;
 import net.citizensnpcs.nms.v1_10_R1.entity.BatController;
 import net.citizensnpcs.nms.v1_10_R1.entity.BlazeController;
 import net.citizensnpcs.nms.v1_10_R1.entity.CaveSpiderController;
@@ -138,7 +138,6 @@ import net.citizensnpcs.nms.v1_10_R1.entity.WitherController;
 import net.citizensnpcs.nms.v1_10_R1.entity.WolfController;
 import net.citizensnpcs.nms.v1_10_R1.entity.ZombieController;
 import net.citizensnpcs.nms.v1_10_R1.entity.nonliving.AreaEffectCloudController;
-import net.citizensnpcs.nms.v1_10_R1.entity.nonliving.ArmorStandController;
 import net.citizensnpcs.nms.v1_10_R1.entity.nonliving.BoatController;
 import net.citizensnpcs.nms.v1_10_R1.entity.nonliving.DragonFireballController;
 import net.citizensnpcs.nms.v1_10_R1.entity.nonliving.EggController;
@@ -775,11 +774,6 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.WITHER, WitherController.class);
         EntityControllers.setEntityControllerForType(EntityType.WITHER_SKULL, WitherSkullController.class);
         EntityControllers.setEntityControllerForType(EntityType.ZOMBIE, ZombieController.class);
-    }
-
-    @Override
-    public void loadPlugins() {
-        ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
     @Override

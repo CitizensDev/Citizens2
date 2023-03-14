@@ -119,8 +119,6 @@ public interface NMSBridge {
 
     public void load(CommandManager commands);
 
-    public void loadPlugins();
-
     public void look(Entity from, Entity to);
 
     public void look(Entity entity, float yaw, float pitch);

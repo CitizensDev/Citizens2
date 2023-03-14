@@ -106,7 +106,6 @@ public class Messages {
     public static final String ERROR_GETTING_FIELD = "citizens.nms-errors.getting-field";
     public static final String ERROR_GETTING_ID_MAPPING = "citizens.nms-errors.getting-id-mapping";
     public static final String ERROR_GETTING_METHOD = "citizens.nms-errors.getting-method";
-    public static final String ERROR_INITALISING_SUB_PLUGIN = "citizens.sub-plugins.error-on-load";
     public static final String ERROR_RESTORING_GOALS = "citizens.nms-errors.restoring-goals";
     public static final String ERROR_SETTING_LOOKCLOSE_RANGE = "citizens.commands.npc.lookclose.error-random-range";
     public static final String ERROR_SETTING_SKIN_URL = "citizens.commands.npc.skin.error-setting-url";
@@ -216,7 +215,6 @@ public class Messages {
     public static final String LOAD_TASK_NOT_SCHEDULED = "citizens.load-task-error";
     public static final String LOAD_UNKNOWN_NPC_TYPE = "citizens.notifications.unknown-npc-type";
     public static final String LOADED_ECONOMY = "citizens.economy.loaded";
-    public static final String LOADING_SUB_PLUGIN = "citizens.sub-plugins.load";
     public static final String LOCALE_NOTIFICATION = "citizens.notifications.locale";
     public static final String LOOKCLOSE_DISABLE_WHEN_NAVIGATING = "citizens.commands.npc.lookclose.disable-when-navigating";
     public static final String LOOKCLOSE_ENABLE_WHEN_NAVIGATING = "citizens.commands.npc.lookclose.enable-when-navigating";

@@ -80,6 +80,10 @@ public class Quaternion {
                 c1c2 * c3 - s1s2 * s3);
     }
 
+    public static Quaternion fromEuler(EulerAngle angle) {
+        return fromEuler(angle.getX(), angle.getY(), angle.getZ());
+    }
+
     public static Quaternion nlerp(Quaternion a, Quaternion b, double t) {
         if (a.dot(b) < 0) {
             b = b.mul(-1);

@@ -1,33 +1,30 @@
-package net.citizensnpcs.nms.v1_15_R1.entity.nonliving;
+package net.citizensnpcs.nms.v1_13_R2.entity;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.nms.v1_15_R1.entity.MobEntityController;
-import net.citizensnpcs.nms.v1_15_R1.util.ForwardingNPCHolder;
-import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
-import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
+import net.citizensnpcs.nms.v1_13_R2.util.NMSBoundingBox;
+import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_15_R1.AxisAlignedBB;
-import net.minecraft.server.v1_15_R1.EntityArmorStand;
-import net.minecraft.server.v1_15_R1.EntityHuman;
-import net.minecraft.server.v1_15_R1.EntityTypes;
-import net.minecraft.server.v1_15_R1.EnumHand;
-import net.minecraft.server.v1_15_R1.EnumInteractionResult;
-import net.minecraft.server.v1_15_R1.FluidType;
-import net.minecraft.server.v1_15_R1.NBTTagCompound;
-import net.minecraft.server.v1_15_R1.Tag;
-import net.minecraft.server.v1_15_R1.Vec3D;
-import net.minecraft.server.v1_15_R1.World;
+import net.minecraft.server.v1_13_R2.AxisAlignedBB;
+import net.minecraft.server.v1_13_R2.EntityArmorStand;
+import net.minecraft.server.v1_13_R2.EntityHuman;
+import net.minecraft.server.v1_13_R2.EnumHand;
+import net.minecraft.server.v1_13_R2.EnumInteractionResult;
+import net.minecraft.server.v1_13_R2.FluidType;
+import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.Tag;
+import net.minecraft.server.v1_13_R2.Vec3D;
+import net.minecraft.server.v1_13_R2.World;
 
 public class ArmorStandController extends MobEntityController {
     public ArmorStandController() {
@@ -39,21 +36,29 @@ public class ArmorStandController extends MobEntityController {
         return (ArmorStand) super.getBukkitEntity();
     }
 
-    public static class ArmorStandNPC extends CraftArmorStand implements ForwardingNPCHolder {
+    public static class ArmorStandNPC extends CraftArmorStand implements NPCHolder {
+        private final CitizensNPC npc;
+
         public ArmorStandNPC(EntityArmorStandNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
+            this.npc = entity.npc;
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
         }
     }
 
     public static class EntityArmorStandNPC extends EntityArmorStand implements NPCHolder {
         private final CitizensNPC npc;
 
-        public EntityArmorStandNPC(EntityTypes<? extends EntityArmorStand> types, World world) {
-            this(types, world, null);
+        public EntityArmorStandNPC(World world) {
+            this(world, null);
         }
 
-        public EntityArmorStandNPC(EntityTypes<? extends EntityArmorStand> types, World world, NPC npc) {
-            super(types, world);
+        public EntityArmorStandNPC(World world, NPC npc) {
+            super(world);
             this.npc = (CitizensNPC) npc;
         }
 
@@ -79,7 +84,7 @@ public class ArmorStandController extends MobEntityController {
         }
 
         @Override
-        public void collide(net.minecraft.server.v1_15_R1.Entity entity) {
+        public void collide(net.minecraft.server.v1_13_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
@@ -94,9 +99,17 @@ public class ArmorStandController extends MobEntityController {
         }
 
         @Override
+        public void f(double x, double y, double z) {
+            Vector vector = Util.callPushEvent(npc, x, y, z);
+            if (vector != null) {
+                super.f(vector.getX(), vector.getY(), vector.getZ());
+            }
+        }
+
+        @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
-                NMSImpl.setBukkitEntity(this, new ArmorStandNPC(this));
+            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
+                bukkitEntity = new ArmorStandNPC(this);
             }
             return super.getBukkitEntity();
         }
@@ -104,14 +117,6 @@ public class ArmorStandController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
-        }
-
-        @Override
-        public void h(double x, double y, double z) {
-            Vector vector = Util.callPushEvent(npc, x, y, z);
-            if (vector != null) {
-                super.h(vector.getX(), vector.getY(), vector.getZ());
-            }
         }
 
         @Override

@@ -6,7 +6,7 @@ import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftSilverfish;
 import org.bukkit.util.Vector;
 
-import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R2.util.NMSBoundingBox;
@@ -94,16 +94,7 @@ public class SilverfishController extends MobEntityController {
             }
         }
 
-        @Override
-        public void dismountTo(double d0, double d1, double d2) {
-            if (npc == null)
-                super.dismountTo(d0, d1, d2);
-            NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
-            Bukkit.getPluginManager().callEvent(event);
-            if (!event.isCancelled()) {
-                super.dismountTo(d0, d1, d2);
-            }
-        }
+        
 
         @Override
         protected SoundEvent getAmbientSound() {

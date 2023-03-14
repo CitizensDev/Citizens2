@@ -39,7 +39,6 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
-import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
 import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.npc.BlockBreaker;
@@ -93,18 +92,6 @@ public class NMS {
 
     public static EntityPacketTracker createPacketTracker(Entity entity) {
         return BRIDGE.createPacketTracker(entity);
-    }
-
-    public static void enderTeleportTo(NPC npc, Runnable cb) {
-        if (npc == null) {
-            cb.run();
-            return;
-        }
-        NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            cb.run();
-        }
     }
 
     public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {
@@ -516,10 +503,6 @@ public class NMS {
         giveReflectiveAccess(entity, NMS.class);
         BRIDGE = (NMSBridge) Class.forName("net.citizensnpcs.nms.v" + rev + ".util.NMSImpl").getConstructor()
                 .newInstance();
-    }
-
-    public static void loadPlugins() {
-        BRIDGE.loadPlugins();
     }
 
     public static void look(Entity entity, float yaw, float pitch) {

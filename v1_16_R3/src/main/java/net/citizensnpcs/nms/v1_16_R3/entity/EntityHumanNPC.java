@@ -24,7 +24,7 @@ import com.mojang.datafixers.util.Pair;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.NPCEnderTeleportEvent;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -186,18 +186,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }, 15); // give enough time for death and smoke animation
     }
 
-    @Override
-    public void enderTeleportTo(double d0, double d1, double d2) {
-        if (npc == null) {
-            super.enderTeleportTo(d0, d1, d2);
-            return;
-        }
-        NPCEnderTeleportEvent event = new NPCEnderTeleportEvent(npc);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            super.enderTeleportTo(d0, d1, d2);
-        }
-    }
+    
 
     @Override
     public void g(Vec3D vec3d) {
