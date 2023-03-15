@@ -328,9 +328,13 @@ public class Settings {
         }
 
         protected void loadFromKey(DataKey root) {
-            if (root.keyExists(path)) {
-                ((YamlKey) root).getSection("").setComments(path,
-                        comments == null ? null : Arrays.asList(comments.split("<br>")));
+            if (SUPPORTS_SET_COMMENTS && root.keyExists(path)) {
+                try {
+                    ((YamlKey) root).getSection("").setComments(path,
+                            comments == null ? null : Arrays.asList(comments.split("<br>")));
+                } catch (Throwable t) {
+                    SUPPORTS_SET_COMMENTS = false;
+                }
             }
             if (migrate != null && root.keyExists(migrate) && !root.keyExists(path)) {
                 value = root.getRaw(migrate);
@@ -344,4 +348,6 @@ public class Settings {
             root.setRaw(path, value);
         }
     }
+
+    private static boolean SUPPORTS_SET_COMMENTS = true;
 }

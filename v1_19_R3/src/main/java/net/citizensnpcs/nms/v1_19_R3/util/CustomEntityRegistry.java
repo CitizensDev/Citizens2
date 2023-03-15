@@ -434,6 +434,7 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
         minecraftClassMap.put(EntityType.BLOCK_DISPLAY, Display.ItemDisplay.class);
         minecraftClassMap.put(EntityType.ITEM_DISPLAY, Display.TextDisplay.class);
         minecraftClassMap.put(EntityType.TEXT_DISPLAY, Display.BlockDisplay.class);
+        minecraftClassMap.put(EntityType.INTERACTION, net.minecraft.world.entity.Interaction.class);
         minecraftClassMap.put(EntityType.SILVERFISH, Silverfish.class);
         minecraftClassMap.put(EntityType.SKELETON, Skeleton.class);
         minecraftClassMap.put(EntityType.SKELETON_HORSE, SkeletonHorse.class);

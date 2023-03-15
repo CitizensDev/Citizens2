@@ -196,6 +196,7 @@ import net.citizensnpcs.nms.v1_19_R3.entity.nonliving.FallingBlockController;
 import net.citizensnpcs.nms.v1_19_R3.entity.nonliving.FireworkController;
 import net.citizensnpcs.nms.v1_19_R3.entity.nonliving.FishingHookController;
 import net.citizensnpcs.nms.v1_19_R3.entity.nonliving.GlowItemFrameController;
+import net.citizensnpcs.nms.v1_19_R3.entity.nonliving.InteractionController;
 import net.citizensnpcs.nms.v1_19_R3.entity.nonliving.ItemController;
 import net.citizensnpcs.nms.v1_19_R3.entity.nonliving.ItemDisplayController;
 import net.citizensnpcs.nms.v1_19_R3.entity.nonliving.ItemFrameController;
@@ -1020,6 +1021,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.BLOCK_DISPLAY, BlockDisplayController.class);
         EntityControllers.setEntityControllerForType(EntityType.ITEM_DISPLAY, TextDisplayController.class);
         EntityControllers.setEntityControllerForType(EntityType.TEXT_DISPLAY, ItemDisplayController.class);
+        EntityControllers.setEntityControllerForType(EntityType.INTERACTION, InteractionController.class);
     }
 
     @Override
