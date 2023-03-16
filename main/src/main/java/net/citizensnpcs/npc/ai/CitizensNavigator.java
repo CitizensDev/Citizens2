@@ -36,6 +36,7 @@ import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.npc.ai.AStarNavigationStrategy.AStarPlanner;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.trait.RotationTrait;
@@ -498,7 +499,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (localParams.stationaryTicks() < 0)
             return false;
         Location current = npc.getEntity().getLocation(STATIONARY_LOCATION);
-        if (current.getY() < -6) {
+        if (!SpigotUtil.checkYSafe(current.getY(), current.getWorld())) {
             stopNavigating(CancelReason.STUCK);
             return true;
         }

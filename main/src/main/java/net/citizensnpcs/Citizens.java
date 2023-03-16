@@ -335,6 +335,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("examination-string").version("1.3.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
+        lib.loadLibrary(Library.builder().groupId("org{}joml").artifactId("joml").version("1.10.5")
+                .relocate("org{}joml", "clib{}org{}joml").build());
     }
 
     @Override

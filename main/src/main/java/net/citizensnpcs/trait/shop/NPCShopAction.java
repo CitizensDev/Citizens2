@@ -64,7 +64,13 @@ public abstract class NPCShopAction implements Cloneable {
         }
 
         public static Transaction fail() {
-            return new Transaction(() -> false, () -> {
+            return create(() -> false, () -> {
+            }, () -> {
+            });
+        }
+
+        public static Transaction success() {
+            return create(() -> true, () -> {
             }, () -> {
             });
         }

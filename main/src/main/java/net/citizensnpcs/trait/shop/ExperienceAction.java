@@ -2,7 +2,6 @@ package net.citizensnpcs.trait.shop;
 
 import java.util.function.Consumer;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -12,37 +11,34 @@ import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.util.Util;
-import net.milkbowl.vault.economy.Economy;
 
-public class MoneyAction extends NPCShopAction {
+public class ExperienceAction extends NPCShopAction {
     @Persist
-    public double money;
+    public int exp;
 
-    public MoneyAction() {
+    public ExperienceAction() {
     }
 
-    public MoneyAction(double cost) {
-        this.money = cost;
+    public ExperienceAction(int cost) {
+        this.exp = cost;
     }
 
     @Override
     public String describe() {
-        Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
-        return money + " " + economy.currencyNamePlural();
+        return exp + " XP";
     }
 
     @Override
     public Transaction grant(Entity entity) {
         if (!(entity instanceof Player))
             return Transaction.fail();
-        Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
         Player player = (Player) entity;
         return Transaction.create(() -> {
             return true;
         }, () -> {
-            economy.depositPlayer(player, money);
+            player.setLevel(player.getLevel() + exp);
         }, () -> {
-            economy.withdrawPlayer(player, money);
+            player.setLevel(player.getLevel() - exp);
         });
     }
 
@@ -50,29 +46,26 @@ public class MoneyAction extends NPCShopAction {
     public Transaction take(Entity entity) {
         if (!(entity instanceof Player))
             return Transaction.fail();
-        Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
         Player player = (Player) entity;
         return Transaction.create(() -> {
-            return economy.has(player, money);
+            return player.getLevel() >= exp;
         }, () -> {
-            economy.withdrawPlayer(player, money);
+            player.setLevel(player.getLevel() - exp);
         }, () -> {
-            economy.depositPlayer(player, money);
+            player.setLevel(player.getLevel() + exp);
         });
     }
 
-    public static class MoneyActionGUI implements GUI {
-        private Boolean supported;
-
+    public static class ExperienceActionGUI implements GUI {
         @Override
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
-            final MoneyAction action = previous == null ? new MoneyAction() : (MoneyAction) previous;
-            return InputMenus.filteredStringSetter(() -> Double.toString(action.money), (s) -> {
+            final ExperienceAction action = previous == null ? new ExperienceAction() : (ExperienceAction) previous;
+            return InputMenus.filteredStringSetter(() -> Integer.toString(action.exp), s -> {
                 try {
-                    double result = Double.parseDouble(s);
+                    int result = Integer.parseInt(s);
                     if (result < 0)
                         return false;
-                    action.money = result;
+                    action.exp = result;
                 } catch (NumberFormatException nfe) {
                     return false;
                 }
@@ -83,27 +76,17 @@ public class MoneyAction extends NPCShopAction {
 
         @Override
         public ItemStack createMenuItem(NPCShopAction previous) {
-            if (supported == null) {
-                try {
-                    supported = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider() != null;
-                } catch (Throwable t) {
-                    supported = false;
-                }
-            }
-            if (!supported) {
-                return null;
-            }
             String description = null;
             if (previous != null) {
-                MoneyAction old = (MoneyAction) previous;
+                ExperienceAction old = (ExperienceAction) previous;
                 description = old.describe();
             }
-            return Util.createItem(Material.GOLD_INGOT, "Money", description);
+            return Util.createItem(Material.EXPERIENCE_BOTTLE, "Experience", description);
         }
 
         @Override
         public boolean manages(NPCShopAction action) {
-            return action instanceof MoneyAction;
+            return action instanceof ExperienceAction;
         }
     }
 }

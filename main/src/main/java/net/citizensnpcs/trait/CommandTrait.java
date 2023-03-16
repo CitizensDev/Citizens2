@@ -23,7 +23,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -48,10 +47,14 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Translator;
+import net.citizensnpcs.trait.shop.ExperienceAction;
+import net.citizensnpcs.trait.shop.ItemAction;
+import net.citizensnpcs.trait.shop.MoneyAction;
+import net.citizensnpcs.trait.shop.NPCShopAction;
+import net.citizensnpcs.trait.shop.NPCShopAction.Transaction;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
-import net.milkbowl.vault.economy.Economy;
 
 @TraitName("commandtrait")
 public class CommandTrait extends Trait {
@@ -66,7 +69,7 @@ public class CommandTrait extends Trait {
     @Persist
     private ExecutionMode executionMode = ExecutionMode.LINEAR;
     @Persist
-    private float experienceCost = -1;
+    private int experienceCost = -1;
     @Persist(valueType = Long.class)
     private final Map<String, Long> globalCooldowns = Maps.newHashMap();
     @Persist
@@ -90,50 +93,29 @@ public class CommandTrait extends Trait {
         return id;
     }
 
-    private boolean chargeCommandCosts(Player player, Hand hand) {
+    private Transaction chargeCommandCosts(Player player, Hand hand) {
+        NPCShopAction action = null;
         if (cost > 0) {
-            try {
-                RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager()
-                        .getRegistration(Economy.class);
-                if (provider != null && provider.getProvider() != null) {
-                    Economy economy = provider.getProvider();
-                    if (!economy.has(player, cost)) {
-                        sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
-                        return false;
-                    }
-                    economy.withdrawPlayer(player, cost);
-                }
-            } catch (NoClassDefFoundError e) {
-                Messaging.severe("Unable to find Vault when checking command cost - is it installed?");
+            action = new MoneyAction(cost);
+            if (!action.take(player).isPossible()) {
+                sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
             }
         }
         if (experienceCost > 0) {
-            if (player.getLevel() < experienceCost) {
+            action = new ExperienceAction(experienceCost);
+            if (!action.take(player).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, experienceCost);
-                return false;
             }
-            player.setLevel((int) (player.getLevel() - experienceCost));
         }
         if (itemRequirements.size() > 0) {
-            List<ItemStack> req = Lists.newArrayList(itemRequirements);
-            Inventory tempInventory = Bukkit.createInventory(null, 54);
-            for (int i = 0; i < player.getInventory().getSize(); i++) {
-                tempInventory.setItem(i, player.getInventory().getItem(i));
-            }
-            for (ItemStack stack : req) {
-                if (tempInventory.containsAtLeast(stack, stack.getAmount())) {
-                    tempInventory.removeItem(stack);
-                } else {
-                    sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
-                            stack.getAmount());
-                    return false;
-                }
-            }
-            for (int i = 0; i < player.getInventory().getSize(); i++) {
-                player.getInventory().setItem(i, tempInventory.getItem(i));
+            action = new ItemAction(itemRequirements);
+            if (!action.take(player).isPossible()) {
+                ItemStack stack = itemRequirements.get(0);
+                sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
+                        stack.getAmount());
             }
         }
-        return true;
+        return action == null ? Transaction.success() : action.take(player);
     }
 
     public void clearHistory(CommandTraitError which, Player who) {
@@ -288,16 +270,22 @@ public class CommandTrait extends Trait {
                             || PlayerNPCCommand.requiresTracking(command))) {
                         playerTracking.put(player.getUniqueId(), info = new PlayerNPCCommand());
                     }
-                    if (info != null && !info.canUse(CommandTrait.this, player, command)) {
-                        return;
-                    }
+                    Transaction charge = null;
                     if (charged == null) {
-                        if (!chargeCommandCosts(player, hand)) {
+                        charge = chargeCommandCosts(player, hand);
+                        if (!charge.isPossible()) {
                             charged = false;
                             return;
                         }
-                        charged = true;
                     }
+
+                    if (info != null && !info.canUse(CommandTrait.this, player, command))
+                        return;
+
+                    if (charged == null) {
+                        charge.run();
+                    }
+
                     PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
                     if (temporaryPermissions.size() > 0) {
                         for (String permission : temporaryPermissions) {
@@ -406,7 +394,7 @@ public class CommandTrait extends Trait {
         this.executionMode = mode;
     }
 
-    public void setExperienceCost(float experienceCost) {
+    public void setExperienceCost(int experienceCost) {
         this.experienceCost = experienceCost;
     }
 
