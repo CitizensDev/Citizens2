@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait;
 
 import java.util.Collection;
-import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -438,7 +437,7 @@ public class HologramTrait extends Trait {
     static {
         try {
             EntityType.valueOf("TEXT_DISPLAY");
-        } catch (IllegalFormatException e) {
+        } catch (IllegalArgumentException e) {
             SUPPORTS_TEXT_DISPLAY = false;
         }
     }
