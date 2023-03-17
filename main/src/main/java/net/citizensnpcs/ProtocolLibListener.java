@@ -43,8 +43,8 @@ public class ProtocolLibListener {
     public ProtocolLibListener(Citizens plugin) {
         this.plugin = plugin;
         this.manager = ProtocolLibrary.getProtocolManager();
-        flagsClass = MinecraftReflection.getMinecraftClass("EnumPlayerTeleportFlags",
-                "PacketPlayOutPosition$EnumPlayerTeleportFlags",
+        flagsClass = MinecraftReflection.getMinecraftClass("RelativeMovement", "world.entity.RelativeMovement",
+                "EnumPlayerTeleportFlags", "PacketPlayOutPosition$EnumPlayerTeleportFlags",
                 "network.protocol.game.PacketPlayOutPosition$EnumPlayerTeleportFlags");
         manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Server.PLAYER_INFO) {
             @Override
