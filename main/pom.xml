@@ -93,6 +93,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <version>1.10.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizensapi</artifactId>
             <version>${citizensapi.version}</version>
@@ -226,6 +232,10 @@
                                 <relocation>
                                     <pattern>net.kyori</pattern>
                                     <shadedPattern>clib.net.kyori</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.joml</pattern>
+                                    <shadedPattern>clib.org.joml</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>net.byteflux.libby</pattern>

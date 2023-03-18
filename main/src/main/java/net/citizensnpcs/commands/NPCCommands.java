@@ -971,20 +971,16 @@ public class NPCCommands {
                 if (!(sender instanceof ConsoleCommandSender)
                         && !followingNPC.getOrAddTrait(Owner.class).isOwnedBy(sender))
                     throw new CommandException(CommandMessages.MUST_BE_OWNER);
-                if (followingNPC.getEntity() instanceof Player) {
-                    boolean following = followingNPC.getOrAddTrait(FollowTrait.class)
-                            .toggle((Player) followingNPC.getEntity(), protect);
-                    Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
-                            followingNPC.getName());
-                } else {
-                    throw new CommandException();
-                }
+                boolean following = followingNPC.getOrAddTrait(FollowTrait.class).toggle(followingNPC.getEntity(),
+                        protect);
+                Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
+                        followingNPC.getName());
             };
             NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
                     args.getString(1));
             return;
         }
-        boolean following = npc.getOrAddTrait(FollowTrait.class).toggle(player, protect);
+        boolean following = npc.getOrAddTrait(FollowTrait.class).toggle(player.getPlayer(), protect);
         Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
                 player.getName());
     }

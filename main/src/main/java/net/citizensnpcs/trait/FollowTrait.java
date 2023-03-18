@@ -3,7 +3,6 @@ package net.citizensnpcs.trait;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -26,10 +25,10 @@ import net.citizensnpcs.api.trait.TraitName;
 public class FollowTrait extends Trait {
     @Persist("active")
     private boolean enabled = false;
+    private Entity entity;
     private Flocker flock;
     @Persist
     private UUID followingUUID;
-    private Player player;
     @Persist
     private boolean protect;
 
@@ -37,15 +36,15 @@ public class FollowTrait extends Trait {
         super("followtrait");
     }
 
-    public Player getFollowingPlayer() {
-        return player;
+    public Entity getFollowing() {
+        return entity;
     }
 
     /**
-     * Returns whether the trait is actively following a {@link Player}.
+     * Returns whether the trait is actively following a {@link Entity}.
      */
     public boolean isActive() {
-        return enabled && npc.isSpawned() && player != null;
+        return enabled && npc.isSpawned() && entity != null;
     }
 
     public boolean isEnabled() {
@@ -59,7 +58,7 @@ public class FollowTrait extends Trait {
 
     @EventHandler
     private void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (isActive() && protect && event.getEntity().equals(player)) {
+        if (isActive() && protect && event.getEntity().equals(entity)) {
             Entity damager = event.getDamager();
             if (event.getEntity() instanceof Projectile) {
                 Projectile projectile = (Projectile) event.getEntity();
@@ -78,53 +77,57 @@ public class FollowTrait extends Trait {
 
     @Override
     public void run() {
-        if (player == null || !player.isValid()) {
+        if (entity == null || !entity.isValid()) {
             if (followingUUID == null)
                 return;
-            player = Bukkit.getPlayer(followingUUID);
-            if (player == null) {
+            entity = Bukkit.getPlayer(followingUUID);
+            if (entity == null) {
+                return;
+            }
+            entity = Bukkit.getEntity(followingUUID);
+            if (entity == null) {
                 return;
             }
         }
         if (!isActive()) {
             return;
         }
-        if (!npc.getEntity().getWorld().equals(player.getWorld())) {
+        if (!npc.getEntity().getWorld().equals(entity.getWorld())) {
             if (Setting.FOLLOW_ACROSS_WORLDS.asBoolean()) {
-                npc.teleport(player.getLocation(), TeleportCause.PLUGIN);
+                npc.teleport(entity.getLocation(), TeleportCause.PLUGIN);
             }
             return;
         }
         if (!npc.getNavigator().isNavigating()) {
-            npc.getNavigator().setTarget(player, false);
+            npc.getNavigator().setTarget(entity, false);
         } else {
             flock.run();
         }
     }
 
     /**
-     * Toggles and/or sets the {@link OfflinePlayer} to follow and whether to protect them (similar to wolves in
-     * Minecraft, attack whoever attacks the player).
+     * Toggles and/or sets the {@link Entity} to follow and whether to protect them (similar to wolves in Minecraft,
+     * attack whoever attacks the entity).
      *
-     * Will toggle if the {@link OfflinePlayer} is the player currently being followed.
+     * Will toggle if the {@link Entity} is the entity currently being followed.
      *
-     * @param player
+     * @param entity
      *            the player to follow
      * @param protect
      *            whether to protect the player
      * @return whether the trait is enabled
      */
-    public boolean toggle(OfflinePlayer player, boolean protect) {
+    public boolean toggle(Entity entity, boolean protect) {
         this.protect = protect;
-        if (player.getUniqueId().equals(this.followingUUID) || this.followingUUID == null) {
+        if (entity.getUniqueId().equals(this.followingUUID) || this.followingUUID == null) {
             this.enabled = !enabled;
         }
-        this.followingUUID = player.getUniqueId();
-        if (npc.getNavigator().isNavigating() && this.player != null && npc.getNavigator().getEntityTarget() != null
-                && this.player == npc.getNavigator().getEntityTarget().getTarget()) {
+        this.followingUUID = entity.getUniqueId();
+        if (npc.getNavigator().isNavigating() && this.entity != null && npc.getNavigator().getEntityTarget() != null
+                && this.entity == npc.getNavigator().getEntityTarget().getTarget()) {
             npc.getNavigator().cancelNavigation();
         }
-        this.player = null;
+        this.entity = null;
         return this.enabled;
     }
 }
