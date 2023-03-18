@@ -46,6 +46,60 @@ public class Placeholders implements Listener {
         return CitizensAPI.getNMSHelper().getPlayer(sender);
     }
 
+    private static String getWorldReplacement(Location location, String group, Entity excluding) {
+        if (group.charAt(0) != '<') {
+            group = '<' + group + '>';
+        }
+        switch (group) {
+            case "<random_player>":
+            case "<random_world_player>":
+                Collection<? extends Player> players = group.equals("<random_player>")
+                        ? Bukkit.getServer().getOnlinePlayers()
+                        : location.getWorld().getPlayers();
+                Player possible = Iterables.get(players, new Random().nextInt(players.size()), null);
+                if (possible != null) {
+                    return possible.getName();
+                }
+                break;
+            case "<random_npc>":
+            case "<random_npc_id>":
+                List<NPC> all = Lists.newArrayList(CitizensAPI.getNPCRegistry());
+                if (all.size() > 0) {
+                    NPC random = all.get(new Random().nextInt(all.size()));
+                    return group.equals("<random_npc>") ? random.getName() : Integer.toString(random.getId());
+                }
+                break;
+            case "<nearest_npc_id>":
+                Optional<NPC> closestNPC = location.getWorld().getNearbyEntities(location, 25, 25, 25).stream()
+                        .map(CitizensAPI.getNPCRegistry()::getNPC).filter(e -> e != null && e.getEntity() != excluding)
+                        .min((a, b) -> Double.compare(a.getEntity().getLocation().distanceSquared(location),
+                                b.getEntity().getLocation().distanceSquared(location)));
+                if (closestNPC.isPresent()) {
+                    return Integer.toString(closestNPC.get().getId());
+                }
+                break;
+            case "<nearest_player>":
+                double min = Double.MAX_VALUE;
+                Entity closest = null;
+                for (Player entity : CitizensAPI.getLocationLookup().getNearbyPlayers(location, 25)) {
+                    if (entity == excluding || CitizensAPI.getNPCRegistry().isNPC(entity))
+                        continue;
+                    double dist = entity.getLocation().distanceSquared(location);
+                    if (dist > min)
+                        continue;
+                    min = dist;
+                    closest = entity;
+                }
+                if (closest != null) {
+                    return closest.getName();
+                }
+                break;
+            case "<world>":
+                return location.getWorld().getName();
+        }
+        return "";
+    }
+
     @EventHandler
     private static void onCitizensDisable(CitizensDisableEvent event) {
         PLACEHOLDERS.clear();
@@ -78,6 +132,9 @@ public class Placeholders implements Listener {
                     break;
                 case "owner":
                     replacement = npc.getOrAddTrait(Owner.class).getOwner();
+                    break;
+                default:
+                    replacement = getWorldReplacement(npc.getStoredLocation(), group, npc.getEntity());
                     break;
             }
             matcher.appendReplacement(out, "");
@@ -113,60 +170,7 @@ public class Placeholders implements Listener {
                 if (PLAYER_VARIABLES.contains(group)) {
                     replacement = player.getName();
                 } else {
-                    switch (group) {
-                        case "<random_player>":
-                        case "<random_world_player>":
-                            Collection<? extends Player> players = group.equals("<random_player>")
-                                    ? Bukkit.getServer().getOnlinePlayers()
-                                    : player.getPlayer().getWorld().getPlayers();
-                            Player possible = Iterables.get(players, new Random().nextInt(players.size()), null);
-                            if (possible != null) {
-                                replacement = possible.getName();
-                            }
-                            break;
-                        case "<random_npc>":
-                        case "<random_npc_id>":
-                            List<NPC> all = Lists.newArrayList(CitizensAPI.getNPCRegistry());
-                            if (all.size() > 0) {
-                                NPC random = all.get(new Random().nextInt(all.size()));
-                                replacement = group.equals("<random_npc>") ? random.getName()
-                                        : Integer.toString(random.getId());
-                            }
-                            break;
-                        case "<nearest_npc_id>":
-                            Location location = player.getPlayer().getLocation();
-                            Optional<NPC> closestNPC = player.getPlayer().getNearbyEntities(25, 25, 25).stream()
-                                    .map(CitizensAPI.getNPCRegistry()::getNPC)
-                                    .filter(e -> e != null && e.getEntity() != player)
-                                    .min((a, b) -> Double.compare(a.getEntity().getLocation().distanceSquared(location),
-                                            b.getEntity().getLocation().distanceSquared(location)));
-                            if (closestNPC.isPresent()) {
-                                replacement = Integer.toString(closestNPC.get().getId());
-                            }
-                            break;
-                        case "<nearest_player>":
-                            double min = Double.MAX_VALUE;
-                            Entity closest = null;
-                            location = player.getPlayer().getLocation();
-                            for (Player entity : CitizensAPI.getLocationLookup()
-                                    .getNearbyPlayers(player.getPlayer().getLocation(), 25)) {
-                                if (entity == player || CitizensAPI.getNPCRegistry().isNPC(entity))
-                                    continue;
-                                double dist = entity.getLocation().distanceSquared(location);
-                                if (dist > min)
-                                    continue;
-                                min = dist;
-                                closest = entity;
-                            }
-                            if (closest != null) {
-                                replacement = closest.getName();
-                            }
-                            break;
-                        case "<world>":
-                            replacement = player.getPlayer().getWorld().getName();
-                            break;
-
-                    }
+                    replacement = getWorldReplacement(player.getPlayer().getLocation(), group, player.getPlayer());
                 }
                 matcher.appendReplacement(out, "");
                 out.append(replacement);
@@ -193,7 +197,8 @@ public class Placeholders implements Listener {
         }
     }
 
-    private static final Pattern PLACEHOLDER_MATCHER = Pattern.compile("<(id|npc|owner)>");
+    private static final Pattern PLACEHOLDER_MATCHER = Pattern.compile(
+            "<(id|npc|owner|random_player|random_world_player|random_npc|random_npc_id|nearest_npc_id|nearest_player|world)>");
     private static boolean PLACEHOLDERAPI_ENABLED = true;
     private static final List<PlaceholderProvider> PLACEHOLDERS = Lists.newArrayList();
     private static final Pattern PLAYER_PLACEHOLDER_MATCHER = Pattern.compile(
