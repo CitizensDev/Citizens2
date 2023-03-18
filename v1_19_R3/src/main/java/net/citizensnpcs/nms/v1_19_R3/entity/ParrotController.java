@@ -84,8 +84,6 @@ public class ParrotController extends MobEntityController {
             }
         }
 
-        
-
         @Override
         public SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);

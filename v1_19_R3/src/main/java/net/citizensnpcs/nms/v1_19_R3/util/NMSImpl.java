@@ -1019,8 +1019,8 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.ZOMBIE_VILLAGER, ZombieVillagerController.class);
         EntityControllers.setEntityControllerForType(EntityType.SNIFFER, SnifferController.class);
         EntityControllers.setEntityControllerForType(EntityType.BLOCK_DISPLAY, BlockDisplayController.class);
-        EntityControllers.setEntityControllerForType(EntityType.ITEM_DISPLAY, TextDisplayController.class);
-        EntityControllers.setEntityControllerForType(EntityType.TEXT_DISPLAY, ItemDisplayController.class);
+        EntityControllers.setEntityControllerForType(EntityType.TEXT_DISPLAY, TextDisplayController.class);
+        EntityControllers.setEntityControllerForType(EntityType.ITEM_DISPLAY, ItemDisplayController.class);
         EntityControllers.setEntityControllerForType(EntityType.INTERACTION, InteractionController.class);
     }
 
