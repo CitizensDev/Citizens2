@@ -13,10 +13,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.nms.v1_18_R2.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.util.profiling.metrics.MetricCategory;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.pathfinder.BinaryHeap;
@@ -25,27 +25,27 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.Target;
 
-public class PlayerPathfinder extends PathFinder {
+public class EntityPathfinder extends PathFinder {
     private final int maxVisitedNodes;
     private final Node[] neighbors = new Node[32];
-    private final PlayerNodeEvaluator nodeEvaluator;
+    private final EntityNodeEvaluator nodeEvaluator;
     private final BinaryHeap openSet;
 
-    public PlayerPathfinder() {
+    public EntityPathfinder() {
         super(null, Setting.MAXIMUM_VISITED_NODES.asInt());
-        this.nodeEvaluator = new PlayerNodeEvaluator();
+        this.nodeEvaluator = new EntityNodeEvaluator();
         this.openSet = new BinaryHeap();
         this.maxVisitedNodes = Setting.MAXIMUM_VISITED_NODES.asInt();
     }
 
-    public PlayerPathfinder(PlayerNodeEvaluator var0, int var1) {
+    public EntityPathfinder(EntityNodeEvaluator var0, int var1) {
         super(var0, var1);
         this.openSet = new BinaryHeap();
         this.nodeEvaluator = var0;
         this.maxVisitedNodes = var1;
     }
 
-    public Path findPath(PathNavigationRegion var0, EntityHumanNPC var1, Set<BlockPos> var2, float var3, int var4,
+    public Path findPath(PathNavigationRegion var0, LivingEntity var1, Set<BlockPos> var2, float var3, int var4,
             float var5) {
         this.openSet.clear();
         this.nodeEvaluator.prepare(var0, var1);

@@ -10,7 +10,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSImpl;
-import net.citizensnpcs.nms.v1_18_R2.util.PlayerMoveControl;
+import net.citizensnpcs.nms.v1_18_R2.util.EntityMoveControl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
@@ -106,7 +106,7 @@ public class TurtleController extends MobEntityController {
                     this.jumpControl = this.oldJumpController;
                 }
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
-                    this.moveControl = new PlayerMoveControl(this);
+                    this.moveControl = new EntityMoveControl(this);
                     this.jumpControl = new EmptyControllerJump(this);
                 }
                 npc.update();
