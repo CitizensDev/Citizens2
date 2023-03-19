@@ -46,6 +46,7 @@ public class HologramTrait extends Trait {
     private NPC nameNPC;
     private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
     private int t;
+    private boolean useTextDisplay = false;
 
     public HologramTrait() {
         super("hologramtrait");
@@ -88,12 +89,13 @@ public class HologramTrait extends Trait {
 
     private NPC createHologram(String line, double heightOffset) {
         NPC hologramNPC = null;
-        if (SUPPORTS_TEXT_DISPLAY) {
+        if (useTextDisplay) {
             hologramNPC = registry.createNPC(EntityType.TEXT_DISPLAY, line);
         } else {
             hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
             hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
         }
+
         if (Setting.PACKET_HOLOGRAMS.asBoolean()) {
             hologramNPC.addTrait(PacketNPC.class);
         }
@@ -101,27 +103,26 @@ public class HologramTrait extends Trait {
                 getEntityHeight()
                         + (direction == HologramDirection.BOTTOM_UP ? heightOffset : getMaxHeight() - heightOffset),
                 0));
+
         Matcher itemMatcher = ITEM_MATCHER.matcher(line);
         if (itemMatcher.matches()) {
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
-            NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", new ItemStack(item, 1));
+            final NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", new ItemStack(item, 1));
             itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
                 itemNPC.getOrAddTrait(ScoreboardTrait.class)
                         .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
             }
+            itemNPC.getOrAddTrait(MountTrait.class).setMountedOn(hologramNPC.getUniqueId());
             itemNPC.spawn(currentLoc);
-            hologramNPC.getEntity().addPassenger(itemNPC.getEntity());
-            itemNPC.addRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    if (!itemNPC.isSpawned() || !itemNPC.getEntity().isInsideVehicle()) {
-                        itemNPC.destroy();
-                    }
+            itemNPC.addRunnable(() -> {
+                if (!itemNPC.isSpawned() || !itemNPC.getEntity().isInsideVehicle()) {
+                    itemNPC.destroy();
                 }
             });
         }
+
         lastEntityHeight = getEntityHeight();
         return hologramNPC;
     }
@@ -139,6 +140,9 @@ public class HologramTrait extends Trait {
 
     private double getHeight(int lineNumber) {
         double base = (lastNameplateVisible ? 0 : -getLineHeight());
+        if (useTextDisplay) {
+            base += 0.15;
+        }
         for (int i = 0; i <= lineNumber; i++) {
             HologramLine line = lines.get(i);
             base += line.mb + getLineHeight();
@@ -180,6 +184,11 @@ public class HologramTrait extends Trait {
      */
     public Entity getNameEntity() {
         return nameNPC != null && nameNPC.isSpawned() ? nameNPC.getEntity() : null;
+    }
+
+    private double getRotationDistance(Location loc) {
+        return Math.abs(loc.getYaw() - npc.getStoredLocation().getYaw())
+                + Math.abs(loc.getPitch() - npc.getStoredLocation().getPitch());
     }
 
     @Override
@@ -275,7 +284,8 @@ public class HologramTrait extends Trait {
 
         boolean updatePosition = currentLoc.getWorld() != npc.getStoredLocation().getWorld()
                 || currentLoc.distance(npc.getStoredLocation()) >= 0.001 || lastNameplateVisible != nameplateVisible
-                || Math.abs(lastEntityHeight - getEntityHeight()) >= 0.05;
+                || Math.abs(lastEntityHeight - getEntityHeight()) >= 0.05
+                || (useTextDisplay && getRotationDistance(currentLoc) >= 0.001);
         boolean updateName = false;
         if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
             t = 0;
@@ -304,9 +314,9 @@ public class HologramTrait extends Trait {
                 continue;
 
             if (updatePosition) {
-                hologramNPC.teleport(currentLoc.clone().add(0, lastEntityHeight
-                        + (direction == HologramDirection.BOTTOM_UP ? getHeight(i) : getMaxHeight() - getHeight(i)), 0),
-                        TeleportCause.PLUGIN);
+                Location tp = currentLoc.clone().add(0, lastEntityHeight
+                        + (direction == HologramDirection.BOTTOM_UP ? getHeight(i) : getMaxHeight() - getHeight(i)), 0);
+                hologramNPC.teleport(tp, TeleportCause.PLUGIN);
             }
 
             if (line.ticks > 0 && --line.ticks == 0) {
@@ -323,6 +333,7 @@ public class HologramTrait extends Trait {
 
             if (!updateName)
                 continue;
+
             line.setText(text);
             hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, npc.getRawName().length() > 0);
         }
@@ -385,6 +396,10 @@ public class HologramTrait extends Trait {
         reloadLineHolograms();
     }
 
+    public void setUseTextDisplay(boolean useTextDisplay) {
+        this.useTextDisplay = useTextDisplay;
+    }
+
     public enum HologramDirection {
         BOTTOM_UP,
         TOP_DOWN;
@@ -433,12 +448,4 @@ public class HologramTrait extends Trait {
     }
 
     private static final Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)([:].*?)?>");
-    private static boolean SUPPORTS_TEXT_DISPLAY = true;
-    static {
-        try {
-            EntityType.valueOf("TEXT_DISPLAY");
-        } catch (IllegalArgumentException e) {
-            SUPPORTS_TEXT_DISPLAY = false;
-        }
-    }
 }

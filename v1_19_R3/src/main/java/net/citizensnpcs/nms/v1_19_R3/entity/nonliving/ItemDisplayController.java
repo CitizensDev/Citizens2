@@ -1,9 +1,12 @@
 package net.citizensnpcs.nms.v1_19_R3.entity.nonliving;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftItemDisplay;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -28,6 +31,14 @@ import net.minecraft.world.phys.AABB;
 public class ItemDisplayController extends MobEntityController {
     public ItemDisplayController() {
         super(EntityItemDisplayNPC.class);
+    }
+
+    @Override
+    protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {
+        final EntityItemDisplayNPC handle = new EntityItemDisplayNPC(EntityType.ITEM_DISPLAY,
+                ((CraftWorld) at.getWorld()).getHandle(), npc);
+        handle.setItemStack(CraftItemStack.asNMSCopy(npc.getItemProvider().get()));
+        return handle.getBukkitEntity();
     }
 
     @Override

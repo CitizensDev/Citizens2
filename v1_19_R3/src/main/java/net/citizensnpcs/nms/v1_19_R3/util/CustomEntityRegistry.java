@@ -431,9 +431,9 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
         minecraftClassMap.put(EntityType.SHULKER, Shulker.class);
         minecraftClassMap.put(EntityType.SHULKER_BULLET, ShulkerBullet.class);
         minecraftClassMap.put(EntityType.SNIFFER, net.minecraft.world.entity.animal.sniffer.Sniffer.class);
-        minecraftClassMap.put(EntityType.BLOCK_DISPLAY, Display.ItemDisplay.class);
-        minecraftClassMap.put(EntityType.ITEM_DISPLAY, Display.TextDisplay.class);
-        minecraftClassMap.put(EntityType.TEXT_DISPLAY, Display.BlockDisplay.class);
+        minecraftClassMap.put(EntityType.BLOCK_DISPLAY, Display.BlockDisplay.class);
+        minecraftClassMap.put(EntityType.ITEM_DISPLAY, Display.ItemDisplay.class);
+        minecraftClassMap.put(EntityType.TEXT_DISPLAY, Display.TextDisplay.class);
         minecraftClassMap.put(EntityType.INTERACTION, net.minecraft.world.entity.Interaction.class);
         minecraftClassMap.put(EntityType.SILVERFISH, Silverfish.class);
         minecraftClassMap.put(EntityType.SKELETON, Skeleton.class);
