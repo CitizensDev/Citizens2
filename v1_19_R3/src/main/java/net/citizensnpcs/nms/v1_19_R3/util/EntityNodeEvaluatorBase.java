@@ -2,15 +2,15 @@ package net.citizensnpcs.nms.v1_19_R3.util;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.citizensnpcs.nms.v1_19_R3.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 
-public abstract class PlayerNodeEvaluatorBase extends NodeEvaluator {
+public abstract class EntityNodeEvaluatorBase extends NodeEvaluator {
     protected boolean canFloat;
     protected boolean canOpenDoors;
     protected boolean canPassDoors;
@@ -19,7 +19,8 @@ public abstract class PlayerNodeEvaluatorBase extends NodeEvaluator {
     protected int entityHeight;
     protected int entityWidth;
     protected PathNavigationRegion level;
-    protected EntityHumanNPC mob;
+    protected LivingEntity mob;
+    protected MobAI mvmt;
     protected final Int2ObjectMap<Node> nodes = new Int2ObjectOpenHashMap<Node>();
 
     @Override
@@ -46,6 +47,7 @@ public abstract class PlayerNodeEvaluatorBase extends NodeEvaluator {
     public void done() {
         this.level = null;
         this.mob = null;
+        this.mvmt = null;
     }
 
     @Override
@@ -65,8 +67,9 @@ public abstract class PlayerNodeEvaluatorBase extends NodeEvaluator {
         return new net.minecraft.world.level.pathfinder.Target(var0);
     }
 
-    public void prepare(PathNavigationRegion var0, EntityHumanNPC var1) {
+    public void prepare(PathNavigationRegion var0, LivingEntity var1) {
         this.mob = var1;
+        this.mvmt = MobAI.from(var1);
         this.level = var0;
         this.nodes.clear();
         this.entityWidth = Mth.floor(var1.getBbWidth() + 1.0F);

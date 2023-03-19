@@ -7,13 +7,13 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import net.citizensnpcs.nms.v1_19_R3.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.PathNavigationRegion;
@@ -36,7 +36,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
+public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     private final Object2BooleanMap collisionCache = new Object2BooleanOpenHashMap();
     protected float oldWaterCost;
     private final Long2ObjectMap pathTypesByPosCache = new Long2ObjectOpenHashMap();
@@ -60,12 +60,12 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
 
     protected boolean canStartAt(BlockPos var0) {
         BlockPathTypes var1 = this.getBlockPathType(this.mob, var0);
-        return var1 != BlockPathTypes.OPEN && this.mob.getPathfindingMalus(var1) >= 0.0F;
+        return var1 != BlockPathTypes.OPEN && this.mvmt.getPathfindingMalus(var1) >= 0.0F;
     }
 
     @Override
     public void done() {
-        this.mob.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
+        this.mvmt.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
         this.pathTypesByPosCache.clear();
         this.collisionCache.clear();
         super.done();
@@ -98,7 +98,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
             return null;
         } else {
             BlockPathTypes var12 = this.getCachedBlockType(this.mob, var0, var1, var2);
-            float var13 = this.mob.getPathfindingMalus(var12);
+            float var13 = this.mvmt.getPathfindingMalus(var12);
             double var14 = this.mob.getBbWidth() / 2.0;
             if (var13 >= 0.0F) {
                 var8 = this.getNodeAndUpdateCostToMax(var0, var1, var2, var12, var13);
@@ -147,7 +147,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
                         }
 
                         var8 = this.getNodeAndUpdateCostToMax(var0, var1, var2, var12,
-                                this.mob.getPathfindingMalus(var12));
+                                this.mvmt.getPathfindingMalus(var12));
                     }
                 }
 
@@ -166,7 +166,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
                         }
 
                         var12 = this.getCachedBlockType(this.mob, var0, var1, var2);
-                        var13 = this.mob.getPathfindingMalus(var12);
+                        var13 = this.mvmt.getPathfindingMalus(var12);
                         if (var12 != BlockPathTypes.OPEN && var13 >= 0.0F) {
                             var8 = this.getNodeAndUpdateCostToMax(var0, var1, var2, var12, var13);
                             break;
@@ -202,7 +202,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
         return getBlockPathTypeStatic(var0, new BlockPos.MutableBlockPos(var1, var2, var3));
     }
 
-    public BlockPathTypes getBlockPathType(BlockGetter var0, int var1, int var2, int var3, EntityHumanNPC var4) {
+    public BlockPathTypes getBlockPathType(BlockGetter var0, int var1, int var2, int var3, LivingEntity var4) {
         EnumSet var5 = EnumSet.noneOf(BlockPathTypes.class);
         BlockPathTypes var6 = BlockPathTypes.BLOCKED;
         var6 = this.getBlockPathTypes(var0, var1, var2, var3, var5, var6, var4.blockPosition());
@@ -216,16 +216,16 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
 
             while (var9.hasNext()) {
                 BlockPathTypes varr9 = (BlockPathTypes) var9.next();
-                if (var4.getPathfindingMalus(varr9) < 0.0F) {
+                if (mvmt.getPathfindingMalus(varr9) < 0.0F) {
                     return varr9;
                 }
 
-                if (var4.getPathfindingMalus(varr9) >= var4.getPathfindingMalus(var7)) {
+                if (mvmt.getPathfindingMalus(varr9) >= mvmt.getPathfindingMalus(var7)) {
                     var7 = varr9;
                 }
             }
 
-            if (var6 == BlockPathTypes.OPEN && var4.getPathfindingMalus(var7) == 0.0F && this.entityWidth <= 1) {
+            if (var6 == BlockPathTypes.OPEN && mvmt.getPathfindingMalus(var7) == 0.0F && this.entityWidth <= 1) {
                 return BlockPathTypes.OPEN;
             } else {
                 return var7;
@@ -265,7 +265,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
         }
     }
 
-    protected BlockPathTypes getBlockPathType(EntityHumanNPC var0, BlockPos var1) {
+    protected BlockPathTypes getBlockPathType(LivingEntity var0, BlockPos var1) {
         return this.getCachedBlockType(var0, var1.getX(), var1.getY(), var1.getZ());
     }
 
@@ -291,7 +291,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
         return var5;
     }
 
-    protected BlockPathTypes getCachedBlockType(EntityHumanNPC var0, int var1, int var2, int var3) {
+    protected BlockPathTypes getCachedBlockType(LivingEntity var0, int var1, int var2, int var3) {
         return (BlockPathTypes) this.pathTypesByPosCache.computeIfAbsent(BlockPos.asLong(var1, var2, var3), (var4) -> {
             return this.getBlockPathType(this.level, var1, var2, var3, var0);
         });
@@ -318,7 +318,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
         int var3 = 0;
         BlockPathTypes var4 = this.getCachedBlockType(this.mob, var1.x, var1.y + 1, var1.z);
         BlockPathTypes var5 = this.getCachedBlockType(this.mob, var1.x, var1.y, var1.z);
-        if (this.mob.getPathfindingMalus(var4) >= 0.0F && var5 != BlockPathTypes.STICKY_HONEY) {
+        if (this.mvmt.getPathfindingMalus(var4) >= 0.0F && var5 != BlockPathTypes.STICKY_HONEY) {
             var3 = Mth.floor(Math.max(1.0F, this.mob.maxUpStep()));
         }
 
@@ -429,7 +429,7 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
     protected Node getStartNode(BlockPos var0) {
         Node var1 = this.getNode(var0);
         var1.type = this.getBlockPathType(this.mob, var1.asBlockPos());
-        var1.costMalus = this.mob.getPathfindingMalus(var1.type);
+        var1.costMalus = this.mvmt.getPathfindingMalus(var1.type);
         return var1;
     }
 
@@ -470,9 +470,9 @@ public class PlayerNodeEvaluator extends PlayerNodeEvaluatorBase {
     }
 
     @Override
-    public void prepare(PathNavigationRegion var0, EntityHumanNPC var1) {
+    public void prepare(PathNavigationRegion var0, LivingEntity var1) {
         super.prepare(var0, var1);
-        this.oldWaterCost = var1.getPathfindingMalus(BlockPathTypes.WATER);
+        this.oldWaterCost = mvmt.getPathfindingMalus(BlockPathTypes.WATER);
     }
 
     @Override

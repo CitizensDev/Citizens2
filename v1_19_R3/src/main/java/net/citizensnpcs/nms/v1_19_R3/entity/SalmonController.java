@@ -10,7 +10,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_19_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_19_R3.util.NMSImpl;
-import net.citizensnpcs.nms.v1_19_R3.util.PlayerMoveControl;
+import net.citizensnpcs.nms.v1_19_R3.util.EntityMoveControl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
@@ -118,7 +118,7 @@ public class SalmonController extends MobEntityController {
                     this.moveControl = this.oldMoveController;
                 }
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
-                    this.moveControl = new PlayerMoveControl(this);
+                    this.moveControl = new EntityMoveControl(this);
                 }
             }
             super.customServerAiStep();

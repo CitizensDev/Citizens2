@@ -15,7 +15,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
@@ -32,10 +31,9 @@ import net.citizensnpcs.nms.v1_19_R3.network.EmptyNetHandler;
 import net.citizensnpcs.nms.v1_19_R3.network.EmptyNetworkManager;
 import net.citizensnpcs.nms.v1_19_R3.util.EmptyAdvancementDataPlayer;
 import net.citizensnpcs.nms.v1_19_R3.util.EmptyServerStatsCounter;
+import net.citizensnpcs.nms.v1_19_R3.util.MobAI;
+import net.citizensnpcs.nms.v1_19_R3.util.MobAI.ForwardingMobAI;
 import net.citizensnpcs.nms.v1_19_R3.util.NMSImpl;
-import net.citizensnpcs.nms.v1_19_R3.util.PlayerControllerJump;
-import net.citizensnpcs.nms.v1_19_R3.util.PlayerMoveControl;
-import net.citizensnpcs.nms.v1_19_R3.util.PlayerNavigation;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinPacketTracker;
@@ -62,27 +60,17 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class EntityHumanNPC extends ServerPlayer implements NPCHolder, SkinnableEntity {
-    private PlayerControllerJump controllerJump;
-    private PlayerMoveControl controllerMove;
+public class EntityHumanNPC extends ServerPlayer implements NPCHolder, SkinnableEntity, ForwardingMobAI {
+    private MobAI ai;
     private final Map<EquipmentSlot, ItemStack> equipmentCache = Maps.newEnumMap(EquipmentSlot.class);
     private int jumpTicks = 0;
-    private final Map<BlockPathTypes, Float> malus = Maps.newEnumMap(BlockPathTypes.class);
-    private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private boolean setBukkitEntity;
@@ -93,6 +81,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         super(minecraftServer, world, gameProfile);
         this.npc = (CitizensNPC) npc;
         if (npc != null) {
+            ai = new BasicMobAI(this);
             skinTracker = new SkinPacketTracker(this);
             try {
                 GAMEMODE_SETTING.invoke(gameMode, GameType.SURVIVAL, null);
@@ -103,11 +92,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         } else {
             skinTracker = null;
         }
-    }
-
-    public boolean canCutCorner(BlockPathTypes pathtype) {
-        return (pathtype != BlockPathTypes.DANGER_FIRE && pathtype != BlockPathTypes.DANGER_POWDER_SNOW
-                && pathtype != BlockPathTypes.DANGER_OTHER && pathtype != BlockPathTypes.WALKABLE_DOOR);
     }
 
     @Override
@@ -149,7 +133,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             return;
         }
         super.baseTick();
-        boolean navigating = npc.getNavigator().isNavigating() || controllerMove.hasWanted();
+        boolean navigating = npc.getNavigator().isNavigating() || ai.getMoveControl().hasWanted();
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))
@@ -161,12 +145,12 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             setDeltaMovement(Vec3.ZERO);
         }
         if (navigating) {
-            if (!navigation.isDone()) {
-                navigation.tick();
+            if (!ai.getNavigation().isDone()) {
+                ai.getNavigation().tick();
             }
             moveOnCurrentHeading();
         }
-        updateAI();
+        tickAI();
         if (isSpectator()) {
             this.noPhysics = true;
             this.onGround = false;
@@ -188,16 +172,17 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public MobAI getAI() {
+        return ai;
+    }
+
+    @Override
     public CraftPlayer getBukkitEntity() {
         if (npc != null && !setBukkitEntity) {
             NMSImpl.setBukkitEntity(this, new PlayerNPC(this));
             setBukkitEntity = true;
         }
         return super.getBukkitEntity();
-    }
-
-    public PlayerControllerJump getControllerJump() {
-        return controllerJump;
     }
 
     @Override
@@ -210,21 +195,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
     }
 
-    public PlayerMoveControl getMoveControl() {
-        return controllerMove;
-    }
-
-    public PathNavigation getNavigation() {
-        return navigation;
-    }
-
     @Override
     public NPC getNPC() {
         return npc;
-    }
-
-    public float getPathfindingMalus(BlockPathTypes pathtype) {
-        return this.malus.containsKey(pathtype) ? this.malus.get(pathtype) : pathtype.getMalus();
     }
 
     @Override
@@ -288,27 +261,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         } catch (IOException e) {
             // swallow
         }
-        AttributeInstance range = getAttribute(Attributes.FOLLOW_RANGE);
-        if (range == null) {
-            try {
-                AttributeSupplier provider = (AttributeSupplier) ATTRIBUTE_SUPPLIER.invoke(getAttributes());
-                Map<Attribute, AttributeInstance> all = Maps
-                        .newHashMap((Map<Attribute, AttributeInstance>) ATTRIBUTE_PROVIDER_MAP.invoke(provider));
-                all.put(Attributes.FOLLOW_RANGE, new AttributeInstance(Attributes.FOLLOW_RANGE, att -> {
-                    throw new UnsupportedOperationException(
-                            "Tried to change value for default attribute instance FOLLOW_RANGE");
-                }));
-                ATTRIBUTE_PROVIDER_MAP_SETTER.invoke(provider, ImmutableMap.copyOf(all));
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            range = getAttribute(Attributes.FOLLOW_RANGE);
-        }
-        getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3D);
-        range.setBaseValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
-        controllerJump = new PlayerControllerJump(this);
-        controllerMove = new PlayerMoveControl(this);
-        navigation = new PlayerNavigation(this, level);
         this.invulnerableTime = 0;
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
@@ -324,10 +276,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             return super.isInWall();
         }
         return Util.inBlock(getBukkitEntity());
-    }
-
-    public boolean isNavigating() {
-        return npc.getNavigator().isNavigating();
     }
 
     @Override
@@ -404,18 +352,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         getAdvancements().save();
     }
 
-    public void setMoveDestination(double x, double y, double z, double speed) {
-        controllerMove.setWantedPosition(x, y, z, speed);
-    }
-
-    public void setPathfindingMalus(BlockPathTypes pathtype, float f) {
-        malus.put(pathtype, f);
-    }
-
-    public void setShouldJump() {
-        controllerJump.jump();
-    }
-
     @Override
     public void setSkinFlags(byte flags) {
         getEntityData().set(net.minecraft.world.entity.player.Player.DATA_PLAYER_MODE_CUSTOMISATION, flags);
@@ -448,17 +384,18 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public void tickAI() {
+        ai.getMoveControl().tick();
+        ai.getJumpControl().tick();
+    }
+
+    @Override
     public void travel(Vec3 vec3d) {
         if (npc == null || !npc.isFlyable()) {
             super.travel(vec3d);
         } else {
             NMSImpl.flyingMoveLogic(this, vec3d);
         }
-    }
-
-    public void updateAI() {
-        controllerMove.tick();
-        controllerJump.tick();
     }
 
     @Override
@@ -493,10 +430,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
         Packet<?>[] packets = { new ClientboundSetEquipmentPacket(getId(), vals) };
         NMSImpl.sendPacketsNearby(getBukkitEntity(), getBukkitEntity().getLocation(packetLocationCache), packets);
-    }
-
-    public void updatePathfindingRange(float pathfindingRange) {
-        this.navigation.setRange(pathfindingRange);
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder, SkinnableEntity {
@@ -582,10 +515,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
     }
 
-    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
-    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeSupplier.class, "a");
-    private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
-            AttributeSupplier.class);
     private static final float EPSILON = 0.003F;
     private static final MethodHandle GAMEMODE_SETTING = NMS.getFirstMethodHandle(ServerPlayerGameMode.class, true,
             GameType.class, GameType.class);
