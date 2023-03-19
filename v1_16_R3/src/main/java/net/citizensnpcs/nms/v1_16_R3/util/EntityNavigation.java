@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableSet;
 
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.nms.v1_16_R3.entity.EntityHumanNPC;
 import net.minecraft.server.v1_16_R3.AttributeModifiable;
 import net.minecraft.server.v1_16_R3.BaseBlockPosition;
 import net.minecraft.server.v1_16_R3.Block;
@@ -17,6 +16,7 @@ import net.minecraft.server.v1_16_R3.Blocks;
 import net.minecraft.server.v1_16_R3.ChunkCache;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.GenericAttributes;
 import net.minecraft.server.v1_16_R3.IBlockData;
@@ -33,9 +33,8 @@ import net.minecraft.server.v1_16_R3.SystemUtils;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.World;
 
-public class PlayerNavigation extends NavigationAbstract {
-    protected final EntityHumanNPC a;
-    protected final World b;
+public class EntityNavigation extends NavigationAbstract {
+    protected final EntityLiving a;
     protected PathEntity c;
     protected double d;
     protected int e;
@@ -48,26 +47,27 @@ public class PlayerNavigation extends NavigationAbstract {
     protected double k;
     protected float l = 0.5F;
     protected boolean m;
+    private final MobAI mvmt;
     protected long n;
-    protected PlayerPathfinderNormal o;
+    protected EntityPathfinderNormal o;
     private BlockPosition p;
     private boolean pp;
     private int q;
     private float r = 1.0F;
-    private final PlayerPathfinder s;
+    private final EntityPathfinder s;
     private boolean t;
 
-    public PlayerNavigation(EntityHumanNPC entityinsentient, World world) {
+    public EntityNavigation(EntityLiving entityinsentient, World world) {
         super(getDummyInsentient(entityinsentient, world), world);
         this.g = Vec3D.ORIGIN;
         this.l = 0.5F;
         this.r = 1.0F;
+        this.mvmt = MobAI.from(entityinsentient);
         this.a = entityinsentient;
-        this.b = world;
         this.followRange = entityinsentient.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
-        this.o = new PlayerPathfinderNormal();
+        this.o = new EntityPathfinderNormal();
         this.o.a(true);
-        this.s = new PlayerPathfinder(this.o, Setting.MAXIMUM_VISITED_NODES.asInt());
+        this.s = new EntityPathfinder(this.o, Setting.MAXIMUM_VISITED_NODES.asInt());
         this.setRange(24);
         // this.b.C().a(this);
     }
@@ -154,7 +154,7 @@ public class PlayerNavigation extends NavigationAbstract {
                     if (!a(var19))
                         return false;
                     var19 = this.o.a(this.b, var13, var1, var14, this.a, var3, var4, var5, true, true);
-                    float var20 = this.a.a(var19);
+                    float var20 = mvmt.getPathfindingMalus(var19);
                     if (var20 < 0.0F || var20 >= 8.0F)
                         return false;
                     if (var19 == PathType.DAMAGE_FIRE || var19 == PathType.DANGER_FIRE
@@ -332,6 +332,11 @@ public class PlayerNavigation extends NavigationAbstract {
         return true;
     }
 
+    public boolean b(PathType pathtype) {
+        return (pathtype != PathType.DANGER_FIRE && pathtype != PathType.DANGER_CACTUS
+                && pathtype != PathType.DANGER_OTHER);
+    }
+
     private boolean b(Vec3D var0) {
         if (this.c.f() + 1 >= this.c.e())
             return false;
@@ -364,8 +369,8 @@ public class PlayerNavigation extends NavigationAbstract {
             return;
         Vec3D var0 = this.c.a(this.a);
         BlockPosition var1 = new BlockPosition(var0);
-        this.a.getControllerMove().a(var0.x,
-                this.b.getType(var1.down()).isAir() ? var0.y : PathfinderNormal.a(this.b, var1), var0.z, this.d);
+        mvmt.getMoveControl().a(var0.x, this.b.getType(var1.down()).isAir() ? var0.y : PathfinderNormal.a(this.b, var1),
+                var0.z, this.d);
     }
 
     public void c(boolean var0) {
@@ -450,7 +455,7 @@ public class PlayerNavigation extends NavigationAbstract {
         boolean b2 = Math.abs(this.a.locX() - (var1.getX() + 0.5D)) < this.l
                 && Math.abs(this.a.locZ() - (var1.getZ() + 0.5D)) < this.l
                 && Math.abs(this.a.locY() - var1.getY()) < 1.0D; // old-style calc
-        if (var8 || b2 || (this.a.b((this.c.h()).l) && b(var0)))
+        if (var8 || b2 || (b((this.c.h()).l) && b(var0)))
             this.c.a();
         a(var0);
     }
@@ -528,7 +533,7 @@ public class PlayerNavigation extends NavigationAbstract {
         return var0;
     }
 
-    private static EntityInsentient getDummyInsentient(EntityHumanNPC from, World world) {
+    private static EntityInsentient getDummyInsentient(EntityLiving from, World world) {
         return new EntityInsentient(EntityTypes.VILLAGER, world) {
         };
     }

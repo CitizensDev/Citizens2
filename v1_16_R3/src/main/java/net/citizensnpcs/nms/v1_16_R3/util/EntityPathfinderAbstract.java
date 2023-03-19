@@ -3,16 +3,16 @@ package net.citizensnpcs.nms.v1_16_R3.util;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-import net.citizensnpcs.nms.v1_16_R3.entity.EntityHumanNPC;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ChunkCache;
+import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.MathHelper;
 import net.minecraft.server.v1_16_R3.PathPoint;
 import net.minecraft.server.v1_16_R3.PathfinderAbstract;
 
-public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
+public abstract class EntityPathfinderAbstract extends PathfinderAbstract {
     protected ChunkCache a;
-    protected EntityHumanNPC b;
+    protected EntityLiving b;
     protected final Int2ObjectMap<PathPoint> c = new Int2ObjectOpenHashMap();
     protected int d;
     protected int e;
@@ -20,11 +20,13 @@ public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
     protected boolean g;
     protected boolean h;
     protected boolean i;
+    protected MobAI mvmt;
 
     @Override
     public void a() {
         this.a = null;
         this.b = null;
+        mvmt = null;
     }
 
     @Override
@@ -37,7 +39,8 @@ public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
         this.g = var0;
     }
 
-    public void a(ChunkCache var0, EntityHumanNPC var1) {
+    public void a(ChunkCache var0, EntityLiving var1) {
+        this.mvmt = MobAI.from(var1);
         this.a = var0;
         this.b = var1;
         this.c.clear();

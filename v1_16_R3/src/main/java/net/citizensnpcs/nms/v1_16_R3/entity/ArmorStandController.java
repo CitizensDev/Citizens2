@@ -11,6 +11,8 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v1_16_R3.util.MobAI;
+import net.citizensnpcs.nms.v1_16_R3.util.MobAI.ForwardingMobAI;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -44,7 +46,8 @@ public class ArmorStandController extends MobEntityController {
         }
     }
 
-    public static class EntityArmorStandNPC extends EntityArmorStand implements NPCHolder {
+    public static class EntityArmorStandNPC extends EntityArmorStand implements NPCHolder, ForwardingMobAI {
+        private MobAI ai;
         private final CitizensNPC npc;
 
         public EntityArmorStandNPC(EntityTypes<? extends EntityArmorStand> types, World world) {
@@ -54,6 +57,9 @@ public class ArmorStandController extends MobEntityController {
         public EntityArmorStandNPC(EntityTypes<? extends EntityArmorStand> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+            if (npc != null) {
+                ai = new BasicMobAI(this);
+            }
         }
 
         @Override
@@ -93,6 +99,11 @@ public class ArmorStandController extends MobEntityController {
         }
 
         @Override
+        public MobAI getAI() {
+            return ai;
+        }
+
+        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new ArmorStandNPC(this));
@@ -118,6 +129,7 @@ public class ArmorStandController extends MobEntityController {
             super.tick();
             if (npc != null) {
                 npc.update();
+                ai.tickAI();
             }
         }
     }

@@ -7,7 +7,6 @@ import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.longs.Long2ObjectOpenHa
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 
-import net.citizensnpcs.nms.v1_16_R3.entity.EntityHumanNPC;
 import net.minecraft.server.v1_16_R3.AxisAlignedBB;
 import net.minecraft.server.v1_16_R3.Block;
 import net.minecraft.server.v1_16_R3.BlockCampfire;
@@ -19,6 +18,7 @@ import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.Blocks;
 import net.minecraft.server.v1_16_R3.ChunkCache;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.Fluid;
 import net.minecraft.server.v1_16_R3.FluidTypes;
@@ -35,14 +35,14 @@ import net.minecraft.server.v1_16_R3.TagsFluid;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.VoxelShape;
 
-public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
+public class EntityPathfinderNormal extends EntityPathfinderAbstract {
     protected float j;
     private final Long2ObjectMap<PathType> k = new Long2ObjectOpenHashMap();
     private final Object2BooleanMap<AxisAlignedBB> l = new Object2BooleanOpenHashMap();
 
     @Override
     public void a() {
-        this.b.a(PathType.WATER, this.j);
+        this.mvmt.setPathfindingMalus(PathType.WATER, this.j);
         this.k.clear();
         this.l.clear();
         super.a();
@@ -53,15 +53,15 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     }
 
     @Override
-    public void a(ChunkCache var0, EntityHumanNPC var1) {
+    public void a(ChunkCache var0, EntityInsentient var1) {
         super.a(var0, var1);
         this.j = var1.a(PathType.WATER);
     }
 
     @Override
-    public void a(ChunkCache var0, EntityInsentient var1) {
+    public void a(ChunkCache var0, EntityLiving var1) {
         super.a(var0, var1);
-        this.j = var1.a(PathType.WATER);
+        this.j = mvmt.getPathfindingMalus(PathType.WATER);
     }
 
     @Override
@@ -69,11 +69,11 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         return new PathDestination(a(MathHelper.floor(var0), MathHelper.floor(var2), MathHelper.floor(var4)));
     }
 
-    private PathType a(EntityHumanNPC var0, BlockPosition var1) {
+    private PathType a(EntityLiving var0, BlockPosition var1) {
         return a(var0, var1.getX(), var1.getY(), var1.getZ());
     }
 
-    private PathType a(EntityHumanNPC var0, int var1, int var2, int var3) {
+    private PathType a(EntityLiving var0, int var1, int var2, int var3) {
         return this.k.computeIfAbsent(BlockPosition.a(var1, var2, var3), (var4) -> {
             return this.a(this.a, var1, var2, var3, var0, this.d, this.e, this.f, this.d(), this.c());
         });
@@ -97,28 +97,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         return a(var0, new BlockPosition.MutableBlockPosition(var1, var2, var3));
     }
 
-    public PathType a(IBlockAccess var0, int var1, int var2, int var3, EntityHumanNPC var4, int var5, int var6,
-            int var7, boolean var8, boolean var9) {
-        EnumSet<PathType> var10 = EnumSet.noneOf(PathType.class);
-        PathType var11 = PathType.BLOCKED;
-        BlockPosition var12 = var4.getChunkCoordinates();
-        var11 = a(var0, var1, var2, var3, var5, var6, var7, var8, var9, var10, var11, var12);
-        if (var10.contains(PathType.FENCE))
-            return PathType.FENCE;
-        if (var10.contains(PathType.UNPASSABLE_RAIL))
-            return PathType.UNPASSABLE_RAIL;
-        PathType var13 = PathType.BLOCKED;
-        for (PathType var15 : var10) {
-            if (var4.a(var15) < 0.0F)
-                return var15;
-            if (var4.a(var15) >= var4.a(var13))
-                var13 = var15;
-        }
-        if (var11 == PathType.OPEN && var4.a(var13) == 0.0F && var5 <= 1)
-            return PathType.OPEN;
-        return var13;
-    }
-
     @Override
     public PathType a(IBlockAccess var0, int var1, int var2, int var3, EntityInsentient var4, int var5, int var6,
             int var7, boolean var8, boolean var9) {
@@ -132,12 +110,34 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             return PathType.UNPASSABLE_RAIL;
         PathType var13 = PathType.BLOCKED;
         for (PathType var15 : var10) {
-            if (var4.a(var15) < 0.0F)
+            if (mvmt.getPathfindingMalus(var15) < 0.0F)
                 return var15;
-            if (var4.a(var15) >= var4.a(var13))
+            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13))
                 var13 = var15;
         }
-        if (var11 == PathType.OPEN && var4.a(var13) == 0.0F && var5 <= 1)
+        if (var11 == PathType.OPEN && mvmt.getPathfindingMalus(var13) == 0.0F && var5 <= 1)
+            return PathType.OPEN;
+        return var13;
+    }
+
+    public PathType a(IBlockAccess var0, int var1, int var2, int var3, EntityLiving var4, int var5, int var6, int var7,
+            boolean var8, boolean var9) {
+        EnumSet<PathType> var10 = EnumSet.noneOf(PathType.class);
+        PathType var11 = PathType.BLOCKED;
+        BlockPosition var12 = var4.getChunkCoordinates();
+        var11 = a(var0, var1, var2, var3, var5, var6, var7, var8, var9, var10, var11, var12);
+        if (var10.contains(PathType.FENCE))
+            return PathType.FENCE;
+        if (var10.contains(PathType.UNPASSABLE_RAIL))
+            return PathType.UNPASSABLE_RAIL;
+        PathType var13 = PathType.BLOCKED;
+        for (PathType var15 : var10) {
+            if (mvmt.getPathfindingMalus(var15) < 0.0F)
+                return var15;
+            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13))
+                var13 = var15;
+        }
+        if (var11 == PathType.OPEN && mvmt.getPathfindingMalus(var13) == 0.0F && var5 <= 1)
             return PathType.OPEN;
         return var13;
     }
@@ -168,7 +168,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         if (var10 - var4 > 1.125D)
             return null;
         PathType var12 = a(this.b, var0, var1, var2);
-        float var13 = this.b.a(var12);
+        float var13 = this.mvmt.getPathfindingMalus(var12);
         double var14 = this.b.getWidth() / 2.0D;
         if (var13 >= 0.0F) {
             var8 = a(var0, var1, var2);
@@ -201,7 +201,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 if (var12 == PathType.WATER) {
                     var8 = a(var0, var1, var2);
                     var8.l = var12;
-                    var8.k = Math.max(var8.k, this.b.a(var12));
+                    var8.k = Math.max(var8.k, mvmt.getPathfindingMalus(var12));
                     continue;
                 }
                 return var8;
@@ -225,7 +225,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     return var18;
                 }
                 var12 = a(this.b, var0, var1, var2);
-                var13 = this.b.a(var12);
+                var13 = mvmt.getPathfindingMalus(var12);
                 if (var12 != PathType.OPEN && var13 >= 0.0F) {
                     var8 = a(var0, var1, var2);
                     var8.l = var12;
@@ -284,7 +284,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         int var3 = 0;
         PathType var4 = a(this.b, var1.a, var1.b + 1, var1.c);
         PathType var5 = a(this.b, var1.a, var1.b, var1.c);
-        if (this.b.a(var4) >= 0.0F && var5 != PathType.STICKY_HONEY)
+        if (mvmt.getPathfindingMalus(var4) >= 0.0F && var5 != PathType.STICKY_HONEY)
             var3 = MathHelper.d(Math.max(1.0F, this.b.G));
         double var6 = aa(this.a, new BlockPosition(var1.a, var1.b, var1.c));
         PathPoint var8 = a(var1.a, var1.b, var1.c + 1, var3, var6, EnumDirection.SOUTH, var5);
@@ -343,7 +343,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         }
         BlockPosition var3 = this.b.getChunkCoordinates();
         PathType var4 = a(this.b, var3.getX(), var0, var3.getZ());
-        if (this.b.a(var4) < 0.0F) {
+        if (mvmt.getPathfindingMalus(var4) < 0.0F) {
             AxisAlignedBB axisAlignedBB = this.b.getBoundingBox();
             if (b(var1.c(axisAlignedBB.minX, var0, axisAlignedBB.minZ))
                     || b(var1.c(axisAlignedBB.minX, var0, axisAlignedBB.maxZ))
@@ -351,19 +351,19 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     || b(var1.c(axisAlignedBB.maxX, var0, axisAlignedBB.maxZ))) {
                 PathPoint var6 = a(var1);
                 var6.l = a(this.b, var6.a());
-                var6.k = this.b.a(var6.l);
+                var6.k = mvmt.getPathfindingMalus(var6.l);
                 return var6;
             }
         }
         PathPoint var5 = a(var3.getX(), var0, var3.getZ());
         var5.l = a(this.b, var5.a());
-        var5.k = this.b.a(var5.l);
+        var5.k = mvmt.getPathfindingMalus(var5.l);
         return var5;
     }
 
     private boolean b(BlockPosition var0) {
         PathType var1 = a(this.b, var0);
-        return (this.b.a(var1) >= 0.0F);
+        return (mvmt.getPathfindingMalus(var1) >= 0.0F);
     }
 
     public static PathType a(IBlockAccess var0, BlockPosition.MutableBlockPosition var1) {

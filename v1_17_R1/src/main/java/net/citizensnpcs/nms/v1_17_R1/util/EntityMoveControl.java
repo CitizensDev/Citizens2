@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_17_R1.util;
 
 import java.util.Random;
 
-import net.citizensnpcs.nms.v1_17_R1.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -13,7 +12,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.monster.Slime;
 
-public class PlayerMoveControl extends MoveControl {
+public class EntityMoveControl extends MoveControl {
     protected LivingEntity entity;
     private int jumpTicks;
     protected boolean moving;
@@ -22,7 +21,7 @@ public class PlayerMoveControl extends MoveControl {
     protected double ty;
     protected double tz;
 
-    public PlayerMoveControl(LivingEntity entityinsentient) {
+    public EntityMoveControl(LivingEntity entityinsentient) {
         super(entityinsentient instanceof Mob ? (Mob) entityinsentient
                 : new Slime(EntityType.SLIME, entityinsentient.level));
         this.entity = entityinsentient;
@@ -122,11 +121,7 @@ public class PlayerMoveControl extends MoveControl {
             if (shouldJump() || (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 1.0D)) {
                 this.jumpTicks = jumpTicks();
                 this.jumpTicks /= 3;
-                if (this.entity instanceof EntityHumanNPC) {
-                    ((EntityHumanNPC) this.entity).getControllerJump().jump();
-                } else {
-                    ((Mob) this.entity).getJumpControl().jump();
-                }
+                entity.setJumping(true);
             }
         }
     }

@@ -57,6 +57,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -238,7 +239,10 @@ import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_16_R3.AdvancementDataPlayer;
+import net.minecraft.server.v1_16_R3.AttributeBase;
+import net.minecraft.server.v1_16_R3.AttributeMapBase;
 import net.minecraft.server.v1_16_R3.AttributeModifiable;
+import net.minecraft.server.v1_16_R3.AttributeProvider;
 import net.minecraft.server.v1_16_R3.AxisAlignedBB;
 import net.minecraft.server.v1_16_R3.BehaviorController;
 import net.minecraft.server.v1_16_R3.Block;
@@ -414,14 +418,15 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void cancelMoveDestination(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
-        if (handle instanceof EntityInsentient) {
+        MobAI ai = MobAI.from(handle);
+        if (ai.getMoveControl() instanceof EntityMoveControl) {
+            ((EntityMoveControl) ai.getMoveControl()).f = false;
+        } else {
             try {
-                MOVE_CONTROLLER_MOVING.invoke(((EntityInsentient) handle).getControllerMove(), null);
+                MOVE_CONTROLLER_MOVING.invoke(ai.getMoveControl(), null);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-        } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getControllerMove().f = false;
         }
     }
 
@@ -548,7 +553,7 @@ public class NMSImpl implements NMSBridge {
     public Location getDestination(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         ControllerMove controller = handle instanceof EntityInsentient ? ((EntityInsentient) handle).getControllerMove()
-                : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getControllerMove() : null;
+                : handle instanceof MobAI ? ((MobAI) handle).getMoveControl() : null;
         if (controller == null || !controller.b()) {
             return null;
         }
@@ -709,11 +714,11 @@ public class NMSImpl implements NMSBridge {
         // navigation won't execute, and calling entity.move doesn't
         // entirely fix the problem.
         final NavigationAbstract navigation = NMSImpl.getNavigation(entity);
-        final float oldWater = raw instanceof EntityPlayer ? ((EntityHumanNPC) raw).a(PathType.WATER)
+        final float oldWater = raw instanceof EntityPlayer ? ((MobAI) raw).getPathfindingMalus(PathType.WATER)
                 : ((EntityInsentient) raw).a(PathType.WATER);
         if (params.avoidWater() && oldWater >= 0) {
-            if (raw instanceof EntityPlayer) {
-                ((EntityHumanNPC) raw).a(PathType.WATER, oldWater + 1F);
+            if (raw instanceof MobAI) {
+                ((MobAI) raw).setPathfindingMalus(PathType.WATER, oldWater + 1F);
             } else {
                 ((EntityInsentient) raw).a(PathType.WATER, oldWater + 1F);
             }
@@ -750,8 +755,8 @@ public class NMSImpl implements NMSBridge {
                     Util.sendBlockChanges(blocks, null);
                 }
                 if (oldWater >= 0) {
-                    if (raw instanceof EntityPlayer) {
-                        ((EntityHumanNPC) raw).a(PathType.WATER, oldWater);
+                    if (raw instanceof MobAI) {
+                        ((MobAI) raw).setPathfindingMalus(PathType.WATER, oldWater);
                     } else {
                         ((EntityInsentient) raw).a(PathType.WATER, oldWater);
                     }
@@ -993,7 +998,7 @@ public class NMSImpl implements NMSBridge {
     public void look(org.bukkit.entity.Entity entity, Location to, boolean headOnly, boolean immediate) {
         Entity handle = NMSImpl.getHandle(entity);
         if (immediate || headOnly || BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
-                || (!(handle instanceof EntityInsentient) && !(handle instanceof EntityHumanNPC))) {
+                || (!(handle instanceof EntityInsentient) && !(handle instanceof MobAI))) {
             Location fromLocation = entity.getLocation(FROM_LOCATION);
             double xDiff, yDiff, zDiff;
             xDiff = to.getX() - fromLocation.getX();
@@ -1027,8 +1032,8 @@ public class NMSImpl implements NMSBridge {
             while (((EntityLiving) handle).aC < -180F) {
                 ((EntityLiving) handle).aC += 360F;
             }
-        } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(to);
+        } else if (handle instanceof NPCHolder) {
+            ((NPCHolder) handle).getNPC().getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(to);
         }
     }
 
@@ -1036,7 +1041,7 @@ public class NMSImpl implements NMSBridge {
     public void look(org.bukkit.entity.Entity from, org.bukkit.entity.Entity to) {
         Entity handle = NMSImpl.getHandle(from), target = NMSImpl.getHandle(to);
         if (BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
-                || (!(handle instanceof EntityInsentient) && !(handle instanceof EntityHumanNPC))) {
+                || (!(handle instanceof EntityInsentient) && !(handle instanceof MobAI))) {
             if (to instanceof LivingEntity) {
                 look(from, ((LivingEntity) to).getEyeLocation(), false, true);
             } else {
@@ -1051,8 +1056,8 @@ public class NMSImpl implements NMSBridge {
             while (((EntityLiving) handle).aC < -180F) {
                 ((EntityLiving) handle).aC += 360F;
             }
-        } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).getNPC().getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(to);
+        } else if (handle instanceof NPCHolder) {
+            ((NPCHolder) handle).getNPC().getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(to);
         }
     }
 
@@ -1304,8 +1309,8 @@ public class NMSImpl implements NMSBridge {
             return;
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerMove().a(x, y, z, speed);
-        } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).setMoveDestination(x, y, z, speed);
+        } else if (handle instanceof MobAI) {
+            ((MobAI) handle).getMoveControl().a(x, y, z, speed);
         }
     }
 
@@ -1431,8 +1436,8 @@ public class NMSImpl implements NMSBridge {
         if (handle instanceof EntityInsentient) {
             ControllerJump controller = ((EntityInsentient) handle).getControllerJump();
             controller.jump();
-        } else if (handle instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) handle).setShouldJump();
+        } else if (handle instanceof MobAI) {
+            ((MobAI) handle).getJumpControl().jump();
         }
     }
 
@@ -1642,10 +1647,8 @@ public class NMSImpl implements NMSBridge {
         if (!npc.isSpawned() || !npc.getEntity().getType().isAlive())
             return;
         EntityLiving en = NMSImpl.getHandle((LivingEntity) npc.getEntity());
-        if (!(en instanceof EntityInsentient)) {
-            if (en instanceof EntityHumanNPC) {
-                ((EntityHumanNPC) en).updatePathfindingRange(pathfindingRange);
-            }
+        if (en instanceof MobAI) {
+            ((MobAI) en).updatePathfindingRange(pathfindingRange);
             return;
         }
         if (NAVIGATION_S == null)
@@ -2005,7 +2008,7 @@ public class NMSImpl implements NMSBridge {
     public static NavigationAbstract getNavigation(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         return handle instanceof EntityInsentient ? ((EntityInsentient) handle).getNavigation()
-                : handle instanceof EntityHumanNPC ? ((EntityHumanNPC) handle).getNavigation() : null;
+                : handle instanceof MobAI ? ((MobAI) handle).getNavigation() : null;
     }
 
     public static DataWatcherObject<Integer> getRabbitTypeField() {
@@ -2153,6 +2156,30 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static void setAttribute(EntityLiving entity, AttributeBase attribute, double value) {
+        AttributeModifiable range = entity.getAttributeInstance(attribute);
+        if (range == null) {
+            try {
+                AttributeProvider provider = (AttributeProvider) ATTRIBUTE_MAP.invoke(entity.getAttributeMap());
+                Map<AttributeBase, AttributeModifiable> all = Maps
+                        .newHashMap((Map<AttributeBase, AttributeModifiable>) ATTRIBUTE_PROVIDER_MAP.invoke(provider));
+                all.put(GenericAttributes.FOLLOW_RANGE,
+                        new AttributeModifiable(GenericAttributes.FOLLOW_RANGE, new Consumer<AttributeModifiable>() {
+                            @Override
+                            public void accept(AttributeModifiable att) {
+                                throw new UnsupportedOperationException(
+                                        "Tried to change value for default attribute instance FOLLOW_RANGE");
+                            }
+                        }));
+                ATTRIBUTE_PROVIDER_MAP_SETTER.invoke(provider, ImmutableMap.copyOf(all));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            range = entity.getAttributeMap().a(attribute);
+        }
+        range.setValue(value);
+    }
+
     public static void setBukkitEntity(Entity entity, CraftEntity bukkitEntity) {
         try {
             BUKKITENTITY_FIELD_SETTER.invoke(entity, bukkitEntity);
@@ -2218,8 +2245,8 @@ public class NMSImpl implements NMSBridge {
             handle.getControllerMove().a();
             handle.getControllerLook().a();
             handle.getControllerJump().b();
-        } else if (entity instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) entity).updateAI();
+        } else if (entity instanceof MobAI) {
+            ((MobAI) entity).tickAI();
         }
     }
 
@@ -2249,6 +2276,12 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
             "advancementDataPlayer");
+
+    private static final MethodHandle ATTRIBUTE_MAP = NMS.getGetter(AttributeMapBase.class, "d");
+
+    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getGetter(AttributeProvider.class, "a");
+
+    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeProvider.class, "a");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,

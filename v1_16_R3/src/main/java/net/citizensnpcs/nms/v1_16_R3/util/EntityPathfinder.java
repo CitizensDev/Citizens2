@@ -14,29 +14,30 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.nms.v1_16_R3.entity.EntityHumanNPC;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ChunkCache;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.Path;
 import net.minecraft.server.v1_16_R3.PathDestination;
 import net.minecraft.server.v1_16_R3.PathEntity;
 import net.minecraft.server.v1_16_R3.PathPoint;
 import net.minecraft.server.v1_16_R3.Pathfinder;
 
-public class PlayerPathfinder extends Pathfinder {
+public class EntityPathfinder extends Pathfinder {
     private final PathPoint[] a = new PathPoint[32];
     private final int b;
-    private final PlayerPathfinderNormal c;
+    private final EntityPathfinderNormal c;
     private final Path d = new Path();
 
-    public PlayerPathfinder(PlayerPathfinderNormal var0, int var1) {
+    public EntityPathfinder(EntityPathfinderNormal var0, int var1) {
         super(var0, var1);
         this.c = var0;
         this.b = var1;
     }
 
-    public PathEntity a(ChunkCache var0, EntityHumanNPC var1, Set<BlockPosition> var2, float var3, int var4,
+    @Override
+    public PathEntity a(ChunkCache var0, EntityInsentient var1, Set<BlockPosition> var2, float var3, int var4,
             float var5) {
         this.d.a();
         this.c.a(var0, var1);
@@ -49,9 +50,7 @@ public class PlayerPathfinder extends Pathfinder {
         return var8;
     }
 
-    @Override
-    public PathEntity a(ChunkCache var0, EntityInsentient var1, Set<BlockPosition> var2, float var3, int var4,
-            float var5) {
+    public PathEntity a(ChunkCache var0, EntityLiving var1, Set<BlockPosition> var2, float var3, int var4, float var5) {
         this.d.a();
         this.c.a(var0, var1);
         PathPoint var6 = this.c.b();

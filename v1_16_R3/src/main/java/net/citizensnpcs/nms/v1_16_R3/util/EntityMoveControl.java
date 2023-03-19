@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_16_R3.util;
 
 import java.util.Random;
 
-import net.citizensnpcs.nms.v1_16_R3.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_16_R3.AttributeModifiable;
 import net.minecraft.server.v1_16_R3.ControllerMove;
@@ -13,8 +12,9 @@ import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.GenericAttributes;
 import net.minecraft.server.v1_16_R3.MathHelper;
 
-public class PlayerControllerMove extends ControllerMove {
+public class EntityMoveControl extends ControllerMove {
     protected EntityLiving a;
+    private final MobAI ai;
     protected double b;
     protected double c;
     protected double d;
@@ -22,10 +22,11 @@ public class PlayerControllerMove extends ControllerMove {
     protected boolean f;
     private int h;
 
-    public PlayerControllerMove(EntityLiving entityinsentient) {
+    public EntityMoveControl(EntityLiving entityinsentient) {
         super(entityinsentient instanceof EntityInsentient ? (EntityInsentient) entityinsentient
                 : new EntitySlime(EntityTypes.SLIME, entityinsentient.world));
         this.a = entityinsentient;
+        this.ai = MobAI.from(entityinsentient);
         this.b = entityinsentient.locX();
         this.c = entityinsentient.locY();
         this.d = entityinsentient.locZ();
@@ -56,11 +57,7 @@ public class PlayerControllerMove extends ControllerMove {
             if (shouldSlimeJump() || (d2 >= NMS.getStepHeight(a.getBukkitEntity()) && (d0 * d0 + d1 * d1) < 1.0D)) {
                 this.h = cg();
                 this.h /= 3;
-                if (this.a instanceof EntityHumanNPC) {
-                    ((EntityHumanNPC) this.a).getControllerJump().jump();
-                } else {
-                    ((EntityInsentient) this.a).getControllerJump().jump();
-                }
+                ai.getJumpControl().jump();
             }
         }
     }

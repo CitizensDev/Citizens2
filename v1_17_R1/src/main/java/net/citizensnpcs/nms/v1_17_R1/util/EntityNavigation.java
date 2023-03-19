@@ -7,13 +7,13 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableSet;
 
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.nms.v1_17_R1.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -31,7 +31,7 @@ import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
 
-public class PlayerNavigation extends PathNavigation {
+public class EntityNavigation extends PathNavigation {
     private boolean avoidSun;
     private final AttributeInstance followRange;
     protected boolean hasDelayedRecomputation;
@@ -39,13 +39,13 @@ public class PlayerNavigation extends PathNavigation {
     protected int lastStuckCheck;
     protected Vec3 lastStuckCheckPos = Vec3.ZERO;
     protected long lastTimeoutCheck;
-    protected final Level level;
     protected float maxDistanceToWaypoint = 0.5F;
     private float maxVisitedNodesMultiplier = 1.0F;
-    protected final EntityHumanNPC mob;
-    protected PlayerNodeEvaluator nodeEvaluator;
+    protected final LivingEntity mob;
+    private final MobAI mvmt;
+    protected EntityNodeEvaluator nodeEvaluator;
     protected Path path;
-    private final PlayerPathfinder pathFinder;
+    private final EntityPathfinder pathFinder;
     private int reachRange;
     protected double speedModifier;
     private BlockPos targetPos;
@@ -55,15 +55,20 @@ public class PlayerNavigation extends PathNavigation {
     protected double timeoutLimit;
     protected long timeoutTimer;
 
-    public PlayerNavigation(EntityHumanNPC entityinsentient, Level world) {
+    public EntityNavigation(LivingEntity entityinsentient, Level world) {
         super(getDummyInsentient(entityinsentient, world), world);
         this.mob = entityinsentient;
-        this.level = world;
+        this.mvmt = MobAI.from(entityinsentient);
         this.followRange = entityinsentient.getAttribute(Attributes.FOLLOW_RANGE);
-        this.nodeEvaluator = new PlayerNodeEvaluator();
+        this.nodeEvaluator = new EntityNodeEvaluator();
         this.nodeEvaluator.setCanPassDoors(true);
-        this.pathFinder = new PlayerPathfinder(this.nodeEvaluator, Setting.MAXIMUM_VISITED_NODES.asInt());
+        this.pathFinder = new EntityPathfinder(this.nodeEvaluator, Setting.MAXIMUM_VISITED_NODES.asInt());
         this.setRange(24);
+    }
+
+    public boolean canCutCorner(BlockPathTypes pathtype) {
+        return (pathtype != BlockPathTypes.DANGER_FIRE && pathtype != BlockPathTypes.DANGER_CACTUS
+                && pathtype != BlockPathTypes.DANGER_OTHER && pathtype != BlockPathTypes.WALKABLE_DOOR);
     }
 
     @Override
@@ -165,7 +170,7 @@ public class PlayerNavigation extends PathNavigation {
                         return false;
                     var19 = this.nodeEvaluator.getBlockPathType(this.level, var13, var1, var14, this.mob, var3, var4,
                             var5, true, true);
-                    float var20 = this.mob.getPathfindingMalus(var19);
+                    float var20 = this.mvmt.getPathfindingMalus(var19);
                     if (var20 < 0.0F || var20 >= 8.0F)
                         return false;
                     if (var19 == BlockPathTypes.DAMAGE_FIRE || var19 == BlockPathTypes.DANGER_FIRE
@@ -287,7 +292,7 @@ public class PlayerNavigation extends PathNavigation {
         double var4 = Math.abs(this.mob.getY() - blockPos.getY());
         double var6 = Math.abs(this.mob.getZ() - (blockPos.getZ() + 0.5D));
         boolean var8 = (var2 < this.maxDistanceToWaypoint && var6 < this.maxDistanceToWaypoint && var4 < 1.0D);
-        if (var8 || (this.mob.canCutCorner((this.path.getNextNode()).type) && shouldTargetNextNodeInDirection(var0)))
+        if (var8 || (canCutCorner((this.path.getNextNode()).type) && shouldTargetNextNodeInDirection(var0)))
             this.path.advance();
         doStuckDetection(var0);
     }
@@ -529,7 +534,7 @@ public class PlayerNavigation extends PathNavigation {
             return;
         Vec3 var0 = this.path.getNextEntityPos(this.mob);
         BlockPos var1 = new BlockPos(var0);
-        this.mob.getMoveControl().setWantedPosition(var0.x, this.level.getBlockState(var1.down()).isAir() ? var0.y
+        this.mvmt.getMoveControl().setWantedPosition(var0.x, this.level.getBlockState(var1.down()).isAir() ? var0.y
                 : WalkNodeEvaluator.getFloorLevel(this.level, var1), var0.z, this.speedModifier);
     }
 
@@ -554,7 +559,7 @@ public class PlayerNavigation extends PathNavigation {
         }
     }
 
-    private static Mob getDummyInsentient(EntityHumanNPC from, Level world) {
+    private static Mob getDummyInsentient(LivingEntity from, Level world) {
         return new Mob(EntityType.VILLAGER, world) {
         };
     }

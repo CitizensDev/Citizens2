@@ -9,6 +9,8 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v1_17_R1.util.MobAI;
+import net.citizensnpcs.nms.v1_17_R1.util.MobAI.ForwardingMobAI;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -43,7 +45,8 @@ public class ArmorStandController extends MobEntityController {
         }
     }
 
-    public static class EntityArmorStandNPC extends ArmorStand implements NPCHolder {
+    public static class EntityArmorStandNPC extends ArmorStand implements NPCHolder, ForwardingMobAI {
+        private MobAI ai;
         private final CitizensNPC npc;
 
         public EntityArmorStandNPC(EntityType<? extends ArmorStand> types, Level level) {
@@ -53,6 +56,14 @@ public class ArmorStandController extends MobEntityController {
         public EntityArmorStandNPC(EntityType<? extends ArmorStand> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+            if (ai != null) {
+                ai = new BasicMobAI(this);
+            }
+        }
+
+        @Override
+        public MobAI getAI() {
+            return ai;
         }
 
         @Override
@@ -118,6 +129,7 @@ public class ArmorStandController extends MobEntityController {
             super.tick();
             if (npc != null) {
                 npc.update();
+                ai.tickAI();
             }
         }
 

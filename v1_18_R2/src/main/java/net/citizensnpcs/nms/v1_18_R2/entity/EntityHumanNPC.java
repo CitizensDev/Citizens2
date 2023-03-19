@@ -292,10 +292,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         return Util.inBlock(getBukkitEntity());
     }
 
-    public boolean isNavigating() {
-        return npc.getNavigator().isNavigating();
-    }
-
     @Override
     public boolean isPushable() {
         return npc == null ? super.isPushable() : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());

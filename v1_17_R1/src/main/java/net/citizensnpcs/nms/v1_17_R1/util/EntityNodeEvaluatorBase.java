@@ -3,15 +3,15 @@ package net.citizensnpcs.nms.v1_17_R1.util;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-import net.citizensnpcs.nms.v1_17_R1.entity.EntityHumanNPC;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 
-public abstract class PlayerNodeEvaluatorBase extends NodeEvaluator {
+public abstract class EntityNodeEvaluatorBase extends NodeEvaluator {
     protected final Int2ObjectMap<Node> c = new Int2ObjectOpenHashMap();
     protected boolean canFloat;
     protected boolean canOpenDoors;
@@ -20,7 +20,8 @@ public abstract class PlayerNodeEvaluatorBase extends NodeEvaluator {
     protected int entityHeight;
     protected int entityWidth;
     protected PathNavigationRegion level;
-    protected EntityHumanNPC mob;
+    protected LivingEntity mob;
+    protected MobAI mvmt;
 
     @Override
     public boolean canFloat() {
@@ -41,6 +42,7 @@ public abstract class PlayerNodeEvaluatorBase extends NodeEvaluator {
     public void done() {
         this.level = null;
         this.mob = null;
+        this.mvmt = null;
     }
 
     @Override
@@ -53,9 +55,10 @@ public abstract class PlayerNodeEvaluatorBase extends NodeEvaluator {
         return this.c.computeIfAbsent(Node.createHash(var0, var1, var2), var3 -> new Node(var0, var1, var2));
     }
 
-    public void prepare(PathNavigationRegion var0, EntityHumanNPC var1) {
+    public void prepare(PathNavigationRegion var0, LivingEntity var1) {
         this.level = var0;
         this.mob = var1;
+        this.mvmt = MobAI.from(var1);
         this.c.clear();
         this.entityWidth = Mth.floor(var1.getBbWidth() + 1.0F);
         this.entityHeight = Mth.floor(var1.getBbHeight() + 1.0F);
