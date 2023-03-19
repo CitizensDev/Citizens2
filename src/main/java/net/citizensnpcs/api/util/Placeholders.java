@@ -128,7 +128,7 @@ public class Placeholders implements Listener {
                     replacement = Integer.toString(npc.getId());
                     break;
                 case "npc":
-                    replacement = npc.getFullName();
+                    replacement = npc.getName();
                     break;
                 case "owner":
                     replacement = npc.getOrAddTrait(Owner.class).getOwner();

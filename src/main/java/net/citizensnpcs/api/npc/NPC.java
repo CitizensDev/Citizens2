@@ -142,7 +142,7 @@ public interface NPC extends Agent, Cloneable {
     public int getId();
 
     /**
-     * @see #getItemProvider()
+     * @see #setItemProvider()
      */
     public Supplier<ItemStack> getItemProvider();
 
