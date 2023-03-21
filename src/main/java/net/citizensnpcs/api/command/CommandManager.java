@@ -34,6 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -423,22 +424,24 @@ public class CommandManager implements TabCompleter {
         String[] newArgs = new String[args.length + 1];
         System.arraycopy(args, 0, newArgs, 1, args.length);
         newArgs[0] = command.getName().toLowerCase();
-        CommandContext context = new CommandContext(sender, newArgs);
+        CommandContext context = new CommandContext(false, sender, newArgs);
 
         results.addAll(cmd.getArgTabCompletions(context, sender, args.length - 1));
 
-        Collection<String> valueFlags = cmd.valueFlags();
         String lastArg = (newArgs.length >= 2 ? newArgs[newArgs.length - 2] : newArgs[newArgs.length - 1])
                 .toLowerCase();
         String hyphenStrippedArg = lastArg.replaceFirst("--", "");
 
-        if (lastArg.startsWith("--") && valueFlags.contains(hyphenStrippedArg)) {
+        if (lastArg.startsWith("--") && cmd.valueFlags().contains(hyphenStrippedArg)) {
             results.addAll(cmd.getFlagTabCompletions(context, sender, hyphenStrippedArg));
         } else {
-            for (String valueFlag : valueFlags) {
-                if ((newArgs[newArgs.length - 1].startsWith("--")) && valueFlag.startsWith(hyphenStrippedArg)) {
+            lastArg = newArgs[newArgs.length - 1];
+            hyphenStrippedArg = lastArg.replaceFirst("--", "");
+            boolean isEmpty = lastArg.isEmpty() || ImmutableSet.of("-", "--").contains(lastArg);
+            for (String valueFlag : cmd.valueFlags()) {
+                if (lastArg.startsWith("--") && valueFlag.startsWith(hyphenStrippedArg)) {
                     results.add("--" + valueFlag);
-                } else if (newArgs[newArgs.length - 1].isEmpty() && !context.hasValueFlag(valueFlag)) {
+                } else if (isEmpty && !context.hasValueFlag(valueFlag)) {
                     results.add("--" + valueFlag);
                 }
             }
@@ -446,7 +449,7 @@ public class CommandManager implements TabCompleter {
             String flags = cmd.commandAnnotation.flags();
             for (int i = 0; i < flags.length(); i++) {
                 char c = flags.charAt(i);
-                if (newArgs[newArgs.length - 1].isEmpty() && !context.hasFlag(c)) {
+                if (lastArg.isEmpty() && !context.hasFlag(c)) {
                     results.add("-" + c);
                 }
             }

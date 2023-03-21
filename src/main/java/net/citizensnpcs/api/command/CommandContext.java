@@ -48,7 +48,7 @@ public class CommandContext {
     private final CommandSender sender;
     protected final Map<String, String> valueFlags = Maps.newHashMap();
 
-    public CommandContext(CommandSender sender, String[] args) {
+    public CommandContext(boolean clearFlags, CommandSender sender, String[] args) {
         this.sender = sender;
         this.rawArgs = new String[args.length];
         System.arraycopy(args, 0, rawArgs, 0, args.length);
@@ -100,12 +100,15 @@ public class CommandContext {
 
                 if (inner != -1) {
                     valueFlags.put(args[i].toLowerCase().substring(2), args[inner]);
-                    args[i] = "";
-                    args[inner] = "";
+                    if (clearFlags) {
+                        args[i] = "";
+                        args[inner] = "";
+                    }
                 }
             } else if (FLAG.matcher(args[i]).matches()) {
-                for (int k = 1; k < args[i].length(); k++)
+                for (int k = 1; k < args[i].length(); k++) {
                     flags.add(args[i].charAt(k));
+                }
                 args[i] = "";
             }
         }
@@ -117,6 +120,10 @@ public class CommandContext {
             copied.add(arg.trim());
         }
         this.args = copied.toArray(new String[copied.size()]);
+    }
+
+    public CommandContext(CommandSender sender, String[] args) {
+        this(true, sender, args);
     }
 
     public CommandContext(String[] args) {
