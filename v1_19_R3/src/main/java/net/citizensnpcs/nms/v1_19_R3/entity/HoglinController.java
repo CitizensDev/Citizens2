@@ -99,8 +99,6 @@ public class HoglinController extends MobEntityController {
             }
         }
 
-        
-
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);

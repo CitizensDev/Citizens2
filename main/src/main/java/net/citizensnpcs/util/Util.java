@@ -333,6 +333,11 @@ public class Util {
         return list;
     }
 
+    public static int parseTicks(String raw) {
+        Duration duration = SpigotUtil.parseDuration(raw);
+        return duration == null ? -1 : toTicks(duration);
+    }
+
     public static String prettyEnum(Enum<?> e) {
         return e.name().toLowerCase().replace('_', ' ');
     }

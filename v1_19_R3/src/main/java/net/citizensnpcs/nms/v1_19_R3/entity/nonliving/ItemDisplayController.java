@@ -37,7 +37,9 @@ public class ItemDisplayController extends MobEntityController {
     protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {
         final EntityItemDisplayNPC handle = new EntityItemDisplayNPC(EntityType.ITEM_DISPLAY,
                 ((CraftWorld) at.getWorld()).getHandle(), npc);
-        handle.setItemStack(CraftItemStack.asNMSCopy(npc.getItemProvider().get()));
+        if (npc != null) {
+            handle.setItemStack(CraftItemStack.asNMSCopy(npc.getItemProvider().get()));
+        }
         return handle.getBukkitEntity();
     }
 
@@ -114,10 +116,9 @@ public class ItemDisplayController extends MobEntityController {
 
         @Override
         public void tick() {
+            super.tick();
             if (npc != null) {
                 npc.update();
-            } else {
-                super.tick();
             }
         }
 

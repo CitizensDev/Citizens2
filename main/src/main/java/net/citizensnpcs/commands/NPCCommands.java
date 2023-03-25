@@ -499,14 +499,8 @@ public class NPCCommands {
             if (which == null)
                 throw new CommandException(Messages.NPC_COMMAND_INVALID_ERROR_MESSAGE,
                         Util.listValuesPretty(CommandTraitError.values()));
-            Player player = null;
-            if (args.argsLength() > 3) {
-                player = Bukkit.getPlayerExact(args.getString(3));
-                if (player == null) {
-                    player = Bukkit.getPlayer(UUID.fromString(args.getString(3)));
-                }
-            }
-            commands.clearHistory(which, player);
+
+            commands.clearHistory(which, args.argsLength() > 3 ? args.getString(3) : args.getString(3));
             Messaging.send(sender, Messages.NPC_COMMAND_ERRORS_CLEARED, Util.prettyEnum(which));
         } else if (action.equalsIgnoreCase("sequential")) {
             commands.setExecutionMode(commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? ExecutionMode.LINEAR
@@ -690,7 +684,6 @@ public class NPCCommands {
         if (args.hasFlag('t') || temporaryTicks != null) {
             registry = temporaryRegistry;
         }
-
         if (item != null) {
             ItemStack stack = new ItemStack(Material.STONE, 1);
             try {

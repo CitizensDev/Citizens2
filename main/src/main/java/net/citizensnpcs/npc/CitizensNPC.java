@@ -52,6 +52,7 @@ import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.PacketNPC;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SitTrait;
+import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
@@ -300,6 +301,10 @@ public class CitizensNPC extends AbstractNPC {
         entityController.create(at.clone(), this);
         getEntity().setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
+        if (getEntity() instanceof SkinnableEntity && !hasTrait(SkinLayers.class)) {
+            ((SkinnableEntity) getEntity()).setSkinFlags((byte) 0xFF);
+        }
+
         Collection<Trait> onPreSpawn = traits.values();
         for (Trait trait : onPreSpawn.toArray(new Trait[onPreSpawn.size()])) {
             try {
@@ -530,7 +535,6 @@ public class CitizensNPC extends AbstractNPC {
                 }
                 updateCounter = 0;
             }
-
             updateCustomNameVisibility();
 
             if (isLiving) {

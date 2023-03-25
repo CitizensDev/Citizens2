@@ -51,7 +51,6 @@ public class VillagerController extends MobEntityController {
 
     public static class EntityVillagerNPC extends Villager implements NPCHolder {
         private boolean blockingATrade;
-
         private final CitizensNPC npc;
 
         public EntityVillagerNPC(EntityType<? extends Villager> types, Level level) {
@@ -106,8 +105,6 @@ public class VillagerController extends MobEntityController {
                 npc.update();
             }
         }
-
-        
 
         @Override
         protected SoundEvent getAmbientSound() {

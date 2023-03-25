@@ -47,8 +47,12 @@ public class Waypoint implements Locatable {
 
     public void describeTriggers(CommandSender sender) {
         String base = "";
-        for (WaypointTrigger trigger : getTriggers()) {
-            base += "\n    - " + trigger.description();
+        if (triggers == null)
+            return;
+        for (int i = 0; i < triggers.size(); i++) {
+            base += "\n    - " + triggers.get(i).description()
+                    + " [<hover:show_text:Remove trigger><click:run_command:/npc path remove_trigger " + i
+                    + "><u><red>-</click></hover>]";
         }
         Messaging.sendTr(sender, Messages.WAYPOINT_TRIGGER_LIST, base);
     }

@@ -88,8 +88,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
     @Override
     public NPC createNPCUsingItem(EntityType type, String name, ItemStack item) {
         NPC npc = createNPC(type, name);
-        if (type == EntityType.DROPPED_ITEM || type == EntityType.FALLING_BLOCK || type == EntityType.GLOW_ITEM_FRAME
-                || type == EntityType.ITEM_FRAME) {
+        if (type == EntityType.DROPPED_ITEM || type == EntityType.FALLING_BLOCK || type == EntityType.ITEM_FRAME
+                || type.name().equals("GLOW_ITEM_FRAME") || type.name().equals("ITEM_DISPLAY")) {
             npc.data().set(NPC.Metadata.ITEM_AMOUNT, item.getAmount());
             npc.data().set(NPC.Metadata.ITEM_ID, item.getType().name());
             npc.data().set(NPC.Metadata.ITEM_DATA, item.getData().getData());

@@ -453,10 +453,6 @@ public class Messages {
     public static final String WAYPOINT_TRIGGER_EDITOR_INVALID_TRIGGER = "citizens.editors.waypoints.triggers.add.invalid-trigger";
     public static final String WAYPOINT_TRIGGER_EDITOR_PROMPT = "citizens.editors.waypoints.triggers.main.prompt";
     public static final String WAYPOINT_TRIGGER_LIST = "citizens.editors.waypoints.triggers.list";
-    public static final String WAYPOINT_TRIGGER_REMOVE_INDEX_OUT_OF_RANGE = "citizens.editors.waypoints.triggers.remove.index-out-of-range";
-    public static final String WAYPOINT_TRIGGER_REMOVE_INVALID_NUMBER = "citizens.editors.waypoints.triggers.remove.not-a-number";
-    public static final String WAYPOINT_TRIGGER_REMOVE_PROMPT = "citizens.editors.waypoints.triggers.remove.prompt";
-    public static final String WAYPOINT_TRIGGER_REMOVE_REMOVED = "citizens.editors.waypoints.triggers.remove.removed";
     public static final String WAYPOINT_TRIGGER_TELEPORT_PROMPT = "citizens.editors.waypoints.triggers.teleport.prompt";
     public static final String WOLF_TRAIT_UPDATED = "citizens.commands.wolf.traits-updated";
     public static final String WORLD_NOT_FOUND = "citizens.commands.errors.missing-world";

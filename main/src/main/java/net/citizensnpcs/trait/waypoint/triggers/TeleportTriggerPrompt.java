@@ -55,7 +55,8 @@ public class TeleportTriggerPrompt extends RegexPrompt implements WaypointTrigge
 
     @Override
     public String getPromptText(ConversationContext context) {
-        return Messaging.tr(Messages.WAYPOINT_TRIGGER_TELEPORT_PROMPT);
+        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_TELEPORT_PROMPT);
+        return "";
     }
 
     private static final Pattern PATTERN = Pattern.compile("here|back|[\\p{L}]+?:[0-9]+?:[0-9]+?:[0-9]+?",

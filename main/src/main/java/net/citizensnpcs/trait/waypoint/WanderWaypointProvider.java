@@ -173,17 +173,12 @@ public class WanderWaypointProvider
                     });
                 } else if (message.startsWith("delay")) {
                     event.setCancelled(true);
-                    try {
-                        delay = Integer.parseInt(message.split(" ")[1]);
-                        if (currentGoal != null) {
-                            currentGoal.setDelay(delay);
-                        }
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                                () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
-                    } catch (Exception e) {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                                () -> Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_INVALID_DELAY));
+                    delay = Util.parseTicks(message.split(" ")[1]);
+                    if (currentGoal != null) {
+                        currentGoal.setDelay(delay);
                     }
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                            () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
                 } else if (message.startsWith("worldguardregion")) {
                     event.setCancelled(true);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {

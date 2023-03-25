@@ -1,14 +1,16 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+
+import com.google.common.primitives.Ints;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.Messaging;
@@ -26,43 +28,50 @@ public class TriggerEditPrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
         input = input.toLowerCase().trim();
+        if (input.startsWith("remove_trigger")) {
+            Waypoint waypoint = editor.getCurrentWaypoint();
+            List<WaypointTrigger> triggers = waypoint.getTriggers();
+            int idx = Ints.tryParse(input.replaceFirst("remove_trigger\\s*", ""));
+            if (idx < triggers.size()) {
+                triggers.remove(idx);
+            }
+            return this;
+        }
         if (input.contains("add")) {
             context.setSessionData("said", false);
             return new TriggerAddPrompt(editor);
-        }
-        if (input.contains("remove")) {
-            context.setSessionData("said", false);
-            return new TriggerRemovePrompt(editor);
         }
         return this;
     }
 
     @Override
     public String getPromptText(ConversationContext context) {
-        context.setSessionData("previous", this);
-        if (context.getSessionData("said") == Boolean.TRUE)
-            return "";
-        context.setSessionData("said", true);
-        String base = "";
-        if (editor.getCurrentWaypoint() != null) {
-            Waypoint waypoint = editor.getCurrentWaypoint();
-            for (WaypointTrigger trigger : waypoint.getTriggers()) {
-                base += "\n    - " + trigger.description();
+        WaypointTrigger returned = (WaypointTrigger) context.getSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY);
+
+        if (returned != null) {
+            if (editor.getCurrentWaypoint() != null) {
+                editor.getCurrentWaypoint().addTrigger(returned);
+                Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_ADDED_SUCCESSFULLY,
+                        returned.description());
+            } else {
+                Messaging.sendErrorTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_INACTIVE);
             }
+            context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, null);
         }
-        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_PROMPT, base);
+        context.setSessionData("said", false);
+        context.setSessionData("previous", this);
+        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_PROMPT);
+        if (editor.getCurrentWaypoint() != null) {
+            editor.getCurrentWaypoint().describeTriggers((CommandSender) context.getForWhom());
+        }
         return "";
     }
 
     public static Conversation start(Player player, WaypointEditor editor) {
         final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
-                .addConversationAbandonedListener(new ConversationAbandonedListener() {
-                    @Override
-                    public void conversationAbandoned(ConversationAbandonedEvent event) {
-                        event.getContext().getForWhom()
-                                .sendRawMessage(Messaging.tr(Messages.WAYPOINT_TRIGGER_EDITOR_EXIT));
-                    }
-                }).withEscapeSequence("exit").withEscapeSequence("triggers").withEscapeSequence("/npc path")
+                .addConversationAbandonedListener(event -> Messaging
+                        .sendTr((CommandSender) event.getContext().getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_EXIT))
+                .withEscapeSequence("exit").withEscapeSequence("triggers").withEscapeSequence("/npc path")
                 .withModality(false).withFirstPrompt(new TriggerEditPrompt(editor)).buildConversation(player);
         conversation.begin();
         return conversation;

@@ -13,8 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -330,12 +328,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                     @Override
                     public void run() {
                         conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
-                        conversation.addConversationAbandonedListener(new ConversationAbandonedListener() {
-                            @Override
-                            public void conversationAbandoned(ConversationAbandonedEvent event) {
-                                conversation = null;
-                            }
-                        });
+                        conversation.addConversationAbandonedListener(e -> conversation = null);
                     }
                 });
             } else if (message.equalsIgnoreCase("clear")) {
@@ -348,21 +341,13 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 });
             } else if (message.equalsIgnoreCase("toggle path") || message.equalsIgnoreCase("markers")) {
                 event.setCancelled(true);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        togglePath();
-                    }
-                });
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> togglePath());
             } else if (message.equalsIgnoreCase("cycle")) {
                 event.setCancelled(true);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        cycle = !cycle;
-                        Messaging.sendTr(event.getPlayer(), cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET
-                                : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
-                    }
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    cycle = !cycle;
+                    Messaging.sendTr(event.getPlayer(), cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET
+                            : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
                 });
             }
         }

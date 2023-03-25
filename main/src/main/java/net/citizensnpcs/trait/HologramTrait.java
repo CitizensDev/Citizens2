@@ -102,6 +102,7 @@ public class HologramTrait extends Trait {
         if (Setting.PACKET_HOLOGRAMS.asBoolean()) {
             hologramNPC.addTrait(PacketNPC.class);
         }
+
         hologramNPC.spawn(currentLoc.clone().add(0,
                 getEntityHeight()
                         + (direction == HologramDirection.BOTTOM_UP ? heightOffset : getMaxHeight() - heightOffset),

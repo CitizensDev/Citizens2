@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
@@ -27,6 +28,7 @@ public class SpeedTriggerPrompt extends NumericPrompt implements WaypointTrigger
 
     @Override
     public String getPromptText(ConversationContext context) {
-        return Messaging.tr(Messages.SPEED_TRIGGER_PROMPT);
+        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.SPEED_TRIGGER_PROMPT);
+        return "";
     }
 }

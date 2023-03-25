@@ -1,6 +1,5 @@
 package net.citizensnpcs.commands;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.api.command.Command;
@@ -48,15 +47,18 @@ public class EditorCommands {
             desc = "Toggle the waypoint editor",
             modifiers = { "path" },
             min = 1,
-            max = 1,
             flags = "*",
             permission = "citizens.npc.edit.path")
     @Requirements(selected = true, ownership = true)
-    public void path(CommandContext args, CommandSender player, NPC npc) {
+    public void path(CommandContext args, Player player, NPC npc) {
         Editor editor = npc.getOrAddTrait(Waypoints.class).getEditor(player, args);
         if (editor == null)
             return;
-        Editor.enterOrLeave((Player) player, editor);
+        if (player.isConversing() && args.argsLength() > 1) {
+            player.acceptConversationInput(args.getJoinedStrings(1));
+            return;
+        }
+        Editor.enterOrLeave(player, editor);
     }
 
     @Command(

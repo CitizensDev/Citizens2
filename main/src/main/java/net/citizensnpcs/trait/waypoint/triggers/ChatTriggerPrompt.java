@@ -7,6 +7,7 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.util.Messaging;
@@ -48,7 +49,12 @@ public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPr
 
     @Override
     public String getPromptText(ConversationContext context) {
-        Messaging.sendTr((CommandSender) context.getForWhom(), Messages.CHAT_TRIGGER_PROMPT);
+        if (context.getSessionData("said") == Boolean.TRUE) {
+            Messaging.send((CommandSender) context.getForWhom(),
+                    "Current lines:<br>-   " + Joiner.on("<br>-   ").join(lines));
+        } else {
+            Messaging.sendTr((CommandSender) context.getForWhom(), Messages.CHAT_TRIGGER_PROMPT);
+        }
         return "";
     }
 }
