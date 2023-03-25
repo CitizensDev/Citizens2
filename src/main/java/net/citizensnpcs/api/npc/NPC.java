@@ -524,6 +524,7 @@ public interface NPC extends Agent, Cloneable {
          * Whether to remove players from the player list. Boolean defaults to true.
          */
         REMOVE_FROM_PLAYERLIST("removefromplayerlist"),
+        RESET_PITCH_ON_TICK("reset-pitch-on-tick"),
         /**
          * The Integer delay to respawn in ticks after death. Only works if non-zero.
          */
