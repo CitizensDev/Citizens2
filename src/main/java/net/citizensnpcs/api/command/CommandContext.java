@@ -32,6 +32,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -60,6 +61,15 @@ public class CommandContext {
             if (args[i].length() == 0) {
                 // Ignore this
                 continue;
+            } else if (args[i].charAt(0) == '{') {
+                String json = args[i];
+                for (int inner = i + 1; inner < args.length; inner++) {
+                    if (CharMatcher.is('{').countIn(json) - CharMatcher.is('}').countIn(json) == 0)
+                        break;
+                    json += " " + args[inner];
+                    args[inner] = "";
+                }
+                args[i] = json;
             } else if (args[i].charAt(0) == '\'' || args[i].charAt(0) == '"' || args[i].charAt(0) == '`') {
                 char quote = args[i].charAt(0);
                 String quoted = args[i].substring(1); // remove initial quote
