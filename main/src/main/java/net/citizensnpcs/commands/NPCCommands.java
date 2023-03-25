@@ -684,6 +684,7 @@ public class NPCCommands {
         if (args.hasFlag('t') || temporaryTicks != null) {
             registry = temporaryRegistry;
         }
+
         if (item != null) {
             ItemStack stack = new ItemStack(Material.STONE, 1);
             try {
@@ -1345,6 +1346,7 @@ public class NPCCommands {
             max = 1,
             flags = "t",
             permission = "citizens.npc.leashable")
+    @Requirements(selected = true, ownership = true, excludedTypes = { EntityType.PLAYER })
     public void leashable(CommandContext args, CommandSender sender, NPC npc) {
         boolean vulnerable = !npc.data().get(NPC.Metadata.LEASH_PROTECTED, true);
         if (args.hasFlag('t')) {
@@ -1535,12 +1537,9 @@ public class NPCCommands {
             permission = "citizens.npc.metadata")
     @Requirements(selected = true, ownership = true)
     public void metadata(CommandContext args, CommandSender sender, NPC npc,
-            @Arg(value = 1, completions = { "set", "get", "remove" }) String command) throws CommandException {
+            @Arg(value = 1, completions = { "set", "get", "remove" }) String command, @Arg(2) NPC.Metadata enumKey)
+            throws CommandException {
         String key = args.getString(2);
-        try {
-            key = NPC.Metadata.valueOf(key.toUpperCase()).getKey();
-        } catch (IllegalArgumentException e) {
-        }
 
         if (command.equals("set")) {
             if (args.argsLength() != 4)
@@ -1560,21 +1559,33 @@ public class NPCCommands {
             }
 
             if (args.hasFlag('t')) {
-                npc.data().set(key, metadata);
+                if (enumKey != null) {
+                    npc.data().set(enumKey, metadata);
+                } else {
+                    npc.data().set(key, metadata);
+                }
             } else {
-                npc.data().setPersistent(key, metadata);
+                if (enumKey != null) {
+                    npc.data().set(enumKey, metadata);
+                } else {
+                    npc.data().setPersistent(key, metadata);
+                }
             }
             Messaging.sendTr(sender, Messages.METADATA_SET, key, args.getString(3));
         } else if (command.equals("get")) {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
-            sender.sendMessage(npc.data().get(key, "null"));
+            sender.sendMessage(enumKey != null ? npc.data().get(enumKey, "null") : npc.data().get(key, "null"));
         } else if (command.equals("remove")) {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
-            npc.data().remove(key);
+            if (enumKey != null) {
+                npc.data().remove(enumKey);
+            } else {
+                npc.data().remove(key);
+            }
             Messaging.sendTr(sender, Messages.METADATA_UNSET, key, npc.getName());
         } else {
             throw new CommandUsageException();

@@ -245,6 +245,7 @@ import net.minecraft.server.v1_15_R1.ContainerAccess;
 import net.minecraft.server.v1_15_R1.ContainerAnvil;
 import net.minecraft.server.v1_15_R1.Containers;
 import net.minecraft.server.v1_15_R1.ControllerJump;
+import net.minecraft.server.v1_15_R1.ControllerLook;
 import net.minecraft.server.v1_15_R1.ControllerMove;
 import net.minecraft.server.v1_15_R1.ControllerMoveFlying;
 import net.minecraft.server.v1_15_R1.DamageSource;
@@ -2175,6 +2176,14 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static void setLookControl(EntityInsentient mob, ControllerLook control) {
+        try {
+            LOOK_CONTROL_SETTER.invoke(mob, control);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void setNotInSchool(EntityFish entity) {
         try {
             if (ENTITY_FISH_NUM_IN_SCHOOL != null) {
@@ -2254,6 +2263,7 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
             "advancementDataPlayer");
+
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
@@ -2288,6 +2298,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle ISCLIMBING_METHOD = NMS.getMethodHandle(EntityLiving.class, "f", true,
             Vec3D.class);
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(EntityLiving.class, "jumping");
+    private static final MethodHandle LOOK_CONTROL_SETTER = NMS.getFirstSetter(EntityInsentient.class,
+            ControllerLook.class);
     private static final MethodHandle MAKE_REQUEST = NMS.getMethodHandle(YggdrasilAuthenticationService.class,
             "makeRequest", true, URL.class, Object.class, Class.class);
     private static MethodHandle MOVE_CONTROLLER_MOVING = NMS.getSetter(ControllerMove.class, "h");

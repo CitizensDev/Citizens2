@@ -308,6 +308,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.control.JumpControl;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -2335,6 +2336,14 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static void setLookControl(Mob mob, LookControl control) {
+        try {
+            LOOK_CONTROL_SETTER.invoke(mob, control);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void setNotInSchool(AbstractFish entity) {
         try {
             if (ENTITY_FISH_NUM_IN_SCHOOL != null) {
@@ -2479,6 +2488,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle HEAD_HEIGHT_METHOD = NMS.getFirstMethodHandle(Entity.class, true, Pose.class,
             EntityDimensions.class);
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(LivingEntity.class, "bi");
+    private static final MethodHandle LOOK_CONTROL_SETTER = NMS.getFirstSetter(Mob.class, LookControl.class);
     private static final MethodHandle MAKE_REQUEST = NMS.getMethodHandle(YggdrasilAuthenticationService.class,
             "makeRequest", true, URL.class, Object.class, Class.class);
     private static MethodHandle MOVE_CONTROLLER_OPERATION = NMS.getSetter(MoveControl.class, "k");

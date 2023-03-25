@@ -13,9 +13,11 @@ import org.bukkit.entity.Entity;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
+import net.citizensnpcs.nms.v1_15_R1.util.PitchableLookControl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.NMS;
+import net.minecraft.server.v1_15_R1.ControllerLook;
 import net.minecraft.server.v1_15_R1.EntityInsentient;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.World;
@@ -36,6 +38,10 @@ public abstract class MobEntityController extends AbstractEntityController {
         if (entity instanceof EntityInsentient) {
             NMSImpl.clearGoals(npc, ((EntityInsentient) entity).goalSelector,
                     ((EntityInsentient) entity).targetSelector);
+            EntityInsentient mob = (EntityInsentient) entity;
+            if (mob.getControllerLook().getClass() == ControllerLook.class) {
+                NMSImpl.setLookControl(mob, new PitchableLookControl(mob));
+            }
         }
         entity.setPositionRotation(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         if (npc != null) {

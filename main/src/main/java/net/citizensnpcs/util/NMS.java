@@ -775,7 +775,6 @@ public class NMS {
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_OBJECT;
-
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {
