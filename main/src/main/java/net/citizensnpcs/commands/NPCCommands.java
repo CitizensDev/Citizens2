@@ -2318,6 +2318,7 @@ public class NPCCommands {
                 return;
             }
         }
+
         if (args.argsLength() == 2) {
             if ("all".equalsIgnoreCase(action)) {
                 if (!sender.hasPermission("citizens.admin.remove.all") && !sender.hasPermission("citizens.admin"))

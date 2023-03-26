@@ -232,11 +232,7 @@
                                 <relocation>
                                     <pattern>net.kyori</pattern>
                                     <shadedPattern>clib.net.kyori</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.joml</pattern>
-                                    <shadedPattern>clib.org.joml</shadedPattern>
-                                </relocation>
+                                </relocation> 
                                 <relocation>
                                     <pattern>net.byteflux.libby</pattern>
                                     <shadedPattern>clib.net.byteflux.libby</shadedPattern>

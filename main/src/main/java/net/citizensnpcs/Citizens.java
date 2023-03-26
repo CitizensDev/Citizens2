@@ -25,6 +25,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -335,8 +336,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("examination-string").version("1.3.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("org{}joml").artifactId("joml").version("1.10.5")
-                .relocate("org{}joml", "clib{}org{}joml").build());
+        try {
+            Class.forName("org.joml.Vector3f");
+        } catch (Throwable t) {
+            lib.loadLibrary(Library.builder().groupId("org{}joml").artifactId("joml").version("1.10.5").build());
+        }
     }
 
     @Override
@@ -420,13 +424,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             CommandTrait trait = npc.getTraitNullable(CommandTrait.class);
             return trait == null ? "" : trait.fillPlaceholder(sender, input);
         });
+
         Plugin papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
         if (papi != null && papi.isEnabled()) {
             new CitizensPlaceholders(selector).register();
-        }
-        Plugin plib = Bukkit.getPluginManager().getPlugin("ProtocolLib");
-        if (plib != null && plib.isEnabled()) {
-            protocolListener = new ProtocolLibListener(this);
         }
 
         setupEconomy();
@@ -591,6 +592,18 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private class CitizensLoadTask implements Runnable {
         @Override
         public void run() {
+            Plugin plib = Bukkit.getPluginManager().getPlugin("ProtocolLib");
+            if (plib != null && plib.isEnabled() && ProtocolLibrary.getProtocolManager() != null) {
+                try {
+                    protocolListener = new ProtocolLibListener(Citizens.this);
+                } catch (Throwable t) {
+                    Messaging.severe("ProtocolLib support not enabled: enable debug to see error");
+                    if (Messaging.isDebugging()) {
+                        t.printStackTrace();
+                    }
+                }
+            }
+
             saves.loadInto(npcRegistry);
             shops.load();
 

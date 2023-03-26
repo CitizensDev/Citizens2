@@ -94,15 +94,13 @@ public class WardenController extends MobEntityController {
                 return;
             }
             NMSImpl.updateMinecraftAIState(npc, this);
+            npc.update();
             if (npc.useMinecraftAI()) {
                 super.customServerAiStep();
             } else {
                 NMSImpl.updateAI(this);
             }
-            npc.update();
         }
-
-        
 
         @Override
         protected SoundEvent getAmbientSound() {

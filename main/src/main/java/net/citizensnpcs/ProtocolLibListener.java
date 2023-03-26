@@ -133,6 +133,7 @@ public class ProtocolLibListener {
                         session.onPacketOverwritten();
                     }
                 });
+
     }
 
     private StructureModifier<Set<PlayerTeleportFlag>> getFlagsModifier(PacketContainer handle) {
