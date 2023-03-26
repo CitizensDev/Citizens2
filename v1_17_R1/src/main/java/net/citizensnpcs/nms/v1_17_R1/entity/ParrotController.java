@@ -73,16 +73,12 @@ public class ParrotController extends MobEntityController {
                 super.customServerAiStep();
             } else {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (!npc.useMinecraftAI()) {
-                    NMSImpl.updateAI(this);
-                } else {
+                if (npc.useMinecraftAI()) {
                     super.customServerAiStep();
                 }
                 npc.update();
             }
         }
-
-        
 
         @Override
         public SoundEvent getAmbientSound() {

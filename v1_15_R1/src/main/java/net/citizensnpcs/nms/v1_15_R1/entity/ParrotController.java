@@ -104,8 +104,6 @@ public class ParrotController extends MobEntityController {
             return npc == null ? super.d(save) : false;
         }
 
-        
-
         @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
@@ -153,9 +151,7 @@ public class ParrotController extends MobEntityController {
                 super.mobTick();
             } else {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (!npc.useMinecraftAI()) {
-                    NMSImpl.updateAI(this);
-                } else {
+                if (npc.useMinecraftAI()) {
                     super.mobTick();
                 }
                 npc.update();

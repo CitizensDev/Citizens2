@@ -97,8 +97,6 @@ public class WardenController extends MobEntityController {
             npc.update();
             if (npc.useMinecraftAI()) {
                 super.customServerAiStep();
-            } else {
-                NMSImpl.updateAI(this);
             }
         }
 
