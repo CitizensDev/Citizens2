@@ -253,5 +253,5 @@ public interface NMSBridge {
 
     public void updateNavigationWorld(Entity entity, World world);
 
-    public void updatePathfindingRange(NPC npc, float pathfindingRange);;
+    public void updatePathfindingRange(NPC npc, float pathfindingRange);
 }

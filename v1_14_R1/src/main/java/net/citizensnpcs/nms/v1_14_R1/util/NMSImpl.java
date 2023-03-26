@@ -436,6 +436,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void unlinkAll(Consumer<Player> callback) {
+                handle.die();
                 for (EntityPlayer link : Lists.newArrayList(linked)) {
                     Player entity = link.getBukkitEntity();
                     unlink(entity);
@@ -443,6 +444,7 @@ public class NMSImpl implements NMSBridge {
                         callback.accept(entity);
                     }
                 }
+                linked.clear();
             }
         };
     }

@@ -215,6 +215,7 @@ import net.minecraft.server.v1_12_R1.ChatMessage;
 import net.minecraft.server.v1_12_R1.Container;
 import net.minecraft.server.v1_12_R1.ContainerAnvil;
 import net.minecraft.server.v1_12_R1.ControllerJump;
+import net.minecraft.server.v1_12_R1.ControllerLook;
 import net.minecraft.server.v1_12_R1.ControllerMove;
 import net.minecraft.server.v1_12_R1.CrashReport;
 import net.minecraft.server.v1_12_R1.CrashReportSystemDetails;
@@ -375,6 +376,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void unlinkAll(Consumer<Player> callback) {
+                handle.die();
                 for (EntityPlayer link : Lists.newArrayList(tracker.trackedPlayers)) {
                     Player entity = link.getBukkitEntity();
                     unlink(entity);
@@ -382,6 +384,7 @@ public class NMSImpl implements NMSBridge {
                         callback.accept(entity);
                     }
                 }
+                tracker.trackedPlayers.clear();
             }
         };
     }
@@ -1913,6 +1916,14 @@ public class NMSImpl implements NMSBridge {
         NMSImpl.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
+    public static void setLookControl(EntityInsentient mob, ControllerLook control) {
+        try {
+            LOOK_CONTROL_SETTER.invoke(mob, control);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void setSize(Entity entity, float f, float f1, boolean justCreated) {
         if ((f != entity.width) || (f1 != entity.length)) {
             float f2 = entity.width;
@@ -1960,6 +1971,8 @@ public class NMSImpl implements NMSBridge {
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     public static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
     private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "bd");
+    private static final MethodHandle LOOK_CONTROL_SETTER = NMS.getFirstSetter(EntityInsentient.class,
+            ControllerLook.class);
     private static Method MAKE_REQUEST;
     private static MethodHandle MOVE_CONTROLLER_MOVING = NMS.getSetter(ControllerMove.class, "h");
     private static Field NAVIGATION_WORLD_FIELD = NMS.getField(NavigationAbstract.class, "b");

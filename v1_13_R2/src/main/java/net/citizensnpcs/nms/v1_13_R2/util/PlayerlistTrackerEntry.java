@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
 
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
+import net.minecraft.server.v1_13_R2.EntityTracker;
 import net.minecraft.server.v1_13_R2.EntityTrackerEntry;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
@@ -51,21 +53,31 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
-        // prevent updates to NPC "viewers"
-        if ((entityplayer instanceof EntityHumanNPC) || (tracker instanceof NPCHolder
-                && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity())))
+        if (tracker instanceof NPCHolder) {
+            NPC npc = ((NPCHolder) tracker).getNPC();
+            if (npc.isHiddenFrom(entityplayer.getBukkitEntity()))
+                return;
+            Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
+            if (TRACKING_RANGE_SETTER != null && trackingRange != null
+                    && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
+                try {
+                    TRACKING_RANGE_SETTER.invoke(this, trackingRange);
+                    npc.data().set("last-tracking-range", trackingRange);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (entityplayer instanceof EntityHumanNPC)
             return;
-        lastUpdatedPlayer = entityplayer;
+
+        this.lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
-        lastUpdatedPlayer = null;
     }
 
     private static int getE(EntityTrackerEntry entry) {
         try {
-            Entity entity = getTracker(entry);
-            if (entity instanceof NPCHolder) {
-                return ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.TRACKING_RANGE, (Integer) E.get(entry));
-            }
             return (Integer) E.get(entry);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -123,5 +135,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private static Field F = NMS.getField(EntityTrackerEntry.class, "f");
     private static Field G = NMS.getField(EntityTrackerEntry.class, "g");
     private static Field TRACKER = NMS.getField(EntityTrackerEntry.class, "tracker");
+    private static final MethodHandle TRACKING_RANGE_SETTER = NMS.getFirstFinalSetter(EntityTracker.class, int.class);
     private static Field U = NMS.getField(EntityTrackerEntry.class, "u");
 }

@@ -61,8 +61,8 @@ public class EnderDragonController extends MobEntityController {
         @Override
         public void aiStep() {
             if (npc != null) {
-                npc.update();
                 NMSImpl.updateMinecraftAIState(npc, this);
+                npc.update();
             }
             if (npc != null && !npc.useMinecraftAI()) {
                 if (getFirstPassenger() != null) {
@@ -96,8 +96,6 @@ public class EnderDragonController extends MobEntityController {
                 super.checkDespawn();
             }
         }
-
-        
 
         @Override
         protected SoundEvent getAmbientSound() {

@@ -178,6 +178,7 @@ import net.minecraft.server.v1_8_R3.ChatMessage;
 import net.minecraft.server.v1_8_R3.Container;
 import net.minecraft.server.v1_8_R3.ContainerAnvil;
 import net.minecraft.server.v1_8_R3.ControllerJump;
+import net.minecraft.server.v1_8_R3.ControllerLook;
 import net.minecraft.server.v1_8_R3.ControllerMove;
 import net.minecraft.server.v1_8_R3.CrashReport;
 import net.minecraft.server.v1_8_R3.CrashReportSystemDetails;
@@ -329,6 +330,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void unlinkAll(Consumer<Player> callback) {
+                handle.die();
                 for (EntityPlayer link : Lists.newArrayList(tracker.trackedPlayers)) {
                     Player entity = link.getBukkitEntity();
                     unlink(entity);
@@ -336,6 +338,7 @@ public class NMSImpl implements NMSBridge {
                         callback.accept(entity);
                     }
                 }
+                tracker.trackedPlayers.clear();
             }
         };
     }
@@ -1704,6 +1707,14 @@ public class NMSImpl implements NMSBridge {
         NMSImpl.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
+    public static void setLookControl(EntityInsentient mob, ControllerLook control) {
+        try {
+            LOOK_CONTROL_SETTER.invoke(mob, control);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void setSize(Entity entity, float f, float f1, boolean justCreated) {
         if ((f != entity.width) || (f1 != entity.length)) {
             float f2 = entity.width;
@@ -1741,6 +1752,7 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE,
             EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
             EntityType.GHAST);
+
     private static final float DEFAULT_SPEED = 1F;
     private static Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class, Entity.class);
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
@@ -1749,6 +1761,8 @@ public class NMSImpl implements NMSBridge {
     private static Method GET_NMS_BLOCK = NMS.getMethod(CraftBlock.class, "getNMSBlock", false);
     private static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
     private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "aY");
+    private static final MethodHandle LOOK_CONTROL_SETTER = NMS.getFirstSetter(EntityInsentient.class,
+            ControllerLook.class);
     private static Method MAKE_REQUEST;
     private static Field MOVE_CONTROLLER_MOVING = NMS.getField(ControllerMove.class, "f");
     private static Field NAVIGATION_WORLD_FIELD = NMS.getField(NavigationAbstract.class, "c");

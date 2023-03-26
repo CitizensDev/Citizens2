@@ -117,12 +117,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             return;
         }
         super.die(damagesource);
-        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                EntityHumanNPC.this.getLevel().removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
-                ((ServerLevel) level).getChunkSource().removeEntity(EntityHumanNPC.this);
-            }
+        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
+            EntityHumanNPC.this.getLevel().removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
+            ((ServerLevel) level).getChunkSource().removeEntity(EntityHumanNPC.this);
         }, 15); // give enough time for death and smoke animation
     }
 

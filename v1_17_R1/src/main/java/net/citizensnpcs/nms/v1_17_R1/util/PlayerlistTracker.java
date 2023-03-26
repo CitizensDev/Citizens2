@@ -51,9 +51,25 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
 
     @Override
     public void updatePlayer(final ServerPlayer entityplayer) {
-        if ((entityplayer instanceof EntityHumanNPC) || (tracker instanceof NPCHolder
-                && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity())))
+        if (tracker instanceof NPCHolder) {
+            NPC npc = ((NPCHolder) tracker).getNPC();
+            if (npc.isHiddenFrom(entityplayer.getBukkitEntity()))
+                return;
+            Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
+            if (TRACKING_RANGE_SETTER != null && trackingRange != null
+                    && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
+                try {
+                    TRACKING_RANGE_SETTER.invoke(this, trackingRange);
+                    npc.data().set("last-tracking-range", trackingRange);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (entityplayer instanceof EntityHumanNPC)
             return;
+
         this.lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
     }
@@ -87,11 +103,6 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
 
     private static int getTrackingDistance(TrackedEntity entry) {
         try {
-            Entity entity = getTracker(entry);
-            if (entity instanceof NPCHolder) {
-                return ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.TRACKING_RANGE,
-                        (Integer) TRACKING_RANGE.invoke(entry));
-            }
             return (Integer) TRACKING_RANGE.invoke(entry);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -104,4 +115,5 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
     private static final MethodHandle TRACKER = NMS.getFirstGetter(TrackedEntity.class, Entity.class);
     private static final MethodHandle TRACKER_ENTRY = NMS.getFirstGetter(TrackedEntity.class, ServerEntity.class);
     private static final MethodHandle TRACKING_RANGE = NMS.getFirstGetter(TrackedEntity.class, int.class);
+    private static final MethodHandle TRACKING_RANGE_SETTER = NMS.getFirstFinalSetter(TrackedEntity.class, int.class);
 }

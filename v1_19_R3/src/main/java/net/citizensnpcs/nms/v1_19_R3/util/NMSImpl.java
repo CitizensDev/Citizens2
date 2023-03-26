@@ -508,6 +508,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void unlinkAll(Consumer<Player> callback) {
+                handle.remove(RemovalReason.KILLED);
                 for (ServerPlayerConnection link : Lists.newArrayList(linked)) {
                     Player entity = link.getPlayer().getBukkitEntity();
                     unlink(entity);
@@ -515,6 +516,7 @@ public class NMSImpl implements NMSBridge {
                         callback.accept(entity);
                     }
                 }
+                linked.clear();
             }
         };
     }
@@ -2288,7 +2290,7 @@ public class NMSImpl implements NMSBridge {
 
     public static void setAdvancement(Player entity, PlayerAdvancements instance) {
         try {
-            ADVANCEMENTS_PLAYER_FIELD.invoke(getHandle(entity), instance);
+            ADVANCEMENTS_PLAYER_SETTER.invoke(getHandle(entity), instance);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -2452,10 +2454,11 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFirstFinalSetter(ServerPlayer.class,
+    private static final MethodHandle ADVANCEMENTS_PLAYER_SETTER = NMS.getFirstFinalSetter(ServerPlayer.class,
             PlayerAdvancements.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
-    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeSupplier.class, "a");
+    private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
+            Map.class);
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
             AttributeSupplier.class);
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
@@ -2468,7 +2471,8 @@ public class NMSImpl implements NMSBridge {
             ServerPlayer.class, boolean.class);
     private static final Map<Class<?>, net.minecraft.world.entity.EntityType<?>> CITIZENS_ENTITY_TYPES = Maps
             .newHashMap();
-    private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
+    private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getFirstSetter(CraftBossBar.class,
+            ServerBossEvent.class);
     private static final float DEFAULT_SPEED = 1F;
     private static EntityDataAccessor<Boolean> ENDERMAN_CREEPY = null;
     private static final MethodHandle ENTITY_FISH_NUM_IN_SCHOOL = NMS.getFirstSetter(AbstractSchoolingFish.class,
@@ -2501,10 +2505,12 @@ public class NMSImpl implements NMSBridge {
             PathFinder.class);
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
     private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(ChunkMap.class, "P");
-    private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(ChunkMap.class, "P");
+    private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getFirstGetter(ChunkMap.class,
+            int.class);
+    private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getFirstSetter(ChunkMap.class,
+            int.class);
     private static final MethodHandle PLAYER_INFO_ENTRIES_LIST = NMS
-            .getFinalSetter(ClientboundPlayerInfoUpdatePacket.class, "b");
+            .getFirstFinalSetter(ClientboundPlayerInfoUpdatePacket.class, List.class);
     private static final MethodHandle PLAYERINFO_ENTRIES = PLAYER_INFO_ENTRIES_LIST;
     private static MethodHandle PORTAL_ENTRANCE_POS_GETTER = NMS.getGetter(Entity.class, "aw");
     private static MethodHandle PORTAL_ENTRANCE_POS_SETTER = NMS.getSetter(Entity.class, "aw");
@@ -2529,9 +2535,7 @@ public class NMSImpl implements NMSBridge {
         try {
             // Middle one
             ENDERMAN_CREEPY = (EntityDataAccessor<Boolean>) NMS.getField(EnderMan.class, "bU").get(null);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         try {

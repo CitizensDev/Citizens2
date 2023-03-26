@@ -182,8 +182,13 @@ public class NMS {
         return getFinalSetter(clazz, field, true);
     }
 
-    public static MethodHandle getFinalSetter(Class<?> clazz, String fieldName, boolean log) {
-        Field field;
+    public static MethodHandle getFinalSetter(Class<?> clazz, String field, boolean log) {
+        return getFinalSetter(NMS.getField(clazz, field, log), log);
+    }
+
+    public static MethodHandle getFinalSetter(Field field, boolean log) {
+        if (field == null)
+            return null;
         if (MODIFIERS_FIELD == null) {
             if (UNSAFE == null) {
                 try {
@@ -191,7 +196,7 @@ public class NMS {
                 } catch (Exception e) {
                     e.printStackTrace();
                     if (log) {
-                        Messaging.logTr(Messages.ERROR_GETTING_FIELD, fieldName, e.getLocalizedMessage());
+                        Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
                     }
                     return null;
                 }
@@ -201,34 +206,41 @@ public class NMS {
                         .bindTo(UNSAFE);
                 UNSAFE_PUT_OBJECT = getMethodHandle(UNSAFE.getClass(), "putObject", true, Object.class, long.class,
                         Object.class).bindTo(UNSAFE);
-            }
-            field = NMS.getField(clazz, fieldName, log);
-            if (field == null) {
-                return null;
+                UNSAFE_PUT_INT = getMethodHandle(UNSAFE.getClass(), "putInt", true, Object.class, long.class, int.class)
+                        .bindTo(UNSAFE);
+                UNSAFE_PUT_FLOAT = getMethodHandle(UNSAFE.getClass(), "putFloat", true, Object.class, long.class,
+                        float.class).bindTo(UNSAFE);
+                UNSAFE_PUT_DOUBLE = getMethodHandle(UNSAFE.getClass(), "putDouble", true, Object.class, long.class,
+                        double.class).bindTo(UNSAFE);
+                UNSAFE_PUT_BOOLEAN = getMethodHandle(UNSAFE.getClass(), "putBoolean", true, Object.class, long.class,
+                        boolean.class).bindTo(UNSAFE);
+                UNSAFE_PUT_LONG = getMethodHandle(UNSAFE.getClass(), "putLong", true, Object.class, long.class,
+                        long.class).bindTo(UNSAFE);
             }
             try {
                 boolean isStatic = Modifier.isStatic(field.getModifiers());
                 long offset = (long) (isStatic ? UNSAFE_STATIC_FIELD_OFFSET.invoke(field)
                         : UNSAFE_FIELD_OFFSET.invoke(field));
-                return isStatic ? MethodHandles.insertArguments(UNSAFE_PUT_OBJECT, 0, clazz, offset)
-                        : MethodHandles.insertArguments(UNSAFE_PUT_OBJECT, 1, offset);
+                MethodHandle mh = field.getType() == int.class ? UNSAFE_PUT_INT
+                        : field.getType() == boolean.class ? UNSAFE_PUT_BOOLEAN
+                                : field.getType() == double.class ? UNSAFE_PUT_DOUBLE
+                                        : field.getType() == float.class ? UNSAFE_PUT_FLOAT
+                                                : field.getType() == long.class ? UNSAFE_PUT_LONG : UNSAFE_PUT_OBJECT;
+                return isStatic ? MethodHandles.insertArguments(mh, 0, field.getDeclaringClass(), offset)
+                        : MethodHandles.insertArguments(mh, 1, offset);
             } catch (Throwable t) {
                 t.printStackTrace();
                 if (log) {
-                    Messaging.logTr(Messages.ERROR_GETTING_FIELD, fieldName, t.getLocalizedMessage());
+                    Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), t.getLocalizedMessage());
                 }
                 return null;
             }
-        }
-        field = getField(clazz, fieldName, log);
-        if (field == null) {
-            return null;
         }
         try {
             MODIFIERS_FIELD.setInt(field, field.getModifiers() & ~Modifier.FINAL);
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_FIELD, fieldName, e.getLocalizedMessage());
+                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
             }
             return null;
         }
@@ -236,7 +248,7 @@ public class NMS {
             return LOOKUP.unreflectSetter(field);
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_FIELD, fieldName, e.getLocalizedMessage());
+                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
             }
         }
         return null;
@@ -247,7 +259,7 @@ public class NMS {
             List<Field> found = getFieldsMatchingType(clazz, type, false);
             if (found.isEmpty())
                 return null;
-            return getFinalSetter(clazz, found.get(0).getName());
+            return getFinalSetter(found.get(0), true);
         } catch (Exception e) {
             Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
         }
@@ -774,6 +786,11 @@ public class NMS {
     private static Field MODIFIERS_FIELD;
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
+    private static MethodHandle UNSAFE_PUT_BOOLEAN;
+    private static MethodHandle UNSAFE_PUT_DOUBLE;
+    private static MethodHandle UNSAFE_PUT_FLOAT;
+    private static MethodHandle UNSAFE_PUT_INT;
+    private static MethodHandle UNSAFE_PUT_LONG;
     private static MethodHandle UNSAFE_PUT_OBJECT;
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
