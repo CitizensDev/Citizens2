@@ -121,7 +121,8 @@ public class Messaging {
         m = LEGACY_COLORCODE_MATCHER.matcher(sb.toString());
         sb = new StringBuffer();
         while (m.find()) {
-            m.appendReplacement(sb, COLORCODE_CONVERTER.get(m.group(1) == null ? m.group(2) : m.group(1)));
+            m.appendReplacement(sb,
+                    COLORCODE_CONVERTER.get(m.group(1) == null ? m.group(2).toLowerCase() : m.group(1).toLowerCase()));
         }
         m.appendTail(sb);
         return MINIMESSAGE_COLORCODE_MATCHER.matcher(sb.toString()).replaceAll("$0<csr>");
