@@ -20,23 +20,23 @@ import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
 
 public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
-    private ServerPlayer lastUpdatedPlayer;
     private final Entity tracker;
 
     public CitizensEntityTracker(ChunkMap map, Entity entity, int i, int j, boolean flag) {
         map.super(entity, i, j, flag);
         this.tracker = entity;
         try {
-            Set set = (Set) TRACKING_SET_GETTER.invoke(this);
-            TRACKING_SET_SETTER.invoke(this, new ForwardingSet() {
+            Set<ServerPlayerConnection> set = (Set<ServerPlayerConnection>) TRACKING_SET_GETTER.invoke(this);
+            TRACKING_SET_SETTER.invoke(this, new ForwardingSet<ServerPlayerConnection>() {
                 @Override
-                public boolean add(Object conn) {
+                public boolean add(ServerPlayerConnection conn) {
                     boolean res = super.add(conn);
                     if (res) {
-                        updateLastPlayer();
+                        updateLastPlayer(conn.getPlayer());
                     }
                     return res;
                 }
@@ -55,9 +55,8 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         this(map, getTracker(entry), getTrackingDistance(entry), getE(entry), getF(entry));
     }
 
-    public void updateLastPlayer() {
-        if (tracker.isRemoved() || lastUpdatedPlayer == null
-                || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+    public void updateLastPlayer(ServerPlayer lastUpdatedPlayer) {
+        if (tracker.isRemoved() || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         final ServerPlayer entityplayer = lastUpdatedPlayer;
         boolean sendTabRemove = NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
@@ -94,7 +93,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         if (entityplayer instanceof EntityHumanNPC)
             return;
 
-        this.lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
     }
 

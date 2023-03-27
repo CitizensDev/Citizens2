@@ -1332,10 +1332,7 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        NMSImpl.sendPacket(recipient, packet); /* if (VIA_ENABLED == true) {
-                                               int version = Via.getAPI().getPlayerVersion(recipient);
-                                               return version < 761;
-                                               }*/
+        NMSImpl.sendPacket(recipient, packet);
         return true;
     }
 
