@@ -157,7 +157,8 @@ public class EnderDragonController extends MobEntityController {
         public void n() {
             if (npc != null) {
                 npc.update();
-
+            }
+            if (npc != null && getHealth() > 0) {
                 if (this.c < 0) {
                     for (int i = 0; i < this.b.length; ++i) {
                         this.b[i][0] = this.yaw;

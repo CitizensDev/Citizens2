@@ -165,7 +165,8 @@ public class EnderDragonController extends MobEntityController {
         public void movementTick() {
             if (npc != null) {
                 npc.update();
-
+            }
+            if (npc != null && getHealth() > 0) {
                 if (this.d < 0) {
                     for (int i = 0; i < this.c.length; ++i) {
                         this.c[i][0] = this.yaw;

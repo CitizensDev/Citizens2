@@ -160,7 +160,7 @@ public class EnderDragonController extends MobEntityController {
                 npc.update();
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
-            if (npc != null && !npc.useMinecraftAI()) {
+            if (npc != null && !npc.useMinecraftAI() && !dl()) {
                 if (this.d < 0) {
                     for (int i = 0; i < this.c.length; ++i) {
                         this.c[i][0] = this.yaw;

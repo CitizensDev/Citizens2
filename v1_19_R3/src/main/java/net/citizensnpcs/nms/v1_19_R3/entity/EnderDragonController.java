@@ -66,7 +66,7 @@ public class EnderDragonController extends MobEntityController {
                 npc.update();
 
             }
-            if (npc != null && !npc.useMinecraftAI()) {
+            if (npc != null && !npc.useMinecraftAI() && !isDeadOrDying()) {
                 if (this.posPointer < 0) {
                     for (int i = 0; i < this.positions.length; ++i) {
                         this.positions[i][0] = this.getYRot();
@@ -105,7 +105,6 @@ public class EnderDragonController extends MobEntityController {
                     setPos(getX() + mot.x, getY() + mot.y, getZ() + mot.z);
                     setDeltaMovement(mot);
                 }
-
             } else {
                 super.aiStep();
             }
