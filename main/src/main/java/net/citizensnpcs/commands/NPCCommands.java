@@ -1,12 +1,7 @@
 package net.citizensnpcs.commands;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.io.File;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +38,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -148,6 +142,7 @@ import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.MojangSkinGenerator;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.StringHelper;
@@ -2609,7 +2604,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-c(lear) -l(atest)) [name] (or --url [url] or -t [uuid/name] [data] [signature])",
+            usage = "skin (-c(lear) -l(atest)) [name] (or --url [url] --file [file] or -t [uuid/name] [data] [signature])",
             desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
             modifiers = { "skin" },
             min = 1,
@@ -2617,73 +2612,48 @@ public class NPCCommands {
             flags = "ctl",
             permission = "citizens.npc.skin")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
-    public void skin(final CommandContext args, final CommandSender sender, final NPC npc, @Flag("url") String url)
-            throws CommandException {
+    public void skin(final CommandContext args, final CommandSender sender, final NPC npc, @Flag("url") String url,
+            @Flag("file") String file) throws CommandException {
         String skinName = npc.getName();
         final SkinTrait trait = npc.getOrAddTrait(SkinTrait.class);
         if (args.hasFlag('c')) {
             trait.clearTexture();
-        } else if (url != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    DataOutputStream out = null;
-                    BufferedReader reader = null;
-                    try {
-                        URL target = new URL("https://api.mineskin.org/generate/url");
-                        HttpURLConnection con = (HttpURLConnection) target.openConnection();
-                        con.setRequestMethod("POST");
-                        con.setDoOutput(true);
-                        con.setConnectTimeout(1000);
-                        con.setReadTimeout(30000);
-                        out = new DataOutputStream(con.getOutputStream());
-                        out.writeBytes("url=" + URLEncoder.encode(url, "UTF-8"));
-                        out.close();
-                        reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                        JSONObject output = (JSONObject) new JSONParser().parse(reader);
-                        JSONObject data = (JSONObject) output.get("data");
-                        String uuid = (String) data.get("uuid");
-                        JSONObject texture = (JSONObject) data.get("texture");
-                        String textureEncoded = (String) texture.get("value");
-                        String signature = (String) texture.get("signature");
-                        con.disconnect();
-                        Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    trait.setSkinPersistent(uuid, signature, textureEncoded);
-                                    Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url);
-                                } catch (IllegalArgumentException e) {
-                                    Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url);
-                                }
-                            }
-                        });
-                    } catch (Throwable t) {
-                        if (Messaging.isDebugging()) {
-                            t.printStackTrace();
+        } else if (url != null || file != null) {
+            Messaging.sendErrorTr(sender, Messages.FETCHING_SKIN, file);
+            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), () -> {
+                try {
+                    JSONObject data = null;
+                    if (file != null) {
+                        File skin = new File(new File(CitizensAPI.getDataFolder(), "skins"), file);
+                        if (!skin.exists()
+                                || !skin.getParentFile().equals(new File(CitizensAPI.getDataFolder(), "skins"))) {
+                            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
+                                    () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
+                            return;
                         }
-                        Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url);
-                            }
-                        });
-                    } finally {
-                        if (out != null) {
-                            try {
-                                out.close();
-                            } catch (IOException e) {
-                            }
-                        }
-                        if (reader != null) {
-                            try {
-                                reader.close();
-                            } catch (IOException e) {
-                            }
-                        }
+                        data = MojangSkinGenerator.generateFromPNG(Files.readAllBytes(skin.toPath()));
+                    } else {
+                        MojangSkinGenerator.generateFromURL(url);
                     }
+                    String uuid = (String) data.get("uuid");
+                    JSONObject texture = (JSONObject) data.get("texture");
+                    String textureEncoded = (String) texture.get("value");
+                    String signature = (String) texture.get("signature");
+                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
+                        try {
+                            trait.setSkinPersistent(uuid, signature, textureEncoded);
+                            Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url);
+                        } catch (IllegalArgumentException e) {
+                            Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url);
+                        }
+                    });
+                } catch (Throwable t) {
+                    if (Messaging.isDebugging()) {
+                        t.printStackTrace();
+                    }
+                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
+                            () -> Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url));
                 }
-
             });
             return;
         } else if (args.hasFlag('t')) {

@@ -415,6 +415,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return new ShopTrait(shops);
         }));
         selector = new NPCSelector(this);
+
         Bukkit.getPluginManager().registerEvents(new EventListen(storedRegistries), this);
         Bukkit.getPluginManager().registerEvents(new Placeholders(), this);
         Placeholders.registerNPCPlaceholder(Pattern.compile("command_[a-zA-Z_0-9]+"), (npc, sender, input) -> {

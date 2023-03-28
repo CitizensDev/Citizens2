@@ -114,6 +114,7 @@ public class Messages {
     public static final String FAILED_LOAD_SAVES = "citizens.saves.load-failed";
     public static final String FAILED_TO_MOUNT_NPC = "citizens.commands.npc.mount.failed";
     public static final String FAILED_TO_REMOVE = "citizens.commands.trait.failed-to-remove";
+    public static final String FETCHING_SKIN = "citizens.commands.npc.skin.fetching";
     public static final String FLYABLE_SET = "citizens.commands.npc.flyable.set";
     public static final String FLYABLE_UNSET = "citizens.commands.npc.flyable.unset";
     public static final String FOLLOW_PLAYER_NOT_INGAME = "citizens.commands.npc.follow.player-not-ingame";
@@ -189,6 +190,7 @@ public class Messages {
     public static final String INVALID_SHEEP_COLOR = "citizens.commands.npc.sheep.invalid-color";
     public static final String INVALID_SHULKER_COLOR = "citizens.commands.npc.shulker.invalid-color";
     public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
+    public static final String INVALID_SKIN_FILE = "citizens.commands.npc.skin.invalid-file";
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
     public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
