@@ -23,6 +23,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
@@ -63,20 +64,48 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
+
             }
             if (npc != null && !npc.useMinecraftAI()) {
+                if (this.posPointer < 0) {
+                    for (int i = 0; i < this.positions.length; ++i) {
+                        this.positions[i][0] = this.getYRot();
+                        this.positions[i][1] = this.getY();
+                    }
+                }
+
+                if (++this.posPointer == this.positions.length) {
+                    this.posPointer = 0;
+                }
+
+                this.positions[this.posPointer][0] = this.getYRot();
+                this.positions[this.posPointer][1] = this.getY();
+
+                float[][] pos = NMS.calculateDragonPositions(getYRot(),
+                        new double[][] { getLatencyPos(0, 1F), getLatencyPos(5, 1F), getLatencyPos(10, 1F),
+                                getLatencyPos(12, 1F), getLatencyPos(14, 1F), getLatencyPos(16, 1F) });
+                for (int j = 0; j < subEntities.length; ++j) {
+                    Vec3 vec3 = new Vec3(this.subEntities[j].getX(), this.subEntities[j].getY(),
+                            this.subEntities[j].getZ());
+                    subEntities[j].setPos(this.getX() + pos[j][0], this.getY() + pos[j][1], this.getZ() + pos[j][2]);
+                    subEntities[j].xo = subEntities[j].xOld = vec3.x;
+                    subEntities[j].yo = subEntities[j].yOld = vec3.y;
+                    subEntities[j].zo = subEntities[j].zOld = vec3.z;
+                }
+
                 if (getFirstPassenger() != null) {
                     setYRot(getFirstPassenger().getBukkitYaw() - 180);
                 }
                 Vec3 mot = getDeltaMovement();
                 if (mot.x != 0 || mot.y != 0 || mot.z != 0) {
-                    mot = mot.multiply(0.98, 0.98, 0.98);
+                    mot = mot.multiply(0.98, 0.91, 0.98);
                     if (getFirstPassenger() == null) {
                         setYRot(Util.getDragonYaw(getBukkitEntity(), mot.x, mot.z));
                     }
                     setPos(getX() + mot.x, getY() + mot.y, getZ() + mot.z);
                     setDeltaMovement(mot);
                 }
+
             } else {
                 super.aiStep();
             }
@@ -167,6 +196,19 @@ public class EnderDragonController extends MobEntityController {
             super.push(entity);
             if (npc != null)
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+        }
+
+        @Override
+        protected boolean reallyHurt(DamageSource source, float f) {
+            if (npc == null)
+                return super.reallyHurt(source, f);
+
+            Vec3 old = getDeltaMovement();
+            boolean res = super.reallyHurt(source, f);
+            if (getPhaseManager().getCurrentPhase() == EnderDragonPhase.HOVERING) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
 
         @Override

@@ -16,6 +16,7 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.AxisAlignedBB;
 import net.minecraft.server.v1_14_R1.DamageSource;
+import net.minecraft.server.v1_14_R1.DragonControllerPhase;
 import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityBoat;
 import net.minecraft.server.v1_14_R1.EntityEnderDragon;
@@ -106,7 +107,18 @@ public class EnderDragonController extends MobEntityController {
             return npc == null ? super.d(save) : false;
         }
 
-        
+        @Override
+        protected boolean dealDamage(DamageSource source, float f) {
+            if (npc == null)
+                return super.dealDamage(source, f);
+
+            Vec3D old = getMot();
+            boolean res = super.dealDamage(source, f);
+            if (getDragonControllerManager().a() == DragonControllerPhase.HOVER) {
+                setMot(old);
+            }
+            return res;
+        }
 
         @Override
         public void f(double x, double y, double z) {
@@ -153,6 +165,31 @@ public class EnderDragonController extends MobEntityController {
         public void movementTick() {
             if (npc != null) {
                 npc.update();
+
+                if (this.d < 0) {
+                    for (int i = 0; i < this.c.length; ++i) {
+                        this.c[i][0] = this.yaw;
+                        this.c[i][1] = this.locY;
+                    }
+                }
+
+                if (++this.d == this.c.length) {
+                    this.d = 0;
+                }
+
+                this.c[this.d][0] = this.yaw;
+                this.c[this.d][1] = this.locY;
+
+                float[][] pos = NMS.calculateDragonPositions(yaw,
+                        new double[][] { a(0, 1F), a(5, 1F), a(10, 1F), a(12, 1F), a(14, 1F), a(16, 1F) });
+                for (int j = 0; j < children.length; ++j) {
+                    Vec3D vec3 = new Vec3D(this.children[j].locX, this.children[j].locY, this.children[j].locZ);
+                    children[j].setPosition(this.locX + pos[j][0], this.locY + pos[j][1], this.locZ + pos[j][2]);
+                    children[j].lastX = vec3.x;
+                    children[j].lastY = vec3.y;
+                    children[j].lastZ = vec3.z;
+                }
+
                 if (getRidingPassenger() != null) {
                     yaw = getRidingPassenger().getBukkitYaw() - 180;
                 }

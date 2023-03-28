@@ -77,6 +77,31 @@ public class NMS {
         BRIDGE.attack(attacker, bukkitTarget);
     }
 
+    public static float[][] calculateDragonPositions(float yrot, double[][] latency) {
+        float[][] positions = new float[8][];
+        float f7 = (float) (latency[1][1] - latency[2][1]) * 10.0F * 0.017453292F;
+        float f8 = (float) Math.cos(f7);
+        float f9 = (float) Math.sin(f7);
+        float f6 = yrot * 0.017453292F;
+        float f11 = (float) Math.sin(f6);
+        float f12 = (float) Math.cos(f6);
+        positions[2] = new float[] { f11 * 0.5F, 0.0F, -f12 * 0.5F };
+        positions[6] = new float[] { f12 * 4.5F, 2F, f11 * 4.5F };
+        positions[7] = new float[] { f12 * -4.5F, 2f, f11 * -4.5F };
+        float f15 = (float) (latency[1][1] - latency[0][1]);
+        positions[0] = new float[] { f11 * 6.5F * f8, f15 + f9 * 6.5F, -f12 * 6.5F * f8 };
+        positions[1] = new float[] { f11 * 5.5F * f8, f15 + f9 * 5.5F, -f12 * 5.5F * f8 };
+        for (int k = 3; k < 6; ++k) {
+            float f16 = f6 + Util.clamp((float) (latency[k][0] - latency[1][0])) * 0.017453292F;
+            float f3 = (float) Math.sin(f16);
+            float f4 = (float) Math.cos(f16);
+            float f17 = (k - 2) * 2.0F;
+            positions[k] = new float[] { -(f11 * 1.5F + f3 * f17) * f8,
+                    (float) (latency[k][1] - latency[1][1] - (f17 + 1.5F) * f9 + 1.5), (f12 * 1.5F + f4 * f17) * f8 };
+        }
+        return positions;
+    }
+
     public static void callKnockbackEvent(NPC npc, float strength, double dx, double dz,
             Consumer<NPCKnockbackEvent> cb) {
         NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);

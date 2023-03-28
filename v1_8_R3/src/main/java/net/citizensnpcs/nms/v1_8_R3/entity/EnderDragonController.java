@@ -15,9 +15,11 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
+import net.minecraft.server.v1_8_R3.DamageSource;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityEnderDragon;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.Vec3D;
 import net.minecraft.server.v1_8_R3.World;
 
 public class EnderDragonController extends MobEntityController {
@@ -109,6 +111,20 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
+        protected boolean dealDamage(DamageSource source, float f) {
+            if (npc == null)
+                return super.dealDamage(source, f);
+
+            Vec3D old = new Vec3D(motX, motY, motZ);
+            boolean res = super.dealDamage(source, f);
+            motX = old.a;
+            motY = old.b;
+            motZ = old.c;
+
+            return res;
+        }
+
+        @Override
         public void g(double x, double y, double z) {
             Vector vector = Util.callPushEvent(npc, x, y, z);
             if (vector != null) {
@@ -132,6 +148,31 @@ public class EnderDragonController extends MobEntityController {
         public void m() {
             if (npc != null) {
                 npc.update();
+
+                if (this.bl < 0) {
+                    for (int i = 0; i < this.bk.length; ++i) {
+                        this.bk[i][0] = this.yaw;
+                        this.bk[i][1] = this.locY;
+                    }
+                }
+
+                if (++this.bl == this.bk.length) {
+                    this.bl = 0;
+                }
+
+                this.bk[this.bl][0] = this.yaw;
+                this.bk[this.bl][1] = this.locY;
+
+                float[][] pos = NMS.calculateDragonPositions(yaw,
+                        new double[][] { b(0, 1F), b(5, 1F), b(10, 1F), b(12, 1F), b(14, 1F), b(16, 1F) });
+                for (int j = 0; j < children.length; ++j) {
+                    Vec3D vec3 = new Vec3D(this.children[j].locX, this.children[j].locY, this.children[j].locZ);
+                    children[j].setPosition(this.locX + pos[j][0], this.locY + pos[j][1], this.locZ + pos[j][2]);
+                    children[j].lastX = vec3.a;
+                    children[j].lastY = vec3.b;
+                    children[j].lastZ = vec3.c;
+                }
+
                 if (getBukkitEntity().getPassenger() != null) {
                     yaw = getBukkitEntity().getPassenger().getLocation().getYaw() - 180;
                 }

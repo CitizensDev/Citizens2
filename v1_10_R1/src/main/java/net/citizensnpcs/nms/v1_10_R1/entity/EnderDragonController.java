@@ -15,10 +15,13 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_10_R1.AxisAlignedBB;
+import net.minecraft.server.v1_10_R1.DamageSource;
+import net.minecraft.server.v1_10_R1.DragonControllerPhase;
 import net.minecraft.server.v1_10_R1.Entity;
 import net.minecraft.server.v1_10_R1.EntityEnderDragon;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import net.minecraft.server.v1_10_R1.SoundEffect;
+import net.minecraft.server.v1_10_R1.Vec3D;
 import net.minecraft.server.v1_10_R1.World;
 
 public class EnderDragonController extends MobEntityController {
@@ -97,7 +100,20 @@ public class EnderDragonController extends MobEntityController {
             return npc == null ? super.d(save) : false;
         }
 
-        
+        @Override
+        protected boolean dealDamage(DamageSource source, float f) {
+            if (npc == null)
+                return super.dealDamage(source, f);
+
+            Vec3D old = new Vec3D(motX, motY, motZ);
+            boolean res = super.dealDamage(source, f);
+            if (getDragonControllerManager().a() == DragonControllerPhase.k) {
+                motX = old.x;
+                motY = old.y;
+                motZ = old.z;
+            }
+            return res;
+        }
 
         @Override
         public void g(double x, double y, double z) {
@@ -140,6 +156,31 @@ public class EnderDragonController extends MobEntityController {
         public void n() {
             if (npc != null) {
                 npc.update();
+
+                if (this.c < 0) {
+                    for (int i = 0; i < this.b.length; ++i) {
+                        this.b[i][0] = this.yaw;
+                        this.b[i][1] = this.locY;
+                    }
+                }
+
+                if (++this.c == this.b.length) {
+                    this.c = 0;
+                }
+
+                this.b[this.c][0] = this.yaw;
+                this.b[this.c][1] = this.locY;
+
+                float[][] pos = NMS.calculateDragonPositions(yaw,
+                        new double[][] { a(0, 1F), a(5, 1F), a(10, 1F), a(12, 1F), a(14, 1F), a(16, 1F) });
+                for (int j = 0; j < children.length; ++j) {
+                    Vec3D vec3 = new Vec3D(this.children[j].locX, this.children[j].locY, this.children[j].locZ);
+                    children[j].setPosition(this.locX + pos[j][0], this.locY + pos[j][1], this.locZ + pos[j][2]);
+                    children[j].lastX = vec3.x;
+                    children[j].lastY = vec3.y;
+                    children[j].lastZ = vec3.z;
+                }
+
                 if (getBukkitEntity().getPassenger() != null) {
                     yaw = getBukkitEntity().getPassenger().getLocation().getYaw() - 180;
                 }
