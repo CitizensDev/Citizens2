@@ -66,7 +66,11 @@ public class EnderDragonController extends MobEntityController {
                 npc.update();
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
-            if (npc != null && !npc.useMinecraftAI() && !isDeadOrDying()) {
+            if (npc != null && !npc.useMinecraftAI()) {
+                if (isDeadOrDying()) {
+                    setHealth(0F);
+                    return;
+                }
                 if (this.posPointer < 0) {
                     for (int i = 0; i < this.positions.length; ++i) {
                         this.positions[i][0] = this.getYRot();
@@ -216,7 +220,7 @@ public class EnderDragonController extends MobEntityController {
 
             Vec3 old = getDeltaMovement();
             boolean res = super.reallyHurt(source, f);
-            if (getPhaseManager().getCurrentPhase() == EnderDragonPhase.HOVERING) {
+            if (getPhaseManager().getCurrentPhase().getPhase() == EnderDragonPhase.HOVERING) {
                 setDeltaMovement(old);
             }
             return res;

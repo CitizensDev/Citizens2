@@ -108,7 +108,7 @@ public class EnderDragonController extends MobEntityController {
 
             Vec3D old = new Vec3D(motX, motY, motZ);
             boolean res = super.dealDamage(source, f);
-            if (getDragonControllerManager().a() == DragonControllerPhase.k) {
+            if (getDragonControllerManager().a().getControllerPhase() == DragonControllerPhase.k) {
                 motX = old.x;
                 motY = old.y;
                 motZ = old.z;
@@ -159,7 +159,11 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
-            if (npc != null && getHealth() > 0) {
+            if (npc != null) {
+                if (getDragonControllerManager().a().getControllerPhase() == DragonControllerPhase.j) {
+                    setHealth(0F);
+                    return;
+                }
                 if (this.c < 0) {
                     for (int i = 0; i < this.b.length; ++i) {
                         this.b[i][0] = this.yaw;

@@ -108,7 +108,7 @@ public class EnderDragonController extends MobEntityController {
 
             Vec3D old = getMot();
             boolean res = super.dealDamage(source, f);
-            if (getDragonControllerManager().a() == DragonControllerPhase.HOVER) {
+            if (getDragonControllerManager().a().getControllerPhase() == DragonControllerPhase.HOVER) {
                 setMot(old);
             }
             return res;
@@ -161,7 +161,11 @@ public class EnderDragonController extends MobEntityController {
                 npc.update();
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
-            if (npc != null && !npc.useMinecraftAI() && !dl()) {
+            if (npc != null && !npc.useMinecraftAI()) {
+                if (dl()) {
+                    setHealth(0F);
+                    return;
+                }
                 if (this.d < 0) {
                     for (int i = 0; i < this.c.length; ++i) {
                         this.c[i][0] = this.yaw;
