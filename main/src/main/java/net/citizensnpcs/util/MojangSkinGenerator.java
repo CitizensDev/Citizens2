@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,28 +13,49 @@ import java.util.concurrent.Executors;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.google.common.io.CharStreams;
+
+import net.citizensnpcs.api.util.Messaging;
+
 public class MojangSkinGenerator {
-    public static JSONObject generateFromPNG(final byte[] png) throws InterruptedException, ExecutionException {
+    public static JSONObject generateFromPNG(final byte[] png, boolean slim)
+            throws InterruptedException, ExecutionException {
         return EXECUTOR.submit(() -> {
             DataOutputStream out = null;
             BufferedReader reader = null;
             try {
-                URL target = new URL("https://api.mineskin.org/generate/upload");
+                URL target = new URL("https://api.mineskin.org/generate/upload" + (slim ? "?model=slim" : ""));
                 HttpURLConnection con = (HttpURLConnection) target.openConnection();
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
+                con.setRequestProperty("User-Agent", "Citizens/2.0");
                 con.setRequestProperty("Cache-Control", "no-cache");
                 con.setRequestProperty("Content-Type", "multipart/form-data;boundary=*****");
                 con.setConnectTimeout(1000);
                 con.setReadTimeout(30000);
                 out = new DataOutputStream(con.getOutputStream());
                 out.writeBytes("--*****\r\n");
-                out.writeBytes("Content-Disposition: form-data; name=\"skin.png\";filename=\"skin.png\"\r\n\r\n");
+                out.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"skin.png\"\r\n");
+                out.writeBytes("Content-Type: image/png\r\n\r\n");
                 out.write(png);
                 out.writeBytes("\r\n");
+                out.writeBytes("--*****\r\n");
+                out.writeBytes("Content-Disposition: form-data; name=\"name\";\r\n\r\n\r\n");
+                if (slim) {
+                    out.writeBytes("--*****\r\n");
+                    out.writeBytes("Content-Disposition: form-data; name=\"variant\";\r\n\r\n");
+                    out.writeBytes("slim\r\n");
+                }
                 out.writeBytes("--*****--\r\n");
                 out.flush();
                 out.close();
+                if (con.getResponseCode() != 200) {
+                    if (Messaging.isDebugging()) {
+                        reader = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+                        Messaging.log(new String(CharStreams.toString(reader)));
+                    }
+                    return null;
+                }
                 reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 JSONObject output = (JSONObject) new JSONParser().parse(reader);
                 JSONObject data = (JSONObject) output.get("data");
@@ -58,7 +78,8 @@ public class MojangSkinGenerator {
         }).get();
     }
 
-    public static JSONObject generateFromURL(final String url) throws InterruptedException, ExecutionException {
+    public static JSONObject generateFromURL(final String url, boolean slim)
+            throws InterruptedException, ExecutionException {
         return EXECUTOR.submit(() -> {
             DataOutputStream out = null;
             BufferedReader reader = null;
@@ -67,11 +88,28 @@ public class MojangSkinGenerator {
                 HttpURLConnection con = (HttpURLConnection) target.openConnection();
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
+                con.setRequestProperty("User-Agent", "Citizens/2.0");
+                con.setRequestProperty("Cache-Control", "no-cache");
+                con.setRequestProperty("Accept", "application/json");
+                con.setRequestProperty("Content-Type", "application/json");
                 con.setConnectTimeout(1000);
                 con.setReadTimeout(30000);
                 out = new DataOutputStream(con.getOutputStream());
-                out.writeBytes("url=" + URLEncoder.encode(url, "UTF-8"));
+                JSONObject req = new JSONObject();
+                req.put("url", url);
+                req.put("name", "");
+                if (slim) {
+                    req.put("variant", "slim");
+                }
+                out.writeBytes(req.toJSONString().replace("\\", ""));
                 out.close();
+                if (con.getResponseCode() != 200) {
+                    if (Messaging.isDebugging()) {
+                        reader = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+                        Messaging.log(new String(CharStreams.toString(reader)));
+                    }
+                    return null;
+                }
                 reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 JSONObject output = (JSONObject) new JSONParser().parse(reader);
                 JSONObject data = (JSONObject) output.get("data");

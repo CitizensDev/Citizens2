@@ -54,11 +54,7 @@ public class MoneyAction extends NPCShopAction {
         Player player = (Player) entity;
         return Transaction.create(() -> {
             return economy.has(player, money);
-        }, () -> {
-            economy.withdrawPlayer(player, money);
-        }, () -> {
-            economy.depositPlayer(player, money);
-        });
+        }, () -> economy.withdrawPlayer(player, money), () -> economy.depositPlayer(player, money));
     }
 
     public static class MoneyActionGUI implements GUI {

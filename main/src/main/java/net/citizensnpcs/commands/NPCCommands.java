@@ -2604,12 +2604,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-c(lear) -l(atest)) [name] (or --url [url] --file [file] or -t [uuid/name] [data] [signature])",
+            usage = "skin (-c(lear) -l(atest)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
             desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
             modifiers = { "skin" },
             min = 1,
             max = 4,
-            flags = "ctl",
+            flags = "ctls",
             permission = "citizens.npc.skin")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skin(final CommandContext args, final CommandSender sender, final NPC npc, @Flag("url") String url,
@@ -2619,21 +2619,23 @@ public class NPCCommands {
         if (args.hasFlag('c')) {
             trait.clearTexture();
         } else if (url != null || file != null) {
-            Messaging.sendErrorTr(sender, Messages.FETCHING_SKIN, file);
+            Messaging.sendTr(sender, Messages.FETCHING_SKIN, file);
             Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), () -> {
                 try {
                     JSONObject data = null;
                     if (file != null) {
-                        File skin = new File(new File(CitizensAPI.getDataFolder(), "skins"), file);
-                        if (!skin.exists()
-                                || !skin.getParentFile().equals(new File(CitizensAPI.getDataFolder(), "skins"))) {
+                        File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
+                        File skin = new File(skinsFolder, file);
+                        if (!skin.exists() || !skin.isFile() || skin.isHidden()
+                                || !skin.getParentFile().equals(skinsFolder)) {
                             Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
                                     () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
                             return;
                         }
-                        data = MojangSkinGenerator.generateFromPNG(Files.readAllBytes(skin.toPath()));
+                        data = MojangSkinGenerator.generateFromPNG(Files.readAllBytes(skin.toPath()),
+                                args.hasFlag('s'));
                     } else {
-                        MojangSkinGenerator.generateFromURL(url);
+                        data = MojangSkinGenerator.generateFromURL(url, args.hasFlag('s'));
                     }
                     String uuid = (String) data.get("uuid");
                     JSONObject texture = (JSONObject) data.get("texture");
@@ -2642,17 +2644,17 @@ public class NPCCommands {
                     Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
                         try {
                             trait.setSkinPersistent(uuid, signature, textureEncoded);
-                            Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url);
+                            Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url == null ? file : url);
                         } catch (IllegalArgumentException e) {
-                            Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url);
+                            Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url == null ? file : url);
                         }
                     });
                 } catch (Throwable t) {
                     if (Messaging.isDebugging()) {
                         t.printStackTrace();
                     }
-                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
-                            () -> Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url));
+                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> Messaging.sendErrorTr(sender,
+                            Messages.ERROR_SETTING_SKIN_URL, url == null ? file : url));
                 }
             });
             return;

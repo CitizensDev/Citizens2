@@ -94,6 +94,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private Settings config;
     private boolean enabled;
     private LocationLookup locationLookup;
+
     private final NMSHelper nmsHelper = new NMSHelper() {
         private boolean SUPPORT_OWNER_PROFILE = true;
 
@@ -555,7 +556,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private void startMetrics() {
         try {
             Metrics metrics = new Metrics(this, 2463);
-
             metrics.addCustomChart(new Metrics.SingleLineChart("total_npcs", new Callable<Integer>() {
                 @Override
                 public Integer call() {

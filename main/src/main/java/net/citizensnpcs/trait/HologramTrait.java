@@ -110,6 +110,7 @@ public class HologramTrait extends Trait {
 
         if (useTextDisplay) {
             ((TextDisplay) hologramNPC.getEntity()).setBillboard(Billboard.CENTER);
+            ((TextDisplay) hologramNPC.getEntity()).setInterpolationDelay(0);
         }
 
         Matcher itemMatcher = ITEM_MATCHER.matcher(line);
@@ -143,14 +144,11 @@ public class HologramTrait extends Trait {
     }
 
     private double getEntityHeight() {
-        return NMS.getHeight(npc.getEntity());
+        return NMS.getHeight(npc.getEntity()) + (useTextDisplay ? 0.27 : 0);
     }
 
     private double getHeight(int lineNumber) {
         double base = (lastNameplateVisible ? 0 : -getLineHeight());
-        if (useTextDisplay) {
-            base += 0.27;
-        }
         for (int i = 0; i <= lineNumber; i++) {
             HologramLine line = lines.get(i);
             base += line.mb + getLineHeight();
