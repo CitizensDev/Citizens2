@@ -2335,6 +2335,8 @@ public class NMSImpl implements NMSBridge {
             .newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
     private static final float DEFAULT_SPEED = 1F;
+    public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EnderDragon.class, true,
+            boolean.class, AABB.class);
     private static EntityDataAccessor<Boolean> ENDERMAN_CREEPY = null;
     private static final MethodHandle ENTITY_FISH_NUM_IN_SCHOOL = NMS.getFirstSetter(AbstractSchoolingFish.class,
             int.class);

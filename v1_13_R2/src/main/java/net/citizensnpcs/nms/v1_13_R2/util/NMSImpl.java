@@ -2115,6 +2115,8 @@ public class NMSImpl implements NMSBridge {
     private static final float DEFAULT_SPEED = 1F;
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bR");
+    public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EntityEnderDragon.class,
+            true, boolean.class, AxisAlignedBB.class);
     private static DataWatcherObject<Boolean> ENDERMAN_ANGRY;
     private static Method ENTITY_FISH_METHOD = NMS.getMethod(EntityFish.class, "t", false, boolean.class);
     private static Field ENTITY_FISH_NUM_IN_SCHOOL;

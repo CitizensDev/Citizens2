@@ -12,6 +12,7 @@ import net.citizensnpcs.nms.v1_19_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_19_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.versioned.EnderDragonTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.PositionImpl;
@@ -96,6 +97,7 @@ public class EnderDragonController extends MobEntityController {
                 if (getFirstPassenger() != null) {
                     setYRot(getFirstPassenger().getBukkitYaw() - 180);
                 }
+
                 Vec3 mot = getDeltaMovement();
                 if (mot.x != 0 || mot.y != 0 || mot.z != 0) {
                     mot = mot.multiply(0.98, 0.91, 0.98);
@@ -104,6 +106,18 @@ public class EnderDragonController extends MobEntityController {
                     }
                     setPos(getX() + mot.x, getY() + mot.y, getZ() + mot.z);
                     setDeltaMovement(mot);
+                }
+
+                if (npc.hasTrait(EnderDragonTrait.class) && npc.getOrAddTrait(EnderDragonTrait.class).isDestroyWalls()
+                        && NMSImpl.ENDERDRAGON_CHECK_WALLS != null) {
+                    for (int i = 0; i < 3; i++) {
+                        try {
+                            this.inWall |= (boolean) NMSImpl.ENDERDRAGON_CHECK_WALLS.invoke(this,
+                                    subEntities[i].getBoundingBox());
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             } else {
                 super.aiStep();

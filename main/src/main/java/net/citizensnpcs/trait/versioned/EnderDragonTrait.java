@@ -18,6 +18,8 @@ import net.citizensnpcs.api.trait.TraitName;
 @TraitName("enderdragontrait")
 public class EnderDragonTrait extends Trait {
     @Persist
+    private boolean destroyWalls;
+    @Persist
     private EnderDragon.Phase phase;
 
     public EnderDragonTrait() {
@@ -28,9 +30,17 @@ public class EnderDragonTrait extends Trait {
         return phase;
     }
 
+    public boolean isDestroyWalls() {
+        return destroyWalls;
+    }
+
     @Override
     public void onSpawn() {
         updateModifiers();
+    }
+
+    public void setDestroyWalls(boolean destroyWalls) {
+        this.destroyWalls = destroyWalls;
     }
 
     public void setPhase(Phase phase) {
@@ -49,7 +59,7 @@ public class EnderDragonTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "enderdragon --phase [phase]",
+            usage = "enderdragon --phase [phase] --destroywalls [true|false]",
             desc = "Control enderdragon modifiers",
             modifiers = { "enderdragon" },
             min = 1,
@@ -57,10 +67,14 @@ public class EnderDragonTrait extends Trait {
             permission = "citizens.npc.enderdragon")
     @Requirements(ownership = true, selected = true, types = EntityType.ENDER_DRAGON)
     public static void enderdragon(CommandContext args, CommandSender sender, NPC npc,
-            @Flag("phase") EnderDragon.Phase phase) throws CommandException {
+            @Flag("phase") EnderDragon.Phase phase, @Flag("destroywalls") Boolean destroyWalls)
+            throws CommandException {
         EnderDragonTrait trait = npc.getOrAddTrait(EnderDragonTrait.class);
         if (phase != null) {
             trait.setPhase(phase);
+        }
+        if (destroyWalls != null) {
+            trait.setDestroyWalls(destroyWalls);
         }
     }
 }

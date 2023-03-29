@@ -12,6 +12,7 @@ import net.citizensnpcs.nms.v1_8_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.versioned.EnderDragonTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
@@ -184,6 +185,18 @@ public class EnderDragonController extends MobEntityController {
                         yaw = Util.getDragonYaw(getBukkitEntity(), motX, motZ);
                     }
                     setPosition(locX + motX, locY + motY, locZ + motZ);
+                }
+
+                if (npc.hasTrait(EnderDragonTrait.class) && npc.getOrAddTrait(EnderDragonTrait.class).isDestroyWalls()
+                        && NMSImpl.ENDERDRAGON_CHECK_WALLS != null) {
+                    for (int i = 0; i < 3; i++) {
+                        try {
+                            this.bx |= (boolean) NMSImpl.ENDERDRAGON_CHECK_WALLS.invoke(this,
+                                    children[i].getBoundingBox());
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             } else {
                 super.m();
