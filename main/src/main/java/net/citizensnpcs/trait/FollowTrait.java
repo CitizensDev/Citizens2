@@ -80,16 +80,15 @@ public class FollowTrait extends Trait {
                 return;
             entity = Bukkit.getPlayer(followingUUID);
             if (entity == null) {
-                return;
+                entity = Bukkit.getEntity(followingUUID);
             }
-            entity = Bukkit.getEntity(followingUUID);
-            if (entity == null) {
+            if (entity == null)
                 return;
-            }
         }
-        if (!isActive()) {
+
+        if (!isActive())
             return;
-        }
+
         if (!npc.getEntity().getWorld().equals(entity.getWorld())) {
             if (Setting.FOLLOW_ACROSS_WORLDS.asBoolean()) {
                 npc.teleport(entity.getLocation(), TeleportCause.PLUGIN);

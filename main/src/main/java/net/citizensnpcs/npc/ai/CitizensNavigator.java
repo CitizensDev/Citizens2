@@ -283,7 +283,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
-        setTarget((params) -> {
+        setTarget(params -> {
             params.straightLineTargetingDistance(100000);
             return new MCTargetStrategy(npc, target, aggressive, params);
         });
@@ -297,7 +297,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
-        setTarget((params) -> new StraightLineNavigationStrategy(npc, target.clone(), params));
+        setTarget(params -> new StraightLineNavigationStrategy(npc, target.clone(), params));
     }
 
     @Override
@@ -308,12 +308,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
-        setTarget(new Function<NavigatorParameters, PathStrategy>() {
-            @Override
-            public PathStrategy apply(NavigatorParameters params) {
-                return new MCTargetStrategy(npc, target, aggressive, params);
-            }
-        });
+        setTarget(params -> new MCTargetStrategy(npc, target, aggressive, params));
     }
 
     @Override
@@ -332,17 +327,14 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
-        setTarget(new Function<NavigatorParameters, PathStrategy>() {
-            @Override
-            public PathStrategy apply(NavigatorParameters params) {
-                if (npc.isFlyable()) {
-                    return new FlyingAStarNavigationStrategy(npc, path, params);
-                } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)
-                        || npc.getEntity() instanceof ArmorStand) {
-                    return new AStarNavigationStrategy(npc, path, params);
-                } else {
-                    return new MCNavigationStrategy(npc, path, params);
-                }
+        setTarget(params -> {
+            if (npc.isFlyable()) {
+                return new FlyingAStarNavigationStrategy(npc, path, params);
+            } else if (params.useNewPathfinder()
+                    || (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof ArmorStand))) {
+                return new AStarNavigationStrategy(npc, path, params);
+            } else {
+                return new MCNavigationStrategy(npc, path, params);
             }
         });
     }
@@ -356,17 +348,14 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
         }
         final Location target = targetIn.clone();
-        setTarget(new Function<NavigatorParameters, PathStrategy>() {
-            @Override
-            public PathStrategy apply(NavigatorParameters params) {
-                if (npc.isFlyable()) {
-                    return new FlyingAStarNavigationStrategy(npc, target, params);
-                } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)
-                        || npc.getEntity() instanceof ArmorStand) {
-                    return new AStarNavigationStrategy(npc, target, params);
-                } else {
-                    return new MCNavigationStrategy(npc, target, params);
-                }
+        setTarget(params -> {
+            if (npc.isFlyable()) {
+                return new FlyingAStarNavigationStrategy(npc, target, params);
+            } else if (params.useNewPathfinder()
+                    || (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof ArmorStand))) {
+                return new AStarNavigationStrategy(npc, target, params);
+            } else {
+                return new MCNavigationStrategy(npc, target, params);
             }
         });
     }

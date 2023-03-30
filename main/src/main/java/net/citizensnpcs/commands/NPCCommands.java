@@ -960,8 +960,7 @@ public class NPCCommands {
                 if (!(sender instanceof ConsoleCommandSender)
                         && !followingNPC.getOrAddTrait(Owner.class).isOwnedBy(sender))
                     throw new CommandException(CommandMessages.MUST_BE_OWNER);
-                boolean following = followingNPC.getOrAddTrait(FollowTrait.class).toggle(followingNPC.getEntity(),
-                        protect);
+                boolean following = npc.getOrAddTrait(FollowTrait.class).toggle(followingNPC.getEntity(), protect);
                 Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
                         followingNPC.getName());
             };
