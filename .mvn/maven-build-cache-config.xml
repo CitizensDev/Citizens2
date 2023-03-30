@@ -12,7 +12,7 @@
     </configuration>
     <input>
         <global>
-            <glob> {*.java,*.yaml,*.properties} </glob>
+            <glob> {*.java,*.yml,*.yaml,*.properties} </glob>
             <includes>
                 <include>src/</include>
             </includes>
