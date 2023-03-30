@@ -1,5 +1,8 @@
 package net.citizensnpcs.nms.v1_17_R1.entity;
 
+import java.lang.invoke.MethodHandle;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEnderDragon;
@@ -20,6 +23,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
@@ -117,6 +121,24 @@ public class EnderDragonController extends MobEntityController {
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
+                    }
+                }
+                if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
+                    try {
+                        KNOCKBACK.invoke(this,
+                                this.level.getEntities(this,
+                                        subEntities[6].getBoundingBox().inflate(4.0, 2.0, 4.0).move(0.0, -2.0, 0.0),
+                                        EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+                        KNOCKBACK.invoke(this,
+                                this.level.getEntities(this,
+                                        subEntities[7].getBoundingBox().inflate(4.0, 2.0, 4.0).move(0.0, -2.0, 0.0),
+                                        EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+                        HURT.invoke(this, this.level.getEntities(this, subEntities[0].getBoundingBox().inflate(1.0),
+                                EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+                        HURT.invoke(this, this.level.getEntities(this, subEntities[1].getBoundingBox().inflate(1.0),
+                                EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+                    } catch (Throwable t) {
+                        t.printStackTrace();
                     }
                 }
             } else {
@@ -233,5 +255,8 @@ public class EnderDragonController extends MobEntityController {
         public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
             return NMSImpl.fluidPush(npc, this, () -> super.updateFluidHeightAndDoFluidPushing(Tag, d0));
         }
+
+        private static final MethodHandle HURT = NMS.getMethodHandle(EnderDragon.class, "b", true, List.class);
+        private static final MethodHandle KNOCKBACK = NMS.getMethodHandle(EnderDragon.class, "a", true, List.class);
     }
 }

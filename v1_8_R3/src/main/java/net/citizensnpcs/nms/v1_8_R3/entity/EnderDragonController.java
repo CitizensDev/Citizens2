@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_8_R3.entity;
 
+import java.lang.invoke.MethodHandle;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEnderDragon;
@@ -198,6 +200,18 @@ public class EnderDragonController extends MobEntityController {
                         }
                     }
                 }
+                if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
+                    try {
+                        KNOCKBACK.invoke(this, this.world.getEntities(this,
+                                children[6].getBoundingBox().grow(4.0, 2.0, 4.0).c(0.0, -2.0, 0.0)));
+                        KNOCKBACK.invoke(this, this.world.getEntities(this,
+                                children[7].getBoundingBox().grow(4.0, 2.0, 4.0).c(0.0, -2.0, 0.0)));
+                        HURT.invoke(this, this.world.getEntities(this, children[0].getBoundingBox().grow(1, 1, 1.0)));
+                        HURT.invoke(this, this.world.getEntities(this, children[1].getBoundingBox().grow(1, 1, 1.0)));
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
             } else {
                 super.m();
             }
@@ -207,5 +221,10 @@ public class EnderDragonController extends MobEntityController {
         protected String z() {
             return NMSImpl.getSoundEffect(npc, super.z(), NPC.Metadata.AMBIENT_SOUND);
         }
+
+        private static final MethodHandle HURT = NMS.getMethodHandle(EntityEnderDragon.class, "b", true,
+                java.util.List.class);
+        private static final MethodHandle KNOCKBACK = NMS.getMethodHandle(EntityEnderDragon.class, "a", true,
+                java.util.List.class);
     }
 }

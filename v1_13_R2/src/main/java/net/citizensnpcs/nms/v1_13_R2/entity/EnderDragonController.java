@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 
 import org.bukkit.Bukkit;
@@ -25,6 +26,7 @@ import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityEnderDragon;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.FluidType;
+import net.minecraft.server.v1_13_R2.IEntitySelector;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.Tag;
@@ -223,6 +225,20 @@ public class EnderDragonController extends MobEntityController {
                         }
                     }
                 }
+                if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
+                    try {
+                        KNOCKBACK.invoke(this, this.world.getEntities(this,
+                                children[6].getBoundingBox().grow(4.0, 2.0, 4.0).d(0.0, -2.0, 0.0), IEntitySelector.e));
+                        KNOCKBACK.invoke(this, this.world.getEntities(this,
+                                children[7].getBoundingBox().grow(4.0, 2.0, 4.0).d(0.0, -2.0, 0.0), IEntitySelector.e));
+                        HURT.invoke(this,
+                                this.world.getEntities(this, children[0].getBoundingBox().g(1.0), IEntitySelector.e));
+                        HURT.invoke(this,
+                                this.world.getEntities(this, children[1].getBoundingBox().g(1.0), IEntitySelector.e));
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
             } else {
                 try {
                     super.movementTick();
@@ -244,6 +260,10 @@ public class EnderDragonController extends MobEntityController {
             return super.n(entity);
         }
 
+        private static final MethodHandle HURT = NMS.getMethodHandle(EntityEnderDragon.class, "b", true,
+                java.util.List.class);
+        private static final MethodHandle KNOCKBACK = NMS.getMethodHandle(EntityEnderDragon.class, "a", true,
+                java.util.List.class);
         private static final Method MOVEMENT_TICK = NMS.getMethod(EntityEnderDragon.class, "k", false);
     }
 }

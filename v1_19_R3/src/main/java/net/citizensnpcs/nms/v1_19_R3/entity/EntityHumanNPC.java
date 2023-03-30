@@ -408,6 +408,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     private void updatePackets(boolean navigating) {
         if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
+
         effectsDirty = true;
         boolean itemChanged = false;
         for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -425,6 +426,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             vals.add(new Pair<EquipmentSlot, ItemStack>(slot, getItemBySlot(slot)));
         }
+
         Packet<?>[] packets = { new ClientboundSetEquipmentPacket(getId(), vals) };
         NMSImpl.sendPacketsNearby(getBukkitEntity(), getBukkitEntity().getLocation(packetLocationCache), packets);
     }

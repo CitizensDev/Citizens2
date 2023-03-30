@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_12_R1.entity;
 
+import java.lang.invoke.MethodHandle;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEnderDragon;
@@ -20,6 +22,7 @@ import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.DragonControllerPhase;
 import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.EntityEnderDragon;
+import net.minecraft.server.v1_12_R1.IEntitySelector;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.SoundEffect;
 import net.minecraft.server.v1_12_R1.Vec3D;
@@ -212,9 +215,28 @@ public class EnderDragonController extends MobEntityController {
                         }
                     }
                 }
+                if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
+                    try {
+                        KNOCKBACK.invoke(this, this.world.getEntities(this,
+                                children[6].getBoundingBox().grow(4.0, 2.0, 4.0).d(0.0, -2.0, 0.0), IEntitySelector.e));
+                        KNOCKBACK.invoke(this, this.world.getEntities(this,
+                                children[7].getBoundingBox().grow(4.0, 2.0, 4.0).d(0.0, -2.0, 0.0), IEntitySelector.e));
+                        HURT.invoke(this,
+                                this.world.getEntities(this, children[0].getBoundingBox().g(1.0), IEntitySelector.e));
+                        HURT.invoke(this,
+                                this.world.getEntities(this, children[1].getBoundingBox().g(1.0), IEntitySelector.e));
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
             } else {
                 super.n();
             }
         }
+
+        private static final MethodHandle HURT = NMS.getMethodHandle(EntityEnderDragon.class, "b", true,
+                java.util.List.class);
+        private static final MethodHandle KNOCKBACK = NMS.getMethodHandle(EntityEnderDragon.class, "a", true,
+                java.util.List.class);
     }
 }

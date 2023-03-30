@@ -94,7 +94,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private Settings config;
     private boolean enabled;
     private LocationLookup locationLookup;
-
     private final NMSHelper nmsHelper = new NMSHelper() {
         private boolean SUPPORT_OWNER_PROFILE = true;
 

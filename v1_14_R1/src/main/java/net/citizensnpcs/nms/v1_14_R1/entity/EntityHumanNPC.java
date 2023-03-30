@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_14_R1.entity;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,6 @@ import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -62,6 +62,7 @@ import net.minecraft.server.v1_14_R1.NavigationAbstract;
 import net.minecraft.server.v1_14_R1.NetworkManager;
 import net.minecraft.server.v1_14_R1.Packet;
 import net.minecraft.server.v1_14_R1.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_14_R1.PacketPlayOutUpdateAttributes;
 import net.minecraft.server.v1_14_R1.PathType;
 import net.minecraft.server.v1_14_R1.PlayerInteractManager;
 import net.minecraft.server.v1_14_R1.SoundEffect;
@@ -181,8 +182,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             NMSImpl.flyingMoveLogic(this, vec3d);
         }
     }
-
-    
 
     @Override
     public void f(double x, double y, double z) {
@@ -435,6 +434,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private void updatePackets(boolean navigating) {
         if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
+
+
         updateEffects = true;
         boolean itemChanged = false;
         for (EnumItemSlot slot : EnumItemSlot.values()) {

@@ -48,7 +48,7 @@ public class HologramTrait extends Trait {
     private NPC nameNPC;
     private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
     private int t;
-    private boolean useTextDisplay = SUPPORTS_TEXT_DISPLAY;
+    private boolean useTextDisplay;
 
     public HologramTrait() {
         super("hologramtrait");
@@ -269,7 +269,7 @@ public class HologramTrait extends Trait {
         }
 
         if (currentLoc == null) {
-            currentLoc = npc.getStoredLocation();
+            currentLoc = npc.getStoredLocation().clone();
         }
 
         boolean nameplateVisible = Boolean
@@ -392,7 +392,6 @@ public class HologramTrait extends Trait {
      */
     public void setLineHeight(double height) {
         lineHeight = height;
-
         reloadLineHolograms();
     }
 

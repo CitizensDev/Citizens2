@@ -398,6 +398,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private void updatePackets(boolean navigating) {
         if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
+
         updateEffects = true;
         boolean itemChanged = false;
         for (EnumItemSlot slot : EnumItemSlot.values()) {

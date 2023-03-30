@@ -60,8 +60,7 @@ public class PlayerAnimationImpl {
     }
 
     protected static void playDefaultAnimation(ServerPlayer player, int radius, int code) {
-        ClientboundAnimatePacket packet = new ClientboundAnimatePacket(player, code);
-        sendPacketNearby(packet, player, radius);
+        sendPacketNearby(new ClientboundAnimatePacket(player, code), player, radius);
     }
 
     private static void sendEntityData(int radius, final ServerPlayer player) {

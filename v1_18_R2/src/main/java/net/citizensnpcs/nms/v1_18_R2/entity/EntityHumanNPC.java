@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandle;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -50,6 +51,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,6 +61,7 @@ import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -403,6 +406,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     private void updatePackets(boolean navigating) {
         if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
+
+
         effectsDirty = true;
         boolean itemChanged = false;
         for (EquipmentSlot slot : EquipmentSlot.values()) {

@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_8_R3.entity;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ import net.minecraft.server.v1_8_R3.NavigationAbstract;
 import net.minecraft.server.v1_8_R3.NetworkManager;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateAttributes;
 import net.minecraft.server.v1_8_R3.PlayerInteractManager;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import net.minecraft.server.v1_8_R3.WorldSettings;
@@ -392,6 +394,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private void updatePackets(boolean navigating) {
         if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
+
+
         updateEffects = true;
         boolean itemChanged = false;
         for (int slot = 0; slot < this.inventory.armor.length; slot++) {

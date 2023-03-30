@@ -3,6 +3,7 @@ package net.citizensnpcs.nms.v1_13_R2.entity;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,6 @@ import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -64,6 +64,7 @@ import net.minecraft.server.v1_13_R2.NavigationAbstract;
 import net.minecraft.server.v1_13_R2.NetworkManager;
 import net.minecraft.server.v1_13_R2.Packet;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_13_R2.PacketPlayOutUpdateAttributes;
 import net.minecraft.server.v1_13_R2.PathType;
 import net.minecraft.server.v1_13_R2.PlayerInteractManager;
 import net.minecraft.server.v1_13_R2.SoundEffect;
@@ -192,8 +193,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             }
         }, 35); // give enough time for death and smoke animation
     }
-
-    
 
     @Override
     public void f(double x, double y, double z) {
@@ -430,6 +429,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private void updatePackets(boolean navigating) {
         if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
+
+
         updateEffects = true;
         boolean itemChanged = false;
         for (EnumItemSlot slot : EnumItemSlot.values()) {

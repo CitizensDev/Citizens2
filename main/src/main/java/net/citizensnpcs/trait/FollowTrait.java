@@ -23,8 +23,6 @@ import net.citizensnpcs.api.trait.TraitName;
  */
 @TraitName("followtrait")
 public class FollowTrait extends Trait {
-    @Persist("active")
-    private boolean enabled = false;
     private Entity entity;
     private Flocker flock;
     @Persist
@@ -44,11 +42,11 @@ public class FollowTrait extends Trait {
      * Returns whether the trait is actively following a {@link Entity}.
      */
     public boolean isActive() {
-        return enabled && npc.isSpawned() && entity != null;
+        return npc.isSpawned() && entity != null;
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return followingUUID != null;
     }
 
     @Override
@@ -119,15 +117,12 @@ public class FollowTrait extends Trait {
      */
     public boolean toggle(Entity entity, boolean protect) {
         this.protect = protect;
-        if (entity.getUniqueId().equals(this.followingUUID) || this.followingUUID == null) {
-            this.enabled = !enabled;
-        }
-        this.followingUUID = entity.getUniqueId();
+        this.followingUUID = entity.getUniqueId().equals(followingUUID) ? null : entity.getUniqueId();
         if (npc.getNavigator().isNavigating() && this.entity != null && npc.getNavigator().getEntityTarget() != null
                 && this.entity == npc.getNavigator().getEntityTarget().getTarget()) {
             npc.getNavigator().cancelNavigation();
         }
         this.entity = null;
-        return this.enabled;
+        return followingUUID != null;
     }
 }
