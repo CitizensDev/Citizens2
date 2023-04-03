@@ -55,6 +55,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -257,6 +258,7 @@ import net.citizensnpcs.trait.versioned.VillagerTrait;
 import net.citizensnpcs.trait.versioned.WardenTrait;
 import net.citizensnpcs.util.EmptyChannel;
 import net.citizensnpcs.util.EntityPacketTracker;
+import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
@@ -270,6 +272,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundBundlePacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -476,15 +479,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity) {
+    @SuppressWarnings("rawtypes")
+    public Iterable<Object> createBundlePacket(List source) {
+        return source.isEmpty() ? ImmutableList.of() : ImmutableList.of(new ClientboundBundlePacket(source));
+    }
+
+    @Override
+    public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity, PacketAggregator agg) {
         Entity handle = getHandle(entity);
         Set<ServerPlayerConnection> linked = Sets.newIdentityHashSet();
         ServerEntity tracker = new ServerEntity((ServerLevel) handle.level, handle, handle.getType().updateInterval(),
-                handle.getType().trackDeltas(), packet -> {
-                    for (ServerPlayerConnection link : linked) {
-                        link.send(packet);
-                    }
-                }, linked);
+                handle.getType().trackDeltas(), agg::send, linked);
         return new EntityPacketTracker() {
             @Override
             public void link(Player player) {
@@ -492,6 +497,7 @@ public class NMSImpl implements NMSBridge {
                 handle.unsetRemoved();
                 tracker.addPairing(p);
                 linked.add(p.connection);
+                agg.add(p.getUUID(), packet -> p.connection.send((Packet<?>) packet));
             }
 
             @Override
@@ -504,6 +510,7 @@ public class NMSImpl implements NMSBridge {
                 ServerPlayer p = (ServerPlayer) getHandle(player);
                 tracker.removePairing(p);
                 linked.remove(p.connection);
+                agg.removeConnection(p.getUUID());
             }
 
             @Override
@@ -728,7 +735,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final Location dest,
             final NavigatorParameters params) {
-        return getTargetNavigator(entity, params, (input) -> {
+        return getTargetNavigator(entity, params, input -> {
             return input.moveTo(dest.getX(), dest.getY(), dest.getZ(), params.speed());
         });
     }

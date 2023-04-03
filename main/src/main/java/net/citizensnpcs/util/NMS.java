@@ -55,6 +55,7 @@ import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
+import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
 
 public class NMS {
     private NMS() {
@@ -118,8 +119,16 @@ public class NMS {
      * an Exception like it should.
      */
 
+    public static Iterable<Object> createBundlePacket(List<Object> packets) {
+        return BRIDGE.createBundlePacket(packets);
+    }
+
     public static EntityPacketTracker createPacketTracker(Entity entity) {
-        return BRIDGE.createPacketTracker(entity);
+        return createPacketTracker(entity, new PacketAggregator());
+    }
+
+    public static EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg) {
+        return BRIDGE.createPacketTracker(entity, agg);
     }
 
     public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {

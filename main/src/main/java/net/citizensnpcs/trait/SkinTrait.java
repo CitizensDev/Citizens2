@@ -146,10 +146,10 @@ public class SkinTrait extends Trait {
     }
 
     /**
-     * Sets the skin data directly, respawning the NPC if spawned
+     * Sets the skin data directly, respawning the NPC if spawned.
      *
      * @param skinName
-     *            Skin name, for caching purposes
+     *            Skin name or cache key
      * @param signature
      *            {@link #getSignature()}
      * @param data

@@ -223,6 +223,7 @@ import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.trait.versioned.VillagerTrait;
 import net.citizensnpcs.util.EmptyChannel;
 import net.citizensnpcs.util.EntityPacketTracker;
+import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
@@ -403,15 +404,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity) {
+    public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity, PacketAggregator agg) {
         Entity handle = getHandle(entity);
         Set<EntityPlayer> linked = Sets.newIdentityHashSet();
         EntityTrackerEntry tracker = new EntityTrackerEntry((WorldServer) handle.world, handle,
-                handle.getEntityType().getUpdateInterval(), handle.getEntityType().isDeltaTracking(), packet -> {
-                    for (EntityPlayer link : linked) {
-                        link.playerConnection.sendPacket(packet);
-                    }
-                }, linked);
+                handle.getEntityType().getUpdateInterval(), handle.getEntityType().isDeltaTracking(), agg::send,
+                linked);
         return new EntityPacketTracker() {
             @Override
             public void link(Player player) {
@@ -419,6 +417,7 @@ public class NMSImpl implements NMSBridge {
                 handle.dead = false;
                 tracker.b(p);
                 linked.add(p);
+                agg.add(p.getUniqueID(), packet -> p.playerConnection.sendPacket((Packet<?>) packet));
                 handle.dead = true;
             }
 
@@ -432,6 +431,7 @@ public class NMSImpl implements NMSBridge {
                 EntityPlayer p = (EntityPlayer) getHandle(player);
                 tracker.a(p);
                 linked.remove(p);
+                agg.removeConnection(p.getUniqueID());
             }
 
             @Override

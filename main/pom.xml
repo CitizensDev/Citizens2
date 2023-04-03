@@ -46,7 +46,7 @@
         <repository>
             <id>viaversion-repo</id>
             <url>https://repo.viaversion.com</url>
-        </repository>
+        </repository> 
     </repositories>
     <dependencies>
         <dependency>
@@ -55,7 +55,7 @@
             <version>${craftbukkit.version}</version>
             <type>jar</type>
             <scope>provided</scope>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>

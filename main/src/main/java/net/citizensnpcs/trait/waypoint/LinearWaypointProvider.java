@@ -238,7 +238,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         };
     }
 
-    private final class LinearWaypointEditor extends WaypointEditor {
+    private class LinearWaypointEditor extends WaypointEditor {
         Conversation conversation;
         boolean editing = true;
         EntityMarkers<Waypoint> markers;
@@ -324,12 +324,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             String message = event.getMessage();
             if (message.equalsIgnoreCase("triggers")) {
                 event.setCancelled(true);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                    @Override
-                    public void run() {
-                        conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
-                        conversation.addConversationAbandonedListener(e -> conversation = null);
-                    }
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
+                    conversation.addConversationAbandonedListener(e -> conversation = null);
                 });
             } else if (message.equalsIgnoreCase("clear")) {
                 event.setCancelled(true);

@@ -41,6 +41,7 @@ import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
+import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
 
 public interface NMSBridge {
     default void activate(Entity entity) {
@@ -54,9 +55,11 @@ public interface NMSBridge {
 
     public void cancelMoveDestination(Entity entity);
 
-    default public EntityPacketTracker createPacketTracker(Entity entity) {
-        throw new UnsupportedOperationException();
+    public default Iterable<Object> createBundlePacket(List<Object> packets) {
+        return packets;
     }
+
+    public EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg);
 
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable;
 
@@ -80,9 +83,9 @@ public interface NMSBridge {
 
     public float getHorizontalMovement(Entity entity);
 
-    public CompoundTag getNBT(ItemStack item);
+    public CompoundTag getNBT(ItemStack item);;
 
-    public NPC getNPC(Entity entity);;
+    public NPC getNPC(Entity entity);
 
     public List<Entity> getPassengers(Entity entity);
 
@@ -145,9 +148,9 @@ public interface NMSBridge {
 
     public void removeFromServerPlayerList(Player player);
 
-    public void removeFromWorld(org.bukkit.entity.Entity entity);
+    public void removeFromWorld(org.bukkit.entity.Entity entity);;
 
-    public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity);;
+    public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity);
 
     public void replaceTrackerEntry(Entity entity);
 
@@ -170,7 +173,7 @@ public interface NMSBridge {
         throw new UnsupportedOperationException();
     }
 
-    public void setBodyYaw(Entity entity, float yaw);
+    public void setBodyYaw(Entity entity, float yaw);;
 
     public void setBoundingBox(Entity entity, BoundingBox box);;
 
@@ -178,11 +181,11 @@ public interface NMSBridge {
         throw new UnsupportedOperationException();
     };
 
-    public void setCustomName(Entity entity, Object component, String string);;
+    public void setCustomName(Entity entity, Object component, String string);
 
-    public void setDestination(Entity entity, double x, double y, double z, float speed);
+    public void setDestination(Entity entity, double x, double y, double z, float speed);;
 
-    public void setDimensions(Entity entity, EntityDim desired);;
+    public void setDimensions(Entity entity, EntityDim desired);
 
     public void setEndermanAngry(Enderman enderman, boolean angry);
 

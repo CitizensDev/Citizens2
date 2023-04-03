@@ -3,7 +3,9 @@ package net.citizensnpcs.nms.v1_19_R3.entity.nonliving;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftFishHook;
 import org.bukkit.entity.FishHook;
@@ -39,6 +41,21 @@ public class FishingHookController extends MobEntityController {
     }
 
     @Override
+    protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {
+        ServerLevel level = ((CraftWorld) at.getWorld()).getHandle();
+        ServerPlayer sp = new ServerPlayer(level.getServer(), level,
+                new GameProfile(UUID.randomUUID(), "dummyfishhook")) {
+        };
+        sp.setPos(at.getX(), at.getY(), at.getZ());
+        sp.setYRot(at.getYaw());
+        sp.setXRot(at.getPitch());
+        sp.setHealth(20F);
+        sp.getInventory().items.set(sp.getInventory().selected, new ItemStack(Items.FISHING_ROD, 1));
+        final EntityFishingHookNPC handle = new EntityFishingHookNPC(EntityType.FISHING_BOBBER, level, npc, sp);
+        return handle.getBukkitEntity();
+    }
+
+    @Override
     public FishHook getBukkitEntity() {
         return (FishHook) super.getBukkitEntity();
     }
@@ -47,13 +64,11 @@ public class FishingHookController extends MobEntityController {
         private final CitizensNPC npc;
 
         public EntityFishingHookNPC(EntityType<? extends FishingHook> types, Level level) {
-            this(types, level, null);
+            this(types, level, null, null);
         }
 
-        public EntityFishingHookNPC(EntityType<? extends FishingHook> types, Level level, NPC npc) {
-            super(new ServerPlayer(((ServerLevel) level).getServer(), (ServerLevel) level,
-                    new GameProfile(UUID.randomUUID(), "dummyfishhook")) {
-            }, level, 0, 0);
+        public EntityFishingHookNPC(EntityType<? extends FishingHook> types, Level level, NPC npc, ServerPlayer sp) {
+            super(sp, level, 0, 0);
             this.npc = (CitizensNPC) npc;
         }
 
@@ -122,10 +137,7 @@ public class FishingHookController extends MobEntityController {
         @Override
         public void tick() {
             if (npc != null) {
-                ((ServerPlayer) getPlayerOwner()).setHealth(20F);
                 getPlayerOwner().unsetRemoved();
-                ((ServerPlayer) getPlayerOwner()).getInventory().items.set(
-                        ((ServerPlayer) getPlayerOwner()).getInventory().selected, new ItemStack(Items.FISHING_ROD, 1));
                 NMSImpl.setLife(this, 0);
                 npc.update();
             } else {

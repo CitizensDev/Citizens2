@@ -237,6 +237,7 @@ import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.trait.versioned.VillagerTrait;
 import net.citizensnpcs.util.EmptyChannel;
 import net.citizensnpcs.util.EntityPacketTracker;
+import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.NMSBridge;
@@ -452,15 +453,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity) {
+    public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity, PacketAggregator agg) {
         Entity handle = getHandle(entity);
         Set<ServerPlayerConnection> linked = Sets.newIdentityHashSet();
         ServerEntity tracker = new ServerEntity((ServerLevel) handle.level, handle, handle.getType().updateInterval(),
-                handle.getType().trackDeltas(), packet -> {
-                    for (ServerPlayerConnection link : linked) {
-                        link.send(packet);
-                    }
-                }, linked);
+                handle.getType().trackDeltas(), agg::send, linked);
         return new EntityPacketTracker() {
             @Override
             public void link(Player player) {
@@ -468,6 +465,7 @@ public class NMSImpl implements NMSBridge {
                 handle.unsetRemoved();
                 tracker.addPairing(p);
                 linked.add(p.connection);
+                agg.add(p.getUUID(), packet -> p.connection.send((Packet<?>) packet));
             }
 
             @Override
@@ -480,6 +478,7 @@ public class NMSImpl implements NMSBridge {
                 ServerPlayer p = (ServerPlayer) getHandle(player);
                 tracker.removePairing(p);
                 linked.remove(p.connection);
+                agg.removeConnection(p.getUUID());
             }
 
             @Override

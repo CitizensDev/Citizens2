@@ -142,6 +142,7 @@ public class Messages {
     public static final String GUIDED_WAYPOINT_EDITOR_ADDED_GUIDE = "citizens.editors.waypoints.guided.added-guide";
     public static final String GUIDED_WAYPOINT_EDITOR_ALREADY_TAKEN = "citizens.editors.waypoints.guided.already-taken";
     public static final String GUIDED_WAYPOINT_EDITOR_BEGIN = "citizens.editors.waypoints.guided.begin";
+    public static final String GUIDED_WAYPOINT_EDITOR_DISTANCE_SET = "citizens.editors.waypoints.guided.distance-set";
     public static final String GUIDED_WAYPOINT_EDITOR_END = "citizens.editors.waypoints.guided.end";
     public static final String HEADONLY_SET = "citizens.commands.npc.lookclose.headonly-set";
     public static final String HEADONLY_UNSET = "citizens.commands.npc.lookclose.headonly-unset";
