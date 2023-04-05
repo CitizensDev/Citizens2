@@ -48,26 +48,35 @@ public class CommandAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(Entity entity) {
+    public int getMaxRepeats(Entity entity) {
+        return -1;
+    }
+
+    @Override
+    public Transaction grant(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;
         return Transaction.create(() -> true, () -> {
-            for (String command : commands) {
-                Util.runCommand(null, player, command, op, !server);
+            for (int i = 0; i < repeats; i++) {
+                for (String command : commands) {
+                    Util.runCommand(null, player, command, op, !server);
+                }
             }
         }, () -> {
         });
     }
 
     @Override
-    public Transaction take(Entity entity) {
+    public Transaction take(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;
         return Transaction.create(() -> true, () -> {
-            for (String command : commands) {
-                Util.runCommand(null, player, command, op, !server);
+            for (int i = 0; i < repeats; i++) {
+                for (String command : commands) {
+                    Util.runCommand(null, player, command, op, !server);
+                }
             }
         }, () -> {
         });
@@ -122,10 +131,7 @@ public class CommandAction extends NPCShopAction {
             }
             ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("COMMAND_BLOCK", "COMMAND")),
                     "Run commands as server", base.server ? ChatColor.GREEN + "On" : ChatColor.RED + "OFF");
-            ctx.getSlot(3 * 9 + 3).addClickHandler(InputMenus.clickToggle((res) -> {
-                base.server = res;
-                return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
-            }, base.server));
+            ctx.getSlot(3 * 9 + 3).addClickHandler(InputMenus.toggler((res) -> base.server = res, base.server));
             ctx.getSlot(3 * 9 + 4).setItemStack(
                     new ItemStack(Util.getFallbackMaterial("COMPARATOR", "REDSTONE_COMPARATOR")), "Run commands as op",
                     base.op ? ChatColor.GREEN + "On" : ChatColor.RED + "OFF");

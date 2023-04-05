@@ -29,30 +29,39 @@ public class ExperienceAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(Entity entity) {
+    public int getMaxRepeats(Entity entity) {
+        if (!(entity instanceof Player))
+            return 0;
+        return ((Player) entity).getLevel() / exp;
+    }
+
+    @Override
+    public Transaction grant(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;
+        int amount = exp * repeats;
         return Transaction.create(() -> {
             return true;
         }, () -> {
-            player.setLevel(player.getLevel() + exp);
+            player.setLevel(player.getLevel() + amount);
         }, () -> {
-            player.setLevel(player.getLevel() - exp);
+            player.setLevel(player.getLevel() - amount);
         });
     }
 
     @Override
-    public Transaction take(Entity entity) {
+    public Transaction take(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;
+        int amount = exp * repeats;
         return Transaction.create(() -> {
-            return player.getLevel() >= exp;
+            return player.getLevel() >= amount;
         }, () -> {
-            player.setLevel(player.getLevel() - exp);
+            player.setLevel(player.getLevel() - amount);
         }, () -> {
-            player.setLevel(player.getLevel() + exp);
+            player.setLevel(player.getLevel() + amount);
         });
     }
 

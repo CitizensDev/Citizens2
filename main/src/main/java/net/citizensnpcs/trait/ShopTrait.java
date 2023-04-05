@@ -262,7 +262,24 @@ public class ShopTrait extends Trait {
         @Persist
         private ItemStack display;
         @Persist
+        private boolean maxRepeatsOnShiftClick;
+        @Persist
         private final List<NPCShopAction> result = Lists.newArrayList();
+
+        public List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
+            List<Transaction> pending = Lists.newArrayList();
+            for (NPCShopAction action : actions) {
+                Transaction take = func.apply(action);
+                if (!take.isPossible()) {
+                    pending.forEach(a -> a.rollback());
+                    return null;
+                } else {
+                    take.run();
+                    pending.add(take);
+                }
+            }
+            return pending;
+        }
 
         private void changeAction(List<NPCShopAction> source, Function<NPCShopAction, Boolean> filter,
                 NPCShopAction delta) {
@@ -298,21 +315,6 @@ public class ShopTrait extends Trait {
             }
         }
 
-        public List<Transaction> execute(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
-            List<Transaction> pending = Lists.newArrayList();
-            for (NPCShopAction action : actions) {
-                Transaction take = func.apply(action);
-                if (!take.isPossible()) {
-                    pending.forEach(a -> a.rollback());
-                    return null;
-                } else {
-                    take.run();
-                    pending.add(take);
-                }
-            }
-            return pending;
-        }
-
         public ItemStack getDisplayItem(Player player) {
             if (display == null)
                 return null;
@@ -323,12 +325,8 @@ public class ShopTrait extends Trait {
             }
             if (!meta.hasLore()) {
                 List<String> lore = Lists.newArrayList();
-                if (cost.size() > 0) {
-                    result.forEach(a -> lore.add(a.describe()));
-                }
-                if (result.size() > 0) {
-                    result.forEach(a -> lore.add(a.describe()));
-                }
+                cost.forEach(a -> lore.add(a.describe()));
+                result.forEach(a -> lore.add(a.describe()));
             }
             if (meta.hasLore()) {
                 meta.setLore(Lists.transform(meta.getLore(), line -> placeholders(line, player)));
@@ -351,11 +349,22 @@ public class ShopTrait extends Trait {
                         placeholders(clickToConfirmMessage, (Player) event.getWhoClicked()));
                 return;
             }
-            List<Transaction> take = execute(cost, action -> action.take(event.getWhoClicked()));
+            int max = Integer.MAX_VALUE;
+            if (maxRepeatsOnShiftClick && event.isShiftClick()) {
+                for (NPCShopAction action : cost) {
+                    int r = action.getMaxRepeats(event.getWhoClicked());
+                    if (r != -1) {
+                        max = Math.min(max, r);
+                    }
+                }
+            }
+            final int repeats = max == Integer.MAX_VALUE ? 1 : max;
+            List<Transaction> take = apply(cost, action -> action.take(event.getWhoClicked(), repeats));
             if (take == null)
                 return;
-            if (execute(result, action -> action.grant(event.getWhoClicked())) == null) {
+            if (apply(result, action -> action.grant(event.getWhoClicked(), repeats)) == null) {
                 take.forEach(a -> a.rollback());
+                return;
             }
             if (clickMessage != null) {
                 Messaging.sendColorless(event.getWhoClicked(),
@@ -387,14 +396,14 @@ public class ShopTrait extends Trait {
         @MenuPattern(
                 offset = { 0, 6 },
                 slots = { @MenuSlot(pat = 'x', material = Material.AIR) },
-                value = "x x\n x \nx x")
+                value = "xxx\nxxx\nxxx")
         private InventoryMenuPattern actionItems;
         private NPCShopItem base;
         private final Consumer<NPCShopItem> callback;
         @MenuPattern(
                 offset = { 0, 0 },
                 slots = { @MenuSlot(pat = 'x', material = Material.AIR) },
-                value = "x x\n x \nx x")
+                value = "xxx\nxxx\nxxx")
         private InventoryMenuPattern costItems;
         private MenuContext ctx;
         private final NPCShopItem modified;
@@ -412,7 +421,7 @@ public class ShopTrait extends Trait {
                 ctx.getSlot(9 * 4 + 4).setItemStack(modified.getDisplayItem(null));
             }
             ctx.getSlot(9 * 3 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
-                    "Set message to send on click, currently:",
+                    "Set message to send on click, currently:\n",
                     modified.clickMessage == null ? "Unset" : modified.clickMessage);
             ctx.getSlot(9 * 3 + 3).setClickHandler(
                     e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.clickMessage, s -> {
@@ -428,6 +437,11 @@ public class ShopTrait extends Trait {
                         modified.clickToConfirmMessage = s;
                         ctx.getSlot(9 * 3 + 5).setDescription(modified.clickToConfirmMessage);
                     })));
+
+            ctx.getSlot(9 * 3 + 4).setItemStack(new ItemStack(Material.REDSTONE),
+                    "Sell as many times as possible on shift click\n", "Currently: " + modified.maxRepeatsOnShiftClick);
+            ctx.getSlot(9 * 3 + 4).setClickHandler(
+                    InputMenus.toggler(res -> modified.maxRepeatsOnShiftClick = res, modified.maxRepeatsOnShiftClick));
             int pos = 0;
             for (GUI template : NPCShopAction.getGUIs()) {
                 if (template.createMenuItem(null) == null)
@@ -554,9 +568,8 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1)
         public void editPageTitle(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            ctx.getMenu().transition(InputMenus.stringSetter(() -> page.title, newTitle -> {
-                page.title = newTitle.isEmpty() ? null : newTitle;
-            }));
+            ctx.getMenu().transition(InputMenus.stringSetter(() -> page.title,
+                    newTitle -> page.title = newTitle.isEmpty() ? null : newTitle));
         }
 
         @Override
@@ -606,16 +619,15 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 0, 6 }, material = Material.NAME_TAG, amount = 1)
         public void onSetTitle(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            ctx.getMenu().transition(InputMenus.stringSetter(() -> shop.title, newTitle -> {
-                shop.title = newTitle;
-            }));
+            ctx.getMenu().transition(InputMenus.stringSetter(() -> shop.title, newTitle -> shop.title = newTitle));
         }
 
         @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, title = "<f>Edit shop type")
         public void onShopTypeChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            ctx.getMenu().transition(InputMenus.<ShopType> picker("Edit shop type", chosen -> {
-                shop.type = chosen.getValue();
-            }, Choice.<ShopType> of(ShopType.BUY, Material.DIAMOND, "Players buy items", shop.type == ShopType.BUY),
+            ctx.getMenu().transition(InputMenus.<ShopType> picker("Edit shop type",
+                    chosen -> shop.type = chosen.getValue(),
+                    Choice.<ShopType> of(ShopType.BUY, Material.DIAMOND, "Players buy items",
+                            shop.type == ShopType.BUY),
                     Choice.of(ShopType.SELL, Material.EMERALD, "Players sell items", shop.type == ShopType.SELL),
                     Choice.of(ShopType.COMMAND, Util.getFallbackMaterial("ENDER_EYE", "ENDER_PEARL"),
                             "Clicks trigger commands only", shop.type == ShopType.COMMAND)));

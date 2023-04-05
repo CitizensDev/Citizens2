@@ -46,7 +46,12 @@ public class PermissionAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(Entity entity) {
+    public int getMaxRepeats(Entity entity) {
+        return -1;
+    }
+
+    @Override
+    public Transaction grant(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;
@@ -65,7 +70,7 @@ public class PermissionAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction take(Entity entity) {
+    public Transaction take(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;

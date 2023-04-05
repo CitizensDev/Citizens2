@@ -97,25 +97,25 @@ public class CommandTrait extends Trait {
         NPCShopAction action = null;
         if (cost > 0) {
             action = new MoneyAction(cost);
-            if (!action.take(player).isPossible()) {
+            if (!action.take(player, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
             }
         }
         if (experienceCost > 0) {
             action = new ExperienceAction(experienceCost);
-            if (!action.take(player).isPossible()) {
+            if (!action.take(player, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, experienceCost);
             }
         }
         if (itemRequirements.size() > 0) {
             action = new ItemAction(itemRequirements);
-            if (!action.take(player).isPossible()) {
+            if (!action.take(player, 1).isPossible()) {
                 ItemStack stack = itemRequirements.get(0);
                 sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
                         stack.getAmount());
             }
         }
-        return action == null ? Transaction.success() : action.take(player);
+        return action == null ? Transaction.success() : action.take(player, 1);
     }
 
     public void clearHistory(CommandTraitError which, String raw) {

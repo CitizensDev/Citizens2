@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -50,30 +51,24 @@ public class ItemAction extends NPCShopAction {
         this.items = items;
     }
 
-    private boolean containsItems(Inventory source, BiFunction<ItemStack, Integer, ItemStack> filter) {
-        List<Integer> req = items.stream().map(i -> i.getAmount()).collect(Collectors.toList());
+    private boolean containsItems(Inventory source, int repeats, BiFunction<ItemStack, Integer, ItemStack> filter) {
+        List<Integer> req = items.stream().map(i -> i.getAmount() * repeats).collect(Collectors.toList());
         ItemStack[] contents = source.getContents();
         for (int i = 0; i < contents.length; i++) {
-            ItemStack stack = contents[i];
-            if (stack == null || stack.getType() == Material.AIR)
+            ItemStack toMatch = contents[i];
+            if (toMatch == null || toMatch.getType() == Material.AIR)
                 continue;
-            if (requireUndamaged && stack.getItemMeta() instanceof Damageable
-                    && ((Damageable) stack.getItemMeta()).getDamage() != 0)
+            if (requireUndamaged && toMatch.getItemMeta() instanceof Damageable
+                    && ((Damageable) toMatch.getItemMeta()).getDamage() != 0)
                 continue;
             for (int j = 0; j < items.size(); j++) {
-                ItemStack match = items.get(j);
-                if (req.get(j) <= 0)
-                    continue;
-                if (match.getType() != stack.getType())
-                    continue;
-                if (metaFilter.size() > 0 && !metaMatches(match, stack, metaFilter))
-                    continue;
-                if (compareSimilarity && !match.isSimilar(stack))
+                ItemStack item = items.get(j);
+                if (req.get(j) <= 0 || !matches(item, toMatch))
                     continue;
 
                 int remaining = req.get(j);
-                int taken = stack.getAmount() > remaining ? remaining : stack.getAmount();
-                ItemStack res = filter.apply(stack, taken);
+                int taken = toMatch.getAmount() > remaining ? remaining : toMatch.getAmount();
+                ItemStack res = filter.apply(toMatch, taken);
                 if (res == null) {
                     source.clear(i);
                 } else {
@@ -103,7 +98,33 @@ public class ItemAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(Entity entity) {
+    public int getMaxRepeats(Entity entity) {
+        if (!(entity instanceof InventoryHolder))
+            return 0;
+
+        Inventory source = ((InventoryHolder) entity).getInventory();
+        List<Integer> req = items.stream().map(i -> i.getAmount()).collect(Collectors.toList());
+        List<Integer> has = items.stream().map(i -> 0).collect(Collectors.toList());
+        ItemStack[] contents = source.getContents();
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack toMatch = contents[i];
+            if (toMatch == null || toMatch.getType() == Material.AIR)
+                continue;
+            if (requireUndamaged && toMatch.getItemMeta() instanceof Damageable
+                    && ((Damageable) toMatch.getItemMeta()).getDamage() != 0)
+                continue;
+            for (int j = 0; j < items.size(); j++) {
+                if (!matches(items.get(j), toMatch))
+                    continue;
+                has.set(j, has.get(j) + toMatch.getAmount());
+            }
+        }
+        return IntStream.range(0, req.size()).map(i -> req.get(i) == 0 ? 0 : has.get(i) / req.get(i)).reduce(Math::min)
+                .orElse(0);
+    }
+
+    @Override
+    public Transaction grant(Entity entity, int repeats) {
         if (!(entity instanceof InventoryHolder))
             return Transaction.fail();
         Inventory source = ((InventoryHolder) entity).getInventory();
@@ -115,12 +136,26 @@ public class ItemAction extends NPCShopAction {
                     continue;
                 }
             }
-            return free >= items.size();
+            return free >= items.size() * repeats;
         }, () -> {
-            source.addItem(items.stream().map(item -> item.clone()).toArray(ItemStack[]::new));
+            for (int i = 0; i < repeats; i++) {
+                source.addItem(items.stream().map(ItemStack::clone).toArray(ItemStack[]::new));
+            }
         }, () -> {
-            source.removeItem(items.stream().map(item -> item.clone()).toArray(ItemStack[]::new));
+            for (int i = 0; i < repeats; i++) {
+                source.removeItem(items.stream().map(ItemStack::clone).toArray(ItemStack[]::new));
+            }
         });
+    }
+
+    private boolean matches(ItemStack a, ItemStack b) {
+        if (a.getType() != b.getType())
+            return false;
+        if (metaFilter.size() > 0 && !metaMatches(a, b, metaFilter))
+            return false;
+        if (compareSimilarity && !a.isSimilar(b))
+            return false;
+        return true;
     }
 
     private boolean metaMatches(ItemStack needle, ItemStack haystack, List<String> meta) {
@@ -154,14 +189,14 @@ public class ItemAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction take(Entity entity) {
+    public Transaction take(Entity entity, int repeats) {
         if (!(entity instanceof InventoryHolder))
             return Transaction.fail();
         Inventory source = ((InventoryHolder) entity).getInventory();
         return Transaction.create(() -> {
-            return containsItems(source, (stack, taken) -> stack);
+            return containsItems(source, repeats, (stack, taken) -> stack);
         }, () -> {
-            containsItems(source, (stack, taken) -> {
+            containsItems(source, repeats, (stack, taken) -> {
                 if (stack.getAmount() == taken) {
                     return null;
                 } else {
@@ -170,7 +205,7 @@ public class ItemAction extends NPCShopAction {
                 }
             });
         }, () -> {
-            source.addItem(items.stream().map(item -> item.clone()).toArray(ItemStack[]::new));
+            source.addItem(items.stream().map(ItemStack::clone).toArray(ItemStack[]::new));
         });
     }
 
@@ -205,17 +240,13 @@ public class ItemAction extends NPCShopAction {
 
             ctx.getSlot(3 * 9 + 1).setItemStack(new ItemStack(Material.ANVIL), "Must have no damage",
                     base.requireUndamaged ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
-            ctx.getSlot(3 * 9 + 1).addClickHandler(InputMenus.clickToggle((res) -> {
-                base.requireUndamaged = res;
-                return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
-            }, base.requireUndamaged));
+            ctx.getSlot(3 * 9 + 1)
+                    .addClickHandler(InputMenus.toggler((res) -> base.requireUndamaged = res, base.requireUndamaged));
             ctx.getSlot(3 * 9 + 2).setItemStack(
                     new ItemStack(Util.getFallbackMaterial("COMPARATOR", "REDSTONE_COMPARATOR")),
                     "Compare item similarity", base.compareSimilarity ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
-            ctx.getSlot(3 * 9 + 2).addClickHandler(InputMenus.clickToggle((res) -> {
-                base.compareSimilarity = res;
-                return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
-            }, base.compareSimilarity));
+            ctx.getSlot(3 * 9 + 2)
+                    .addClickHandler(InputMenus.toggler((res) -> base.compareSimilarity = res, base.compareSimilarity));
             ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Material.BOOK), "NBT comparison filter",
                     Joiner.on("\n").join(base.metaFilter));
             ctx.getSlot(3 * 9 + 3)

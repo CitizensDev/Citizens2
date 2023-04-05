@@ -32,29 +32,43 @@ public class MoneyAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(Entity entity) {
+    public int getMaxRepeats(Entity entity) {
+        if (!(entity instanceof Player))
+            return 0;
+        Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
+        return (int) Math.floor(economy.getBalance((Player) entity) / money);
+    }
+
+    @Override
+    public Transaction grant(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
         Player player = (Player) entity;
+        double amount = money * repeats;
         return Transaction.create(() -> {
             return true;
         }, () -> {
-            economy.depositPlayer(player, money);
+            economy.depositPlayer(player, amount);
         }, () -> {
-            economy.withdrawPlayer(player, money);
+            economy.withdrawPlayer(player, amount);
         });
     }
 
     @Override
-    public Transaction take(Entity entity) {
+    public Transaction take(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
         Player player = (Player) entity;
+        double amount = money * repeats;
         return Transaction.create(() -> {
-            return economy.has(player, money);
-        }, () -> economy.withdrawPlayer(player, money), () -> economy.depositPlayer(player, money));
+            return economy.has(player, amount);
+        }, () -> {
+            economy.withdrawPlayer(player, amount);
+        }, () -> {
+            economy.depositPlayer(player, amount);
+        });
     }
 
     public static class MoneyActionGUI implements GUI {
