@@ -236,4 +236,11 @@ public class InputMenus {
             InputMenus.Choice<T>... choices) {
         return new ChoiceInputMenu<T>(title, Choice.Type.TOGGLE, callback, choices);
     }
+
+    public static BooleanSlotHandler toggler(Consumer<Boolean> consumer, boolean initialValue) {
+        return new BooleanSlotHandler((b) -> {
+            consumer.accept(b);
+            return b ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
+        }, initialValue);
+    }
 }
