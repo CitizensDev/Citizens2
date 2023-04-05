@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 
 import net.citizensnpcs.api.ai.speech.SpeechFactory;
 import net.citizensnpcs.api.command.CommandManager;
+import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -44,6 +45,13 @@ public final class CitizensAPI {
      */
     public static NPCRegistry createCitizensBackedNPCRegistry(NPCDataStore store) {
         return getImplementation().createCitizensBackedNPCRegistry(store);
+    }
+
+    /**
+     * Creates a new {@link NPCRegistry} with its own set of {@link NPC}s that does not save to disk.
+     */
+    public static NPCRegistry createInMemoryNPCRegistry(String name) {
+        return getImplementation().createNamedNPCRegistry(name, new MemoryNPCDataStore());
     }
 
     /**
