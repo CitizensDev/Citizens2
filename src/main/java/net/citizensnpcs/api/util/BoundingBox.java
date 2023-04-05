@@ -90,6 +90,10 @@ public class BoundingBox {
         return new BoundingBox(minX * x, minY * y, minZ * z, maxX * x, maxY * y, maxZ * z);
     }
 
+    public org.bukkit.util.BoundingBox toBukkit() {
+        return new org.bukkit.util.BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
     public EntityDim toDimensions() {
         return new EntityDim(Math.abs(maxX - minX) * 2, Math.abs(maxY - minY));
     }

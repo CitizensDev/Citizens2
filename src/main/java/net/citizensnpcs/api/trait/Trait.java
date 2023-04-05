@@ -2,6 +2,7 @@ package net.citizensnpcs.api.trait;
 
 import org.bukkit.event.Listener;
 
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
@@ -76,6 +77,13 @@ public abstract class Trait implements Listener, Runnable {
      * Called just before the attached {@link NPC} is despawned. {@link NPC#getEntity()} will be non-null.
      */
     public void onDespawn() {
+    }
+
+    /**
+     * Called just before the attached {@link NPC} is despawned. {@link NPC#getEntity()} will be non-null.
+     */
+    public void onDespawn(DespawnReason reason) {
+        onDespawn();
     }
 
     /**

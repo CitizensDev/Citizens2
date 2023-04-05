@@ -89,7 +89,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public Vector getGoal() {
-        return info.goal.goal;
+        return info.goal.getGoalVector();
     }
 
     @Override

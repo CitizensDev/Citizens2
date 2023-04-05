@@ -6,7 +6,7 @@ import org.bukkit.util.Vector;
 import net.citizensnpcs.api.astar.AStarGoal;
 
 public class VectorGoal implements AStarGoal<VectorNode> {
-    final Vector goal;
+    private final Vector goal;
     private final float leeway;
 
     public VectorGoal(Location dest, float range) {
@@ -23,6 +23,10 @@ public class VectorGoal implements AStarGoal<VectorNode> {
         return from.distance(to);
     }
 
+    public Vector getGoalVector() {
+        return goal.clone();
+    }
+
     @Override
     public float getInitialCost(VectorNode node) {
         return (float) node.getVector().distance(goal);
@@ -35,7 +39,7 @@ public class VectorGoal implements AStarGoal<VectorNode> {
 
     @Override
     public boolean isFinished(VectorNode node) {
-        double distanceSquared = node.location.distanceSquared(goal);
-        return goal.equals(node.location) || distanceSquared <= leeway;
+        double distance = node.location.distance(goal);
+        return goal.equals(node.location) || distance <= leeway;
     }
 }
