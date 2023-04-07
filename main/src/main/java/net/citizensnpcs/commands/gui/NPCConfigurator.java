@@ -74,6 +74,5 @@ public class NPCConfigurator extends InventoryMenuPage {
                         InputMenus.stringSetter(() -> evt.npc.getName(), (input) -> evt.npc.setName(input)));
             }
         }));
-
     }
 }

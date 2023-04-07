@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -122,6 +123,7 @@ import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.PacketNPC;
+import net.citizensnpcs.trait.PaintingTrait;
 import net.citizensnpcs.trait.PausePathfindingTrait;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
@@ -554,6 +556,18 @@ public class NPCCommands {
         } else {
             throw new CommandUsageException();
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "configgui",
+            desc = "Display NPC configuration GUI",
+            modifiers = { "configgui" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.configgui")
+    public void configgui(CommandContext args, Player sender, NPC npc) {
+        InventoryMenu.createSelfRegistered(new NPCConfigurator(npc)).present(sender);
     }
 
     @Command(
@@ -1034,18 +1048,6 @@ public class NPCCommands {
         boolean nogravity = npc.getOrAddTrait(Gravity.class).toggle();
         String key = !nogravity ? Messages.GRAVITY_ENABLED : Messages.GRAVITY_DISABLED;
         Messaging.sendTr(sender, key, npc.getName());
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "gui",
-            desc = "Display NPC configuration GUI",
-            modifiers = { "gui" },
-            min = 1,
-            max = 1,
-            permission = "citizens.npc.gui")
-    public void gui(CommandContext args, Player sender, NPC npc) {
-        InventoryMenu.createSelfRegistered(new NPCConfigurator(npc)).present(sender);
     }
 
     @Command(
@@ -1871,6 +1873,26 @@ public class NPCCommands {
             npc.removeTrait(PacketNPC.class);
             Messaging.sendTr(sender, Messages.NPC_PACKET_DISABLED, npc.getName());
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "painting (--art art)",
+            desc = "Set painting modifiers",
+            modifiers = { "painting" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.painting")
+    @Requirements(selected = true, ownership = true, types = { EntityType.PAINTING })
+    public void painting(CommandContext args, CommandSender sender, NPC npc, @Flag("art") Art art)
+            throws CommandException {
+        PaintingTrait trait = npc.getOrAddTrait(PaintingTrait.class);
+        if (art != null) {
+            trait.setArt(art);
+            Messaging.sendTr(sender, Messages.PAINTING_ART_SET, npc.getName(), Util.prettyEnum(art));
+            return;
+        }
+        throw new CommandUsageException();
     }
 
     @Command(

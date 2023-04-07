@@ -103,7 +103,7 @@ public class CitizensNPC extends AbstractNPC {
             unloadEvents();
         }
         for (Trait trait : new ArrayList<Trait>(traits.values())) {
-            trait.onDespawn();
+            trait.onDespawn(reason);
         }
         Messaging.debug("Despawned", this, "DespawnReason." + reason);
 

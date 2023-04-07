@@ -357,6 +357,8 @@ public class ShopTrait extends Trait {
                         max = Math.min(max, r);
                     }
                 }
+                if (max == 0)
+                    return;
             }
             final int repeats = max == Integer.MAX_VALUE ? 1 : max;
             List<Transaction> take = apply(cost, action -> action.take(event.getWhoClicked(), repeats));

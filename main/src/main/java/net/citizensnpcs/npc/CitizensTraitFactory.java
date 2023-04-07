@@ -42,6 +42,7 @@ import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.OcelotModifiers;
 import net.citizensnpcs.trait.PacketNPC;
+import net.citizensnpcs.trait.PaintingTrait;
 import net.citizensnpcs.trait.PausePathfindingTrait;
 import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
@@ -89,6 +90,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(HologramTrait.class));
         registerTrait(TraitInfo.create(Inventory.class));
         registerTrait(TraitInfo.create(LookClose.class));
+        registerTrait(TraitInfo.create(PaintingTrait.class));
         registerTrait(TraitInfo.create(MirrorTrait.class));
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());

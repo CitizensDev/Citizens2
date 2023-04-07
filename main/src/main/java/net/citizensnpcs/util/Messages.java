@@ -288,6 +288,7 @@ public class Messages {
     public static final String OVER_NPC_LIMIT = "citizens.limits.over-npc-limit";
     public static final String OWNER_SET = "citizens.commands.npc.owner.set";
     public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";
+    public static final String PAINTING_ART_SET = "citizens.commands.npc.painting.art-set";
     public static final String PANDA_HIDDEN_GENE_SET = "citizens.commands.npc.panda.hidden-gene-set";
     public static final String PANDA_MAIN_GENE_SET = "citizens.commands.npc.panda.main-gene-set";
     public static final String PANDA_ROLLING = "citizens.commands.npc.panda.rolling";
