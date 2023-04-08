@@ -16,6 +16,7 @@ import org.bukkit.scoreboard.Team.OptionStatus;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.LocationLookup.PerPlayerMetadata;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -54,6 +55,14 @@ public class ScoreboardTrait extends Trait {
         tags.add(tag);
     }
 
+    private void clearClientTeams(Team team) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (metadata.remove(player.getUniqueId(), team.getName())) {
+                NMS.sendTeamPacket(player, team, 1);
+            }
+        }
+    }
+
     public void createTeam(String entityName) {
         String teamName = Util.getTeamName(npc.getUniqueId());
         npc.data().set(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, teamName);
@@ -61,6 +70,9 @@ public class ScoreboardTrait extends Trait {
         Team team = scoreboard.getTeam(teamName);
         if (team == null) {
             team = scoreboard.registerNewTeam(teamName);
+        }
+        if (!team.hasEntry(entityName)) {
+            clearClientTeams(team);
         }
         team.addEntry(entityName);
     }
@@ -81,7 +93,7 @@ public class ScoreboardTrait extends Trait {
     }
 
     @Override
-    public void onDespawn() {
+    public void onDespawn(DespawnReason reason) {
         previousGlowingColor = null;
         String name = lastName;
         String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
@@ -100,15 +112,12 @@ public class ScoreboardTrait extends Trait {
                 return;
             }
             if (team.getSize() == 1) {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    metadata.remove(player.getUniqueId(), team.getName());
-                    NMS.sendTeamPacket(player, team, 1);
-                }
+                clearClientTeams(team);
                 team.unregister();
             } else {
                 team.removeEntry(name);
             }
-        }, npc.getEntity() instanceof LivingEntity ? 20 : 2);
+        }, reason == DespawnReason.DEATH && npc.getEntity() instanceof LivingEntity ? 20 : 2);
     }
 
     @Override
@@ -186,6 +195,8 @@ public class ScoreboardTrait extends Trait {
             } catch (NoClassDefFoundError e) {
                 SUPPORT_TEAM_SETOPTION = false;
             }
+        } else {
+            NMS.setTeamNameTagVisible(team, nameVisibility);
         }
 
         if (SUPPORT_COLLIDABLE_SETOPTION) {
@@ -204,10 +215,6 @@ public class ScoreboardTrait extends Trait {
             }
         }
 
-        if (!SUPPORT_TEAM_SETOPTION) {
-            NMS.setTeamNameTagVisible(team, nameVisibility);
-        }
-
         if (color != null) {
             if (SUPPORT_GLOWING_COLOR && Util.getMinecraftRevision().contains("1_12_R1")) {
                 SUPPORT_GLOWING_COLOR = false;
@@ -221,7 +228,6 @@ public class ScoreboardTrait extends Trait {
                         changed = true;
                     }
                 } catch (NoSuchMethodError err) {
-                    err.printStackTrace();
                     SUPPORT_GLOWING_COLOR = false;
                 }
             } else {
@@ -235,16 +241,16 @@ public class ScoreboardTrait extends Trait {
             }
         }
 
-        if (changed) {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.hasMetadata("NPC"))
-                    continue;
-                if (metadata.has(player.getUniqueId(), team.getName())) {
-                    NMS.sendTeamPacket(player, team, 2);
-                } else {
-                    NMS.sendTeamPacket(player, team, 0);
-                    metadata.set(player.getUniqueId(), team.getName(), true);
-                }
+        if (!changed)
+            return;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasMetadata("NPC"))
+                continue;
+            if (metadata.has(player.getUniqueId(), team.getName())) {
+                NMS.sendTeamPacket(player, team, 2);
+            } else {
+                NMS.sendTeamPacket(player, team, 0);
+                metadata.set(player.getUniqueId(), team.getName(), true);
             }
         }
     }

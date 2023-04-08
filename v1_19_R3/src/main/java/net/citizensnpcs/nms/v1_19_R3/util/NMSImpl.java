@@ -566,9 +566,9 @@ public class NMSImpl implements NMSBridge {
         ServerBossEvent bserver = null;
         try {
             if (entity.getType() == EntityType.WITHER) {
-                bserver = ((WitherBoss) NMSImpl.getHandle(entity)).bossEvent;
+                bserver = ((WitherBoss) getHandle(entity)).bossEvent;
             } else if (entity.getType() == EntityType.ENDER_DRAGON) {
-                EndDragonFight df = ((EnderDragon) NMSImpl.getHandle(entity)).getDragonFight();
+                EndDragonFight df = ((EnderDragon) getHandle(entity)).getDragonFight();
                 if (df != null) {
                     bserver = df.dragonEvent;
                 }
@@ -590,7 +590,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
-        return NMSBoundingBox.wrap(NMSImpl.getHandle(handle).getBoundingBox());
+        return NMSBoundingBox.wrap(getHandle(handle).getBoundingBox());
     }
 
     @Override
@@ -634,7 +634,7 @@ public class NMSImpl implements NMSBridge {
     public float getHorizontalMovement(org.bukkit.entity.Entity entity) {
         if (!entity.getType().isAlive())
             return Float.NaN;
-        LivingEntity handle = NMSImpl.getHandle((org.bukkit.entity.LivingEntity) entity);
+        LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) entity);
         return handle.zza;
     }
 
@@ -651,7 +651,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
-        Entity handle = NMSImpl.getHandle(entity);
+        Entity handle = getHandle(entity);
         if (handle == null || handle.passengers == null)
             return Lists.newArrayList();
         return Lists.transform(handle.passengers, new Function<Entity, org.bukkit.entity.Entity>() {
@@ -706,7 +706,7 @@ public class NMSImpl implements NMSBridge {
     public float getSpeedFor(NPC npc) {
         if (!npc.isSpawned() || !(npc.getEntity() instanceof org.bukkit.entity.LivingEntity))
             return DEFAULT_SPEED;
-        LivingEntity handle = NMSImpl.getHandle((org.bukkit.entity.LivingEntity) npc.getEntity());
+        LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) npc.getEntity());
         if (handle == null)
             return DEFAULT_SPEED;
         return DEFAULT_SPEED;
@@ -716,7 +716,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public float getStepHeight(org.bukkit.entity.Entity entity) {
-        return NMSImpl.getHandle(entity).maxUpStep();
+        return getHandle(entity).maxUpStep();
     }
 
     @Override
@@ -747,7 +747,7 @@ public class NMSImpl implements NMSBridge {
         // not sure of a better way around this - if onGround is false, then
         // navigation won't execute, and calling entity.move doesn't
         // entirely fix the problem.
-        final PathNavigation navigation = NMSImpl.getNavigation(entity);
+        final PathNavigation navigation = getNavigation(entity);
         final float oldWater = raw instanceof MobAI ? ((MobAI) raw).getPathfindingMalus(BlockPathTypes.WATER)
                 : ((Mob) raw).getPathfindingMalus(BlockPathTypes.WATER);
         if (params.avoidWater() && oldWater >= 0) {
@@ -842,7 +842,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public org.bukkit.entity.Entity getVehicle(org.bukkit.entity.Entity entity) {
-        Entity handle = NMSImpl.getHandle(entity);
+        Entity handle = getHandle(entity);
         if (handle == null) {
             return null;
         }
@@ -854,7 +854,7 @@ public class NMSImpl implements NMSBridge {
     public float getVerticalMovement(org.bukkit.entity.Entity entity) {
         if (!entity.getType().isAlive())
             return Float.NaN;
-        LivingEntity handle = NMSImpl.getHandle((org.bukkit.entity.LivingEntity) entity);
+        LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) entity);
         return handle.xxa;
     }
 
@@ -870,7 +870,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public boolean isOnGround(org.bukkit.entity.Entity entity) {
-        return NMSImpl.getHandle(entity).isOnGround();
+        return getHandle(entity).isOnGround();
     }
 
     @Override
@@ -1042,7 +1042,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void look(org.bukkit.entity.Entity entity, float yaw, float pitch) {
-        Entity handle = NMSImpl.getHandle(entity);
+        Entity handle = getHandle(entity);
         if (handle == null)
             return;
         yaw = Util.clamp(yaw);
@@ -1053,7 +1053,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void look(org.bukkit.entity.Entity entity, Location to, boolean headOnly, boolean immediate) {
-        Entity handle = NMSImpl.getHandle(entity);
+        Entity handle = getHandle(entity);
         if (immediate || headOnly || BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
                 || (!(handle instanceof Mob) && !(handle instanceof MobAI))) {
             Location fromLocation = entity.getLocation(FROM_LOCATION);
@@ -1097,7 +1097,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void look(org.bukkit.entity.Entity from, org.bukkit.entity.Entity to) {
-        Entity handle = NMSImpl.getHandle(from), target = NMSImpl.getHandle(to);
+        Entity handle = getHandle(from), target = getHandle(to);
         if (BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
                 || (!(handle instanceof Mob) && !(handle instanceof MobAI))) {
             if (to instanceof org.bukkit.entity.LivingEntity) {
@@ -1121,9 +1121,9 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
-        if (NMSImpl.getHandle(passenger) == null)
+        if (getHandle(passenger) == null)
             return;
-        NMSImpl.getHandle(passenger).startRiding(NMSImpl.getHandle(entity));
+        getHandle(passenger).startRiding(getHandle(entity));
     }
 
     @Override
@@ -1216,8 +1216,8 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void openHorseScreen(Tameable horse, Player equipper) {
-        LivingEntity handle = NMSImpl.getHandle(horse);
-        ServerPlayer equipperHandle = (ServerPlayer) NMSImpl.getHandle(equipper);
+        LivingEntity handle = getHandle(horse);
+        ServerPlayer equipperHandle = (ServerPlayer) getHandle(equipper);
         if (handle == null || equipperHandle == null)
             return;
         boolean wasTamed = horse.isTamed();
@@ -1261,12 +1261,12 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void remove(org.bukkit.entity.Entity entity) {
-        NMSImpl.getHandle(entity).remove(RemovalReason.KILLED);
+        getHandle(entity).remove(RemovalReason.KILLED);
     }
 
     @Override
     public void removeFromServerPlayerList(Player player) {
-        ServerPlayer handle = (ServerPlayer) NMSImpl.getHandle(player);
+        ServerPlayer handle = (ServerPlayer) getHandle(player);
         ((CraftServer) Bukkit.getServer()).getHandle().players.remove(handle);
     }
 
@@ -1279,7 +1279,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity) {
-        FishingHook hook = (FishingHook) NMSImpl.getHandle(entity);
+        FishingHook hook = (FishingHook) getHandle(entity);
         Entity hooked = hook.getHookedIn();
         if (hooked == null)
             return;
@@ -1292,7 +1292,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void replaceTrackerEntry(org.bukkit.entity.Entity entity) {
-        ServerLevel server = (ServerLevel) NMSImpl.getHandle(entity).level;
+        ServerLevel server = (ServerLevel) getHandle(entity).level;
         TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
         if (entry == null)
             return;
@@ -1339,7 +1339,7 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        NMSImpl.sendPacket(recipient, packet);
+        sendPacket(recipient, packet);
         return true;
     }
 
@@ -1353,7 +1353,7 @@ public class NMSImpl implements NMSBridge {
             entities[i] = (ServerPlayer) skinnable;
             i++;
         }
-        NMSImpl.sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(
+        sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(
                 skinnableNPCs.stream().map(e -> ((ServerPlayer) e).getUUID()).collect(Collectors.toList())));
     }
 
@@ -1361,8 +1361,7 @@ public class NMSImpl implements NMSBridge {
     public void sendTabListRemove(Player recipient, Player listPlayer) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(listPlayer);
-        NMSImpl.sendPacket(recipient,
-                new ClientboundPlayerInfoRemovePacket(Arrays.asList(getHandle(listPlayer).getUUID())));
+        sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(Arrays.asList(getHandle(listPlayer).getUUID())));
     }
 
     @Override
@@ -1377,8 +1376,7 @@ public class NMSImpl implements NMSBridge {
             if (mode == 1) {
                 sendPacket(recipient, ClientboundSetPlayerTeamPacket.createRemovePacket(nmsTeam));
             } else {
-                sendPacket(recipient,
-                        ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(nmsTeam, mode == 0 ? true : false));
+                sendPacket(recipient, ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(nmsTeam, mode == 0));
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -1406,7 +1404,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setBoundingBox(org.bukkit.entity.Entity entity, BoundingBox box) {
-        NMSImpl.getHandle(entity).setBoundingBox(NMSBoundingBox.convert(box));
+        getHandle(entity).setBoundingBox(NMSBoundingBox.convert(box));
     }
 
     @Override
@@ -1446,7 +1444,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {
-        Entity handle = NMSImpl.getHandle(entity);
+        Entity handle = getHandle(entity);
         if (handle == null)
             return;
         MobAI ai = MobAI.from(handle);
@@ -1482,7 +1480,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setKnockbackResistance(org.bukkit.entity.LivingEntity entity, double d) {
-        LivingEntity handle = NMSImpl.getHandle(entity);
+        LivingEntity handle = getHandle(entity);
         handle.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(d);
     }
 
@@ -1499,7 +1497,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setNavigationTarget(org.bukkit.entity.Entity handle, org.bukkit.entity.Entity target, float speed) {
-        NMSImpl.getNavigation(handle).moveTo(NMSImpl.getHandle(target), speed);
+        getNavigation(handle).moveTo(getHandle(target), speed);
     }
 
     @Override
@@ -1570,7 +1568,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setShouldJump(org.bukkit.entity.Entity entity) {
-        Entity handle = NMSImpl.getHandle(entity);
+        Entity handle = getHandle(entity);
         if (handle == null)
             return;
         if (handle instanceof Mob) {
@@ -1588,7 +1586,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setSitting(Tameable tameable, boolean sitting) {
-        ((TamableAnimal) NMSImpl.getHandle(tameable)).setInSittingPose(sitting);
+        ((TamableAnimal) getHandle(tameable)).setInSittingPose(sitting);
     }
 
     @Override
@@ -1609,19 +1607,14 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setStepHeight(org.bukkit.entity.Entity entity, float height) {
-        NMSImpl.getHandle(entity).setMaxUpStep(height);
-    }
-
-    @Override
-    public void setTeamNameTagVisible(Team team, boolean visible) {
-        team.setOption(Team.Option.NAME_TAG_VISIBILITY, visible ? Team.OptionStatus.ALWAYS : Team.OptionStatus.NEVER);
+        getHandle(entity).setMaxUpStep(height);
     }
 
     @Override
     public void setVerticalMovement(org.bukkit.entity.Entity bukkitEntity, double d) {
         if (!bukkitEntity.getType().isAlive())
             return;
-        LivingEntity handle = NMSImpl.getHandle((org.bukkit.entity.LivingEntity) bukkitEntity);
+        LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) bukkitEntity);
         handle.xxa = (float) d;
     }
 
@@ -1636,7 +1629,7 @@ public class NMSImpl implements NMSBridge {
         if (JUMP_FIELD == null || !(entity instanceof org.bukkit.entity.LivingEntity))
             return false;
         try {
-            return (boolean) JUMP_FIELD.invoke(NMSImpl.getHandle(entity));
+            return (boolean) JUMP_FIELD.invoke(getHandle(entity));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1665,7 +1658,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void trySwim(org.bukkit.entity.Entity entity, float power) {
-        Entity handle = NMSImpl.getHandle(entity);
+        Entity handle = getHandle(entity);
         if (handle == null)
             return;
         if (RANDOM.nextFloat() <= 0.85F && handle.isInWater()) {
@@ -1772,7 +1765,7 @@ public class NMSImpl implements NMSBridge {
     public void updateNavigationWorld(org.bukkit.entity.Entity entity, World world) {
         if (NAVIGATION_WORLD_FIELD == null)
             return;
-        Entity en = NMSImpl.getHandle(entity);
+        Entity en = getHandle(entity);
         if (en == null || !(en instanceof Mob))
             return;
         Mob handle = (Mob) en;
@@ -1790,7 +1783,7 @@ public class NMSImpl implements NMSBridge {
     public void updatePathfindingRange(NPC npc, float pathfindingRange) {
         if (!npc.isSpawned() || !npc.getEntity().getType().isAlive())
             return;
-        LivingEntity en = NMSImpl.getHandle((org.bukkit.entity.LivingEntity) npc.getEntity());
+        LivingEntity en = getHandle((org.bukkit.entity.LivingEntity) npc.getEntity());
         if (en instanceof MobAI) {
             ((MobAI) en).updatePathfindingRange(pathfindingRange);
             return;
@@ -2145,11 +2138,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static LivingEntity getHandle(org.bukkit.entity.LivingEntity entity) {
-        return (LivingEntity) NMSImpl.getHandle((org.bukkit.entity.Entity) entity);
+        return (LivingEntity) getHandle((org.bukkit.entity.Entity) entity);
     }
 
     private static LivingEntity getHandle(Tameable entity) {
-        return (LivingEntity) NMSImpl.getHandle((org.bukkit.entity.Entity) entity);
+        return (LivingEntity) getHandle((org.bukkit.entity.Entity) entity);
     }
 
     public static PathNavigation getNavigation(org.bukkit.entity.Entity entity) {
@@ -2261,7 +2254,7 @@ public class NMSImpl implements NMSBridge {
     public static void sendPacket(Player player, Packet<?> packet) {
         if (packet == null)
             return;
-        ((ServerPlayer) NMSImpl.getHandle(player)).connection.send(packet);
+        ((ServerPlayer) getHandle(player)).connection.send(packet);
     }
 
     public static void sendPacketNearby(Player from, Location location, Packet<?> packet) {
@@ -2283,13 +2276,13 @@ public class NMSImpl implements NMSBridge {
                 continue;
             }
             for (Packet<?> packet : packets) {
-                NMSImpl.sendPacket(player, packet);
+                sendPacket(player, packet);
             }
         }
     }
 
     public static void sendPacketsNearby(Player from, Location location, Packet<?>... packets) {
-        NMSImpl.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
+        sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
     public static void setAdvancement(Player entity, PlayerAdvancements instance) {
@@ -2442,14 +2435,14 @@ public class NMSImpl implements NMSBridge {
         if (npc == null)
             return;
         if (npc.useMinecraftAI()) {
-            NMSImpl.restoreGoals(npc, entity.goalSelector, entity.targetSelector);
+            restoreGoals(npc, entity.goalSelector, entity.targetSelector);
             if (npc.data().has("behavior-map")) {
                 TreeMap behavior = npc.data().get("behavior-map");
                 getBehaviorMap(entity).putAll(behavior);
                 npc.data().remove("behavior-map");
             }
         } else {
-            NMSImpl.clearGoals(npc, entity.goalSelector, entity.targetSelector);
+            clearGoals(npc, entity.goalSelector, entity.targetSelector);
             TreeMap behaviorMap = getBehaviorMap(entity);
             if (behaviorMap.size() > 0) {
                 npc.data().set("behavior-map", new TreeMap(behaviorMap));
