@@ -236,7 +236,9 @@ public interface NMSBridge {
 
     public void setStepHeight(Entity entity, float height);
 
-    public void setTeamNameTagVisible(Team team, boolean visible);
+    public default void setTeamNameTagVisible(Team team, boolean visible) {
+        team.setOption(Team.Option.NAME_TAG_VISIBILITY, visible ? Team.OptionStatus.ALWAYS : Team.OptionStatus.NEVER);
+    }
 
     public void setVerticalMovement(Entity bukkitEntity, double d);
 
