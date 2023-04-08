@@ -1,13 +1,27 @@
-Setup
-=====
-Clone the CitizensAPI and Citizens2 repositories.
-Citizens2 uses Maven subprojects for backwards compatibility with old Minecraft versions.
+Citizens welcomes contributors and pull requests. Feel free to join the [Discord](https://discord.gg/Q6pZGSR) for tips and tricks when writing your first pull request.
 
-Contributing
-============
-Citizens welcomes open source contributions. Make sure you sign the CLA when making a pull request.
+Before you get started, bear in mind that we do require a Contributor's License Agreement (CLA) to prevent licensing issues in the future.
+Sign the CLA [here](https://cla-assistant.io/CitizensDev/Citizens2)
 
-Building
-======== 
-Make sure you have installed all prerequisite Spigot versions using `java BuildTools.jar --rev <1.12.2|1.13.2|1.14.4|1.15.2...>`.
-Build the Citizens JAR by running `maven install` in the main directory; the output JAR will be located at `dist/target/Citizens-xxx.jar`.
+Development environment setup
+=============================
+1. Clone Citizens2 and CitizensAPI repos to your machine
+2. Import the maven project to your IDE of choice. Citizens targets Java 8, and Java 9+ code should not be used.
+
+Citizens is structured using an overarching maven project with several submodules for different parts of the codebase
+`api` - the API, with a loosely defined boundary but mainly containing interfaces and events that are agnostic to the lifecycle of a Spigot plugin
+`main` - the main Citizens codebase which implements commands and Spigot plugin-specific code
+`dist` - the distribution subproject which will actually build your Citizens JAR
+NMS submodules, from 1.8.8 - the current Minecraft version (excluding 1.9)
+
+3. Next, run Spigot's BuildTools.jar for all the currently supported Minecraft versions to install the Spigot JARs to your local maven repo (see `dist/pom.xml` for the current list)
+Try to build your first Citizens2 JAR using `mvn install dist/pom.xml`
+
+Now you're ready to start creating a pull request!
+
+Creating a pull request
+=======================
+1. Pull request your changes to the relevant Citizens repo using Github's pull request feature
+2. Sign the CLA and make sure you own the rights to all of your contributions
+3. Include JavaDocs for your code that other people might use, such as API methods
+4. There are no specific style requirements at present
