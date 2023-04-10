@@ -94,7 +94,6 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
-import net.citizensnpcs.model.ModelTrait;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
@@ -258,9 +257,6 @@ public class EventListen implements Listener {
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, (EntityDamageByEntityEvent) event);
             Bukkit.getPluginManager().callEvent(damageEvent);
-            if (npc.hasTrait(ModelTrait.class) && !damageEvent.isCancelled()) {
-                npc.getOrAddTrait(ModelTrait.class).onDamage(damageEvent);
-            }
             if (!damageEvent.isCancelled() || !(damageEvent.getDamager() instanceof Player))
                 return;
 
