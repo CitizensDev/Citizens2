@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.net.Socket;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,10 +15,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
-import com.mojang.datafixers.util.Pair;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -50,8 +45,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -60,9 +53,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -70,10 +60,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class EntityHumanNPC extends ServerPlayer implements NPCHolder, SkinnableEntity, ForwardingMobAI {
     private MobAI ai;
-    private final Map<EquipmentSlot, ItemStack> equipmentCache = Maps.newEnumMap(EquipmentSlot.class);
     private int jumpTicks = 0;
     private final CitizensNPC npc;
-    private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private PlayerlistTracker playerlistTracker;
     private final SkinPacketTracker skinTracker;
     private EmptyServerStatsCounter statsCache;
@@ -161,8 +149,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
         ai.getJumpControl().tick();
         ai.getMoveControl().tick();
+        detectEquipmentUpdates();
+        this.noPhysics = isSpectator();
         if (isSpectator()) {
-            this.noPhysics = true;
             this.onGround = false;
         }
         if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
@@ -388,7 +377,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         super.tick();
         if (npc == null)
             return;
-        noPhysics = isSpectator();
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
         updatePackets(npc.getNavigator().isNavigating());
         npc.update();
@@ -407,27 +395,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
 
-
         effectsDirty = true;
-        boolean itemChanged = false;
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
-            ItemStack equipment = getItemBySlot(slot);
-            ItemStack cache = equipmentCache.get(slot);
-            if (!(cache == null && equipment == null)
-                    && (cache == null ^ equipment == null || !ItemStack.isSame(cache, equipment))) {
-                itemChanged = true;
-            }
-            equipmentCache.put(slot, equipment);
-        }
-        if (!itemChanged)
-            return;
-        Location current = getBukkitEntity().getLocation(packetLocationCache);
-        List<Pair<EquipmentSlot, ItemStack>> vals = Lists.newArrayList();
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
-            vals.add(new Pair<EquipmentSlot, ItemStack>(slot, getItemBySlot(slot)));
-        }
-        Packet<?>[] packets = { new ClientboundSetEquipmentPacket(getId(), vals) };
-        NMSImpl.sendPacketsNearby(getBukkitEntity(), current, packets);
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder, SkinnableEntity {

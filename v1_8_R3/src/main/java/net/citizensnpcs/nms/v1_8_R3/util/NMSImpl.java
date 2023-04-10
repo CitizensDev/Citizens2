@@ -201,6 +201,7 @@ import net.minecraft.server.v1_8_R3.EntityTypes;
 import net.minecraft.server.v1_8_R3.EntityWither;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.IInventory;
+import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.MathHelper;
 import net.minecraft.server.v1_8_R3.Navigation;
 import net.minecraft.server.v1_8_R3.NavigationAbstract;
@@ -208,6 +209,7 @@ import net.minecraft.server.v1_8_R3.NetworkManager;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_8_R3.PacketPlayOutOpenWindow;
@@ -307,6 +309,7 @@ public class NMSImpl implements NMSBridge {
         boolean deltaTracking = handle instanceof EntityPlayer ? false : true;
         EntityTrackerEntry tracker = new EntityTrackerEntry(handle, visibleDistance,
                 ((WorldServer) handle.world).getMinecraftServer().getPlayerList().d(), deltaTracking);
+        Map<Integer, ItemStack> equipment = Maps.newHashMap();
         return new EntityPacketTracker() {
             @Override
             public void link(Player player) {
@@ -319,6 +322,23 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void run() {
+                if (handle instanceof EntityLiving) {
+                    boolean changed = false;
+                    EntityLiving entity = (EntityLiving) handle;
+                    for (int i = 0; i < entity.getEquipment().length; i++) {
+                        ItemStack old = equipment.get(i);
+                        ItemStack curr = entity.getEquipment()[i];
+                        if (!changed && !ItemStack.matches(old, curr)) {
+                            changed = true;
+                        }
+                        equipment.put(i, curr);
+                    }
+                    if (changed) {
+                        for (int i = 0; i < entity.getEquipment().length; i++) {
+                            agg.send(new PacketPlayOutEntityEquipment(handle.getId(), i, equipment.get(i)));
+                        }
+                    }
+                }
                 tracker.a();
             }
 

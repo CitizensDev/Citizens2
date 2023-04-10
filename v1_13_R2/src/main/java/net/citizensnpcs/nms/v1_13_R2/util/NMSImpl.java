@@ -260,12 +260,14 @@ import net.minecraft.server.v1_13_R2.EntityTrackerEntry;
 import net.minecraft.server.v1_13_R2.EntityTurtle;
 import net.minecraft.server.v1_13_R2.EntityTypes;
 import net.minecraft.server.v1_13_R2.EntityWither;
+import net.minecraft.server.v1_13_R2.EnumItemSlot;
 import net.minecraft.server.v1_13_R2.EnumMoveType;
 import net.minecraft.server.v1_13_R2.GenericAttributes;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.IChatBaseComponent;
 import net.minecraft.server.v1_13_R2.IInventory;
 import net.minecraft.server.v1_13_R2.IRegistry;
+import net.minecraft.server.v1_13_R2.ItemStack;
 import net.minecraft.server.v1_13_R2.MathHelper;
 import net.minecraft.server.v1_13_R2.MinecraftKey;
 import net.minecraft.server.v1_13_R2.MobEffects;
@@ -275,6 +277,7 @@ import net.minecraft.server.v1_13_R2.Packet;
 import net.minecraft.server.v1_13_R2.PacketPlayOutAnimation;
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutEntityLook;
+import net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_13_R2.PacketPlayOutOpenWindow;
@@ -374,6 +377,7 @@ public class NMSImpl implements NMSBridge {
         EntityTrackerEntry tracker = new EntityTrackerEntry(handle, visibleDistance,
                 handle.world.getMinecraftServer().getPlayerList().getFurthestViewableBlock(), updateInterval,
                 deltaTracking);
+        Map<EnumItemSlot, ItemStack> equipment = Maps.newEnumMap(EnumItemSlot.class);
         return new EntityPacketTracker() {
             @Override
             public void link(Player player) {
@@ -386,6 +390,23 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void run() {
+                if (handle instanceof EntityLiving) {
+                    boolean changed = false;
+                    EntityLiving entity = (EntityLiving) handle;
+                    for (EnumItemSlot slot : EnumItemSlot.values()) {
+                        ItemStack old = equipment.get(slot);
+                        ItemStack curr = entity.getEquipment(slot);
+                        if (!changed && !ItemStack.matches(old, curr)) {
+                            changed = true;
+                        }
+                        equipment.put(slot, curr);
+                    }
+                    if (changed) {
+                        for (EnumItemSlot slot : EnumItemSlot.values()) {
+                            agg.send(new PacketPlayOutEntityEquipment(handle.getId(), slot, equipment.get(slot)));
+                        }
+                    }
+                }
                 tracker.a();
             }
 

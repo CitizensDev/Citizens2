@@ -86,12 +86,12 @@ public class EntityMoveControl extends MoveControl {
     }
 
     private boolean shouldJump() {
-        if (!(this.entity instanceof Slime)) {
+        if (!(this.entity instanceof Slime))
             return false;
-        }
-        if (this.jumpTicks-- <= 0) {
+
+        if (this.jumpTicks-- <= 0)
             return true;
-        }
+
         return false;
     }
 

@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v1_13_R2.entity;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.net.Socket;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +63,6 @@ import net.minecraft.server.v1_13_R2.NavigationAbstract;
 import net.minecraft.server.v1_13_R2.NetworkManager;
 import net.minecraft.server.v1_13_R2.Packet;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_13_R2.PacketPlayOutUpdateAttributes;
 import net.minecraft.server.v1_13_R2.PathType;
 import net.minecraft.server.v1_13_R2.PlayerInteractManager;
 import net.minecraft.server.v1_13_R2.SoundEffect;
@@ -430,7 +428,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (!npc.isUpdating(NPCUpdate.PACKET))
             return;
 
-
         updateEffects = true;
         boolean itemChanged = false;
         for (EnumItemSlot slot : EnumItemSlot.values()) {
@@ -439,6 +436,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             if (!(cache == null && equipment == null)
                     && (cache == null ^ equipment == null || !ItemStack.equals(cache, equipment))) {
                 itemChanged = true;
+                if (!cache.isEmpty()) {
+                    this.getAttributeMap().a(cache.a(slot));
+                }
+
+                if (!equipment.isEmpty()) {
+                    this.getAttributeMap().b(equipment.a(slot));
+                }
             }
             equipmentCache.put(slot, equipment);
         }

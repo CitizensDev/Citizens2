@@ -1,9 +1,9 @@
 package net.citizensnpcs.nms.v1_16_R3.entity;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
 import java.net.Socket;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,10 +14,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
-import com.mojang.datafixers.util.Pair;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -47,17 +44,15 @@ import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityHuman;
+import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EnumGamemode;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.EnumProtocolDirection;
 import net.minecraft.server.v1_16_R3.IBlockData;
 import net.minecraft.server.v1_16_R3.IChatBaseComponent;
-import net.minecraft.server.v1_16_R3.ItemStack;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.Packet;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_16_R3.PlayerInteractManager;
 import net.minecraft.server.v1_16_R3.SoundEffect;
 import net.minecraft.server.v1_16_R3.Vec3D;
@@ -65,10 +60,8 @@ import net.minecraft.server.v1_16_R3.WorldServer;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity, ForwardingMobAI {
     private MobAI ai;
-    private final Map<EnumItemSlot, ItemStack> equipmentCache = Maps.newEnumMap(EnumItemSlot.class);
     private int jumpTicks = 0;
     private final CitizensNPC npc;
-    private final Location packetLocationCache = new Location(null, 0, 0, 0);
     private PlayerlistTracker playerlistTracker;
     private final SkinPacketTracker skinTracker;
 
@@ -367,6 +360,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return;
         noclip = isSpectator();
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
+        try {
+            DETECT_EQUIPMENT_UPDATES.invoke(this);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
         npc.update();
@@ -400,26 +398,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return;
 
         updateEffects = true;
-        boolean itemChanged = false;
-        for (EnumItemSlot slot : EnumItemSlot.values()) {
-            ItemStack equipment = getEquipment(slot);
-            ItemStack cache = equipmentCache.get(slot);
-            if (!(cache == null && equipment == null)
-                    && (cache == null ^ equipment == null || !ItemStack.equals(cache, equipment))) {
-                itemChanged = true;
-            }
-            equipmentCache.put(slot, equipment);
-        }
-        if (!itemChanged)
-            return;
-        Location current = getBukkitEntity().getLocation(packetLocationCache);
-        Packet<?>[] packets = new Packet[1];
-        List<Pair<EnumItemSlot, ItemStack>> vals = Lists.newArrayList();
-        for (EnumItemSlot slot : EnumItemSlot.values()) {
-            vals.add(new Pair<EnumItemSlot, ItemStack>(slot, getEquipment(slot)));
-        }
-        packets[0] = new PacketPlayOutEntityEquipment(getId(), vals);
-        NMSImpl.sendPacketsNearby(getBukkitEntity(), current, packets);
     }
 
     public static class PlayerNPC extends CraftPlayer implements NPCHolder, SkinnableEntity {
@@ -499,6 +477,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
     }
 
+    private static final MethodHandle DETECT_EQUIPMENT_UPDATES = NMS.getMethodHandle(EntityLiving.class, "p", true);
     private static final float EPSILON = 0.003F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }

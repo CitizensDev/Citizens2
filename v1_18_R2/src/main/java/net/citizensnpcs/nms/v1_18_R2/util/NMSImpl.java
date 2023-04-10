@@ -252,6 +252,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -275,6 +276,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
@@ -458,6 +460,7 @@ public class NMSImpl implements NMSBridge {
         Set<ServerPlayerConnection> linked = Sets.newIdentityHashSet();
         ServerEntity tracker = new ServerEntity((ServerLevel) handle.level, handle, handle.getType().updateInterval(),
                 handle.getType().trackDeltas(), agg::send, linked);
+        Map<EquipmentSlot, ItemStack> equipment = Maps.newEnumMap(EquipmentSlot.class);
         return new EntityPacketTracker() {
             @Override
             public void link(Player player) {
@@ -470,6 +473,25 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void run() {
+                if (handle instanceof LivingEntity) {
+                    boolean changed = false;
+                    LivingEntity entity = (LivingEntity) handle;
+                    for (EquipmentSlot slot : EquipmentSlot.values()) {
+                        ItemStack old = equipment.get(slot);
+                        ItemStack curr = entity.getItemBySlot(slot);
+                        if (!changed && !ItemStack.matches(old, curr)) {
+                            changed = true;
+                        }
+                        equipment.put(slot, curr);
+                    }
+                    if (changed) {
+                        List<com.mojang.datafixers.util.Pair<EquipmentSlot, ItemStack>> vals = Lists.newArrayList();
+                        for (EquipmentSlot slot : EquipmentSlot.values()) {
+                            vals.add(com.mojang.datafixers.util.Pair.of(slot, equipment.get(slot)));
+                        }
+                        agg.send(new ClientboundSetEquipmentPacket(handle.getId(), vals));
+                    }
+                }
                 tracker.sendChanges();
             }
 
@@ -1350,6 +1372,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
+        getHandle(entity).setPos(location.getX(), location.getY(), location.getZ());
         getHandle(entity).moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
                 location.getPitch());
     }
