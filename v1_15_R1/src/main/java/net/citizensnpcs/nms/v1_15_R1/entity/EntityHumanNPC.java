@@ -439,11 +439,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             ItemStack cache = equipmentCache.get(slot);
             if (!(cache == null && equipment == null)
                     && (cache == null ^ equipment == null || !ItemStack.equals(cache, equipment))) {
-                if (!cache.isEmpty()) {
+                if (cache != null && !cache.isEmpty()) {
                     this.getAttributeMap().a(cache.a(slot));
                 }
 
-                if (!equipment.isEmpty()) {
+                if (equipment != null && !equipment.isEmpty()) {
                     this.getAttributeMap().b(equipment.a(slot));
                 }
 
