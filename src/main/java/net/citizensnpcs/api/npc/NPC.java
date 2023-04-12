@@ -104,6 +104,9 @@ public interface NPC extends Agent, Cloneable {
      */
     public void faceLocation(Location location);
 
+    /**
+     * Creates a {@link BlockBreaker} that allows you to break blocks using the Minecraft breaking algorithm.
+     */
     public BlockBreaker getBlockBreaker(Block targetBlock, BlockBreakerConfiguration config);
 
     /**
@@ -394,7 +397,7 @@ public interface NPC extends Agent, Cloneable {
      */
     public void teleport(Location location, TeleportCause cause);
 
-    void updateCustomName();
+    public void updateCustomName();
 
     /**
      * Whether the NPC is currently set to use Minecraft AI. Defaults to false.
