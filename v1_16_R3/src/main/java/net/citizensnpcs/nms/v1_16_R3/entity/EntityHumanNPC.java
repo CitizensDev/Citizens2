@@ -360,10 +360,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return;
         noclip = isSpectator();
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
-        try {
-            DETECT_EQUIPMENT_UPDATES.invoke(this);
-        } catch (Throwable e) {
-            e.printStackTrace();
+        if (DETECT_EQUIPMENT_UPDATES != null) {
+            try {
+                DETECT_EQUIPMENT_UPDATES.invoke(this);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
