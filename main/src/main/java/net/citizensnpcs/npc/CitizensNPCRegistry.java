@@ -154,11 +154,23 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC getByUniqueId(UUID uuid) {
+        if (uuid.version() == 2) {
+            long msb = uuid.getMostSignificantBits();
+            msb &= ~0x0000000000002000L;
+            msb |= 0x0000000000004000L;
+            uuid = new UUID(msb, uuid.getLeastSignificantBits());
+        }
         return uniqueNPCs.get(uuid);
     }
 
     @Override
     public NPC getByUniqueIdGlobal(UUID uuid) {
+        if (uuid.version() == 2) {
+            long msb = uuid.getMostSignificantBits();
+            msb &= ~0x0000000000002000L;
+            msb |= 0x0000000000004000L;
+            uuid = new UUID(msb, uuid.getLeastSignificantBits());
+        }
         NPC npc = getByUniqueId(uuid);
         if (npc != null)
             return npc;

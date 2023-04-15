@@ -7,7 +7,6 @@ import java.util.function.Function;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -330,8 +329,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         setTarget(params -> {
             if (npc.isFlyable()) {
                 return new FlyingAStarNavigationStrategy(npc, path, params);
-            } else if (params.useNewPathfinder()
-                    || (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof ArmorStand))) {
+            } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
                 return new AStarNavigationStrategy(npc, path, params);
             } else {
                 return new MCNavigationStrategy(npc, path, params);
@@ -351,8 +349,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         setTarget(params -> {
             if (npc.isFlyable()) {
                 return new FlyingAStarNavigationStrategy(npc, target, params);
-            } else if (params.useNewPathfinder()
-                    || (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof ArmorStand))) {
+            } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
                 return new AStarNavigationStrategy(npc, target, params);
             } else {
                 return new MCNavigationStrategy(npc, target, params);
