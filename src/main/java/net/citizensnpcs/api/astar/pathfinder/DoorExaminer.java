@@ -31,11 +31,17 @@ public class DoorExaminer implements BlockExaminer {
 
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
+        if (!MinecraftBlockExaminer.canStandOn(source.getBlockAt(point.getVector().getBlockX(),
+                point.getVector().getBlockY() - 1, point.getVector().getBlockZ())))
+            return PassableState.IGNORE;
+
         Material in = source.getMaterialAt(point.getVector());
+
         if (MinecraftBlockExaminer.isDoor(in) || MinecraftBlockExaminer.isGate(in)) {
             point.addCallback(new DoorOpener());
             return PassableState.PASSABLE;
         }
+
         return PassableState.IGNORE;
     }
 
