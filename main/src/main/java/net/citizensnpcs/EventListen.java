@@ -85,6 +85,7 @@ import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.event.NPCVehicleDamageEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
@@ -92,6 +93,7 @@ import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
@@ -380,6 +382,13 @@ public class EventListen implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCRemove(NPCRemoveEvent event) {
         toRespawn.values().remove(event.getNPC());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onNPCSeenByPlayer(NPCSeenByPlayerEvent event) {
+        if (event.getNPC().hasTrait(PlayerFilter.class)) {
+            event.setCancelled(event.getNPC().getOrAddTrait(PlayerFilter.class).onSeenByPlayer(event.getPlayer()));
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

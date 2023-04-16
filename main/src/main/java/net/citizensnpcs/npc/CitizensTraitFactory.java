@@ -64,6 +64,8 @@ import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.text.Text;
 import net.citizensnpcs.trait.waypoint.Waypoints;
+import net.citizensnpcs.util.EntityPacketTracker;
+import net.citizensnpcs.util.NMS;
 
 public class CitizensTraitFactory implements TraitFactory {
     private final List<TraitInfo> defaultTraits = Lists.newArrayList();
@@ -98,7 +100,17 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Owner.class));
         registerTrait(TraitInfo.create(PacketNPC.class));
         registerTrait(TraitInfo.create(PausePathfindingTrait.class));
-        registerTrait(TraitInfo.create(PlayerFilter.class));
+        registerTrait(TraitInfo.create(PlayerFilter.class).withSupplier(() -> new PlayerFilter((p, e) -> {
+            EntityPacketTracker ept = NMS.getPacketTracker(e);
+            if (ept != null) {
+                ept.unlink(p);
+            }
+        }, (p, e) -> {
+            EntityPacketTracker ept = NMS.getPacketTracker(e);
+            if (ept != null) {
+                ept.link(p);
+            }
+        })));
         registerTrait(TraitInfo.create(Poses.class));
         registerTrait(TraitInfo.create(Powered.class));
         registerTrait(TraitInfo.create(RabbitType.class));

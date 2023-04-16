@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -53,7 +54,9 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
     public void updatePlayer(final ServerPlayer entityplayer) {
         if (tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
-            if (npc.isHiddenFrom(entityplayer.getBukkitEntity()))
+            NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled())
                 return;
             Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
             if (TRACKING_RANGE_SETTER != null && trackingRange != null

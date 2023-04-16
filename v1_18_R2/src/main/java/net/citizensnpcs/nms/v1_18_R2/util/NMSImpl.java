@@ -640,6 +640,34 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
+        ServerLevel server = (ServerLevel) getHandle(entity).level;
+        TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
+        if (entry == null)
+            return null;
+        return new EntityPacketTracker() {
+            @Override
+            public void link(Player player) {
+                entry.updatePlayer((ServerPlayer) getHandle(player));
+            }
+
+            @Override
+            public void run() {
+            }
+
+            @Override
+            public void unlink(Player player) {
+                entry.removePlayer((ServerPlayer) getHandle(player));
+            }
+
+            @Override
+            public void unlinkAll(Consumer<Player> callback) {
+                entry.broadcastRemoved();
+            }
+        };
+    }
+
+    @Override
     public List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null || handle.passengers == null)
@@ -1241,11 +1269,9 @@ public class NMSImpl implements NMSBridge {
         float oldPitch = handle.getXRot();
         handle.setYBodyRot(bodyYaw);
         handle.setXRot(pitch);
-        sendPacketsNearby(null, from.getLocation(), new ClientboundTeleportEntityPacket(handle), // new
-                                                                                                 // ClientboundMoveEntityPacket.Rot(handle.getId(),
-                                                                                                 // (byte) (bodyYaw *
-                                                                                                 // 256.0F / 360.0F),
-                // (byte) (pitch * 256.0F / 360.0F), handle.onGround),
+        sendPacketsNearby(null, from.getLocation(), new ClientboundTeleportEntityPacket(handle),
+                // newClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw *256.0F / 360.0F), (byte) (pitch *
+                // 256.0F / 360.0F), handle.onGround),
                 new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
         handle.setYBodyRot(oldBody);
         handle.setXRot(oldPitch);

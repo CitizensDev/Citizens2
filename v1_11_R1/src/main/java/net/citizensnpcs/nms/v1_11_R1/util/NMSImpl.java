@@ -528,6 +528,34 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
+        WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
+        EntityTrackerEntry entry = server.getTracker().trackedEntities.get(entity.getEntityId());
+        if (entry == null)
+            return null;
+        return new EntityPacketTracker() {
+            @Override
+            public void link(Player player) {
+                entry.updatePlayer((EntityPlayer) getHandle(player));
+            }
+
+            @Override
+            public void run() {
+            }
+
+            @Override
+            public void unlink(Player player) {
+                entry.clear((EntityPlayer) getHandle(player));
+            }
+
+            @Override
+            public void unlinkAll(Consumer<Player> callback) {
+                entry.a();
+            }
+        };
+    }
+
+    @Override
     public List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null || handle.passengers == null)

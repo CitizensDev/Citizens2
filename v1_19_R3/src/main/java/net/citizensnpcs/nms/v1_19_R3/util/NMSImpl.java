@@ -672,6 +672,34 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
+        ServerLevel server = (ServerLevel) getHandle(entity).level;
+        TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
+        if (entry == null)
+            return null;
+        return new EntityPacketTracker() {
+            @Override
+            public void link(Player player) {
+                entry.updatePlayer((ServerPlayer) getHandle(player));
+            }
+
+            @Override
+            public void run() {
+            }
+
+            @Override
+            public void unlink(Player player) {
+                entry.removePlayer((ServerPlayer) getHandle(player));
+            }
+
+            @Override
+            public void unlinkAll(Consumer<Player> callback) {
+                entry.broadcastRemoved();
+            }
+        };
+    }
+
+    @Override
     public List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         if (handle == null || handle.passengers == null)
@@ -2476,7 +2504,6 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_SETTER = NMS.getFirstFinalSetter(ServerPlayer.class,
             PlayerAdvancements.class);
-
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);

@@ -52,7 +52,9 @@ import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.PacketNPC;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
 import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
@@ -439,6 +441,19 @@ public class NMS {
 
     public static NPC getNPC(Entity entity) {
         return BRIDGE.getNPC(entity);
+    }
+
+    public static EntityPacketTracker getPacketTracker(Entity entity) {
+        if (entity == null)
+            return null;
+        if (entity instanceof NPCHolder) {
+            NPC npc = ((NPCHolder) entity).getNPC();
+            if (npc.hasTrait(PacketNPC.class))
+                return npc.getOrAddTrait(PacketNPC.class).getPacketTracker();
+        }
+        if (!entity.isValid())
+            return null;
+        return BRIDGE.getPacketTracker(entity);
     }
 
     public static List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {

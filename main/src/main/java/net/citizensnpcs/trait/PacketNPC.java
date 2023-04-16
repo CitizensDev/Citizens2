@@ -26,6 +26,10 @@ public class PacketNPC extends Trait {
         super("packet");
     }
 
+    public EntityPacketTracker getPacketTracker() {
+        return packetTracker;
+    }
+
     @Override
     public void onRemove() {
         npc.despawn(DespawnReason.PENDING_RESPAWN);

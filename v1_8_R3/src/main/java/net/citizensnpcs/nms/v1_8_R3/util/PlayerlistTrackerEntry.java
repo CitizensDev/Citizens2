@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -52,9 +53,15 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
         // prevent updates to NPC "viewers"
-        if ((entityplayer instanceof EntityHumanNPC) || (tracker instanceof NPCHolder
-                && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity())))
+        if (entityplayer instanceof EntityHumanNPC)
             return;
+        if (tracker instanceof NPCHolder) {
+            NPC npc = ((NPCHolder) tracker).getNPC();
+            NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                return;
+        }
         lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
         lastUpdatedPlayer = null;

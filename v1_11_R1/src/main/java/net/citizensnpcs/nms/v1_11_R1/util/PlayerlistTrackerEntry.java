@@ -2,9 +2,11 @@ package net.citizensnpcs.nms.v1_11_R1.util;
 
 import java.lang.reflect.Field;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_11_R1.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -29,9 +31,14 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         if (entityplayer instanceof EntityHumanNPC)
             return;
         Entity tracker = getTracker(this);
-        if ((tracker instanceof NPCHolder
-                && ((NPCHolder) tracker).getNPC().isHiddenFrom(entityplayer.getBukkitEntity())) || tracker.dead
-                || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+        if (tracker instanceof NPCHolder) {
+            NPC npc = ((NPCHolder) tracker).getNPC();
+            NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                return;
+        }
+        if (tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         if (entityplayer != tracker && c(entityplayer)) {
             if (!this.trackedPlayers.contains(entityplayer)

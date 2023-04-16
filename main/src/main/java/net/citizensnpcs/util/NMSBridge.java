@@ -59,7 +59,7 @@ public interface NMSBridge {
         return packets;
     }
 
-    public EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg);
+    public EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg);;
 
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable;
 
@@ -86,6 +86,8 @@ public interface NMSBridge {
     public CompoundTag getNBT(ItemStack item);;
 
     public NPC getNPC(Entity entity);
+
+    public EntityPacketTracker getPacketTracker(Entity entity);
 
     public List<Entity> getPassengers(Entity entity);
 
@@ -146,9 +148,9 @@ public interface NMSBridge {
 
     public void remove(Entity entity);
 
-    public void removeFromServerPlayerList(Player player);
+    public void removeFromServerPlayerList(Player player);;
 
-    public void removeFromWorld(org.bukkit.entity.Entity entity);;
+    public void removeFromWorld(org.bukkit.entity.Entity entity);
 
     public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity);
 
@@ -167,15 +169,15 @@ public interface NMSBridge {
     public void sendTeamPacket(Player recipient, Team team, int mode);
 
     default public void setAggressive(Entity entity, boolean aggro) {
-    }
+    };
 
     public default void setAllayDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
-    }
+    };
 
     public void setBodyYaw(Entity entity, float yaw);;
 
-    public void setBoundingBox(Entity entity, BoundingBox box);;
+    public void setBoundingBox(Entity entity, BoundingBox box);
 
     public default void setCamelPose(Entity entity, CamelPose pose) {
         throw new UnsupportedOperationException();
@@ -183,7 +185,7 @@ public interface NMSBridge {
 
     public void setCustomName(Entity entity, Object component, String string);
 
-    public void setDestination(Entity entity, double x, double y, double z, float speed);;
+    public void setDestination(Entity entity, double x, double y, double z, float speed);
 
     public void setDimensions(Entity entity, EntityDim desired);
 

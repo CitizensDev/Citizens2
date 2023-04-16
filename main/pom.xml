@@ -236,11 +236,7 @@
                                 <relocation>
                                     <pattern>net.byteflux.libby</pattern>
                                     <shadedPattern>clib.net.byteflux.libby</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.bstats</pattern>
-                                    <shadedPattern>net.citizensnpcs.util.metrics</shadedPattern>
-                                </relocation>
+                                </relocation> 
                             </relocations>
                         </configuration>
                     </execution>

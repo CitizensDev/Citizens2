@@ -335,7 +335,6 @@ public class HologramTrait extends Trait {
                 continue;
 
             line.setText(text);
-            hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, npc.getRawName().length() > 0);
         }
     }
 
@@ -438,12 +437,15 @@ public class HologramTrait extends Trait {
             this.text = text;
 
             if (hologram != null) {
-                hologram.setName(Placeholders.replace(text, null, npc));
+                String name = Placeholders.replace(text, null, npc);
+                hologram.setName(name);
+                hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, ChatColor.stripColor(name).length() > 0);
             }
         }
 
         public void spawnNPC(double height) {
-            this.hologram = createHologram(Placeholders.replace(text, null, npc), height);
+            String name = Placeholders.replace(text, null, npc);
+            this.hologram = createHologram(name, height);
         }
     }
 
