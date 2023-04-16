@@ -77,8 +77,9 @@ public class Translator {
 
     private String translate(String key, Locale locale) {
         ResourceBundle bundle = preferredBundle;
-        if (locale != defaultLocale)
+        if (locale != defaultLocale) {
             bundle = getBundle(locale);
+        }
         try {
             return bundle.getString(key);
         } catch (MissingResourceException e) {
