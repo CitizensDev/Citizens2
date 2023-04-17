@@ -13,6 +13,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -130,7 +131,6 @@ public class PlayerFilter extends Trait {
      * that should no longer view the NPC.
      */
     public void recalculate() {
-        System.out.println(viewingPlayers + " " + hiddenPlayers);
         for (Iterator<UUID> itr = viewingPlayers.iterator(); itr.hasNext();) {
             UUID uuid = itr.next();
             Player player = Bukkit.getPlayer(uuid);
@@ -155,6 +155,13 @@ public class PlayerFilter extends Trait {
                 itr.remove();
             }
         }
+    }
+
+    @Override
+    public void run() {
+        if (!npc.isSpawned() || !npc.isUpdating(NPCUpdate.PACKET))
+            return;
+        recalculate();
     }
 
     /**
