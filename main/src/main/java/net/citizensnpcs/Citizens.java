@@ -486,6 +486,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Skin.clearCache();
 
         getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
+
         saves.reloadFromSource();
         saves.loadInto(npcRegistry);
 

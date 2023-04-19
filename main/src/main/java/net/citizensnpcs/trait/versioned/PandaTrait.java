@@ -22,6 +22,8 @@ import net.citizensnpcs.util.Util;
 @TraitName("pandatrait")
 public class PandaTrait extends Trait {
     @Persist
+    private boolean eating;
+    @Persist
     private Panda.Gene hiddenGene;
     @Persist
     private Panda.Gene mainGene = Panda.Gene.NORMAL;
@@ -42,6 +44,10 @@ public class PandaTrait extends Trait {
 
     public Panda.Gene getMainGene() {
         return mainGene;
+    }
+
+    public boolean isEating() {
+        return eating;
     }
 
     public boolean isRolling() {
@@ -66,6 +72,7 @@ public class PandaTrait extends Trait {
                 try {
                     panda.setRolling(rolling);
                     panda.setSneezing(sneezing);
+                    panda.setEating(eating);
                 } catch (Throwable t) {
                     SUPPORT_ROLLING_SNEEZING = false;
                 }
@@ -74,6 +81,10 @@ public class PandaTrait extends Trait {
                 panda.setHiddenGene(hiddenGene);
             }
         }
+    }
+
+    public void setEating(boolean eating) {
+        this.eating = eating;
     }
 
     public void setHiddenGene(Panda.Gene gene) {
@@ -96,6 +107,10 @@ public class PandaTrait extends Trait {
         this.sneezing = sneezing;
     }
 
+    public boolean toggleEating() {
+        return eating = !eating;
+    }
+
     public boolean toggleRolling() {
         return rolling = !rolling;
     }
@@ -110,10 +125,10 @@ public class PandaTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "panda --gene (main gene) --hiddengene (hidden gene) -s(itting) -n -r(olling)",
+            usage = "panda --gene (main gene) --hiddengene (hidden gene) -e(ating) -s(itting) -n (sneezing) -r(olling)",
             desc = "Sets panda modifiers",
             modifiers = { "panda" },
-            flags = "srn",
+            flags = "srne",
             min = 1,
             max = 1,
             permission = "citizens.npc.panda")
@@ -138,17 +153,25 @@ public class PandaTrait extends Trait {
             trait.setHiddenGene(hiddengene);
             output += ' ' + Messaging.tr(Messages.PANDA_HIDDEN_GENE_SET, hiddengene);
         }
+        if (args.hasFlag('e')) {
+            boolean isEating = trait.toggleEating();
+            output += ' '
+                    + Messaging.tr(isEating ? Messages.PANDA_EATING : Messages.PANDA_STOPPED_EATING, npc.getName());
+        }
         if (args.hasFlag('s')) {
             boolean isSitting = trait.toggleSitting();
-            output += ' ' + Messaging.tr(isSitting ? Messages.PANDA_SITTING : Messages.PANDA_STOPPED_SITTING);
+            output += ' '
+                    + Messaging.tr(isSitting ? Messages.PANDA_SITTING : Messages.PANDA_STOPPED_SITTING, npc.getName());
         }
         if (args.hasFlag('r')) {
             boolean isRolling = trait.toggleRolling();
-            output += ' ' + Messaging.tr(isRolling ? Messages.PANDA_ROLLING : Messages.PANDA_STOPPED_ROLLING);
+            output += ' '
+                    + Messaging.tr(isRolling ? Messages.PANDA_ROLLING : Messages.PANDA_STOPPED_ROLLING, npc.getName());
         }
         if (args.hasFlag('n')) {
             boolean isSneezing = trait.toggleSneezing();
-            output += ' ' + Messaging.tr(isSneezing ? Messages.PANDA_SNEEZING : Messages.PANDA_STOPPED_SNEEZING);
+            output += ' ' + Messaging.tr(isSneezing ? Messages.PANDA_SNEEZING : Messages.PANDA_STOPPED_SNEEZING,
+                    npc.getName());
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());

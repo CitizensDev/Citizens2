@@ -289,11 +289,13 @@ public class Messages {
     public static final String OWNER_SET = "citizens.commands.npc.owner.set";
     public static final String OWNER_SET_SERVER = "citizens.commands.npc.owner.set-server";
     public static final String PAINTING_ART_SET = "citizens.commands.npc.painting.art-set";
+    public static final String PANDA_EATING = "citizens.commands.npc.panda.eating-set";
     public static final String PANDA_HIDDEN_GENE_SET = "citizens.commands.npc.panda.hidden-gene-set";
     public static final String PANDA_MAIN_GENE_SET = "citizens.commands.npc.panda.main-gene-set";
     public static final String PANDA_ROLLING = "citizens.commands.npc.panda.rolling";
     public static final String PANDA_SITTING = "citizens.commands.npc.panda.sitting";
     public static final String PANDA_SNEEZING = "citizens.commands.npc.panda.sneezing";
+    public static final String PANDA_STOPPED_EATING = "citizens.commands.npc.panda.eating-unset";
     public static final String PANDA_STOPPED_ROLLING = "citizens.commands.npc.panda.rolling-stopped";
     public static final String PANDA_STOPPED_SITTING = "citizens.commands.npc.panda.stopped-sitting";
     public static final String PANDA_STOPPED_SNEEZING = "citizens.commands.npc.panda.sneezing-stopped";

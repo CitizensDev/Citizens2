@@ -545,7 +545,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void unlink(Player player) {
-                entry.clear((EntityPlayer) getHandle(player));
+                entry.a((EntityPlayer) getHandle(player));
             }
 
             @Override

@@ -215,9 +215,10 @@ public class CitizensNavigator implements Navigator, Runnable {
             npc.teleport(targetLoc, TeleportCause.PLUGIN);
             finished = true;
         }
-        if (!finished) {
+
+        if (!finished)
             return;
-        }
+
         if (executing.getCancelReason() != null) {
             stopNavigating(executing.getCancelReason());
         } else {
