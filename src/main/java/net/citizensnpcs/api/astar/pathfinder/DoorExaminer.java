@@ -15,6 +15,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
@@ -31,7 +32,7 @@ public class DoorExaminer implements BlockExaminer {
 
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
-        if (!MinecraftBlockExaminer.canStandOn(source.getBlockAt(point.getVector().getBlockX(),
+        if (!MinecraftBlockExaminer.canStandOn(source.getMaterialAt(point.getVector().getBlockX(),
                 point.getVector().getBlockY() - 1, point.getVector().getBlockZ())))
             return PassableState.IGNORE;
 
@@ -45,7 +46,7 @@ public class DoorExaminer implements BlockExaminer {
         return PassableState.IGNORE;
     }
 
-    static class DoorOpener implements PathCallback {
+    private static class DoorOpener implements PathCallback {
         private boolean opened;
 
         private void close(NPC npc, Block point) {
@@ -81,17 +82,6 @@ public class DoorExaminer implements BlockExaminer {
                 }
             }
             tryArmSwing(npc);
-        }
-
-        @SuppressWarnings("deprecation")
-        private Block getCorrectDoor(Block point) {
-            MaterialData data = point.getState().getData();
-            if (data instanceof org.bukkit.material.Door) {
-                return point;
-            }
-            org.bukkit.material.Door door = (org.bukkit.material.Door) data;
-            boolean bottom = !door.isTopHalf();
-            return bottom ? point : point.getRelative(BlockFace.DOWN);
         }
 
         @Override
@@ -187,4 +177,17 @@ public class DoorExaminer implements BlockExaminer {
         private static boolean SUPPORTS_SOUNDS = true;
         private static boolean SUPPORTS_SWING_ANIMATION = true;
     }
+
+    @SuppressWarnings("deprecation")
+    private static Block getCorrectDoor(Block point) {
+        MaterialData data = point.getState().getData();
+        if (!(data instanceof org.bukkit.material.Door))
+            return point;
+
+        org.bukkit.material.Door door = (org.bukkit.material.Door) data;
+        boolean bottom = !door.isTopHalf();
+        return bottom ? point : point.getRelative(BlockFace.DOWN);
+    }
+
+    private static final Vector DOWN = new Vector(0, -1, 0);
 }
