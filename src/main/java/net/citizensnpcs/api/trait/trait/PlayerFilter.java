@@ -63,11 +63,19 @@ public class PlayerFilter extends Trait {
         this.viewFunction = viewFunction;
     }
 
+    /**
+     * Clears all set UUID filters.
+     */
     public void clear() {
         hidden = allowlist = null;
         groupAllowlist = groupHidden = null;
     }
 
+    /**
+     * Hides the NPC from the given Player UUID.
+     *
+     * @param uuid
+     */
     public void hide(UUID uuid) {
         if (hidden == null) {
             hidden = Sets.newHashSet();
@@ -77,6 +85,9 @@ public class PlayerFilter extends Trait {
         recalculate();
     }
 
+    /**
+     * Hides the NPC from the given permissions group
+     */
     public void hideGroup(String group) {
         if (groupHidden == null) {
             groupHidden = Sets.newHashSet();
@@ -85,6 +96,9 @@ public class PlayerFilter extends Trait {
         recalculate();
     }
 
+    /**
+     * Whether the NPC should be hidden from the given Player
+     */
     public boolean isHidden(Player player) {
         return filter == null ? false : filter.apply(player);
     }
@@ -106,6 +120,9 @@ public class PlayerFilter extends Trait {
         recalculate();
     }
 
+    /**
+     * Only the given permissions group should see the NPC.
+     */
     public void onlyGroup(String group) {
         if (groupAllowlist == null) {
             groupAllowlist = Sets.newHashSet();
@@ -164,6 +181,14 @@ public class PlayerFilter extends Trait {
         recalculate();
     }
 
+    public void setAllowlist(Set<UUID> allowlist) {
+        this.allowlist = allowlist == null ? null : Sets.newHashSet(allowlist);
+    }
+
+    public void setHiddenFrom(Set<UUID> hidden) {
+        this.hidden = hidden == null ? null : Sets.newHashSet(hidden);
+    }
+
     /**
      * Sets the filter function, which returns {@code true} if the {@link NPC} should be hidden from the given
      * {@link Player}.
@@ -173,12 +198,12 @@ public class PlayerFilter extends Trait {
         recalculate();
     }
 
+    /**
+     * Unhides the given Player UUID
+     */
     public void unhide(UUID uuid) {
         if (hidden != null) {
             hidden.remove(uuid);
-            if (hidden.size() == 0) {
-                hidden = null;
-            }
         }
         if (allowlist != null) {
             allowlist.remove(uuid);
@@ -187,12 +212,12 @@ public class PlayerFilter extends Trait {
         recalculate();
     }
 
+    /**
+     * Unhides the given permissions group
+     */
     public void unhideGroup(String group) {
         if (groupHidden != null) {
             groupHidden.remove(group);
-            if (groupHidden.size() == 0) {
-                groupHidden = null;
-            }
         }
         if (groupAllowlist != null) {
             groupAllowlist = null;
