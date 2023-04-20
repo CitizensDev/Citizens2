@@ -202,7 +202,7 @@ public class Placeholders implements Listener {
     private static boolean PLACEHOLDERAPI_ENABLED = true;
     private static final List<PlaceholderProvider> PLACEHOLDERS = Lists.newArrayList();
     private static final Pattern PLAYER_PLACEHOLDER_MATCHER = Pattern.compile(
-            "(<player>|<p>|@p|%player%|<random_player>|<random_world_player>|<random_npc>|<random_npc_id>|<nearest_npc_id>|<nearest_player>|<world>)");
-    private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", "@p", "%player%" };
-    private static final Collection<String> PLAYER_VARIABLES = ImmutableSet.of("<player>", "<p>", "@p", "%player%");
+            "(<player>|<p>|%player%|<random_player>|<random_world_player>|<random_npc>|<random_npc_id>|<nearest_npc_id>|<nearest_player>|<world>)");
+    private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", "%player%" };
+    private static final Collection<String> PLAYER_VARIABLES = ImmutableSet.of("<player>", "<p>", "%player%");
 }
