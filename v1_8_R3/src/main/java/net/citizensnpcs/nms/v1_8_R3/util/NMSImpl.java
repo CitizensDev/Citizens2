@@ -316,7 +316,6 @@ public class NMSImpl implements NMSBridge {
                 EntityPlayer p = (EntityPlayer) getHandle(player);
                 handle.dead = false;
                 tracker.updatePlayer(p);
-                tracker.trackedPlayers.add(p);
                 handle.dead = true;
             }
 
@@ -339,13 +338,13 @@ public class NMSImpl implements NMSBridge {
                         }
                     }
                 }
-                tracker.a();
+                tracker.track(Lists.newArrayList(tracker.trackedPlayers));
             }
 
             @Override
             public void unlink(Player player) {
                 EntityPlayer p = (EntityPlayer) getHandle(player);
-                tracker.a(p);
+                tracker.clear(p);
                 tracker.trackedPlayers.remove(p);
             }
 

@@ -337,7 +337,6 @@ public class NMSImpl implements NMSBridge {
                 EntityPlayer p = (EntityPlayer) getHandle(player);
                 handle.dead = false;
                 tracker.updatePlayer(p);
-                tracker.trackedPlayers.add(p);
                 handle.dead = true;
             }
 
@@ -347,7 +346,8 @@ public class NMSImpl implements NMSBridge {
                     boolean changed = false;
                     EntityLiving entity = (EntityLiving) handle;
                     for (EnumItemSlot slot : EnumItemSlot.values()) {
-                        ItemStack old = equipment.get(slot);
+                        ItemStack old = equipment.getOrDefault(slot,
+                                CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(Material.AIR)));
                         ItemStack curr = entity.getEquipment(slot);
                         if (!changed && !ItemStack.matches(old, curr)) {
                             changed = true;
@@ -360,13 +360,13 @@ public class NMSImpl implements NMSBridge {
                         }
                     }
                 }
-                tracker.a();
+                tracker.track(Lists.newArrayList(tracker.trackedPlayers));
             }
 
             @Override
             public void unlink(Player player) {
                 EntityPlayer p = (EntityPlayer) getHandle(player);
-                tracker.a(p);
+                tracker.clear(p);
                 tracker.trackedPlayers.remove(p);
             }
 

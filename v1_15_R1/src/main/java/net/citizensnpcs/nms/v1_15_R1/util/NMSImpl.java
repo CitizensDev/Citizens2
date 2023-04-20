@@ -446,7 +446,7 @@ public class NMSImpl implements NMSBridge {
                     boolean changed = false;
                     EntityLiving entity = (EntityLiving) handle;
                     for (EnumItemSlot slot : EnumItemSlot.values()) {
-                        ItemStack old = equipment.get(slot);
+                        ItemStack old = equipment.getOrDefault(slot, ItemStack.a);
                         ItemStack curr = entity.getEquipment(slot);
                         if (!changed && !ItemStack.matches(old, curr)) {
                             changed = true;
