@@ -41,7 +41,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.LocationLookup;
 import net.citizensnpcs.api.NMSHelper;
-import net.citizensnpcs.api.ai.speech.SpeechFactory;
+import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.Injector;
 import net.citizensnpcs.api.event.CitizensDisableEvent;
@@ -75,7 +75,6 @@ import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
-import net.citizensnpcs.npc.ai.speech.CitizensSpeechFactory;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.trait.ClickRedirectTrait;
@@ -150,7 +149,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private NPCDataStore saves;
     private NPCSelector selector;
     private StoredShops shops;
-    private CitizensSpeechFactory speechFactory;
     private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
     private CitizensTraitFactory traitFactory;
 
@@ -288,11 +286,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
-    public SpeechFactory getSpeechFactory() {
-        return speechFactory;
-    }
-
-    @Override
     public TraitFactory getTraitFactory() {
         return traitFactory;
     }
@@ -408,7 +401,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         locationLookup = new LocationLookup();
         locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
 
-        speechFactory = new CitizensSpeechFactory();
         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
         traitFactory = new CitizensTraitFactory(this);
         traitFactory.registerTrait(TraitInfo.create(ShopTrait.class).withSupplier(() -> {
@@ -586,6 +578,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             shops.saveToDisk();
             saves.saveToDiskImmediate();
         }
+    }
+
+    @Override
+    public void talk(SpeechContext context) {
+        Util.talk(context);
     }
 
     private class CitizensLoadTask implements Runnable {

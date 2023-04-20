@@ -19,7 +19,6 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.trait.trait.Spawned;
-import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
@@ -126,7 +125,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(SneakTrait.class));
         registerTrait(TraitInfo.create(SlimeSize.class));
         registerTrait(TraitInfo.create(Spawned.class));
-        registerTrait(TraitInfo.create(Speech.class));
         registerTrait(TraitInfo.create(Text.class));
         registerTrait(TraitInfo.create(Waypoints.class));
         registerTrait(TraitInfo.create(WitherTrait.class));

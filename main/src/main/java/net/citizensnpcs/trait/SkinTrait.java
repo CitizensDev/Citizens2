@@ -10,6 +10,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.md_5.bungee.api.ChatColor;
 
@@ -162,13 +163,13 @@ public class SkinTrait extends Trait {
 
         setSkinNameInternal(skinName);
         String json = new String(BaseEncoding.base64().decode(data), Charsets.UTF_8);
-        if (!json.contains("textures")) {
+        if (!json.contains("textures"))
             throw new IllegalArgumentException("Invalid texture data");
-        }
+
         this.signature = signature;
         this.textureRaw = data;
         this.updateSkins = false;
-        npc.data().setPersistent("cached-skin-uuid-name", skinName.toLowerCase());
+        npc.data().setPersistent(Skin.CACHED_SKIN_UUID_NAME_METADATA, skinName.toLowerCase());
         onSkinChange(false);
     }
 

@@ -83,7 +83,6 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.trait.trait.Spawned;
-import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
@@ -2874,7 +2873,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "speak [message] --target [npcid|player name] --range (range to look for entities to speak to in blocks) (--type vocal_type)",
+            usage = "speak [message] --target [npcid|player name] --range (range to look for entities to speak to in blocks)",
             desc = "Says a message from the NPC",
             modifiers = { "speak" },
             min = 2,
@@ -2882,12 +2881,6 @@ public class NPCCommands {
     public void speak(CommandContext args, CommandSender sender, NPC npc, @Flag("type") String type,
             @Flag("target") String target, @Flag("range") Float range) throws CommandException {
         String message = args.getJoinedStrings(1);
-
-        if (message.length() <= 0) {
-            Messaging.send(sender, "Default Vocal Chord for " + npc.getName() + ": "
-                    + npc.getOrAddTrait(Speech.class).getDefaultVocalChord());
-            return;
-        }
 
         SpeechContext context = new SpeechContext(message);
 
@@ -2912,11 +2905,7 @@ public class NPCCommands {
             });
         }
 
-        if (type == null || !CitizensAPI.getSpeechFactory().isRegistered(type)) {
-            type = npc.getOrAddTrait(Speech.class).getDefaultVocalChord();
-        }
-
-        npc.getDefaultSpeechController().speak(context, type);
+        npc.getDefaultSpeechController().speak(context);
     }
 
     @Command(
