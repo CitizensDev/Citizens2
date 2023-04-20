@@ -7,7 +7,6 @@ import org.bukkit.entity.Entity;
  *
  */
 public interface Talkable extends Comparable<Object> {
-
     /**
      * Gets the LivingEntity associated with this Talkable
      *
@@ -34,12 +33,12 @@ public interface Talkable extends Comparable<Object> {
      *            The chord to use
      *
      */
-    public void talkNear(SpeechContext context, String message, VocalChord vocalChord);
+    public void talkNear(SpeechContext context, String message);
 
     /**
      * Called by a {@link VocalChord} when talking to this Talkable Entity to provide a universal method to getting an
      * event/output.
-     * 
+     *
      * @param context
      *            the Speech context
      * @param message
@@ -47,6 +46,6 @@ public interface Talkable extends Comparable<Object> {
      * @param vocalChord
      *            The chord to use
      */
-    public void talkTo(SpeechContext context, String message, VocalChord vocalChord);
+    public void talkTo(SpeechContext context, String message);
 
 }

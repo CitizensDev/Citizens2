@@ -42,7 +42,6 @@ import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
-import net.citizensnpcs.api.trait.trait.Speech;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 import net.citizensnpcs.api.util.MemoryDataKey;
@@ -224,12 +223,6 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public SpeechController getDefaultSpeechController() {
-        // TODO: Remove in future versions.
-        // This is here to add the Speech trait to any existing NPCs
-        // that were created pre-SpeechController, if invoked.
-        if (!hasTrait(Speech.class)) {
-            addTrait(Speech.class);
-        }
         return speechController;
     }
 

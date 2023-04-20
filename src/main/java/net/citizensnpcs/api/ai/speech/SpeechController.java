@@ -8,7 +8,6 @@ import net.citizensnpcs.api.npc.NPC;
  *
  */
 public interface SpeechController {
-
     /**
      * Sends the speechController's {@link NPC} and {@link SpeechContext} to the current default {@link VocalChord} for
      * the NPC. If none, the default {@link VocalChord} is used.
@@ -17,15 +16,4 @@ public interface SpeechController {
      *            The message to speak
      */
     public void speak(SpeechContext message);
-
-    /**
-     * Sends the speechController's {@link NPC} and {@link SpeechContext} to the specified {@link VocalChord}.
-     *
-     * @param message
-     *            The message to speak
-     * @param vocalChordName
-     *            the registered {@link VocalChord} name
-     *
-     */
-    public void speak(SpeechContext message, String vocalChordName);
 }

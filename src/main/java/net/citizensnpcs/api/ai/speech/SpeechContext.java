@@ -8,7 +8,6 @@ import java.util.List;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent;
 import net.citizensnpcs.api.npc.NPC;
 
@@ -62,7 +61,7 @@ public class SpeechContext implements Iterable<Talkable> {
     public SpeechContext addRecipient(Entity entity) {
         if (recipients.isEmpty())
             recipients = new ArrayList<Talkable>();
-        recipients.add(CitizensAPI.getSpeechFactory().newTalkableEntity(entity));
+        recipients.add(new TalkableEntity(entity));
         return this;
     }
 
@@ -145,7 +144,7 @@ public class SpeechContext implements Iterable<Talkable> {
      *
      */
     public void setTalker(Entity entity) {
-        this.talker = CitizensAPI.getSpeechFactory().newTalkableEntity(entity);
+        this.talker = new TalkableEntity(entity);
     }
 
     @Deprecated

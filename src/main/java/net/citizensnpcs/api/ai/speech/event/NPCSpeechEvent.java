@@ -5,7 +5,6 @@ import org.bukkit.event.HandlerList;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
-import net.citizensnpcs.api.ai.speech.VocalChord;
 import net.citizensnpcs.api.event.NPCEvent;
 
 /**
@@ -14,15 +13,11 @@ import net.citizensnpcs.api.event.NPCEvent;
  *
  */
 public class NPCSpeechEvent extends NPCEvent implements Cancellable {
-
     private boolean cancelled = false;
-
     private final SpeechContext context;
-    private String vocalChordName;
 
-    public NPCSpeechEvent(SpeechContext context, String vocalChordName) {
+    public NPCSpeechEvent(SpeechContext context) {
         super(CitizensAPI.getNPCRegistry().getNPC(context.getTalker().getEntity()));
-        this.vocalChordName = vocalChordName;
         this.context = context;
     }
 
@@ -40,13 +35,6 @@ public class NPCSpeechEvent extends NPCEvent implements Cancellable {
         return handlers;
     }
 
-    /**
-     * @return the name of the VocalChord that will be used.
-     */
-    public String getVocalChordName() {
-        return vocalChordName;
-    }
-
     @Override
     public boolean isCancelled() {
         return cancelled;
@@ -55,16 +43,6 @@ public class NPCSpeechEvent extends NPCEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
-    }
-
-    /**
-     * Sets the name of the {@link VocalChord} to be used.
-     *
-     * @param name
-     *            A valid registered VocalChord name
-     */
-    public void setVocalChord(String name) {
-        this.vocalChordName = name;
     }
 
     public static HandlerList getHandlerList() {

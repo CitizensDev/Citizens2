@@ -6,25 +6,20 @@ import org.bukkit.event.HandlerList;
 
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.Talkable;
-import net.citizensnpcs.api.ai.speech.VocalChord;
 
 /**
  * Represents an event where a {@link Talkable} entity speaks at/near a {@link Talkable} entity.
  *
  */
 public class SpeechEvent extends Event implements Cancellable {
-
     private boolean cancelled = false;
-
     SpeechContext context;
     String message;
     Talkable target;
-    VocalChord vocalChord;
 
-    public SpeechEvent(Talkable target, SpeechContext context, String message, VocalChord vocalChord) {
+    public SpeechEvent(Talkable target, SpeechContext context, String message) {
         this.target = target;
         this.context = context;
-        this.vocalChord = vocalChord;
         this.message = message;
     }
 
@@ -50,15 +45,6 @@ public class SpeechEvent extends Event implements Cancellable {
      */
     public String getMessage() {
         return message;
-    }
-
-    /**
-     * Returns the name of the {@link VocalChord} that called this event.
-     *
-     * @return name of the VocalChord being used
-     */
-    public String getVocalChordName() {
-        return vocalChord.getName();
     }
 
     @Override

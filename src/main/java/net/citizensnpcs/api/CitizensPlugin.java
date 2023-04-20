@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.bukkit.plugin.Plugin;
 
-import net.citizensnpcs.api.ai.speech.SpeechFactory;
+import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -82,13 +82,6 @@ public interface CitizensPlugin extends Plugin {
     public File getScriptFolder();
 
     /**
-     * Gets the SpeechFactory.
-     *
-     * @return Citizens speech factory
-     */
-    public SpeechFactory getSpeechFactory();
-
-    /**
      * Gets the TraitFactory.
      *
      * @return Citizens trait factory
@@ -112,4 +105,6 @@ public interface CitizensPlugin extends Plugin {
      *            The new default store
      */
     public void setDefaultNPCDataStore(NPCDataStore store);
+
+    public void talk(SpeechContext context);
 }

@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import net.citizensnpcs.api.ai.speech.SpeechFactory;
+import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
@@ -157,16 +157,6 @@ public final class CitizensAPI {
     }
 
     /**
-     * Gets the current implementation's {@link SpeechFactory}.
-     *
-     * @see CitizensPlugin
-     * @return Citizens speech factory
-     */
-    public static SpeechFactory getSpeechFactory() {
-        return getImplementation().getSpeechFactory();
-    }
-
-    /**
      * Gets the current implementation's {@link TraitFactory}.
      *
      * @see CitizensPlugin
@@ -229,6 +219,10 @@ public final class CitizensAPI {
         instance = null;
         scriptCompiler.interrupt();
         scriptCompiler = null;
+    }
+
+    public static void talk(SpeechContext context) {
+        getImplementation().talk(context);
     }
 
     private static CitizensPlugin instance = null;
