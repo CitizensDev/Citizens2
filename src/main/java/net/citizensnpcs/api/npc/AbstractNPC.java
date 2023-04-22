@@ -353,6 +353,8 @@ public abstract class AbstractNPC implements NPC {
             keys.remove(locationKey);
         }
         for (DataKey key : keys) {
+            if (key.name().equals("speech"))
+                continue;
             loadTraitFromKey(key);
         }
     }
