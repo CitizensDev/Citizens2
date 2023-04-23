@@ -2,6 +2,7 @@ package net.citizensnpcs.trait;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -404,7 +406,8 @@ public class HologramTrait extends Trait {
         TOP_DOWN;
     }
 
-    private class HologramLine {
+    private class HologramLine implements Function<Player, String> {
+        boolean hasPlayerPlaceholder;
         NPC hologram;
         double mb, mt;
         boolean persist;
@@ -416,13 +419,18 @@ public class HologramTrait extends Trait {
         }
 
         public HologramLine(String text, boolean persist, int ticks) {
-            this.text = text == null ? "" : text;
+            setText(text);
             this.persist = persist;
             this.ticks = ticks;
             if (ITEM_MATCHER.matcher(text).matches()) {
                 mb = 0.21;
                 mt = 0.07;
             }
+        }
+
+        @Override
+        public String apply(Player viewer) {
+            return Placeholders.replace(text, viewer, npc);
         }
 
         public void removeNPC() {
@@ -434,18 +442,27 @@ public class HologramTrait extends Trait {
         }
 
         public void setText(String text) {
-            this.text = text;
+            this.text = text == null ? "" : text;
+            this.hasPlayerPlaceholder = Placeholders.containsPlayerPlaceholder(text);
 
             if (hologram != null) {
                 String name = Placeholders.replace(text, null, npc);
                 hologram.setName(name);
                 hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, ChatColor.stripColor(name).length() > 0);
+                if (Placeholders.containsPlayerPlaceholder(text)) {
+                    hologram.data().set(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER, this);
+                } else {
+                    hologram.data().remove(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER);
+                }
             }
         }
 
         public void spawnNPC(double height) {
             String name = Placeholders.replace(text, null, npc);
             this.hologram = createHologram(name, height);
+            if (Placeholders.containsPlayerPlaceholder(text)) {
+                hologram.data().set(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER, this);
+            }
         }
     }
 

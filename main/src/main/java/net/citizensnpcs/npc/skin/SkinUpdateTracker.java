@@ -319,8 +319,8 @@ public class SkinUpdateTracker {
                 List<SkinnableEntity> visible = getNearbyNPCs(player, reset, false);
                 for (SkinnableEntity skinnable : visible) {
                     if (Messaging.isDebugging()) {
-                        Messaging.debug("Sending skin from", skinnable.getBukkitEntity(), "to", player, "(" + delay,
-                                reset + ")");
+                        Messaging.debug("Sending skin from", skinnable.getBukkitEntity(), "to", player,
+                                "(" + delay + "t delay, reset", reset + ")");
                     }
                     skinnable.getSkinTracker().updateViewer(player);
                 }

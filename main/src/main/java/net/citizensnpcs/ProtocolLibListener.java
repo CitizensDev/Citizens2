@@ -2,9 +2,12 @@ package net.citizensnpcs;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
@@ -20,8 +23,10 @@ import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -46,6 +51,53 @@ public class ProtocolLibListener {
         flagsClass = MinecraftReflection.getMinecraftClass("RelativeMovement", "world.entity.RelativeMovement",
                 "EnumPlayerTeleportFlags", "PacketPlayOutPosition$EnumPlayerTeleportFlags",
                 "network.protocol.game.PacketPlayOutPosition$EnumPlayerTeleportFlags");
+        manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Server.ENTITY_METADATA) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                NPC npc = getNPCFromPacket(event);
+                if (npc == null || !npc.data().has(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER))
+                    return;
+                Function<Player, String> hvs = npc.data().get(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER);
+                int version = manager.getProtocolVersion(event.getPlayer());
+                PacketContainer packet = event.getPacket();
+                if (version < 761) {
+                    List<WrappedWatchableObject> wwo = packet.getWatchableCollectionModifier().readSafely(0);
+                    if (wwo == null)
+                        return;
+                    boolean delta = false;
+                    String text = hvs.apply(event.getPlayer());
+                    for (WrappedWatchableObject wo : wwo) {
+                        if (wo.getIndex() != 2)
+                            continue;
+                        if (version <= 340) {
+                            wo.setValue(text);
+                        } else {
+                            wo.setValue(Optional.of(Messaging.minecraftComponentFromRawMessage(text)));
+                        }
+                        delta = true;
+                        break;
+                    }
+                    if (delta) {
+                        packet.getWatchableCollectionModifier().write(0, wwo);
+                    }
+                } else {
+                    List<WrappedDataValue> wdvs = packet.getDataValueCollectionModifier().readSafely(0);
+                    if (wdvs == null)
+                        return;
+                    boolean delta = false;
+                    String text = hvs.apply(event.getPlayer());
+                    for (WrappedDataValue wdv : wdvs) {
+                        if (wdv.getIndex() != 2)
+                            continue;
+                        wdv.setValue(Optional.of(Messaging.minecraftComponentFromRawMessage(text)));
+                        break;
+                    }
+                    if (delta) {
+                        packet.getDataValueCollectionModifier().write(0, wdvs);
+                    }
+                }
+            }
+        });
         manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Server.PLAYER_INFO) {
             @Override
             public void onPacketSending(PacketEvent event) {
@@ -66,8 +118,9 @@ public class ProtocolLibListener {
                     if (npc == null || !npc.isSpawned())
                         continue;
                     MirrorTrait trait = npc.getTraitNullable(MirrorTrait.class);
-                    if (trait == null || !trait.isMirroring(event.getPlayer()))
+                    if (trait == null || !trait.isMirroring(event.getPlayer())) {
                         continue;
+                    }
                     GameProfile profile = NMS.getProfile(event.getPlayer());
                     if (trait.mirrorName()) {
                         list.set(i,
