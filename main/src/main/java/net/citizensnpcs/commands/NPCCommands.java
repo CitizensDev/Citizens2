@@ -684,8 +684,8 @@ public class NPCCommands {
         if (registryName != null) {
             registry = CitizensAPI.getNamedNPCRegistry(registryName);
             if (registry == null) {
-                registry = CitizensAPI.createNamedNPCRegistry(name, new MemoryNPCDataStore());
-                Messaging.send(sender, "An in-memory registry has been created named [[" + name + "]].");
+                registry = CitizensAPI.createNamedNPCRegistry(registryName, new MemoryNPCDataStore());
+                Messaging.send(sender, "An in-memory registry has been created named [[" + registryName + "]].");
             }
         }
 
