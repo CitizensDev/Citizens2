@@ -449,6 +449,7 @@ public interface NPC extends Agent, Cloneable {
          * Whether the NPC is currently glowing. Boolean.
          */
         GLOWING("glowing"),
+        HOLOGRAM_LINE_SUPPLIER("hologram-line-supplier"),
         /**
          * The Minecraft sound to play when hurt. String - Minecraft sound name.
          */
@@ -477,11 +478,11 @@ public interface NPC extends Agent, Cloneable {
          * The Minecart item name.
          */
         MINECART_ITEM("minecart-item-name"),
+
         /**
          * The Minecart item data. Byte.
          */
         MINECART_ITEM_DATA("minecart-item-data"),
-
         /**
          * The Minecart item offset as defined by Minecraft. {@link Minecart#setDisplayBlockOffset(int)}
          */

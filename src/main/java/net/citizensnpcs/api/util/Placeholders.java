@@ -42,6 +42,10 @@ public class Placeholders implements Listener {
         }
     }
 
+    public static boolean containsPlayerPlaceholder(String text) {
+        return PLAYER_PLACEHOLDER_MATCHER.matcher(text).find();
+    }
+
     private static OfflinePlayer getPlayer(BlockCommandSender sender) {
         return CitizensAPI.getNMSHelper().getPlayer(sender);
     }
