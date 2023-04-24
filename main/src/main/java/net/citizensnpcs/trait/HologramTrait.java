@@ -47,7 +47,7 @@ public class HologramTrait extends Trait {
     @Persist
     private double lineHeight = -1;
     private final List<HologramLine> lines = Lists.newArrayList();
-    private NPC nameNPC;
+    private HologramLine nameLine;
     private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
     private int t;
     private boolean useTextDisplay;
@@ -191,7 +191,7 @@ public class HologramTrait extends Trait {
      * Note: this is implementation-specific and may be removed at a later date.
      */
     public Entity getNameEntity() {
-        return nameNPC != null && nameNPC.isSpawned() ? nameNPC.getEntity() : null;
+        return nameLine != null && nameLine.hologram.isSpawned() ? nameLine.hologram.getEntity() : null;
     }
 
     @Override
@@ -204,9 +204,9 @@ public class HologramTrait extends Trait {
 
     @Override
     public void onDespawn() {
-        if (nameNPC != null) {
-            nameNPC.destroy();
-            nameNPC = null;
+        if (nameLine != null) {
+            nameLine.removeNPC();
+            nameLine = null;
         }
 
         for (HologramLine line : lines) {
@@ -228,7 +228,8 @@ public class HologramTrait extends Trait {
                 .parseBoolean(npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString());
         currentLoc = npc.getStoredLocation();
         if (npc.requiresNameHologram() && lastNameplateVisible) {
-            nameNPC = createHologram(Placeholders.replace(npc.getRawName(), null, npc), 0);
+            nameLine = new HologramLine(npc.getRawName(), false);
+            nameLine.spawnNPC(0);
         }
 
         for (int i = 0; i < lines.size(); i++) {
@@ -277,11 +278,12 @@ public class HologramTrait extends Trait {
         boolean nameplateVisible = Boolean
                 .parseBoolean(npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString());
         if (npc.requiresNameHologram()) {
-            if (nameNPC != null && !nameplateVisible) {
-                nameNPC.destroy();
-                nameNPC = null;
-            } else if (nameNPC == null && nameplateVisible) {
-                nameNPC = createHologram(Placeholders.replace(npc.getRawName(), null, npc), 0);
+            if (nameLine != null && !nameplateVisible) {
+                nameLine.removeNPC();
+                nameLine = null;
+            } else if (nameLine == null && nameplateVisible) {
+                nameLine = new HologramLine(npc.getRawName(), false);
+                nameLine.spawnNPC(0);
             }
         }
 
@@ -300,12 +302,12 @@ public class HologramTrait extends Trait {
             lastEntityHeight = getEntityHeight();
         }
 
-        if (nameNPC != null && nameNPC.isSpawned()) {
+        if (nameLine != null && nameLine.hologram.isSpawned()) {
             if (updatePosition) {
-                nameNPC.teleport(currentLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
+                nameLine.hologram.teleport(currentLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
             }
             if (updateName) {
-                nameNPC.setName(Placeholders.replace(npc.getRawName(), null, npc));
+                nameLine.setText(npc.getRawName());
             }
         }
 
@@ -407,7 +409,6 @@ public class HologramTrait extends Trait {
     }
 
     private class HologramLine implements Function<Player, String> {
-        boolean hasPlayerPlaceholder;
         NPC hologram;
         double mb, mt;
         boolean persist;
@@ -443,7 +444,6 @@ public class HologramTrait extends Trait {
 
         public void setText(String text) {
             this.text = text == null ? "" : text;
-            this.hasPlayerPlaceholder = Placeholders.containsPlayerPlaceholder(text);
 
             if (hologram != null) {
                 String name = Placeholders.replace(text, null, npc);
