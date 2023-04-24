@@ -9,13 +9,15 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.Bisected.Half;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Openable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
@@ -35,10 +37,10 @@ public class DoorExaminer implements BlockExaminer {
         if (!MinecraftBlockExaminer.canStandOn(source.getMaterialAt(point.getVector().getBlockX(),
                 point.getVector().getBlockY() - 1, point.getVector().getBlockZ())))
             return PassableState.IGNORE;
+        Block in = source.getBlockAt(point.getVector());
 
-        Material in = source.getMaterialAt(point.getVector());
-
-        if (MinecraftBlockExaminer.isDoor(in) || MinecraftBlockExaminer.isGate(in)) {
+        if ((MinecraftBlockExaminer.isDoor(in.getType()) && isBottomDoor(in))
+                || MinecraftBlockExaminer.isGate(in.getType())) {
             point.addCallback(new DoorOpener());
             return PassableState.PASSABLE;
         }
@@ -155,8 +157,9 @@ public class DoorExaminer implements BlockExaminer {
 
         @Override
         public void run(NPC npc, Block point, List<Block> path, int index) {
-            if ((!MinecraftBlockExaminer.isDoor(point.getType()) && !MinecraftBlockExaminer.isGate(point.getType()))
-                    || opened)
+            if (opened)
+                return;
+            if (!MinecraftBlockExaminer.isDoor(point.getType()) && !MinecraftBlockExaminer.isGate(point.getType()))
                 return;
             if (npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5)) > 2.5)
                 return;
@@ -180,6 +183,12 @@ public class DoorExaminer implements BlockExaminer {
 
     @SuppressWarnings("deprecation")
     private static Block getCorrectDoor(Block point) {
+        if (SpigotUtil.isUsing1_13API()) {
+            BlockData bd = point.getBlockData();
+            if (!(bd instanceof Bisected))
+                return point;
+            return ((Bisected) bd).getHalf() == Half.BOTTOM ? point : point.getRelative(BlockFace.DOWN);
+        }
         MaterialData data = point.getState().getData();
         if (!(data instanceof org.bukkit.material.Door))
             return point;
@@ -189,5 +198,18 @@ public class DoorExaminer implements BlockExaminer {
         return bottom ? point : point.getRelative(BlockFace.DOWN);
     }
 
-    private static final Vector DOWN = new Vector(0, -1, 0);
+    private static boolean isBottomDoor(Block point) {
+        if (SpigotUtil.isUsing1_13API()) {
+            BlockData bd = point.getBlockData();
+            if (!(bd instanceof Bisected))
+                return false;
+            return ((Bisected) bd).getHalf() == Half.BOTTOM;
+        }
+        MaterialData data = point.getState().getData();
+        if (!(data instanceof org.bukkit.material.Door))
+            return false;
+
+        org.bukkit.material.Door door = (org.bukkit.material.Door) data;
+        return !door.isTopHalf();
+    }
 }
