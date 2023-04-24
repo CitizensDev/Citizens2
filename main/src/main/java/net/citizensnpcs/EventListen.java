@@ -241,7 +241,7 @@ public class EventListen implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamage(EntityDamageEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
         if (npc == null) {
