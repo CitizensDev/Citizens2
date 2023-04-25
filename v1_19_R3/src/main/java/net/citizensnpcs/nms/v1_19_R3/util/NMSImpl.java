@@ -1197,8 +1197,9 @@ public class NMSImpl implements NMSBridge {
                 changed = true;
             }
             MirrorTrait trait = npc.getTraitNullable(MirrorTrait.class);
-            if (trait == null || !trait.isMirroring(player))
+            if (trait == null || !trait.isMirroring(player)) {
                 continue;
+            }
             GameProfile profile = NMS.getProfile(player);
             if (trait.mirrorName()) {
                 list.set(i,

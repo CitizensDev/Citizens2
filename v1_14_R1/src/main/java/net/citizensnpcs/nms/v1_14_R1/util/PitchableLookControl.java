@@ -8,25 +8,20 @@ import net.minecraft.server.v1_14_R1.ControllerLook;
 import net.minecraft.server.v1_14_R1.EntityInsentient;
 
 public class PitchableLookControl extends ControllerLook {
-    private boolean explicit = true;
     private final Supplier<Boolean> resetOnTick;
 
     public PitchableLookControl(EntityInsentient var0) {
         super(var0);
         if (var0 instanceof NPCHolder) {
             NPC npc = ((NPCHolder) var0).getNPC();
-            resetOnTick = () -> npc.data().get(NPC.Metadata.RESET_PITCH_ON_TICK, explicit);
+            resetOnTick = () -> npc.data().get(NPC.Metadata.RESET_PITCH_ON_TICK, false);
         } else {
-            resetOnTick = () -> explicit;
+            resetOnTick = () -> true;
         }
     }
 
     @Override
     public boolean b() {
         return resetOnTick.get();
-    }
-
-    public void setResetXRotOnTick(boolean val) {
-        explicit = val;
     }
 }
