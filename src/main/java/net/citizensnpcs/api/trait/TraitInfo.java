@@ -9,6 +9,7 @@ import com.google.common.base.Supplier;
 public final class TraitInfo {
     private boolean defaultTrait;
     private String name;
+    private boolean trackStats;
     private Supplier<? extends Trait> supplier;
     private final Class<? extends Trait> trait;
     private boolean triedAnnotation;
@@ -49,6 +50,15 @@ public final class TraitInfo {
 
     public boolean isDefaultTrait() {
         return defaultTrait;
+    }
+
+    public TraitInfo optInToStats() {
+        this.trackStats = true;
+        return this;
+    }
+
+    public boolean trackStats() {
+        return trackStats;
     }
 
     @SuppressWarnings("unchecked")
