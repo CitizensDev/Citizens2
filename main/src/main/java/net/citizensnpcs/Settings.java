@@ -241,6 +241,9 @@ public class Settings {
         STORAGE_FILE("storage.file", "saves.yml"),
         STORAGE_TYPE("Although technically Citizens can use NBT storage, it is not well tested and YAML is recommended",
                 "storage.type", "yaml"),
+        STUCK_ACTION(
+                "The default action to perform when NPCs are unable to find a path or are stuck in the same block for too long. Supported options are: 'teleport to destination' or 'none'",
+                "npc.pathfinding.default-stuck-action", "teleport to destination"),
         TABLIST_REMOVE_PACKET_DELAY("How long to wait before sending the tablist remove packet",
                 "npc.tablist.remove-packet-delay", "1t"),
         TALK_CLOSE_TO_NPCS("Whether to talk to NPCs (and therefore bystanders) as well as players",
