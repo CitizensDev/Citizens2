@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.npc;
 
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.bukkit.Location;
@@ -13,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.reflect.TypeToken;
+
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.speech.SpeechController;
@@ -23,6 +26,7 @@ import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
+import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.DataKey;
 
 /**
@@ -406,195 +410,192 @@ public interface NPC extends Agent, Cloneable {
 
     public enum Metadata {
         /** The activation range. Integer, defaults to the configured activation range. */
-        ACTIVATION_RANGE("activation-range"),
-        AGGRESSIVE("entity-aggressive"),
-        ALWAYS_USE_NAME_HOLOGRAM("always-use-name-hologram"),
+        ACTIVATION_RANGE("activation-range", Integer.class),
+        AGGRESSIVE("entity-aggressive", Boolean.class),
+        ALWAYS_USE_NAME_HOLOGRAM("always-use-name-hologram", Boolean.class),
         /**
-         * The Minecraft ambient sound played. String - Minecraft sound name
+         * The Minecraft ambient sound played.
          */
-        AMBIENT_SOUND("ambient-sound"),
-        BOUNDING_BOX_FUNCTION("bounding-box-function"),
+        AMBIENT_SOUND("ambient-sound", String.class),
+        @SuppressWarnings("serial")
+        BOUNDING_BOX_FUNCTION("bounding-box-function", new TypeToken<Supplier<BoundingBox>>() {
+        }),
         /**
-         * Whether the NPC is collidable with Players or not. Boolean.
+         * Whether the NPC is collidable with Players or not.
          */
-        COLLIDABLE("collidable"),
+        COLLIDABLE("collidable", Boolean.class),
         /**
-         * Whether the NPC can damage other Entities. Boolean.
+         * Whether the NPC can damage other Entities.
          */
-        DAMAGE_OTHERS("damage-others"),
+        DAMAGE_OTHERS("damage-others", Boolean.class),
         /**
          * The Minecraft sound played when the NPC dies. String - Minecraft sound name.
          */
-        DEATH_SOUND("death-sound"),
+        DEATH_SOUND("death-sound", String.class),
         /**
-         * Whether the NPC is 'protected' i.e. invulnerable to damage. Boolean.
+         * Whether the NPC is 'protected' i.e. invulnerable to damage.
          */
-        DEFAULT_PROTECTED("protected"),
-        DISABLE_DEFAULT_STUCK_ACTION("disable-default-stuck-action"),
+        DEFAULT_PROTECTED("protected", Boolean.class),
+        DISABLE_DEFAULT_STUCK_ACTION("disable-default-stuck-action", Boolean.class),
         /**
-         * Whether the NPC drops its inventory after death. Boolean.
+         * Whether the NPC drops its inventory after death.
          */
-        DROPS_ITEMS("drops-items"),
+        DROPS_ITEMS("drops-items", Boolean.class),
         /**
-         * Whether the NPC is pushable by fluids. Boolean.
+         * Whether the NPC is pushable by fluids.
          */
-        FLUID_PUSHABLE("fluid-pushable"),
+        FLUID_PUSHABLE("fluid-pushable", Boolean.class),
         /**
-         * Whether the NPC is 'flyable' i.e. will fly when pathfinding. Boolean.
+         * Whether the NPC is 'flyable' i.e. will fly when pathfinding.
          */
-        FLYABLE("flyable"),
-        /** Forces a singular packet update. Boolean. */
-        FORCE_PACKET_UPDATE("force-packet-update"),
+        FLYABLE("flyable", Boolean.class),
+        /** Forces a singular packet update. */
+        FORCE_PACKET_UPDATE("force-packet-update", Boolean.class),
         /**
-         * Whether the NPC is currently glowing. Boolean.
+         * Whether the NPC is currently glowing.
          */
-        GLOWING("glowing"),
-        HOLOGRAM_LINE_SUPPLIER("hologram-line-supplier"),
+        GLOWING("glowing", Boolean.class),
+        @SuppressWarnings("serial")
+        HOLOGRAM_LINE_SUPPLIER("hologram-line-supplier", new TypeToken<Function<Player, String>>() {
+        }),
         /**
-         * The Minecraft sound to play when hurt. String - Minecraft sound name.
+         * The Minecraft sound to play when hurt.
          */
-        HURT_SOUND("hurt-sound"),
+        HURT_SOUND("hurt-sound", String.class),
         /**
-         * The Item amount. Integer.
+         * The Item amount.
          */
-        ITEM_AMOUNT("item-type-amount"),
+        ITEM_AMOUNT("item-type-amount", Integer.class),
         /**
-         * The Item data. Byte.
+         * The Item data.
          */
-        ITEM_DATA("item-type-data"),
+        ITEM_DATA("item-type-data", Byte.class),
         /**
          * The Item ID. String.
          */
-        ITEM_ID("item-type-id"),
+        ITEM_ID("item-type-id", String.class),
         /**
-         * Whether to keep chunk loaded. Boolean.
+         * Whether to keep chunk loaded.
          */
-        KEEP_CHUNK_LOADED("keep-chunk-loaded"),
+        KEEP_CHUNK_LOADED("keep-chunk-loaded", Boolean.class),
         /**
-         * Whether the NPC is leashable. Boolean.
+         * Whether the NPC is leashable.
          */
-        LEASH_PROTECTED("protected-leash"),
+        LEASH_PROTECTED("protected-leash", Boolean.class),
         /**
          * The Minecart item name.
          */
-        MINECART_ITEM("minecart-item-name"),
+        MINECART_ITEM("minecart-item-name", String.class),
 
         /**
          * The Minecart item data. Byte.
          */
-        MINECART_ITEM_DATA("minecart-item-data"),
+        MINECART_ITEM_DATA("minecart-item-data", Byte.class),
         /**
          * The Minecart item offset as defined by Minecraft. {@link Minecart#setDisplayBlockOffset(int)}
          */
-        MINECART_OFFSET("minecart-item-offset"),
+        MINECART_OFFSET("minecart-item-offset", Integer.class),
         /**
-         * Whether the NPC's nameplate should be visible. Boolean.
+         * Whether the NPC's nameplate should be visible.
          */
-        NAMEPLATE_VISIBLE("nameplate-visible"),
+        NAMEPLATE_VISIBLE("nameplate-visible", Boolean.class),
         /**
-         * The packet update delay. Integer defaults to setting value.
+         * The packet update delay in ticks. Defaults to setting value.
          */
-        PACKET_UPDATE_DELAY("packet-update-delay"),
-        PATHFINDER_FALL_DISTANCE("pathfinder-fall-distance"),
+        PACKET_UPDATE_DELAY("packet-update-delay", Integer.class),
+        PATHFINDER_FALL_DISTANCE("pathfinder-fall-distance", Double.class),
         /**
-         * Whether to open doors while pathfinding. Boolean.
+         * Whether to open doors while pathfinding.
          */
-        PATHFINDER_OPEN_DOORS("pathfinder-open-doors"),
+        PATHFINDER_OPEN_DOORS("pathfinder-open-doors", Boolean.class),
         /**
-         * Whether to pick up items. Boolean defaults to isProtected().
+         * Whether to pick up items. Defaults to isProtected().
          */
-        PICKUP_ITEMS("pickup-items"),
+        PICKUP_ITEMS("pickup-items", Boolean.class),
         /**
-         * @see SkinTrait
+         * Whether to remove players from the player list. Defaults to true.
          */
-        @Deprecated
-        PLAYER_SKIN_TEXTURE_PROPERTIES("player-skin-textures"),
+        REMOVE_FROM_PLAYERLIST("removefromplayerlist", Boolean.class),
         /**
-         * @see SkinTrait
+         * Whether to reset entity pitch to <code>0</code> every tick (default Minecraft behaviour). Defaults to true.
          */
-        @Deprecated
-        PLAYER_SKIN_TEXTURE_PROPERTIES_SIGN("player-skin-signature"),
-        /**
-         * @see SkinTrait
-         */
-        @Deprecated
-        PLAYER_SKIN_USE_LATEST("player-skin-use-latest-skin"),
-        /**
-         * @see SkinTrait
-         */
-        @Deprecated
-        PLAYER_SKIN_UUID("player-skin-name"),
-        /**
-         * Whether to remove players from the player list. Boolean defaults to true.
-         */
-        REMOVE_FROM_PLAYERLIST("removefromplayerlist"),
-        RESET_PITCH_ON_TICK("reset-pitch-on-tick"),
+        RESET_PITCH_ON_TICK("reset-pitch-on-tick", Boolean.class),
         /**
          * The Integer delay to respawn in ticks after death. Only works if non-zero.
          */
-        RESPAWN_DELAY("respawn-delay"),
+        RESPAWN_DELAY("respawn-delay", Integer.class),
         /**
          * The fake NPC scoreboard team name because Minecraft requires a team name. Usually will be a random UUID in
          * String form.
          */
-        SCOREBOARD_FAKE_TEAM_NAME("fake-scoreboard-team-name"),
+        SCOREBOARD_FAKE_TEAM_NAME("fake-scoreboard-team-name", String.class),
         /**
-         * Whether to save / persist across server restarts. Boolean.
+         * Whether to save / persist across server restarts.
          */
-        SHOULD_SAVE("should-save"),
+        SHOULD_SAVE("should-save", Boolean.class),
         /**
-         * Whether to suppress sounds. Boolean.
+         * Whether to suppress sounds.
          */
-        SILENT("silent-sounds"),
+        SILENT("silent-sounds", Boolean.class),
         /**
-         * Whether to sneak. Boolean.
+         * Whether to sneak.
          */
-        SNEAKING("citizens-sneaking"),
+        SNEAKING("citizens-sneaking", Boolean.class),
         /**
          * The initial no damage ticks on spawn, defaults to 20. Integer
          */
-        SPAWN_NODAMAGE_TICKS("spawn-nodamage-ticks"),
+        SPAWN_NODAMAGE_TICKS("spawn-nodamage-ticks", Integer.class),
         /**
          * Whether to allow swimming. Boolean.
          */
-        SWIMMING("swim"),
+        SWIMMING("swim", Boolean.class),
         /**
-         * Whether to prevent NPC being targeted by hostile mobs. Boolean.
+         * Whether to prevent NPC being targeted by hostile mobs.
          */
-        TARGETABLE("protected-target"),
+        TARGETABLE("protected-target", Boolean.class),
         /**
-         * The tracking distance for packets. Integer, defaults to the default tracking distance defined by the server
+         * The tracking distance for packets. Defaults to the default tracking distance defined by the server
          */
-        TRACKING_RANGE("tracking-distance"),
+        TRACKING_RANGE("tracking-distance", Integer.class),
         /**
-         * Whether to use Minecraft AI. Boolean.
+         * Whether to use Minecraft AI.
          */
-        USE_MINECRAFT_AI("minecraft-ai"),
+        USE_MINECRAFT_AI("minecraft-ai", Boolean.class),
         /**
-         * Whether player is actively using held item. Boolean defaults to false.
+         * Whether player is actively using held item. Defaults to false.
          */
-        USING_HELD_ITEM("using-held-item"),
+        USING_HELD_ITEM("using-held-item", Boolean.class),
         /**
-         * Whether player is actively using offhand item. Boolean defaults to false.
+         * Whether player is actively using offhand item. Defaults to false.
          */
-        USING_OFFHAND_ITEM("using-offhand-item"),
+        USING_OFFHAND_ITEM("using-offhand-item", Boolean.class),
         /**
-         * Whether to block Minecraft villager trades. Boolean defaults to true.
+         * Whether to block Minecraft villager trades. Defaults to true.
          */
-        VILLAGER_BLOCK_TRADES("villager-trades"),
+        VILLAGER_BLOCK_TRADES("villager-trades", Boolean.class),
         /**
          * Speed modifier in water, percentage.
          */
-        WATER_SPEED_MODIFIER("water-speed-modifier");
+        WATER_SPEED_MODIFIER("water-speed-modifier", Double.class);
 
         private final String key;
+        private final TypeToken<?> type;
 
-        Metadata(String key) {
+        Metadata(String key, Class<?> type) {
+            this(key, TypeToken.of(type));
+        }
+
+        Metadata(String key, TypeToken<?> type) {
             this.key = key;
+            this.type = type;
         }
 
         public String getKey() {
             return key;
+        }
+
+        public TypeToken<?> getType() {
+            return type;
         }
 
         public static Metadata byKey(String name) {
