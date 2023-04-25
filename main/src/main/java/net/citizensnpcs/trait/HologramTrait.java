@@ -2,6 +2,7 @@ package net.citizensnpcs.trait;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +41,7 @@ import net.citizensnpcs.util.Util;
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
     private Location currentLoc;
+    private BiFunction<String, Player, String> customHologramSupplier;
     @Persist
     private HologramDirection direction = HologramDirection.BOTTOM_UP;
     private double lastEntityHeight = 0;
@@ -398,6 +400,13 @@ public class HologramTrait extends Trait {
         reloadLineHolograms();
     }
 
+    /**
+     * Implementation-specific method: {@see NPC.Metadata#HOLOGRAM_LINE_SUPPLIER}
+     */
+    public void setPerPlayerTextSupplier(BiFunction<String, Player, String> nameSupplier) {
+        this.customHologramSupplier = nameSupplier;
+    }
+
     public void setUseTextDisplay(boolean use) {
         this.useTextDisplay = use;
         reloadLineHolograms();
@@ -460,7 +469,10 @@ public class HologramTrait extends Trait {
         public void spawnNPC(double height) {
             String name = Placeholders.replace(text, null, npc);
             this.hologram = createHologram(name, height);
-            if (Placeholders.containsPlayerPlaceholder(text)) {
+            if (customHologramSupplier != null) {
+                hologram.data().set(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER,
+                        (Function<Player, String>) p -> customHologramSupplier.apply(text, p));
+            } else if (Placeholders.containsPlayerPlaceholder(text)) {
                 hologram.data().set(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER, this);
             }
         }

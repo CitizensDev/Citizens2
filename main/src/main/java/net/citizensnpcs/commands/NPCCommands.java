@@ -692,6 +692,7 @@ public class NPCCommands {
         if (args.hasFlag('t') || temporaryTicks != null) {
             registry = temporaryRegistry;
         }
+
         if (item != null) {
             ItemStack stack = new ItemStack(Material.STONE, 1);
             try {
@@ -1182,7 +1183,7 @@ public class NPCCommands {
         }
         if (delay != null) {
             trait.setDelayTicks(Util.toTicks(delay));
-            output += " " + Messaging.tr(Messages.HOME_TRAIT_DELAY_SET, delay);
+            output += " " + Messaging.tr(Messages.HOME_TRAIT_DELAY_SET, Util.toTicks(delay));
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
@@ -1485,7 +1486,7 @@ public class NPCCommands {
         }
         if (randomLookDelay != null) {
             trait.setRandomLookDelay(Math.max(1, Util.toTicks(randomLookDelay)));
-            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_DELAY_SET, npc.getName(), randomLookDelay);
+            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_DELAY_SET, npc.getName(), Util.toTicks(randomLookDelay));
             toggle = false;
         }
         if (randomPitch != null) {
@@ -2178,6 +2179,7 @@ public class NPCCommands {
             if (pitch != null) {
                 loc.setPitch(pitch);
             }
+
             if (trait.addPose(save, loc, args.hasFlag('d'))) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
             } else {
@@ -2408,7 +2410,7 @@ public class NPCCommands {
     public void respawn(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Duration delay) {
         if (delay != null) {
             npc.data().setPersistent(NPC.Metadata.RESPAWN_DELAY, Util.toTicks(delay));
-            Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, delay);
+            Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, Util.toTicks(delay));
         } else {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.Metadata.RESPAWN_DELAY, -1));
         }
