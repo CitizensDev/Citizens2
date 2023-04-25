@@ -2160,7 +2160,7 @@ public class NPCCommands {
             flags = "ad",
             modifiers = { "pose" },
             min = 1,
-            max = 2,
+            max = 3,
             permission = "citizens.npc.pose")
     public void pose(CommandContext args, CommandSender sender, NPC npc, @Flag("save") String save,
             @Flag("mirror") String mirror, @Flag("assume") String assume, @Flag("remove") String remove,
