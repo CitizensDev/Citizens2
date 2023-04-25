@@ -2155,20 +2155,22 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pose (--save [name] (-d) | --mirror [name] (-d) | --assume [name] | --remove [name] | --default [name]) (yaw) (pitch) (-a)",
+            usage = "pose (--save [name] (-d) | --mirror [name] (-d) | --assume [name] | --remove [name] | --default [name]) (--yaw yaw) (--pitch pitch) (-a)",
             desc = "Manage NPC poses",
             flags = "ad",
             modifiers = { "pose" },
             min = 1,
-            max = 3,
+            max = 2,
             permission = "citizens.npc.pose")
     public void pose(CommandContext args, CommandSender sender, NPC npc, @Flag("save") String save,
             @Flag("mirror") String mirror, @Flag("assume") String assume, @Flag("remove") String remove,
-            @Flag("default") String defaultPose, @Arg(1) Float yaw, @Arg(2) Float pitch) throws CommandException {
+            @Flag("default") String defaultPose, @Flag("yaw") Float yaw, @Flag("pitch") Float pitch)
+            throws CommandException {
         Poses trait = npc.getOrAddTrait(Poses.class);
         if (save != null) {
             if (save.isEmpty())
                 throw new CommandException(Messages.INVALID_POSE_NAME);
+
             Location loc = npc.getStoredLocation();
             if (yaw != null) {
                 loc.setYaw(yaw);
@@ -2176,8 +2178,7 @@ public class NPCCommands {
             if (pitch != null) {
                 loc.setPitch(pitch);
             }
-
-            if (trait.addPose(save, npc.getStoredLocation(), args.hasFlag('d'))) {
+            if (trait.addPose(save, loc, args.hasFlag('d'))) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
             } else {
                 throw new CommandException(Messages.POSE_ALREADY_EXISTS, save);
@@ -2189,7 +2190,7 @@ public class NPCCommands {
             if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
 
-            if (trait.addPose(mirror, npc.getStoredLocation(), args.hasFlag('d'))) {
+            if (trait.addPose(mirror, args.getSenderLocation(), args.hasFlag('d'))) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
             } else {
                 throw new CommandException(Messages.POSE_ALREADY_EXISTS, mirror);
@@ -2219,11 +2220,11 @@ public class NPCCommands {
             trait.describe(sender, args.getInteger(1, 1));
         }
 
-        if (!args.hasFlag('a'))
-            return;
-        if (args.getSenderLocation() == null)
-            throw new ServerCommandException();
-        trait.assumePose(args.getSenderLocation());
+        if (args.hasFlag('a')) {
+            if (args.getSenderLocation() == null)
+                throw new ServerCommandException();
+            trait.assumePose(args.getSenderLocation());
+        }
     }
 
     @Command(
