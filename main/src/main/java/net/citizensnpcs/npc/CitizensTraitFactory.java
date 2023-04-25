@@ -76,48 +76,49 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Anchors.class));
         registerTrait(TraitInfo.create(BoundingBoxTrait.class));
         registerTrait(TraitInfo.create(ClickRedirectTrait.class));
-        registerTrait(TraitInfo.create(CommandTrait.class));
-        registerTrait(TraitInfo.create(Controllable.class));
+        registerTrait(TraitInfo.create(CommandTrait.class).optInToStats());
+        registerTrait(TraitInfo.create(Controllable.class).optInToStats());
         registerTrait(TraitInfo.create(CurrentLocation.class));
-        registerTrait(TraitInfo.create(DropsTrait.class));
+        registerTrait(TraitInfo.create(DropsTrait.class).optInToStats());
         registerTrait(TraitInfo.create(EnderCrystalTrait.class));
         registerTrait(TraitInfo.create(EndermanTrait.class));
         registerTrait(TraitInfo.create(Equipment.class));
-        registerTrait(TraitInfo.create(FollowTrait.class));
+        registerTrait(TraitInfo.create(FollowTrait.class).optInToStats());
         registerTrait(TraitInfo.create(GameModeTrait.class));
         registerTrait(TraitInfo.create(Gravity.class));
-        registerTrait(TraitInfo.create(HomeTrait.class));
+        registerTrait(TraitInfo.create(HomeTrait.class).optInToStats());
         registerTrait(TraitInfo.create(HorseModifiers.class));
         registerTrait(TraitInfo.create(HologramTrait.class));
         registerTrait(TraitInfo.create(Inventory.class));
         registerTrait(TraitInfo.create(LookClose.class));
         registerTrait(TraitInfo.create(PaintingTrait.class));
-        registerTrait(TraitInfo.create(MirrorTrait.class));
+        registerTrait(TraitInfo.create(MirrorTrait.class).optInToStats());
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());
         registerTrait(TraitInfo.create(OcelotModifiers.class));
         registerTrait(TraitInfo.create(Owner.class));
-        registerTrait(TraitInfo.create(PacketNPC.class));
-        registerTrait(TraitInfo.create(PausePathfindingTrait.class));
-        registerTrait(TraitInfo.create(PlayerFilter.class).withSupplier(() -> new PlayerFilter((p, e) -> {
-            EntityPacketTracker ept = NMS.getPacketTracker(e);
-            if (ept != null) {
-                ept.unlink(p);
-            }
-        }, (p, e) -> {
-            EntityPacketTracker ept = NMS.getPacketTracker(e);
-            if (ept != null) {
-                ept.link(p);
-            }
-        })));
-        registerTrait(TraitInfo.create(Poses.class));
+        registerTrait(TraitInfo.create(PacketNPC.class).optInToStats());
+        registerTrait(TraitInfo.create(PausePathfindingTrait.class).optInToStats());
+        registerTrait(
+                TraitInfo.create(PlayerFilter.class).optInToStats().withSupplier(() -> new PlayerFilter((p, e) -> {
+                    EntityPacketTracker ept = NMS.getPacketTracker(e);
+                    if (ept != null) {
+                        ept.unlink(p);
+                    }
+                }, (p, e) -> {
+                    EntityPacketTracker ept = NMS.getPacketTracker(e);
+                    if (ept != null) {
+                        ept.link(p);
+                    }
+                })));
+        registerTrait(TraitInfo.create(Poses.class).optInToStats());
         registerTrait(TraitInfo.create(Powered.class));
         registerTrait(TraitInfo.create(RabbitType.class));
         registerTrait(TraitInfo.create(RotationTrait.class));
         registerTrait(TraitInfo.create(Saddle.class));
         registerTrait(TraitInfo.create(ScoreboardTrait.class));
-        registerTrait(TraitInfo.create(ScriptTrait.class));
-        registerTrait(TraitInfo.create(SitTrait.class));
+        registerTrait(TraitInfo.create(ScriptTrait.class).optInToStats());
+        registerTrait(TraitInfo.create(SitTrait.class).optInToStats());
         registerTrait(TraitInfo.create(SleepTrait.class));
         registerTrait(TraitInfo.create(SheepTrait.class));
         registerTrait(TraitInfo.create(SkinLayers.class));
@@ -126,7 +127,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(SlimeSize.class));
         registerTrait(TraitInfo.create(Spawned.class));
         registerTrait(TraitInfo.create(Text.class));
-        registerTrait(TraitInfo.create(Waypoints.class));
+        registerTrait(TraitInfo.create(Waypoints.class).optInToStats());
         registerTrait(TraitInfo.create(WitherTrait.class));
         registerTrait(TraitInfo.create(WoolColor.class));
         registerTrait(TraitInfo.create(WolfModifiers.class));
@@ -191,5 +192,9 @@ public class CitizensTraitFactory implements TraitFactory {
         if (info.isDefaultTrait()) {
             defaultTraits.add(info);
         }
+    }
+
+    public boolean trackStats(Trait trait) {
+        return registered.get(trait.getName()).trackStats();
     }
 }

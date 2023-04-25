@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -50,12 +49,14 @@ import net.citizensnpcs.api.event.CitizensPreReloadEvent;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.SimpleNPCDataStore;
 import net.citizensnpcs.api.scripting.EventRegistrar;
 import net.citizensnpcs.api.scripting.ObjectProvider;
 import net.citizensnpcs.api.scripting.ScriptCompiler;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.Messaging;
@@ -547,13 +548,21 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private void startMetrics() {
         try {
             Metrics metrics = new Metrics(this, 2463);
-            metrics.addCustomChart(new Metrics.SingleLineChart("total_npcs", new Callable<Integer>() {
-                @Override
-                public Integer call() {
-                    if (npcRegistry == null)
-                        return 0;
-                    return Iterables.size(npcRegistry);
+            metrics.addCustomChart(new Metrics.SingleLineChart("total_npcs", () -> {
+                if (npcRegistry == null)
+                    return 0;
+                return Iterables.size(npcRegistry);
+            }));
+            metrics.addCustomChart(new Metrics.AdvancedPie("traits", () -> {
+                Map<String, Integer> res = Maps.newHashMap();
+                for (NPC npc : npcRegistry) {
+                    for (Trait trait : npc.getTraits()) {
+                        if (traitFactory.trackStats(trait)) {
+                            res.put(trait.getName(), res.getOrDefault(trait.getName(), 0) + 1);
+                        }
+                    }
                 }
+                return res;
             }));
         } catch (Exception e) {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());

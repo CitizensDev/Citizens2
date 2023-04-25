@@ -692,7 +692,6 @@ public class NPCCommands {
         if (args.hasFlag('t') || temporaryTicks != null) {
             registry = temporaryRegistry;
         }
-
         if (item != null) {
             ItemStack stack = new ItemStack(Material.STONE, 1);
             try {
