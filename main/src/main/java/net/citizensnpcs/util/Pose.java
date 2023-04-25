@@ -1,8 +1,5 @@
 package net.citizensnpcs.util;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
 /**
  * A named head yaw/pitch
  */
@@ -17,19 +14,6 @@ public class Pose {
         this.name = name;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == null)
-            return false;
-        if (object == this)
-            return true;
-        if (object.getClass() != getClass())
-            return false;
-
-        Pose op = (Pose) object;
-        return new EqualsBuilder().append(name, op.getName()).isEquals();
-    }
-
     public String getName() {
         return name;
     }
@@ -40,11 +24,6 @@ public class Pose {
 
     public float getYaw() {
         return yaw;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 21).append(name).toHashCode();
     }
 
     public String stringValue() {

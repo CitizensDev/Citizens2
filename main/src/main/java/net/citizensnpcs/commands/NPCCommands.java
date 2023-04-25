@@ -432,7 +432,7 @@ public class NPCCommands {
             permission = "citizens.npc.collidable")
     @Requirements(ownership = true, selected = true)
     public void collidable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        npc.data().setPersistent(NPC.Metadata.COLLIDABLE, !npc.data().get(NPC.Metadata.COLLIDABLE, false));
+        npc.data().setPersistent(NPC.Metadata.COLLIDABLE, !npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected()));
         Messaging.sendTr(sender,
                 npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,
                 npc.getName());
@@ -2156,7 +2156,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pose (--save [name] (-d) | --mirror [name] (-d) | --assume [name] | --remove [name] | --default [name]) (-a)",
+            usage = "pose (--save [name] (-d) | --mirror [name] (-d) | --assume [name] | --remove [name] | --default [name]) (yaw) (pitch) (-a)",
             desc = "Manage NPC poses",
             flags = "ad",
             modifiers = { "pose" },
@@ -2165,14 +2165,18 @@ public class NPCCommands {
             permission = "citizens.npc.pose")
     public void pose(CommandContext args, CommandSender sender, NPC npc, @Flag("save") String save,
             @Flag("mirror") String mirror, @Flag("assume") String assume, @Flag("remove") String remove,
-            @Flag("default") String defaultPose) throws CommandException {
+            @Flag("default") String defaultPose, @Arg(1) Float yaw, @Arg(2) Float pitch) throws CommandException {
         Poses trait = npc.getOrAddTrait(Poses.class);
         if (save != null) {
             if (save.isEmpty())
                 throw new CommandException(Messages.INVALID_POSE_NAME);
-
-            if (args.getSenderLocation() == null)
-                throw new ServerCommandException();
+            Location loc = npc.getStoredLocation();
+            if (yaw != null) {
+                loc.setYaw(yaw);
+            }
+            if (pitch != null) {
+                loc.setPitch(pitch);
+            }
 
             if (trait.addPose(save, npc.getStoredLocation(), args.hasFlag('d'))) {
                 Messaging.sendTr(sender, Messages.POSE_ADDED);
