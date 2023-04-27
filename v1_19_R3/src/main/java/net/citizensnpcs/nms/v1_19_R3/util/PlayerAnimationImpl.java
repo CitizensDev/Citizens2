@@ -11,6 +11,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -24,6 +25,9 @@ public class PlayerAnimationImpl {
             return;
         }
         switch (animation) {
+            case HURT:
+                sendPacketNearby(new ClientboundHurtAnimationPacket(player), player, radius);
+                break;
             case SNEAK:
                 player.setPose(Pose.CROUCHING);
                 sendEntityData(radius, player);
@@ -77,7 +81,6 @@ public class PlayerAnimationImpl {
     private static Map<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);
     static {
         DEFAULTS.put(PlayerAnimation.ARM_SWING, 0);
-        DEFAULTS.put(PlayerAnimation.HURT, 1);
         DEFAULTS.put(PlayerAnimation.LEAVE_BED, 2);
         DEFAULTS.put(PlayerAnimation.ARM_SWING_OFFHAND, 3);
         DEFAULTS.put(PlayerAnimation.CRIT, 4);
