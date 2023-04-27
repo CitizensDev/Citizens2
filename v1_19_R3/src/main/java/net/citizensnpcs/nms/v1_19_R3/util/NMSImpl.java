@@ -273,6 +273,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBundlePacket;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -280,6 +281,7 @@ import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
+import net.minecraft.network.protocol.game.VecDeltaCodec;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -1361,14 +1363,24 @@ public class NMSImpl implements NMSBridge {
         Entity handle = getHandle(from);
         float oldBody = handle.getYRot();
         float oldPitch = handle.getXRot();
-        handle.setYBodyRot(bodyYaw);
-        handle.setXRot(pitch);
-        sendPacketsNearby(null, from.getLocation(), new ClientboundTeleportEntityPacket(handle),
-                // new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
-                // (byte) (pitch * 256.0F / 360.0F), handle.onGround),
+        // handle.setYRot(bodyYaw);
+        // handle.setXRot(pitch);
+        TrackedEntity entry = ((ServerLevel) handle.level).getChunkSource().chunkMap.entityMap.get(handle.getId());
+        VecDeltaCodec vdc = null;
+        try {
+            vdc = (VecDeltaCodec) POSITION_CODEC_GETTER.invoke((ServerEntity) SERVER_ENTITY_GETTER.invoke(entry));
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return;
+        }
+        Vec3 pos = handle.trackingPosition();
+        sendPacketsNearby(null, from.getLocation(), // new ClientboundTeleportEntityPacket(handle),
+                new ClientboundMoveEntityPacket.PosRot(handle.getId(), (short) vdc.encodeX(pos),
+                        (short) vdc.encodeY(pos), (short) vdc.encodeZ(pos), (byte) (bodyYaw * 256.0F / 360.0F),
+                        (byte) (pitch * 256.0F / 360.0F), handle.onGround),
                 new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
-        handle.setYBodyRot(oldBody);
-        handle.setXRot(oldPitch);
+        // handle.setYRot(oldBody);
+        // handle.setXRot(oldPitch);
     }
 
     @Override
@@ -2505,7 +2517,9 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_SETTER = NMS.getFirstFinalSetter(ServerPlayer.class,
             PlayerAdvancements.class);
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
@@ -2565,10 +2579,14 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle PLAYERINFO_ENTRIES = PLAYER_INFO_ENTRIES_LIST;
     private static MethodHandle PORTAL_ENTRANCE_POS_GETTER = NMS.getGetter(Entity.class, "aw");
     private static MethodHandle PORTAL_ENTRANCE_POS_SETTER = NMS.getSetter(Entity.class, "aw");
+    private static final MethodHandle POSITION_CODEC_GETTER = NMS.getFirstGetter(ServerEntity.class,
+            VecDeltaCodec.class);
     private static final MethodHandle PUFFERFISH_C = NMS.getSetter(Pufferfish.class, "bS");
     private static final MethodHandle PUFFERFISH_D = NMS.getSetter(Pufferfish.class, "bT");
     private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
     private static final Random RANDOM = Util.getFastRandom();
+    private static final MethodHandle SERVER_ENTITY_GETTER = NMS.getFirstGetter(TrackedEntity.class,
+            ServerEntity.class);
     private static MethodHandle SET_PROFILE_METHOD;
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getFirstGetter(Entity.class, EntityDimensions.class);
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
