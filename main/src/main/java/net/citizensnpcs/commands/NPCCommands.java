@@ -1566,12 +1566,16 @@ public class NPCCommands {
                     npc.data().setPersistent(key, metadata);
                 }
             }
-            Messaging.sendTr(sender, Messages.METADATA_SET, key, args.getString(3));
+            Messaging.sendTr(sender, Messages.METADATA_SET, enumKey != null ? enumKey : key, args.getString(3));
         } else if (command.equals("get")) {
             if (args.argsLength() != 3) {
                 throw new CommandException();
             }
-            sender.sendMessage(enumKey != null ? npc.data().get(enumKey, "null") : npc.data().get(key, "null"));
+            Object data = enumKey != null ? npc.data().get(enumKey) : npc.data().get(key);
+            if (data == null) {
+                data = "null";
+            }
+            sender.sendMessage(data.toString());
         } else if (command.equals("remove")) {
             if (args.argsLength() != 3) {
                 throw new CommandException();
@@ -1581,7 +1585,7 @@ public class NPCCommands {
             } else {
                 npc.data().remove(key);
             }
-            Messaging.sendTr(sender, Messages.METADATA_UNSET, key, npc.getName());
+            Messaging.sendTr(sender, Messages.METADATA_UNSET, enumKey != null ? enumKey : key, npc.getName());
         } else {
             throw new CommandUsageException();
         }

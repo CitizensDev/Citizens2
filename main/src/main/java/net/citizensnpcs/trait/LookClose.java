@@ -267,8 +267,10 @@ public class LookClose extends Trait implements Toggleable {
 
     @Override
     public void run() {
-        if (!npc.isSpawned())
+        if (!npc.isSpawned()) {
+            lookingAt = null;
             return;
+        }
 
         if (enableRandomLook) {
             if (!npc.getNavigator().isNavigating() && lookingAt == null && t <= 0) {
@@ -278,11 +280,15 @@ public class LookClose extends Trait implements Toggleable {
         }
         t--;
 
-        if (!enabled)
+        if (!enabled) {
+            lookingAt = null;
             return;
+        }
 
-        if (npc.getNavigator().isNavigating() && disableWhileNavigating())
+        if (npc.getNavigator().isNavigating() && disableWhileNavigating()) {
+            lookingAt = null;
             return;
+        }
 
         npc.getEntity().getLocation(NPC_LOCATION);
         findNewTarget();
