@@ -249,12 +249,12 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
-import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -1258,23 +1258,37 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendPositionUpdate(Player excluding, org.bukkit.entity.Entity from, Location storedLocation) {
-        sendPacketNearby(excluding, storedLocation, new ClientboundTeleportEntityPacket(getHandle(from)));
-    }
-
-    @Override
-    public void sendRotationNearby(org.bukkit.entity.Entity from, float bodyYaw, float headYaw, float pitch) {
+    public void sendPositionUpdate(org.bukkit.entity.Entity from, boolean position, Float bodyYaw, Float pitch,
+            Float headYaw) {
         Entity handle = getHandle(from);
-        float oldBody = handle.getYRot();
-        float oldPitch = handle.getXRot();
-        handle.setYBodyRot(bodyYaw);
-        handle.setXRot(pitch);
-        sendPacketsNearby(null, from.getLocation(), new ClientboundTeleportEntityPacket(handle),
-                // newClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw *256.0F / 360.0F), (byte) (pitch *
-                // 256.0F / 360.0F), handle.onGround),
-                new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
-        handle.setYBodyRot(oldBody);
-        handle.setXRot(oldPitch);
+        if (bodyYaw == null) {
+            bodyYaw = handle.getYRot();
+        }
+        if (pitch == null) {
+            pitch = handle.getXRot();
+        }
+        List<Packet<?>> toSend = Lists.newArrayList();
+        if (position) {
+            TrackedEntity entry = ((ServerLevel) handle.level).getChunkSource().chunkMap.entityMap.get(handle.getId());
+            ServerEntity se = null;
+            try {
+                se = (ServerEntity) SERVER_ENTITY_GETTER.invoke(entry);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return;
+            }
+            Vec3 pos = handle.position().subtract(se.sentPos());
+            toSend.add(
+                    new ClientboundMoveEntityPacket.PosRot(handle.getId(), (short) pos.x, (short) pos.y, (short) pos.z,
+                            (byte) (bodyYaw * 256.0F / 360.0F), (byte) (pitch * 256.0F / 360.0F), handle.onGround));
+        } else {
+            toSend.add(new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
+                    (byte) (pitch * 256.0F / 360.0F), handle.onGround));
+        }
+        if (headYaw != null) {
+            toSend.add(new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
+        }
+        sendPacketsNearby(null, from.getLocation(), toSend, 64);
     }
 
     @Override
@@ -2370,6 +2384,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
+
     private static final MethodHandle BEHAVIOR_TREE_MAP = NMS.getGetter(Brain.class, "f");
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
@@ -2419,6 +2434,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle PUFFERFISH_D = NMS.getSetter(Pufferfish.class, "bW");
     private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
     private static final Random RANDOM = Util.getFastRandom();
+    private static final MethodHandle SERVER_ENTITY_GETTER = NMS.getFirstGetter(TrackedEntity.class,
+            ServerEntity.class);
     private static MethodHandle SET_PROFILE_METHOD;
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getFirstGetter(Entity.class, EntityDimensions.class);
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);

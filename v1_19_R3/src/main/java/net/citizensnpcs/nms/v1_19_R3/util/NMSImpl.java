@@ -280,7 +280,6 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
-import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.protocol.game.VecDeltaCodec;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
@@ -1354,33 +1353,37 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendPositionUpdate(Player excluding, org.bukkit.entity.Entity from, Location location) {
-        sendPacketNearby(excluding, location, new ClientboundTeleportEntityPacket(getHandle(from)));
-    }
-
-    @Override
-    public void sendRotationNearby(org.bukkit.entity.Entity from, float bodyYaw, float headYaw, float pitch) {
+    public void sendPositionUpdate(org.bukkit.entity.Entity from, boolean position, Float bodyYaw, Float pitch,
+            Float headYaw) {
         Entity handle = getHandle(from);
-        float oldBody = handle.getYRot();
-        float oldPitch = handle.getXRot();
-        // handle.setYRot(bodyYaw);
-        // handle.setXRot(pitch);
-        TrackedEntity entry = ((ServerLevel) handle.level).getChunkSource().chunkMap.entityMap.get(handle.getId());
-        VecDeltaCodec vdc = null;
-        try {
-            vdc = (VecDeltaCodec) POSITION_CODEC_GETTER.invoke((ServerEntity) SERVER_ENTITY_GETTER.invoke(entry));
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return;
+        if (bodyYaw == null) {
+            bodyYaw = handle.getYRot();
         }
-        Vec3 pos = handle.trackingPosition();
-        sendPacketsNearby(null, from.getLocation(), // new ClientboundTeleportEntityPacket(handle),
-                new ClientboundMoveEntityPacket.PosRot(handle.getId(), (short) vdc.encodeX(pos),
-                        (short) vdc.encodeY(pos), (short) vdc.encodeZ(pos), (byte) (bodyYaw * 256.0F / 360.0F),
-                        (byte) (pitch * 256.0F / 360.0F), handle.onGround),
-                new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
-        // handle.setYRot(oldBody);
-        // handle.setXRot(oldPitch);
+        if (pitch == null) {
+            pitch = handle.getXRot();
+        }
+        List<Packet<?>> toSend = Lists.newArrayList();
+        if (position) {
+            TrackedEntity entry = ((ServerLevel) handle.level).getChunkSource().chunkMap.entityMap.get(handle.getId());
+            VecDeltaCodec vdc = null;
+            try {
+                vdc = (VecDeltaCodec) POSITION_CODEC_GETTER.invoke((ServerEntity) SERVER_ENTITY_GETTER.invoke(entry));
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return;
+            }
+            Vec3 pos = handle.trackingPosition();
+            toSend.add(new ClientboundMoveEntityPacket.PosRot(handle.getId(), (short) vdc.encodeX(pos),
+                    (short) vdc.encodeY(pos), (short) vdc.encodeZ(pos), (byte) (bodyYaw * 256.0F / 360.0F),
+                    (byte) (pitch * 256.0F / 360.0F), handle.onGround));
+        } else {
+            toSend.add(new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
+                    (byte) (pitch * 256.0F / 360.0F), handle.onGround));
+        }
+        if (headYaw != null) {
+            toSend.add(new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
+        }
+        sendPacketsNearby(null, from.getLocation(), toSend, 64);
     }
 
     @Override

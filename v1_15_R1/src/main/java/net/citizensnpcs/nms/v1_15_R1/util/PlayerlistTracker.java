@@ -39,12 +39,9 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         if (!Setting.DISABLE_TABLIST.asBoolean())
             return;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
-            }
-        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                () -> NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity()),
+                Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
     }
 
     @Override

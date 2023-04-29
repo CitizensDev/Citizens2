@@ -1422,7 +1422,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false] --targetnpcs [true|false]",
+            usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --perplayer [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false] --targetnpcs [true|false]",
             desc = "Toggle whether a NPC will look when a player is near",
             modifiers = { "lookclose", "look" },
             min = 1,
@@ -2448,7 +2448,7 @@ public class NPCCommands {
         if (yaw != null) {
             NMS.setBodyYaw(npc.getEntity(), yaw);
             if (npc.getEntity().getType() == EntityType.PLAYER) {
-                PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
+                NMS.sendPositionUpdate(npc.getEntity(), false, yaw, npc.getStoredLocation().getPitch(), null);
             }
         }
         if (pitch != null) {

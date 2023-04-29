@@ -139,6 +139,9 @@ public class RotationTrait extends Trait {
             NMS.setBodyYaw(entity, bodyYaw);
             NMS.setHeadYaw(entity, headYaw);
             NMS.setPitch(entity, pitch);
+            if (entity instanceof Player) {
+                NMS.sendPositionUpdate(entity, true, bodyYaw, pitch, headYaw);
+            }
         }
     }
 
@@ -209,7 +212,7 @@ public class RotationTrait extends Trait {
         @Override
         public void apply() {
             if (Math.abs(lastBodyYaw - bodyYaw) + Math.abs(lastHeadYaw - headYaw) + Math.abs(pitch - lastPitch) > 1) {
-                NMS.sendRotationNearby(entity, bodyYaw, headYaw, pitch);
+                NMS.sendPositionUpdate(entity, true, bodyYaw, pitch, headYaw);
             }
         }
 

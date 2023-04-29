@@ -645,12 +645,8 @@ public class NMS {
         BRIDGE.replaceTrackerEntry(entity);
     }
 
-    public static void sendPositionUpdate(Player excluding, org.bukkit.entity.Entity from, Location location) {
-        BRIDGE.sendPositionUpdate(excluding, from, location);
-    }
-
-    public static void sendRotationNearby(Entity entity, float bodyYaw, float headYaw, float pitch) {
-        BRIDGE.sendRotationNearby(entity, bodyYaw, headYaw, pitch);
+    public static void sendPositionUpdate(Entity from, boolean position, Float bodyYaw, Float pitch, Float headYaw) {
+        BRIDGE.sendPositionUpdate(from, position, bodyYaw, pitch, headYaw);
     }
 
     public static boolean sendTabListAdd(Player recipient, Player listPlayer) {

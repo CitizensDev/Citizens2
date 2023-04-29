@@ -258,6 +258,8 @@ import net.minecraft.server.v1_12_R1.NetworkManager;
 import net.minecraft.server.v1_12_R1.Packet;
 import net.minecraft.server.v1_12_R1.PacketPlayOutAnimation;
 import net.minecraft.server.v1_12_R1.PacketPlayOutBed;
+import net.minecraft.server.v1_12_R1.PacketPlayOutEntity.PacketPlayOutEntityLook;
+import net.minecraft.server.v1_12_R1.PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityTeleport;
@@ -1154,22 +1156,37 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendPositionUpdate(Player excluding, org.bukkit.entity.Entity from, Location storedLocation) {
-        sendPacketNearby(excluding, storedLocation, new PacketPlayOutEntityTeleport(getHandle(from)));
-    }
-
-    @Override
-    public void sendRotationNearby(org.bukkit.entity.Entity from, float bodyYaw, float headYaw, float pitch) {
+    public void sendPositionUpdate(org.bukkit.entity.Entity from, boolean position, Float bodyYaw, Float pitch,
+            Float headYaw) {
         Entity handle = getHandle(from);
-        float oldBody = handle.yaw;
-        float oldPitch = handle.pitch;
-        handle.yaw = bodyYaw;
-        handle.pitch = pitch;
-        Packet<?>[] packets = new Packet[] { new PacketPlayOutEntityTeleport(handle),
-                new PacketPlayOutEntityHeadRotation(handle, (byte) (headYaw * 256.0F / 360.0F)) };
-        sendPacketsNearby(null, from.getLocation(), packets);
-        handle.yaw = oldBody;
-        handle.pitch = oldPitch;
+        if (bodyYaw == null) {
+            bodyYaw = handle.yaw;
+        }
+        if (pitch == null) {
+            pitch = handle.pitch;
+        }
+        List<Packet<?>> toSend = Lists.newArrayList();
+        if (position) {
+            EntityTrackerEntry entry = ((WorldServer) handle.world).getTracker().trackedEntities.get(handle.getId());
+            long dx, dy, dz;
+            try {
+                dx = EntityTracker.a(handle.locX) - (long) ENTITY_TRACKER_ENTRY_X.invoke(entry);
+                dy = EntityTracker.a(handle.locY) - (long) ENTITY_TRACKER_ENTRY_Y.invoke(entry);
+                dz = EntityTracker.a(handle.locY) - (long) ENTITY_TRACKER_ENTRY_Z.invoke(entry);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return;
+            }
+            toSend.add(new PacketPlayOutRelEntityMoveLook(handle.getId(), (short) dx, (short) dy, (short) dz,
+                    (byte) (bodyYaw * 256.0F / 360.0F), (byte) (pitch * 256.0F / 360.0F), handle.onGround));
+        } else {
+            toSend.add(new PacketPlayOutEntityLook(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
+                    (byte) (pitch * 256.0F / 360.0F), handle.onGround));
+        }
+        if (headYaw != null) {
+            toSend.add(new PacketPlayOutEntityHeadRotation(handle, (byte) (headYaw * 256.0F / 360.0F)));
+        }
+        sendPacketsNearby(null, from.getLocation(), toSend, 64);
     }
 
     @Override
@@ -2005,14 +2022,20 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST);
+
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
+
     private static final float DEFAULT_SPEED = 1F;
+
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c");
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bK");
     public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EntityEnderDragon.class,
             true, boolean.class, AxisAlignedBB.class);
     private static DataWatcherObject<Boolean> ENDERMAN_ANGRY;
     private static CustomEntityRegistry ENTITY_REGISTRY;
+    private static final MethodHandle ENTITY_TRACKER_ENTRY_X = NMS.getGetter(EntityTrackerEntry.class, "xLoc");
+    private static final MethodHandle ENTITY_TRACKER_ENTRY_Y = NMS.getGetter(EntityTrackerEntry.class, "yLoc");
+    private static final MethodHandle ENTITY_TRACKER_ENTRY_Z = NMS.getGetter(EntityTrackerEntry.class, "zLoc");
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     public static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
     private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "bd");
