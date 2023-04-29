@@ -4,8 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-
-import com.google.common.base.Function;
+import java.util.function.Function;
 
 /**
  * A selector of sub-goals, that chooses a single {@link Behavior} to execute from a list. The default selection

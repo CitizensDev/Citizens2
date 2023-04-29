@@ -1,10 +1,9 @@
 package net.citizensnpcs.api.gui;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.bukkit.event.Event.Result;
-
-import com.google.common.base.Function;
 
 public class PercentageSlotHandler implements Consumer<CitizensInventoryClickEvent> {
     private int percentage;

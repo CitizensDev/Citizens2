@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
+import java.util.function.Function;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -27,7 +28,6 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
 
-import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
@@ -57,18 +57,15 @@ public class ScriptCompiler {
             return created;
         }
     });
-    private final Function<File, ScriptSource> fileEngineConverter = new Function<File, ScriptSource>() {
-        @Override
-        public ScriptSource apply(File file) {
-            if (!file.isFile())
-                return null;
-            String fileName = file.getName();
-            String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-            ScriptEngine engine = loadEngine(extension);
-            if (engine == null)
-                return null;
-            return new ScriptSource(file, engine);
-        }
+    private final Function<File, ScriptSource> fileEngineConverter = file -> {
+        if (!file.isFile())
+            return null;
+        String fileName = file.getName();
+        String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+        ScriptEngine engine = loadEngine(extension);
+        if (engine == null)
+            return null;
+        return new ScriptSource(file, engine);
     };
     private final List<ContextProvider> globalContextProviders = Lists.newArrayList();
 
@@ -141,10 +138,6 @@ public class ScriptCompiler {
             search = tryUpdateClassLoader(search);
         }
         engines.put(extension, search);
-        ClassLoader cl = classLoader.get();
-        if (cl != null) {
-            updateSunClassLoader(cl);
-        }
         return search;
     }
 
@@ -199,20 +192,6 @@ public class ScriptCompiler {
         } catch (Exception e) {
             return search;
         }
-    }
-
-    private void updateSunClassLoader(ClassLoader cl) {
-        if (!CLASSLOADER_OVERRIDE_ENABLED)
-            return;
-        try {
-            Object global = GET_GLOBAL.invoke(null);
-            if (GET_APPLICATION_CLASS_LOADER.invoke(global) == null) {
-                INIT_APPLICATION_CLASS_LOADER.invoke(global, cl);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     private class CompileTask implements Callable<ScriptFactory> {
@@ -323,22 +302,4 @@ public class ScriptCompiler {
     }
 
     private static final Map<String, ScriptFactory> CACHE = new MapMaker().weakValues().makeMap();
-    private static boolean CLASSLOADER_OVERRIDE_ENABLED;
-    private static Method GET_APPLICATION_CLASS_LOADER, GET_GLOBAL, INIT_APPLICATION_CLASS_LOADER;
-
-    static {
-        try {
-            Class<?> CONTEXT_FACTORY = Class.forName("sun.org.mozilla.javascript.internal.ContextFactory");
-            GET_APPLICATION_CLASS_LOADER = CONTEXT_FACTORY.getDeclaredMethod("getApplicationClassLoader");
-            GET_APPLICATION_CLASS_LOADER.setAccessible(true);
-            GET_GLOBAL = CONTEXT_FACTORY.getDeclaredMethod("getGlobal");
-            GET_GLOBAL.setAccessible(true);
-            INIT_APPLICATION_CLASS_LOADER = CONTEXT_FACTORY.getDeclaredMethod("initApplicationClassLoader",
-                    ClassLoader.class);
-            INIT_APPLICATION_CLASS_LOADER.setAccessible(true);
-            CLASSLOADER_OVERRIDE_ENABLED = true;
-        } catch (Exception e) {
-            // Nashorn is preferred anyway
-        }
-    }
 }

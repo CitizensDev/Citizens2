@@ -3,6 +3,7 @@ package net.citizensnpcs.api.gui;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
@@ -15,7 +16,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.InputMenus.Choice.Type;

@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
 /**
@@ -59,11 +59,6 @@ public class Selectors {
         return Selector.selecting(behaviors).selectionFunction(new PrioritySelection(comparator));
     }
 
-    private static final Comparator<Behavior> BEHAVIOR_COMPARATOR = new Comparator<Behavior>() {
-        @Override
-        @SuppressWarnings("unchecked")
-        public int compare(Behavior o1, Behavior o2) {
-            return ((Comparable<Behavior>) o1).compareTo(o2);
-        }
-    };
+    private static final Comparator<Behavior> BEHAVIOR_COMPARATOR = (o1, o2) -> ((Comparable<Behavior>) o1)
+            .compareTo(o2);
 }

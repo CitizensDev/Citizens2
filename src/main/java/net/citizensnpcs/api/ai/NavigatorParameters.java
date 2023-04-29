@@ -3,11 +3,11 @@ package net.citizensnpcs.api.ai;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.ai.event.CancelReason;

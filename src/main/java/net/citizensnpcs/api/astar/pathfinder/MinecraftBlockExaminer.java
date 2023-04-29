@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +16,6 @@ import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.util.Vector;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.ai.event.CancelReason;

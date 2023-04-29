@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bukkit.util.Vector;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class AStarSolution {
@@ -18,12 +17,9 @@ public class AStarSolution {
     }
 
     public Collection<Vector> convertToVectors() {
-        return Lists.transform(path, new Function<ReversableAStarNode, Vector>() {
-            @Override
-            public Vector apply(ReversableAStarNode input) {
-                HPAGraphNode node = ((HPAGraphAStarNode) input).node;
-                return new Vector(node.x, node.y, node.z);
-            }
+        return Lists.transform(path, input -> {
+            HPAGraphNode node = ((HPAGraphAStarNode) input).node;
+            return new Vector(node.x, node.y, node.z);
         });
     }
 }

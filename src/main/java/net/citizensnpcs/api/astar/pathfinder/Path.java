@@ -10,7 +10,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -25,12 +24,9 @@ public class Path implements Plan {
     private final PathEntry[] path;
 
     public Path(Collection<Vector> vector) {
-        this.path = Iterables.toArray(Iterables.transform(vector, new Function<Vector, PathEntry>() {
-            @Override
-            public PathEntry apply(Vector input) {
-                return new PathEntry(input, Collections.<PathCallback> emptyList());
-            }
-        }), PathEntry.class);
+        this.path = Iterables.toArray(
+                Iterables.transform(vector, input -> new PathEntry(input, Collections.<PathCallback> emptyList())),
+                PathEntry.class);
     }
 
     Path(Iterable<VectorNode> unfiltered) {
@@ -59,12 +55,7 @@ public class Path implements Plan {
     }
 
     public Iterable<Vector> getPath() {
-        return Iterables.transform(Arrays.asList(path), new Function<PathEntry, Vector>() {
-            @Override
-            public Vector apply(PathEntry input) {
-                return input.vector;
-            }
-        });
+        return Iterables.transform(Arrays.asList(path), input -> input.vector);
     }
 
     @Override
@@ -116,13 +107,8 @@ public class Path implements Plan {
                     vector.getBlockZ());
             for (PathCallback callback : callbacks) {
                 if (blockList == null) {
-                    blockList = Lists.transform(Arrays.asList(path), new Function<PathEntry, Block>() {
-                        @Override
-                        public Block apply(PathEntry input) {
-                            return npc.getEntity().getWorld().getBlockAt(input.vector.getBlockX(),
-                                    input.vector.getBlockY(), input.vector.getBlockZ());
-                        }
-                    });
+                    blockList = Lists.transform(Arrays.asList(path), input -> npc.getEntity().getWorld()
+                            .getBlockAt(input.vector.getBlockX(), input.vector.getBlockY(), input.vector.getBlockZ()));
                 }
                 callback.run(npc, current, blockList, index);
             }

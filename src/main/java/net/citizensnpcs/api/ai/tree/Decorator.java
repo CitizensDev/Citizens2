@@ -2,15 +2,15 @@ package net.citizensnpcs.api.ai.tree;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 /**
  * A decorator is a wrapper over a {@link Behavior}, which can add functionality such as filtering
  * {@link BehaviorStatus}es, conditions, timer loops and more without knowing the internals of the behavior it wraps.
- * 
+ *
  * Note that there are often simpler alternatives to a full-blown decorator, which has to be generic for many different
  * scenarios.
  */
@@ -55,7 +55,7 @@ public class Decorator extends BehaviorGoalAdapter {
     public boolean shouldExecute() {
         boolean shouldExecute = wrapping.shouldExecute();
         for (Predicate<Boolean> transformer : shouldExecutePredicates) {
-            shouldExecute = transformer.apply(shouldExecute);
+            shouldExecute = transformer.test(shouldExecute);
         }
         return shouldExecute;
     }
