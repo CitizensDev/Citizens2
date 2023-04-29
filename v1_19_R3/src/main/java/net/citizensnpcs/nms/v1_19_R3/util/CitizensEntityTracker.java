@@ -67,7 +67,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                         new ClientboundMoveEntityPacket.Rot(tracker.getId(),
                                 (byte) (tracker.getYRot() * 256.0F / 360.0F),
                                 (byte) (tracker.getXRot() * 256.0F / 360.0F), tracker.onGround));
-            }, 1);
+            }, 10);
             return;
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
