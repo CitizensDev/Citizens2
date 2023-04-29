@@ -3,14 +3,12 @@ package net.citizensnpcs.commands;
 import java.io.IOException;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import org.bukkit.command.CommandSender;
 
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
@@ -51,17 +49,9 @@ public class TemplateCommands {
             String joined = args.getJoinedStrings(2, ',');
             List<Integer> ids = Lists.newArrayList();
             for (String id : Splitter.on(',').trimResults().split(joined)) {
-                int parsed = Integer.parseInt(id);
-                ids.add(parsed);
+                ids.add(Ints.tryParse(id));
             }
-            Iterable<NPC> transformed = Iterables.transform(ids, new Function<Integer, NPC>() {
-                @Override
-                public NPC apply(@Nullable Integer arg0) {
-                    if (arg0 == null)
-                        return null;
-                    return CitizensAPI.getNPCRegistry().getById(arg0);
-                }
-            });
+            Iterable<NPC> transformed = Iterables.transform(ids, id -> CitizensAPI.getNPCRegistry().getById(id));
             for (NPC toApply : transformed) {
                 template.apply(toApply);
                 appliedCount++;

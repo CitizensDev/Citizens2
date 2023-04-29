@@ -17,7 +17,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;

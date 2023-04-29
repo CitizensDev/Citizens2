@@ -28,6 +28,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
@@ -80,6 +81,7 @@ import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
+import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -559,6 +561,19 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     for (Trait trait : npc.getTraits()) {
                         if (traitFactory.trackStats(trait)) {
                             res.put(trait.getName(), res.getOrDefault(trait.getName(), 0) + 1);
+                        }
+                    }
+                }
+                return res;
+            }));
+            metrics.addCustomChart(new Metrics.AdvancedPie("script_extensions", () -> {
+                Map<String, Integer> res = Maps.newHashMap();
+                for (NPC npc : npcRegistry) {
+                    ScriptTrait trait = npc.getTraitNullable(ScriptTrait.class);
+                    if (trait != null) {
+                        for (String file : trait.getScripts()) {
+                            String ext = Files.getFileExtension(file);
+                            res.put(ext, res.getOrDefault(ext, 0) + 1);
                         }
                     }
                 }
