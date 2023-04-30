@@ -1355,34 +1355,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void sendPositionUpdate(org.bukkit.entity.Entity from, boolean position, Float bodyYaw, Float pitch,
             Float headYaw) {
-        Entity handle = getHandle(from);
-        if (bodyYaw == null) {
-            bodyYaw = handle.getYRot();
-        }
-        if (pitch == null) {
-            pitch = handle.getXRot();
-        }
-        List<Packet<?>> toSend = Lists.newArrayList();
-        if (position) {
-            TrackedEntity entry = ((ServerLevel) handle.level).getChunkSource().chunkMap.entityMap.get(handle.getId());
-            VecDeltaCodec vdc = null;
-            try {
-                vdc = (VecDeltaCodec) POSITION_CODEC_GETTER.invoke((ServerEntity) SERVER_ENTITY_GETTER.invoke(entry));
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return;
-            }
-            Vec3 pos = handle.trackingPosition();
-            toSend.add(new ClientboundMoveEntityPacket.PosRot(handle.getId(), (short) vdc.encodeX(pos),
-                    (short) vdc.encodeY(pos), (short) vdc.encodeZ(pos), (byte) (bodyYaw * 256.0F / 360.0F),
-                    (byte) (pitch * 256.0F / 360.0F), handle.onGround));
-        } else {
-            toSend.add(new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
-                    (byte) (pitch * 256.0F / 360.0F), handle.onGround));
-        }
-        if (headYaw != null) {
-            toSend.add(new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
-        }
+        List<Packet<?>> toSend = getPositionUpdate(from, position, bodyYaw, pitch, headYaw);
         sendPacketsNearby(null, from.getLocation(), toSend, 64);
     }
 
@@ -2226,6 +2199,39 @@ public class NMSImpl implements NMSBridge {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static List<Packet<?>> getPositionUpdate(org.bukkit.entity.Entity from, boolean position, Float bodyYaw,
+            Float pitch, Float headYaw) {
+        Entity handle = getHandle(from);
+        if (bodyYaw == null) {
+            bodyYaw = handle.getYRot();
+        }
+        if (pitch == null) {
+            pitch = handle.getXRot();
+        }
+        List<Packet<?>> toSend = Lists.newArrayList();
+        if (position) {
+            TrackedEntity entry = ((ServerLevel) handle.level).getChunkSource().chunkMap.entityMap.get(handle.getId());
+            VecDeltaCodec vdc = null;
+            try {
+                vdc = (VecDeltaCodec) POSITION_CODEC_GETTER.invoke((ServerEntity) SERVER_ENTITY_GETTER.invoke(entry));
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return Collections.emptyList();
+            }
+            Vec3 pos = handle.trackingPosition();
+            toSend.add(new ClientboundMoveEntityPacket.PosRot(handle.getId(), (short) vdc.encodeX(pos),
+                    (short) vdc.encodeY(pos), (short) vdc.encodeZ(pos), (byte) (bodyYaw * 256.0F / 360.0F),
+                    (byte) (pitch * 256.0F / 360.0F), handle.onGround));
+        } else {
+            toSend.add(new ClientboundMoveEntityPacket.Rot(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
+                    (byte) (pitch * 256.0F / 360.0F), handle.onGround));
+        }
+        if (headYaw != null) {
+            toSend.add(new ClientboundRotateHeadPacket(handle, (byte) (headYaw * 256.0F / 360.0F)));
+        }
+        return toSend;
     }
 
     public static EntityDataAccessor<Integer> getRabbitTypeField() {
