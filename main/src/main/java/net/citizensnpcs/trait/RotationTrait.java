@@ -459,15 +459,22 @@ public class RotationTrait extends Trait {
                     : Util.clamp(params.rotateHeadYawTowards(t, rot.headYaw, getTargetYaw()));
 
             if (!params.headOnly) {
-                float d = Util.clamp(rot.headYaw - 20);
-                if (d > rot.bodyYaw) {
-                    rot.bodyYaw = d;
+                float lo = Util.clamp(rot.headYaw - 20);
+                float hi = Util.clamp(rot.headYaw + 20);
+                if (hi < 0 && lo > 0) {
+                    float i = hi;
+                    hi = lo;
+                    lo = i;
                 }
-                if (d != rot.bodyYaw) {
-                    d = Util.clamp(rot.headYaw + 20);
-                    if (d < rot.bodyYaw) {
-                        rot.bodyYaw = d;
-                    }
+                boolean contained = false;
+                float body = Util.clamp(rot.bodyYaw);
+                if (hi > 0 && lo < 0) {
+                    contained = body >= hi || body <= lo;
+                } else {
+                    contained = body >= lo && body <= hi;
+                }
+                if (!contained) {
+                    rot.bodyYaw = Math.abs(body - lo) > Math.abs(body - hi) ? hi : lo;
                 }
             }
 
