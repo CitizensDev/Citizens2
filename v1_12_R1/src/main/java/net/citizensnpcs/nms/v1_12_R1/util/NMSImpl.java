@@ -1172,7 +1172,7 @@ public class NMSImpl implements NMSBridge {
             try {
                 dx = EntityTracker.a(handle.locX) - (long) ENTITY_TRACKER_ENTRY_X.invoke(entry);
                 dy = EntityTracker.a(handle.locY) - (long) ENTITY_TRACKER_ENTRY_Y.invoke(entry);
-                dz = EntityTracker.a(handle.locY) - (long) ENTITY_TRACKER_ENTRY_Z.invoke(entry);
+                dz = EntityTracker.a(handle.locZ) - (long) ENTITY_TRACKER_ENTRY_Z.invoke(entry);
             } catch (Throwable e) {
                 e.printStackTrace();
                 return;

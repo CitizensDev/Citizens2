@@ -1820,9 +1820,6 @@ public class NMSImpl implements NMSBridge {
     private static Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class, Entity.class);
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
-    private static final MethodHandle ENTITY_TRACKER_ENTRY_X = NMS.getGetter(EntityTrackerEntry.class, "xLoc");
-    private static final MethodHandle ENTITY_TRACKER_ENTRY_Y = NMS.getGetter(EntityTrackerEntry.class, "yLoc");
-    private static final MethodHandle ENTITY_TRACKER_ENTRY_Z = NMS.getGetter(EntityTrackerEntry.class, "zLoc");
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     private static Method GET_NMS_BLOCK = NMS.getMethod(CraftBlock.class, "getNMSBlock", false);
     private static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
