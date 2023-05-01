@@ -182,6 +182,9 @@ public class NMS {
         } catch (Exception e) {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+                if (Messaging.isDebugging()) {
+                    e.printStackTrace();
+                }
             }
             return null;
         }
@@ -277,6 +280,9 @@ public class NMS {
         } catch (Exception e) {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
+                if (Messaging.isDebugging()) {
+                    e.printStackTrace();
+                }
             }
             return null;
         }
@@ -285,6 +291,9 @@ public class NMS {
         } catch (Exception e) {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
+                if (Messaging.isDebugging()) {
+                    e.printStackTrace();
+                }
             }
         }
         return null;
@@ -347,6 +356,9 @@ public class NMS {
         } catch (Exception e) {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_METHOD, e.getLocalizedMessage());
+                if (Messaging.isDebugging()) {
+                    e.printStackTrace();
+                }
             }
         }
         return null;
@@ -390,6 +402,9 @@ public class NMS {
         } catch (Exception e) {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_FIELD, name, e.getLocalizedMessage());
+                if (Messaging.isDebugging()) {
+                    e.printStackTrace();
+                }
             }
         }
         return null;
@@ -417,6 +432,9 @@ public class NMS {
         } catch (Exception e) {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
+                if (Messaging.isDebugging()) {
+                    e.printStackTrace();
+                }
             }
         }
         return f;
@@ -430,6 +448,9 @@ public class NMS {
         } catch (Exception e) {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
+                if (Messaging.isDebugging()) {
+                    e.printStackTrace();
+                }
             }
         }
         return null;
@@ -478,6 +499,9 @@ public class NMS {
         } catch (Exception e) {
             if (log) {
                 Messaging.logTr(Messages.ERROR_GETTING_FIELD, name, e.getLocalizedMessage());
+                if (Messaging.isDebugging()) {
+                    e.printStackTrace();
+                }
             }
         }
         return null;
