@@ -1433,8 +1433,9 @@ public class NPCCommands {
             @Flag({ "randomlook", "rlook" }) Boolean randomlook, @Flag("range") Double range,
             @Flag("randomlookdelay") Duration randomLookDelay, @Flag("randomyawrange") String randomYaw,
             @Flag("randompitchrange") String randomPitch, @Flag("randomswitchtargets") Boolean randomSwitchTargets,
-            @Flag("headonly") Boolean headonly, @Flag("disablewhennavigating") Boolean disableWhenNavigating,
-            @Flag("perplayer") Boolean perPlayer, @Flag("targetnpcs") Boolean targetNPCs) throws CommandException {
+            @Flag("headonly") Boolean headonly, @Flag("linkedbody") Boolean linkedbody,
+            @Flag("disablewhennavigating") Boolean disableWhenNavigating, @Flag("perplayer") Boolean perPlayer,
+            @Flag("targetnpcs") Boolean targetNPCs) throws CommandException {
         boolean toggle = true;
         LookClose trait = npc.getOrAddTrait(LookClose.class);
         if (randomlook != null) {
@@ -1452,6 +1453,11 @@ public class NPCCommands {
         if (headonly != null) {
             trait.setHeadOnly(headonly);
             Messaging.sendTr(sender, headonly ? Messages.HEADONLY_SET : Messages.HEADONLY_UNSET, npc.getName());
+            toggle = false;
+        }
+        if (linkedbody != null) {
+            trait.setLinkedBody(linkedbody);
+            Messaging.sendTr(sender, linkedbody ? Messages.LINKEDBODY_SET : Messages.LINKEDBODY_UNSET, npc.getName());
             toggle = false;
         }
         if (randomSwitchTargets != null) {
@@ -2448,7 +2454,7 @@ public class NPCCommands {
         if (yaw != null) {
             NMS.setBodyYaw(npc.getEntity(), yaw);
             if (npc.getEntity().getType() == EntityType.PLAYER) {
-                NMS.sendPositionUpdate(npc.getEntity(), false, yaw, npc.getStoredLocation().getPitch(), null);
+                NMS.sendPositionUpdate(npc.getEntity(), true, yaw, npc.getStoredLocation().getPitch(), null);
             }
         }
         if (pitch != null) {

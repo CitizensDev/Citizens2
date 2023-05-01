@@ -1,10 +1,13 @@
 package net.citizensnpcs.npc.skin;
 
+import java.util.Set;
+
 import org.bukkit.entity.Player;
 
 import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinTrait;
 
 /**
@@ -43,6 +46,10 @@ public interface SkinnableEntity extends NPCHolder {
      *            The bit flags.
      */
     void setSkinFlags(byte flags);
+
+    default void setSkinFlags(Set<SkinLayers.Layer> flags) {
+        setSkinFlags(SkinLayers.Layer.toByte(flags));
+    }
 
     /**
      * Set the name of the player whose skin the NPC uses.

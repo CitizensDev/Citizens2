@@ -47,6 +47,8 @@ public class LookClose extends Trait implements Toggleable {
     private boolean enableRandomLook = Setting.DEFAULT_RANDOM_LOOK_CLOSE.asBoolean();
     @Persist("headonly")
     private boolean headOnly;
+    @Persist("linkedbody")
+    private boolean linkedBody;
     private Player lookingAt;
     @Persist("perplayer")
     private boolean perPlayer;
@@ -302,6 +304,7 @@ public class LookClose extends Trait implements Toggleable {
 
         RotationTrait rot = npc.getOrAddTrait(RotationTrait.class);
         rot.getGlobalParameters().headOnly(headOnly);
+        rot.getGlobalParameters().linkedBody(linkedBody);
         rot.getPhysicalSession().rotateToFace(lookingAt);
 
         if (npc.getEntity().getType().name().equals("SHULKER")) {
@@ -324,6 +327,10 @@ public class LookClose extends Trait implements Toggleable {
 
     public void setHeadOnly(boolean headOnly) {
         this.headOnly = headOnly;
+    }
+
+    public void setLinkedBody(boolean linkedBody) {
+        this.linkedBody = linkedBody;
     }
 
     public void setPerPlayer(boolean perPlayer) {

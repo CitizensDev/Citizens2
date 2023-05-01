@@ -212,6 +212,8 @@ public class Messages {
     public static final String LINEAR_WAYPOINT_EDITOR_SELECTED_WAYPOINT = "citizens.editors.waypoints.linear.selected-waypoint";
     public static final String LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS = "citizens.editors.waypoints.linear.showing-markers";
     public static final String LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED = "citizens.editors.waypoints.linear.waypoints-cleared";
+    public static final String LINKEDBODY_SET = "citizens.commands.npc.lookclose.linkedbody-set";
+    public static final String LINKEDBODY_UNSET = "citizens.commands.npc.lookclose.linkedbody-unset";
     public static final String LLAMA_COLOR_SET = "citizens.commands.npc.llama.color-set";
     public static final String LLAMA_STRENGTH_SET = "citizens.commands.npc.llama.strength-set";
     public static final String LOAD_NAME_NOT_FOUND = "citizens.notifications.npc-name-not-found";

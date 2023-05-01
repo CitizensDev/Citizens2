@@ -2,6 +2,7 @@ package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -302,7 +303,7 @@ public class CitizensNPC extends AbstractNPC {
         getEntity().setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
 
         if (getEntity() instanceof SkinnableEntity && !hasTrait(SkinLayers.class)) {
-            ((SkinnableEntity) getEntity()).setSkinFlags((byte) 0xFF);
+            ((SkinnableEntity) getEntity()).setSkinFlags(EnumSet.allOf(SkinLayers.Layer.class));
         }
 
         Collection<Trait> onPreSpawn = traits.values();

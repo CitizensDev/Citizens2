@@ -1,5 +1,8 @@
 package net.citizensnpcs.trait;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -131,21 +134,17 @@ public class SkinLayers extends Trait {
     }
 
     private void setFlags() {
-        if (!npc.isSpawned())
+        if (!(npc.getEntity() instanceof SkinnableEntity))
             return;
 
-        SkinnableEntity skinnable = npc.getEntity() instanceof SkinnableEntity ? (SkinnableEntity) npc.getEntity()
-                : null;
-        if (skinnable == null)
-            return;
-
-        int flags = 0xFF;
+        SkinnableEntity skinnable = (SkinnableEntity) npc.getEntity();
+        Set<Layer> visible = EnumSet.noneOf(Layer.class);
         for (Layer layer : Layer.values()) {
-            if (!isVisible(layer)) {
-                flags &= ~layer.flag;
+            if (isVisible(layer)) {
+                visible.add(layer);
             }
         }
-        skinnable.setSkinFlags((byte) flags);
+        skinnable.setSkinFlags(visible);
     }
 
     public SkinLayers setVisible(Layer layer, boolean isVisible) {
@@ -263,6 +262,14 @@ public class SkinLayers extends Trait {
 
         Layer(int offset) {
             this.flag = 1 << offset;
+        }
+
+        public static byte toByte(Set<Layer> flags) {
+            byte b = 0;
+            for (Layer layer : flags) {
+                b |= layer.flag;
+            }
+            return b;
         }
     }
 }

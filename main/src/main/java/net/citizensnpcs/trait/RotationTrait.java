@@ -227,6 +227,7 @@ public class RotationTrait extends Trait {
         private Function<Player, Boolean> filter;
         private boolean headOnly = false;
         private boolean immediate = false;
+        private boolean linkedBody;
         private float maxPitchPerTick = 10;
         private float maxYawPerTick = 40;
         private boolean persist = false;
@@ -262,6 +263,11 @@ public class RotationTrait extends Trait {
             return this;
         }
 
+        public RotationParams linkedBody(boolean linked) {
+            this.linkedBody = linked;
+            return this;
+        }
+
         @Override
         public void load(DataKey key) {
             if (key.keyExists("headOnly")) {
@@ -275,6 +281,9 @@ public class RotationTrait extends Trait {
             }
             if (key.keyExists("maxYawPerTick")) {
                 maxYawPerTick = (float) key.getDouble("maxYawPerTick");
+            }
+            if (key.keyExists("linkedBody")) {
+                linkedBody = key.getBoolean("linkedBody");
             }
             if (key.keyExists("yawRange")) {
                 String[] parts = key.getString("yawRange").split(",");
@@ -480,6 +489,10 @@ public class RotationTrait extends Trait {
 
             rot.pitch = params.immediate ? getTargetPitch() : params.rotatePitchTowards(t, rot.pitch, getTargetPitch());
             t++;
+
+            if (params.linkedBody) {
+                rot.bodyYaw = rot.headYaw;
+            }
 
             if (Math.abs(rot.pitch - getTargetPitch()) + Math.abs(rot.headYaw - getTargetYaw()) < 0.1) {
                 t = -1;
