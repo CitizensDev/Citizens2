@@ -496,7 +496,9 @@ public class RotationTrait extends Trait {
 
             if (Math.abs(rot.pitch - getTargetPitch()) + Math.abs(rot.headYaw - getTargetYaw()) < 0.1) {
                 t = -1;
-                rot.bodyYaw = rot.headYaw;
+                if (!params.headOnly) {
+                    rot.bodyYaw = rot.headYaw;
+                }
             }
 
             rot.apply();
