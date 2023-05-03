@@ -294,9 +294,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             moveOnCurrentHeading();
         }
         updateAI();
-        if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
-            bL();
-        }
+        bL();
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
             AxisAlignedBB axisalignedbb = null;
             if (this.vehicle != null && !this.vehicle.dead) {

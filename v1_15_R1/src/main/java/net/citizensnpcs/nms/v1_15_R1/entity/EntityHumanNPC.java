@@ -352,9 +352,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             moveOnCurrentHeading();
         }
         updateAI();
-        if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
-            collideNearby();
-        }
+        collideNearby();
     }
 
     public void setMoveDestination(double x, double y, double z, double speed) {

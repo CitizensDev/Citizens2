@@ -320,9 +320,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
         ai.getMoveControl().a();
         ai.getJumpControl().b();
-        if (npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
-            collideNearby();
-        }
+        collideNearby();
     }
 
     @Override
