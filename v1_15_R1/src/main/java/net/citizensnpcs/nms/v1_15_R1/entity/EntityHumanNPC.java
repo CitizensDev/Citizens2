@@ -301,14 +301,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         return npc.getNavigator().isNavigating();
     }
 
-    @Override
-    public Packet<?> L() {
-        if (playerlistTracker != null) {
-            playerlistTracker.updateLastPlayer();
-        }
-        return super.L();
-    }
-
     private void moveOnCurrentHeading() {
         if (jumping) {
             if (onGround && jumpTicks == 0) {

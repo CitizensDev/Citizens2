@@ -291,9 +291,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public Packet<?> P() {
-        if (playerlistTracker != null) {
-            playerlistTracker.updateLastPlayer();
-        }
         return super.P();
     }
 

@@ -1,10 +1,13 @@
 package net.citizensnpcs.nms.v1_16_R3.util;
 
 import java.lang.invoke.MethodHandle;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import com.google.common.collect.ForwardingSet;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -21,19 +24,38 @@ import net.minecraft.server.v1_16_R3.PlayerChunkMap;
 import net.minecraft.server.v1_16_R3.PlayerChunkMap.EntityTracker;
 
 public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
-    private EntityPlayer lastUpdatedPlayer;
     private final Entity tracker;
 
     public PlayerlistTracker(PlayerChunkMap map, Entity entity, int i, int j, boolean flag) {
         map.super(entity, i, j, flag);
         this.tracker = entity;
+        try {
+            Set<EntityPlayer> delegate = super.trackedPlayers;
+            TRACKING_SET_SETTER.invoke(this, new ForwardingSet<EntityPlayer>() {
+                @Override
+                public boolean add(EntityPlayer player) {
+                    boolean res = super.add(player);
+                    if (res) {
+                        updateLastPlayer(player);
+                    }
+                    return res;
+                }
+
+                @Override
+                protected Set<EntityPlayer> delegate() {
+                    return delegate;
+                }
+            });
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     public PlayerlistTracker(PlayerChunkMap map, EntityTracker entry) {
         this(map, getTracker(entry), getTrackingDistance(entry), getD(entry), getE(entry));
     }
 
-    public void updateLastPlayer() {
+    public void updateLastPlayer(EntityPlayer lastUpdatedPlayer) {
         if (tracker.dead || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         final EntityPlayer entityplayer = lastUpdatedPlayer;
@@ -73,7 +95,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         if (entityplayer instanceof EntityHumanNPC)
             return;
 
-        this.lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
     }
 
@@ -114,9 +135,11 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
     }
 
     private static final MethodHandle D = NMS.getGetter(EntityTrackerEntry.class, "d");
+
     private static final MethodHandle E = NMS.getGetter(EntityTrackerEntry.class, "e");
     private static final MethodHandle TRACKER = NMS.getGetter(EntityTracker.class, "tracker");
     private static final MethodHandle TRACKER_ENTRY = NMS.getGetter(EntityTracker.class, "trackerEntry");
     private static final MethodHandle TRACKING_RANGE = NMS.getGetter(EntityTracker.class, "trackingDistance");
     private static final MethodHandle TRACKING_RANGE_SETTER = NMS.getFirstFinalSetter(EntityTracker.class, int.class);
+    private static final MethodHandle TRACKING_SET_SETTER = NMS.getFirstFinalSetter(EntityTracker.class, Set.class);
 }

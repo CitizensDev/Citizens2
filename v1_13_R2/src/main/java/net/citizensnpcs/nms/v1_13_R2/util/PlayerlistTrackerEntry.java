@@ -2,10 +2,13 @@ package net.citizensnpcs.nms.v1_13_R2.util;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import com.google.common.collect.ForwardingSet;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -16,28 +19,42 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
-import net.minecraft.server.v1_13_R2.EntityTracker;
 import net.minecraft.server.v1_13_R2.EntityTrackerEntry;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutEntityLook;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
-    private EntityPlayer lastUpdatedPlayer;
     private final Entity tracker;
 
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {
         super(entity, i, j, k, flag);
         tracker = getTracker(this);
+        try {
+            Set<EntityPlayer> delegate = super.trackedPlayers;
+            TRACKING_SET_SETTER.invoke(this, new ForwardingSet<EntityPlayer>() {
+                @Override
+                public boolean add(EntityPlayer player) {
+                    boolean res = super.add(player);
+                    if (res) {
+                        updateLastPlayer(player);
+                    }
+                    return res;
+                }
+
+                @Override
+                protected Set<EntityPlayer> delegate() {
+                    return delegate;
+                }
+            });
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     public PlayerlistTrackerEntry(EntityTrackerEntry entry) {
         this(getTracker(entry), getE(entry), getF(entry), getG(entry), getU(entry));
     }
 
-    public boolean isUpdating() {
-        return lastUpdatedPlayer != null;
-    }
-
-    public void updateLastPlayer() {
+    public void updateLastPlayer(EntityPlayer lastUpdatedPlayer) {
         if (tracker.dead || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         final EntityPlayer entityplayer = lastUpdatedPlayer;
@@ -78,7 +95,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         if (entityplayer instanceof EntityHumanNPC)
             return;
 
-        this.lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
     }
 
@@ -138,9 +154,14 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     private static Field E = NMS.getField(EntityTrackerEntry.class, "e");
+
     private static Field F = NMS.getField(EntityTrackerEntry.class, "f");
+
     private static Field G = NMS.getField(EntityTrackerEntry.class, "g");
     private static Field TRACKER = NMS.getField(EntityTrackerEntry.class, "tracker");
-    private static final MethodHandle TRACKING_RANGE_SETTER = NMS.getFirstFinalSetter(EntityTracker.class, int.class);
+    private static final MethodHandle TRACKING_RANGE_SETTER = NMS.getFirstFinalSetter(EntityTrackerEntry.class,
+            int.class);
+    private static final MethodHandle TRACKING_SET_SETTER = NMS.getFirstFinalSetter(EntityTrackerEntry.class,
+            Set.class);
     private static Field U = NMS.getField(EntityTrackerEntry.class, "u");
 }

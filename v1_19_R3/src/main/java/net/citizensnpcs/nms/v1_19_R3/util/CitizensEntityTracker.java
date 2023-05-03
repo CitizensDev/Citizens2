@@ -43,7 +43,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                 }
 
                 @Override
-                protected Set delegate() {
+                protected Set<ServerPlayerConnection> delegate() {
                     return set;
                 }
             });

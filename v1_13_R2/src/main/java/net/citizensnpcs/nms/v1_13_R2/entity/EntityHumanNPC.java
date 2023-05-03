@@ -47,7 +47,6 @@ import net.minecraft.server.v1_13_R2.AxisAlignedBB;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.ChatComponentText;
 import net.minecraft.server.v1_13_R2.DamageSource;
-import net.minecraft.server.v1_13_R2.DataWatcher;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityHuman;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
@@ -214,14 +213,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     public PlayerControllerMove getControllerMove() {
         return controllerMove;
-    }
-
-    @Override
-    public DataWatcher getDataWatcher() {
-        if (trackerEntry != null && trackerEntry.isUpdating()) {
-            trackerEntry.updateLastPlayer();
-        }
-        return super.getDataWatcher();
     }
 
     public NavigationAbstract getNavigation() {
