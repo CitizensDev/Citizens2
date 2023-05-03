@@ -711,7 +711,6 @@ public class NPCCommands {
             msg += " as a baby";
             npc.getOrAddTrait(Age.class).setAge(-24000);
         }
-
         if (args.hasFlag('s')) {
             npc.data().set(NPC.Metadata.SILENT, true);
         }
@@ -1783,18 +1782,19 @@ public class NPCCommands {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    ID: [[" + npc.getId());
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
-        Messaging.send(sender,
-                "    UUID: [[" + npc.getUniqueId() + (npc.isSpawned() && type == EntityType.PLAYER ? "(v4)" : ""));
+        Messaging.send(sender, "    UUID: [[" + npc.getUniqueId());
         Messaging.send(sender, "    Type: [[" + type);
         if (npc.isSpawned()) {
             Location loc = npc.getEntity().getLocation();
-            String format = "    Spawned at [[%d, %d, %d]] in world [[%s";
+            String format = "    Spawned at [[%d, %d, %d, %.2f, %.2f (head %.2f)]] [[%s";
             Messaging.send(sender,
-                    String.format(format, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName()));
+                    String.format(format, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(),
+                            NMS.getYaw(npc.getEntity()), loc.getPitch(), NMS.getHeadYaw(npc.getEntity()),
+                            loc.getWorld().getName()));
         }
         Messaging.send(sender, "    Traits");
         for (Trait trait : npc.getTraits()) {
-            String message = "     [[- ]]" + trait.getName();
+            String message = "     - [[" + trait.getName();
             Messaging.send(sender, message);
         }
     }
@@ -2455,6 +2455,7 @@ public class NPCCommands {
             NMS.setBodyYaw(npc.getEntity(), yaw);
             if (npc.getEntity().getType() == EntityType.PLAYER) {
                 NMS.sendPositionUpdate(npc.getEntity(), true, yaw, npc.getStoredLocation().getPitch(), null);
+                PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
             }
         }
         if (pitch != null) {

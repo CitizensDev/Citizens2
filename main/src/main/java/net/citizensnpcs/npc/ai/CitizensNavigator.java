@@ -40,7 +40,6 @@ import net.citizensnpcs.npc.ai.AStarNavigationStrategy.AStarPlanner;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
-import net.citizensnpcs.trait.RotationTrait.RotationParams;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.NMS;
 
@@ -205,7 +204,8 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (localParams.lookAtFunction() != null) {
             if (session == null) {
                 RotationTrait trait = npc.getOrAddTrait(RotationTrait.class);
-                session = trait.createPacketSession(new RotationParams().filter(p -> true).persist(true));
+                session = trait
+                        .createPacketSession(trait.getGlobalParameters().clone().filter(p -> true).persist(true));
             }
             session.getSession().rotateToFace(localParams.lookAtFunction().apply(this));
         }

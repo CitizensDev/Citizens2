@@ -175,10 +175,12 @@ public class ProtocolLibListener {
                             packet.getBytes().write(0, degToByte(session.getBodyYaw()));
                             packet.getBytes().write(1, degToByte(session.getPitch()));
                         } else if (type == Server.POSITION) {
-                            Set<PlayerTeleportFlag> rel = getFlagsModifier(packet).read(0);
+                            StructureModifier<Set<PlayerTeleportFlag>> flagsModifier = packet
+                                    .getSets(EnumWrappers.getGenericConverter(flagsClass, PlayerTeleportFlag.class));
+                            Set<PlayerTeleportFlag> rel = flagsModifier.read(0);
                             rel.remove(PlayerTeleportFlag.ZYAW);
                             rel.remove(PlayerTeleportFlag.ZPITCH);
-                            getFlagsModifier(packet).write(0, rel);
+                            flagsModifier.write(0, rel);
                             packet.getFloat().write(0, session.getBodyYaw());
                             packet.getFloat().write(1, session.getPitch());
                         }
@@ -187,10 +189,6 @@ public class ProtocolLibListener {
                     }
                 });
 
-    }
-
-    private StructureModifier<Set<PlayerTeleportFlag>> getFlagsModifier(PacketContainer handle) {
-        return handle.getSets(EnumWrappers.getGenericConverter(flagsClass, PlayerTeleportFlag.class));
     }
 
     private NPC getNPCFromPacket(PacketEvent event) {

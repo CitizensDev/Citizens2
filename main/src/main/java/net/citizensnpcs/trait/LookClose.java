@@ -29,7 +29,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
-import net.citizensnpcs.trait.RotationTrait.RotationParams;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -98,14 +97,15 @@ public class LookClose extends Trait implements Toggleable {
     public void findNewTarget() {
         if (perPlayer) {
             lookingAt = null;
-            List<Player> nearbyPlayers = getNearbyPlayers();
+            RotationTrait rotationTrait = npc.getOrAddTrait(RotationTrait.class);
             Set<UUID> seen = Sets.newHashSet();
-            for (Player player : nearbyPlayers) {
+            for (Player player : getNearbyPlayers()) {
                 PacketRotationSession session = sessions.get(player.getUniqueId());
                 if (session == null) {
                     sessions.put(player.getUniqueId(),
-                            session = npc.getOrAddTrait(RotationTrait.class).createPacketSession(new RotationParams()
-                                    .headOnly(headOnly).uuidFilter(player.getUniqueId()).persist(true)));
+                            session = rotationTrait.createPacketSession(
+                                    rotationTrait.getGlobalParameters().clone().linkedBody(linkedBody)
+                                            .headOnly(headOnly).uuidFilter(player.getUniqueId()).persist(true)));
                 }
                 session.getSession().rotateToFace(player);
                 seen.add(player.getUniqueId());
