@@ -24,7 +24,7 @@ public class Injector {
         try {
             return LOOKUP.findConstructor(clazz, MethodType.methodType(void.class, argClasses))
                     .invokeWithArguments(args);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException | IllegalAccessException e) {
             try {
                 Constructor<?> ctr = clazz.getDeclaredConstructor();
                 ctr.setAccessible(true);
