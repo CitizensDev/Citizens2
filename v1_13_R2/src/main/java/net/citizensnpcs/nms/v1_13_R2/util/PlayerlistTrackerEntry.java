@@ -22,7 +22,7 @@ import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.EntityTrackerEntry;
-import net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutEntityLook;
+import net.minecraft.server.v1_13_R2.PacketPlayOutAnimation;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private final Entity tracker;
@@ -86,9 +86,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         lastUpdatedPlayer = null;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-            NMSImpl.sendPacket(entityplayer.getBukkitEntity(),
-                    new PacketPlayOutEntityLook(tracker.getId(), (byte) (tracker.yaw * 256.0F / 360.0F),
-                            (byte) (tracker.pitch * 256.0F / 360.0F), tracker.onGround));
+            NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new PacketPlayOutAnimation(tracker, 0));
         }, 1);
         if (!Setting.DISABLE_TABLIST.asBoolean())
             return;
