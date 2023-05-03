@@ -2,12 +2,14 @@ package net.citizensnpcs.nms.v1_13_R2.util;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.ForwardingSet;
 
 import net.citizensnpcs.Settings.Setting;
@@ -28,25 +30,48 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {
         super(entity, i, j, k, flag);
         tracker = getTracker(this);
-        try {
-            Set<EntityPlayer> delegate = super.trackedPlayers;
-            TRACKING_SET_SETTER.invoke(this, new ForwardingSet<EntityPlayer>() {
-                @Override
-                public boolean add(EntityPlayer player) {
-                    boolean res = super.add(player);
-                    if (res) {
-                        updateLastPlayer(player);
+        if (TRACKING_MAP_SETTER != null) {
+            try {
+                Map<EntityPlayer, Boolean> delegate = (Map<EntityPlayer, Boolean>) TRACKING_MAP_GETTER.invoke(this);
+                TRACKING_MAP_SETTER.invoke(this, new ForwardingMap<EntityPlayer, Boolean>() {
+                    @Override
+                    protected Map<EntityPlayer, Boolean> delegate() {
+                        return delegate;
                     }
-                    return res;
-                }
 
-                @Override
-                protected Set<EntityPlayer> delegate() {
-                    return delegate;
-                }
-            });
-        } catch (Throwable e) {
-            e.printStackTrace();
+                    @Override
+                    public Boolean put(EntityPlayer player, Boolean value) {
+                        Boolean res = super.put(player, value);
+                        if (res == null) {
+                            updateLastPlayer(player);
+                        }
+                        return res;
+                    }
+                });
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                Set<EntityPlayer> delegate = super.trackedPlayers;
+                TRACKING_SET_SETTER.invoke(this, new ForwardingSet<EntityPlayer>() {
+                    @Override
+                    public boolean add(EntityPlayer player) {
+                        boolean res = super.add(player);
+                        if (res) {
+                            updateLastPlayer(player);
+                        }
+                        return res;
+                    }
+
+                    @Override
+                    protected Set<EntityPlayer> delegate() {
+                        return delegate;
+                    }
+                });
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -158,10 +183,25 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private static Field F = NMS.getField(EntityTrackerEntry.class, "f");
 
     private static Field G = NMS.getField(EntityTrackerEntry.class, "g");
+
     private static Field TRACKER = NMS.getField(EntityTrackerEntry.class, "tracker");
+
+    private static MethodHandle TRACKING_MAP_GETTER;
+
+    private static MethodHandle TRACKING_MAP_SETTER;
     private static final MethodHandle TRACKING_RANGE_SETTER = NMS.getFirstFinalSetter(EntityTrackerEntry.class,
             int.class);
     private static final MethodHandle TRACKING_SET_SETTER = NMS.getFirstFinalSetter(EntityTrackerEntry.class,
             Set.class);
     private static Field U = NMS.getField(EntityTrackerEntry.class, "u");
+    static {
+        try {
+            // Old paper versions override the tracked player set to be a map
+            if (EntityTrackerEntry.class.getField("trackedPlayerMap") != null) {
+                TRACKING_MAP_SETTER = NMS.getFirstSetter(EntityTrackerEntry.class, Map.class);
+                TRACKING_MAP_GETTER = NMS.getFirstGetter(EntityTrackerEntry.class, Map.class);
+            }
+        } catch (Exception e) {
+        }
+    }
 }
