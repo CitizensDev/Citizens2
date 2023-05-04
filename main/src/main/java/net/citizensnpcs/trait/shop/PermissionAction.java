@@ -60,11 +60,11 @@ public class PermissionAction extends NPCShopAction {
             return true;
         }, () -> {
             for (String permission : permissions) {
-                perm.playerAdd(player, Placeholders.replace(permission, player));
+                perm.playerAdd(null, player, Placeholders.replace(permission, player));
             }
         }, () -> {
             for (String permission : permissions) {
-                perm.playerRemove(player, Placeholders.replace(permission, player));
+                perm.playerRemove(null, player, Placeholders.replace(permission, player));
             }
         });
     }
@@ -84,11 +84,11 @@ public class PermissionAction extends NPCShopAction {
             return true;
         }, () -> {
             for (String permission : permissions) {
-                perm.playerRemove(player, Placeholders.replace(permission, player));
+                perm.playerRemove(null, player, Placeholders.replace(permission, player));
             }
         }, () -> {
             for (String permission : permissions) {
-                perm.playerAdd(player, Placeholders.replace(permission, player));
+                perm.playerAdd(null, player, Placeholders.replace(permission, player));
             }
         });
     }
