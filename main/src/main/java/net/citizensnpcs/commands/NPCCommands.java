@@ -959,6 +959,8 @@ public class NPCCommands {
             permission = "citizens.npc.follow")
     public void follow(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         boolean protect = args.hasFlag('p');
+        FollowTrait trait = npc.getOrAddTrait(FollowTrait.class);
+        trait.setProtect(protect);
         String name = sender.getName();
         if (args.argsLength() > 1) {
             name = args.getString(1);
@@ -972,7 +974,8 @@ public class NPCCommands {
                 if (!(sender instanceof ConsoleCommandSender)
                         && !followingNPC.getOrAddTrait(Owner.class).isOwnedBy(sender))
                     throw new CommandException(CommandMessages.MUST_BE_OWNER);
-                boolean following = npc.getOrAddTrait(FollowTrait.class).toggle(followingNPC.getEntity(), protect);
+                boolean following = !trait.isEnabled();
+                trait.follow(following ? followingNPC.getEntity() : null);
                 Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
                         followingNPC.getName());
             };
@@ -980,7 +983,8 @@ public class NPCCommands {
                     args.getString(1));
             return;
         }
-        boolean following = npc.getOrAddTrait(FollowTrait.class).toggle(player.getPlayer(), protect);
+        boolean following = !trait.isEnabled();
+        trait.follow(following ? player.getPlayer() : null);
         Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
                 player.getName());
     }

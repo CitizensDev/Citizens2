@@ -139,6 +139,9 @@ public class Settings {
         DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE(
                 "The distance in blocks where the NPC will switch to walking straight towards the target instead of pathfinding<br>Currently only for dynamic targets like entities",
                 "npc.pathfinding.straight-line-targeting-distance", 5),
+        DEFAULT_STUCK_ACTION(
+                "The default action to perform when NPCs are unable to find a path or are stuck in the same block for too long. Supported options are: 'teleport to destination' or 'none'",
+                "npc.pathfinding.default-stuck-action", "teleport to destination"),
         DEFAULT_TALK_CLOSE("npc.default.talk-close.enabled", false),
         DEFAULT_TALK_CLOSE_RANGE("Default talk close range in blocks", "npc.default.talk-close.range", 5),
         DEFAULT_TEXT("npc.default.talk-close.text.0", "Hi, I'm <npc>!") {
@@ -168,7 +171,7 @@ public class Settings {
                 "general.entity-spawn-wait-ticks", "general.wait-for-entity-spawn", "1s"),
         ERROR_COLOUR("general.color-scheme.message-error", "<red>"),
         FOLLOW_ACROSS_WORLDS("Whether /npc follow will teleport across worlds to follow its target",
-                "npc.follow.teleport-across-worlds", true),
+                "npc.follow.teleport-across-worlds", false),
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "yellow"),
         HOLOGRAM_UPDATE_RATE("How often to update hologram names (including placeholders)",
                 "npc.hologram.update-rate-ticks", "npc.hologram.update-rate", "1s"),
@@ -241,9 +244,6 @@ public class Settings {
         STORAGE_FILE("storage.file", "saves.yml"),
         STORAGE_TYPE("Although technically Citizens can use NBT storage, it is not well tested and YAML is recommended",
                 "storage.type", "yaml"),
-        DEFAULT_STUCK_ACTION(
-                "The default action to perform when NPCs are unable to find a path or are stuck in the same block for too long. Supported options are: 'teleport to destination' or 'none'",
-                "npc.pathfinding.default-stuck-action", "teleport to destination"),
         TABLIST_REMOVE_PACKET_DELAY("How long to wait before sending the tablist remove packet",
                 "npc.tablist.remove-packet-delay", "1t"),
         TALK_CLOSE_TO_NPCS("Whether to talk to NPCs (and therefore bystanders) as well as players",

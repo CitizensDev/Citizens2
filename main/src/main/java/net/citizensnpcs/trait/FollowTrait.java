@@ -34,6 +34,18 @@ public class FollowTrait extends Trait {
         super("followtrait");
     }
 
+    /**
+     * Sets the {@link Entity} to follow
+     */
+    public void follow(Entity entity) {
+        this.followingUUID = entity == null ? null : entity.getUniqueId();
+        if (npc.getNavigator().isNavigating() && this.entity != null && npc.getNavigator().getEntityTarget() != null
+                && this.entity == npc.getNavigator().getEntityTarget().getTarget()) {
+            npc.getNavigator().cancelNavigation();
+        }
+        this.entity = null;
+    }
+
     public Entity getFollowing() {
         return entity;
     }
@@ -103,25 +115,9 @@ public class FollowTrait extends Trait {
     }
 
     /**
-     * Toggles and/or sets the {@link Entity} to follow and whether to protect them (similar to wolves in Minecraft,
-     * attack whoever attacks the entity).
-     *
-     * Will toggle if the {@link Entity} is the entity currently being followed.
-     *
-     * @param entity
-     *            the player to follow
-     * @param protect
-     *            whether to protect the player
-     * @return whether the trait is enabled
+     * Sets whether to protect the followed Entity (similar to wolves in Minecraft, attack whoever attacks the entity).
      */
-    public boolean toggle(Entity entity, boolean protect) {
+    public void setProtect(boolean protect) {
         this.protect = protect;
-        this.followingUUID = entity.getUniqueId().equals(followingUUID) ? null : entity.getUniqueId();
-        if (npc.getNavigator().isNavigating() && this.entity != null && npc.getNavigator().getEntityTarget() != null
-                && this.entity == npc.getNavigator().getEntityTarget().getTarget()) {
-            npc.getNavigator().cancelNavigation();
-        }
-        this.entity = null;
-        return followingUUID != null;
     }
 }
