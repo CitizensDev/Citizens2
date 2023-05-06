@@ -72,20 +72,8 @@ public class WanderWaypointProvider
 
     @Override
     public Location apply(NPC npc) {
-        Location npcLoc = npc.getStoredLocation();
-        Location closestCentre = regionCentres.stream()
-                .min((a, b) -> Double.compare(a.distanceSquared(npcLoc), b.distanceSquared(npcLoc))).orElse(null);
-        if (closestCentre != null) {
-            Location random = MinecraftBlockExaminer.findRandomValidLocation(closestCentre, xrange, yrange,
-                    currentGoal.blockFilter(), Util.getFastRandom());
-            if (random != null)
-                return random;
-
-            // TODO: should find closest edge block that is valid
-            return MinecraftBlockExaminer.findValidLocation(npc.getStoredLocation(), xrange, yrange,
-                    currentGoal.blockFilter());
-        }
-        return null;
+        return MinecraftBlockExaminer.findValidLocation(npc.getStoredLocation(), xrange, yrange,
+                currentGoal.blockFilter());
     }
 
     @Override
