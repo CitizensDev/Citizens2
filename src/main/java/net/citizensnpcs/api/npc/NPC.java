@@ -486,7 +486,6 @@ public interface NPC extends Agent, Cloneable {
          * The Minecart item name.
          */
         MINECART_ITEM("minecart-item-name", String.class),
-
         /**
          * The Minecart item data. Byte.
          */

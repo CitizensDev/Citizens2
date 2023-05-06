@@ -50,34 +50,35 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         this.delay = delay;
     }
 
+    public Function<Block, Boolean> blockFilter() {
+        return block -> {
+            if ((MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(BlockFace.UP))
+                    || MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(0, 2, 0)))
+                    && npc.getNavigator().getDefaultParameters().avoidWater()) {
+                return false;
+            }
+            if (worldguardRegion != null) {
+                try {
+                    if (!((ProtectedRegion) worldguardRegion)
+                            .contains(BukkitAdapter.asBlockVector(block.getLocation())))
+                        return false;
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
+            if (tree != null) {
+                long[] pt = { block.getX(), block.getY(), block.getZ() };
+                if (tree.get() != null && !tree.get().queryIntersect(pt, pt).hasNext())
+                    return false;
+
+            }
+            return true;
+        };
+    }
+
     private Location findRandomPosition() {
-        Location found = MinecraftBlockExaminer.findRandomValidLocation(npc.getEntity().getLocation(NPC_LOCATION),
-                pathfind ? xrange : 1, pathfind ? yrange : 1, new Function<Block, Boolean>() {
-                    @Override
-                    public Boolean apply(Block block) {
-                        if ((MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(BlockFace.UP))
-                                || MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(0, 2, 0)))
-                                && npc.getNavigator().getDefaultParameters().avoidWater()) {
-                            return false;
-                        }
-                        if (worldguardRegion != null) {
-                            try {
-                                if (!((ProtectedRegion) worldguardRegion)
-                                        .contains(BukkitAdapter.asBlockVector(block.getLocation())))
-                                    return false;
-                            } catch (Throwable t) {
-                                t.printStackTrace();
-                            }
-                        }
-                        if (tree != null) {
-                            long[] pt = { block.getX(), block.getY(), block.getZ() };
-                            if (tree.get() != null && !tree.get().queryIntersect(pt, pt).hasNext()) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                }, RANDOM);
+        Location found = MinecraftBlockExaminer.findRandomValidLocation(npc.getStoredLocation(), pathfind ? xrange : 1,
+                pathfind ? yrange : 1, blockFilter(), RANDOM);
         if (found == null && fallback != null) {
             return fallback.apply(npc);
         }

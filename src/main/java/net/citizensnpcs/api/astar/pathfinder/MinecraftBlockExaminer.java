@@ -211,37 +211,26 @@ public class MinecraftBlockExaminer implements BlockExaminer {
     }
 
     public static Location findValidLocation(Location location, int radius) {
-        Block base = location.getBlock();
-        if (canStandOn(base.getRelative(BlockFace.DOWN)))
-            return location;
-        for (int y = 0; y <= radius; y++) {
-            for (int x = -radius; x <= radius; x++) {
-                for (int z = -radius; z <= radius; z++) {
-                    if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4)) {
-                        continue;
-                    }
-                    Block offset = base.getRelative(x, y, z);
-                    if (canStandOn(offset.getRelative(BlockFace.DOWN))) {
-                        return offset.getLocation();
-                    }
-                }
-            }
-        }
-        return location;
+        return findValidLocation(location, radius, radius);
     }
 
-    public static Location findValidLocation(Location location, int radius, int yradius) {
+    public static Location findValidLocation(Location location, int xradius, int yradius) {
+        return findValidLocation(location, xradius, yradius, b -> true);
+    }
+
+    public static Location findValidLocation(Location location, int xradius, int yradius,
+            Function<Block, Boolean> filter) {
         Block base = location.getBlock();
-        if (canStandOn(base.getRelative(BlockFace.DOWN)))
+        if (filter.apply(base) && canStandOn(base.getRelative(BlockFace.DOWN)))
             return location;
         for (int y = -yradius; y <= yradius; y++) {
-            for (int x = -radius; x <= radius; x++) {
-                for (int z = -radius; z <= radius; z++) {
+            for (int x = -xradius; x <= xradius; x++) {
+                for (int z = -xradius; z <= xradius; z++) {
                     if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4)) {
                         continue;
                     }
                     Block relative = base.getRelative(x, y, z);
-                    if (canStandOn(relative.getRelative(BlockFace.DOWN))) {
+                    if (filter.apply(relative) && canStandOn(relative.getRelative(BlockFace.DOWN))) {
                         return relative.getLocation();
                     }
                 }
