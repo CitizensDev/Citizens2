@@ -3,11 +3,10 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -17,7 +16,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.function.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
@@ -74,32 +72,18 @@ public class WanderWaypointProvider
 
     @Override
     public Location apply(NPC npc) {
-        Location closestCentre = null;
-        double minDist = Double.MAX_VALUE;
-        for (Location centre : regionCentres) {
-            double d = centre.distanceSquared(npc.getStoredLocation());
-            if (d < minDist) {
-                minDist = d;
-                closestCentre = centre;
-            }
-        }
+        Location npcLoc = npc.getStoredLocation();
+        Location closestCentre = regionCentres.stream()
+                .min((a, b) -> Double.compare(a.distanceSquared(npcLoc), b.distanceSquared(npcLoc))).orElse(null);
         if (closestCentre != null) {
-            Location randomLocation = MinecraftBlockExaminer.findRandomValidLocation(npc.getEntity().getLocation(),
-                    xrange, yrange, new Function<Block, Boolean>() {
-                        @Override
-                        public Boolean apply(Block block) {
-                            if ((block.getRelative(BlockFace.UP).isLiquid() || block.getRelative(0, 2, 0).isLiquid())
-                                    && npc.getNavigator().getDefaultParameters().avoidWater()) {
-                                return false;
-                            }
-                            return true;
-                        }
-                    }, Util.getFastRandom());
-            if (randomLocation != null) {
-                return randomLocation;
-            }
+            Location random = MinecraftBlockExaminer.findRandomValidLocation(closestCentre, xrange, yrange,
+                    currentGoal.blockFilter(), Util.getFastRandom());
+            if (random != null)
+                return random;
+
             // TODO: should find closest edge block that is valid
-            return MinecraftBlockExaminer.findValidLocation(closestCentre, xrange, yrange);
+            return MinecraftBlockExaminer.findValidLocation(npc.getStoredLocation(), xrange, yrange,
+                    currentGoal.blockFilter());
         }
         return null;
     }
