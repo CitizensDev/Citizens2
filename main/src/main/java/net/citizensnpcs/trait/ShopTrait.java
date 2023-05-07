@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -254,17 +255,19 @@ public class ShopTrait extends Trait {
 
     public static class NPCShopItem implements Cloneable, Persistable {
         @Persist
-        private String clickMessage;
-        @Persist
         private String clickToConfirmMessage;
         @Persist
         private final List<NPCShopAction> cost = Lists.newArrayList();
+        @Persist
+        private String costMessage;
         @Persist
         private ItemStack display;
         @Persist
         private boolean maxRepeatsOnShiftClick;
         @Persist
         private final List<NPCShopAction> result = Lists.newArrayList();
+        @Persist
+        private String resultMessage;
 
         public List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
             List<Transaction> pending = Lists.newArrayList();
@@ -338,12 +341,16 @@ public class ShopTrait extends Trait {
         @Override
         public void load(DataKey key) {
             if (key.keyExists("message")) {
-                clickMessage = key.getString("message");
+                resultMessage = key.getString("message");
                 key.removeKey("message");
+            }
+            if (key.keyExists("clickMessage")) {
+                resultMessage = key.getString("clickMessage");
+                key.removeKey("clickMessage");
             }
         }
 
-        public void onClick(NPCShop shop, CitizensInventoryClickEvent event, boolean secondClick) {
+        public void onClick(NPCShop shop, InventoryClickEvent event, boolean secondClick) {
             if (clickToConfirmMessage != null && !secondClick) {
                 Messaging.sendColorless(event.getWhoClicked(),
                         placeholders(clickToConfirmMessage, (Player) event.getWhoClicked()));
@@ -362,15 +369,20 @@ public class ShopTrait extends Trait {
             }
             final int repeats = max == Integer.MAX_VALUE ? 1 : max;
             List<Transaction> take = apply(cost, action -> action.take(event.getWhoClicked(), repeats));
-            if (take == null)
+            if (take == null) {
+                if (costMessage != null) {
+                    Messaging.sendColorless(event.getWhoClicked(),
+                            placeholders(costMessage, (Player) event.getWhoClicked()));
+                }
                 return;
+            }
             if (apply(result, action -> action.grant(event.getWhoClicked(), repeats)) == null) {
                 take.forEach(a -> a.rollback());
                 return;
             }
-            if (clickMessage != null) {
+            if (resultMessage != null) {
                 Messaging.sendColorless(event.getWhoClicked(),
-                        Placeholders.replace(clickMessage, (Player) event.getWhoClicked()));
+                        placeholders(resultMessage, (Player) event.getWhoClicked()));
             }
         }
 
@@ -423,16 +435,26 @@ public class ShopTrait extends Trait {
                 ctx.getSlot(9 * 4 + 4).setItemStack(modified.getDisplayItem(null));
             }
             ctx.getSlot(9 * 3 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
-                    "Set message to send on click, currently:\n",
-                    modified.clickMessage == null ? "Unset" : modified.clickMessage);
+                    "Set message to send on successful click, currently:\n",
+                    modified.resultMessage == null ? "Unset" : modified.resultMessage);
             ctx.getSlot(9 * 3 + 3).setClickHandler(
-                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.clickMessage, s -> {
-                        modified.clickMessage = s;
-                        ctx.getSlot(9 * 3 + 3).setDescription(modified.clickMessage);
+                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.resultMessage, s -> {
+                        modified.resultMessage = s;
+                        ctx.getSlot(9 * 3 + 3).setDescription(modified.resultMessage);
+                    })));
+
+            ctx.getSlot(9 * 3 + 6).setItemStack(new ItemStack(Util.getFallbackMaterial("BARRIER", "FIRE")),
+                    "Set message to send on unsuccessful click, currently:\n",
+                    modified.costMessage == null ? "Unset" : modified.costMessage);
+            ctx.getSlot(9 * 3 + 6).setClickHandler(
+                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.costMessage, s -> {
+                        modified.costMessage = s;
+                        ctx.getSlot(9 * 3 + 6).setDescription(modified.costMessage);
                     })));
 
             ctx.getSlot(9 * 3 + 5).setItemStack(new ItemStack(Util.getFallbackMaterial("FEATHER", "SIGN")),
-                    "Set click to confirm message.", "You can use <cost> or <result> placeholders.\nCurrently:\n"
+                    "Set click to confirm message.",
+                    "For example, 'click again to buy this item'\nYou can use <cost> or <result> placeholders.\nCurrently:\n"
                             + (modified.clickToConfirmMessage == null ? "Unset" : modified.clickToConfirmMessage));
             ctx.getSlot(9 * 3 + 5).setClickHandler(
                     e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.clickToConfirmMessage, s -> {
