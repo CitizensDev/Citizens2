@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import org.bukkit.Material;
 import org.bukkit.event.Event.Result;
@@ -176,10 +177,12 @@ public class InventoryMenuSlot {
         ItemMeta meta = stack.getItemMeta();
         meta.setDisplayName(ChatColor.RESET + Messaging.parseComponents(name));
         if (description != null) {
-            meta.setLore(Arrays.asList(Messaging.parseComponents(description).split("\n")));
+            meta.setLore(Arrays.asList(NEWLINE_MATCHER.split(Messaging.parseComponents(description))));
         }
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         stack.setItemMeta(meta);
         inventory.setItem(index, stack);
     }
+
+    private static Pattern NEWLINE_MATCHER = Pattern.compile("\n|\\n|<br>");
 }

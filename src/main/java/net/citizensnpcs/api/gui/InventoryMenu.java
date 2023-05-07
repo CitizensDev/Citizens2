@@ -283,11 +283,17 @@ public class InventoryMenu implements Listener, Runnable {
                 if (toNPC) {
                     event.getView().setCursor(null);
                 }
-                if (!e.isCancelled() && e.getResult() != Result.DENY) {
+                if (!e.isCancelled()) {
                     dest.setItem(i, merging);
                     event.setCurrentItem(null);
                     break;
                 }
+
+                // TODO: figure out a better way to communicate from click handlers to here that the shift-click was
+                // "accepted" with different item handling behavior and that processing should stop
+                if (dest.getItem(i) != null && dest.getItem(i).isSimilar(merging))
+                    break;
+
             } else if (contents[i].isSimilar(event.getCurrentItem())) {
                 ItemStack stack = contents[i].clone();
                 merging.setAmount(Math.min(amount, stack.getType().getMaxStackSize() - stack.getAmount()));
@@ -306,7 +312,7 @@ public class InventoryMenu implements Listener, Runnable {
                 if (toNPC) {
                     event.getView().setCursor(null);
                 }
-                if (!e.isCancelled() && e.getResult() != Result.DENY) {
+                if (!e.isCancelled()) {
                     stack.setAmount(stack.getAmount() + merging.getAmount());
                     dest.setItem(i, stack);
                     amount -= merging.getAmount();
