@@ -176,6 +176,7 @@ public class ShopTrait extends Trait {
 
     @Menu(title = "NPC Shop Contents Editor", type = InventoryType.CHEST, dimensions = { 5, 9 })
     public static class NPCShopContentsEditor extends InventoryMenuPage {
+        private NPCShopItem copying;
         private MenuContext ctx;
         private int page = 0;
         private final NPCShop shop;
@@ -191,23 +192,36 @@ public class ShopTrait extends Trait {
             for (int i = 0; i < ctx.getInventory().getSize(); i++) {
                 InventoryMenuSlot slot = ctx.getSlot(i);
                 slot.clear();
-                NPCShopItem item = shopPage.getItem(i);
 
-                if (item != null) {
-                    slot.setItemStack(item.getDisplayItem(null));
+                if (shopPage.getItem(i) != null) {
+                    slot.setItemStack(shopPage.getItem(i).getDisplayItem(null));
                 }
 
                 final int idx = i;
                 slot.setClickHandler(evt -> {
-                    ctx.clearSlots();
-                    NPCShopItem display = item;
+                    NPCShopItem display = shopPage.getItem(idx);
+                    if (display != null && evt.isShiftClick() && evt.getCursorNonNull().getType() == Material.AIR
+                            && display.display != null) {
+                        copying = display.clone();
+                        evt.setCursor(display.getDisplayItem(null));
+                        evt.setCancelled(true);
+                        return;
+                    }
                     if (display == null) {
+                        if (copying != null && evt.getCursorNonNull().getType() != Material.AIR
+                                && evt.getCursorNonNull().equals(copying.getDisplayItem(null))) {
+                            shopPage.setItem(idx, copying);
+                            copying = null;
+                            return;
+                        }
+
                         display = new NPCShopItem();
                         if (evt.getCursor() != null) {
                             display.display = evt.getCursor().clone();
                         }
                     }
 
+                    ctx.clearSlots();
                     ctx.getMenu().transition(new NPCShopItemEditor(display, modified -> {
                         if (modified == null) {
                             shopPage.removeItem(idx);
