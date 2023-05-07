@@ -52,6 +52,8 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
+import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -109,7 +111,7 @@ import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
 
 public class EventListen implements Listener {
-    private EventListenChunk chunkEventListener;
+    private Listener chunkEventListener;
     private final Map<String, NPCRegistry> registries;
     private final SkinUpdateTracker skinUpdateTracker;
     private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create(64, 4);
@@ -118,11 +120,21 @@ public class EventListen implements Listener {
         this.registries = registries;
         this.skinUpdateTracker = new SkinUpdateTracker(registries);
         try {
-            this.chunkEventListener = new EventListenChunk(this);
-            Bukkit.getPluginManager().registerEvents(chunkEventListener, CitizensAPI.getPlugin());
+            Class.forName("org.bukkit.event.world.EntitiesLoadEvent");
+            Bukkit.getPluginManager().registerEvents(new Listener() {
+                @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+                public void onEntitiesLoad(EntitiesLoadEvent event) {
+                    loadNPCs(event);
+                }
+
+                @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+                public void onEntitiesUnload(EntitiesUnloadEvent event) {
+                    unloadNPCs(event, event.getEntities());
+                }
+            }, CitizensAPI.getPlugin());
         } catch (Throwable ex) {
-            this.chunkEventListener = null;
         }
+
         try {
             Class.forName("org.bukkit.event.entity.EntityTransformEvent");
             Bukkit.getPluginManager().registerEvents(new Listener() {
