@@ -1256,6 +1256,7 @@ public class NMSImpl implements NMSBridge {
                 return this.bukkitEntity;
             }
         };
+        container.setTitle(MutableComponent.create(new LiteralContents(title == null ? "" : title)));
         container.getBukkitView().setItem(0, anvil.getItem(0));
         container.getBukkitView().setItem(1, anvil.getItem(1));
         container.checkReachable = false;
