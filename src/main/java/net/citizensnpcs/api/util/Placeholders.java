@@ -70,7 +70,7 @@ public class Placeholders implements Listener {
                 List<NPC> all = Lists.newArrayList(CitizensAPI.getNPCRegistry());
                 if (all.size() > 0) {
                     NPC random = all.get(new Random().nextInt(all.size()));
-                    return group.equals("<random_npc>") ? random.getName() : Integer.toString(random.getId());
+                    return group.equals("<random_npc>") ? random.getFullName() : Integer.toString(random.getId());
                 }
                 break;
             case "<nearest_npc_id>":
@@ -117,6 +117,10 @@ public class Placeholders implements Listener {
     }
 
     public static String replace(String text, CommandSender sender, NPC npc) {
+        return replace(text, sender, npc, false);
+    }
+
+    private static String replace(String text, CommandSender sender, NPC npc, boolean name) {
         text = replace(text, sender instanceof OfflinePlayer ? (OfflinePlayer) sender
                 : sender instanceof BlockCommandSender ? getPlayer((BlockCommandSender) sender) : null);
         if (npc == null || text == null) {
@@ -132,7 +136,7 @@ public class Placeholders implements Listener {
                     replacement = Integer.toString(npc.getId());
                     break;
                 case "npc":
-                    replacement = npc.getName();
+                    replacement = name ? text : npc.getFullName();
                     break;
                 case "owner":
                     replacement = npc.getOrAddTrait(Owner.class).getOwner();
@@ -187,6 +191,10 @@ public class Placeholders implements Listener {
             }
         }
         return setPlaceholderAPIPlaceholders(text, player);
+    }
+
+    public static String replaceName(String text, CommandSender sender, NPC npc) {
+        return replace(text, sender, npc, true);
     }
 
     private static String setPlaceholderAPIPlaceholders(String text, OfflinePlayer player) {

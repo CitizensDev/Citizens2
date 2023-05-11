@@ -233,7 +233,7 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public String getFullName() {
         int nameLength = SpigotUtil.getMaxNameLength(getEntityType());
-        String replaced = Placeholders.replace(
+        String replaced = Placeholders.replaceName(
                 coloredNameStringCache != null ? coloredNameStringCache : Messaging.parseComponents(name), null, this);
         if (replaced.length() > nameLength) {
             Messaging.severe("ID", id, "created with name length greater than " + nameLength + ", truncating", replaced,
@@ -407,7 +407,7 @@ public abstract class AbstractNPC implements NPC {
                 && ((name.length() > 16 && getEntityType() == EntityType.PLAYER)
                         || data().get(NPC.Metadata.ALWAYS_USE_NAME_HOLOGRAM, false)
                         || (coloredNameStringCache != null && coloredNameStringCache.contains("§x"))
-                        || !Placeholders.replace(name, null, this).equals(name));
+                        || !Placeholders.replaceName(name, null, this).equals(name));
     }
 
     @Override
