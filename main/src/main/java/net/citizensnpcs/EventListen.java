@@ -411,19 +411,18 @@ public class EventListen implements Listener {
         toRespawn.values().remove(event.getNPC());
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         skinUpdateTracker.removePlayer(event.getPlayer().getUniqueId());
+        skinUpdateTracker.updatePlayer(event.getPlayer(), 20, true);
         if (CitizensAPI.getNPCRegistry().getNPC(event.getPlayer()) == null)
             return;
-        NMS.removeFromServerPlayerList(event.getPlayer());
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            NMS.replaceTracker(event.getPlayer());
+            NMS.removeFromServerPlayerList(event.getPlayer());
+        }, 1);
         // on teleport, player NPCs are added to the server player list. this is
         // undesirable as player NPCs are not real players and confuse plugins.
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-        skinUpdateTracker.updatePlayer(event.getPlayer(), 20, true);
     }
 
     @EventHandler(ignoreCancelled = true)
