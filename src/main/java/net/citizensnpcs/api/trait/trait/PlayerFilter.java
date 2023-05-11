@@ -72,6 +72,34 @@ public class PlayerFilter extends Trait {
     }
 
     /**
+     * Implementation detail: may change in the future.
+     */
+    public Set<UUID> getAllowlist() {
+        return allowlist;
+    }
+
+    /**
+     * Implementation detail: may change in the future.
+     */
+    public Set<String> getGroupAllowlist() {
+        return groupAllowlist;
+    }
+
+    /**
+     * Implementation detail: may change in the future.
+     */
+    public Set<String> getGroupHidden() {
+        return groupHidden;
+    }
+
+    /**
+     * Implementation detail: may change in the future.
+     */
+    public Set<UUID> getHidden() {
+        return hidden;
+    }
+
+    /**
      * Hides the NPC from the given Player UUID.
      *
      * @param uuid
@@ -181,9 +209,16 @@ public class PlayerFilter extends Trait {
         recalculate();
     }
 
+    /**
+     * Implementation detail: may change in the future.
+     */
     public void setAllowlist(Set<UUID> allowlist) {
         this.allowlist = allowlist == null ? null : Sets.newHashSet(allowlist);
     }
+
+    /**
+     * Implementation detail: may change in the future.
+     */
 
     public void setHiddenFrom(Set<UUID> hidden) {
         this.hidden = hidden == null ? null : Sets.newHashSet(hidden);
