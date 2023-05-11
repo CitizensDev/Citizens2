@@ -233,8 +233,8 @@ public class ItemAction extends NPCShopAction {
                     slot.setItemStack(base.items.get(i).clone());
                 }
                 slot.setClickHandler(event -> {
-                    event.setCancelled(true);
                     event.setCurrentItem(event.getCursorNonNull());
+                    event.setCancelled(true);
                 });
             }
 

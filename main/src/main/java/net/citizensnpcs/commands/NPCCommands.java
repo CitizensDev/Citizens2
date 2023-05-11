@@ -711,6 +711,7 @@ public class NPCCommands {
             msg += " as a baby";
             npc.getOrAddTrait(Age.class).setAge(-24000);
         }
+
         if (args.hasFlag('s')) {
             npc.data().set(NPC.Metadata.SILENT, true);
         }
@@ -2099,50 +2100,53 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "playerfilter --hide [uuid] --unhide [uuid] --only [uuid] --hidegroup [group] --unhidegroup [group] --onlygroup [group] -c(lear)",
+            usage = "playerfilter -a(llowlist) -e(mpty) -d(enylist) --add [uuid] --remove [uuid] --addgroup [group] --removegroup [group] -c(lear)",
             desc = "Sets the NPC filter",
             modifiers = { "playerfilter" },
             min = 1,
             max = 1,
-            flags = "c",
+            flags = "adce",
             permission = "citizens.npc.playerfilter")
-    public void playerfilter(CommandContext args, CommandSender sender, NPC npc, @Flag("hide") UUID hide,
-            @Flag("unhide") UUID unhide, @Flag("only") UUID only, @Flag("hidegroup") String hidegroup,
-            @Flag("unhidegroup") String unhidegroup, @Flag("onlygroup") String onlygroup) {
+    public void playerfilter(CommandContext args, CommandSender sender, NPC npc, @Flag("add") UUID add,
+            @Flag("remove") UUID remove, @Flag("removegroup") String removegroup, @Flag("addgroup") String addgroup) {
         PlayerFilter trait = npc.getOrAddTrait(PlayerFilter.class);
-        if (hide != null) {
-            trait.hide(hide);
-            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_HIDDEN, hide, npc.getName());
+        if (add != null) {
+            trait.addPlayer(add);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_ADDED, add, npc.getName());
         }
-        if (unhide != null) {
-            trait.unhide(unhide);
-            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_UNHIDDEN, unhide, npc.getName());
+        if (remove != null) {
+            trait.removePlayer(remove);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_REMOVED, remove, npc.getName());
         }
-        if (only != null) {
-            trait.only(only);
-            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_ONLY_ADDED, only, npc.getName());
+        if (addgroup != null) {
+            trait.addGroup(addgroup);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_GROUP_ADDED, addgroup, npc.getName());
         }
-        if (hidegroup != null) {
-            trait.hideGroup(hidegroup);
-            Messaging.sendTr(sender, Messages.PLAYERFILTER_GROUP_HIDDEN, hidegroup, npc.getName());
+        if (removegroup != null) {
+            trait.removeGroup(removegroup);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_GROUP_REMOVED, removegroup, npc.getName());
         }
-        if (unhidegroup != null) {
-            trait.unhideGroup(unhidegroup);
-            Messaging.sendTr(sender, Messages.PLAYERFILTER_GROUP_UNHIDDEN, unhidegroup, npc.getName());
+        if (args.hasFlag('e')) {
+            trait.setPlayers(Collections.emptySet());
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_EMPTY_SET, npc.getName());
         }
-        if (onlygroup != null) {
-            trait.onlyGroup(onlygroup);
-            Messaging.sendTr(sender, Messages.PLAYERFILTER_GROUP_ONLY_ADDED, onlygroup, npc.getName());
+        if (args.hasFlag('a')) {
+            trait.setAllowlist();
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_ALLOWLIST_SET, npc.getName());
+        }
+        if (args.hasFlag('d')) {
+            trait.setDenylist();
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_DENYLIST_SET, npc.getName());
         }
         if (args.hasFlag('c')) {
             trait.clear();
-            Messaging.sendTr(sender, Messages.PLAYERFILTER_PLAYER_CLEARED, npc.getName());
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_CLEARED, npc.getName());
         }
     }
 
     @Command(
             aliases = { "npc" },
-            usage = "playerlist (-a,r)",
+            usage = "playerlist (-a(dd),r(emove))",
             desc = "Sets whether the NPC is put in the playerlist",
             modifiers = { "playerlist" },
             min = 1,

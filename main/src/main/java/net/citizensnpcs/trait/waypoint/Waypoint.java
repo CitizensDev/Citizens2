@@ -35,7 +35,7 @@ public class Waypoint implements Locatable {
     }
 
     public Waypoint(Location at) {
-        location = at;
+        location = at.clone();
     }
 
     public void addTrigger(WaypointTrigger trigger) {

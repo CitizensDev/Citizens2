@@ -207,6 +207,7 @@ public class ShopTrait extends Trait {
                         evt.setCancelled(true);
                         return;
                     }
+
                     if (display == null) {
                         if (copying != null && evt.getCursorNonNull().getType() != Material.AIR
                                 && evt.getCursorNonNull().equals(copying.getDisplayItem(null))) {
