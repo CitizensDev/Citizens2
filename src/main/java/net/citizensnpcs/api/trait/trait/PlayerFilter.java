@@ -9,7 +9,6 @@ import java.util.function.Function;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.google.common.collect.Sets;
 
@@ -20,17 +19,15 @@ import net.citizensnpcs.api.trait.TraitName;
 
 @TraitName("playerfilter")
 public class PlayerFilter extends Trait {
-    @Persist
-    private Set<UUID> allowlist = null;
     private Function<Player, Boolean> filter;
     @Persist
-    private Set<String> groupAllowlist = null;
-    @Persist
-    private Set<String> groupHidden = null;
-    @Persist
-    private Set<UUID> hidden = null;
+    private Set<String> groups = null;
     private final Set<UUID> hiddenPlayers = Sets.newHashSet();
     private BiConsumer<Player, Entity> hideFunction;
+    @Persist
+    private Mode mode = Mode.DENYLIST;
+    @Persist
+    private Set<UUID> players = null;
     private BiConsumer<Player, Entity> viewFunction;
     private final Set<UUID> viewingPlayers = Sets.newHashSet();
 
@@ -41,21 +38,27 @@ public class PlayerFilter extends Trait {
     public PlayerFilter(BiConsumer<Player, Entity> hideFunction, BiConsumer<Player, Entity> viewFunction) {
         this();
         this.filter = p -> {
-            if (allowlist != null && !allowlist.contains(p.getUniqueId()))
-                return true;
-            if (hidden != null && hidden.contains(p.getUniqueId()))
-                return true;
-            if (groupAllowlist != null || groupHidden != null) {
-                RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> groups = Bukkit.getServicesManager()
-                        .getRegistration(net.milkbowl.vault.permission.Permission.class);
-                if (groups != null
-                        && !groupAllowlist.stream().anyMatch(group -> groups.getProvider().playerInGroup(p, group))) {
-                    return true;
-                }
-                if (groups != null
-                        && groupHidden.stream().anyMatch(group -> groups.getProvider().playerInGroup(p, group))) {
-                    return true;
-                }
+            switch (mode) {
+                case DENYLIST:
+                    if (players != null && players.contains(p.getUniqueId()))
+                        return true;
+                    if (groups != null) {
+                        net.milkbowl.vault.permission.Permission permission = Bukkit.getServicesManager()
+                                .getRegistration(net.milkbowl.vault.permission.Permission.class).getProvider();
+                        if (groups.stream().anyMatch(group -> permission.playerInGroup(p, group)))
+                            return true;
+                    }
+                    break;
+                case ALLOWLIST:
+                    if (players != null && !players.contains(p.getUniqueId()))
+                        return true;
+                    if (groups != null) {
+                        net.milkbowl.vault.permission.Permission permission = Bukkit.getServicesManager()
+                                .getRegistration(net.milkbowl.vault.permission.Permission.class).getProvider();
+                        if (!groups.stream().anyMatch(group -> permission.playerInGroup(p, group)))
+                            return true;
+                    }
+                    break;
             }
             return false;
         };
@@ -64,39 +67,14 @@ public class PlayerFilter extends Trait {
     }
 
     /**
-     * Clears all set UUID filters.
+     * Hides the NPC from the given permissions group
      */
-    public void clear() {
-        hidden = allowlist = null;
-        groupAllowlist = groupHidden = null;
-    }
-
-    /**
-     * Implementation detail: may change in the future.
-     */
-    public Set<UUID> getAllowlist() {
-        return allowlist;
-    }
-
-    /**
-     * Implementation detail: may change in the future.
-     */
-    public Set<String> getGroupAllowlist() {
-        return groupAllowlist;
-    }
-
-    /**
-     * Implementation detail: may change in the future.
-     */
-    public Set<String> getGroupHidden() {
-        return groupHidden;
-    }
-
-    /**
-     * Implementation detail: may change in the future.
-     */
-    public Set<UUID> getHidden() {
-        return hidden;
+    public void addGroup(String group) {
+        if (groups == null) {
+            groups = Sets.newHashSet();
+        }
+        groups.add(group);
+        recalculate();
     }
 
     /**
@@ -104,24 +82,43 @@ public class PlayerFilter extends Trait {
      *
      * @param uuid
      */
-    public void hide(UUID uuid) {
-        if (hidden == null) {
-            hidden = Sets.newHashSet();
+    public void addPlayer(UUID uuid) {
+        if (players == null) {
+            players = Sets.newHashSet();
         }
-        hidden.add(uuid);
-        viewingPlayers.add(uuid);
+        players.add(uuid);
+        getSet().add(uuid);
         recalculate();
     }
 
     /**
-     * Hides the NPC from the given permissions group
+     * Clears all set UUID filters.
      */
-    public void hideGroup(String group) {
-        if (groupHidden == null) {
-            groupHidden = Sets.newHashSet();
-        }
-        groupHidden.add(group);
-        recalculate();
+    public void clear() {
+        players = null;
+        groups = null;
+    }
+
+    /**
+     * Implementation detail: may change in the future.
+     */
+    public Set<String> getGroups() {
+        return groups;
+    }
+
+    private Set<UUID> getInverseSet() {
+        return mode == Mode.ALLOWLIST ? viewingPlayers : hiddenPlayers;
+    }
+
+    /**
+     * Implementation detail: may change in the future.
+     */
+    public Set<UUID> getPlayerUUIDs() {
+        return players;
+    }
+
+    private Set<UUID> getSet() {
+        return mode == Mode.DENYLIST ? viewingPlayers : hiddenPlayers;
     }
 
     /**
@@ -135,28 +132,6 @@ public class PlayerFilter extends Trait {
     public void onDespawn() {
         hiddenPlayers.clear();
         viewingPlayers.clear();
-    }
-
-    /**
-     * Only the given {@link Player} identified by their {@link UUID} should see the {@link NPC}.
-     */
-    public void only(UUID uuid) {
-        if (allowlist == null) {
-            allowlist = Sets.newHashSet();
-        }
-        allowlist.add(uuid);
-        recalculate();
-    }
-
-    /**
-     * Only the given permissions group should see the NPC.
-     */
-    public void onlyGroup(String group) {
-        if (groupAllowlist == null) {
-            groupAllowlist = Sets.newHashSet();
-        }
-        groupAllowlist.add(group);
-        recalculate();
     }
 
     /**
@@ -202,6 +177,27 @@ public class PlayerFilter extends Trait {
         }
     }
 
+    /**
+     * Unhides the given permissions group
+     */
+    public void removeGroup(String group) {
+        if (groups != null) {
+            groups.remove(group);
+        }
+        recalculate();
+    }
+
+    /**
+     * Unhides the given Player UUID
+     */
+    public void removePlayer(UUID uuid) {
+        if (players != null) {
+            players.remove(uuid);
+        }
+        getInverseSet().add(uuid);
+        recalculate();
+    }
+
     @Override
     public void run() {
         if (!npc.isSpawned() || !npc.isUpdating(NPCUpdate.PACKET))
@@ -209,19 +205,17 @@ public class PlayerFilter extends Trait {
         recalculate();
     }
 
-    /**
-     * Implementation detail: may change in the future.
-     */
-    public void setAllowlist(Set<UUID> allowlist) {
-        this.allowlist = allowlist == null ? null : Sets.newHashSet(allowlist);
+    public void setAllowlist() {
+        this.mode = Mode.ALLOWLIST;
+        recalculate();
     }
 
     /**
      * Implementation detail: may change in the future.
      */
-
-    public void setHiddenFrom(Set<UUID> hidden) {
-        this.hidden = hidden == null ? null : Sets.newHashSet(hidden);
+    public void setDenylist() {
+        this.mode = Mode.DENYLIST;
+        recalculate();
     }
 
     /**
@@ -234,29 +228,14 @@ public class PlayerFilter extends Trait {
     }
 
     /**
-     * Unhides the given Player UUID
+     * Implementation detail: may change in the future.
      */
-    public void unhide(UUID uuid) {
-        if (hidden != null) {
-            hidden.remove(uuid);
-        }
-        if (allowlist != null) {
-            allowlist.remove(uuid);
-        }
-        hiddenPlayers.add(uuid);
-        recalculate();
+    public void setPlayers(Set<UUID> players) {
+        this.players = players == null ? null : Sets.newHashSet(players);
     }
 
-    /**
-     * Unhides the given permissions group
-     */
-    public void unhideGroup(String group) {
-        if (groupHidden != null) {
-            groupHidden.remove(group);
-        }
-        if (groupAllowlist != null) {
-            groupAllowlist = null;
-        }
-        recalculate();
+    public enum Mode {
+        ALLOWLIST,
+        DENYLIST;
     }
 }
