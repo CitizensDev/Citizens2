@@ -66,6 +66,12 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void loadsNullSets() {
+        SpecificCollectionClassTest test = PersistenceLoader.load(SpecificCollectionClassTest.class, root);
+        assertEquals(test.list, null);
+    }
+
+    @Test
     public void longLoadSaveTest() {
         LongLoadSaveTest load = new LongLoadSaveTest();
         load.term = 23423423333333L;

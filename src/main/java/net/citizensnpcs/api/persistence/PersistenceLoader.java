@@ -166,6 +166,9 @@ public class PersistenceLoader {
         // TODO: this is pretty ugly.
         if (!Collection.class.isAssignableFrom(collectionType) && !Map.class.isAssignableFrom(collectionType))
             throw loadException;
+        if (Collection.class.isAssignableFrom(type) && !root.keyExists(field.key))
+            return;
+
         if (List.class.isAssignableFrom(type)) {
             List<Object> list = (List<Object>) (!List.class.isAssignableFrom(collectionType) ? Lists.newArrayList()
                     : collectionType.newInstance());
