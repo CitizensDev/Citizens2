@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.util;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -10,6 +11,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 
 import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 
 public class SpigotUtil {
     public static boolean checkYSafe(double y, World world) {
@@ -28,7 +30,7 @@ public class SpigotUtil {
         return isUsing1_13API() ? 256 : 64;
     }
 
-    private static int[] getVersion() {
+    public static int[] getVersion() {
         if (BUKKIT_VERSION == null) {
             String version = Bukkit.getVersion();
             if (version == null || version.isEmpty()) {
@@ -54,13 +56,20 @@ public class SpigotUtil {
         return using1_13API;
     }
 
+    public static void main(String[] args) {
+        System.out.println(parseDuration("1234", null));
+    }
+
     public static Duration parseDuration(String raw, TimeUnit defaultUnits) {
         if (defaultUnits == null) {
             Integer ticks = Ints.tryParse(raw);
             if (ticks != null) {
                 return Duration.ofMillis(ticks * 50);
             }
+        } else if (NUMBER_MATCHER.matcher(raw).matches()) {
+            return Duration.of(Longs.tryParse(raw), toChronoUnit(defaultUnits));
         }
+
         if (raw.endsWith("t")) {
             return Duration.ofMillis(Integer.parseInt(raw.substring(0, raw.length() - 1)) * 50);
         }
@@ -71,8 +80,29 @@ public class SpigotUtil {
         return Duration.parse(raw);
     }
 
+    private static ChronoUnit toChronoUnit(TimeUnit tu) {
+        switch (tu) {
+            case NANOSECONDS:
+                return ChronoUnit.NANOS;
+            case MICROSECONDS:
+                return ChronoUnit.MICROS;
+            case MILLISECONDS:
+                return ChronoUnit.MILLIS;
+            case SECONDS:
+                return ChronoUnit.SECONDS;
+            case MINUTES:
+                return ChronoUnit.MINUTES;
+            case HOURS:
+                return ChronoUnit.HOURS;
+            case DAYS:
+                return ChronoUnit.DAYS;
+            default:
+                throw new AssertionError();
+        }
+    }
+
     private static int[] BUKKIT_VERSION = null;
-    private static Pattern NUMBER_MATCHER = Pattern.compile("(\\d+d)");
+    private static Pattern NUMBER_MATCHER = Pattern.compile("(\\d+)");
     private static boolean SUPPORT_WORLD_HEIGHT = true;
     private static Boolean using1_13API;
 }
