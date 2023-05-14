@@ -32,6 +32,23 @@ permissions:
 # -------------------------------------------- #
 # THE REAL NODES
 # -------------------------------------------- #
+  citizens.npc.command.ignoreerrors: {default: false}
+  citizens.npc.command.ignoreerrors.cost: {default: false}
+  citizens.npc.command.ignoreerrors.expcost: {default: false}
+  citizens.npc.command.ignoreerrors.itemcost: {default: false}
+  citizens.npc.command.ignoreerrors.nused: {default: false}
+  citizens.npc.command.ignoreerrors.cooldown: {default: false}
+  citizens.npc.command.ignoreerrors.globalcooldown: {default: false}
+  citizens.npc.command.ignoreerrors.*: 
+    default: false
+    children:
+      citizens.npc.command.ignoreerrors: true
+      citizens.npc.command.ignoreerrors.cost: true
+      citizens.npc.command.ignoreerrors.expcost: true
+      citizens.npc.command.ignoreerrors.itemcost: true
+      citizens.npc.command.ignoreerrors.nused: true
+      citizens.npc.command.ignoreerrors.cooldown: true
+      citizens.npc.command.ignoreerrors.globalcooldown: true 
   citizens.admin: {default: op}
   citizens.admin.avoid-limits: {default: op}
   citizens.admin.remove.all: {default: op}
