@@ -1183,39 +1183,39 @@ public class NMSImpl implements NMSBridge {
         List<ClientboundPlayerInfoUpdatePacket.Entry> list = Lists.newArrayList(packet.entries());
         boolean changed = false;
         for (int i = 0; i < list.size(); i++) {
-            ClientboundPlayerInfoUpdatePacket.Entry info = list.get(i);
-            if (info == null)
+            ClientboundPlayerInfoUpdatePacket.Entry npcInfo = list.get(i);
+            if (npcInfo == null)
                 continue;
-            NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(info.profileId());
+            NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(npcInfo.profileId());
             if (npc == null || !npc.isSpawned())
                 continue;
-            if (Setting.DISABLE_TABLIST.asBoolean() != info.listed()) {
+            if (Setting.DISABLE_TABLIST.asBoolean() != npcInfo.listed()) {
                 list.set(i,
-                        new ClientboundPlayerInfoUpdatePacket.Entry(info.profileId(), info.profile(),
-                                !Setting.DISABLE_TABLIST.asBoolean(), info.latency(), info.gameMode(),
-                                !Setting.DISABLE_TABLIST.asBoolean() ? info.displayName() : Component.empty(),
-                                info.chatSession()));
+                        new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), npcInfo.profile(),
+                                !Setting.DISABLE_TABLIST.asBoolean(), npcInfo.latency(), npcInfo.gameMode(),
+                                !Setting.DISABLE_TABLIST.asBoolean() ? npcInfo.displayName() : Component.empty(),
+                                npcInfo.chatSession()));
                 changed = true;
             }
             MirrorTrait trait = npc.getTraitNullable(MirrorTrait.class);
             if (trait == null || !trait.isMirroring(player)) {
                 continue;
             }
-            GameProfile profile = NMS.getProfile(player);
+            GameProfile playerProfile = NMS.getProfile(player);
             if (trait.mirrorName()) {
                 list.set(i,
-                        new ClientboundPlayerInfoUpdatePacket.Entry(info.profileId(), profile,
-                                !Setting.DISABLE_TABLIST.asBoolean(), info.latency(), info.gameMode(),
-                                Component.literal(profile.getName()), info.chatSession()));
+                        new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), playerProfile,
+                                !Setting.DISABLE_TABLIST.asBoolean(), npcInfo.latency(), npcInfo.gameMode(),
+                                Component.literal(playerProfile.getName()), npcInfo.chatSession()));
                 changed = true;
                 continue;
             }
-            Collection<Property> textures = profile.getProperties().get("textures");
+            Collection<Property> textures = playerProfile.getProperties().get("textures");
             if (textures == null || textures.size() == 0)
                 continue;
-            info.profile().getProperties().clear();
-            for (String key : profile.getProperties().keySet()) {
-                info.profile().getProperties().putAll(key, profile.getProperties().get(key));
+            npcInfo.profile().getProperties().clear();
+            for (String key : playerProfile.getProperties().keySet()) {
+                npcInfo.profile().getProperties().putAll(key, playerProfile.getProperties().get(key));
             }
             changed = true;
         }
@@ -1260,8 +1260,8 @@ public class NMSImpl implements NMSBridge {
         container.getBukkitView().setItem(0, anvil.getItem(0));
         container.getBukkitView().setItem(1, anvil.getItem(1));
         container.checkReachable = false;
-        handle.connection.send(new ClientboundOpenScreenPacket(container.containerId, container.getType(),
-                MutableComponent.create(new LiteralContents(title))));
+        handle.connection.send(
+                new ClientboundOpenScreenPacket(container.containerId, container.getType(), container.getTitle()));
         handle.containerMenu = container;
         handle.initMenu(container);
         return container.getBukkitView();

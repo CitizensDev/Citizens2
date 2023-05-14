@@ -10,6 +10,6 @@ public class StringHelper {
     }
 
     public static String wrapHeader(Object string) {
-        return "<yellow>=====[ </yellow>" + string.toString() + "<yellow> ]=====";
+        return "<yellow>=====[</yellow> " + string.toString() + "<yellow> ]=====";
     }
 }

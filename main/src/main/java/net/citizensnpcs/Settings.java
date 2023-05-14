@@ -314,7 +314,7 @@ public class Settings {
 
         public int asSeconds() {
             if (duration == null) {
-                duration = SpigotUtil.parseDuration(asString());
+                duration = SpigotUtil.parseDuration(asString(), null);
             }
             return Util.convert(TimeUnit.SECONDS, duration);
         }
@@ -325,7 +325,7 @@ public class Settings {
 
         public int asTicks() {
             if (duration == null) {
-                duration = SpigotUtil.parseDuration(asString());
+                duration = SpigotUtil.parseDuration(asString(), null);
             }
             return Util.toTicks(duration);
         }

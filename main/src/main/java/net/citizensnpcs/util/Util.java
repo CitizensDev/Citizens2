@@ -339,7 +339,7 @@ public class Util {
     }
 
     public static int parseTicks(String raw) {
-        Duration duration = SpigotUtil.parseDuration(raw);
+        Duration duration = SpigotUtil.parseDuration(raw, null);
         return duration == null ? -1 : toTicks(duration);
     }
 

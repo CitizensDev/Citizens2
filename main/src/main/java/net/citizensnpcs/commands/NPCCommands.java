@@ -2996,7 +2996,7 @@ public class NPCCommands {
             flags = "t",
             permission = "citizens.npc.targetable")
     public void targetable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean targetable = !npc.data().get(NPC.Metadata.TARGETABLE, npc.isProtected());
+        boolean targetable = !npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected());
         if (args.hasFlag('t')) {
             npc.data().set(NPC.Metadata.TARGETABLE, targetable);
         } else {

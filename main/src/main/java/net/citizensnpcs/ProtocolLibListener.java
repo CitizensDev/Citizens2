@@ -111,33 +111,33 @@ public class ProtocolLibListener {
                     return;
                 boolean changed = false;
                 for (int i = 0; i < list.size(); i++) {
-                    PlayerInfoData info = list.get(i);
-                    if (info == null)
+                    PlayerInfoData npcInfo = list.get(i);
+                    if (npcInfo == null)
                         continue;
-                    NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(info.getProfile().getUUID());
+                    NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(npcInfo.getProfile().getUUID());
                     if (npc == null || !npc.isSpawned())
                         continue;
                     MirrorTrait trait = npc.getTraitNullable(MirrorTrait.class);
                     if (trait == null || !trait.isMirroring(event.getPlayer())) {
                         continue;
                     }
-                    GameProfile profile = NMS.getProfile(event.getPlayer());
+                    GameProfile playerProfile = NMS.getProfile(event.getPlayer());
                     if (trait.mirrorName()) {
                         list.set(i,
                                 new PlayerInfoData(
-                                        WrappedGameProfile.fromPlayer(event.getPlayer()).withId(
-                                                info.getProfile().getId()),
-                                        info.getLatency(), info.getGameMode(),
+                                        WrappedGameProfile.fromPlayer(event.getPlayer())
+                                                .withId(npcInfo.getProfile().getId()),
+                                        npcInfo.getLatency(), npcInfo.getGameMode(),
                                         WrappedChatComponent.fromText(event.getPlayer().getDisplayName())));
                         continue;
                     }
-                    Collection<Property> textures = profile.getProperties().get("textures");
+                    Collection<Property> textures = playerProfile.getProperties().get("textures");
                     if (textures == null || textures.size() == 0)
                         continue;
-                    info.getProfile().getProperties().clear();
-                    for (String key : profile.getProperties().keySet()) {
-                        info.getProfile().getProperties().putAll(key,
-                                Iterables.transform(profile.getProperties().get(key),
+                    npcInfo.getProfile().getProperties().clear();
+                    for (String key : playerProfile.getProperties().keySet()) {
+                        npcInfo.getProfile().getProperties().putAll(key,
+                                Iterables.transform(playerProfile.getProperties().get(key),
                                         skin -> new WrappedSignedProperty(skin.getName(), skin.getValue(),
                                                 skin.getSignature())));
                     }
