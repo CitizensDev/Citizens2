@@ -95,19 +95,21 @@ public class CommandTrait extends Trait {
 
     private Transaction chargeCommandCosts(Player player, Hand hand) {
         NPCShopAction action = null;
-        if (cost > 0) {
+        if (player.hasPermission("citizens.npc.command.ignoreerrors.*"))
+            return Transaction.success();
+        if (cost > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
             action = new MoneyAction(cost);
             if (!action.take(player, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
             }
         }
-        if (experienceCost > 0) {
+        if (experienceCost > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
             action = new ExperienceAction(experienceCost);
             if (!action.take(player, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, experienceCost);
             }
         }
-        if (itemRequirements.size() > 0) {
+        if (itemRequirements.size() > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
             action = new ItemAction(itemRequirements);
             if (!action.take(player, 1).isPossible()) {
                 ItemStack stack = itemRequirements.get(0);
@@ -666,7 +668,8 @@ public class CommandTrait extends Trait {
             long globalDelay = Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds();
             long currentTimeSec = System.currentTimeMillis() / 1000;
             String commandKey = command.getEncodedKey();
-            if (lastUsed.containsKey(commandKey)) {
+            if (!player.hasPermission("citizens.npc.command.ignoreerrors.cooldown")
+                    && lastUsed.containsKey(commandKey)) {
                 long deadline = ((Number) lastUsed.get(commandKey)).longValue()
                         + (command.cooldown != 0 ? command.cooldown : globalDelay);
                 if (currentTimeSec < deadline) {
@@ -677,7 +680,8 @@ public class CommandTrait extends Trait {
                 }
                 lastUsed.remove(commandKey);
             }
-            if (command.globalCooldown > 0 && trait.globalCooldowns.containsKey(commandKey)) {
+            if (!player.hasPermission("citizens.npc.command.ignoreerrors.globalcooldown") && command.globalCooldown > 0
+                    && trait.globalCooldowns.containsKey(commandKey)) {
                 long deadline = ((Number) trait.globalCooldowns.get(commandKey)).longValue() + command.globalCooldown;
                 if (currentTimeSec < deadline) {
                     long seconds = deadline - currentTimeSec;
@@ -688,7 +692,8 @@ public class CommandTrait extends Trait {
                 trait.globalCooldowns.remove(commandKey);
             }
             int timesUsed = nUsed.getOrDefault(commandKey, 0);
-            if (command.n > 0 && command.n <= timesUsed) {
+            if (!player.hasPermission("citizens.npc.command.ignoreerrors.nused") && command.n > 0
+                    && command.n <= timesUsed) {
                 trait.sendErrorMessage(player, CommandTraitError.MAXIMUM_TIMES_USED, null, command.n);
                 return false;
             }
