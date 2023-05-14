@@ -159,8 +159,8 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             npc.getNavigator().getLocalParameters().addSingleUseCallback((reason) -> forceFinish = true);
         } else {
             Random random = new Random();
-            dest.setX(dest.getX() + random.nextDouble(0.5));
-            dest.setZ(dest.getZ() + random.nextDouble(0.5));
+            dest.setX(dest.getX() + random.nextDouble() * 0.5);
+            dest.setZ(dest.getZ() + random.nextDouble() * 0.5);
             movingTicks = 20 + random.nextInt(20);
         }
         this.target = dest;

@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.util;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -53,10 +54,15 @@ public class SpigotUtil {
         return using1_13API;
     }
 
-    public static Duration parseDuration(String raw) {
-        Integer ticks = Ints.tryParse(raw.endsWith("t") ? raw.substring(0, raw.length() - 1) : raw);
-        if (ticks != null) {
-            return Duration.ofMillis(ticks * 50);
+    public static Duration parseDuration(String raw, TimeUnit defaultUnits) {
+        if (defaultUnits == null) {
+            Integer ticks = Ints.tryParse(raw);
+            if (ticks != null) {
+                return Duration.ofMillis(ticks * 50);
+            }
+        }
+        if (raw.endsWith("t")) {
+            return Duration.ofMillis(Integer.parseInt(raw.substring(0, raw.length() - 1)) * 50);
         }
         raw = NUMBER_MATCHER.matcher(raw).replaceFirst("P$1T").replace("min", "m").replace("hr", "h");
         if (raw.charAt(0) != 'P') {

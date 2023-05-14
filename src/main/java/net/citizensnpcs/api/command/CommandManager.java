@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -61,6 +62,7 @@ public class CommandManager implements TabCompleter {
      * (one for each alias) with the method.
      */
     private final Map<String, CommandInfo> commands = Maps.newHashMap();
+    private TimeUnit defaultDurationUnits;
     private Injector injector;
 
     public CommandManager() {
@@ -181,7 +183,7 @@ public class CommandManager implements TabCompleter {
                 } else if (desiredType == UUID.class) {
                     val = UUID.fromString(val.toString());
                 } else if (desiredType == Duration.class) {
-                    val = SpigotUtil.parseDuration(val.toString());
+                    val = SpigotUtil.parseDuration(val.toString(), defaultDurationUnits);
                 }
                 methodArgs[entry.getKey()] = val;
             }
@@ -595,6 +597,10 @@ public class CommandManager implements TabCompleter {
         if (help.isEmpty())
             return;
         Messaging.send(sender, "<aqua>" + help);
+    }
+
+    public void setDefaultDurationUnits(TimeUnit unit) {
+        this.defaultDurationUnits = unit;
     }
 
     public void setInjector(Injector injector) {
