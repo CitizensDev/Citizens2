@@ -56,10 +56,6 @@ public class SpigotUtil {
         return using1_13API;
     }
 
-    public static void main(String[] args) {
-        System.out.println(parseDuration("1234", null));
-    }
-
     public static Duration parseDuration(String raw, TimeUnit defaultUnits) {
         if (defaultUnits == null) {
             Integer ticks = Ints.tryParse(raw);
@@ -73,7 +69,7 @@ public class SpigotUtil {
         if (raw.endsWith("t")) {
             return Duration.ofMillis(Integer.parseInt(raw.substring(0, raw.length() - 1)) * 50);
         }
-        raw = NUMBER_MATCHER.matcher(raw).replaceFirst("P$1T").replace("min", "m").replace("hr", "h");
+        raw = DAY_MATCHER.matcher(raw).replaceFirst("P$1T").replace("min", "m").replace("hr", "h");
         if (raw.charAt(0) != 'P') {
             raw = "PT" + raw;
         }
@@ -102,6 +98,7 @@ public class SpigotUtil {
     }
 
     private static int[] BUKKIT_VERSION = null;
+    private static Pattern DAY_MATCHER = Pattern.compile("(\\d+d)");
     private static Pattern NUMBER_MATCHER = Pattern.compile("(\\d+)");
     private static boolean SUPPORT_WORLD_HEIGHT = true;
     private static Boolean using1_13API;
