@@ -12,7 +12,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 @TraitName("skintrait")
 public class SkinTrait extends Trait {

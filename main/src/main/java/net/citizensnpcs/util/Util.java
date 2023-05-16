@@ -46,7 +46,7 @@ import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 public class Util {
     private Util() {
