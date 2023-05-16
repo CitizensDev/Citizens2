@@ -20,7 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.util.Messaging;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 /**
  * Represents a single inventory slot in a {@link InventoryMenu}.
