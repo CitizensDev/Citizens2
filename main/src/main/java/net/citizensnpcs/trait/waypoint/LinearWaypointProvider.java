@@ -372,12 +372,18 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 }
 
                 Waypoint element = new Waypoint(at);
-                waypoints.add(element);
+                int idx = waypoints.size();
+                if (waypoints.indexOf(selectedWaypoint) != -1) {
+                    idx = waypoints.indexOf(selectedWaypoint);
+                    waypoints.add(idx, element);
+                } else {
+                    waypoints.add(element);
+                }
+
                 if (showingMarkers) {
                     markers.createMarker(element, element.getLocation().clone());
                 }
-                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at),
-                        waypoints.size());
+                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at), idx);
             } else if (waypoints.size() > 0 && !event.getPlayer().isSneaking()) {
                 event.setCancelled(true);
 

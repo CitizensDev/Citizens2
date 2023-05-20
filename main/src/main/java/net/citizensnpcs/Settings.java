@@ -241,6 +241,9 @@ public class Settings {
         SELECTION_ITEM("The default item in hand to select an NPC", "npc.selection.item", "stick"),
         SELECTION_MESSAGE("npc.selection.message", "Selected [[<npc>]] (ID [[<id>]])."),
         SERVER_OWNS_NPCS("Whether the server owns NPCs rather than individual players", "npc.server-ownership", false),
+        SHOP_GLOBAL_VIEW_PERMISSION(
+                "The global view permission that players need to view any NPC shop. Defaults to empty (no permission required).",
+                "npc.shops.global-view-permission", ""),
         STORAGE_FILE("storage.file", "saves.yml"),
         STORAGE_TYPE("Although technically Citizens can use NBT storage, it is not well tested and YAML is recommended",
                 "storage.type", "yaml"),

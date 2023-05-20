@@ -24,6 +24,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.StoredShops;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
@@ -97,6 +98,10 @@ public class ShopTrait extends Trait {
     public void onRightClick(Player player) {
         if (rightClickShop == null || rightClickShop.isEmpty())
             return;
+        if (!Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
+                && !player.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString()))
+            return;
+
         NPCShop shop = shops.globalShops.getOrDefault(rightClickShop, getDefaultShop());
         shop.display(player);
     }
