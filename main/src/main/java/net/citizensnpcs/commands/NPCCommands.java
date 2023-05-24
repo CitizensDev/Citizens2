@@ -1571,7 +1571,7 @@ public class NPCCommands {
                 }
             } else {
                 if (enumKey != null) {
-                    npc.data().set(enumKey, metadata);
+                    npc.data().setPersistent(enumKey, metadata);
                 } else {
                     npc.data().setPersistent(key, metadata);
                 }
