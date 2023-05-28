@@ -27,6 +27,7 @@ import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.jnbt.Tag;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -58,8 +59,7 @@ public class ItemAction extends NPCShopAction {
             ItemStack toMatch = contents[i];
             if (toMatch == null || toMatch.getType() == Material.AIR)
                 continue;
-            if (requireUndamaged && toMatch.getItemMeta() instanceof Damageable
-                    && ((Damageable) toMatch.getItemMeta()).getDamage() != 0)
+            if (tooDamaged(toMatch))
                 continue;
             for (int j = 0; j < items.size(); j++) {
                 ItemStack item = items.get(j);
@@ -97,6 +97,14 @@ public class ItemAction extends NPCShopAction {
         return description;
     }
 
+    private boolean tooDamaged(ItemStack toMatch) {
+        if (!requireUndamaged)
+            return false;
+        if (SpigotUtil.isUsing1_13API())
+            return toMatch.getItemMeta() instanceof Damageable && ((Damageable) toMatch.getItemMeta()).getDamage() != 0;
+        return toMatch.getDurability() == toMatch.getType().getMaxDurability();
+    }
+
     @Override
     public int getMaxRepeats(Entity entity) {
         if (!(entity instanceof InventoryHolder))
@@ -110,8 +118,7 @@ public class ItemAction extends NPCShopAction {
             ItemStack toMatch = contents[i];
             if (toMatch == null || toMatch.getType() == Material.AIR)
                 continue;
-            if (requireUndamaged && toMatch.getItemMeta() instanceof Damageable
-                    && ((Damageable) toMatch.getItemMeta()).getDamage() != 0)
+            if (tooDamaged(toMatch))
                 continue;
             for (int j = 0; j < items.size(); j++) {
                 if (!matches(items.get(j), toMatch))
