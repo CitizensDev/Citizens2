@@ -426,13 +426,12 @@ public class NMSImpl implements NMSBridge {
             PlayerAnimation.ARM_SWING.play((Player) source.getBukkitEntity());
             return;
         }
-        if (source instanceof Mob) {
+        boolean hasAttackDamage = source.getAttributes().hasAttribute(Attributes.ATTACK_DAMAGE);
+        if (source instanceof Mob && hasAttackDamage) {
             ((Mob) source).doHurtTarget(target);
             return;
         }
-        float f = (float) (source.getAttributes().hasAttribute(Attributes.ATTACK_DAMAGE)
-                ? source.getAttributeValue(Attributes.ATTACK_DAMAGE)
-                : 1f);
+        float f = (float) (hasAttackDamage ? source.getAttributeValue(Attributes.ATTACK_DAMAGE) : 1f);
         int i = 0;
         f += EnchantmentHelper.getDamageBonus(source.getMainHandItem(), target.getMobType());
         i += EnchantmentHelper.getKnockbackBonus(source);
