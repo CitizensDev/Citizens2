@@ -295,7 +295,7 @@ public class LookClose extends Trait implements Toggleable {
         npc.getEntity().getLocation(NPC_LOCATION);
         findNewTarget();
 
-        if (npc.getNavigator().isNavigating()) {
+        if (npc.getNavigator().isNavigating() || npc.getNavigator().isPaused()) {
             npc.getNavigator().setPaused(lookingAt != null);
         }
 
