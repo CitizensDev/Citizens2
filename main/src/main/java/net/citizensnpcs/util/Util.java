@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -46,7 +47,6 @@ import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
-import org.bukkit.ChatColor;
 
 public class Util {
     private Util() {
@@ -408,7 +408,7 @@ public class Util {
         for (Player player : blocks.get(0).getWorld().getPlayers()) {
             for (Block block : blocks) {
                 if (type != null) {
-                    player.sendBlockChange(loc, type, (byte) 0);
+                    player.sendBlockChange(block.getLocation(loc), type, (byte) 0);
                 } else if (SpigotUtil.isUsing1_13API()) {
                     player.sendBlockChange(block.getLocation(loc), block.getBlockData());
                 } else {
