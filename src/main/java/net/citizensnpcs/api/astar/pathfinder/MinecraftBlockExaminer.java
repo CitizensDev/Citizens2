@@ -314,6 +314,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                 NOT_JUMPABLE.add(Material.valueOf("MANGROVE_FENCE"));
             } catch (IllegalArgumentException e) {
             }
+            try {
+                NOT_JUMPABLE.add(Material.valueOf("CHERRY_FENCE"));
+            } catch (IllegalArgumentException e) {
+            }
         }
     }
 }
