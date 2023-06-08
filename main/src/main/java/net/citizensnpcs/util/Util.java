@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -22,6 +23,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
@@ -55,6 +57,22 @@ public class Util {
     public static void callCollisionEvent(NPC npc, Entity entity) {
         if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length > 0) {
             Bukkit.getPluginManager().callEvent(new NPCCollisionEvent(npc, entity));
+        }
+    }
+
+    public static void callPossiblyAsyncEvent(Event event, boolean sync) {
+        try {
+            Callable<Void> callable = () -> {
+                Bukkit.getPluginManager().callEvent(event);
+                return null;
+            };
+            if (sync) {
+                Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), callable).get();
+            } else {
+                callable.call();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

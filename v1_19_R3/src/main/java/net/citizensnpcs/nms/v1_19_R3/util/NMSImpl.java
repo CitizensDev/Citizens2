@@ -872,10 +872,10 @@ public class NMSImpl implements NMSBridge {
                         // minecraft requires that an entity fit onto both blocks if width >= 1f, but we'd prefer to
                         // make it just fit on 1 so hack around it a bit.
                     }
+                    if (params.debug() && getPathEntity(navigation) != null) {
+                        Util.sendBlockChanges(getBlocks(entity, getPathEntity(navigation)), Material.DANDELION);
+                    }
                     lastSpeed = params.speed();
-                }
-                if (params.debug() && !navigation.isDone()) {
-                    Util.sendBlockChanges(getBlocks(entity, getPathEntity(navigation)), Material.DANDELION);
                 }
                 navigation.setSpeedModifier(params.speed());
                 return navigation.isDone();
