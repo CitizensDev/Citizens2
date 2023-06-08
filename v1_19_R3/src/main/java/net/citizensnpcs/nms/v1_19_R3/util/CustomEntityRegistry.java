@@ -154,17 +154,17 @@ import net.minecraft.world.entity.vehicle.MinecartTNT;
 
 @SuppressWarnings("rawtypes")
 public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
-        implements Supplier<DefaultedMappedRegistry<EntityType<?>>> {
+        implements Supplier<MappedRegistry<EntityType<?>>> {
     private final BiMap<ResourceLocation, EntityType> entities = HashBiMap.create();
     private final BiMap<EntityType, ResourceLocation> entityClasses = this.entities.inverse();
     private final Map<EntityType, Integer> entityIds = Maps.newHashMap();
-    private final DefaultedMappedRegistry<EntityType<?>> wrapped;
+    private final MappedRegistry<EntityType<?>> wrapped;
 
     public CustomEntityRegistry(DefaultedRegistry<EntityType<?>> original) throws Throwable {
         super(original.getDefaultKey().getNamespace(),
                 (ResourceKey<? extends Registry<EntityType<?>>>) IREGISTRY_RESOURCE_KEY.invoke(original),
                 (Lifecycle) IREGISTRY_LIFECYCLE.invoke(original), true);
-        this.wrapped = (DefaultedMappedRegistry<EntityType<?>>) original;
+        this.wrapped = (MappedRegistry<EntityType<?>>) original;
     }
 
     @Override
@@ -212,7 +212,7 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     }
 
     @Override
-    public DefaultedMappedRegistry<EntityType<?>> get() {
+    public MappedRegistry<EntityType<?>> get() {
         return wrapped;
     }
 
