@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -60,20 +60,26 @@ public class Util {
         }
     }
 
-    public static void callPossiblyAsyncEvent(Event event, boolean sync) {
+    public static boolean callEventPossiblySync(Event event, boolean sync) {
+        if (!sync) {
+            try {
+                Bukkit.getPluginManager().callEvent(event);
+                return false;
+            } catch (IllegalStateException ex) {
+                // sync method called
+            }
+        }
         try {
-            Callable<Void> callable = () -> {
+            Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), () -> {
                 Bukkit.getPluginManager().callEvent(event);
                 return null;
-            };
-            if (sync) {
-                Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), callable).get();
-            } else {
-                callable.call();
-            }
-        } catch (Exception e) {
+            }).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     public static Vector callPushEvent(NPC npc, double x, double y, double z) {

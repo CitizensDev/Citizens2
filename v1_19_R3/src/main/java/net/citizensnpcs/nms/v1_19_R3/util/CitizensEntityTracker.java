@@ -81,11 +81,8 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
 
         if (tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
-            if (REQUIRES_SYNC == null) {
-                REQUIRES_SYNC = !Bukkit.isPrimaryThread();
-            }
             NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
-            Util.callPossiblyAsyncEvent(event, REQUIRES_SYNC);
+            REQUIRES_SYNC = Util.callEventPossiblySync(event, REQUIRES_SYNC);
             if (event.isCancelled())
                 return;
             Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
@@ -141,7 +138,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
 
     private static final MethodHandle E = NMS.getGetter(ServerEntity.class, "e");
     private static final MethodHandle F = NMS.getGetter(ServerEntity.class, "f");
-    private static Boolean REQUIRES_SYNC;
+    private static boolean REQUIRES_SYNC = false;
     private static final MethodHandle TRACKER = NMS.getFirstGetter(TrackedEntity.class, Entity.class);
     private static final MethodHandle TRACKER_ENTRY = NMS.getFirstGetter(TrackedEntity.class, ServerEntity.class);
     private static final MethodHandle TRACKING_RANGE = NMS.getFirstGetter(TrackedEntity.class, int.class);

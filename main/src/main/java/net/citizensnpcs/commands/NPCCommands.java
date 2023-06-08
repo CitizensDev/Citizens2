@@ -133,6 +133,7 @@ import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.ShopTrait.NPCShop;
+import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SkinTrait;
@@ -2645,6 +2646,31 @@ public class NPCCommands {
         } else {
             throw new CommandUsageException();
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "sitting (--explicit [true|false]) (--at [at])",
+            desc = "Sets the NPC sitting",
+            modifiers = { "sitting" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.sitting")
+    @Requirements(selected = true, ownership = true)
+    public void sitting(CommandContext args, CommandSender sender, NPC npc, @Flag("explicit") Boolean explicit,
+            @Flag("at") Location at) {
+        SitTrait trait = npc.getOrAddTrait(SitTrait.class);
+        boolean toSit = explicit != null ? explicit : !trait.isSitting();
+        if (!toSit) {
+            trait.setSitting(null);
+            Messaging.sendTr(sender, Messages.SITTING_UNSET, npc.getName());
+            return;
+        }
+        if (at == null) {
+            at = npc.getStoredLocation();
+        }
+        trait.setSitting(at);
+        Messaging.sendTr(sender, Messages.SITTING_SET, npc.getName(), at);
     }
 
     @Command(

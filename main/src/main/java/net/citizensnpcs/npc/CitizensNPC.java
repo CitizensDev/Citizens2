@@ -301,6 +301,7 @@ public class CitizensNPC extends AbstractNPC {
         getOrAddTrait(CurrentLocation.class).setLocation(at);
         entityController.create(at.clone(), this);
         getEntity().setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+        getEntity().setMetadata("NPC-ID", new FixedMetadataValue(CitizensAPI.getPlugin(), getId()));
 
         if (getEntity() instanceof SkinnableEntity && !hasTrait(SkinLayers.class)) {
             ((SkinnableEntity) getEntity()).setSkinFlags(EnumSet.allOf(SkinLayers.Layer.class));

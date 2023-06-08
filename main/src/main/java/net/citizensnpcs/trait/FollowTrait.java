@@ -97,7 +97,6 @@ public class FollowTrait extends Trait {
             if (entity == null)
                 return;
         }
-
         if (!isActive())
             return;
 
@@ -107,6 +106,7 @@ public class FollowTrait extends Trait {
             }
             return;
         }
+
         if (!npc.getNavigator().isNavigating()) {
             npc.getNavigator().setTarget(entity, false);
         } else {

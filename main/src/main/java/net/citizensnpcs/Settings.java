@@ -141,7 +141,7 @@ public class Settings {
                 "npc.pathfinding.straight-line-targeting-distance", 5),
         DEFAULT_STUCK_ACTION(
                 "The default action to perform when NPCs are unable to find a path or are stuck in the same block for too long. Supported options are: 'teleport to destination' or 'none'",
-                "npc.pathfinding.default-stuck-action", "teleport to destination"),
+                "npc.pathfinding.default-stuck-action", "none"),
         DEFAULT_TALK_CLOSE("npc.default.talk-close.enabled", false),
         DEFAULT_TALK_CLOSE_RANGE("Default talk close range in blocks", "npc.default.talk-close.range", 5),
         DEFAULT_TEXT("npc.default.talk-close.text.0", "Hi, I'm <npc>!") {
