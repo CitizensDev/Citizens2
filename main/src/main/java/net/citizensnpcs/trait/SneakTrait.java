@@ -21,6 +21,10 @@ public class SneakTrait extends Trait {
         }
     }
 
+    public boolean isSneaking() {
+        return sneaking;
+    }
+
     @Override
     public void onSpawn() {
         apply();
