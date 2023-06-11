@@ -6,17 +6,17 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
-import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.util.DataKey;
 
 /**
  * Represents the owner of an NPC.
  */
 @TraitName("owner")
 public class Owner extends Trait {
-    private UUID uuid = null;
+    @Persist
+    private UUID uuid;
 
     public Owner() {
         super("owner");
@@ -64,21 +64,6 @@ public class Owner extends Trait {
 
     public boolean isOwnedBy(UUID other) {
         return uuid == null ? other == null : uuid.equals(other);
-    }
-
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        if (key.keyExists("uuid") && !key.getString("uuid").isEmpty()) {
-            uuid = UUID.fromString(key.getString("uuid"));
-        } else {
-            uuid = null;
-        }
-        key.removeKey("owner");
-    }
-
-    @Override
-    public void save(DataKey key) {
-        key.setString("uuid", uuid == null ? "" : uuid.toString());
     }
 
     public void setOwner(CommandSender sender) {
