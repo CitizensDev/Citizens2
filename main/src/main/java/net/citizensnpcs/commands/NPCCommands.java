@@ -2670,7 +2670,7 @@ public class NPCCommands {
             at = npc.getStoredLocation();
         }
         trait.setSitting(at);
-        Messaging.sendTr(sender, Messages.SITTING_SET, npc.getName(), at);
+        Messaging.sendTr(sender, Messages.SITTING_SET, npc.getName(), Util.prettyPrintLocation(at));
     }
 
     @Command(

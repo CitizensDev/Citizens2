@@ -457,6 +457,7 @@ public class Messages {
     public static final String WAYPOINT_TELEPORTING_ENABLED = "citizens.commands.waypoints.disableteleporting.enabled";
     public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";
     public static final String WAYPOINT_TRIGGER_ADDED_SUCCESSFULLY = "citizens.editors.waypoints.triggers.add.added";
+    public static final String WAYPOINT_TRIGGER_ANIMATION_AT_SET = "citizens.editors.waypoints.triggers.animation.at-set";
     public static final String WAYPOINT_TRIGGER_CHAT_INVALID_RADIUS = "citizens.editors.waypoints.triggers.chat.invalid-radius";
     public static final String WAYPOINT_TRIGGER_CHAT_NO_RADIUS = "citizens.editors.waypoints.triggers.chat.missing-radius";
     public static final String WAYPOINT_TRIGGER_EDITOR_EXIT = "citizens.editors.waypoints.triggers.main.exit";

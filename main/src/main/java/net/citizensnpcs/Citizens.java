@@ -32,6 +32,7 @@ import com.google.common.io.Files;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
+import ch.ethz.globis.phtree.PhTreeHelper;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.LibraryManager;
@@ -337,6 +338,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         } catch (Throwable t) {
             lib.loadLibrary(Library.builder().groupId("org{}joml").artifactId("joml").version("1.10.5").build());
         }
+        PhTreeHelper.enablePooling(false);
     }
 
     @Override

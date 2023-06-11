@@ -2,6 +2,7 @@ package net.citizensnpcs.trait;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Sittable;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -29,6 +30,11 @@ public class SitTrait extends Trait {
 
     @Override
     public void onDespawn() {
+        if (SUPPORT_SITTABLE && npc.getEntity() instanceof Sittable) {
+            ((Sittable) npc.getEntity()).setSitting(false);
+            return;
+        }
+
         if (chair != null) {
             if (chair.getEntity() != null) {
                 chair.getEntity().eject();
@@ -47,6 +53,13 @@ public class SitTrait extends Trait {
     public void run() {
         if (!npc.isSpawned() || !isSitting())
             return;
+
+        if (SUPPORT_SITTABLE && npc.getEntity() instanceof Sittable) {
+            ((Sittable) npc.getEntity()).setSitting(true);
+            if (npc.getEntity().getLocation().distance(sittingAt) > 0.05) {
+                npc.teleport(sittingAt, TeleportCause.PLUGIN);
+            }
+        }
 
         if (chair == null) {
             NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("SitRegistry");
@@ -74,6 +87,15 @@ public class SitTrait extends Trait {
         this.sittingAt = at != null ? at.clone() : null;
         if (!isSitting()) {
             onDespawn();
+        }
+    }
+
+    private static boolean SUPPORT_SITTABLE = true;
+    static {
+        try {
+            Class.forName("org.bukkit.entity.Sittable");
+        } catch (ClassNotFoundException e) {
+            SUPPORT_SITTABLE = false;
         }
     }
 }
