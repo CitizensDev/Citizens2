@@ -680,6 +680,10 @@ public class NPCCommands {
         if (!sender.hasPermission("citizens.npc.create.*") && !sender.hasPermission("citizens.npc.createall")
                 && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase().replace("_", "")))
             throw new NoPermissionsException();
+        
+        if ((at != null || registryName != null || traits != null || templateName != null)
+                && !sender.hasPermission("citizens.npc.admin"))
+            throw new NoPermissionsException();
 
         NPCRegistry registry = CitizensAPI.getNPCRegistry();
         if (registryName != null) {
