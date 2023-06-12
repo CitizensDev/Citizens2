@@ -1,5 +1,6 @@
 package net.citizensnpcs;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -58,7 +60,9 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
@@ -84,7 +88,9 @@ import net.citizensnpcs.api.event.NPCDamageEntityEvent;
 import net.citizensnpcs.api.event.NPCDamageEvent;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
+import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
+import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
@@ -98,6 +104,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
@@ -149,6 +156,26 @@ public class EventListen implements Listener {
                 }
             }, CitizensAPI.getPlugin());
         } catch (Throwable ex) {
+        }
+
+        Class<?> kbc = null;
+        try {
+            kbc = Class.forName("com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent");
+        } catch (ClassNotFoundException e) {
+        }
+
+        if (kbc != null) {
+            registerKnockbackEvent(kbc);
+        }
+
+        Class<?> pbeac = null;
+        try {
+            pbeac = Class.forName("io.papermc.paper.event.entity.EntityPushedByEntityAttackEvent");
+        } catch (ClassNotFoundException e) {
+        }
+
+        if (pbeac != null) {
+            registerPushEvent(pbeac);
         }
     }
 
@@ -663,6 +690,68 @@ public class EventListen implements Listener {
             }
         }
         CitizensAPI.getLocationLookup().onWorldUnload(event);
+    }
+
+    private void registerKnockbackEvent(Class<?> kbc) {
+        try {
+            HandlerList handlers = (HandlerList) kbc.getMethod("getHandlerList").invoke(null);
+            Method getEntity = kbc.getMethod("getEntity");
+            Method getHitBy = kbc.getMethod("getHitBy");
+            Method getKnockbackStrength = kbc.getMethod("getKnockbackStrength");
+            Method getAcceleration = kbc.getMethod("getAcceleration");
+            handlers.register(new RegisteredListener(new Listener() {
+            }, (listener, event) -> {
+                if (NPCKnockbackEvent.getHandlerList().getRegisteredListeners().length == 0)
+                    return;
+                try {
+                    Entity entity = (Entity) getEntity.invoke(event);
+                    if (!(entity instanceof NPCHolder))
+                        return;
+                    NPC npc = ((NPCHolder) entity).getNPC();
+                    Entity hitBy = (Entity) getHitBy.invoke(event);
+                    float strength = (float) getKnockbackStrength.invoke(event);
+                    Vector vector = (Vector) getAcceleration.invoke(event);
+                    NPCKnockbackEvent kb = new NPCKnockbackEvent(npc, strength, vector, hitBy);
+                    Bukkit.getPluginManager().callEvent(kb);
+                    ((Cancellable) event).setCancelled(kb.isCancelled());
+                } catch (Throwable ex) {
+                    ex.printStackTrace();
+                }
+            }, EventPriority.NORMAL, CitizensAPI.getPlugin(), true));
+        } catch (Throwable ex) {
+            Messaging.severe("Error registering knockback event forwarder");
+            ex.printStackTrace();
+        }
+    }
+
+    private void registerPushEvent(Class<?> clazz) {
+        try {
+            HandlerList handlers = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
+            Method getEntity = clazz.getMethod("getEntity");
+            Method getPushedBy = clazz.getMethod("getPushedBy");
+            Method getAcceleration = clazz.getMethod("getAcceleration");
+            handlers.register(new RegisteredListener(new Listener() {
+            }, (listener, event) -> {
+                if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
+                    return;
+                try {
+                    Entity entity = (Entity) getEntity.invoke(event);
+                    if (!(entity instanceof NPCHolder))
+                        return;
+                    NPC npc = ((NPCHolder) entity).getNPC();
+                    Entity pushedBy = (Entity) getPushedBy.invoke(event);
+                    Vector vector = (Vector) getAcceleration.invoke(event);
+                    NPCPushEvent push = new NPCPushEvent(npc, vector, pushedBy);
+                    Bukkit.getPluginManager().callEvent(push);
+                    ((Cancellable) event).setCancelled(push.isCancelled());
+                } catch (Throwable ex) {
+                    ex.printStackTrace();
+                }
+            }, EventPriority.NORMAL, CitizensAPI.getPlugin(), true));
+        } catch (Throwable ex) {
+            Messaging.severe("Error registering push event forwarder");
+            ex.printStackTrace();
+        }
     }
 
     private void respawnAllFromCoord(ChunkCoord coord, Event event) {

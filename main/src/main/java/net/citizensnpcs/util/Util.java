@@ -91,7 +91,7 @@ public class Util {
         // when another entity collides, this method is called to push the NPC so we prevent it from
         // doing anything if the event is cancelled.
         Vector vector = new Vector(x, y, z);
-        NPCPushEvent event = new NPCPushEvent(npc, vector);
+        NPCPushEvent event = new NPCPushEvent(npc, vector, null);
         event.setCancelled(!allowed);
         Bukkit.getPluginManager().callEvent(event);
         return !event.isCancelled() ? event.getCollisionVector() : null;

@@ -18,7 +18,6 @@ import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.trait.Inventory;
@@ -273,12 +272,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public void knockback(double strength, double dx, double dz) {
-        NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
-        Bukkit.getPluginManager().callEvent(event);
-        Vector kb = event.getKnockbackVector();
-        if (!event.isCancelled()) {
-            super.knockback(event.getStrength(), kb.getX(), kb.getZ());
-        }
+        NMS.callKnockbackEvent(npc, (float) strength, dx, dz, (evt) -> super.knockback((float) evt.getStrength(),
+                evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
     }
 
     private void moveOnCurrentHeading() {

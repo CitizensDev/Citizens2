@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Enderman;
@@ -107,7 +109,24 @@ public class NMS {
 
     public static void callKnockbackEvent(NPC npc, float strength, double dx, double dz,
             Consumer<NPCKnockbackEvent> cb) {
-        NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, dx, dz);
+        if (SUPPORT_KNOCKBACK_RESISTANCE && npc.getEntity() instanceof LivingEntity) {
+            try {
+                AttributeInstance attribute = ((LivingEntity) npc.getEntity())
+                        .getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
+                if (attribute != null) {
+                    strength *= 1 - attribute.getValue();
+                }
+            } catch (Throwable t) {
+                SUPPORT_KNOCKBACK_RESISTANCE = false;
+            }
+        }
+        Vector vector = npc.getEntity().getVelocity();
+        Vector impulse = new Vector(dx, 0, dz).normalize().multiply(strength);
+        Vector delta = new Vector(vector.getX() / 2 - impulse.getX() - vector.getX(),
+                -vector.getY()
+                        + (npc.getEntity().isOnGround() ? Math.min(0.4, vector.getY() / 2 + strength) : vector.getY()),
+                vector.getZ() / 2 - impulse.getZ() - vector.getZ());
+        NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, delta, null);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             cb.accept(event);
@@ -853,6 +872,7 @@ public class NMS {
     private static Method GET_MODULE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;
+    private static boolean SUPPORT_KNOCKBACK_RESISTANCE = true;
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_BOOLEAN;
