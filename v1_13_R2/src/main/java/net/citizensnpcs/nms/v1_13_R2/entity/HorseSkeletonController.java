@@ -50,7 +50,6 @@ public class HorseSkeletonController extends MobEntityController {
 
     public static class EntityHorseSkeletonNPC extends EntityHorseSkeleton implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -158,8 +157,6 @@ public class HorseSkeletonController extends MobEntityController {
         protected SoundEffect D() {
             return NMSImpl.getSoundEffect(npc, super.D(), NPC.Metadata.AMBIENT_SOUND);
         }
-
-        
 
         @Override
         public void f(double x, double y, double z) {

@@ -55,7 +55,6 @@ public class HorseSkeletonController extends MobEntityController {
 
     public static class EntityHorseSkeletonNPC extends SkeletonHorse implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -126,8 +125,6 @@ public class HorseSkeletonController extends MobEntityController {
                 npc.update();
             }
         }
-
-        
 
         @Override
         protected SoundEvent getAmbientSound() {

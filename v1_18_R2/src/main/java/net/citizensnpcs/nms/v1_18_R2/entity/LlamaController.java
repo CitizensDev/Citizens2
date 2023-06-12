@@ -13,6 +13,7 @@ import net.citizensnpcs.nms.v1_18_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_18_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -25,6 +26,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -51,7 +53,9 @@ public class LlamaController extends MobEntityController {
     }
 
     public static class EntityLlamaNPC extends Llama implements NPCHolder {
+        private double baseMovementSpeed;
         private final CitizensNPC npc;
+        private boolean riding;
 
         public EntityLlamaNPC(EntityType<? extends Llama> types, Level level) {
             this(types, level, null);
@@ -63,6 +67,7 @@ public class LlamaController extends MobEntityController {
             if (npc != null) {
                 ((org.bukkit.entity.Llama) getBukkitEntity())
                         .setDomestication(((org.bukkit.entity.Llama) getBukkitEntity()).getMaxDomestication());
+                baseMovementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED).getValue();
             }
         }
 
@@ -98,19 +103,27 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public void customServerAiStep() {
-            if (npc == null) {
-                super.customServerAiStep();
-            } else {
+            super.customServerAiStep();
+            if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (npc.useMinecraftAI()) {
-                    super.customServerAiStep();
+                if (npc.hasTrait(Controllable.class) && npc.getOrAddTrait(Controllable.class).isEnabled()) {
+                    riding = getBukkitEntity().getPassengers().size() > 0;
+                    getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(
+                            baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
+                } else {
+                    riding = false;
+                }
+                if (riding) {
+                    if (npc.getNavigator().isNavigating()) {
+                        org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
+                        NMS.look(basePassenger, getYRot(), getXRot());
+                    }
+                    setFlag(4, true); // datawatcher method
                 }
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
         }
-
-        
 
         @Override
         protected SoundEvent getAmbientSound() {
@@ -143,6 +156,14 @@ public class LlamaController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public boolean isControlledByLocalInstance() {
+            if (npc != null && riding) {
+                return true;
+            }
+            return super.isControlledByLocalInstance();
         }
 
         @Override

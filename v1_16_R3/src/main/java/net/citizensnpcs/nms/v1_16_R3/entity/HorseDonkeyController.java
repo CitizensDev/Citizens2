@@ -54,7 +54,6 @@ public class HorseDonkeyController extends MobEntityController {
 
     public static class EntityHorseDonkeyNPC extends EntityHorseDonkey implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -145,8 +144,6 @@ public class HorseDonkeyController extends MobEntityController {
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
         }
-
-        
 
         @Override
         public boolean er() {

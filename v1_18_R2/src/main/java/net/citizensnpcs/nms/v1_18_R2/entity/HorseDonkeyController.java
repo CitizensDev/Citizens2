@@ -54,7 +54,6 @@ public class HorseDonkeyController extends MobEntityController {
 
     public static class EntityHorseDonkeyNPC extends Donkey implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -130,8 +129,6 @@ public class HorseDonkeyController extends MobEntityController {
                 npc.update();
             }
         }
-
-        
 
         @Override
         protected SoundEvent getAmbientSound() {

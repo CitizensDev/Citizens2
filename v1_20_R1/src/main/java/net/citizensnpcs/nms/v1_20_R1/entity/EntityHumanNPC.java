@@ -228,12 +228,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         boolean damaged = super.hurt(damagesource, f);
         if (damaged && hurtMarked) {
             hurtMarked = false;
-            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    EntityHumanNPC.this.hurtMarked = true;
-                }
-            });
+            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> EntityHumanNPC.this.hurtMarked = true);
         }
         return damaged;
     }

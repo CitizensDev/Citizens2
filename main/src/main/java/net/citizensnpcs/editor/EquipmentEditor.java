@@ -109,7 +109,7 @@ public class EquipmentEditor extends Editor {
         EQUIPPERS.put(EntityType.SHEEP, new SheepEquipper());
         EQUIPPERS.put(EntityType.HORSE, new HorseEquipper());
         for (EntityType type : Util.optionalEntitySet("ZOMBIE_HORSE", "LLAMA", "TRADER_LLAMA", "DONKEY", "MULE",
-                "SKELETON_HORSE")) {
+                "SKELETON_HORSE", "CAMEL")) {
             EQUIPPERS.put(type, new HorseEquipper());
         }
     }

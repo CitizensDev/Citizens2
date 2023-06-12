@@ -13,6 +13,7 @@ import net.citizensnpcs.nms.v1_13_R2.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -24,6 +25,7 @@ import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityLlama;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.FluidType;
+import net.minecraft.server.v1_13_R2.GenericAttributes;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
@@ -47,7 +49,9 @@ public class LlamaController extends MobEntityController {
     }
 
     public static class EntityLlamaNPC extends EntityLlama implements NPCHolder {
+        private double baseMovementSpeed;
         private final CitizensNPC npc;
+        private boolean riding;
 
         public EntityLlamaNPC(World world) {
             this(world, null);
@@ -58,6 +62,7 @@ public class LlamaController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 ((Llama) getBukkitEntity()).setDomestication(((Llama) getBukkitEntity()).getMaxDomestication());
+                baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
         }
 
@@ -108,6 +113,14 @@ public class LlamaController extends MobEntityController {
         }
 
         @Override
+        public boolean bT() {
+            if (npc != null && riding) {
+                return true;
+            }
+            return super.bT();
+        }
+
+        @Override
         public void c(float f, float f1) {
             if (npc == null || !npc.isFlyable()) {
                 super.c(f, f1);
@@ -144,8 +157,6 @@ public class LlamaController extends MobEntityController {
             return NMSImpl.getSoundEffect(npc, super.D(), NPC.Metadata.AMBIENT_SOUND);
         }
 
-        
-
         @Override
         public void f(double x, double y, double z) {
             Vector vector = Util.callPushEvent(npc, x, y, z);
@@ -181,9 +192,18 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public void mobTick() {
-            if (npc == null) {
-                super.mobTick();
-            } else {
+            super.mobTick();
+            if (npc != null) {
+                if (npc.hasTrait(Controllable.class) && npc.getOrAddTrait(Controllable.class).isEnabled()) {
+                    riding = getBukkitEntity().getPassengers().size() > 0;
+                    getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+                            .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
+                } else {
+                    riding = false;
+                }
+                if (riding) {
+                    d(4, true); // datawatcher method
+                }
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }

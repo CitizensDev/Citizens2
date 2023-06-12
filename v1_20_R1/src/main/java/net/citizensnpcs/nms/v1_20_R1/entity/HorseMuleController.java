@@ -55,7 +55,6 @@ public class HorseMuleController extends MobEntityController {
 
     public static class EntityHorseMuleNPC extends Mule implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
         private boolean riding;
 
@@ -126,8 +125,6 @@ public class HorseMuleController extends MobEntityController {
                 npc.update();
             }
         }
-
-        
 
         @Override
         protected SoundEvent getAmbientSound() {
