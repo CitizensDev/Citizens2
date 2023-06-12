@@ -17,6 +17,8 @@ public @interface Flag {
 
     String defValue() default "";
 
+    String permission() default "";
+
     Class<? extends FlagValidator<?>> validator() default FlagValidator.Identity.class;
 
     String[] value();

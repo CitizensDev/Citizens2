@@ -702,6 +702,7 @@ public class CommandManager implements TabCompleter {
         private int index = -1;
         private final String[] names;
         private final Class<?> paramType;
+        private String permission;
         private FlagValidator<?> validator;
 
         public InjectedCommandArgument(Injector injector, Class<?> paramType, Arg arg) {
@@ -724,6 +725,7 @@ public class CommandManager implements TabCompleter {
             for (int i = 0; i < this.names.length; i++) {
                 this.names[i] = this.names[i].toLowerCase();
             }
+            this.permission = flag.permission().isEmpty() ? null : flag.permission();
             this.completions = flag.completions();
             this.defaultValue = flag.defValue().isEmpty() ? null : flag.defValue();
             if (flag.validator() != FlagValidator.Identity.class) {
@@ -749,18 +751,22 @@ public class CommandManager implements TabCompleter {
 
         @SuppressWarnings("rawtypes")
         private Collection<String> getTabCompletions(CommandContext args, CommandSender sender) {
-            if (completionsProvider != null) {
+            if (permission != null && !sender.hasPermission(permission))
+                return Collections.emptyList();
+
+            if (completionsProvider != null)
                 return completionsProvider.getCompletions(args, sender);
-            }
-            if (completions.length > 0) {
+
+            if (completions.length > 0)
                 return Arrays.asList(completions);
-            }
+
             if (Enum.class.isAssignableFrom(paramType)) {
                 Enum[] constants = (Enum[]) paramType.getEnumConstants();
                 return Lists.transform(Arrays.asList(constants), (e) -> e.name());
             } else if (paramType == boolean.class || paramType == Boolean.class) {
                 return Arrays.asList("true", "false");
             }
+
             return Collections.emptyList();
         }
 

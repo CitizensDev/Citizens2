@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.event;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.util.Vector;
@@ -8,13 +9,15 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class NPCKnockbackEvent extends NPCEvent implements Cancellable {
     private boolean cancelled;
-    private double strength;
-    private Vector vector;
+    private final Entity entity;
+    private final double strength;
+    private final Vector vector;
 
-    public NPCKnockbackEvent(NPC npc, double impulse, double dx, double dz) {
+    public NPCKnockbackEvent(NPC npc, double strength, Vector vector, Entity entity) {
         super(npc);
-        this.strength = impulse;
-        this.vector = new Vector(dx, 0, dz);
+        this.entity = entity;
+        this.strength = strength;
+        this.vector = vector;
     }
 
     @Override
@@ -24,6 +27,10 @@ public class NPCKnockbackEvent extends NPCEvent implements Cancellable {
 
     public Vector getKnockbackVector() {
         return vector;
+    }
+
+    public Entity getKnockingBackEntity() {
+        return entity;
     }
 
     public double getStrength() {
@@ -38,14 +45,6 @@ public class NPCKnockbackEvent extends NPCEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
-    }
-
-    public void setKnockbackVector(Vector vector) {
-        this.vector = vector;
-    }
-
-    public void setStrength(double strength) {
-        this.strength = strength;
     }
 
     public static HandlerList getHandlerList() {
