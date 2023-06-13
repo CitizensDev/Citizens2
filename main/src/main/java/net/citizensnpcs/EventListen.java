@@ -35,6 +35,7 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -340,12 +341,9 @@ public class EventListen implements Listener {
         if (delay < 0)
             return;
         int deathAnimationTicks = event.getEntity() instanceof LivingEntity ? 20 : 2;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
-                    npc.spawn(location, SpawnReason.TIMED_RESPAWN);
-                }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
+                npc.spawn(location, SpawnReason.TIMED_RESPAWN);
             }
         }, delay + deathAnimationTicks);
     }
@@ -455,6 +453,18 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
         checkCreationEvent(event);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        final NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
+        if (npc == null) {
+            return;
+        }
+
+        if (npc.requiresNameHologram()) {
+            event.setDeathMessage(event.getDeathMessage().replace(npc.getEntity().getName(), npc.getFullName()));
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
