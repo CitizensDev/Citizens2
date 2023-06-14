@@ -478,6 +478,8 @@ public interface NPC extends Agent, Cloneable {
          * Whether to keep chunk loaded.
          */
         KEEP_CHUNK_LOADED("keep-chunk-loaded", Boolean.class),
+        /** Simple knockback toggle. Not set by default. */
+        KNOCKBACK("knockback", Boolean.class),
         /**
          * Whether the NPC is leashable.
          */
