@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <groupId>net.citizensnpcs</groupId>
@@ -28,16 +30,51 @@
         </repository>
     </repositories>
     <build>
-        <defaultGoal>clean package install</defaultGoal> 
+        <defaultGoal>clean package install</defaultGoal>
     </build>
-    <modules>
-        <module>main</module>
-        <module>v1_8_R3</module>
-        <module>v1_12_R1</module>
-        <module>v1_16_R3</module>
-        <module>v1_18_R2</module>
-        <module>v1_19_R3</module>
-        <module>v1_20_R1</module>
-        <module>dist</module>
-    </modules>
+    <profiles>
+        <profile>
+            <id>spigot-release</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>main</module>
+                <module>v1_8_R3</module>
+                <module>v1_12_R1</module>
+                <module>v1_16_R3</module>
+                <module>v1_18_R2</module>
+                <module>v1_19_R3</module>
+                <module>v1_20_R1</module>
+                <module>dist</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>full</id> 
+            <modules>
+                <module>main</module>
+                <module>v1_8_R3</module>
+                <module>v1_10_R1</module>
+                <module>v1_11_R1</module>
+                <module>v1_12_R1</module>
+                <module>v1_13_R2</module>
+                <module>v1_14_R1</module>
+                <module>v1_15_R1</module>
+                <module>v1_16_R3</module>
+                <module>v1_17_R1</module>
+                <module>v1_18_R2</module>
+                <module>v1_19_R3</module>
+                <module>v1_20_R1</module>
+                <module>dist</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <modules>
+                <module>main</module>
+                <module>v1_20_R1</module>
+                <module>dist</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
