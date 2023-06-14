@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.inventory.ClickType;
@@ -20,7 +21,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.util.Messaging;
-import org.bukkit.ChatColor;
 
 /**
  * Represents a single inventory slot in a {@link InventoryMenu}.
@@ -72,6 +72,10 @@ public class InventoryMenuSlot {
             return false;
         }
         return true;
+    }
+
+    public List<Consumer<CitizensInventoryClickEvent>> getClickHandlers() {
+        return handlers;
     }
 
     public ItemStack getCurrentItem() {
