@@ -241,10 +241,14 @@ public class ShopTrait extends Trait {
             InventoryMenuSlot prev = ctx.getSlot(4 * 9 + 3);
             InventoryMenuSlot edit = ctx.getSlot(4 * 9 + 4);
             InventoryMenuSlot next = ctx.getSlot(4 * 9 + 5);
-            prev.clear();
             if (page > 0) {
                 prev.setItemStack(new ItemStack(Material.FEATHER, 1), "Previous page (" + (page) + ")");
+                Consumer<CitizensInventoryClickEvent> prevItemEditor = prev.getClickHandlers().get(0);
                 prev.setClickHandler(evt -> {
+                    if (evt.isShiftClick()) {
+                        prevItemEditor.accept(evt);
+                        return;
+                    }
                     evt.setCancelled(true);
                     changePage(page - 1);
                 });
@@ -252,13 +256,25 @@ public class ShopTrait extends Trait {
 
             next.setItemStack(new ItemStack(Material.FEATHER, 1),
                     page + 1 >= shop.pages.size() ? "New page" : "Next page (" + (page + 1) + ")");
+            Consumer<CitizensInventoryClickEvent> nextItemEditor = next.getClickHandlers().get(0);
             next.setClickHandler(evt -> {
+                if (evt.isShiftClick()) {
+                    nextItemEditor.accept(evt);
+                    return;
+                }
                 evt.setCancelled(true);
                 changePage(page + 1);
             });
 
+            Consumer<CitizensInventoryClickEvent> editPageItem = edit.getClickHandlers().get(0);
             edit.setItemStack(new ItemStack(Material.BOOK), "Edit page");
-            edit.setClickHandler(evt -> ctx.getMenu().transition(new NPCShopPageSettings(shop.getOrCreatePage(page))));
+            edit.setClickHandler(evt -> {
+                if (evt.isShiftClick()) {
+                    editPageItem.accept(evt);
+                    return;
+                }
+                ctx.getMenu().transition(new NPCShopPageSettings(shop.getOrCreatePage(page)));
+            });
         }
 
         @Override
