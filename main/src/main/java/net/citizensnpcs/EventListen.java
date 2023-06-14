@@ -416,6 +416,13 @@ public class EventListen implements Listener {
         skinUpdateTracker.onNPCDespawn(event.getNPC());
     }
 
+    @EventHandler
+    public void onNPCKnockback(NPCKnockbackEvent event) {
+        if (event.getNPC().data().has(NPC.Metadata.KNOCKBACK)) {
+            event.setCancelled(!event.getNPC().data().get(NPC.Metadata.KNOCKBACK, true));
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCRemove(NPCRemoveEvent event) {
         toRespawn.values().remove(event.getNPC());
