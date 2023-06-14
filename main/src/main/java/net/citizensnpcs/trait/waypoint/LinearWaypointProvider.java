@@ -326,7 +326,11 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 event.setCancelled(true);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
                     conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
-                    conversation.addConversationAbandonedListener(e -> conversation = null);
+                    conversation.addConversationAbandonedListener(e -> {
+                        setPaused(false);
+                        conversation = null;
+                    });
+                    setPaused(true);
                 });
             } else if (message.equalsIgnoreCase("clear")) {
                 event.setCancelled(true);

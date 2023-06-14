@@ -1341,6 +1341,23 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "knockback (--explicit true|false)",
+            desc = "Toggle NPC knockback",
+            modifiers = { "knockback" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.knockback")
+    public void knockback(CommandContext args, CommandSender sender, NPC npc, @Flag("explicit") Boolean explicit) {
+        boolean kb = !npc.data().get(NPC.Metadata.KNOCKBACK, true);
+        if (explicit != null) {
+            kb = explicit;
+        }
+        npc.data().set(NPC.Metadata.KNOCKBACK, kb);
+        Messaging.sendTr(sender, kb ? Messages.KNOCKBACK_SET : Messages.KNOCKBACK_UNSET, npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "leashable",
             desc = "Toggles leashability",
             modifiers = { "leashable" },

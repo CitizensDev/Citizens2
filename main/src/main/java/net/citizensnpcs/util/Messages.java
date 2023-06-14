@@ -76,6 +76,8 @@ public class Messages {
     public static final String COMMAND_RIGHT_HAND_HEADER = "citizens.commands.npc.command.right-hand-header";
     public static final String COMMAND_SAVE_HELP = "citizens.commands.citizens.save.help";
     public static final String COMMAND_TEMPORARY_PERMISSIONS_SET = "citizens.commands.npc.command.temporary-permissions-set";
+    public static final String COMMAND_TRIGGER_ADDED = "citizens.editors.waypoints.triggers.command.added";
+    public static final String COMMAND_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.command.prompt";
     public static final String COMMAND_UNKNOWN_COMMAND_ID = "citizens.commands.npc.command.unknown-id";
     public static final String COMMANDS_PERSIST_SEQUENCE_SET = "citizens.commands.npc.command.persist-sequence-set";
     public static final String COMMANDS_PERSIST_SEQUENCE_UNSET = "citizens.commands.npc.command.persist-sequence-unset";
@@ -199,6 +201,8 @@ public class Messages {
     public static final String INVALID_TROPICALFISH_PATTERN = "citizens.commands.npc.tropicalfish.invalid-pattern";
     public static final String INVALID_VILLAGER_TYPE = "citizens.commands.npc.villager.invalid-type";
     public static final String ITEM_SET = "citizens.commands.npc.item.item-set";
+    public static final String KNOCKBACK_SET = "citizens.commands.npc.knockback.set";
+    public static final String KNOCKBACK_UNSET = "citizens.commands.npc.knockback.unset";
     public static final String LEASHABLE_SET = "citizens.commands.npc.leashable.set";
     public static final String LEASHABLE_STOPPED = "citizens.commands.npc.leashable.stopped";
     public static final String LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT = "citizens.editors.waypoints.linear.added-waypoint";

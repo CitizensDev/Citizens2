@@ -56,7 +56,11 @@ public class AnimationTriggerPrompt extends StringPrompt implements WaypointTrig
 
     @Override
     public WaypointTrigger createFromShortInput(ConversationContext context, String input) {
-        return null;
+        PlayerAnimation anim = Util.matchEnum(PlayerAnimation.values(), input);
+        if (anim == null)
+            return null;
+
+        return new AnimationTrigger(Lists.newArrayList(anim), at);
     }
 
     @Override

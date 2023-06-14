@@ -66,10 +66,17 @@ public class CatTrait extends Trait {
     }
 
     public void setType(Cat.Type type) {
+        if (type == null) {
+            type = Cat.Type.BLACK;
+        }
         this.type = type;
     }
 
     public void setType(Type type2) {
+        if (type2 == null) {
+            this.type = Cat.Type.BLACK;
+            return;
+        }
         switch (type2) {
             case WILD_OCELOT:
                 this.type = Cat.Type.CALICO;
