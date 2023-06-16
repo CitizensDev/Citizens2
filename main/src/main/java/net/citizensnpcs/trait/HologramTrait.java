@@ -202,7 +202,10 @@ public class HologramTrait extends Trait {
     public void load(DataKey root) {
         clear();
         for (DataKey key : root.getRelative("lines").getIntegerSubKeys()) {
-            lines.add(new HologramLine(key.getString(""), true));
+            HologramLine line = new HologramLine(key.keyExists("text") ? key.getString("text") : key.getString(""), true);
+            line.mt = key.keyExists("margin.top") ? key.getDouble("margin.top") : 0.0;
+            line.mb = key.keyExists("margin.bottom") ? key.getDouble("margin.bottom") : 0.0;
+            lines.add(line);
         }
     }
 
@@ -353,7 +356,9 @@ public class HologramTrait extends Trait {
         for (HologramLine line : lines) {
             if (!line.persist)
                 continue;
-            root.setString("lines." + i, line.text);
+            root.setString("lines." + i + ".text", line.text);
+            root.setDouble("lines." + i + ".margin.top", line.mt);
+            root.setDouble("lines." + i + ".margin.bottom", line.mb);
             i++;
         }
     }
@@ -403,6 +408,26 @@ public class HologramTrait extends Trait {
     }
 
     /**
+     * Sets the margin of a line at a specific index
+     *
+     * @param idx
+     *            The index
+     * @param type
+     *            The margin type, top or bottom
+     * @param margin
+     *            The margin
+     */
+    public void setMargin(int idx, String type, double margin) {
+        if (type.equalsIgnoreCase("top")) {
+            lines.get(idx).mt = margin;
+        }
+        else if (type.equalsIgnoreCase("bottom")) {
+            lines.get(idx).mb = margin;
+        }
+        reloadLineHolograms();
+    }
+
+    /**
      * Implementation-specific method: {@see NPC.Metadata#HOLOGRAM_LINE_SUPPLIER}
      */
     public void setPerPlayerTextSupplier(BiFunction<String, Player, String> nameSupplier) {
@@ -432,7 +457,8 @@ public class HologramTrait extends Trait {
 
     private class HologramLine implements Function<Player, String> {
         NPC hologram;
-        double mb, mt;
+        double mb = 0;
+        double mt = 0;
         boolean persist;
         String text;
         int ticks;

@@ -1081,14 +1081,14 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] | set [line #] [text] | remove [line #] | clear | lineheight [height] | direction [up|down]",
+            usage = "hologram add [text] | set [line #] [text] | remove [line #] | clear | lineheight [height] | direction [top|bottom] | margin [line #] [top|bottom] [margin]",
             desc = "Controls NPC hologram text",
             modifiers = { "hologram" },
             min = 1,
             max = -1,
             permission = "citizens.npc.hologram")
     public void hologram(CommandContext args, CommandSender sender, NPC npc,
-            @Arg(value = 1, completions = { "add", "set", "remove", "clear", "lineheight", "direction" }) String action)
+            @Arg(value = 1, completions = { "add", "set", "remove", "clear", "lineheight", "direction", "margin" }) String action)
             throws CommandException {
         HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
         if (args.argsLength() == 1) {
@@ -1148,6 +1148,19 @@ public class NPCCommands {
                     : HologramDirection.TOP_DOWN;
             trait.setDirection(direction);
             Messaging.sendTr(sender, Messages.HOLOGRAM_DIRECTION_SET, Util.prettyEnum(direction));
+        } else if (action.equalsIgnoreCase("margin")) {
+            if (args.argsLength() == 2) {
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+            }
+            int idx = Math.max(0, args.getInteger(2));
+            if (idx >= trait.getLines().size()) {
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+            }
+            if (args.argsLength() == 3 || args.argsLength() == 4) {
+                throw new CommandException(Messages.HOLOGRAM_MARGIN_MISSING);
+            }
+            trait.setMargin(idx, args.getString(3), args.getDouble(4));
+            Messaging.sendTr(sender, Messages.HOLOGRAM_MARGIN_SET, idx, args.getString(3), args.getDouble(4));
         }
     }
 
