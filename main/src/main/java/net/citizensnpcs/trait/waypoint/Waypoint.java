@@ -116,21 +116,18 @@ public class Waypoint implements Locatable {
     }
 
     private void runTriggers(final NPC npc, int start) {
+        List<WaypointTrigger> triggers = Lists.newArrayList(this.triggers);
         for (int i = start; i < triggers.size(); i++) {
             WaypointTrigger trigger = triggers.get(i);
-            trigger.onWaypointReached(npc, location);
+            trigger.onWaypointReached(npc, location.clone());
             if (!(trigger instanceof DelayTrigger))
                 continue;
             int delay = ((DelayTrigger) trigger).getDelay();
             if (delay <= 0)
                 continue;
             final int newStart = i + 1;
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    runTriggers(npc, newStart);
-                }
-            }, delay);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> runTriggers(npc, newStart),
+                    delay);
             break;
         }
     }
