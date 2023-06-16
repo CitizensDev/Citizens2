@@ -457,8 +457,7 @@ public class HologramTrait extends Trait {
 
     private class HologramLine implements Function<Player, String> {
         NPC hologram;
-        double mb = 0;
-        double mt = 0;
+        double mb, mt;
         boolean persist;
         String text;
         int ticks;
