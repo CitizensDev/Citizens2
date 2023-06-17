@@ -16,7 +16,6 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.nms.v1_11_R1.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_11_R1.Entity;
@@ -26,12 +25,15 @@ import net.minecraft.server.v1_11_R1.EntityTrackerEntry;
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private Entity tracker;
 
+    private Map<EntityPlayer, Boolean> trackingMap;
+
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {
         super(entity, i, j, k, flag);
         tracker = getTracker(this);
         if (TRACKING_MAP_SETTER != null) {
             try {
                 Map<EntityPlayer, Boolean> delegate = (Map<EntityPlayer, Boolean>) TRACKING_MAP_GETTER.invoke(this);
+                trackingMap = delegate;
                 TRACKING_MAP_SETTER.invoke(this, new ForwardingMap<EntityPlayer, Boolean>() {
                     @Override
                     protected Map<EntityPlayer, Boolean> delegate() {
@@ -78,6 +80,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         this(getTracker(entry), getE(entry), getF(entry), getG(entry), getU(entry));
     }
 
+    private boolean isTracked(EntityPlayer player) {
+        return trackingMap != null ? trackingMap.containsKey(player) : trackedPlayers.contains(player);
+    }
+
     public void updateLastPlayer(EntityPlayer lastUpdatedPlayer) {
         if (lastUpdatedPlayer == null || tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
@@ -93,16 +99,15 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
-        // prevent updates to NPC "viewers"
-        if (entityplayer instanceof EntityHumanNPC)
-            return;
-        if (tracker instanceof NPCHolder) {
+        if (!tracker.dead && !isTracked(entityplayer) && tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
             NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled())
                 return;
         }
+        if (entityplayer instanceof NPCHolder)
+            return;
         super.updatePlayer(entityplayer);
     }
 

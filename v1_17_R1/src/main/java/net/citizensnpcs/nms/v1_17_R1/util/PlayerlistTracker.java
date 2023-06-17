@@ -52,7 +52,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
 
     @Override
     public void updatePlayer(final ServerPlayer entityplayer) {
-        if (tracker instanceof NPCHolder) {
+        if (!tracker.isRemoved() && !seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
             NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
             REQUIRES_SYNC = Util.callEventPossiblySync(event, REQUIRES_SYNC);

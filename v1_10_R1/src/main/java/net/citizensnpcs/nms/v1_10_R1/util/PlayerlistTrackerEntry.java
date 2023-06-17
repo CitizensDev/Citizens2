@@ -31,7 +31,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         if (entityplayer instanceof EntityHumanNPC)
             return;
         Entity tracker = getTracker(this);
-        if (tracker instanceof NPCHolder) {
+        if (!trackedPlayers.contains(entityplayer) && tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
             NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);

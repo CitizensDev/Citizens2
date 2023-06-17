@@ -26,12 +26,15 @@ import net.minecraft.server.v1_12_R1.EntityTrackerEntry;
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private final Entity tracker;
 
+    private Map<EntityPlayer, Boolean> trackingMap;
+
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {
         super(entity, i, j, k, flag);
         this.tracker = getTracker(this);
         if (TRACKING_MAP_SETTER != null) {
             try {
                 Map<EntityPlayer, Boolean> delegate = (Map<EntityPlayer, Boolean>) TRACKING_MAP_GETTER.invoke(this);
+                trackingMap = delegate;
                 TRACKING_MAP_SETTER.invoke(this, new ForwardingMap<EntityPlayer, Boolean>() {
                     @Override
                     protected Map<EntityPlayer, Boolean> delegate() {
@@ -78,6 +81,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         this(getTracker(entry), getE(entry), getF(entry), getG(entry), getU(entry));
     }
 
+    private boolean isTracked(EntityPlayer player) {
+        return trackingMap != null ? trackingMap.containsKey(player) : trackedPlayers.contains(player);
+    }
+
     public void updateLastPlayer(EntityPlayer lastUpdatedPlayer) {
         if (lastUpdatedPlayer == null || tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
@@ -93,7 +100,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
-        if (tracker instanceof NPCHolder) {
+        if (!tracker.dead && !isTracked(entityplayer) && tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
             NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);

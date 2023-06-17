@@ -79,7 +79,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         if (entityplayer instanceof EntityHumanNPC)
             return;
 
-        if (tracker instanceof NPCHolder) {
+        if (!tracker.isRemoved() && !seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
             if (REQUIRES_SYNC == null) {
                 REQUIRES_SYNC = !Bukkit.isPrimaryThread();
