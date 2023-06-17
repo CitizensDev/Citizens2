@@ -74,7 +74,15 @@ public class ShulkerController extends MobEntityController {
 
         @Override
         public boolean a(Tag<FluidType> tag, double d0) {
-            return NMSImpl.fluidPush(npc, this, () -> super.a(tag, d0));
+            if (npc == null) {
+                return super.a(tag, d0);
+            }
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setMot(old);
+            }
+            return res;
         }
 
         @Override
@@ -110,8 +118,6 @@ public class ShulkerController extends MobEntityController {
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
         }
-
-        
 
         @Override
         public void g(Vec3D vec3d) {

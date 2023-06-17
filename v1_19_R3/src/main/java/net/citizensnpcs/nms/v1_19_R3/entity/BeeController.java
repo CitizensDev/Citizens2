@@ -28,6 +28,7 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class BeeController extends MobEntityController {
     public BeeController() {
@@ -84,8 +85,6 @@ public class BeeController extends MobEntityController {
                 npc.update();
             }
         }
-
-        
 
         @Override
         public SoundEvent getAmbientSound() {
@@ -174,7 +173,15 @@ public class BeeController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            return NMSImpl.fluidPush(npc, this, () -> super.updateFluidHeightAndDoFluidPushing(tagkey, d0));
+            if (npc == null) {
+                return super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            }
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 }

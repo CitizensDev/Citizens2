@@ -96,7 +96,15 @@ public class CreeperController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+            if (npc == null) {
+                return super.b(tag);
+            }
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                setMot(old);
+            }
+            return res;
         }
 
         @Override
@@ -133,8 +141,6 @@ public class CreeperController extends MobEntityController {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
         }
-
-        
 
         @Override
         public void f(double x, double y, double z) {

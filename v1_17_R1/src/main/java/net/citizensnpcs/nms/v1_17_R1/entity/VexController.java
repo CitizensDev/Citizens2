@@ -26,6 +26,7 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class VexController extends MobEntityController {
     public VexController() {
@@ -75,8 +76,6 @@ public class VexController extends MobEntityController {
                 npc.update();
             }
         }
-
-        
 
         @Override
         protected SoundEvent getAmbientSound() {
@@ -158,7 +157,15 @@ public class VexController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
-            return NMSImpl.fluidPush(npc, this, () -> super.updateFluidHeightAndDoFluidPushing(Tag, d0));
+            if (npc == null) {
+                return super.updateFluidHeightAndDoFluidPushing(Tag, d0);
+            }
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 

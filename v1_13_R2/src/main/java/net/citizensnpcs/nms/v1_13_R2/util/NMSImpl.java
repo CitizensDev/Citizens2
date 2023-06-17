@@ -1758,22 +1758,6 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
-    public static boolean fluidPush(NPC npc, Entity entity, Supplier<Boolean> func) {
-        if (npc == null) {
-            return func.get();
-        }
-        double mx = entity.motX;
-        double my = entity.motY;
-        double mz = entity.motZ;
-        boolean res = func.get();
-        if (!npc.isPushableByFluids()) {
-            entity.motX = mx;
-            entity.motY = my;
-            entity.motZ = mz;
-        }
-        return res;
-    }
-
     public static void flyingMoveLogic(EntityLiving entity, float f, float f1, float f2) {
         if ((entity.cP()) || (entity.bT())) {
             double d0 = 0.08D;

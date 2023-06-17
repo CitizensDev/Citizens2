@@ -30,6 +30,7 @@ import net.minecraft.server.v1_14_R1.Items;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.PlayerInteractManager;
 import net.minecraft.server.v1_14_R1.Tag;
+import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.World;
 import net.minecraft.server.v1_14_R1.WorldServer;
 
@@ -65,7 +66,15 @@ public class FishingHookController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+            if (npc == null) {
+                return super.b(tag);
+            }
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                setMot(old);
+            }
+            return res;
         }
 
         @Override

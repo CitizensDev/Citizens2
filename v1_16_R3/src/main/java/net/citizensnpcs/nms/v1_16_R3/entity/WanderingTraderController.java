@@ -95,7 +95,15 @@ public class WanderingTraderController extends MobEntityController {
 
         @Override
         public boolean a(Tag<FluidType> tag, double d0) {
-            return NMSImpl.fluidPush(npc, this, () -> super.a(tag, d0));
+            if (npc == null) {
+                return super.a(tag, d0);
+            }
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setMot(old);
+            }
+            return res;
         }
 
         @Override
@@ -153,8 +161,6 @@ public class WanderingTraderController extends MobEntityController {
             }
             return super.eN();
         }
-
-        
 
         @Override
         public void g(Vec3D vec3d) {

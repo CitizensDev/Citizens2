@@ -89,7 +89,19 @@ public class PigController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+            if (npc == null) {
+                return super.b(tag);
+            }
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override
@@ -139,8 +151,6 @@ public class PigController extends MobEntityController {
             // block carrot-on-a-stick behaviour
             return npc == null ? super.dh() : false;
         }
-
-        
 
         @Override
         public void f(double x, double y, double z) {

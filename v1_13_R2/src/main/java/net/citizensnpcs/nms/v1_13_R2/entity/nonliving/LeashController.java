@@ -50,7 +50,19 @@ public class LeashController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+            if (npc == null) {
+                return super.b(tag);
+            }
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override

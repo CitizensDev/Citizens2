@@ -1904,18 +1904,6 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
-    public static boolean fluidPush(NPC npc, Entity entity, Supplier<Boolean> func) {
-        if (npc == null) {
-            return func.get();
-        }
-        Vec3 old = entity.getDeltaMovement().add(0, 0, 0);
-        boolean res = func.get();
-        if (!npc.isPushableByFluids()) {
-            entity.setDeltaMovement(old);
-        }
-        return res;
-    }
-
     public static void flyingMoveLogic(LivingEntity entity, Vec3 vec3d) {
         if (entity.isEffectiveAi() || entity.isControlledByLocalInstance()) {
             double d0 = 0.08D;

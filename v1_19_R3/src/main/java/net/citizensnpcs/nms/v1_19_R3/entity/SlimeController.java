@@ -7,10 +7,10 @@ import org.bukkit.craftbukkit.v1_19_R3.entity.CraftSlime;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_19_R3.util.EntityMoveControl;
 import net.citizensnpcs.nms.v1_19_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_19_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_19_R3.util.NMSImpl;
-import net.citizensnpcs.nms.v1_19_R3.util.EntityMoveControl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
@@ -93,8 +93,6 @@ public class SlimeController extends MobEntityController {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
         }
-
-        
 
         @Override
         protected SoundEvent getAmbientSound() {
@@ -232,7 +230,15 @@ public class SlimeController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            return NMSImpl.fluidPush(npc, this, () -> super.updateFluidHeightAndDoFluidPushing(tagkey, d0));
+            if (npc == null) {
+                return super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            }
+            Vec3 old = getDeltaMovement().add(0, 0, 0);
+            boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
+            if (!npc.isPushableByFluids()) {
+                setDeltaMovement(old);
+            }
+            return res;
         }
     }
 

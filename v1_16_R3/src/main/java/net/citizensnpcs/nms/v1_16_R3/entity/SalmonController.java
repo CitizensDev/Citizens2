@@ -8,10 +8,10 @@ import org.bukkit.entity.Salmon;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_16_R3.util.EntityMoveControl;
 import net.citizensnpcs.nms.v1_16_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
-import net.citizensnpcs.nms.v1_16_R3.util.EntityMoveControl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
@@ -86,7 +86,15 @@ public class SalmonController extends MobEntityController {
 
         @Override
         public boolean a(Tag<FluidType> tag, double d0) {
-            return NMSImpl.fluidPush(npc, this, () -> super.a(tag, d0));
+            if (npc == null) {
+                return super.a(tag, d0);
+            }
+            Vec3D old = getMot().add(0, 0, 0);
+            boolean res = super.a(tag, d0);
+            if (!npc.isPushableByFluids()) {
+                setMot(old);
+            }
+            return res;
         }
 
         @Override
@@ -133,8 +141,6 @@ public class SalmonController extends MobEntityController {
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
         }
-
-        
 
         @Override
         public void g(Vec3D vec3d) {

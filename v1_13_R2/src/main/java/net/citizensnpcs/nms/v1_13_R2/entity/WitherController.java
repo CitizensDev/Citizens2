@@ -61,7 +61,19 @@ public class WitherController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            return NMSImpl.fluidPush(npc, this, () -> super.b(tag));
+            if (npc == null) {
+                return super.b(tag);
+            }
+            double mx = motX;
+            double my = motY;
+            double mz = motZ;
+            boolean res = super.b(tag);
+            if (!npc.isPushableByFluids()) {
+                motX = mx;
+                motY = my;
+                motZ = mz;
+            }
+            return res;
         }
 
         @Override
@@ -103,8 +115,6 @@ public class WitherController extends MobEntityController {
             return npc == null || !npc.data().has("wither-arrow-shield") ? super.dA()
                     : npc.data().get("wither-arrow-shield");
         }
-
-        
 
         @Override
         public void f(double x, double y, double z) {
