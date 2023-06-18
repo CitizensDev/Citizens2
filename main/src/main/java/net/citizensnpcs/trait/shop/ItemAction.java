@@ -62,6 +62,8 @@ public class ItemAction extends NPCShopAction {
             if (tooDamaged(toMatch))
                 continue;
             for (int j = 0; j < items.size(); j++) {
+                if (toMatch == null)
+                    break;
                 ItemStack item = items.get(j);
                 if (req.get(j) <= 0 || !matches(item, toMatch))
                     continue;
@@ -75,6 +77,7 @@ public class ItemAction extends NPCShopAction {
                     source.setItem(i, res);
                 }
                 req.set(j, remaining - taken);
+                toMatch = res;
             }
         }
         return req.stream().collect(Collectors.summingInt(n -> n)) <= 0;
@@ -95,14 +98,6 @@ public class ItemAction extends NPCShopAction {
             }
         }
         return description;
-    }
-
-    private boolean tooDamaged(ItemStack toMatch) {
-        if (!requireUndamaged)
-            return false;
-        if (SpigotUtil.isUsing1_13API())
-            return toMatch.getItemMeta() instanceof Damageable && ((Damageable) toMatch.getItemMeta()).getDamage() != 0;
-        return toMatch.getDurability() == toMatch.getType().getMaxDurability();
     }
 
     @Override
@@ -214,6 +209,14 @@ public class ItemAction extends NPCShopAction {
         }, () -> {
             source.addItem(items.stream().map(ItemStack::clone).toArray(ItemStack[]::new));
         });
+    }
+
+    private boolean tooDamaged(ItemStack toMatch) {
+        if (!requireUndamaged)
+            return false;
+        if (SpigotUtil.isUsing1_13API())
+            return toMatch.getItemMeta() instanceof Damageable && ((Damageable) toMatch.getItemMeta()).getDamage() != 0;
+        return toMatch.getDurability() == toMatch.getType().getMaxDurability();
     }
 
     @Menu(title = "Item editor", dimensions = { 4, 9 })
