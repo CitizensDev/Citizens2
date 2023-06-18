@@ -348,15 +348,17 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     public void onDependentPluginDisable() {
-        storeNPCs(false);
-        saveOnDisable = false;
+        if (enabled) {
+            storeNPCs(false);
+            saveOnDisable = false;
+        }
     }
 
     @Override
     public void onDisable() {
-        if (!enabled) {
+        if (!enabled)
             return;
-        }
+
         Bukkit.getPluginManager().callEvent(new CitizensDisableEvent());
         Editor.leaveAll();
         despawnNPCs(saveOnDisable);
@@ -388,7 +390,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 e.printStackTrace();
             }
             Messaging.severeTr(Messages.CITIZENS_INCOMPATIBLE, getDescription().getVersion(), mcVersion);
-            enabled = true;
+            NMS.shutdown();
+            CitizensAPI.shutdown();
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -625,6 +628,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     }
                 }
             }
+
 
             saves.loadInto(npcRegistry);
             shops.load();

@@ -2,7 +2,6 @@ package net.citizensnpcs.trait.shop;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -52,7 +51,7 @@ public class ItemAction extends NPCShopAction {
         this.items = items;
     }
 
-    private boolean containsItems(Inventory source, int repeats, BiFunction<ItemStack, Integer, ItemStack> filter) {
+    private boolean containsItems(Inventory source, int repeats, boolean modify) {
         List<Integer> req = items.stream().map(i -> i.getAmount() * repeats).collect(Collectors.toList());
         ItemStack[] contents = source.getContents();
         for (int i = 0; i < contents.length; i++) {
@@ -61,6 +60,7 @@ public class ItemAction extends NPCShopAction {
                 continue;
             if (tooDamaged(toMatch))
                 continue;
+            toMatch = toMatch.clone();
             for (int j = 0; j < items.size(); j++) {
                 if (toMatch == null)
                     break;
@@ -70,14 +70,21 @@ public class ItemAction extends NPCShopAction {
 
                 int remaining = req.get(j);
                 int taken = toMatch.getAmount() > remaining ? remaining : toMatch.getAmount();
-                ItemStack res = filter.apply(toMatch, taken);
-                if (res == null) {
-                    source.clear(i);
+
+                if (toMatch.getAmount() == taken) {
+                    toMatch = null;
                 } else {
-                    source.setItem(i, res);
+                    toMatch.setAmount(toMatch.getAmount() - taken);
+                }
+
+                if (modify) {
+                    if (toMatch == null) {
+                        source.clear(i);
+                    } else {
+                        source.setItem(i, toMatch.clone());
+                    }
                 }
                 req.set(j, remaining - taken);
-                toMatch = res;
             }
         }
         return req.stream().collect(Collectors.summingInt(n -> n)) <= 0;
@@ -196,16 +203,9 @@ public class ItemAction extends NPCShopAction {
             return Transaction.fail();
         Inventory source = ((InventoryHolder) entity).getInventory();
         return Transaction.create(() -> {
-            return containsItems(source, repeats, (stack, taken) -> stack);
+            return containsItems(source, repeats, false);
         }, () -> {
-            containsItems(source, repeats, (stack, taken) -> {
-                if (stack.getAmount() == taken) {
-                    return null;
-                } else {
-                    stack.setAmount(stack.getAmount() - taken);
-                    return stack;
-                }
-            });
+            containsItems(source, repeats, true);
         }, () -> {
             source.addItem(items.stream().map(ItemStack::clone).toArray(ItemStack[]::new));
         });
