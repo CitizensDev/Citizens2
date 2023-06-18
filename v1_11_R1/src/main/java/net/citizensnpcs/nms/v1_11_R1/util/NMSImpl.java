@@ -1130,6 +1130,7 @@ public class NMSImpl implements NMSBridge {
         EntityTrackerEntry entry = server.getTracker().trackedEntities.get(entity.getEntityId());
         if (entry == null)
             return;
+        entry.a();
         PlayerlistTrackerEntry replace = new PlayerlistTrackerEntry(entry);
         server.getTracker().trackedEntities.a(entity.getEntityId(), replace);
         if (TRACKED_ENTITY_SET != null) {

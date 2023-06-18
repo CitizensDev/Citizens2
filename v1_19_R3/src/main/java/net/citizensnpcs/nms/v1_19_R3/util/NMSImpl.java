@@ -1349,6 +1349,7 @@ public class NMSImpl implements NMSBridge {
         TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
         if (entry == null)
             return;
+        entry.broadcastRemoved();
         CitizensEntityTracker replace = new CitizensEntityTracker(server.getChunkSource().chunkMap, entry);
         server.getChunkSource().chunkMap.entityMap.put(entity.getEntityId(), replace);
     }
