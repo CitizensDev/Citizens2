@@ -217,6 +217,20 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
+    public UUID getMinecraftUniqueId() {
+        if (getEntityType() == EntityType.PLAYER) {
+            UUID uuid = getUniqueId();
+            if (uuid.version() == 4) { // set version to 2
+                long msb = uuid.getMostSignificantBits();
+                msb &= ~0x0000000000004000L;
+                msb |= 0x0000000000002000L;
+                return new UUID(msb, uuid.getLeastSignificantBits());
+            }
+        }
+        return getUniqueId();
+    }
+
+    @Override
     public GoalController getDefaultGoalController() {
         return goalController;
     }

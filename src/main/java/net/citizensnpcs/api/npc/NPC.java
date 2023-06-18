@@ -114,6 +114,15 @@ public interface NPC extends Agent, Cloneable {
     public BlockBreaker getBlockBreaker(Block targetBlock, BlockBreakerConfiguration config);
 
     /**
+     * For certain mob types (currently, Players) it is beneficial to change the UUID slightly to signal to the client
+     * that the mob is an NPC not a real mob. This will return {@link #getUniqueId()} with the necessary changes for the
+     * current mob type.
+     *
+     * @return The client unique ID.
+     */
+    public UUID getMinecraftUniqueId();
+
+    /**
      * Gets the default {@link GoalController} of this NPC.
      *
      * @return Default goal controller
