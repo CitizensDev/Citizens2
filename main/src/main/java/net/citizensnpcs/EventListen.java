@@ -506,6 +506,8 @@ public class EventListen implements Listener {
         if (SUPPORT_STOP_USE_ITEM) {
             try {
                 PlayerAnimation.STOP_USE_ITEM.play(player);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                        () -> PlayerAnimation.STOP_USE_ITEM.play(player));
             } catch (UnsupportedOperationException e) {
                 SUPPORT_STOP_USE_ITEM = false;
             }
