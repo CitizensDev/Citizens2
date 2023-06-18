@@ -31,6 +31,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Joiner;
@@ -180,6 +181,8 @@ public class CommandManager implements TabCompleter {
                     val = Float.parseFloat(val.toString());
                 } else if (desiredType == Location.class) {
                     val = CommandContext.parseLocation(context.getSenderLocation(), val.toString());
+                } else if (desiredType == ItemStack.class) {
+                    val = CommandContext.parseItemStack(val.toString());
                 } else if (desiredType == UUID.class) {
                     val = UUID.fromString(val.toString());
                 } else if (desiredType == Duration.class) {
