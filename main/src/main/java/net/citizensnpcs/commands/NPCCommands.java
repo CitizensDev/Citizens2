@@ -78,6 +78,8 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -1088,7 +1090,10 @@ public class NPCCommands {
             max = -1,
             permission = "citizens.npc.hologram")
     public void hologram(CommandContext args, CommandSender sender, NPC npc,
-            @Arg(value = 1, completions = { "add", "set", "remove", "clear", "lineheight", "direction", "margintop", "marginbottom" }) String action)
+            @Arg(
+                    value = 1,
+                    completions = { "add", "set", "remove", "clear", "lineheight", "direction", "margintop",
+                            "marginbottom" }) String action)
             throws CommandException {
         HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
         if (args.argsLength() == 1) {
@@ -2619,6 +2624,27 @@ public class NPCCommands {
         } else {
             NPCCommandSelector.startWithCallback(callback, registry, sender, args, args.getString(1));
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "setequipment [slot] [item]",
+            desc = "Sets equipment via commands",
+            modifiers = { "setequipment" },
+            min = 2,
+            max = 3,
+            permission = "citizens.npc.setequipment")
+    public void setequipment(CommandContext args, CommandSender sender, NPC npc, @Arg(1) EquipmentSlot slot,
+            @Arg(2) ItemStack item) throws CommandException {
+        if (slot == null)
+            throw new CommandUsageException();
+        if (item == null && args.argsLength() == 3 && args.getString(2).equalsIgnoreCase("hand")) {
+            if (!(sender instanceof Player))
+                throw new ServerCommandException();
+            item = ((Player) sender).getItemInHand().clone();
+        }
+        npc.getOrAddTrait(Equipment.class).set(slot, item);
+        Messaging.sendTr(sender, Messages.EQUIPMENT_SET, slot, item);
     }
 
     @Command(

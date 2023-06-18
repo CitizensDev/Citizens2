@@ -104,6 +104,7 @@ public class Messages {
     public static final String EQUIPMENT_EDITOR_BEGIN = "citizens.editors.equipment.begin";
     public static final String EQUIPMENT_EDITOR_END = "citizens.editors.equipment.end";
     public static final String EQUIPMENT_EDITOR_SHEEP_COLOURED = "citizens.editors.equipment.sheep-coloured";
+    public static final String EQUIPMENT_SET = "citizens.commands.npc.setequipment.set";
     public static final String ERROR_CLEARING_GOALS = "citizens.nms-errors.clearing-goals";
     public static final String ERROR_GETTING_FIELD = "citizens.nms-errors.getting-field";
     public static final String ERROR_GETTING_ID_MAPPING = "citizens.nms-errors.getting-id-mapping";
@@ -156,10 +157,10 @@ public class Messages {
     public static final String HOLOGRAM_LINE_HEIGHT_SET = "citizens.commands.npc.hologram.line-height-set";
     public static final String HOLOGRAM_LINE_REMOVED = "citizens.commands.npc.hologram.line-removed";
     public static final String HOLOGRAM_LINE_SET = "citizens.commands.npc.hologram.text-set";
-    public static final String HOLOGRAM_TEXT_MISSING = "citizens.commands.npc.hologram.text-missing";
-    public static final String HOLOGRAM_TEXT_REMOVED = "citizens.commands.npc.hologram.text-removed";
     public static final String HOLOGRAM_MARGIN_MISSING = "citizens.commands.npc.hologram.margin-missing";
     public static final String HOLOGRAM_MARGIN_SET = "citizens.commands.npc.hologram.margin-set";
+    public static final String HOLOGRAM_TEXT_MISSING = "citizens.commands.npc.hologram.text-missing";
+    public static final String HOLOGRAM_TEXT_REMOVED = "citizens.commands.npc.hologram.text-removed";
     public static final String HOME_TRAIT_DELAY_SET = "citizens.commands.npc.home.delay-set";
     public static final String HOME_TRAIT_DISTANCE_SET = "citizens.commands.npc.home.distance-set";
     public static final String HOME_TRAIT_LOCATION_SET = "citizens.commands.npc.home.home-set";

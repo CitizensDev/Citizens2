@@ -718,8 +718,6 @@ public class EventListen implements Listener {
             Method getAcceleration = kbc.getMethod("getAcceleration");
             handlers.register(new RegisteredListener(new Listener() {
             }, (listener, event) -> {
-                if (NPCKnockbackEvent.getHandlerList().getRegisteredListeners().length == 0)
-                    return;
                 try {
                     Entity entity = (Entity) getEntity.invoke(event);
                     if (!(entity instanceof NPCHolder))
