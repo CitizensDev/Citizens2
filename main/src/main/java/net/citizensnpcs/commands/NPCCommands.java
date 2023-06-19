@@ -19,6 +19,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -2884,8 +2885,8 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.sound")
     @Requirements(selected = true, ownership = true, livingEntity = true)
-    public void sound(CommandContext args, CommandSender sender, NPC npc, @Flag("death") String death,
-            @Flag("ambient") String ambient, @Flag("hurt") String hurt) throws CommandException {
+    public void sound(CommandContext args, CommandSender sender, NPC npc, @Flag("death") Sound death,
+            @Flag("ambient") Sound ambient, @Flag("hurt") Sound hurt) throws CommandException {
         String ambientSound = npc.data().get(NPC.Metadata.AMBIENT_SOUND);
         String deathSound = npc.data().get(NPC.Metadata.DEATH_SOUND);
         String hurtSound = npc.data().get(NPC.Metadata.HURT_SOUND);
@@ -2906,13 +2907,21 @@ public class NPCCommands {
             npc.data().setPersistent(NPC.Metadata.SILENT, false);
         } else {
             if (death != null) {
-                deathSound = death.equals("d") ? null : NMS.getSound(death);
+                deathSound = NMS.getSoundPath(death);
+            } else if (args.hasValueFlag("death")) {
+                deathSound = args.getFlag("death").equals("d") ? null : args.getFlag("death");
             }
+
             if (ambient != null) {
-                ambientSound = ambient.equals("d") ? null : NMS.getSound(ambient);
+                ambientSound = NMS.getSoundPath(ambient);
+            } else if (args.hasValueFlag("ambient")) {
+                ambientSound = args.getFlag("ambient").equals("d") ? null : args.getFlag("ambient");
             }
+
             if (hurt != null) {
-                hurtSound = hurt.equals("d") ? null : NMS.getSound(hurt);
+                hurtSound = NMS.getSoundPath(hurt);
+            } else if (args.hasValueFlag("hurt")) {
+                hurtSound = args.getFlag("hurt").equals("d") ? null : args.getFlag("hurt");
             }
         }
         if (deathSound == null) {

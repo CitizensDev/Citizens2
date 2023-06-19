@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
@@ -95,7 +96,7 @@ public interface NMSBridge {
 
     public GameProfile getProfile(SkullMeta meta);
 
-    public String getSound(String flag) throws CommandException;
+    public String getSoundPath(Sound flag) throws CommandException;
 
     public Entity getSource(BlockCommandSender sender);
 

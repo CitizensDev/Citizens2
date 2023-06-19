@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
@@ -526,8 +527,8 @@ public class NMS {
         return null;
     }
 
-    public static String getSound(String flag) throws CommandException {
-        return BRIDGE.getSound(flag);
+    public static String getSoundPath(Sound flag) throws CommandException {
+        return BRIDGE.getSoundPath(flag);
     }
 
     public static Entity getSource(BlockCommandSender sender) {

@@ -520,9 +520,9 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public String getSound(String flag) throws CommandException {
+    public String getSoundPath(Sound flag) throws CommandException {
         try {
-            String ret = CraftSound.getSound(Sound.valueOf(flag.toUpperCase()));
+            String ret = CraftSound.getSound(flag);
             if (ret == null)
                 throw new CommandException(Messages.INVALID_SOUND);
             return ret;
