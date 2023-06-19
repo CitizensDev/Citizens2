@@ -629,7 +629,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 }
             }
 
-
             saves.loadInto(npcRegistry);
             shops.load();
 

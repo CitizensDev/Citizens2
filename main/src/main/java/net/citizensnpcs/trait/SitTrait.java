@@ -38,6 +38,7 @@ public class SitTrait extends Trait {
         if (chair != null) {
             if (chair.getEntity() != null) {
                 chair.getEntity().eject();
+                npc.getEntity().teleport(npc.getEntity().getLocation().clone().add(0, 0.3, 0));
             }
             chair.destroy();
             chair = null;
@@ -56,9 +57,10 @@ public class SitTrait extends Trait {
 
         if (SUPPORT_SITTABLE && npc.getEntity() instanceof Sittable) {
             ((Sittable) npc.getEntity()).setSitting(true);
-            if (npc.getEntity().getLocation().distance(sittingAt) > 0.05) {
+            if (npc.getEntity().getLocation().distance(sittingAt) >= 0.03) {
                 npc.teleport(sittingAt, TeleportCause.PLUGIN);
             }
+            return;
         }
 
         if (chair == null) {
@@ -78,14 +80,14 @@ public class SitTrait extends Trait {
             NMS.mount(chair.getEntity(), npc.getEntity());
         }
 
-        if (chair.getStoredLocation() != null && chair.getStoredLocation().distance(sittingAt) > 0.05) {
+        if (chair.getStoredLocation() != null && chair.getStoredLocation().distance(sittingAt) >= 0.03) {
             chair.teleport(sittingAt.clone(), TeleportCause.PLUGIN);
         }
     }
 
     public void setSitting(Location at) {
-        this.sittingAt = at != null ? at.clone() : null;
-        if (!isSitting()) {
+        this.sittingAt = at != null ? at.clone().add(0, -0.3, 0) : null;
+        if (at == null) {
             onDespawn();
         }
     }

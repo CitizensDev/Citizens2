@@ -721,6 +721,8 @@ public class EventListen implements Listener {
             handlers.register(new RegisteredListener(new Listener() {
             }, (listener, event) -> {
                 try {
+                    if (event.getClass() != kbc)
+                        return;
                     Entity entity = (Entity) getEntity.invoke(event);
                     if (!(entity instanceof NPCHolder))
                         return;
@@ -750,6 +752,8 @@ public class EventListen implements Listener {
             handlers.register(new RegisteredListener(new Listener() {
             }, (listener, event) -> {
                 if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
+                    return;
+                if (event.getClass() != clazz)
                     return;
                 try {
                     Entity entity = (Entity) getEntity.invoke(event);

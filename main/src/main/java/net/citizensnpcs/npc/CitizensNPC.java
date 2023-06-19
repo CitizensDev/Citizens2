@@ -443,7 +443,7 @@ public class CitizensNPC extends AbstractNPC {
     public void teleport(Location location, TeleportCause reason) {
         if (!isSpawned())
             return;
-        if (hasTrait(SitTrait.class)) {
+        if (hasTrait(SitTrait.class) && getOrAddTrait(SitTrait.class).isSitting()) {
             getOrAddTrait(SitTrait.class).setSitting(location);
         }
         Location npcLoc = getEntity().getLocation(CACHE_LOCATION);
