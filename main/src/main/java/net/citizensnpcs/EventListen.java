@@ -430,8 +430,12 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onNPCSeenByPlayer(NPCSeenByPlayerEvent event) {
-        if (event.getNPC().hasTrait(PlayerFilter.class)) {
-            event.setCancelled(event.getNPC().getOrAddTrait(PlayerFilter.class).onSeenByPlayer(event.getPlayer()));
+        NPC npc = event.getNPC();
+        if (npc.hasTrait(ClickRedirectTrait.class)) {
+            npc = npc.getOrAddTrait(ClickRedirectTrait.class).getRedirectNPC();
+        }
+        if (npc.hasTrait(PlayerFilter.class)) {
+            event.setCancelled(npc.getOrAddTrait(PlayerFilter.class).onSeenByPlayer(event.getPlayer()));
         }
     }
 
