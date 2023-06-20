@@ -62,6 +62,8 @@ public class Messages {
     public static final String COMMAND_ADDED = "citizens.commands.npc.command.command-added";
     public static final String COMMAND_AGE_HELP = "citizens.commands.npc.age.help";
     public static final String COMMAND_COST_SET = "citizens.commands.npc.command.cost-set";
+    public static final String COMMAND_INDIVIDUAL_COST_SET = "citizens.commands.npc.command.individual-cost-set";
+    public static final String COMMAND_MISSING_COST = "citizens.commands.npc.command.cost-missing";
     public static final String COMMAND_DESCRIBE_TEMPLATE = "citizens.commands.npc.command.describe-format";
     public static final String COMMAND_EXPERIENCE_COST_SET = "citizens.commands.npc.command.experience-cost-set";
     public static final String COMMAND_HELP_HEADER = "citizens.commands.help.header";
