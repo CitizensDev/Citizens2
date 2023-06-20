@@ -117,10 +117,16 @@ public class CommandTrait extends Trait {
                         stack.getAmount());
             }
         }
-        if (hasIndividualCost(id)) {
+        if (hasIndividualCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
             action = new MoneyAction(commands.get(id).individualCost);
             if (!action.take(player, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, commands.get(id).individualCost);
+            }
+        }
+        if (hasIndividualExpCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
+            action = new ExperienceAction(commands.get(id).individualExpCost);
+            if (!action.take(player, 1).isPossible()) {
+                sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, commands.get(id).individualExpCost);
             }
         }
         return action == null ? Transaction.success() : action.take(player, 1);
@@ -211,7 +217,8 @@ public class CommandTrait extends Trait {
         String output = Messaging.tr(Messages.COMMAND_DESCRIBE_TEMPLATE,
                 command.command,
                 StringHelper.wrap(command.cooldown != 0 ? command.cooldown : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()),
-                StringHelper.wrap(hasIndividualCost(command.id) ? command.individualCost : "default"),
+
+//                StringHelper.wrap(hasIndividualCost(command.id) ? command.individualCost : "default"),
                 command.id);
         if (command.globalCooldown > 0) {
             output += "[global " + StringHelper.wrap(command.globalCooldown) + "s]";
@@ -350,6 +357,10 @@ public class CommandTrait extends Trait {
         return experienceCost;
     }
 
+    public int getIndividualExpCost(int id) {
+        return commands.get(id).individualExpCost;
+    }
+
     private int getNewId() {
         int i = 0;
         while (commands.containsKey(i)) {
@@ -364,6 +375,10 @@ public class CommandTrait extends Trait {
 
     public boolean hasIndividualCost(int id) {
         return commands.get(id).individualCost != 0;
+    }
+
+    public boolean hasIndividualExpCost(int id) {
+        return commands.get(id).individualExpCost != 0;
     }
 
     public boolean isHideErrorMessages() {
@@ -429,6 +444,10 @@ public class CommandTrait extends Trait {
 
     public void setExperienceCost(int experienceCost) {
         this.experienceCost = experienceCost;
+    }
+
+    public void setIndividualExpCost(int id, int individualExpCost) {
+        commands.get(id).individualExpCost = individualExpCost;
     }
 
     public void setHideErrorMessages(boolean hide) {
@@ -532,9 +551,11 @@ public class CommandTrait extends Trait {
         List<String> perms;
         boolean player;
         double individualCost;
+        int individualExpCost;
 
         public NPCCommand(int id, String command, Hand hand, boolean player, boolean op, int cooldown,
-                          List<String> perms, int n, int delay, int globalCooldown, double individualCost) {
+                          List<String> perms, int n, int delay, int globalCooldown, double individualCost,
+                          int individualExpCost) {
             this.id = id;
             this.command = command;
             this.hand = hand;
@@ -548,6 +569,7 @@ public class CommandTrait extends Trait {
             List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().limit(2).splitToList(command);
             this.bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
             this.individualCost = individualCost;
+            this.individualExpCost = individualExpCost;
         }
 
         public String getEncodedKey() {
@@ -572,6 +594,7 @@ public class CommandTrait extends Trait {
         List<String> perms = Lists.newArrayList();
         boolean player;
         double individualCost;
+        int individualExpCost;
 
         public NPCCommandBuilder(String command, Hand hand) {
             this.command = command;
@@ -589,7 +612,7 @@ public class CommandTrait extends Trait {
         }
 
         private NPCCommand build(int id) {
-            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown, individualCost);
+            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown, individualCost, individualExpCost);
         }
 
         public NPCCommandBuilder command(String command) {
@@ -639,6 +662,11 @@ public class CommandTrait extends Trait {
             this.individualCost = individualCost;
             return this;
         }
+
+        public NPCCommandBuilder individualExpCost(int individualExpCost) {
+            this.individualExpCost = individualExpCost;
+            return this;
+        }
     }
 
     private static class NPCCommandPersister implements Persister<NPCCommand> {
@@ -654,7 +682,8 @@ public class CommandTrait extends Trait {
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
                     Hand.valueOf(root.getString("hand")), Boolean.valueOf(root.getString("player")),
                     Boolean.valueOf(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
-                    root.getInt("delay"), root.getInt("globalcooldown"), root.getDouble("individualCost"));
+                    root.getInt("delay"), root.getInt("globalcooldown"), root.getDouble("individualCost"),
+                    root.getInt("individualExpCost"));
         }
 
         @Override
@@ -671,6 +700,7 @@ public class CommandTrait extends Trait {
                 root.setString("permissions." + i, instance.perms.get(i));
             }
             root.setDouble("individualCost", instance.individualCost);
+            root.setInt("individualExpCost", instance.individualExpCost);
         }
     }
 
