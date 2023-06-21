@@ -226,7 +226,8 @@ public class CommandTrait extends Trait {
         String output = Messaging.tr(Messages.COMMAND_DESCRIBE_TEMPLATE,
                 command.command,
                 StringHelper.wrap(command.cooldown != 0 ? command.cooldown : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()),
-//                StringHelper.wrap(hasIndividualCost(command.id) ? command.individualCost : "default"),
+                StringHelper.wrap(hasIndividualCost(command.id) ? command.individualCost : "default"),
+                StringHelper.wrap(hasIndividualExpCost(command.id) ? command.individualExpCost : "default"),
                 command.id);
         if (command.globalCooldown > 0) {
             output += "[global " + StringHelper.wrap(command.globalCooldown) + "s]";
