@@ -45,6 +45,7 @@ import net.citizensnpcs.api.persistence.Persister;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.ItemStorage;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.trait.shop.ExperienceAction;
@@ -726,9 +727,9 @@ public class CommandTrait extends Trait {
                 perms.add(key.getString(""));
             }
             List<ItemStack> items = Lists.newArrayList();
-//            for (DataKey key : root.getRelative("individualItemCost").getSubKeys()) {
-//                items.add((ItemStack) key.getRaw(""));
-//            }
+            for (DataKey key : root.getRelative("individualItemCost").getIntegerSubKeys()) {
+                items.add(ItemStorage.loadItemStack(key));
+            }
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
                     Hand.valueOf(root.getString("hand")), Boolean.valueOf(root.getString("player")),
                     Boolean.valueOf(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
@@ -751,8 +752,9 @@ public class CommandTrait extends Trait {
             }
             root.setDouble("individualCost", instance.individualCost);
             root.setInt("individualExpCost", instance.individualExpCost);
-            // Using .setRaw does not work, and also creates weird save information.
-//            root.setRaw("individualItemCost", instance.individualItemCost);
+            for (int i = 0; i < instance.individualItemCost.size(); i++) {
+                ItemStorage.saveItem(root.getRelative("individualItemCost." + i), instance.individualItemCost.get(i));
+            }
         }
     }
 
