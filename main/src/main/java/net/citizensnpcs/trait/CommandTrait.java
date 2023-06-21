@@ -129,6 +129,14 @@ public class CommandTrait extends Trait {
                 sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, commands.get(id).individualExpCost);
             }
         }
+        if (hasIndividualItemCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
+            action = new ItemAction(commands.get(id).individualItemCost);
+            if (!action.take(player, 1).isPossible()) {
+                ItemStack stack = commands.get(id).individualItemCost.get(0);
+                sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
+                        stack.getAmount());
+            }
+        }
         return action == null ? Transaction.success() : action.take(player, 1);
     }
 
@@ -217,7 +225,6 @@ public class CommandTrait extends Trait {
         String output = Messaging.tr(Messages.COMMAND_DESCRIBE_TEMPLATE,
                 command.command,
                 StringHelper.wrap(command.cooldown != 0 ? command.cooldown : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()),
-
 //                StringHelper.wrap(hasIndividualCost(command.id) ? command.individualCost : "default"),
                 command.id);
         if (command.globalCooldown > 0) {
@@ -361,6 +368,10 @@ public class CommandTrait extends Trait {
         return commands.get(id).individualExpCost;
     }
 
+    public List<ItemStack> getIndividualItemCost(int id) {
+        return commands.get(id).individualItemCost;
+    }
+
     private int getNewId() {
         int i = 0;
         while (commands.containsKey(i)) {
@@ -379,6 +390,10 @@ public class CommandTrait extends Trait {
 
     public boolean hasIndividualExpCost(int id) {
         return commands.get(id).individualExpCost != 0;
+    }
+
+    public boolean hasIndividualItemCost(int id) {
+        return !commands.get(id).individualItemCost.isEmpty();
     }
 
     public boolean isHideErrorMessages() {
@@ -463,6 +478,11 @@ public class CommandTrait extends Trait {
         temporaryPermissions.addAll(permissions);
     }
 
+    public void setIndividualItemCost(int id, List<ItemStack> individualItemCost) {
+        commands.get(id).individualItemCost.clear();
+        commands.get(id).individualItemCost.addAll(individualItemCost);
+    }
+
     public enum CommandTraitError {
         MAXIMUM_TIMES_USED(Setting.NPC_COMMAND_MAXIMUM_TIMES_USED_MESSAGE),
         MISSING_EXPERIENCE(Setting.NPC_COMMAND_NOT_ENOUGH_EXPERIENCE_MESSAGE),
@@ -502,6 +522,7 @@ public class CommandTrait extends Trait {
     public static class ItemRequirementGUI extends InventoryMenuPage {
         private Inventory inventory;
         private CommandTrait trait;
+        private int commandId = -1;
 
         private ItemRequirementGUI() {
             throw new UnsupportedOperationException();
@@ -511,11 +532,23 @@ public class CommandTrait extends Trait {
             this.trait = trait;
         }
 
+        public ItemRequirementGUI(CommandTrait trait, int id) {
+            this.trait = trait;
+            this.commandId = id;
+        }
+
         @Override
         public void initialise(MenuContext ctx) {
             this.inventory = ctx.getInventory();
-            for (ItemStack stack : trait.itemRequirements) {
-                inventory.addItem(stack.clone());
+            if (commandId == -1) {
+                for (ItemStack stack : trait.itemRequirements) {
+                    inventory.addItem(stack.clone());
+                }
+            }
+            else {
+                for (ItemStack stack : trait.commands.get(commandId).individualItemCost) {
+                    inventory.addItem(stack.clone());
+                }
             }
         }
 
@@ -532,8 +565,13 @@ public class CommandTrait extends Trait {
                     requirements.add(stack);
                 }
             }
-            this.trait.itemRequirements.clear();
-            this.trait.itemRequirements.addAll(requirements);
+            if (commandId == -1) {
+                this.trait.itemRequirements.clear();
+                this.trait.itemRequirements.addAll(requirements);
+            }
+            else {
+                this.trait.setIndividualItemCost(commandId, requirements);
+            }
         }
     }
 
@@ -552,10 +590,11 @@ public class CommandTrait extends Trait {
         boolean player;
         double individualCost;
         int individualExpCost;
+        List<ItemStack> individualItemCost;
 
         public NPCCommand(int id, String command, Hand hand, boolean player, boolean op, int cooldown,
                           List<String> perms, int n, int delay, int globalCooldown, double individualCost,
-                          int individualExpCost) {
+                          int individualExpCost, List<ItemStack> individualItemCost) {
             this.id = id;
             this.command = command;
             this.hand = hand;
@@ -570,6 +609,7 @@ public class CommandTrait extends Trait {
             this.bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
             this.individualCost = individualCost;
             this.individualExpCost = individualExpCost;
+            this.individualItemCost = individualItemCost;
         }
 
         public String getEncodedKey() {
@@ -595,6 +635,7 @@ public class CommandTrait extends Trait {
         boolean player;
         double individualCost;
         int individualExpCost;
+        List<ItemStack> individualItemCost = Lists.newArrayList();
 
         public NPCCommandBuilder(String command, Hand hand) {
             this.command = command;
@@ -612,7 +653,7 @@ public class CommandTrait extends Trait {
         }
 
         private NPCCommand build(int id) {
-            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown, individualCost, individualExpCost);
+            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown, individualCost, individualExpCost, individualItemCost);
         }
 
         public NPCCommandBuilder command(String command) {
@@ -667,6 +708,11 @@ public class CommandTrait extends Trait {
             this.individualExpCost = individualExpCost;
             return this;
         }
+
+        public NPCCommandBuilder individualItemCost(List<ItemStack> individualItemCost) {
+            this.individualItemCost = individualItemCost;
+            return this;
+        }
     }
 
     private static class NPCCommandPersister implements Persister<NPCCommand> {
@@ -679,11 +725,15 @@ public class CommandTrait extends Trait {
             for (DataKey key : root.getRelative("permissions").getIntegerSubKeys()) {
                 perms.add(key.getString(""));
             }
+            List<ItemStack> items = Lists.newArrayList();
+//            for (DataKey key : root.getRelative("individualItemCost").getSubKeys()) {
+//                items.add((ItemStack) key.getRaw(""));
+//            }
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
                     Hand.valueOf(root.getString("hand")), Boolean.valueOf(root.getString("player")),
                     Boolean.valueOf(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
                     root.getInt("delay"), root.getInt("globalcooldown"), root.getDouble("individualCost"),
-                    root.getInt("individualExpCost"));
+                    root.getInt("individualExpCost"), items);
         }
 
         @Override
@@ -701,6 +751,8 @@ public class CommandTrait extends Trait {
             }
             root.setDouble("individualCost", instance.individualCost);
             root.setInt("individualExpCost", instance.individualExpCost);
+            // Using .setRaw does not work, and also creates weird save information.
+//            root.setRaw("individualItemCost", instance.individualItemCost);
         }
     }
 

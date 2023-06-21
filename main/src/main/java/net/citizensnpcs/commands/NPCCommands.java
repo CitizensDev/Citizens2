@@ -444,7 +444,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | (exp|item)cost [cost] (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
@@ -459,7 +459,7 @@ public class NPCCommands {
             @Arg(
                     value = 1,
                     completions = { "add", "remove", "permissions", "persistsequence", "sequential", "random",
-                            "hideerrors", "errormsg", "clearerror", "expcost", "itemcost" }) String action)
+                            "hideerrors", "errormsg", "clearerror", "expcost", "itemcost", "cost" }) String action)
             throws CommandException {
         CommandTrait commands = npc.getOrAddTrait(CommandTrait.class);
         if (args.argsLength() == 1) {
@@ -569,7 +569,12 @@ public class NPCCommands {
         } else if (action.equalsIgnoreCase("itemcost")) {
             if (!(sender instanceof Player))
                 throw new CommandException(CommandMessages.MUST_BE_INGAME);
-            InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands)).present(((Player) sender));
+            if (args.argsLength() == 2) {
+                InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands)).present(((Player) sender));
+            }
+            else {
+                InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands, args.getInteger(2))).present(((Player) sender));
+            }
         } else if (action.equalsIgnoreCase("errormsg")) {
             CommandTraitError which = Util.matchEnum(CommandTraitError.values(), args.getString(2));
             if (which == null)
