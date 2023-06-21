@@ -532,12 +532,10 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.COMMAND_TEMPORARY_PERMISSIONS_SET,
                     Joiner.on(' ').join(temporaryPermissions));
         } else if (action.equalsIgnoreCase("cost")) {
-            // TODO: possibly rewrite cost system? maybe use enum for cost types or something idk
             if (args.argsLength() == 2) {
                 throw new CommandException(Messages.COMMAND_MISSING_COST);
             }
             if (args.argsLength() == 4) {
-                Messaging.send(sender, commands.toString());
                 commands.setIndividualCost(args.getInteger(3), args.getDouble(2));
                 Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_COST_SET, args.getDouble(2), args.getInteger(3));
             }
