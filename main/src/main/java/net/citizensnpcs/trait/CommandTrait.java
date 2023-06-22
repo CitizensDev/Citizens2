@@ -194,32 +194,38 @@ public class CommandTrait extends Trait {
                 right.add(command);
             }
         }
-        String output = "";
+        List<String> outputList = Lists.newArrayList();
         if (cost > 0) {
-            output += "Cost: " + StringHelper.wrap(cost);
+            outputList.add("Cost: " + StringHelper.wrap(cost));
         }
         if (experienceCost > 0) {
-            output += " XP cost: " + StringHelper.wrap(experienceCost);
+            outputList.add("XP cost: " + StringHelper.wrap(experienceCost));
         }
         if (left.size() > 0) {
-            output += Messaging.tr(Messages.COMMAND_LEFT_HAND_HEADER);
+            outputList.add(Messaging.tr(Messages.COMMAND_LEFT_HAND_HEADER));
             for (NPCCommand command : left) {
-                output += describe(command);
+                outputList.add(describe(command));
             }
         }
         if (right.size() > 0) {
-            output += Messaging.tr(Messages.COMMAND_RIGHT_HAND_HEADER);
+            outputList.add(Messaging.tr(Messages.COMMAND_RIGHT_HAND_HEADER));
             for (NPCCommand command : right) {
-                output += describe(command);
+                outputList.add(describe(command));
             }
         }
-        if (output.isEmpty()) {
-            output = Messaging.tr(Messages.COMMAND_NO_COMMANDS_ADDED);
+        if (outputList.isEmpty()) {
+            outputList.add(Messaging.tr(Messages.COMMAND_NO_COMMANDS_ADDED));
         } else {
-            output = executionMode + " " + output;
+            outputList.add(0, executionMode.toString());
         }
 
-        Messaging.send(sender, output);
+        StringBuilder output = new StringBuilder();
+        for (String item : outputList) {
+            output.append(item);
+            output.append(" ");
+        }
+
+        Messaging.send(sender, output.toString().trim());
     }
 
     private String describe(NPCCommand command) {
@@ -423,8 +429,7 @@ public class CommandTrait extends Trait {
         }
     }
 
-    private void sendErrorMessage(Player player, CommandTraitError msg, Function<String, String> transform,
-                                  Object... objects) {
+    private void sendErrorMessage(Player player, CommandTraitError msg, Function<String, String> transform, Object... objects) {
         if (hideErrorMessages) {
             return;
         }
