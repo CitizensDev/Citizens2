@@ -370,10 +370,6 @@ public class CommandTrait extends Trait {
         return commands.get(id).individualExpCost;
     }
 
-    public List<ItemStack> getIndividualItemCost(int id) {
-        return commands.get(id).individualItemCost;
-    }
-
     private int getNewId() {
         int i = 0;
         while (commands.containsKey(i)) {
@@ -382,16 +378,20 @@ public class CommandTrait extends Trait {
         return i;
     }
 
+    public List<ItemStack> getIndividualItemCost(int id) {
+        return commands.get(id).individualItemCost;
+    }
+
     public boolean hasCommandId(int id) {
         return commands.containsKey(id);
     }
 
     public boolean hasIndividualCost(int id) {
-        return commands.get(id).individualCost != 0;
+        return commands.get(id).individualCost != -1;
     }
 
     public boolean hasIndividualExpCost(int id) {
-        return commands.get(id).individualExpCost != 0;
+        return commands.get(id).individualExpCost != -1;
     }
 
     public boolean hasIndividualItemCost(int id) {
@@ -635,8 +635,8 @@ public class CommandTrait extends Trait {
         boolean op;
         List<String> perms = Lists.newArrayList();
         boolean player;
-        double individualCost;
-        int individualExpCost;
+        double individualCost = -1;
+        int individualExpCost = -1;
         List<ItemStack> individualItemCost = Lists.newArrayList();
 
         public NPCCommandBuilder(String command, Hand hand) {
@@ -731,11 +731,12 @@ public class CommandTrait extends Trait {
             for (DataKey key : root.getRelative("individualItemCost").getIntegerSubKeys()) {
                 items.add(ItemStorage.loadItemStack(key));
             }
+            double cost = root.keyExists("individualCost") ? root.getDouble("individualCost") : -1;
+            int exp = root.keyExists("individualExpCost") ? root.getInt("individualExpCost") : -1;
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
                     Hand.valueOf(root.getString("hand")), Boolean.valueOf(root.getString("player")),
                     Boolean.valueOf(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
-                    root.getInt("delay"), root.getInt("globalcooldown"), root.getDouble("individualCost"),
-                    root.getInt("individualExpCost"), items);
+                    root.getInt("delay"), root.getInt("globalcooldown"), cost, exp, items);
         }
 
         @Override

@@ -537,7 +537,7 @@ public class NPCCommands {
             }
             if (args.argsLength() == 4) {
                 commands.setIndividualCost(args.getInteger(3), args.getDouble(2));
-                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_COST_SET, args.getDouble(2), args.getInteger(3));
+                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_COST_SET, args.getDouble(2) == -1 ? "-1 (default)" : args.getDouble(2), args.getInteger(3));
             }
             else {
                 commands.setCost(args.getDouble(2));
@@ -549,7 +549,7 @@ public class NPCCommands {
             }
             if (args.argsLength() == 4) {
                 commands.setIndividualExpCost(args.getInteger(3), args.getInteger(2));
-                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_EXPERIENCE_COST_SET, args.getInteger(2), args.getInteger(3));
+                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_EXPERIENCE_COST_SET, args.getInteger(2) == -1 ? "-1 (default)" : args.getInteger(2), args.getInteger(3));
             }
             else {
                 commands.setExperienceCost(args.getInteger(2));
