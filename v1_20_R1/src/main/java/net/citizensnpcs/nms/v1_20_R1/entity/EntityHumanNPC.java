@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -122,7 +121,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         boolean navigating = npc.getNavigator().isNavigating() || ai.getMoveControl().hasWanted();
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
-                && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))
+                && Util.isLoaded(getBukkitEntity().getLocation())
                 && SpigotUtil.checkYSafe(getY(), getBukkitEntity().getWorld())) {
             moveWithFallDamage(Vec3.ZERO);
         }
@@ -480,5 +479,4 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     private static final float EPSILON = 0.003F;
     private static final MethodHandle GAMEMODE_SETTING = NMS.getFirstMethodHandle(ServerPlayerGameMode.class, true,
             GameType.class, GameType.class);
-    private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }

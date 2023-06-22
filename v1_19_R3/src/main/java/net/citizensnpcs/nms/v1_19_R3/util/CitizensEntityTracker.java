@@ -138,7 +138,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
 
     private static final MethodHandle E = NMS.getGetter(ServerEntity.class, "e");
     private static final MethodHandle F = NMS.getGetter(ServerEntity.class, "f");
-    private static boolean REQUIRES_SYNC = false;
+    private static volatile boolean REQUIRES_SYNC = false;
     private static final MethodHandle TRACKER = NMS.getFirstGetter(TrackedEntity.class, Entity.class);
     private static final MethodHandle TRACKER_ENTRY = NMS.getFirstGetter(TrackedEntity.class, ServerEntity.class);
     private static final MethodHandle TRACKING_RANGE = NMS.getFirstGetter(TrackedEntity.class, int.class);
