@@ -118,22 +118,22 @@ public class CommandTrait extends Trait {
                         stack.getAmount());
             }
         }
-        if (hasIndividualCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
-            action = new MoneyAction(commands.get(id).individualCost);
+        if (hasCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
+            action = new MoneyAction(commands.get(id).cost);
             if (!action.take(player, 1).isPossible()) {
-                sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, commands.get(id).individualCost);
+                sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, commands.get(id).cost);
             }
         }
-        if (hasIndividualExpCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
-            action = new ExperienceAction(commands.get(id).individualExpCost);
+        if (hasExperienceCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
+            action = new ExperienceAction(commands.get(id).experienceCost);
             if (!action.take(player, 1).isPossible()) {
-                sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, commands.get(id).individualExpCost);
+                sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, commands.get(id).experienceCost);
             }
         }
-        if (hasIndividualItemCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
-            action = new ItemAction(commands.get(id).individualItemCost);
+        if (hasItemCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
+            action = new ItemAction(commands.get(id).itemCost);
             if (!action.take(player, 1).isPossible()) {
-                ItemStack stack = commands.get(id).individualItemCost.get(0);
+                ItemStack stack = commands.get(id).itemCost.get(0);
                 sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
                         stack.getAmount());
             }
@@ -232,8 +232,8 @@ public class CommandTrait extends Trait {
         String output = Messaging.tr(Messages.COMMAND_DESCRIBE_TEMPLATE,
                 command.command,
                 StringHelper.wrap(command.cooldown != 0 ? command.cooldown : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()),
-                StringHelper.wrap(hasIndividualCost(command.id) ? command.individualCost : "default"),
-                StringHelper.wrap(hasIndividualExpCost(command.id) ? command.individualExpCost : "default"),
+                StringHelper.wrap(hasCost(command.id) ? command.cost : "default"),
+                StringHelper.wrap(hasExperienceCost(command.id) ? command.experienceCost : "default"),
                 command.id);
         if (command.globalCooldown > 0) {
             output += "[global " + StringHelper.wrap(command.globalCooldown) + "s]";
@@ -360,8 +360,8 @@ public class CommandTrait extends Trait {
         return cost;
     }
 
-    public double getIndividualCost(int id) {
-        return commands.get(id).individualCost;
+    public double getCost(int id) {
+        return commands.get(id).cost;
     }
 
     public ExecutionMode getExecutionMode() {
@@ -372,8 +372,12 @@ public class CommandTrait extends Trait {
         return experienceCost;
     }
 
-    public int getIndividualExpCost(int id) {
-        return commands.get(id).individualExpCost;
+    public int getExperienceCost(int id) {
+        return commands.get(id).experienceCost;
+    }
+
+    public List<ItemStack> getItemCost(int id) {
+        return commands.get(id).itemCost;
     }
 
     private int getNewId() {
@@ -384,24 +388,20 @@ public class CommandTrait extends Trait {
         return i;
     }
 
-    public List<ItemStack> getIndividualItemCost(int id) {
-        return commands.get(id).individualItemCost;
-    }
-
     public boolean hasCommandId(int id) {
         return commands.containsKey(id);
     }
 
-    public boolean hasIndividualCost(int id) {
-        return commands.get(id).individualCost != -1;
+    public boolean hasCost(int id) {
+        return commands.get(id).cost != -1;
     }
 
-    public boolean hasIndividualExpCost(int id) {
-        return commands.get(id).individualExpCost != -1;
+    public boolean hasExperienceCost(int id) {
+        return commands.get(id).experienceCost != -1;
     }
 
-    public boolean hasIndividualItemCost(int id) {
-        return !commands.get(id).individualItemCost.isEmpty();
+    public boolean hasItemCost(int id) {
+        return !commands.get(id).itemCost.isEmpty();
     }
 
     public boolean isHideErrorMessages() {
@@ -452,8 +452,8 @@ public class CommandTrait extends Trait {
         this.cost = cost;
     }
 
-    public void setIndividualCost(int id, double individualCost) {
-        commands.get(id).individualCost = individualCost;
+    public void setCost(double individualCost, int id) {
+        commands.get(id).cost = individualCost;
     }
 
     public void setCustomErrorMessage(CommandTraitError which, String message) {
@@ -468,8 +468,8 @@ public class CommandTrait extends Trait {
         this.experienceCost = experienceCost;
     }
 
-    public void setIndividualExpCost(int id, int individualExpCost) {
-        commands.get(id).individualExpCost = individualExpCost;
+    public void setExperienceCost(int experienceCost, int id) {
+        commands.get(id).experienceCost = experienceCost;
     }
 
     public void setHideErrorMessages(boolean hide) {
@@ -485,9 +485,9 @@ public class CommandTrait extends Trait {
         temporaryPermissions.addAll(permissions);
     }
 
-    public void setIndividualItemCost(int id, List<ItemStack> individualItemCost) {
-        commands.get(id).individualItemCost.clear();
-        commands.get(id).individualItemCost.addAll(individualItemCost);
+    public void setItemCost(List<ItemStack> itemCost, int id) {
+        commands.get(id).itemCost.clear();
+        commands.get(id).itemCost.addAll(itemCost);
     }
 
     public enum CommandTraitError {
@@ -529,7 +529,7 @@ public class CommandTrait extends Trait {
     public static class ItemRequirementGUI extends InventoryMenuPage {
         private Inventory inventory;
         private CommandTrait trait;
-        private int commandId = -1;
+        private int id = -1;
 
         private ItemRequirementGUI() {
             throw new UnsupportedOperationException();
@@ -541,19 +541,19 @@ public class CommandTrait extends Trait {
 
         public ItemRequirementGUI(CommandTrait trait, int id) {
             this.trait = trait;
-            this.commandId = id;
+            this.id = id;
         }
 
         @Override
         public void initialise(MenuContext ctx) {
             this.inventory = ctx.getInventory();
-            if (commandId == -1) {
+            if (id == -1) {
                 for (ItemStack stack : trait.itemRequirements) {
                     inventory.addItem(stack.clone());
                 }
             }
             else {
-                for (ItemStack stack : trait.commands.get(commandId).individualItemCost) {
+                for (ItemStack stack : trait.commands.get(id).itemCost) {
                     inventory.addItem(stack.clone());
                 }
             }
@@ -572,12 +572,12 @@ public class CommandTrait extends Trait {
                     requirements.add(stack);
                 }
             }
-            if (commandId == -1) {
+            if (id == -1) {
                 this.trait.itemRequirements.clear();
                 this.trait.itemRequirements.addAll(requirements);
             }
             else {
-                this.trait.setIndividualItemCost(commandId, requirements);
+                this.trait.setItemCost(requirements, id);
             }
         }
     }
@@ -595,13 +595,13 @@ public class CommandTrait extends Trait {
         boolean op;
         List<String> perms;
         boolean player;
-        double individualCost;
-        int individualExpCost;
-        List<ItemStack> individualItemCost;
+        double cost;
+        int experienceCost;
+        List<ItemStack> itemCost;
 
         public NPCCommand(int id, String command, Hand hand, boolean player, boolean op, int cooldown,
-                          List<String> perms, int n, int delay, int globalCooldown, double individualCost,
-                          int individualExpCost, List<ItemStack> individualItemCost) {
+                          List<String> perms, int n, int delay, int globalCooldown, double cost,
+                          int experienceCost, List<ItemStack> itemCost) {
             this.id = id;
             this.command = command;
             this.hand = hand;
@@ -614,9 +614,9 @@ public class CommandTrait extends Trait {
             this.globalCooldown = globalCooldown;
             List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().limit(2).splitToList(command);
             this.bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
-            this.individualCost = individualCost;
-            this.individualExpCost = individualExpCost;
-            this.individualItemCost = individualItemCost;
+            this.cost = cost;
+            this.experienceCost = experienceCost;
+            this.itemCost = itemCost;
         }
 
         public String getEncodedKey() {
@@ -640,9 +640,9 @@ public class CommandTrait extends Trait {
         boolean op;
         List<String> perms = Lists.newArrayList();
         boolean player;
-        double individualCost = -1;
-        int individualExpCost = -1;
-        List<ItemStack> individualItemCost = Lists.newArrayList();
+        double cost = -1;
+        int experienceCost = -1;
+        List<ItemStack> itemCost = Lists.newArrayList();
 
         public NPCCommandBuilder(String command, Hand hand) {
             this.command = command;
@@ -660,7 +660,7 @@ public class CommandTrait extends Trait {
         }
 
         private NPCCommand build(int id) {
-            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown, individualCost, individualExpCost, individualItemCost);
+            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown, cost, experienceCost, itemCost);
         }
 
         public NPCCommandBuilder command(String command) {
@@ -706,18 +706,18 @@ public class CommandTrait extends Trait {
             return this;
         }
 
-        public NPCCommandBuilder individualCost(double individualCost) {
-            this.individualCost = individualCost;
+        public NPCCommandBuilder cost(double cost) {
+            this.cost = cost;
             return this;
         }
 
-        public NPCCommandBuilder individualExpCost(int individualExpCost) {
-            this.individualExpCost = individualExpCost;
+        public NPCCommandBuilder experienceCost(int experienceCost) {
+            this.experienceCost = experienceCost;
             return this;
         }
 
-        public NPCCommandBuilder individualItemCost(List<ItemStack> individualItemCost) {
-            this.individualItemCost = individualItemCost;
+        public NPCCommandBuilder itemCost(List<ItemStack> itemCost) {
+            this.itemCost = itemCost;
             return this;
         }
     }
@@ -733,11 +733,11 @@ public class CommandTrait extends Trait {
                 perms.add(key.getString(""));
             }
             List<ItemStack> items = Lists.newArrayList();
-            for (DataKey key : root.getRelative("individualItemCost").getIntegerSubKeys()) {
+            for (DataKey key : root.getRelative("itemCost").getIntegerSubKeys()) {
                 items.add(ItemStorage.loadItemStack(key));
             }
-            double cost = root.keyExists("individualCost") ? root.getDouble("individualCost") : -1;
-            int exp = root.keyExists("individualExpCost") ? root.getInt("individualExpCost") : -1;
+            double cost = root.keyExists("cost") ? root.getDouble("cost") : -1;
+            int exp = root.keyExists("experienceCost") ? root.getInt("experienceCost") : -1;
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
                     Hand.valueOf(root.getString("hand")), Boolean.valueOf(root.getString("player")),
                     Boolean.valueOf(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
@@ -757,10 +757,10 @@ public class CommandTrait extends Trait {
             for (int i = 0; i < instance.perms.size(); i++) {
                 root.setString("permissions." + i, instance.perms.get(i));
             }
-            root.setDouble("individualCost", instance.individualCost);
-            root.setInt("individualExpCost", instance.individualExpCost);
-            for (int i = 0; i < instance.individualItemCost.size(); i++) {
-                ItemStorage.saveItem(root.getRelative("individualItemCost." + i), instance.individualItemCost.get(i));
+            root.setDouble("cost", instance.cost);
+            root.setInt("experienceCost", instance.experienceCost);
+            for (int i = 0; i < instance.itemCost.size(); i++) {
+                ItemStorage.saveItem(root.getRelative("itemCost." + i), instance.itemCost.get(i));
             }
         }
     }
