@@ -51,6 +51,8 @@ public class BossBarTrait extends Trait {
     @Persist
     private String track;
     @Persist
+    private String viewPermission;
+    @Persist
     private boolean visible = true;
 
     public BossBarTrait() {
@@ -89,6 +91,10 @@ public class BossBarTrait extends Trait {
 
     public String getTrackingVariable() {
         return track;
+    }
+
+    public String getViewPermission() {
+        return viewPermission;
     }
 
     private boolean isBoss(Entity entity) {
@@ -168,6 +174,8 @@ public class BossBarTrait extends Trait {
             barCache.removeAll();
             for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
                     range > 0 ? range : Setting.BOSSBAR_RANGE.asInt())) {
+                if (viewPermission != null && !player.hasPermission(viewPermission))
+                    continue;
                 barCache.addPlayer(player);
             }
         }
@@ -201,13 +209,17 @@ public class BossBarTrait extends Trait {
         this.track = variable;
     }
 
+    public void setViewPermission(String viewpermission) {
+        this.viewPermission = viewpermission;
+    }
+
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
     @Command(
             aliases = { "npc" },
-            usage = "bossbar --style [style] --color [color] --title [title] --visible [visible] --flags [flags] --track [health | placeholder] --range [range]",
+            usage = "bossbar --style [style] --color [color] --title [title] --visible [visible] --viewpermission [permission] --flags [flags] --track [health | placeholder] --range [range]",
             desc = "Edit bossbar properties",
             modifiers = { "bossbar" },
             min = 1,
@@ -215,8 +227,8 @@ public class BossBarTrait extends Trait {
     @Requirements(selected = true, ownership = true)
     public static void bossbar(CommandContext args, CommandSender sender, NPC npc, @Flag("style") BarStyle style,
             @Flag("track") String track, @Flag("color") BarColor color, @Flag("visible") Boolean visible,
-            @Flag("range") Integer range, @Flag("title") String title, @Flag("flags") String flags)
-            throws CommandException {
+            @Flag("range") Integer range, @Flag("title") String title, @Flag("flags") String flags,
+            @Flag("viewpermission") String viewpermission) throws CommandException {
         BossBarTrait trait = npc.getOrAddTrait(BossBarTrait.class);
         if (style != null) {
             trait.setStyle(style);
@@ -235,6 +247,9 @@ public class BossBarTrait extends Trait {
         }
         if (range != null) {
             trait.setRange(range);
+        }
+        if (viewpermission != null) {
+            trait.setViewPermission(viewpermission);
         }
         if (flags != null) {
             List<BarFlag> parsed = Lists.newArrayList();
