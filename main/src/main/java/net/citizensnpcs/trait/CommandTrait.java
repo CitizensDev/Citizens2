@@ -452,8 +452,8 @@ public class CommandTrait extends Trait {
         this.cost = cost;
     }
 
-    public void setCost(double individualCost, int id) {
-        commands.get(id).cost = individualCost;
+    public void setCost(double cost, int id) {
+        commands.get(id).cost = cost;
     }
 
     public void setCustomErrorMessage(CommandTraitError which, String message) {
