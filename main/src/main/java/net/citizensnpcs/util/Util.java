@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -23,7 +23,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
@@ -60,26 +59,22 @@ public class Util {
         }
     }
 
-    public static boolean callEventPossiblySync(Event event, boolean sync) {
+    public static <T> T callPossiblySync(Callable<T> callable, boolean sync) {
         if (!sync) {
             try {
-                Bukkit.getPluginManager().callEvent(event);
-                return false;
-            } catch (IllegalStateException ex) {
-                // sync method called
+                return callable.call();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+
         try {
-            Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), () -> {
-                Bukkit.getPluginManager().callEvent(event);
-                return null;
-            }).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            return Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), callable).get();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return true;
+
+        return null;
     }
 
     public static Vector callPushEvent(NPC npc, double x, double y, double z) {
@@ -152,7 +147,7 @@ public class Util {
         double pitchCos = Math.cos(Math.toRadians(pitch));
         Vector vector = new Vector(Math.sin(Math.toRadians(yaw)) * -pitchCos, -Math.sin(Math.toRadians(pitch)),
                 Math.cos(Math.toRadians(yaw)) * pitchCos).normalize();
-        faceLocation(entity, entity.getLocation(AT_LOCATION).clone().add(vector));
+        faceLocation(entity, entity.getLocation().clone().add(vector));
     }
 
     public static void faceEntity(Entity entity, Entity to) {
@@ -161,7 +156,7 @@ public class Util {
         if (to instanceof LivingEntity) {
             NMS.look(entity, to);
         } else {
-            faceLocation(entity, to.getLocation(AT_LOCATION));
+            faceLocation(entity, to.getLocation());
         }
     }
 
@@ -180,7 +175,7 @@ public class Util {
     }
 
     public static Location getCenterLocation(Block block) {
-        Location bloc = block.getLocation(AT_LOCATION);
+        Location bloc = block.getLocation();
         Location center = new Location(bloc.getWorld(), bloc.getBlockX() + 0.5, bloc.getBlockY(),
                 bloc.getBlockZ() + 0.5);
         BoundingBox bb = NMS.getCollisionBox(block);
@@ -194,7 +189,7 @@ public class Util {
      * Returns the yaw to face along the given velocity (corrected for dragon yaw i.e. facing backwards)
      */
     public static float getDragonYaw(Entity entity, double motX, double motZ) {
-        Location location = entity.getLocation(AT_LOCATION);
+        Location location = entity.getLocation();
         double x = location.getX();
         double z = location.getZ();
         double tX = x + motX;
@@ -240,7 +235,7 @@ public class Util {
 
     public static boolean inBlock(Entity entity) {
         // TODO: bounding box aware?
-        Location loc = entity.getLocation(AT_LOCATION);
+        Location loc = entity.getLocation();
         if (!Util.isLoaded(loc)) {
             return false;
         }
@@ -557,7 +552,6 @@ public class Util {
                 + TimeUnit.MILLISECONDS.convert(delay.getNano(), TimeUnit.NANOSECONDS)) / 50;
     }
 
-    private static final Location AT_LOCATION = new Location(null, 0, 0, 0);
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static String MINECRAFT_REVISION;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();

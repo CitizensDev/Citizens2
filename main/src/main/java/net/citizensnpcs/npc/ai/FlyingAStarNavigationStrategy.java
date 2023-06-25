@@ -136,7 +136,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null || plan == null || plan.isComplete()) {
             return true;
         }
-        Location current = npc.getEntity().getLocation(NPC_LOCATION);
+        Location current = npc.getEntity().getLocation();
         if (current.toVector().distance(vector) <= parameters.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete()) {
@@ -184,5 +184,4 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     }
 
     private static final AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();
-    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }

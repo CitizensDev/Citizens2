@@ -57,7 +57,7 @@ public class BatController extends MobEntityController {
             super(types, level);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                setFlying(false);
+                setResting(false);
             }
         }
 
@@ -165,10 +165,6 @@ public class BatController extends MobEntityController {
         @Override
         public boolean save(CompoundTag save) {
             return npc == null ? super.save(save) : false;
-        }
-
-        public void setFlying(boolean flying) {
-            setResting(flying);
         }
 
         @Override

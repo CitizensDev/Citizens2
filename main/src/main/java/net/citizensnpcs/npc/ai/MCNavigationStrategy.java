@@ -82,7 +82,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null)
             return true;
         boolean wasFinished = navigator.update();
-        Location loc = entity.getLocation(HANDLE_LOCATION);
+        Location loc = entity.getLocation();
         double dX = target.getX() - loc.getX();
         double dZ = target.getZ() - loc.getZ();
         double dY = target.getY() - loc.getY();
@@ -107,6 +107,4 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
 
         boolean update();
     }
-
-    private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
 }

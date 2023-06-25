@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -165,7 +164,7 @@ public class SkinPacketTracker {
     public void updateNearbyViewers(double radius) {
         Player from = entity.getBukkitEntity();
 
-        CitizensAPI.getLocationLookup().getNearbyPlayers(from.getLocation(CACHE_LOCATION), radius).forEach(player -> {
+        CitizensAPI.getLocationLookup().getNearbyPlayers(from.getLocation(), radius).forEach(player -> {
             if (!player.canSee(from) || player.hasMetadata("NPC"))
                 return;
             updateViewer(player);
@@ -228,7 +227,6 @@ public class SkinPacketTracker {
         }
     }
 
-    private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static PlayerListener LISTENER;
     private static final int PACKET_DELAY_REMOVE = 2;
     private static final TabListRemover TAB_LIST_REMOVER = new TabListRemover();

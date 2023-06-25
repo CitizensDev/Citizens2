@@ -55,7 +55,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     private double distance() {
-        return handle.getLocation(HANDLE_LOCATION).distance(target.getLocation(TARGET_LOCATION));
+        return handle.getLocation().distance(target.getLocation());
     }
 
     @Override
@@ -292,6 +292,4 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             return false;
         }
     };
-    private static final Location HANDLE_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location TARGET_LOCATION = new Location(null, 0, 0, 0);
 }

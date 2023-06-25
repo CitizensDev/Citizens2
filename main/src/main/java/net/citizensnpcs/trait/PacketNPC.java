@@ -12,6 +12,7 @@ import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.RemoveReason;
 import net.citizensnpcs.npc.EntityController;
 import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.NMS;
@@ -31,10 +32,15 @@ public class PacketNPC extends Trait {
     }
 
     @Override
-    public void onRemove() {
-        npc.despawn(DespawnReason.PENDING_RESPAWN);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                () -> npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN));
+    public void onRemove(RemoveReason reason) {
+        if (reason == RemoveReason.REMOVAL) {
+            npc.despawn(DespawnReason.PENDING_RESPAWN);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                if (npc.getStoredLocation() != null) {
+                    npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
+                }
+            });
+        }
     }
 
     @Override

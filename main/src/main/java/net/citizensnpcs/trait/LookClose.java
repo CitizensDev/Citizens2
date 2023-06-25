@@ -147,8 +147,9 @@ public class LookClose extends Trait implements Toggleable {
             }
         } else {
             double min = range;
+            Location npcLoc = npc.getStoredLocation();
             for (Player player : getNearbyPlayers()) {
-                double dist = player.getLocation(CACHE_LOCATION).distance(NPC_LOCATION);
+                double dist = player.getLocation().distance(npcLoc);
                 if (dist > min)
                     continue;
                 min = dist;
@@ -168,15 +169,16 @@ public class LookClose extends Trait implements Toggleable {
 
     private List<Player> getNearbyPlayers() {
         List<Player> options = Lists.newArrayList();
+        Location npcLoc = npc.getStoredLocation();
         Iterable<Player> nearby = targetNPCs
                 ? npc.getEntity().getNearbyEntities(range, range, range).stream()
-                        .filter(e -> e.getType() == EntityType.PLAYER && e.getWorld() == NPC_LOCATION.getWorld())
+                        .filter(e -> e.getType() == EntityType.PLAYER && e.getWorld() == npcLoc.getWorld())
                         .map(e -> (Player) e).collect(Collectors.toList())
-                : CitizensAPI.getLocationLookup().getNearbyPlayers(NPC_LOCATION, range);
+                : CitizensAPI.getLocationLookup().getNearbyPlayers(npcLoc, range);
         for (Player player : nearby) {
             if (player == lookingAt || (!targetNPCs && CitizensAPI.getNPCRegistry().getNPC(player) != null))
                 continue;
-            if (player.getLocation().getWorld() != NPC_LOCATION.getWorld() || isInvisible(player))
+            if (player.getLocation().getWorld() != npcLoc.getWorld() || isInvisible(player))
                 continue;
 
             options.add(player);
@@ -232,8 +234,7 @@ public class LookClose extends Trait implements Toggleable {
 
     private boolean isValid(Player entity) {
         return entity.isOnline() && entity.isValid() && entity.getWorld() == npc.getEntity().getWorld()
-                && entity.getLocation(PLAYER_LOCATION).distanceSquared(NPC_LOCATION) < range * range
-                && !isInvisible(entity);
+                && entity.getLocation().distance(npc.getStoredLocation()) <= range && !isInvisible(entity);
     }
 
     @Override
@@ -292,7 +293,6 @@ public class LookClose extends Trait implements Toggleable {
             return;
         }
 
-        npc.getEntity().getLocation(NPC_LOCATION);
         findNewTarget();
 
         if (npc.getNavigator().isNavigating() || npc.getNavigator().isPaused()) {
@@ -310,8 +310,8 @@ public class LookClose extends Trait implements Toggleable {
         if (npc.getEntity().getType().name().equals("SHULKER")) {
             boolean wasSilent = npc.getEntity().isSilent();
             npc.getEntity().setSilent(true);
-            NMS.setPeekShulker(npc.getEntity(), 100 - 4 * (int) Math
-                    .floor(npc.getStoredLocation().distanceSquared(lookingAt.getLocation(PLAYER_LOCATION))));
+            NMS.setPeekShulker(npc.getEntity(),
+                    100 - 4 * (int) Math.floor(npc.getStoredLocation().distanceSquared(lookingAt.getLocation())));
             npc.getEntity().setSilent(wasSilent);
         }
     }
@@ -403,8 +403,4 @@ public class LookClose extends Trait implements Toggleable {
     private static boolean isEqual(float[] array) {
         return Math.abs(array[0] - array[1]) < 0.001;
     }
-
-    private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
-    private static final Location PLAYER_LOCATION = new Location(null, 0, 0, 0);
 }

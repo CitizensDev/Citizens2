@@ -215,12 +215,7 @@ public class EventListen implements Listener {
 
     void loadNPCs(ChunkEvent event) {
         ChunkCoord coord = new ChunkCoord(event.getChunk());
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                respawnAllFromCoord(coord, event);
-            }
-        };
+        Runnable runnable = () -> respawnAllFromCoord(coord, event);
         if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean() && toRespawn.containsKey(coord)) {
             new Exception("CITIZENS CHUNK LOAD DEBUG " + coord).printStackTrace();
         }

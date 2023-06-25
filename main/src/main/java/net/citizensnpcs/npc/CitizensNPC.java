@@ -236,7 +236,7 @@ public class CitizensNPC extends AbstractNPC {
         boolean wasSpawned = entityController == null ? false : isSpawned();
         Location prev = null;
         if (wasSpawned) {
-            prev = getEntity().getLocation(CACHE_LOCATION);
+            prev = getEntity().getLocation();
             despawn(DespawnReason.PENDING_RESPAWN);
         }
         PacketNPC packet = getTraitNullable(PacketNPC.class);
@@ -446,7 +446,7 @@ public class CitizensNPC extends AbstractNPC {
         if (hasTrait(SitTrait.class) && getOrAddTrait(SitTrait.class).isSitting()) {
             getOrAddTrait(SitTrait.class).setSitting(location);
         }
-        Location npcLoc = getEntity().getLocation(CACHE_LOCATION);
+        Location npcLoc = getEntity().getLocation();
         if (isSpawned() && npcLoc.getWorld() == location.getWorld()) {
             if (npcLoc.distance(location) < 1) {
                 NMS.setHeadYaw(getEntity(), location.getYaw());
@@ -625,7 +625,6 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
-    private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
     private static boolean SUPPORT_GLOWING = true;
     private static boolean SUPPORT_NODAMAGE_TICKS = true;

@@ -61,7 +61,7 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null || npc.getStoredLocation().getWorld() != destination.getWorld()) {
             return true;
         }
-        Location currLoc = npc.getEntity().getLocation(NPC_LOCATION);
+        Location currLoc = npc.getEntity().getLocation();
         if (currLoc.distance(destination) <= params.distanceMargin()) {
             return true;
         }
@@ -127,6 +127,4 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
         }
         return false;
     }
-
-    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }

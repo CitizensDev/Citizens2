@@ -81,20 +81,34 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
 
         if (!tracker.isRemoved() && !seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
-            NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
-            REQUIRES_SYNC = Util.callEventPossiblySync(event, REQUIRES_SYNC);
-            if (event.isCancelled())
-                return;
-            Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
-            if (TRACKING_RANGE_SETTER != null && trackingRange != null
-                    && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
-                try {
-                    TRACKING_RANGE_SETTER.invoke(this, trackingRange);
-                    npc.data().set("last-tracking-range", trackingRange);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
+            if (REQUIRES_SYNC == null) {
+                REQUIRES_SYNC = !Bukkit.isPrimaryThread();
             }
+            boolean cancelled = Util.callPossiblySync(() -> {
+                NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
+                try {
+                    Bukkit.getPluginManager().callEvent(event);
+                } catch (IllegalStateException e) {
+                    REQUIRES_SYNC = true;
+                    throw e;
+                }
+                if (event.isCancelled())
+                    return true;
+                Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
+                if (TRACKING_RANGE_SETTER != null && trackingRange != null
+                        && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
+                    try {
+                        TRACKING_RANGE_SETTER.invoke(CitizensEntityTracker.this, trackingRange);
+                        npc.data().set("last-tracking-range", trackingRange);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            }, REQUIRES_SYNC);
+
+            if (cancelled)
+                return;
         }
 
         super.updatePlayer(entityplayer);
@@ -138,7 +152,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
 
     private static final MethodHandle E = NMS.getGetter(ServerEntity.class, "e");
     private static final MethodHandle F = NMS.getGetter(ServerEntity.class, "f");
-    private static volatile boolean REQUIRES_SYNC = false;
+    private static volatile Boolean REQUIRES_SYNC = false;
     private static final MethodHandle TRACKER = NMS.getFirstGetter(TrackedEntity.class, Entity.class);
     private static final MethodHandle TRACKER_ENTRY = NMS.getFirstGetter(TrackedEntity.class, ServerEntity.class);
     private static final MethodHandle TRACKING_RANGE = NMS.getFirstGetter(TrackedEntity.class, int.class);

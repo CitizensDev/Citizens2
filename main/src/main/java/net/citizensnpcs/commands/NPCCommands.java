@@ -537,9 +537,9 @@ public class NPCCommands {
             }
             if (args.argsLength() == 4) {
                 commands.setCost(args.getDouble(2), args.getInteger(3));
-                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_COST_SET, args.getDouble(2) == -1 ? "-1 (default)" : args.getDouble(2), args.getInteger(3));
-            }
-            else {
+                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_COST_SET,
+                        args.getDouble(2) == -1 ? "-1 (default)" : args.getDouble(2), args.getInteger(3));
+            } else {
                 commands.setCost(args.getDouble(2));
                 Messaging.sendTr(sender, Messages.COMMAND_COST_SET, args.getDouble(2));
             }
@@ -549,9 +549,9 @@ public class NPCCommands {
             }
             if (args.argsLength() == 4) {
                 commands.setExperienceCost(args.getInteger(2), args.getInteger(3));
-                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_EXPERIENCE_COST_SET, args.getInteger(2) == -1 ? "-1 (default)" : args.getInteger(2), args.getInteger(3));
-            }
-            else {
+                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_EXPERIENCE_COST_SET,
+                        args.getInteger(2) == -1 ? "-1 (default)" : args.getInteger(2), args.getInteger(3));
+            } else {
                 commands.setExperienceCost(args.getInteger(2));
                 Messaging.sendTr(sender, Messages.COMMAND_EXPERIENCE_COST_SET, args.getInteger(2));
             }
@@ -569,9 +569,9 @@ public class NPCCommands {
                 throw new CommandException(CommandMessages.MUST_BE_INGAME);
             if (args.argsLength() == 2) {
                 InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands)).present(((Player) sender));
-            }
-            else {
-                InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands, args.getInteger(2))).present(((Player) sender));
+            } else {
+                InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands, args.getInteger(2)))
+                        .present(((Player) sender));
             }
         } else if (action.equalsIgnoreCase("errormsg")) {
             CommandTraitError which = Util.matchEnum(CommandTraitError.values(), args.getString(2));
@@ -2784,6 +2784,8 @@ public class NPCCommands {
         final SkinTrait trait = npc.getOrAddTrait(SkinTrait.class);
         if (args.hasFlag('c')) {
             trait.clearTexture();
+            Messaging.sendTr(sender, Messages.SKIN_CLEARED);
+            return;
         } else if (url != null || file != null) {
             Messaging.sendTr(sender, Messages.FETCHING_SKIN, file);
             Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), () -> {

@@ -79,7 +79,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
     public boolean update() {
         if (plan == null) {
             if (planner == null) {
-                planner = new AStarPlanner(params, npc.getEntity().getLocation(NPC_LOCATION), destination);
+                planner = new AStarPlanner(params, npc.getEntity().getLocation(), destination);
             }
             CancelReason reason = planner.tick(Setting.ASTAR_ITERATIONS_PER_TICK.asInt(),
                     Setting.MAXIMUM_ASTAR_ITERATIONS.asInt());
@@ -97,9 +97,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (vector == null) {
             vector = plan.getCurrentVector();
         }
-        Location loc = npc.getEntity().getLocation(NPC_LOCATION);
+        Location loc = npc.getEntity().getLocation();
         /* Proper door movement - gets stuck on corners at times
-
+        
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
@@ -131,7 +131,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             NMS.setDestination(npc.getEntity(), dest.getX(), dest.getY(), dest.getZ(), params.speed());
         } else {
             Vector dir = dest.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
-            boolean liquidOrInLiquid = MinecraftBlockExaminer.isLiquidOrInLiquid(NPC_LOCATION.getBlock());
+            boolean liquidOrInLiquid = MinecraftBlockExaminer.isLiquidOrInLiquid(loc.getBlock());
             if ((dY >= 1 && Math.sqrt(xzDistance) <= 0.4) || (dY >= 0.2 && liquidOrInLiquid)) {
                 dir.add(new Vector(0, 0.75, 0));
             }
@@ -201,5 +201,4 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
     }
 
     private static final AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();
-    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }

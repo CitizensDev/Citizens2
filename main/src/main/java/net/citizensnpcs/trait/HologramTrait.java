@@ -202,7 +202,8 @@ public class HologramTrait extends Trait {
     public void load(DataKey root) {
         clear();
         for (DataKey key : root.getRelative("lines").getIntegerSubKeys()) {
-            HologramLine line = new HologramLine(key.keyExists("text") ? key.getString("text") : key.getString(""), true);
+            HologramLine line = new HologramLine(key.keyExists("text") ? key.getString("text") : key.getString(""),
+                    true);
             line.mt = key.keyExists("margin.top") ? key.getDouble("margin.top") : 0.0;
             line.mb = key.keyExists("margin.bottom") ? key.getDouble("margin.bottom") : 0.0;
             lines.add(line);
@@ -420,8 +421,7 @@ public class HologramTrait extends Trait {
     public void setMargin(int idx, String type, double margin) {
         if (type.equalsIgnoreCase("top")) {
             lines.get(idx).mt = margin;
-        }
-        else if (type.equalsIgnoreCase("bottom")) {
+        } else if (type.equalsIgnoreCase("bottom")) {
             lines.get(idx).mb = margin;
         }
         reloadLineHolograms();

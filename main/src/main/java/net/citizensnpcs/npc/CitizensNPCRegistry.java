@@ -27,6 +27,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.util.RemoveReason;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.LookClose;
@@ -118,7 +119,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
             npc.despawn(DespawnReason.REMOVAL);
             for (Trait t : npc.getTraits()) {
                 HandlerList.unregisterAll(t);
-                t.onRemove();
+                t.onRemove(RemoveReason.REMOVAL);
             }
             itr.remove();
             if (saves != null) {

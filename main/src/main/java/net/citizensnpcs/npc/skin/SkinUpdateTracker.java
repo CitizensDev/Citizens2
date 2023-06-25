@@ -72,8 +72,8 @@ public class SkinUpdateTracker {
         if (!player.getWorld().equals(entity.getWorld()))
             return false;
 
-        Location playerLoc = player.getLocation(CACHE_LOCATION);
-        Location skinLoc = entity.getLocation(NPC_LOCATION);
+        Location playerLoc = player.getLocation();
+        Location skinLoc = entity.getLocation();
 
         if (playerLoc.distance(skinLoc) > Setting.NPC_SKIN_VIEW_DISTANCE.asDouble())
             return false;
@@ -281,12 +281,12 @@ public class SkinUpdateTracker {
             return;
 
         double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
-        Location location = entity.getLocation(NPC_LOCATION);
+        Location location = entity.getLocation();
         List<Player> players = entity.getWorld().getPlayers();
         for (Player player : players) {
             if (player.hasMetadata("NPC"))
                 continue;
-            Location ploc = player.getLocation(CACHE_LOCATION);
+            Location ploc = player.getLocation();
             if (ploc.getWorld() != location.getWorld())
                 continue;
             if (ploc.distance(location) > viewDistance)
@@ -410,7 +410,7 @@ public class SkinUpdateTracker {
         }
 
         boolean shouldUpdate(Player player) {
-            Location currentLoc = player.getLocation(CACHE_LOCATION);
+            Location currentLoc = player.getLocation();
 
             // make sure player is in same world
             if (!currentLoc.getWorld().equals(this.location.getWorld())) {
@@ -461,8 +461,6 @@ public class SkinUpdateTracker {
         }
     }
 
-    private static final Location CACHE_LOCATION = new Location(null, 0, 0, 0);
     private static final float FIELD_OF_VIEW = 70F;
     private static final int MOVEMENT_SKIN_UPDATE_DISTANCE = 25;
-    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
 }

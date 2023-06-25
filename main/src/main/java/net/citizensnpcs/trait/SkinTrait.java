@@ -1,5 +1,7 @@
 package net.citizensnpcs.trait;
 
+import org.bukkit.ChatColor;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
@@ -12,12 +14,11 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import org.bukkit.ChatColor;
 
 @TraitName("skintrait")
 public class SkinTrait extends Trait {
     @Persist
-    private boolean fetchDefaultSkin = true;
+    private boolean fetchDefaultSkin = Setting.NPC_SKIN_FETCH_DEFAULT.asBoolean();
     private String filledPlaceholder;
     @Persist
     private String signature;

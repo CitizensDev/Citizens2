@@ -218,6 +218,9 @@ public class Settings {
         NPC_COMMAND_ON_GLOBAL_COOLDOWN_MESSAGE("npc.commands.error-messages.on-global-cooldown",
                 "Please wait for {minutes} minutes and {seconds_over} seconds."),
         NPC_COST("The default cost to create an NPC", "economy.npc.cost", 100D),
+        NPC_SKIN_FETCH_DEFAULT(
+                "Whether to try and look for the player skin for all new NPCs. If this is set to false and you create an NPC named Dinnerbone, the NPC will have the default (steve/alex/...) skin rather than trying to fetch the Dinnerbone skin.",
+                "npc.skins.try-fetch-default-skin", true),
         NPC_SKIN_RETRY_DELAY("How long before retrying skin requests (typically due to Mojang rate limiting)",
                 "npc.skins.retry-delay", "5s"),
         NPC_SKIN_ROTATION_UPDATE_DEGREES("npc.skins.rotation-update-degrees", 90f),

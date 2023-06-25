@@ -486,7 +486,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     private boolean updateStationaryStatus() {
         if (localParams.stationaryTicks() < 0)
             return false;
-        Location current = npc.getEntity().getLocation(STATIONARY_LOCATION);
+        Location current = npc.getEntity().getLocation();
         if (!SpigotUtil.checkYSafe(current.getY(), current.getWorld())) {
             stopNavigating(CancelReason.STUCK);
             return true;
@@ -534,7 +534,6 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
     }
 
-    private static final Location STATIONARY_LOCATION = new Location(null, 0, 0, 0);
     private static boolean SUPPORT_CHUNK_TICKETS = true;
     private static int UNINITIALISED_SPEED = Integer.MIN_VALUE;
 }
