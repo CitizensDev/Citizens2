@@ -21,6 +21,7 @@ import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_13_R2.EntitySkeleton;
+import net.minecraft.server.v1_13_R2.EnumPistonReaction;
 import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
@@ -39,6 +40,11 @@ public class SkeletonController extends MobEntityController {
     }
 
     public static class EntitySkeletonNPC extends EntitySkeleton implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntitySkeletonNPC(World world) {

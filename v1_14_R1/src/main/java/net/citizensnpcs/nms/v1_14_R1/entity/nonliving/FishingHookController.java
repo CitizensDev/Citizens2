@@ -24,6 +24,7 @@ import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityFishingHook;
 import net.minecraft.server.v1_14_R1.EntityPlayer;
 import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_14_R1.EnumPistonReaction;
 import net.minecraft.server.v1_14_R1.FluidType;
 import net.minecraft.server.v1_14_R1.ItemStack;
 import net.minecraft.server.v1_14_R1.Items;
@@ -45,6 +46,11 @@ public class FishingHookController extends MobEntityController {
     }
 
     public static class EntityFishingHookNPC extends EntityFishingHook implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityFishingHookNPC(EntityTypes<? extends EntityFishingHook> types, World world) {

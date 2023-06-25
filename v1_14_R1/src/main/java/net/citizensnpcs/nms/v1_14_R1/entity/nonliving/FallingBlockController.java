@@ -23,6 +23,7 @@ import net.minecraft.server.v1_14_R1.Block;
 import net.minecraft.server.v1_14_R1.EntityFallingBlock;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EnumMoveType;
+import net.minecraft.server.v1_14_R1.EnumPistonReaction;
 import net.minecraft.server.v1_14_R1.FluidType;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
@@ -51,6 +52,11 @@ public class FallingBlockController extends AbstractEntityController {
     }
 
     public static class EntityFallingBlockNPC extends EntityFallingBlock implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityFallingBlockNPC(EntityTypes<? extends EntityFallingBlock> types, World world) {

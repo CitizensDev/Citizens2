@@ -19,6 +19,7 @@ import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.EntitySquid;
+import net.minecraft.server.v1_12_R1.EnumPistonReaction;
 import net.minecraft.server.v1_12_R1.IBlockData;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.SoundEffect;
@@ -35,6 +36,11 @@ public class SquidController extends MobEntityController {
     }
 
     public static class EntitySquidNPC extends EntitySquid implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntitySquidNPC(World world) {
@@ -108,8 +114,6 @@ public class SquidController extends MobEntityController {
                 super.e(f, f1);
             }
         }
-
-        
 
         @Override
         public void f(double x, double y, double z) {

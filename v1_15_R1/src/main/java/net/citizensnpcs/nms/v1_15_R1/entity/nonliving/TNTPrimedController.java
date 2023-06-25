@@ -18,6 +18,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.AxisAlignedBB;
 import net.minecraft.server.v1_15_R1.EntityTNTPrimed;
 import net.minecraft.server.v1_15_R1.EntityTypes;
+import net.minecraft.server.v1_15_R1.EnumPistonReaction;
 import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import net.minecraft.server.v1_15_R1.Tag;
@@ -35,6 +36,11 @@ public class TNTPrimedController extends MobEntityController {
     }
 
     public static class EntityTNTPrimedNPC extends EntityTNTPrimed implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityTNTPrimedNPC(EntityTypes<? extends EntityTNTPrimed> types, World world) {

@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -39,6 +40,11 @@ public class EvokerFangsController extends MobEntityController {
     }
 
     public static class EntityEvokerFangsNPC extends EvokerFangs implements NPCHolder {
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityEvokerFangsNPC(EntityType<? extends EvokerFangs> types, Level level) {

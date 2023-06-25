@@ -13,6 +13,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.AxisAlignedBB;
 import net.minecraft.server.v1_14_R1.EntityMinecartHopper;
 import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_14_R1.EnumPistonReaction;
 import net.minecraft.server.v1_14_R1.FluidType;
 import net.minecraft.server.v1_14_R1.NBTTagCompound;
 import net.minecraft.server.v1_14_R1.Tag;
@@ -30,6 +31,11 @@ public class MinecartHopperController extends MobEntityController {
     }
 
     public static class EntityMinecartHopperNPC extends EntityMinecartHopper implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityMinecartHopperNPC(EntityTypes<? extends EntityMinecartHopper> types, World world) {

@@ -24,6 +24,7 @@ import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityLightning;
 import net.minecraft.server.v1_12_R1.EntityVillager;
 import net.minecraft.server.v1_12_R1.EnumHand;
+import net.minecraft.server.v1_12_R1.EnumPistonReaction;
 import net.minecraft.server.v1_12_R1.IBlockData;
 import net.minecraft.server.v1_12_R1.MerchantRecipe;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
@@ -41,6 +42,11 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private boolean blockingATrade;
 
         private final CitizensNPC npc;
@@ -147,8 +153,6 @@ public class VillagerController extends MobEntityController {
                 super.e(f, f1);
             }
         }
-
-        
 
         @Override
         public void f(double x, double y, double z) {

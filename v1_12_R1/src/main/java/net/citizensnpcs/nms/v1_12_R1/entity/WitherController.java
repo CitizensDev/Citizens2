@@ -18,6 +18,7 @@ import net.minecraft.server.v1_12_R1.AxisAlignedBB;
 import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.EntityWither;
+import net.minecraft.server.v1_12_R1.EnumPistonReaction;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.SoundEffect;
 import net.minecraft.server.v1_12_R1.World;
@@ -33,6 +34,11 @@ public class WitherController extends MobEntityController {
     }
 
     public static class EntityWitherNPC extends EntityWither implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityWitherNPC(World world) {
@@ -89,8 +95,6 @@ public class WitherController extends MobEntityController {
             return npc == null || !npc.data().has("wither-arrow-shield") ? super.dn()
                     : npc.data().get("wither-arrow-shield");
         }
-
-        
 
         @Override
         public void f(double x, double y, double z) {

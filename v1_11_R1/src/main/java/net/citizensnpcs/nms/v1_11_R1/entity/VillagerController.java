@@ -138,8 +138,6 @@ public class VillagerController extends MobEntityController {
             }
         }
 
-        
-
         @Override
         public void f(double x, double y, double z) {
             Vector vector = Util.callPushEvent(npc, x, y, z);

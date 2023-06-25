@@ -20,6 +20,7 @@ import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityParrot;
 import net.minecraft.server.v1_12_R1.EnumHand;
+import net.minecraft.server.v1_12_R1.EnumPistonReaction;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.SoundEffect;
 import net.minecraft.server.v1_12_R1.World;
@@ -35,6 +36,11 @@ public class ParrotController extends MobEntityController {
     }
 
     public static class EntityParrotNPC extends EntityParrot implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityParrotNPC(World world) {
@@ -95,8 +101,6 @@ public class ParrotController extends MobEntityController {
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
         }
-
-        
 
         @Override
         public void f(double x, double y, double z) {

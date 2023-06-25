@@ -89,8 +89,6 @@ public class WitherController extends MobEntityController {
                     : npc.data().get("wither-arrow-shield");
         }
 
-        
-
         @Override
         public void f(double x, double y, double z) {
             Vector vector = Util.callPushEvent(npc, x, y, z);

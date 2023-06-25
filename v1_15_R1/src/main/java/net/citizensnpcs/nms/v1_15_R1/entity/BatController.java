@@ -22,6 +22,7 @@ import net.minecraft.server.v1_15_R1.EntityBat;
 import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityTypes;
+import net.minecraft.server.v1_15_R1.EnumPistonReaction;
 import net.minecraft.server.v1_15_R1.FluidType;
 import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import net.minecraft.server.v1_15_R1.SoundEffect;
@@ -46,6 +47,11 @@ public class BatController extends MobEntityController {
     }
 
     public static class EntityBatNPC extends EntityBat implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityBatNPC(EntityTypes<? extends EntityBat> types, World world) {
@@ -56,7 +62,7 @@ public class BatController extends MobEntityController {
             super(types, world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                setFlying(false);
+                setAsleep(false);
             }
         }
 
@@ -171,10 +177,6 @@ public class BatController extends MobEntityController {
                 return !npc.isProtected();
             }
             return super.n(entity);
-        }
-
-        public void setFlying(boolean flying) {
-            setAsleep(flying);
         }
     }
 }

@@ -89,8 +89,6 @@ public class GhastController extends MobEntityController {
             return npc == null ? super.d(save) : false;
         }
 
-        
-
         @Override
         public void f(double x, double y, double z) {
             Vector vector = Util.callPushEvent(npc, x, y, z);

@@ -100,8 +100,6 @@ public class ShulkerController extends MobEntityController {
             }
         }
 
-        
-
         @Override
         public void g(double x, double y, double z) {
             Vector vector = Util.callPushEvent(npc, x, y, z);

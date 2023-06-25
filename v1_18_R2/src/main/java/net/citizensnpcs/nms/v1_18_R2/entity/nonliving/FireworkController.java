@@ -24,6 +24,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -38,6 +39,11 @@ public class FireworkController extends MobEntityController {
     }
 
     public static class EntityFireworkNPC extends FireworkRocketEntity implements NPCHolder {
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityFireworkNPC(EntityType<? extends FireworkRocketEntity> types, Level level) {

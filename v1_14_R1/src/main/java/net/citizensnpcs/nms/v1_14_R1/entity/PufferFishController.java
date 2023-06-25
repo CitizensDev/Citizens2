@@ -28,6 +28,7 @@ import net.minecraft.server.v1_14_R1.EntityPufferFish;
 import net.minecraft.server.v1_14_R1.EntitySize;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EnumHand;
+import net.minecraft.server.v1_14_R1.EnumPistonReaction;
 import net.minecraft.server.v1_14_R1.FluidType;
 import net.minecraft.server.v1_14_R1.IBlockData;
 import net.minecraft.server.v1_14_R1.ItemStack;
@@ -49,6 +50,11 @@ public class PufferFishController extends MobEntityController {
     }
 
     public static class EntityPufferFishNPC extends EntityPufferFish implements NPCHolder {
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
+        }
+
         private final CitizensNPC npc;
 
         public EntityPufferFishNPC(EntityTypes<? extends EntityPufferFish> types, World world) {

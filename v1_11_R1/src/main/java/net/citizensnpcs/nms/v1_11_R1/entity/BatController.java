@@ -56,7 +56,7 @@ public class BatController extends MobEntityController {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                setFlying(false);
+                setAsleep(false);
             }
         }
 
@@ -100,8 +100,6 @@ public class BatController extends MobEntityController {
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
         }
-
-        
 
         @Override
         public void f(double x, double y, double z) {
@@ -149,10 +147,6 @@ public class BatController extends MobEntityController {
                 NMSImpl.updateAI(this);
                 npc.update();
             }
-        }
-
-        public void setFlying(boolean flying) {
-            setAsleep(flying);
         }
     }
 }
