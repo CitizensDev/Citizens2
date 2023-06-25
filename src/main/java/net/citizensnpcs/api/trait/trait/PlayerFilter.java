@@ -178,7 +178,6 @@ public class PlayerFilter extends Trait {
     public void recalculate() {
         Collection<NPC> npcs = children.stream().map(u -> CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(u))
                 .filter(n -> n != null).collect(Collectors.toList());
-        System.out.println(npcs);
         for (Iterator<UUID> itr = viewingPlayers.iterator(); itr.hasNext();) {
             UUID uuid = itr.next();
             Player player = Bukkit.getPlayer(uuid);
