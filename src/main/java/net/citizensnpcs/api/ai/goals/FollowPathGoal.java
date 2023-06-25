@@ -42,6 +42,7 @@ public class FollowPathGoal extends BehaviorGoalAdapter {
         if (status == BehaviorStatus.SUCCESS) {
             idx++;
             setPath();
+            return BehaviorStatus.RUNNING;
         }
         return status;
     }
