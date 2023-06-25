@@ -42,6 +42,7 @@ import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.Talkable;
 import net.citizensnpcs.api.ai.speech.TalkableEntity;
 import net.citizensnpcs.api.event.NPCCollisionEvent;
+import net.citizensnpcs.api.event.NPCPistonPushEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
@@ -57,6 +58,17 @@ public class Util {
         if (NPCCollisionEvent.getHandlerList().getRegisteredListeners().length > 0) {
             Bukkit.getPluginManager().callEvent(new NPCCollisionEvent(npc, entity));
         }
+    }
+
+    public static boolean callPistonPushEvent(NPC npc) {
+        if (npc == null)
+            return false;
+        NPCPistonPushEvent event = new NPCPistonPushEvent(npc);
+        if (npc.isProtected()) {
+            event.setCancelled(true);
+        }
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
     }
 
     public static <T> T callPossiblySync(Callable<T> callable, boolean sync) {
