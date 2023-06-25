@@ -1,12 +1,13 @@
 package net.citizensnpcs.trait.shop;
 
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
+
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
@@ -79,15 +80,15 @@ public abstract class NPCShopAction implements Cloneable {
     }
 
     public static Iterable<GUI> getGUIs() {
-        return GUI.values();
+        return GUI;
     }
 
     public static void register(Class<? extends NPCShopAction> clazz, String type, GUI gui) {
         REGISTRY.register(type, clazz);
-        GUI.put(clazz, gui);
+        GUI.add(gui);
     }
 
-    private static final Map<Class<? extends NPCShopAction>, GUI> GUI = new WeakHashMap<>();
+    private static final List<GUI> GUI = Lists.newArrayList();
     private static final PersisterRegistry<NPCShopAction> REGISTRY = PersistenceLoader
             .createRegistry(NPCShopAction.class);
 }
