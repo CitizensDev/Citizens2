@@ -26,6 +26,9 @@ public class ClickRedirectTrait extends Trait {
     public ClickRedirectTrait(NPC npc) {
         this();
         this.redirectNPC = npc;
+        if (redirectNPC != null && redirectNPC.hasTrait(PlayerFilter.class)) {
+            redirectNPC.getOrAddTrait(PlayerFilter.class).addChildNPC(npc);
+        }
     }
 
     public NPC getRedirectNPC() {
