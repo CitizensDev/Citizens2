@@ -4,7 +4,6 @@ import org.bukkit.Location;
 
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
@@ -44,12 +43,9 @@ public class MoveToGoal extends BehaviorGoalAdapter {
         boolean executing = !npc.getNavigator().isNavigating() && target != null;
         if (executing) {
             npc.getNavigator().setTarget(target);
-            npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
-                @Override
-                public void onCompletion(CancelReason cancelReason) {
-                    finished = true;
-                    reason = cancelReason;
-                }
+            npc.getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
+                finished = true;
+                reason = cancelReason;
             });
         }
         return executing;
