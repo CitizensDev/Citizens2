@@ -1,10 +1,12 @@
 package net.citizensnpcs.api.trait.trait;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -12,6 +14,8 @@ import org.bukkit.entity.Player;
 
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -19,6 +23,7 @@ import net.citizensnpcs.api.trait.TraitName;
 
 @TraitName("playerfilter")
 public class PlayerFilter extends Trait {
+    private final Set<UUID> children = Sets.newHashSet();
     private Function<Player, Boolean> filter;
     @Persist
     private Set<String> groups = null;
@@ -66,6 +71,10 @@ public class PlayerFilter extends Trait {
         this.viewFunction = viewFunction;
     }
 
+    public void addChildNPC(NPC npc) {
+        children.add(npc.getUniqueId());
+    }
+
     /**
      * Hides the NPC from the given permissions group
      */
@@ -89,6 +98,14 @@ public class PlayerFilter extends Trait {
         players.add(uuid);
         getSet().add(uuid);
         recalculate();
+    }
+
+    public boolean affectsGroup(String group) {
+        return groups.contains(group);
+    }
+
+    public boolean affectsPlayer(UUID uuid) {
+        return players.contains(uuid);
     }
 
     /**
@@ -121,6 +138,14 @@ public class PlayerFilter extends Trait {
         return mode == Mode.DENYLIST ? viewingPlayers : hiddenPlayers;
     }
 
+    public boolean isAllowlist() {
+        return mode == Mode.ALLOWLIST;
+    }
+
+    public boolean isDenylist() {
+        return mode == Mode.DENYLIST;
+    }
+
     /**
      * Whether the NPC should be hidden from the given Player
      */
@@ -151,6 +176,9 @@ public class PlayerFilter extends Trait {
      * that should no longer view the NPC.
      */
     public void recalculate() {
+        Collection<NPC> npcs = children.stream().map(u -> CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(u))
+                .filter(n -> n != null).collect(Collectors.toList());
+        System.out.println(npcs);
         for (Iterator<UUID> itr = viewingPlayers.iterator(); itr.hasNext();) {
             UUID uuid = itr.next();
             Player player = Bukkit.getPlayer(uuid);
@@ -160,6 +188,9 @@ public class PlayerFilter extends Trait {
             }
             if (hideFunction != null && filter.apply(player)) {
                 hideFunction.accept(player, npc.getEntity());
+                for (NPC npc : npcs) {
+                    hideFunction.accept(player, npc.getEntity());
+                }
                 itr.remove();
             }
         }
@@ -172,6 +203,9 @@ public class PlayerFilter extends Trait {
             }
             if (viewFunction != null && !filter.apply(player)) {
                 viewFunction.accept(player, npc.getEntity());
+                for (NPC npc : npcs) {
+                    viewFunction.accept(player, npc.getEntity());
+                }
                 itr.remove();
             }
         }

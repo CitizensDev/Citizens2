@@ -10,7 +10,6 @@ import org.bukkit.entity.EntityType;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
@@ -27,11 +26,11 @@ public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
     private final double radius;
     private CancelReason reason;
     private Entity target;
-    private final Set<EntityType> targets;
+    private final Set<EntityType> targetTypes;
 
     private TargetNearbyEntityGoal(NPC npc, Set<EntityType> targets, boolean aggressive, double radius) {
         this.npc = npc;
-        this.targets = targets;
+        this.targetTypes = targets;
         this.aggressive = aggressive;
         this.radius = radius;
     }
@@ -54,24 +53,21 @@ public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
 
     @Override
     public boolean shouldExecute() {
-        if (targets.size() == 0 || !npc.isSpawned())
+        if (targetTypes.isEmpty() || !npc.isSpawned())
             return false;
         Collection<Entity> nearby = npc.getEntity().getNearbyEntities(radius, radius, radius);
         this.target = null;
         for (Entity entity : nearby) {
-            if (targets.contains(entity.getType())) {
+            if (targetTypes.contains(entity.getType())) {
                 target = entity;
                 break;
             }
         }
         if (target != null) {
             npc.getNavigator().setTarget(target, aggressive);
-            npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
-                @Override
-                public void onCompletion(CancelReason cancelReason) {
-                    reason = cancelReason;
-                    finished = true;
-                }
+            npc.getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
+                reason = cancelReason;
+                finished = true;
             });
             return true;
         }

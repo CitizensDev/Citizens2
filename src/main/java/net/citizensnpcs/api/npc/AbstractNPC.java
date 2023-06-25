@@ -47,6 +47,7 @@ import net.citizensnpcs.api.util.ItemStorage;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.api.util.RemoveReason;
 import net.citizensnpcs.api.util.SpigotUtil;
 
 public abstract class AbstractNPC implements NPC {
@@ -184,7 +185,7 @@ public abstract class AbstractNPC implements NPC {
         runnables.clear();
         for (Trait trait : traits.values()) {
             HandlerList.unregisterAll(trait);
-            trait.onRemove();
+            trait.onRemove(RemoveReason.DESTROYED);
         }
         traits.clear();
         goalController.clear();
@@ -214,20 +215,6 @@ public abstract class AbstractNPC implements NPC {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public UUID getMinecraftUniqueId() {
-        if (getEntityType() == EntityType.PLAYER) {
-            UUID uuid = getUniqueId();
-            if (uuid.version() == 4) { // set version to 2
-                long msb = uuid.getMostSignificantBits();
-                msb &= ~0x0000000000004000L;
-                msb |= 0x0000000000002000L;
-                return new UUID(msb, uuid.getLeastSignificantBits());
-            }
-        }
-        return getUniqueId();
     }
 
     @Override
@@ -265,6 +252,20 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public Supplier<ItemStack> getItemProvider() {
         return itemProvider;
+    }
+
+    @Override
+    public UUID getMinecraftUniqueId() {
+        if (getEntityType() == EntityType.PLAYER) {
+            UUID uuid = getUniqueId();
+            if (uuid.version() == 4) { // set version to 2
+                long msb = uuid.getMostSignificantBits();
+                msb &= ~0x0000000000004000L;
+                msb |= 0x0000000000002000L;
+                return new UUID(msb, uuid.getLeastSignificantBits());
+            }
+        }
+        return getUniqueId();
     }
 
     @Override
@@ -411,7 +412,7 @@ public abstract class AbstractNPC implements NPC {
                 runnables.remove(trait);
             }
             HandlerList.unregisterAll(trait);
-            trait.onRemove();
+            trait.onRemove(RemoveReason.REMOVAL);
         }
     }
 

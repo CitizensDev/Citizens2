@@ -113,7 +113,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
                 return BehaviorStatus.SUCCESS;
             }
         } else {
-            if (npc.getEntity().getLocation(NPC_LOCATION).distance(target) >= 0.1) {
+            if (npc.getEntity().getLocation().distance(target) >= 0.1) {
                 npc.setMoveDestination(target);
             } else {
                 return BehaviorStatus.SUCCESS;
@@ -245,6 +245,5 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         return new Builder(npc);
     }
 
-    private static final Location NPC_LOCATION = new Location(null, 0, 0, 0);
     private static final Random RANDOM = new Random();
 }

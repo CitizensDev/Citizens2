@@ -564,12 +564,5 @@ public class NavigatorParameters implements Cloneable {
         return this;
     }
 
-    private static final Function<org.bukkit.entity.Entity, Location> DEFAULT_MAPPER = new Function<Entity, Location>() {
-        Location location = new Location(null, 0, 0, 0);
-
-        @Override
-        public Location apply(Entity input) {
-            return input.getLocation(location);
-        }
-    };
+    private static final Function<org.bukkit.entity.Entity, Location> DEFAULT_MAPPER = Entity::getLocation;
 }

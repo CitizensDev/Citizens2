@@ -6,6 +6,7 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.RemoveReason;
 
 /**
  * Represents a Trait linked to an {@link NPC} that can be loaded and saved. This will be kept persisted inside a
@@ -97,6 +98,10 @@ public abstract class Trait implements Listener, Runnable {
      * Called when a trait is removed from the attached {@link NPC}.
      */
     public void onRemove() {
+    }
+
+    public void onRemove(RemoveReason reason) {
+        onRemove();
     }
 
     /**

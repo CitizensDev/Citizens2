@@ -23,16 +23,15 @@ public class CohesionBehavior implements FlockBehavior {
     @Override
     public Vector getVector(NPC npc, Collection<NPC> nearby) {
         Vector positions = new Vector(0, 0, 0);
+        Location cacheLoc = new Location(null, 0, 0, 0);
         for (NPC neighbor : nearby) {
-            positions = positions.add(neighbor.getEntity().getLocation(CACHE).toVector());
+            positions = positions.add(neighbor.getEntity().getLocation(cacheLoc).toVector());
         }
         Vector center = positions.multiply(1.0 / nearby.size());
-        Vector temp = npc.getEntity().getLocation(CACHE).toVector().subtract(center);
+        Vector temp = npc.getEntity().getLocation(cacheLoc).toVector().subtract(center);
         if (temp.length() == 0) {
             return new Vector(0, 0, 0);
         }
         return temp.normalize().multiply(weight);
     }
-
-    private static final Location CACHE = new Location(null, 0, 0, 0);
 }
