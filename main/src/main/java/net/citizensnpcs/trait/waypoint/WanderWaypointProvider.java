@@ -168,9 +168,6 @@ public class WanderWaypointProvider
                             return;
                         }
                         WanderWaypointProvider.this.worldguardRegion = regionId;
-                        if (currentGoal != null) {
-                            currentGoal.setWorldGuardRegion(region);
-                        }
                         Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_SET, regionId);
                     });
                 } else if (message.startsWith("pathfind")) {
@@ -234,12 +231,12 @@ public class WanderWaypointProvider
     }
 
     public Object getWorldGuardRegion() {
-        if (worldguardRegion == null) {
+        if (worldguardRegion == null)
             return null;
-        }
-        if (worldguardRegionCache != null) {
+
+        if (worldguardRegionCache != null)
             return worldguardRegionCache;
-        }
+
         try {
             RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer()
                     .get(BukkitAdapter.adapt(npc.getStoredLocation().getWorld()));
@@ -270,7 +267,7 @@ public class WanderWaypointProvider
         this.npc = npc;
         if (currentGoal == null) {
             currentGoal = WanderGoal.builder(npc).xrange(xrange).yrange(yrange).fallback(this).tree(this).delay(delay)
-                    .worldguardRegion(getWorldGuardRegion()).build();
+                    .worldguardRegion(() -> getWorldGuardRegion()).build();
             if (paused) {
                 currentGoal.pause();
             }
