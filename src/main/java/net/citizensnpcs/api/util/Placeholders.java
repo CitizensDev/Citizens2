@@ -142,7 +142,7 @@ public class Placeholders implements Listener {
                     replacement = npc.getOrAddTrait(Owner.class).getOwner();
                     break;
                 default:
-                    replacement = getWorldReplacement(npc.getStoredLocation(), group, npc.getEntity());
+                    replacement = getWorldReplacement(npc.getEntity().getLocation(), group, npc.getEntity());
                     break;
             }
             matcher.appendReplacement(out, "");

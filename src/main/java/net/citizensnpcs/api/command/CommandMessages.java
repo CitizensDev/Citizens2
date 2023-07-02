@@ -6,7 +6,7 @@ public class CommandMessages {
     public static final String COMMAND_PAGE_MISSING = "citizens.commands.page-missing";
     public static final String ID_NOT_FOUND = "citizens.commands.id-not-found";
     public static final String INVALID_NUMBER = "citizens.commands.invalid-number";
-    public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
+    public static final String INVALID_LOCATION = "citizens.commands.npc.create.invalid-location";
     public static final String MISSING_TRAIT = "citizens.commands.requirements.missing-required-trait";
     public static final String MUST_BE_INGAME = "citizens.commands.requirements.must-be-ingame";
     public static final String MUST_BE_OWNER = "citizens.commands.requirements.must-be-owner";

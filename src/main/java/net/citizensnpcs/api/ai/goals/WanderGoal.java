@@ -34,12 +34,12 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private boolean paused;
     private Location target;
     private final Supplier<PhTreeSolid<Boolean>> tree;
-    private Object worldguardRegion;
+    private final Supplier<Object> worldguardRegion;
     private int xrange;
     private int yrange;
 
     private WanderGoal(NPC npc, boolean pathfind, int xrange, int yrange, Supplier<PhTreeSolid<Boolean>> tree,
-            Function<NPC, Location> fallback, Object worldguardRegion, int delay) {
+            Function<NPC, Location> fallback, Supplier<Object> worldguardRegion, int delay) {
         this.npc = npc;
         this.pathfind = pathfind;
         this.worldguardRegion = worldguardRegion;
@@ -58,12 +58,14 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
                 return false;
             }
             if (worldguardRegion != null) {
-                try {
-                    if (!((ProtectedRegion) worldguardRegion)
-                            .contains(BukkitAdapter.asBlockVector(block.getLocation())))
-                        return false;
-                } catch (Throwable t) {
-                    t.printStackTrace();
+                Object region = worldguardRegion.get();
+                if (region != null) {
+                    try {
+                        if (!((ProtectedRegion) region).contains(BukkitAdapter.asBlockVector(block.getLocation())))
+                            return false;
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
                 }
             }
             if (tree != null) {
@@ -135,10 +137,6 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         this.pathfind = pathfind;
     }
 
-    public void setWorldGuardRegion(Object region) {
-        this.worldguardRegion = region;
-    }
-
     public void setXYRange(int xrange, int yrange) {
         this.xrange = xrange;
         this.yrange = yrange;
@@ -177,7 +175,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         private final NPC npc;
         private boolean pathfind = true;
         private Supplier<PhTreeSolid<Boolean>> tree;
-        private Object worldguardRegion;
+        private Supplier<Object> worldguardRegion;
         private int xrange = 10;
         private int yrange = 2;
 
@@ -225,7 +223,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             return this;
         }
 
-        public Builder worldguardRegion(Object worldguardRegion) {
+        public Builder worldguardRegion(Supplier<Object> worldguardRegion) {
             this.worldguardRegion = worldguardRegion;
             return this;
         }

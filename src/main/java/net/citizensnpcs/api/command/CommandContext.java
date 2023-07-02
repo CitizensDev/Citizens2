@@ -394,11 +394,11 @@ public class CommandContext {
                     z = Double.parseDouble(parts[2]);
                     break;
                 default:
-                    throw new CommandException(CommandMessages.INVALID_SPAWN_LOCATION);
+                    throw new CommandException(CommandMessages.INVALID_LOCATION);
             }
             World world = Bukkit.getWorld(worldName);
             if (world == null)
-                throw new CommandException(CommandMessages.INVALID_SPAWN_LOCATION);
+                throw new CommandException(CommandMessages.INVALID_LOCATION);
             return new Location(world, x, y, z, yaw, pitch);
         } else {
             Player search = Bukkit.getPlayerExact(flag);
