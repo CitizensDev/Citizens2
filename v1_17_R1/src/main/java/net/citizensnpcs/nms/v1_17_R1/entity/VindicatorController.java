@@ -43,11 +43,6 @@ public class VindicatorController extends MobEntityController {
     }
 
     public static class EntityVindicatorNPC extends Vindicator implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityVindicatorNPC(EntityType<? extends Vindicator> types, Level level) {
@@ -129,6 +124,11 @@ public class VindicatorController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

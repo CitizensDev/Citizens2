@@ -40,11 +40,6 @@ public class SquidController extends MobEntityController {
     }
 
     public static class EntitySquidNPC extends EntitySquid implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntitySquidNPC(World world) {
@@ -159,6 +154,11 @@ public class SquidController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

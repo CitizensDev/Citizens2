@@ -45,11 +45,6 @@ public class ItemFrameController extends MobEntityController {
     }
 
     public static class EntityItemFrameNPC extends EntityItemFrame implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityItemFrameNPC(World world) {
@@ -117,6 +112,11 @@ public class ItemFrameController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

@@ -44,11 +44,6 @@ public class ParrotController extends MobEntityController {
     }
 
     public static class EntityParrotNPC extends EntityParrot implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityParrotNPC(EntityTypes<? extends EntityParrot> types, World world) {
@@ -131,6 +126,11 @@ public class ParrotController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

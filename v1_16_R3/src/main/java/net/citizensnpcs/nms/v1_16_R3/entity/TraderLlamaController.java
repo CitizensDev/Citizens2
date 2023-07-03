@@ -54,11 +54,6 @@ public class TraderLlamaController extends MobEntityController {
     }
 
     public static class EntityTraderLlamaNPC extends EntityLlamaTrader implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityTraderLlamaNPC(EntityTypes<? extends EntityLlamaTrader> types, World world) {
@@ -169,6 +164,11 @@ public class TraderLlamaController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

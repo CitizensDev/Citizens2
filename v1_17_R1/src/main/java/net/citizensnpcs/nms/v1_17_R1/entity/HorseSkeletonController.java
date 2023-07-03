@@ -53,16 +53,11 @@ public class HorseSkeletonController extends MobEntityController {
     }
 
     public static class EntityHorseSkeletonNPC extends SkeletonHorse implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
-        private boolean riding;
 
+        private boolean riding;
         public EntityHorseSkeletonNPC(EntityType<? extends SkeletonHorse> types, Level level) {
             this(types, level, null);
         }
@@ -167,6 +162,11 @@ public class HorseSkeletonController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

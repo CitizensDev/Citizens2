@@ -36,11 +36,6 @@ public class ThrownPotionController extends MobEntityController {
     }
 
     public static class EntityThrownPotionNPC extends EntityPotion implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityThrownPotionNPC(EntityTypes<? extends EntityPotion> types, World world) {
@@ -108,6 +103,11 @@ public class ThrownPotionController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

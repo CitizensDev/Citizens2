@@ -53,11 +53,6 @@ public class EnderDragonController extends MobEntityController {
     }
 
     public static class EntityEnderDragonNPC extends EntityEnderDragon implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderDragonNPC(EntityTypes<? extends EntityEnderDragon> types, World world) {
@@ -143,6 +138,11 @@ public class EnderDragonController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

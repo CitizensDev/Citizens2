@@ -45,11 +45,6 @@ public class EnderSignalController extends MobEntityController {
     }
 
     public static class EntityEnderSignalNPC extends EyeOfEnder implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderSignalNPC(EntityType<? extends EyeOfEnder> types, Level level) {
@@ -72,6 +67,11 @@ public class EnderSignalController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

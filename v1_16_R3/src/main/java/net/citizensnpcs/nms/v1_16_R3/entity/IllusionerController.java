@@ -43,11 +43,6 @@ public class IllusionerController extends MobEntityController {
     }
 
     public static class EntityIllusionerNPC extends EntityIllagerIllusioner implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityIllusionerNPC(EntityTypes<? extends EntityIllagerIllusioner> types, World world) {
@@ -145,6 +140,11 @@ public class IllusionerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

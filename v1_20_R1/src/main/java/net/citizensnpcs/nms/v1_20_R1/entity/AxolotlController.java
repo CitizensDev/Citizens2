@@ -60,11 +60,6 @@ public class AxolotlController extends MobEntityController {
     }
 
     public static class EntityAxolotlNPC extends Axolotl implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         private MoveControl oldMoveController;
@@ -145,6 +140,11 @@ public class AxolotlController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

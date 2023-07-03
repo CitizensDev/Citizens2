@@ -53,11 +53,6 @@ public class EggController extends AbstractEntityController {
     }
 
     public static class EntityEggNPC extends ThrownEgg implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityEggNPC(EntityType<? extends ThrownEgg> types, Level level) {
@@ -85,6 +80,11 @@ public class EggController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

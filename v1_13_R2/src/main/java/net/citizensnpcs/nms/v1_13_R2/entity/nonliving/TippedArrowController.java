@@ -32,11 +32,6 @@ public class TippedArrowController extends MobEntityController {
     }
 
     public static class EntityTippedArrowNPC extends EntityTippedArrow implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityTippedArrowNPC(World world) {
@@ -104,6 +99,11 @@ public class TippedArrowController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.Llama.Color;
 
@@ -67,8 +68,9 @@ public class LlamaTrait extends Trait {
     @Requirements(selected = true, ownership = true)
     public static void llama(CommandContext args, CommandSender sender, NPC npc,
             @Flag({ "color", "colour" }) Color color, @Flag("strength") Integer strength) throws CommandException {
-        if (!npc.getOrAddTrait(MobType.class).getType().name().contains("LLAMA"))
-            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE);
+        EntityType type = npc.getOrAddTrait(MobType.class).getType();
+        if (!type.name().contains("LLAMA"))
+            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
         LlamaTrait trait = npc.getOrAddTrait(LlamaTrait.class);
         String output = "";
         if (args.hasAnyValueFlag("color", "colour")) {

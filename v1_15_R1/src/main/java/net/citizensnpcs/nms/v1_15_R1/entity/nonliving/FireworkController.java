@@ -36,11 +36,6 @@ public class FireworkController extends MobEntityController {
     }
 
     public static class EntityFireworkNPC extends EntityFireworks implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityFireworkNPC(EntityTypes<? extends EntityFireworks> types, World world) {
@@ -96,6 +91,11 @@ public class FireworkController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

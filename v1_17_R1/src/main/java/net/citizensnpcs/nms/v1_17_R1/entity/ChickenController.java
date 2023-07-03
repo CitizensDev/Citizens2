@@ -49,11 +49,6 @@ public class ChickenController extends MobEntityController {
     }
 
     public static class EntityChickenNPC extends Chicken implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityChickenNPC(EntityType<? extends Chicken> types, Level level) {
@@ -143,6 +138,11 @@ public class ChickenController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

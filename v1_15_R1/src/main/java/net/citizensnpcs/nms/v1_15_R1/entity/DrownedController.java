@@ -49,11 +49,6 @@ public class DrownedController extends MobEntityController {
     }
 
     public static class EntityDrownedNPC extends EntityDrowned implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityDrownedNPC(EntityTypes<? extends EntityDrowned> types, World world) {
@@ -150,6 +145,11 @@ public class DrownedController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

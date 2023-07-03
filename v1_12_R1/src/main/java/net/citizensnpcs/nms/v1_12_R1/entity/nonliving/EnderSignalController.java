@@ -44,11 +44,6 @@ public class EnderSignalController extends MobEntityController {
     }
 
     public static class EntityEnderSignalNPC extends EntityEnderSignal implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderSignalNPC(World world) {
@@ -108,6 +103,11 @@ public class EnderSignalController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
     }
 }

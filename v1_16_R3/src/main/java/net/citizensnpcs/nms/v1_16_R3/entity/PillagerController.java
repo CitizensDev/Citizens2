@@ -44,11 +44,6 @@ public class PillagerController extends MobEntityController {
     }
 
     public static class EntityPillagerNPC extends EntityPillager implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPillagerNPC(EntityTypes<? extends EntityPillager> types, World world) {
@@ -155,6 +150,11 @@ public class PillagerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

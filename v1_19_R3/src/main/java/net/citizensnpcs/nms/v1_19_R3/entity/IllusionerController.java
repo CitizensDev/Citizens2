@@ -44,11 +44,6 @@ public class IllusionerController extends MobEntityController {
     }
 
     public static class EntityIllusionerNPC extends Illusioner implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityIllusionerNPC(EntityType<? extends Illusioner> types, Level level) {
@@ -130,6 +125,11 @@ public class IllusionerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

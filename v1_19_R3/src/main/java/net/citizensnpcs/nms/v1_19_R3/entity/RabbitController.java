@@ -46,11 +46,6 @@ public class RabbitController extends MobEntityController {
     }
 
     public static class EntityRabbitNPC extends Rabbit implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityRabbitNPC(EntityType<? extends Rabbit> types, Level level) {
@@ -135,6 +130,11 @@ public class RabbitController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

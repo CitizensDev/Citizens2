@@ -42,11 +42,6 @@ public class PolarBearController extends MobEntityController {
     }
 
     public static class EntityPolarBearNPC extends EntityPolarBear implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPolarBearNPC(EntityTypes<? extends EntityPolarBear> types, World world) {
@@ -129,6 +124,11 @@ public class PolarBearController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

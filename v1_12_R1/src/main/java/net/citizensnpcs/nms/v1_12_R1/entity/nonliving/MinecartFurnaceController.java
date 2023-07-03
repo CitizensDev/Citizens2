@@ -31,11 +31,6 @@ public class MinecartFurnaceController extends MobEntityController {
     }
 
     public static class EntityMinecartFurnaceNPC extends EntityMinecartFurnace implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityMinecartFurnaceNPC(World world) {
@@ -95,6 +90,11 @@ public class MinecartFurnaceController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
     }
 

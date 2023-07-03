@@ -50,11 +50,6 @@ public class SnifferController extends MobEntityController {
     }
 
     public static class EntitySnifferNPC extends Sniffer implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntitySnifferNPC(EntityType<? extends Sniffer> types, Level level) {
@@ -136,6 +131,11 @@ public class SnifferController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

@@ -36,11 +36,6 @@ public class MinecartRideableController extends MobEntityController {
     }
 
     public static class EntityMinecartRideableNPC extends Minecart implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityMinecartRideableNPC(EntityType<? extends Minecart> types, Level level) {
@@ -63,6 +58,11 @@ public class MinecartRideableController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

@@ -42,11 +42,6 @@ public class WitherController extends MobEntityController {
     }
 
     public static class EntityWitherNPC extends WitherBoss implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityWitherNPC(EntityType<? extends WitherBoss> types, Level level) {
@@ -122,6 +117,11 @@ public class WitherController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

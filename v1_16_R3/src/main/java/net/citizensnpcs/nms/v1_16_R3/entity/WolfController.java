@@ -46,11 +46,6 @@ public class WolfController extends MobEntityController {
     }
 
     public static class EntityWolfNPC extends EntityWolf implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityWolfNPC(EntityTypes<? extends EntityWolf> types, World world) {
@@ -157,6 +152,11 @@ public class WolfController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

@@ -42,11 +42,6 @@ public class GiantController extends MobEntityController {
     }
 
     public static class EntityGiantNPC extends Giant implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityGiantNPC(EntityType<? extends Giant> types, Level level) {
@@ -128,6 +123,11 @@ public class GiantController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

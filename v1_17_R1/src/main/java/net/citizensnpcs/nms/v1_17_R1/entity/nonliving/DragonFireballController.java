@@ -42,11 +42,6 @@ public class DragonFireballController extends MobEntityController {
     }
 
     public static class EntityDragonFireballNPC extends DragonFireball implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityDragonFireballNPC(EntityType<? extends DragonFireball> types, Level level) {
@@ -69,6 +64,11 @@ public class DragonFireballController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

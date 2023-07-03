@@ -48,19 +48,14 @@ public class BoatController extends MobEntityController {
     }
 
     public static class EntityBoatNPC extends EntityBoat implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private double aC;
+
         private float aD;
         private EnumStatus aE;
         private EnumStatus aF;
         private double ap;
         private double ar;
         private final CitizensNPC npc;
-
         public EntityBoatNPC(EntityTypes<? extends EntityBoat> types, World world) {
             this(types, world, null);
         }
@@ -114,6 +109,11 @@ public class BoatController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         private EnumStatus getStatus() {

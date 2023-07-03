@@ -36,11 +36,6 @@ public class ShulkerBulletController extends MobEntityController {
     }
 
     public static class EntityShulkerBulletNPC extends ShulkerBullet implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityShulkerBulletNPC(EntityType<? extends ShulkerBullet> types, Level level) {
@@ -63,6 +58,11 @@ public class ShulkerBulletController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

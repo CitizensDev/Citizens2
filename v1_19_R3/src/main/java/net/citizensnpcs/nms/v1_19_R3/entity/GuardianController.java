@@ -44,11 +44,6 @@ public class GuardianController extends MobEntityController {
     }
 
     public static class EntityGuardianNPC extends Guardian implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityGuardianNPC(EntityType<? extends Guardian> types, Level level) {
@@ -136,6 +131,11 @@ public class GuardianController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

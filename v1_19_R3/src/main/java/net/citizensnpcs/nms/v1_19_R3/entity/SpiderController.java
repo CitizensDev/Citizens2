@@ -44,11 +44,6 @@ public class SpiderController extends MobEntityController {
     }
 
     public static class EntitySpiderNPC extends Spider implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntitySpiderNPC(EntityType<? extends Spider> types, Level level) {
@@ -130,6 +125,11 @@ public class SpiderController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

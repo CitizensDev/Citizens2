@@ -51,11 +51,6 @@ public class ItemDisplayController extends MobEntityController {
     }
 
     public static class EntityItemDisplayNPC extends ItemDisplay implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityItemDisplayNPC(EntityType<? extends ItemDisplay> types, Level level) {
@@ -78,6 +73,11 @@ public class ItemDisplayController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

@@ -56,11 +56,6 @@ public class CaveSpiderController extends MobEntityController {
     }
 
     public static class EntityCaveSpiderNPC extends EntityCaveSpider implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityCaveSpiderNPC(EntityTypes<? extends EntityCaveSpider> types, World world) {
@@ -165,6 +160,11 @@ public class CaveSpiderController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

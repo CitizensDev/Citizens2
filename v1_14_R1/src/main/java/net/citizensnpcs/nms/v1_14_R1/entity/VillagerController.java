@@ -51,17 +51,12 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private TreeMap<?, ?> behaviorMap;
 
         private boolean blockingATrade;
+
         private final CitizensNPC npc;
         private BehaviorController<EntityVillager> previousBehaviorController;
-
         public EntityVillagerNPC(EntityTypes<? extends EntityVillager> types, World world) {
             this(types, world, null);
         }
@@ -194,6 +189,11 @@ public class VillagerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

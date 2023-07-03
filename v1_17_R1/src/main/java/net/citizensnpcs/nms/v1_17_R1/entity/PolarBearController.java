@@ -41,11 +41,6 @@ public class PolarBearController extends MobEntityController {
     }
 
     public static class EntityPolarBearNPC extends PolarBear implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPolarBearNPC(EntityType<? extends PolarBear> types, Level level) {
@@ -112,6 +107,11 @@ public class PolarBearController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

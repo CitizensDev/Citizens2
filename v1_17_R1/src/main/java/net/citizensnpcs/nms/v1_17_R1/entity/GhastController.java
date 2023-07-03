@@ -40,11 +40,6 @@ public class GhastController extends MobEntityController {
     }
 
     public static class EntityGhastNPC extends Ghast implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityGhastNPC(EntityType<? extends Ghast> types, Level level) {
@@ -111,6 +106,11 @@ public class GhastController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

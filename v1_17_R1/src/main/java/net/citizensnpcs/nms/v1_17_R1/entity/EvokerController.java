@@ -42,11 +42,6 @@ public class EvokerController extends MobEntityController {
     }
 
     public static class EntityEvokerNPC extends Evoker implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityEvokerNPC(EntityType<? extends Evoker> types, Level level) {
@@ -128,6 +123,11 @@ public class EvokerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

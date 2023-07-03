@@ -43,11 +43,6 @@ public class PiglinController extends MobEntityController {
     }
 
     public static class EntityPiglinNPC extends EntityPiglin implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPiglinNPC(EntityTypes<? extends EntityPiglin> types, World world) {
@@ -144,6 +139,11 @@ public class PiglinController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

@@ -38,11 +38,6 @@ public class SmallFireballController extends MobEntityController {
     }
 
     public static class EntitySmallFireballNPC extends SmallFireball implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntitySmallFireballNPC(EntityType<? extends SmallFireball> types, Level level) {
@@ -65,6 +60,11 @@ public class SmallFireballController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

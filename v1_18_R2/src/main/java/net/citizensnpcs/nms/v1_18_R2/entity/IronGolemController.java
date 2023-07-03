@@ -43,11 +43,6 @@ public class IronGolemController extends MobEntityController {
     }
 
     public static class EntityIronGolemNPC extends IronGolem implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityIronGolemNPC(EntityType<? extends IronGolem> types, Level level) {
@@ -129,6 +124,11 @@ public class IronGolemController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

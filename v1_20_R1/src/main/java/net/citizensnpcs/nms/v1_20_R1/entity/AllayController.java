@@ -59,14 +59,9 @@ public class AllayController extends MobEntityController {
     }
 
     public static class EntityAllayNPC extends Allay implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
-        private int taskId = -1;
 
+        private int taskId = -1;
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level) {
             this(types, level, null);
         }
@@ -146,6 +141,11 @@ public class AllayController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

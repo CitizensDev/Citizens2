@@ -51,11 +51,6 @@ public class CreeperController extends MobEntityController {
     }
 
     public static class EntityCreeperNPC extends Creeper implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private boolean allowPowered;
 
         private final CitizensNPC npc;
@@ -139,6 +134,11 @@ public class CreeperController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

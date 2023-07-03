@@ -49,11 +49,6 @@ public class AreaEffectCloudController extends MobEntityController {
     }
 
     public static class EntityAreaEffectCloudNPC extends EntityAreaEffectCloud implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityAreaEffectCloudNPC(EntityTypes<? extends EntityAreaEffectCloud> types, World world) {
@@ -117,6 +112,11 @@ public class AreaEffectCloudController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

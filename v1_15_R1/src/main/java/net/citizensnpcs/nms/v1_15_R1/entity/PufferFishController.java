@@ -52,11 +52,6 @@ public class PufferFishController extends MobEntityController {
     }
 
     public static class EntityPufferFishNPC extends EntityPufferFish implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         private ControllerMove oldMoveController;
@@ -181,6 +176,11 @@ public class PufferFishController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

@@ -42,11 +42,6 @@ public class GlowSquidController extends MobEntityController {
     }
 
     public static class EntityGlowSquidNPC extends GlowSquid implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityGlowSquidNPC(EntityType<? extends GlowSquid> types, Level level) {
@@ -128,6 +123,11 @@ public class GlowSquidController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

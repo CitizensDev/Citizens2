@@ -51,16 +51,11 @@ public class WanderingTraderController extends MobEntityController {
     }
 
     public static class EntityWanderingTraderNPC extends EntityVillagerTrader implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private boolean blockingATrade;
 
         private boolean blockTrades = true;
-        private final CitizensNPC npc;
 
+        private final CitizensNPC npc;
         public EntityWanderingTraderNPC(EntityTypes<? extends EntityVillagerTrader> types, World world) {
             this(types, world, null);
         }
@@ -186,6 +181,11 @@ public class WanderingTraderController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

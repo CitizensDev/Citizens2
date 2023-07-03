@@ -36,11 +36,6 @@ public class PaintingController extends MobEntityController {
     }
 
     public static class EntityPaintingNPC extends Painting implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPaintingNPC(EntityType<? extends Painting> types, Level level) {
@@ -63,6 +58,11 @@ public class PaintingController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

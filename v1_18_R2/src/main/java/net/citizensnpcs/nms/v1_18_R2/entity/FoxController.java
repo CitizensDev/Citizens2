@@ -44,11 +44,6 @@ public class FoxController extends MobEntityController {
     }
 
     public static class EntityFoxNPC extends Fox implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityFoxNPC(EntityType<? extends Fox> types, Level level) {
@@ -130,6 +125,11 @@ public class FoxController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

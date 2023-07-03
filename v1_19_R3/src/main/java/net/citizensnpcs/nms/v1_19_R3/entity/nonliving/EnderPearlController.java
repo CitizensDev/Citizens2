@@ -45,11 +45,6 @@ public class EnderPearlController extends MobEntityController {
     }
 
     public static class EntityEnderPearlNPC extends ThrownEnderpearl implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderPearlNPC(EntityType<? extends ThrownEnderpearl> types, Level level) {
@@ -72,6 +67,11 @@ public class EnderPearlController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

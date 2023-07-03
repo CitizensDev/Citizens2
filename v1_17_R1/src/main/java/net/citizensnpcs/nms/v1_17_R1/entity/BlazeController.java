@@ -46,11 +46,6 @@ public class BlazeController extends MobEntityController {
     }
 
     public static class EntityBlazeNPC extends Blaze implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityBlazeNPC(EntityType<? extends Blaze> types, Level level) {
@@ -116,6 +111,11 @@ public class BlazeController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

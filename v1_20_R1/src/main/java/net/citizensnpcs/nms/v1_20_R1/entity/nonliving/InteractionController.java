@@ -38,11 +38,6 @@ public class InteractionController extends MobEntityController {
     }
 
     public static class EntityInteractionNPC extends Interaction implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityInteractionNPC(EntityType<? extends Interaction> types, Level level) {
@@ -65,6 +60,11 @@ public class InteractionController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

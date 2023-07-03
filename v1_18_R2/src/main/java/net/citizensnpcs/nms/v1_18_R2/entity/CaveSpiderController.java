@@ -49,11 +49,6 @@ public class CaveSpiderController extends MobEntityController {
     }
 
     public static class EntityCaveSpiderNPC extends CaveSpider implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityCaveSpiderNPC(EntityType<? extends CaveSpider> types, Level level) {
@@ -135,6 +130,11 @@ public class CaveSpiderController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

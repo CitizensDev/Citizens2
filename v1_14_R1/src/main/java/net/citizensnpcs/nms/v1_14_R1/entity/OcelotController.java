@@ -43,11 +43,6 @@ public class OcelotController extends MobEntityController {
     }
 
     public static class EntityOcelotNPC extends EntityOcelot implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityOcelotNPC(EntityTypes<? extends EntityOcelot> types, World world) {
@@ -168,6 +163,11 @@ public class OcelotController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

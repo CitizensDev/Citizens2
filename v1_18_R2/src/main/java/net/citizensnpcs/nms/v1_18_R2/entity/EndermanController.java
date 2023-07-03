@@ -52,11 +52,6 @@ public class EndermanController extends MobEntityController {
     }
 
     public static class EntityEndermanNPC extends EnderMan implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityEndermanNPC(EntityType<? extends EnderMan> types, Level level) {
@@ -138,6 +133,11 @@ public class EndermanController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

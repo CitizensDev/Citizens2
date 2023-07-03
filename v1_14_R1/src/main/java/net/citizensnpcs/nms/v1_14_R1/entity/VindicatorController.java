@@ -43,11 +43,6 @@ public class VindicatorController extends MobEntityController {
     }
 
     public static class EntityVindicatorNPC extends EntityVindicator implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityVindicatorNPC(EntityTypes<? extends EntityVindicator> types, World world) {
@@ -161,6 +156,11 @@ public class VindicatorController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

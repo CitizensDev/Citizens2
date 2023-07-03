@@ -36,11 +36,6 @@ public class SkeletonStrayController extends MobEntityController {
     }
 
     public static class EntityStrayNPC extends EntitySkeletonStray implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityStrayNPC(World world) {
@@ -138,6 +133,11 @@ public class SkeletonStrayController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

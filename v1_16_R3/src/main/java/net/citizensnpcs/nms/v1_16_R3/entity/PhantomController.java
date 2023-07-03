@@ -47,16 +47,11 @@ public class PhantomController extends MobEntityController {
     }
 
     public static class EntityPhantomNPC extends EntityPhantom implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         private ControllerLook oldLookController;
-        private ControllerMove oldMoveController;
 
+        private ControllerMove oldMoveController;
         public EntityPhantomNPC(EntityTypes<? extends EntityPhantom> types, World world) {
             this(types, world, null);
         }
@@ -174,6 +169,11 @@ public class PhantomController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

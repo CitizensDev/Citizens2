@@ -46,16 +46,11 @@ public class TurtleController extends MobEntityController {
     }
 
     public static class EntityTurtleNPC extends Turtle implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         private JumpControl oldJumpController;
-        private MoveControl oldMoveController;
 
+        private MoveControl oldMoveController;
         public EntityTurtleNPC(EntityType<? extends Turtle> types, Level level) {
             this(types, level, null);
         }
@@ -149,6 +144,11 @@ public class TurtleController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

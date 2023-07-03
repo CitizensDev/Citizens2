@@ -50,11 +50,6 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends Villager implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private boolean blockingATrade;
 
         private final CitizensNPC npc;
@@ -143,6 +138,11 @@ public class VillagerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

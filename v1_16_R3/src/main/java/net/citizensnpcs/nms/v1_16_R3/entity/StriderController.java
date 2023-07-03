@@ -43,11 +43,6 @@ public class StriderController extends MobEntityController {
     }
 
     public static class EntityStriderNPC extends EntityStrider implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityStriderNPC(EntityTypes<? extends EntityStrider> types, World world) {
@@ -144,6 +139,11 @@ public class StriderController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

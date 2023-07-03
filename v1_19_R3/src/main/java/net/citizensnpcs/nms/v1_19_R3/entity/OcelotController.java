@@ -46,11 +46,6 @@ public class OcelotController extends MobEntityController {
     }
 
     public static class EntityOcelotNPC extends Ocelot implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityOcelotNPC(EntityType<? extends Ocelot> types, Level level) {
@@ -137,6 +132,11 @@ public class OcelotController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

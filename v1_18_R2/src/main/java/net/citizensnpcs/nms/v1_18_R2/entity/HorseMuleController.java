@@ -54,16 +54,11 @@ public class HorseMuleController extends MobEntityController {
     }
 
     public static class EntityHorseMuleNPC extends Mule implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
-        private boolean riding;
 
+        private boolean riding;
         public EntityHorseMuleNPC(EntityType<? extends Mule> types, Level level) {
             this(types, level, null);
         }
@@ -168,6 +163,11 @@ public class HorseMuleController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

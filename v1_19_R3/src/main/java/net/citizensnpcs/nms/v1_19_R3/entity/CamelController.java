@@ -61,15 +61,10 @@ public class CamelController extends MobEntityController {
     }
 
     public static class EntityCamelNPC extends Camel implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private double baseMovementSpeed;
+
         private final CitizensNPC npc;
         private boolean riding;
-
         public EntityCamelNPC(EntityType<? extends Camel> types, Level level) {
             this(types, level, null);
         }
@@ -169,6 +164,11 @@ public class CamelController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

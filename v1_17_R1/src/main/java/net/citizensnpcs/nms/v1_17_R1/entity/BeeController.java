@@ -46,11 +46,6 @@ public class BeeController extends MobEntityController {
     }
 
     public static class EntityBeeNPC extends Bee implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityBeeNPC(EntityType<? extends Bee> types, Level level) {
@@ -121,6 +116,11 @@ public class BeeController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

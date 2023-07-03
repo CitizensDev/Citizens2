@@ -45,11 +45,6 @@ public class SheepController extends MobEntityController {
     }
 
     public static class EntitySheepNPC extends Sheep implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntitySheepNPC(EntityType<? extends Sheep> types, Level level) {
@@ -131,6 +126,11 @@ public class SheepController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

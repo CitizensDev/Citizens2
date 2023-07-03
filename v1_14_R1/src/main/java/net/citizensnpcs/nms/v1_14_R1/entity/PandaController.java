@@ -43,11 +43,6 @@ public class PandaController extends MobEntityController {
     }
 
     public static class EntityPandaNPC extends EntityPanda implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPandaNPC(EntityTypes<? extends EntityPanda> types, World world) {
@@ -161,6 +156,11 @@ public class PandaController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

@@ -42,11 +42,6 @@ public class ZombieController extends MobEntityController {
     }
 
     public static class EntityZombieNPC extends Zombie implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityZombieNPC(EntityType<? extends Zombie> types, Level level) {
@@ -128,6 +123,11 @@ public class ZombieController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

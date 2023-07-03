@@ -42,11 +42,6 @@ public class SnowmanController extends MobEntityController {
     }
 
     public static class EntitySnowmanNPC extends EntitySnowman implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntitySnowmanNPC(EntityTypes<? extends EntitySnowman> types, World world) {
@@ -150,6 +145,11 @@ public class SnowmanController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

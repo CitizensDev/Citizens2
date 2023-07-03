@@ -44,11 +44,6 @@ public class AreaEffectCloudController extends MobEntityController {
     }
 
     public static class EntityAreaEffectCloudNPC extends AreaEffectCloud implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityAreaEffectCloudNPC(EntityType<? extends AreaEffectCloud> types, Level level) {
@@ -71,6 +66,11 @@ public class AreaEffectCloudController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

@@ -44,11 +44,6 @@ public class EnderCrystalController extends MobEntityController {
     }
 
     public static class EntityEnderCrystalNPC extends EntityEnderCrystal implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderCrystalNPC(World world) {
@@ -108,6 +103,11 @@ public class EnderCrystalController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
     }
 }

@@ -45,11 +45,6 @@ public class PillagerController extends MobEntityController {
     }
 
     public static class EntityPillagerNPC extends Pillager implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPillagerNPC(EntityType<? extends Pillager> types, Level level) {
@@ -131,6 +126,11 @@ public class PillagerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

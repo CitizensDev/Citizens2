@@ -43,11 +43,6 @@ public class PandaController extends MobEntityController {
     }
 
     public static class EntityPandaNPC extends Panda implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPandaNPC(EntityType<? extends Panda> types, Level level) {
@@ -129,6 +124,11 @@ public class PandaController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

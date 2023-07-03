@@ -50,11 +50,6 @@ public class CatController extends MobEntityController {
     }
 
     public static class EntityCatNPC extends Cat implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityCatNPC(EntityType<? extends Cat> types, Level level) {
@@ -136,6 +131,11 @@ public class CatController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

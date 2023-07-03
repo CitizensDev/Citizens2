@@ -50,11 +50,6 @@ public class LlamaSpitController extends AbstractEntityController {
     }
 
     public static class EntityLlamaSpitNPC extends EntityLlamaSpit implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityLlamaSpitNPC(EntityTypes<? extends EntityLlamaSpit> types, World world) {
@@ -115,6 +110,11 @@ public class LlamaSpitController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

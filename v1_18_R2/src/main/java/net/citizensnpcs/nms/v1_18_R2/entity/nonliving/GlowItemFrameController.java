@@ -49,11 +49,6 @@ public class GlowItemFrameController extends MobEntityController {
     }
 
     public static class EntityGlowItemFrameNPC extends GlowItemFrame implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityGlowItemFrameNPC(EntityType<? extends GlowItemFrame> types, Level level) {
@@ -76,6 +71,11 @@ public class GlowItemFrameController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

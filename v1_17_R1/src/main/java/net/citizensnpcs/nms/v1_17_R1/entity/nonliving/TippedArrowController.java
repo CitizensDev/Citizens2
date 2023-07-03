@@ -36,11 +36,6 @@ public class TippedArrowController extends MobEntityController {
     }
 
     public static class EntityTippedArrowNPC extends Arrow implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityTippedArrowNPC(EntityType<? extends Arrow> types, Level level) {
@@ -63,6 +58,11 @@ public class TippedArrowController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

@@ -40,11 +40,6 @@ public class VexController extends MobEntityController {
     }
 
     public static class EntityVexNPC extends Vex implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityVexNPC(EntityType<? extends Vex> types, Level level) {
@@ -114,6 +109,11 @@ public class VexController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

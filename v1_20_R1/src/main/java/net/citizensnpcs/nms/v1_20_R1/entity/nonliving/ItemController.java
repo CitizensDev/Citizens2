@@ -50,11 +50,6 @@ public class ItemController extends AbstractEntityController {
     }
 
     public static class EntityItemNPC extends ItemEntity implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityItemNPC(EntityType<? extends ItemEntity> types, Level level) {
@@ -78,6 +73,11 @@ public class ItemController extends AbstractEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

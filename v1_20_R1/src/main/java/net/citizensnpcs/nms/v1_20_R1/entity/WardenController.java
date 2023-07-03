@@ -46,11 +46,6 @@ public class WardenController extends MobEntityController {
     }
 
     public static class EntityWardenNPC extends Warden implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityWardenNPC(EntityType<? extends Warden> types, Level level) {
@@ -137,6 +132,11 @@ public class WardenController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

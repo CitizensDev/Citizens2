@@ -57,11 +57,6 @@ public class ChickenController extends MobEntityController {
     }
 
     public static class EntityChickenNPC extends EntityChicken implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityChickenNPC(EntityTypes<? extends EntityChicken> types, World world) {
@@ -175,6 +170,11 @@ public class ChickenController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

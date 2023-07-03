@@ -52,16 +52,11 @@ public class DolphinController extends MobEntityController {
     }
 
     public static class EntityDolphinNPC extends EntityDolphin implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private boolean inProtectedTick;
 
         private final CitizensNPC npc;
-        private ControllerMove oldMoveController;
 
+        private ControllerMove oldMoveController;
         public EntityDolphinNPC(EntityTypes<? extends EntityDolphin> types, World world) {
             this(types, world, null);
         }
@@ -169,6 +164,11 @@ public class DolphinController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

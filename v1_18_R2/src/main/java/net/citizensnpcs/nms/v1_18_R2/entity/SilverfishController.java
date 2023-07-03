@@ -43,11 +43,6 @@ public class SilverfishController extends MobEntityController {
     }
 
     public static class EntitySilverfishNPC extends Silverfish implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntitySilverfishNPC(EntityType<? extends Silverfish> types, Level level) {
@@ -129,6 +124,11 @@ public class SilverfishController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

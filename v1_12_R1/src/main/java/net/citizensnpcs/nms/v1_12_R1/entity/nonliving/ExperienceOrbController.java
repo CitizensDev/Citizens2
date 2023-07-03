@@ -30,11 +30,6 @@ public class ExperienceOrbController extends MobEntityController {
     }
 
     public static class EntityExperienceOrbNPC extends EntityExperienceOrb implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityExperienceOrbNPC(World world) {
@@ -94,6 +89,11 @@ public class ExperienceOrbController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
     }
 

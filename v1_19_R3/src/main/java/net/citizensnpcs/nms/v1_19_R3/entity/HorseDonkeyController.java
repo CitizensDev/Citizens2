@@ -55,15 +55,10 @@ public class HorseDonkeyController extends MobEntityController {
     }
 
     public static class EntityHorseDonkeyNPC extends Donkey implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private double baseMovementSpeed;
+
         private final CitizensNPC npc;
         private boolean riding;
-
         public EntityHorseDonkeyNPC(EntityType<? extends Donkey> types, Level level) {
             this(types, level, null);
         }
@@ -163,6 +158,11 @@ public class HorseDonkeyController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

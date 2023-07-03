@@ -43,11 +43,6 @@ public class RavagerController extends MobEntityController {
     }
 
     public static class EntityRavagerNPC extends EntityRavager implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityRavagerNPC(EntityTypes<? extends EntityRavager> types, World world) {
@@ -161,6 +156,11 @@ public class RavagerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

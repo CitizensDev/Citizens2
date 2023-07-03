@@ -45,11 +45,6 @@ public class FrogController extends MobEntityController {
     }
 
     public static class EntityFrogNPC extends Frog implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityFrogNPC(EntityType<? extends Frog> types, Level level) {
@@ -134,6 +129,11 @@ public class FrogController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

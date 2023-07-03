@@ -46,11 +46,6 @@ public class BatController extends MobEntityController {
     }
 
     public static class EntityBatNPC extends Bat implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityBatNPC(EntityType<? extends Bat> types, Level level) {
@@ -124,6 +119,11 @@ public class BatController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

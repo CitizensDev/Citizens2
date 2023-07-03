@@ -47,11 +47,6 @@ public class WolfController extends MobEntityController {
     }
 
     public static class EntityWolfNPC extends Wolf implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityWolfNPC(EntityType<? extends Wolf> types, Level level) {
@@ -133,6 +128,11 @@ public class WolfController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

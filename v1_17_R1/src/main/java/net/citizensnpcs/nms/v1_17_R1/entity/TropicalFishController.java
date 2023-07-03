@@ -49,11 +49,6 @@ public class TropicalFishController extends MobEntityController {
     }
 
     public static class EntityTropicalFishNPC extends TropicalFish implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         private MoveControl oldMoveController;
@@ -164,6 +159,11 @@ public class TropicalFishController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

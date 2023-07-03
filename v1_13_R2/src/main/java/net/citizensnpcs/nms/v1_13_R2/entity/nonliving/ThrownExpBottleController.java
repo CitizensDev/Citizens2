@@ -32,11 +32,6 @@ public class ThrownExpBottleController extends MobEntityController {
     }
 
     public static class EntityThrownExpBottleNPC extends EntityThrownExpBottle implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityThrownExpBottleNPC(World world) {
@@ -104,6 +99,11 @@ public class ThrownExpBottleController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

@@ -47,11 +47,6 @@ public class TropicalFishController extends MobEntityController {
     }
 
     public static class EntityTropicalFishNPC extends EntityTropicalFish implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityTropicalFishNPC(EntityTypes<? extends EntityTropicalFish> types, World world) {
@@ -171,6 +166,11 @@ public class TropicalFishController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

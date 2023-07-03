@@ -36,11 +36,6 @@ public class ZombieVillagerController extends MobEntityController {
     }
 
     public static class EntityZombieVillagerNPC extends EntityZombieVillager implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityZombieVillagerNPC(World world) {
@@ -138,6 +133,11 @@ public class ZombieVillagerController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override

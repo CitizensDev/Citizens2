@@ -725,12 +725,7 @@ public class NPCCommands {
         }
 
         if (item != null) {
-            ItemStack stack = new ItemStack(Material.STONE, 1);
-            try {
-                Bukkit.getUnsafe().modifyItemStack(stack, item);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
+            ItemStack stack = Util.parseItemStack(null, item);
             npc = registry.createNPCUsingItem(type, name, stack);
         } else {
             npc = registry.createNPC(type, name);
@@ -1362,19 +1357,17 @@ public class NPCCommands {
     public void item(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Material mat, @Arg(2) String modify)
             throws CommandException {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
-        if (!type.name().contains("ITEM_FRAME") && type != EntityType.DROPPED_ITEM && type != EntityType.FALLING_BLOCK)
-            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE);
+        if (!type.name().contains("ITEM_FRAME") && !type.name().contains("ITEM_DISPLAY")
+                && type != EntityType.DROPPED_ITEM && type != EntityType.FALLING_BLOCK)
+            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
         ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand() : new ItemStack(mat, 1);
         if (modify != null) {
-            try {
-                Bukkit.getUnsafe().modifyItemStack(stack, modify);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
+            stack = Util.parseItemStack(stack, modify);
         }
         if (mat == null && !args.hasFlag('h'))
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
-        npc.setItemProvider(() -> stack);
+        ItemStack fstack = stack.clone();
+        npc.setItemProvider(() -> fstack);
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
@@ -2348,14 +2341,13 @@ public class NPCCommands {
     public void profession(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Profession parsed)
             throws CommandException {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
-        if (type != EntityType.VILLAGER && !type.name().equals("ZOMBIE_VILLAGER")) {
-            throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE,
-                    type.name().toLowerCase().replace('_', ' ')));
-        }
-        if (parsed == null) {
+        if (type != EntityType.VILLAGER && !type.name().equals("ZOMBIE_VILLAGER"))
+            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
+
+        if (parsed == null)
             throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1),
                     Util.listValuesPretty(Profession.values()));
-        }
+
         npc.getOrAddTrait(VillagerProfession.class).setProfession(parsed);
         Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), Util.prettyEnum(parsed));
     }

@@ -44,11 +44,6 @@ public class StriderController extends MobEntityController {
     }
 
     public static class EntityStriderNPC extends Strider implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityStriderNPC(EntityType<? extends Strider> types, Level level) {
@@ -130,6 +125,11 @@ public class StriderController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

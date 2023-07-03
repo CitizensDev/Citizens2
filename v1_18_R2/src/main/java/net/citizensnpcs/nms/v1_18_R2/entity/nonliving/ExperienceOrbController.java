@@ -38,11 +38,6 @@ public class ExperienceOrbController extends MobEntityController {
     }
 
     public static class EntityExperienceOrbNPC extends ExperienceOrb implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityExperienceOrbNPC(EntityType<? extends ExperienceOrb> types, Level level) {
@@ -65,6 +60,11 @@ public class ExperienceOrbController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

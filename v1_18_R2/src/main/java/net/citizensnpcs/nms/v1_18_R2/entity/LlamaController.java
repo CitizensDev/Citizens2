@@ -54,15 +54,10 @@ public class LlamaController extends MobEntityController {
     }
 
     public static class EntityLlamaNPC extends Llama implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private double baseMovementSpeed;
+
         private final CitizensNPC npc;
         private boolean riding;
-
         public EntityLlamaNPC(EntityType<? extends Llama> types, Level level) {
             this(types, level, null);
         }
@@ -162,6 +157,11 @@ public class LlamaController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

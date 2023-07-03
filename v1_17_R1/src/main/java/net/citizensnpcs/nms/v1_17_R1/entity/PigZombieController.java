@@ -42,11 +42,6 @@ public class PigZombieController extends MobEntityController {
     }
 
     public static class EntityPigZombieNPC extends ZombifiedPiglin implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPigZombieNPC(EntityType<? extends ZombifiedPiglin> types, Level level) {
@@ -128,6 +123,11 @@ public class PigZombieController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

@@ -39,11 +39,6 @@ public class SpectralArrowController extends MobEntityController {
     }
 
     public static class EntitySpectralArrowNPC extends SpectralArrow implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntitySpectralArrowNPC(EntityType<? extends SpectralArrow> types, Level level) {
@@ -66,6 +61,11 @@ public class SpectralArrowController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

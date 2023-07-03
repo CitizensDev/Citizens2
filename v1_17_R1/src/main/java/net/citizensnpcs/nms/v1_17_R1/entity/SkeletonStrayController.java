@@ -42,11 +42,6 @@ public class SkeletonStrayController extends MobEntityController {
     }
 
     public static class EntityStrayNPC extends Stray implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityStrayNPC(EntityType<? extends Stray> types, Level level) {
@@ -128,6 +123,11 @@ public class SkeletonStrayController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

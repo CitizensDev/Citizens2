@@ -44,11 +44,6 @@ public class PiglinController extends MobEntityController {
     }
 
     public static class EntityPiglinNPC extends Piglin implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityPiglinNPC(EntityType<? extends Piglin> types, Level level) {
@@ -133,6 +128,11 @@ public class PiglinController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

@@ -50,11 +50,6 @@ public class DrownedController extends MobEntityController {
     }
 
     public static class EntityDrownedNPC extends Drowned implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityDrownedNPC(EntityType<? extends Drowned> types, Level level) {
@@ -136,6 +131,11 @@ public class DrownedController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

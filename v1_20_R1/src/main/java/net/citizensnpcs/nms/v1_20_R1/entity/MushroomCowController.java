@@ -48,11 +48,6 @@ public class MushroomCowController extends MobEntityController {
     }
 
     public static class EntityMushroomCowNPC extends MushroomCow implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityMushroomCowNPC(EntityType<? extends MushroomCow> types, Level level) {
@@ -134,6 +129,11 @@ public class MushroomCowController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

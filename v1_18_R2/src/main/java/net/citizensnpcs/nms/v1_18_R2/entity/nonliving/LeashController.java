@@ -39,11 +39,6 @@ public class LeashController extends MobEntityController {
     }
 
     public static class EntityLeashNPC extends LeashFenceKnotEntity implements NPCHolder {
-        @Override
-        public PushReaction getPistonPushReaction() {
-            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityLeashNPC(EntityType<? extends LeashFenceKnotEntity> types, Level level) {
@@ -66,6 +61,11 @@ public class LeashController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
         }
 
         @Override

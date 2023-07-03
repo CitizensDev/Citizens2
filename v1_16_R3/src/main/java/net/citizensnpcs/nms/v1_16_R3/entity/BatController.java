@@ -47,11 +47,6 @@ public class BatController extends MobEntityController {
     }
 
     public static class EntityBatNPC extends EntityBat implements NPCHolder {
-        @Override
-        public EnumPistonReaction getPushReaction() {
-            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
         private final CitizensNPC npc;
 
         public EntityBatNPC(EntityTypes<? extends EntityBat> types, World world) {
@@ -128,6 +123,11 @@ public class BatController extends MobEntityController {
         @Override
         public NPC getNPC() {
             return npc;
+        }
+
+        @Override
+        public EnumPistonReaction getPushReaction() {
+            return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
         @Override
