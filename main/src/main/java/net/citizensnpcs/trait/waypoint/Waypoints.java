@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.bukkit.command.CommandSender;
 
@@ -21,19 +20,22 @@ import net.citizensnpcs.util.StringHelper;
 @TraitName("waypoints")
 public class Waypoints extends Trait {
     private WaypointProvider provider;
+    private final Map<String, WaypointProvider> providerCache = Maps.newHashMap();
     private String providerName = "linear";
 
     public Waypoints() {
         super("waypoints");
     }
 
-    private WaypointProvider create(Class<? extends WaypointProvider> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    private WaypointProvider create(String name, Class<? extends WaypointProvider> clazz) {
+        return providerCache.computeIfAbsent(name, s -> {
+            try {
+                return clazz.newInstance();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        });
     }
 
     public void describeProviders(CommandSender sender) {
@@ -67,12 +69,8 @@ public class Waypoints extends Trait {
     public void load(DataKey key) throws NPCLoadException {
         provider = null;
         providerName = key.getString("provider", "linear");
-        for (Entry<String, Class<? extends WaypointProvider>> entry : PROVIDERS.entrySet()) {
-            if (entry.getKey().equals(providerName)) {
-                provider = create(entry.getValue());
-                break;
-            }
-        }
+        Class<? extends WaypointProvider> clazz = PROVIDERS.get(providerName);
+        provider = create(providerName, clazz);
         if (provider == null)
             return;
         PersistenceLoader.load(provider, key.getRelative(providerName));
@@ -114,7 +112,7 @@ public class Waypoints extends Trait {
         if (provider != null) {
             provider.onRemove();
         }
-        if (clazz == null || (provider = create(clazz)) == null)
+        if (clazz == null || (provider = create(name, clazz)) == null)
             return false;
         providerName = name;
         if (npc != null && npc.isSpawned()) {

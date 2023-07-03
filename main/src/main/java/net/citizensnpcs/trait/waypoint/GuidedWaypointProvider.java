@@ -235,7 +235,11 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
     @Override
     public void onRemove() {
+        if (currentGoal == null)
+            return;
+        currentGoal.onProviderChanged();
         npc.getDefaultGoalController().removeGoal(currentGoal);
+        currentGoal = null;
     }
 
     @Override

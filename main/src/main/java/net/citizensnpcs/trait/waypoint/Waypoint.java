@@ -22,7 +22,7 @@ import net.citizensnpcs.util.Messages;
 /**
  * Represents a {@link Location} with a number of {@link WaypointTrigger}s that activate on reaching the location.
  */
-public class Waypoint implements Locatable {
+public class Waypoint {
     @Persist(required = true)
     private Location location;
     @Persist
@@ -90,7 +90,6 @@ public class Waypoint implements Locatable {
         return true;
     }
 
-    @Override
     public Location getLocation() {
         return location.clone();
     }

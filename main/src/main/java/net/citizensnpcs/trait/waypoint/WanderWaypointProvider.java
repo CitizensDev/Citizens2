@@ -3,7 +3,6 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,7 +15,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -40,8 +38,7 @@ import net.citizensnpcs.util.Util;
  * A wandering waypoint provider that wanders between either a box centered at the current location or inside a region
  * defined by a list of boxes.
  */
-public class WanderWaypointProvider
-        implements WaypointProvider, Supplier<PhTreeSolid<Boolean>>, Function<NPC, Location> {
+public class WanderWaypointProvider implements WaypointProvider {
     private WanderGoal currentGoal;
     @Persist
     public int delay = -1;
@@ -53,7 +50,7 @@ public class WanderWaypointProvider
     private final List<Location> regionCentres = Lists.newArrayList();
     private PhTreeSolid<Boolean> tree = PhTreeSolid.create(3);
     @Persist
-    private String worldguardRegion;
+    public String worldguardRegion;
     private Object worldguardRegionCache;
     @Persist
     public int xrange = DEFAULT_XRANGE;
@@ -68,12 +65,6 @@ public class WanderWaypointProvider
     public void addRegionCentres(Collection<Location> centre) {
         regionCentres.addAll(centre);
         recalculateTree();
-    }
-
-    @Override
-    public Location apply(NPC npc) {
-        return MinecraftBlockExaminer.findValidLocation(npc.getStoredLocation(), xrange, yrange,
-                currentGoal.blockFilter());
     }
 
     @Override
@@ -221,11 +212,6 @@ public class WanderWaypointProvider
         };
     }
 
-    @Override
-    public PhTreeSolid<Boolean> get() {
-        return regionCentres.isEmpty() ? null : tree;
-    }
-
     public List<Location> getRegionCentres() {
         return new RecalculateList();
     }
@@ -259,14 +245,22 @@ public class WanderWaypointProvider
 
     @Override
     public void onRemove() {
+        worldguardRegionCache = null;
+        if (currentGoal == null)
+            return;
+        currentGoal.pause();
         npc.getDefaultGoalController().removeGoal(currentGoal);
+        currentGoal = null;
     }
 
     @Override
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = WanderGoal.builder(npc).xrange(xrange).yrange(yrange).fallback(this).tree(this).delay(delay)
+            currentGoal = WanderGoal.builder(npc).xrange(xrange).yrange(yrange)
+                    .fallback(n -> MinecraftBlockExaminer.findValidLocation(n.getStoredLocation(), xrange, yrange,
+                            currentGoal.blockFilter()))
+                    .tree(() -> regionCentres.isEmpty() ? null : tree).delay(delay)
                     .worldguardRegion(() -> getWorldGuardRegion()).build();
             if (paused) {
                 currentGoal.pause();
@@ -282,7 +276,6 @@ public class WanderWaypointProvider
     }
 
     private void recalculateTree() {
-        tree.clear();
         tree = PhTreeSolid.create(3);
         for (Location loc : regionCentres) {
             long[] lower = { loc.getBlockX() - xrange, loc.getBlockY() - yrange, loc.getBlockZ() - xrange };

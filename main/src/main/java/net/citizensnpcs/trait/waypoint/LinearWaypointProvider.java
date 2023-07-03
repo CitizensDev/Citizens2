@@ -76,6 +76,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         }
     }
 
+    public boolean cachePaths() {
+        return cachePaths;
+    }
+
     @Override
     public WaypointEditor createEditor(CommandSender sender, CommandContext args) {
         if (args.hasFlag('h')) {
@@ -119,6 +123,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         return new LinearWaypointEditor((Player) sender);
     }
 
+    public boolean cycleWaypoints() {
+        return cycle;
+    }
+
     public Waypoint getCurrentWaypoint() {
         if (currentGoal != null && currentGoal.currentDestination != null) {
             return currentGoal.currentDestination;
@@ -143,10 +151,11 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
     @Override
     public void onRemove() {
-        if (currentGoal != null) {
-            npc.getDefaultGoalController().removeGoal(currentGoal);
-            currentGoal = null;
-        }
+        if (currentGoal == null)
+            return;
+        currentGoal.onProviderChanged();
+        npc.getDefaultGoalController().removeGoal(currentGoal);
+        currentGoal = null;
     }
 
     @Override
@@ -164,6 +173,20 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         DataKey root = key.getRelative("points");
         for (int i = 0; i < waypoints.size(); ++i) {
             PersistenceLoader.save(waypoints.get(i), root.getRelative(i));
+        }
+    }
+
+    public void setCachePaths(boolean cachePaths) {
+        this.cachePaths = cachePaths;
+        if (currentGoal != null) {
+            currentGoal.onProviderChanged();
+        }
+    }
+
+    public void setCycle(boolean cycle) {
+        this.cycle = cycle;
+        if (currentGoal != null) {
+            currentGoal.onProviderChanged();
         }
     }
 
