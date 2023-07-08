@@ -146,14 +146,17 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     public boolean shouldExecute() {
         if (!npc.isSpawned() || npc.getNavigator().isNavigating() || paused)
             return false;
-        if (delayedTicks-- > 0) {
+
+        if (delayedTicks-- > 0)
             return false;
-        }
+
         Location dest = findRandomPosition();
         if (dest == null)
             return false;
+
         if (pathfind) {
             npc.getNavigator().setTarget(dest);
+            npc.getNavigator().getLocalParameters().stuckAction(null);
             npc.getNavigator().getLocalParameters().addSingleUseCallback((reason) -> forceFinish = true);
         } else {
             Random random = new Random();
