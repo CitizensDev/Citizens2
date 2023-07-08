@@ -410,7 +410,8 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 if (showingMarkers) {
                     markers.createMarker(element, element.getLocation().clone());
                 }
-                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at), idx);
+                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at),
+                        waypoints.size());
             } else if (waypoints.size() > 0 && !event.getPlayer().isSneaking()) {
                 event.setCancelled(true);
 

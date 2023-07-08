@@ -1,18 +1,26 @@
 package net.citizensnpcs;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerOptions;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
@@ -28,11 +36,16 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
-import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCAddTraitEvent;
+import net.citizensnpcs.api.event.NPCDespawnEvent;
+import net.citizensnpcs.api.event.NPCEvent;
+import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.MirrorTrait;
@@ -40,10 +53,12 @@ import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.util.NMS;
 
-public class ProtocolLibListener {
+public class ProtocolLibListener implements Listener {
     private final Class<?> flagsClass;
     private final ProtocolManager manager;
+    private final Map<UUID, MirrorTrait> mirrorTraits = Maps.newConcurrentMap();
     private final Citizens plugin;
+    private final Map<Integer, RotationTrait> rotationTraits = Maps.newConcurrentMap();
 
     public ProtocolLibListener(Citizens plugin) {
         this.plugin = plugin;
@@ -51,6 +66,7 @@ public class ProtocolLibListener {
         flagsClass = MinecraftReflection.getMinecraftClass("RelativeMovement", "world.entity.RelativeMovement",
                 "EnumPlayerTeleportFlags", "PacketPlayOutPosition$EnumPlayerTeleportFlags",
                 "network.protocol.game.PacketPlayOutPosition$EnumPlayerTeleportFlags");
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Server.ENTITY_METADATA) {
             @Override
             public void onPacketSending(PacketEvent event) {
@@ -98,12 +114,14 @@ public class ProtocolLibListener {
                 }
             }
         });
-        manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Server.PLAYER_INFO) {
+        manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Arrays.asList(Server.PLAYER_INFO),
+                ListenerOptions.ASYNC) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 int version = manager.getProtocolVersion(event.getPlayer());
                 if (version >= 761) {
-                    NMS.onPlayerInfoAdd(event.getPlayer(), event.getPacket().getHandle());
+                    NMS.onPlayerInfoAdd(event.getPlayer(), event.getPacket().getHandle(),
+                            uuid -> mirrorTraits.get(uuid));
                     return;
                 }
                 List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists().readSafely(0);
@@ -114,10 +132,7 @@ public class ProtocolLibListener {
                     PlayerInfoData npcInfo = list.get(i);
                     if (npcInfo == null)
                         continue;
-                    NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(npcInfo.getProfile().getUUID());
-                    if (npc == null || !npc.isSpawned())
-                        continue;
-                    MirrorTrait trait = npc.getTraitNullable(MirrorTrait.class);
+                    MirrorTrait trait = mirrorTraits.get(npcInfo.getProfile().getUUID());
                     if (trait == null || !trait.isMirroring(event.getPlayer())) {
                         continue;
                     }
@@ -148,46 +163,45 @@ public class ProtocolLibListener {
                 }
             }
         });
-        manager.addPacketListener(
-                new PacketAdapter(plugin, ListenerPriority.MONITOR, Server.ENTITY_HEAD_ROTATION, Server.ENTITY_LOOK) {
-                    @Override
-                    public void onPacketSending(PacketEvent event) {
-                        NPC npc = getNPCFromPacket(event);
-                        if (npc == null)
-                            return;
+        manager.addPacketListener(new PacketAdapter(
+                plugin, ListenerPriority.MONITOR, Arrays.asList(Server.ENTITY_HEAD_ROTATION, Server.ENTITY_LOOK,
+                        Server.REL_ENTITY_MOVE_LOOK, Server.ENTITY_MOVE_LOOK, Server.POSITION, Server.ENTITY_TELEPORT),
+                ListenerOptions.ASYNC) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                RotationTrait trait = rotationTraits.get(event.getPacket().getIntegers().readSafely(0));
+                if (trait == null)
+                    return;
 
-                        RotationTrait trait = npc.getTraitNullable(RotationTrait.class);
-                        if (trait == null)
-                            return;
+                PacketRotationSession session = trait.getPacketSession(event.getPlayer());
+                if (session == null || !session.isActive())
+                    return;
 
-                        PacketRotationSession session = trait.getPacketSession(event.getPlayer());
-                        if (session == null || !session.isActive())
-                            return;
+                PacketContainer packet = event.getPacket();
+                PacketType type = event.getPacketType();
+                if (type == Server.ENTITY_HEAD_ROTATION) {
+                    packet.getBytes().write(0, degToByte(session.getHeadYaw()));
+                } else if (type == Server.ENTITY_LOOK) {
+                    packet.getBytes().write(0, degToByte(session.getBodyYaw()));
+                    packet.getBytes().write(1, degToByte(session.getPitch()));
+                } else if (type == Server.ENTITY_MOVE_LOOK || type == Server.REL_ENTITY_MOVE_LOOK) {
+                    packet.getBytes().write(0, degToByte(session.getBodyYaw()));
+                    packet.getBytes().write(1, degToByte(session.getPitch()));
+                } else if (type == Server.POSITION) {
+                    StructureModifier<Set<PlayerTeleportFlag>> flagsModifier = packet
+                            .getSets(EnumWrappers.getGenericConverter(flagsClass, PlayerTeleportFlag.class));
+                    Set<PlayerTeleportFlag> rel = flagsModifier.read(0);
+                    rel.remove(PlayerTeleportFlag.ZYAW);
+                    rel.remove(PlayerTeleportFlag.ZPITCH);
+                    flagsModifier.write(0, rel);
+                    packet.getFloat().write(0, session.getBodyYaw());
+                    packet.getFloat().write(1, session.getPitch());
+                }
 
-                        PacketContainer packet = event.getPacket();
-                        PacketType type = event.getPacketType();
-                        if (type == Server.ENTITY_HEAD_ROTATION) {
-                            packet.getBytes().write(0, degToByte(session.getHeadYaw()));
-                        } else if (type == Server.ENTITY_LOOK) {
-                            packet.getBytes().write(0, degToByte(session.getBodyYaw()));
-                            packet.getBytes().write(1, degToByte(session.getPitch()));
-                        } else if (type == Server.ENTITY_MOVE_LOOK || type == Server.REL_ENTITY_MOVE_LOOK) {
-                            packet.getBytes().write(0, degToByte(session.getBodyYaw()));
-                            packet.getBytes().write(1, degToByte(session.getPitch()));
-                        } else if (type == Server.POSITION) {
-                            StructureModifier<Set<PlayerTeleportFlag>> flagsModifier = packet
-                                    .getSets(EnumWrappers.getGenericConverter(flagsClass, PlayerTeleportFlag.class));
-                            Set<PlayerTeleportFlag> rel = flagsModifier.read(0);
-                            rel.remove(PlayerTeleportFlag.ZYAW);
-                            rel.remove(PlayerTeleportFlag.ZPITCH);
-                            flagsModifier.write(0, rel);
-                            packet.getFloat().write(0, session.getBodyYaw());
-                            packet.getFloat().write(1, session.getPitch());
-                        }
-
-                        session.onPacketOverwritten();
-                    }
-                });
+                session.onPacketOverwritten();
+                Messaging.log("OVERWRITTEN " + type + " " + packet.getHandle());
+            }
+        });
 
     }
 
@@ -212,6 +226,36 @@ public class ProtocolLibListener {
         }
 
         return entity instanceof NPCHolder ? ((NPCHolder) entity).getNPC() : null;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onNPCDespawn(NPCDespawnEvent event) {
+        rotationTraits.remove(event.getNPC().getEntity().getEntityId());
+        mirrorTraits.remove(event.getNPC().getEntity().getUniqueId());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onNPCSpawn(NPCSpawnEvent event) {
+        onSpawn(event);
+    }
+
+    private void onSpawn(NPCEvent event) {
+        if (event.getNPC().hasTrait(RotationTrait.class)) {
+            rotationTraits.put(event.getNPC().getEntity().getEntityId(),
+                    event.getNPC().getTraitNullable(RotationTrait.class));
+        }
+        if (event.getNPC().hasTrait(MirrorTrait.class)
+                && event.getNPC().getOrAddTrait(MobType.class).getType() == EntityType.PLAYER) {
+            mirrorTraits.put(event.getNPC().getEntity().getUniqueId(),
+                    event.getNPC().getTraitNullable(MirrorTrait.class));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onTraitAdd(NPCAddTraitEvent event) {
+        if (!event.getNPC().isSpawned())
+            return;
+        onSpawn(event);
     }
 
     public enum PlayerTeleportFlag {

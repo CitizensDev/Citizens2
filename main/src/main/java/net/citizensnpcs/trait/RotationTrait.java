@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.Persistable;
 import net.citizensnpcs.api.trait.Trait;
@@ -32,7 +33,7 @@ public class RotationTrait extends Trait {
     private final RotationParams globalParameters = new RotationParams();
     private final RotationSession globalSession = new RotationSession(globalParameters);
     private final List<PacketRotationSession> packetSessions = Lists.newArrayList();
-    private final Map<UUID, PacketRotationSession> packetSessionsByUUID = Maps.newHashMap();
+    private final Map<UUID, PacketRotationSession> packetSessionsByUUID = Maps.newConcurrentMap();
 
     public RotationTrait() {
         super("rotationtrait");
@@ -104,6 +105,9 @@ public class RotationTrait extends Trait {
     public void run() {
         if (!npc.isSpawned())
             return;
+        if (npc.data().get(NPC.Metadata.RESET_PITCH_ON_TICK, false)) {
+            NMS.setPitch(npc.getEntity(), 0);
+        }
 
         Set<PacketRotationSession> ran = Sets.newHashSet();
         for (Iterator<PacketRotationSession> itr = Iterables.concat(packetSessions, packetSessionsByUUID.values())
@@ -146,9 +150,9 @@ public class RotationTrait extends Trait {
     }
 
     public static class PacketRotationSession {
-        private boolean ended;
+        private volatile boolean ended;
         private final RotationSession session;
-        private PacketRotationTriple triple;
+        private volatile PacketRotationTriple triple;
 
         public PacketRotationSession(RotationSession session) {
             this.session = session;
@@ -201,9 +205,9 @@ public class RotationTrait extends Trait {
     }
 
     private static class PacketRotationTriple extends EntityRotation {
-        private float lastBodyYaw;
-        private float lastHeadYaw;
-        private float lastPitch;
+        private volatile float lastBodyYaw;
+        private volatile float lastHeadYaw;
+        private volatile float lastPitch;
 
         public PacketRotationTriple(Entity entity) {
             super(entity);

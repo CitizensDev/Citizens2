@@ -15,7 +15,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -54,7 +56,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -705,12 +706,7 @@ public class NMSImpl implements NMSBridge {
         Entity handle = getHandle(entity);
         if (handle == null || handle.passengers == null)
             return Lists.newArrayList();
-        return Lists.transform(handle.passengers, new Function<Entity, org.bukkit.entity.Entity>() {
-            @Override
-            public org.bukkit.entity.Entity apply(Entity input) {
-                return input.getBukkitEntity();
-            }
-        });
+        return Lists.transform(handle.passengers, input -> input.getBukkitEntity());
     }
 
     @Override
@@ -777,7 +773,7 @@ public class NMSImpl implements NMSBridge {
         }));
         Node last = list.size() > 0 ? list.get(list.size() - 1) : null;
         final Path path = new Path(list, last != null ? new BlockPos(last.x, last.y, last.z) : null, true);
-        return getTargetNavigator(entity, params, (input) -> {
+        return getTargetNavigator(entity, params, input -> {
             return input.moveTo(path, params.speed());
         });
     }
@@ -1177,7 +1173,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void onPlayerInfoAdd(Player player, Object raw) {
+    public void onPlayerInfoAdd(Player player, Object raw, Function<UUID, MirrorTrait> mirrorTraits) {
         ClientboundPlayerInfoUpdatePacket packet = (ClientboundPlayerInfoUpdatePacket) raw;
         List<ClientboundPlayerInfoUpdatePacket.Entry> list = Lists.newArrayList(packet.entries());
         boolean changed = false;
@@ -1185,9 +1181,10 @@ public class NMSImpl implements NMSBridge {
             ClientboundPlayerInfoUpdatePacket.Entry npcInfo = list.get(i);
             if (npcInfo == null)
                 continue;
-            NPC npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(npcInfo.profileId());
-            if (npc == null || !npc.isSpawned())
+            MirrorTrait trait = mirrorTraits.apply(npcInfo.profileId());
+            if (trait == null || !trait.isMirroring(player)) {
                 continue;
+            }
             if (Setting.DISABLE_TABLIST.asBoolean() != npcInfo.listed()) {
                 list.set(i,
                         new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), npcInfo.profile(),
@@ -1195,10 +1192,6 @@ public class NMSImpl implements NMSBridge {
                                 !Setting.DISABLE_TABLIST.asBoolean() ? npcInfo.displayName() : Component.empty(),
                                 npcInfo.chatSession()));
                 changed = true;
-            }
-            MirrorTrait trait = npc.getTraitNullable(MirrorTrait.class);
-            if (trait == null || !trait.isMirroring(player)) {
-                continue;
             }
             GameProfile playerProfile = NMS.getProfile(player);
             if (trait.mirrorName()) {

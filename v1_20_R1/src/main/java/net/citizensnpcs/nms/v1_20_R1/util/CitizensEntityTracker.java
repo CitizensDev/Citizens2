@@ -18,6 +18,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerEntity;
@@ -69,6 +70,8 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
             return;
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            NMSImpl.sendPacket(entityplayer.getBukkitEntity(),
+                    new ClientboundRotateHeadPacket(tracker, (byte) (tracker.getYHeadRot() * 256.0F / 360.0F)));
             NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0));
             NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());

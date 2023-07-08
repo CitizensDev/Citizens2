@@ -11,9 +11,9 @@ import net.citizensnpcs.api.trait.TraitName;
 @TraitName("mirrortrait")
 public class MirrorTrait extends Trait {
     @Persist
-    private boolean enabled;
+    private volatile boolean enabled;
     @Persist
-    private boolean mirrorName;
+    private volatile boolean mirrorName;
 
     public MirrorTrait() {
         super("mirrortrait");

@@ -158,10 +158,10 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 @Override
                 public float getCost(BlockSource source, PathPoint point) {
                     Vector pos = point.getVector();
-                    Material above = source.getMaterialAt(pos.setY(pos.getY() + 1));
+                    Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
                     return params.avoidWater() && (MinecraftBlockExaminer.isLiquid(above)
                             || MinecraftBlockExaminer.isLiquidOrInLiquid(pos.toLocation(source.getWorld()).getBlock()))
-                                    ? 1F
+                                    ? 2F
                                     : 0F;
                 }
 

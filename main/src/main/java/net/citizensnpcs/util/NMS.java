@@ -7,7 +7,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -57,6 +59,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.PacketNPC;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
@@ -640,8 +643,8 @@ public class NMS {
         BRIDGE.mount(entity, passenger);
     }
 
-    public static void onPlayerInfoAdd(Player player, Object source) {
-        BRIDGE.onPlayerInfoAdd(player, source);
+    public static void onPlayerInfoAdd(Player player, Object source, Function<UUID, MirrorTrait> mirrorTraits) {
+        BRIDGE.onPlayerInfoAdd(player, source, mirrorTraits);
     }
 
     public static InventoryView openAnvilInventory(Player player, Inventory inventory, String title) {
