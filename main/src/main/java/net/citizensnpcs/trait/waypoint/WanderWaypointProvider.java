@@ -257,7 +257,7 @@ public class WanderWaypointProvider implements WaypointProvider {
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = WanderGoal.builder(npc).xrange(xrange).yrange(yrange)
+            currentGoal = WanderGoal.builder(npc).xrange(xrange).yrange(yrange).pathfind(pathfind)
                     .fallback(n -> MinecraftBlockExaminer.findValidLocation(n.getStoredLocation(), xrange, yrange,
                             currentGoal.blockFilter()))
                     .tree(() -> regionCentres.isEmpty() ? null : tree).delay(delay)
