@@ -50,7 +50,7 @@ public class WanderWaypointProvider implements WaypointProvider {
     private final List<Location> regionCentres = Lists.newArrayList();
     private PhTreeSolid<Boolean> tree = PhTreeSolid.create(3);
     @Persist
-    public String worldguardRegion;
+    private String worldguardRegion;
     private Object worldguardRegionCache;
     @Persist
     public int xrange = DEFAULT_XRANGE;
@@ -308,6 +308,11 @@ public class WanderWaypointProvider implements WaypointProvider {
                 currentGoal.unpause();
             }
         }
+    }
+
+    public void setWorldGuardRegion(String region) {
+        this.worldguardRegion = region;
+        this.worldguardRegionCache = null;
     }
 
     public void setXYRange(int xrange, int yrange) {
