@@ -32,14 +32,14 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
         Material in = source.getMaterialAt(pos);
         if (above == WEB || in == WEB)
-            return 1F;
+            return 2F;
         if (below == Material.SOUL_SAND || below == Material.ICE)
-            return 1F;
+            return 2F;
         if (isLiquidOrInLiquid(source.getWorld().getBlockAt(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))) {
             if (in == Material.LAVA) {
-                return 2F;
+                return 3F;
             }
-            return 1F;
+            return 2F;
         }
         return 0F; // TODO: add light level-specific costs?
     }

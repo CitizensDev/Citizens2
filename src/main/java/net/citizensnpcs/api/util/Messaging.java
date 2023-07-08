@@ -173,9 +173,10 @@ public class Messaging {
     private static String prettify(String message) {
         String trimmed = message.trim();
         String messageColour = MESSAGE_COLOUR;
-        if (!trimmed.isEmpty()) {
-            if (trimmed.charAt(0) == ChatColor.COLOR_CHAR) {
-                ChatColor test = ChatColor.getByChar(trimmed.substring(1, 2));
+        String parsed = convertLegacyCodes(trimmed);
+        if (!parsed.isEmpty()) {
+            if (parsed.charAt(0) == ChatColor.COLOR_CHAR) {
+                ChatColor test = ChatColor.getByChar(parsed.substring(1, 2));
                 if (test == null) {
                     message = messageColour + message;
                 } else {
