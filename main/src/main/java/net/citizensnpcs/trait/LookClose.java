@@ -146,7 +146,7 @@ public class LookClose extends Trait implements Toggleable {
                 }
             }
         } else {
-            double min = range;
+            double min = Double.MAX_VALUE;
             Location npcLoc = npc.getStoredLocation();
             for (Player player : getNearbyPlayers()) {
                 double dist = player.getLocation().distance(npcLoc);
