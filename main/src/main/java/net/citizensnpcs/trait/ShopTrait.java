@@ -745,8 +745,8 @@ public class ShopTrait extends Trait {
 
             InventoryMenuSlot prev = ctx.getSlot(4 * 9 + 3);
             InventoryMenuSlot next = ctx.getSlot(4 * 9 + 5);
-            prev.clear();
             if (currentPage > 0) {
+                prev.clear();
                 prev.setItemStack(new ItemStack(Material.FEATHER, 1), "Previous page (" + (currentPage) + ")");
                 prev.setClickHandler(evt -> {
                     evt.setCancelled(true);
@@ -754,8 +754,8 @@ public class ShopTrait extends Trait {
                 });
             }
 
-            next.clear();
             if (currentPage + 1 < shop.pages.size()) {
+                next.clear();
                 next.setItemStack(new ItemStack(Material.FEATHER, 1), "Next page (" + (currentPage + 1) + ")");
                 next.setClickHandler(evt -> {
                     evt.setCancelled(true);
