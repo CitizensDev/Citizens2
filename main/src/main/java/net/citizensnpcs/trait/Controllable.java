@@ -88,9 +88,14 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             }
             return;
         }
-        if (ownerRequired && !npc.getOrAddTrait(Owner.class).isOwnedBy(player)) {
+        if (!player.hasPermission(
+                "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", ""))
+                || !player.hasPermission("citizens.npc.controllable"))
             return;
-        }
+
+        if (ownerRequired && !npc.getOrAddTrait(Owner.class).isOwnedBy(player))
+            return;
+
         NMS.mount(npc.getEntity(), player);
     }
 
