@@ -52,7 +52,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -558,12 +558,7 @@ public class NMSImpl implements NMSBridge {
     public MCNavigator getTargetNavigator(org.bukkit.entity.Entity entity, Iterable<Vector> dest,
             final NavigatorParameters params) {
         final PathEntity path = new PathEntity(
-                Iterables.toArray(Iterables.transform(dest, new Function<Vector, PathPoint>() {
-                    @Override
-                    public PathPoint apply(Vector input) {
-                        return new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ());
-                    }
-                }), PathPoint.class));
+                Iterables.toArray(Iterables.transform(dest, input -> new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ())), PathPoint.class));
         return getTargetNavigator(entity, params, new Function<NavigationAbstract, Boolean>() {
             @Override
             public Boolean apply(NavigationAbstract input) {

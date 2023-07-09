@@ -55,7 +55,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -657,12 +657,7 @@ public class NMSImpl implements NMSBridge {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null || handle.passengers == null)
             return Lists.newArrayList();
-        return Lists.transform(handle.passengers, new Function<Entity, org.bukkit.entity.Entity>() {
-            @Override
-            public org.bukkit.entity.Entity apply(Entity input) {
-                return input.getBukkitEntity();
-            }
-        });
+        return Lists.transform(handle.passengers, input->input.getBukkitEntity());
     }
 
     @Override
@@ -732,12 +727,7 @@ public class NMSImpl implements NMSBridge {
     public MCNavigator getTargetNavigator(org.bukkit.entity.Entity entity, Iterable<Vector> dest,
             final NavigatorParameters params) {
         List<PathPoint> list = Lists.<PathPoint> newArrayList(
-                Iterables.<Vector, PathPoint> transform(dest, new Function<Vector, PathPoint>() {
-                    @Override
-                    public PathPoint apply(Vector input) {
-                        return new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ());
-                    }
-                }));
+                Iterables.<Vector, PathPoint> transform(dest, input -> new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ())));
         PathPoint last = list.size() > 0 ? list.get(list.size() - 1) : null;
         final PathEntity path = new PathEntity(list, last != null ? new BlockPosition(last.a, last.b, last.c) : null,
                 true);
