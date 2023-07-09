@@ -1,7 +1,7 @@
 package net.citizensnpcs.api.astar;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
+import java.util.function.Supplier;
 
 public class AStarMachine<N extends AStarNode, P extends Plan> {
     private Supplier<AStarStorage> storageSupplier;

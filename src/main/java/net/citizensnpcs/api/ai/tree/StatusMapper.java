@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.ai.tree;
 
-import com.google.common.base.Supplier;
+import java.util.function.Supplier;
 
 /**
  * Wraps an {@link Behavior} and returns a supplied {@link BehaviorStatus} instead of the underlying status.

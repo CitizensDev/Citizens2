@@ -2,13 +2,13 @@ package net.citizensnpcs.api.ai.goals;
 
 import java.util.Random;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.Listener;
 
-import com.google.common.base.Supplier;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 

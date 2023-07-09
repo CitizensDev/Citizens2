@@ -1,7 +1,7 @@
 package net.citizensnpcs.api.trait;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
+import java.util.function.Supplier;
 
 /**
  * Builds a trait.
