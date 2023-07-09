@@ -109,7 +109,7 @@ public class Settings {
                 "The default MOVEMENT distance in blocks where the NPC will move to before considering a path finished<br>Note: this is different from the PATHFINDING distance which is specified by path-distance-margin",
                 "npc.pathfinding.default-distance-margin", 1),
         DEFAULT_LOOK_CLOSE("Enable look close by default", "npc.default.look-close.enabled", false),
-        DEFAULT_LOOK_CLOSE_RANGE("Default look close range in blocks", "npc.default.look-close.range", 5),
+        DEFAULT_LOOK_CLOSE_RANGE("Default look close range in blocks", "npc.default.look-close.range", 10),
         DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT("Default distance between hologram lines", "npc.hologram.default-line-height",
                 0.4D),
         DEFAULT_NPC_LIMIT(

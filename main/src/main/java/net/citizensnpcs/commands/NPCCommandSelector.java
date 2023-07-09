@@ -12,6 +12,7 @@ import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.CommandContext;
@@ -99,31 +100,31 @@ public class NPCCommandSelector extends NumericPrompt {
             return;
         } catch (IllegalArgumentException e) {
         }
-        try {
-            int id = Integer.parseInt(raw);
+
+        Integer id = Ints.tryParse(raw);
+        if (id != null) {
             callback.run(npcRegistry.getById(id));
             return;
-        } catch (NumberFormatException ex) {
-            String name = args.getString(1);
-            List<NPC> possible = Lists.newArrayList();
-            double range = -1;
-            if (args.hasValueFlag("range")) {
-                range = Math.abs(args.getFlagDouble("range"));
+        }
+        String name = args.getString(1);
+        List<NPC> possible = Lists.newArrayList();
+        double range = -1;
+        if (args.hasValueFlag("range")) {
+            range = Math.abs(args.getFlagDouble("range"));
+        }
+
+        for (NPC test : npcRegistry) {
+            if (test.getName().equalsIgnoreCase(name)) {
+                if (range > 0 && test.isSpawned()
+                        && !Util.locationWithinRange(args.getSenderLocation(), test.getEntity().getLocation(), range))
+                    continue;
+                possible.add(test);
             }
-            for (NPC test : npcRegistry) {
-                if (test.getName().equalsIgnoreCase(name)) {
-                    if (range > 0 && test.isSpawned() && !Util.locationWithinRange(args.getSenderLocation(),
-                            test.getEntity().getLocation(), range))
-                        continue;
-                    possible.add(test);
-                }
-            }
-            if (possible.size() == 1) {
-                callback.run(possible.get(0));
-            } else if (possible.size() > 1) {
-                NPCCommandSelector.start(callback, (Conversable) sender, possible);
-                return;
-            }
+        }
+        if (possible.size() == 1) {
+            callback.run(possible.get(0));
+        } else if (possible.size() > 1) {
+            NPCCommandSelector.start(callback, (Conversable) sender, possible);
         }
     }
 }

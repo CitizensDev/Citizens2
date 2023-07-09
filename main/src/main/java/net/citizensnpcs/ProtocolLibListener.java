@@ -169,7 +169,24 @@ public class ProtocolLibListener implements Listener {
                 ListenerOptions.ASYNC) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                RotationTrait trait = rotationTraits.get(event.getPacket().getIntegers().readSafely(0));
+                Integer eid = null;
+                try {
+                    eid = event.getPacket().getIntegers().readSafely(0);
+                    if (eid == null)
+                        return;
+                } catch (FieldAccessException | IllegalArgumentException ex) {
+                    if (!LOGGED_ERROR) {
+                        Messaging.severe(
+                                "Error retrieving entity from ID: ProtocolLib error? Suppressing further exceptions unless debugging.");
+                        ex.printStackTrace();
+                        LOGGED_ERROR = true;
+                    } else if (Messaging.isDebugging()) {
+                        ex.printStackTrace();
+                    }
+                    return;
+                }
+
+                RotationTrait trait = rotationTraits.get(eid);
                 if (trait == null)
                     return;
 
