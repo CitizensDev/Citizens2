@@ -131,15 +131,18 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     public void setDelay(int delayTicks) {
         this.delay = delayTicks;
         this.delayedTicks = delayTicks;
+        forceFinish = true;
     }
 
     public void setPathfind(boolean pathfind) {
         this.pathfind = pathfind;
+        forceFinish = true;
     }
 
     public void setXYRange(int xrange, int yrange) {
         this.xrange = xrange;
         this.yrange = yrange;
+        forceFinish = true;
     }
 
     @Override
