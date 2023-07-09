@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
@@ -31,15 +32,21 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
         Requirements requirements = (Requirements) instance;
         NPC npc = (methodArgs.length >= 3 && methodArgs[2] instanceof NPC) ? (NPC) methodArgs[2] : null;
 
-        boolean canRedefineSelected = context.hasValueFlag("id") && sender.hasPermission("npc.select");
+        boolean canRedefineSelected = (context.hasValueFlag("uuid") || context.hasValueFlag("id"))
+                && sender.hasPermission("npc.select");
         String error = Messaging.tr(CommandMessages.MUST_HAVE_SELECTED);
         if (canRedefineSelected) {
-            npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
+            if (context.hasValueFlag("uuid")) {
+                npc = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(UUID.fromString(context.getFlag("uuid")));
+            } else {
+                npc = CitizensAPI.getNPCRegistry().getById(context.getFlagInteger("id"));
+            }
             if (methodArgs.length >= 3) {
                 methodArgs[2] = npc;
             }
             if (npc == null) {
-                error += ' ' + Messaging.tr(CommandMessages.ID_NOT_FOUND, context.getFlagInteger("id"));
+                error += ' '
+                        + Messaging.tr(CommandMessages.ID_NOT_FOUND, context.getFlag("id", context.getFlag("uuid")));
             }
         }
 
