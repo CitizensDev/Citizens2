@@ -1476,7 +1476,7 @@ public class NPCCommands {
         Paginator paginator = new Paginator().header("NPCs").console(sender instanceof ConsoleCommandSender)
                 .enablePageSwitcher('/' + args.getRawCommand() + " --page $page");
         for (int i = 0; i < npcs.size(); i++) {
-            String id = npc.getUniqueId().toString();
+            String id = npcs.get(i).getUniqueId().toString();
             String line = StringHelper.wrap(id) + " " + npcs.get(i).getName() + " (<click:run_command:/npc tp --uuid "
                     + id
                     + "><hover:show_text:Teleport to this NPC>[[tp]]</hover></click>) (<click:run_command:/npc tph --uuid "
