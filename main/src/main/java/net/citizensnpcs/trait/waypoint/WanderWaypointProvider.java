@@ -25,7 +25,6 @@ import ch.ethz.globis.phtree.PhTreeSolid;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.GoalController.GoalEntry;
 import net.citizensnpcs.api.ai.goals.WanderGoal;
-import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
@@ -268,8 +267,6 @@ public class WanderWaypointProvider implements WaypointProvider {
         this.npc = npc;
         if (currentGoal == null) {
             currentGoal = WanderGoal.builder(npc).xrange(xrange).yrange(yrange).pathfind(pathfind)
-                    .fallback(n -> MinecraftBlockExaminer.findValidLocation(n.getStoredLocation(), xrange, yrange,
-                            currentGoal.blockFilter()))
                     .tree(() -> regionCentres.isEmpty() ? null : tree).delay(delay)
                     .worldguardRegion(() -> getWorldGuardRegion()).build();
             if (paused) {
