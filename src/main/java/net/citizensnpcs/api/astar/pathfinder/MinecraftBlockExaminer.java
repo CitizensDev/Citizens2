@@ -226,13 +226,13 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         for (int y = -yradius; y <= yradius; y++) {
             for (int x = -xradius; x <= xradius; x++) {
                 for (int z = -xradius; z <= xradius; z++) {
-                    if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4)) {
+                    if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4))
                         continue;
-                    }
+
                     Block relative = base.getRelative(x, y, z);
-                    if (filter.apply(relative) && canStandOn(relative.getRelative(BlockFace.DOWN))) {
+                    if (filter.apply(relative) && canStandOn(relative.getRelative(BlockFace.DOWN)))
                         return relative.getLocation();
-                    }
+
                 }
             }
         }
