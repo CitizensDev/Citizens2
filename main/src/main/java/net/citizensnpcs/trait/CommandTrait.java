@@ -94,7 +94,7 @@ public class CommandTrait extends Trait {
         return id;
     }
 
-    private Transaction chargeCommandCosts(Player player, Hand hand, int id) {
+    private Transaction chargeCommandCosts(Player player, Hand hand, NPCCommand command) {
         NPCShopAction action = null;
         if (player.hasPermission("citizens.npc.command.ignoreerrors.*"))
             return Transaction.success();
@@ -118,22 +118,23 @@ public class CommandTrait extends Trait {
                         stack.getAmount());
             }
         }
-        if (hasCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
-            action = new MoneyAction(commands.get(id).cost);
+        if (command.cost != -1 && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
+            action = new MoneyAction(command.cost);
             if (!action.take(player, 1).isPossible()) {
-                sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, commands.get(id).cost);
+                sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, command.cost);
             }
         }
-        if (hasExperienceCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
-            action = new ExperienceAction(commands.get(id).experienceCost);
+        if (command.experienceCost != -1 && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
+            action = new ExperienceAction(command.experienceCost);
             if (!action.take(player, 1).isPossible()) {
-                sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, commands.get(id).experienceCost);
+                sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, command.experienceCost);
             }
         }
-        if (hasItemCost(id) && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
-            action = new ItemAction(commands.get(id).itemCost);
+        if (command.itemCost != null && command.itemCost.size() > 0
+                && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
+            action = new ItemAction(command.itemCost);
             if (!action.take(player, 1).isPossible()) {
-                ItemStack stack = commands.get(id).itemCost.get(0);
+                ItemStack stack = command.itemCost.get(0);
                 sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
                         stack.getAmount());
             }
@@ -229,12 +230,11 @@ public class CommandTrait extends Trait {
     }
 
     private String describe(NPCCommand command) {
-        String output = Messaging.tr(Messages.COMMAND_DESCRIBE_TEMPLATE,
-                command.command,
-                StringHelper.wrap(command.cooldown != 0 ? command.cooldown : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()),
+        String output = Messaging.tr(Messages.COMMAND_DESCRIBE_TEMPLATE, command.command,
+                StringHelper.wrap(command.cooldown != 0 ? command.cooldown
+                        : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()),
                 StringHelper.wrap(hasCost(command.id) ? command.cost : "default"),
-                StringHelper.wrap(hasExperienceCost(command.id) ? command.experienceCost : "default"),
-                command.id);
+                StringHelper.wrap(hasExperienceCost(command.id) ? command.experienceCost : "default"), command.id);
         if (command.globalCooldown > 0) {
             output += "[global " + StringHelper.wrap(command.globalCooldown) + "s]";
         }
@@ -315,7 +315,7 @@ public class CommandTrait extends Trait {
                     }
                     Transaction charge = null;
                     if (charged == null) {
-                        charge = chargeCommandCosts(player, hand, command.id);
+                        charge = chargeCommandCosts(player, hand, command);
                         if (!charge.isPossible()) {
                             charged = false;
                             return;
@@ -429,7 +429,8 @@ public class CommandTrait extends Trait {
         }
     }
 
-    private void sendErrorMessage(Player player, CommandTraitError msg, Function<String, String> transform, Object... objects) {
+    private void sendErrorMessage(Player player, CommandTraitError msg, Function<String, String> transform,
+            Object... objects) {
         if (hideErrorMessages) {
             return;
         }
@@ -476,6 +477,11 @@ public class CommandTrait extends Trait {
         this.hideErrorMessages = hide;
     }
 
+    public void setItemCost(List<ItemStack> itemCost, int id) {
+        commands.get(id).itemCost.clear();
+        commands.get(id).itemCost.addAll(itemCost);
+    }
+
     public void setPersistSequence(boolean persistSequence) {
         this.persistSequence = persistSequence;
     }
@@ -483,11 +489,6 @@ public class CommandTrait extends Trait {
     public void setTemporaryPermissions(List<String> permissions) {
         temporaryPermissions.clear();
         temporaryPermissions.addAll(permissions);
-    }
-
-    public void setItemCost(List<ItemStack> itemCost, int id) {
-        commands.get(id).itemCost.clear();
-        commands.get(id).itemCost.addAll(itemCost);
     }
 
     public enum CommandTraitError {
@@ -527,9 +528,9 @@ public class CommandTrait extends Trait {
 
     @Menu(title = "Drag items for requirements", type = InventoryType.CHEST, dimensions = { 5, 9 })
     public static class ItemRequirementGUI extends InventoryMenuPage {
+        private int id = -1;
         private Inventory inventory;
         private CommandTrait trait;
-        private int id = -1;
 
         private ItemRequirementGUI() {
             throw new UnsupportedOperationException();
@@ -551,8 +552,7 @@ public class CommandTrait extends Trait {
                 for (ItemStack stack : trait.itemRequirements) {
                     inventory.addItem(stack.clone());
                 }
-            }
-            else {
+            } else {
                 for (ItemStack stack : trait.commands.get(id).itemCost) {
                     inventory.addItem(stack.clone());
                 }
@@ -575,8 +575,7 @@ public class CommandTrait extends Trait {
             if (id == -1) {
                 this.trait.itemRequirements.clear();
                 this.trait.itemRequirements.addAll(requirements);
-            }
-            else {
+            } else {
                 this.trait.setItemCost(requirements, id);
             }
         }
@@ -586,22 +585,22 @@ public class CommandTrait extends Trait {
         String bungeeServer;
         String command;
         int cooldown;
+        double cost;
         int delay;
+        int experienceCost;
         int globalCooldown;
         Hand hand;
         int id;
+        List<ItemStack> itemCost;
         String key;
         int n;
         boolean op;
         List<String> perms;
         boolean player;
-        double cost;
-        int experienceCost;
-        List<ItemStack> itemCost;
 
         public NPCCommand(int id, String command, Hand hand, boolean player, boolean op, int cooldown,
-                          List<String> perms, int n, int delay, int globalCooldown, double cost,
-                          int experienceCost, List<ItemStack> itemCost) {
+                List<String> perms, int n, int delay, int globalCooldown, double cost, int experienceCost,
+                List<ItemStack> itemCost) {
             this.id = id;
             this.command = command;
             this.hand = hand;
@@ -633,16 +632,16 @@ public class CommandTrait extends Trait {
     public static class NPCCommandBuilder {
         String command;
         int cooldown;
+        double cost = -1;
         int delay;
+        int experienceCost = -1;
         int globalCooldown;
         Hand hand;
+        List<ItemStack> itemCost = Lists.newArrayList();
         int n = -1;
         boolean op;
         List<String> perms = Lists.newArrayList();
         boolean player;
-        double cost = -1;
-        int experienceCost = -1;
-        List<ItemStack> itemCost = Lists.newArrayList();
 
         public NPCCommandBuilder(String command, Hand hand) {
             this.command = command;
@@ -660,7 +659,8 @@ public class CommandTrait extends Trait {
         }
 
         private NPCCommand build(int id) {
-            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown, cost, experienceCost, itemCost);
+            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown, cost,
+                    experienceCost, itemCost);
         }
 
         public NPCCommandBuilder command(String command) {
@@ -677,8 +677,18 @@ public class CommandTrait extends Trait {
             return this;
         }
 
+        public NPCCommandBuilder cost(double cost) {
+            this.cost = cost;
+            return this;
+        }
+
         public NPCCommandBuilder delay(int delay) {
             this.delay = delay;
+            return this;
+        }
+
+        public NPCCommandBuilder experienceCost(int experienceCost) {
+            this.experienceCost = experienceCost;
             return this;
         }
 
@@ -688,6 +698,11 @@ public class CommandTrait extends Trait {
 
         public NPCCommandBuilder globalCooldown(int cooldown) {
             this.globalCooldown = cooldown;
+            return this;
+        }
+
+        public NPCCommandBuilder itemCost(List<ItemStack> itemCost) {
+            this.itemCost = itemCost;
             return this;
         }
 
@@ -703,21 +718,6 @@ public class CommandTrait extends Trait {
 
         public NPCCommandBuilder player(boolean player) {
             this.player = player;
-            return this;
-        }
-
-        public NPCCommandBuilder cost(double cost) {
-            this.cost = cost;
-            return this;
-        }
-
-        public NPCCommandBuilder experienceCost(int experienceCost) {
-            this.experienceCost = experienceCost;
-            return this;
-        }
-
-        public NPCCommandBuilder itemCost(List<ItemStack> itemCost) {
-            this.itemCost = itemCost;
             return this;
         }
     }
