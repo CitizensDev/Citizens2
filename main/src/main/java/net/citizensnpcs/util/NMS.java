@@ -132,6 +132,9 @@ public class NMS {
                 vector.getZ() / 2 - impulse.getZ() - vector.getZ());
         NPCKnockbackEvent event = new NPCKnockbackEvent(npc, strength, delta, null);
         Bukkit.getPluginManager().callEvent(event);
+        if (!PAPER_KNOCKBACK_EVENT_EXISTS) {
+            event.getKnockbackVector().multiply(new Vector(-1, 0, -1));
+        }
         if (!event.isCancelled()) {
             cb.accept(event);
         }
@@ -872,10 +875,13 @@ public class NMS {
     }
 
     private static Method ADD_OPENS;
+
     private static NMSBridge BRIDGE;
+
     private static Method GET_MODULE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;
+    private static boolean PAPER_KNOCKBACK_EVENT_EXISTS = true;
     private static boolean SUPPORT_KNOCKBACK_RESISTANCE = true;
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
@@ -886,6 +892,13 @@ public class NMS {
     private static MethodHandle UNSAFE_PUT_LONG;
     private static MethodHandle UNSAFE_PUT_OBJECT;
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
+    static {
+        try {
+            Class.forName("com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent");
+        } catch (ClassNotFoundException e) {
+            PAPER_KNOCKBACK_EVENT_EXISTS = false;
+        }
+    }
 
     static {
         giveReflectiveAccess(Field.class, NMS.class);
