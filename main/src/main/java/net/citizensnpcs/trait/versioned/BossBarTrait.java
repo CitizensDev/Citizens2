@@ -60,7 +60,7 @@ public class BossBarTrait extends Trait {
     }
 
     private BossBar getBar() {
-        if (npc.isSpawned() && isBoss(npc.getEntity()))
+        if (npc.isSpawned() && isBoss(npc.getEntity()) && NMS.getBossBar(npc.getEntity()) != null)
             return (BossBar) NMS.getBossBar(npc.getEntity());
         if (barCache == null) {
             barCache = Bukkit.getServer().createBossBar(npc.getFullName(), color, style,
@@ -98,10 +98,9 @@ public class BossBarTrait extends Trait {
     }
 
     private boolean isBoss(Entity entity) {
-        boolean isBoss = entity.getType() == EntityType.ENDER_DRAGON || entity.getType() == EntityType.WITHER
-                || entity.getType() == EntityType.GUARDIAN;
+        boolean isBoss = entity.getType() == EntityType.ENDER_DRAGON || entity.getType() == EntityType.WITHER;
         if (isBoss) {
-            barCache = null;
+            onDespawn();
         }
         return isBoss;
     }
@@ -129,9 +128,9 @@ public class BossBarTrait extends Trait {
         if (!npc.isSpawned())
             return;
         BossBar bar = getBar();
-        if (bar == null) {
+        if (bar == null)
             return;
-        }
+
         if (track != null && !track.isEmpty() && npc.getEntity() instanceof LivingEntity) {
             LivingEntity entity = (LivingEntity) npc.getEntity();
             if (track.equalsIgnoreCase("health")) {
@@ -170,14 +169,12 @@ public class BossBarTrait extends Trait {
         for (BarFlag flag : flags) {
             bar.addFlag(flag);
         }
-        if (barCache != null) {
-            barCache.removeAll();
-            for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
-                    range > 0 ? range : Setting.BOSSBAR_RANGE.asInt())) {
-                if (viewPermission != null && !player.hasPermission(viewPermission))
-                    continue;
-                barCache.addPlayer(player);
-            }
+        bar.removeAll();
+        for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
+                range > 0 ? range : Setting.BOSSBAR_RANGE.asInt())) {
+            if (viewPermission != null && !player.hasPermission(viewPermission))
+                continue;
+            bar.addPlayer(player);
         }
     }
 
