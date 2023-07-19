@@ -31,7 +31,7 @@ public abstract class AStarNode implements Comparable<AStarNode> {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends AStarNode> Iterable<T> getParents() {
+    protected <T extends AStarNode> Iterable<T> orderedPath() {
         if (parents != null)
             return (Iterable<T>) parents;
         parents = Lists.newArrayList();

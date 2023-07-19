@@ -46,7 +46,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public Plan buildPlan() {
-        return new Path(getParents());
+        return new Path(orderedPath());
     }
 
     @Override
