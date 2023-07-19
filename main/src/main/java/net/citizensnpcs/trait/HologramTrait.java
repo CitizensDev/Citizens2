@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -95,6 +96,7 @@ public class HologramTrait extends Trait {
         lines.clear();
     }
 
+    @SuppressWarnings("deprecation")
     private NPC createHologram(String line, double heightOffset) {
         NPC hologramNPC = null;
         if (useTextDisplay) {
@@ -123,16 +125,23 @@ public class HologramTrait extends Trait {
         if (itemMatcher.matches()) {
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
-            final NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", new ItemStack(item, 1));
+            ItemStack itemStack = new ItemStack(item, 1);
+            final NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", itemStack);
             itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
-                itemNPC.getOrAddTrait(ScoreboardTrait.class)
-                        .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
+                if (itemMatcher.group(2).charAt(1) == '{') {
+                    Bukkit.getUnsafe().modifyItemStack(itemStack, itemMatcher.group(2).substring(1));
+                    itemNPC.setItemProvider(() -> itemStack);
+                } else {
+                    itemNPC.getOrAddTrait(ScoreboardTrait.class)
+                            .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
+                }
             }
             itemNPC.getOrAddTrait(MountTrait.class).setMountedOn(hologramNPC.getUniqueId());
             itemNPC.spawn(currentLoc);
+            final NPC hn = hologramNPC;
             itemNPC.addRunnable(() -> {
-                if (!itemNPC.isSpawned() || !itemNPC.getEntity().isInsideVehicle()) {
+                if (!itemNPC.isSpawned() || !hn.isSpawned()) {
                     itemNPC.destroy();
                 }
             });

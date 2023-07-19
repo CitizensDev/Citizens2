@@ -28,7 +28,7 @@ public class MountTrait extends Trait {
     public void checkMounted() {
         if (uuid == null || uuid.equals(currentMount))
             return;
-        NPC other = CitizensAPI.getNPCRegistry().getByUniqueId(uuid);
+        NPC other = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(uuid);
         if (other != null && other.isSpawned()) {
             NMS.mount(other.getEntity(), npc.getEntity());
             currentMount = uuid;

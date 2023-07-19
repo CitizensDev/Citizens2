@@ -387,7 +387,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public Plan buildPlan() {
-            return new GuidedPlan(this.<GuidedNode> getParents());
+            return new GuidedPlan(this.<GuidedNode> orderedPath());
         }
 
         public double distance(Waypoint dest) {

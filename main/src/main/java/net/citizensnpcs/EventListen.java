@@ -32,6 +32,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
@@ -359,6 +360,14 @@ public class EventListen implements Listener {
         if (event.isCancelled() && CitizensAPI.getNPCRegistry().isNPC(event.getEntity())) {
             event.setCancelled(false);
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityTame(EntityTameEvent event) {
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
+        if (npc == null || !npc.isProtected())
+            return;
+        event.setCancelled(true);
     }
 
     @EventHandler

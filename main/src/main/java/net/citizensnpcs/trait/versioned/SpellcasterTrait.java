@@ -27,6 +27,10 @@ public class SpellcasterTrait extends Trait {
         super("spellcastertrait");
     }
 
+    public Spell getSpell() {
+        return spell;
+    }
+
     @Override
     public void run() {
         if (!npc.isSpawned() || !(npc.getEntity() instanceof Spellcaster))

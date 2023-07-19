@@ -24,7 +24,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -329,14 +328,18 @@ public class CommandTrait extends Trait {
                         charge.run();
                     }
 
-                    PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
                     if (temporaryPermissions.size() > 0) {
-                        for (String permission : temporaryPermissions) {
-                            attachment.setPermission(permission, true);
+                        PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
+                        if (attachment != null) {
+                            for (String permission : temporaryPermissions) {
+                                attachment.setPermission(permission, true);
+                            }
+                            command.run(npc, player);
+                            attachment.remove();
+                            return;
                         }
                     }
                     command.run(npc, player);
-                    attachment.remove();
                 };
                 if (command.delay <= 0) {
                     runnable.run();
@@ -582,7 +585,6 @@ public class CommandTrait extends Trait {
     }
 
     private static class NPCCommand {
-        String bungeeServer;
         String command;
         int cooldown;
         double cost;
@@ -611,8 +613,6 @@ public class CommandTrait extends Trait {
             this.n = n;
             this.delay = delay;
             this.globalCooldown = globalCooldown;
-            List<String> split = Splitter.on(' ').omitEmptyStrings().trimResults().limit(2).splitToList(command);
-            this.bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
             this.cost = cost;
             this.experienceCost = experienceCost;
             this.itemCost = itemCost;
