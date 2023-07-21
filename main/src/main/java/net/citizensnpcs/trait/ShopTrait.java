@@ -2,6 +2,7 @@ package net.citizensnpcs.trait;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -304,6 +305,12 @@ public class ShopTrait extends Trait {
         private final List<NPCShopAction> result = Lists.newArrayList();
         @Persist
         private String resultMessage;
+        @Persist
+        private boolean purchasableOnce = false;
+        @Persist
+        private String alreadyPurchasedMessage;
+        @Persist
+        private final List<UUID> purchases = Lists.newArrayList();
 
         public List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
             List<Transaction> pending = Lists.newArrayList();
@@ -387,9 +394,17 @@ public class ShopTrait extends Trait {
         }
 
         public void onClick(NPCShop shop, InventoryClickEvent event, boolean secondClick) {
+            Player player = (Player) event.getWhoClicked();
+            if (purchasableOnce && purchases.contains(player.getUniqueId())) {
+                if (alreadyPurchasedMessage != null) {
+                    Messaging.sendColorless(event.getWhoClicked(),
+                            placeholders(alreadyPurchasedMessage, player));
+                }
+                return;
+            }
             if (clickToConfirmMessage != null && !secondClick) {
                 Messaging.sendColorless(event.getWhoClicked(),
-                        placeholders(clickToConfirmMessage, (Player) event.getWhoClicked()));
+                        placeholders(clickToConfirmMessage, player));
                 return;
             }
             int max = Integer.MAX_VALUE;
@@ -408,7 +423,7 @@ public class ShopTrait extends Trait {
             if (take == null) {
                 if (costMessage != null) {
                     Messaging.sendColorless(event.getWhoClicked(),
-                            placeholders(costMessage, (Player) event.getWhoClicked()));
+                            placeholders(costMessage, player));
                 }
                 return;
             }
@@ -418,7 +433,10 @@ public class ShopTrait extends Trait {
             }
             if (resultMessage != null) {
                 Messaging.sendColorless(event.getWhoClicked(),
-                        placeholders(resultMessage, (Player) event.getWhoClicked()));
+                        placeholders(resultMessage, player));
+            }
+            if (purchasableOnce) {
+                purchases.add(player.getUniqueId());
             }
         }
 
@@ -470,6 +488,21 @@ public class ShopTrait extends Trait {
             if (modified.display != null) {
                 ctx.getSlot(9 * 4 + 4).setItemStack(modified.getDisplayItem(null));
             }
+            ctx.getSlot(9 * 3 + 2).setItemStack(new ItemStack(Material.EGG),
+                    "Only purchasable once per player",
+                    "Currently: " + modified.purchasableOnce);
+            ctx.getSlot(9 * 3 + 2).setClickHandler(
+                    InputMenus.toggler(res -> modified.purchasableOnce = res, modified.purchasableOnce));
+
+            ctx.getSlot(9 * 4 + 2).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
+                    "Set message to send on already purchased, currently:\n",
+                    modified.alreadyPurchasedMessage == null ? "Unset" : modified.alreadyPurchasedMessage);
+            ctx.getSlot(9 * 4 + 2).setClickHandler(
+                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.alreadyPurchasedMessage, s -> {
+                        modified.alreadyPurchasedMessage = s;
+                        ctx.getSlot(9 * 4 + 2).setDescription(modified.alreadyPurchasedMessage);
+                    })));
+
             ctx.getSlot(9 * 3 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
                     "Set message to send on successful click, currently:\n",
                     modified.resultMessage == null ? "Unset" : modified.resultMessage);
