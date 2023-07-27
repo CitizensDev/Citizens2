@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
@@ -52,7 +53,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
-import java.util.function.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -666,7 +666,7 @@ public class NMSImpl implements NMSBridge {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null || handle.passengers == null)
             return Lists.newArrayList();
-        return Lists.transform(handle.passengers, input->input.getBukkitEntity());
+        return Lists.transform(handle.passengers, input -> input.getBukkitEntity());
     }
 
     @Override
@@ -1226,7 +1226,7 @@ public class NMSImpl implements NMSBridge {
         NPC npc = npcRegistry.getNPC(hooked.getBukkitEntity());
         if (npc != null && npc.isProtected()) {
             hook.hookedIn = null;
-            hook.setRemoved(RemovalReason.KILLED);
+            hook.getBukkitEntity().remove();
         }
     }
 

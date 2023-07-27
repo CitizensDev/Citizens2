@@ -1054,7 +1054,7 @@ public class NMSImpl implements NMSBridge {
             return;
         if (npc.isProtected()) {
             hook.hooked = null;
-            hook.die();
+            hook.getBukkitEntity().remove();
         }
     }
 
