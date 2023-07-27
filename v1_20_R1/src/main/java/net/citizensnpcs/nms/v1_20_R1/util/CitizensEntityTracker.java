@@ -62,6 +62,12 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         if (tracker.isRemoved() || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         final ServerPlayer entityplayer = lastUpdatedPlayer;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            if (tracker.isRemoved() || entityplayer.isRemoved())
+                return;
+            NMSImpl.sendPacket(entityplayer.getBukkitEntity(),
+                    new ClientboundRotateHeadPacket(tracker, (byte) (tracker.getYHeadRot() * 256.0F / 360.0F)));
+        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks() + 1);
         boolean sendTabRemove = NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         if (!sendTabRemove || !Setting.DISABLE_TABLIST.asBoolean()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
@@ -70,10 +76,10 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
             return;
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-            NMSImpl.sendPacket(entityplayer.getBukkitEntity(),
-                    new ClientboundRotateHeadPacket(tracker, (byte) (tracker.getYHeadRot() * 256.0F / 360.0F)));
-            NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0));
+            if (tracker.isRemoved() || entityplayer.isRemoved())
+                return;
             NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
+            NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0));
         }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
     }
 
