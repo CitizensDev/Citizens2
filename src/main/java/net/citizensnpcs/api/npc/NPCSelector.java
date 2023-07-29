@@ -7,6 +7,8 @@ import org.bukkit.command.CommandSender;
  * config or via commands.
  */
 public interface NPCSelector {
+    void deselect(CommandSender sender);
+
     NPC getSelected(CommandSender sender);
 
     void select(CommandSender sender, NPC npc);
