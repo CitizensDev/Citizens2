@@ -42,12 +42,21 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
     }
 
     @Override
+    public void deselect(CommandSender sender) {
+        if (sender instanceof ConsoleCommandSender) {
+            consoleSelectedNPC = null;
+        } else if (sender instanceof Metadatable) {
+            removeMetadata((Metadatable) sender);
+        }
+    }
+
+    @Override
     public NPC getSelected(CommandSender sender) {
         CitizensGetSelectedNPCEvent event = new CitizensGetSelectedNPCEvent(sender);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.getSelected() != null) {
+        if (event.getSelected() != null)
             return event.getSelected();
-        }
+
         if (sender instanceof Player) {
             return getSelectedFromMetadatable((Player) sender);
         } else if (sender instanceof BlockCommandSender) {
@@ -72,7 +81,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
     }
 
     @EventHandler
-    public void onNPCRemove(NPCRemoveEvent event) {
+    private void onNPCRemove(NPCRemoveEvent event) {
         NPC npc = event.getNPC();
         List<String> selectors = npc.data().get("selectors");
         if (selectors == null)
@@ -96,7 +105,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
     }
 
     @EventHandler
-    public void onNPCRightClick(NPCRightClickEvent event) {
+    private void onNPCRightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
         NPC npc = event.getNPC();
         List<MetadataValue> selected = player.getMetadata("selected");

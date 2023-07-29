@@ -366,8 +366,8 @@ public class LookClose extends Trait implements Toggleable {
     /**
      * Sets the maximum range in blocks to look at other Entities
      */
-    public void setRange(double d) {
-        this.range = d;
+    public void setRange(double range) {
+        this.range = range;
     }
 
     /**

@@ -42,16 +42,12 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private boolean canAttack() {
         BoundingBox handleBB = NMS.getBoundingBox(handle), targetBB = NMS.getBoundingBox(target);
         return attackTicks <= 0 && (handleBB.maxY > targetBB.minY && handleBB.minY < targetBB.maxY)
-                && closeEnough(distance()) && hasLineOfSight();
+                && distance() <= parameters.attackRange() && ((LivingEntity) handle).hasLineOfSight(target);
     }
 
     @Override
     public void clearCancelReason() {
         cancelReason = null;
-    }
-
-    private boolean closeEnough(double distance) {
-        return distance <= parameters.attackRange();
     }
 
     private double distance() {
@@ -88,10 +84,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         return TargetType.ENTITY;
     }
 
-    private boolean hasLineOfSight() {
-        return ((LivingEntity) handle).hasLineOfSight(target);
-    }
-
     @Override
     public boolean isAggressive() {
         return aggro;
@@ -113,16 +105,19 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             cancelReason = CancelReason.TARGET_DIED;
             return true;
         }
+
         if (target.getWorld() != handle.getWorld()) {
             cancelReason = CancelReason.TARGET_MOVED_WORLD;
             return true;
         }
-        if (cancelReason != null) {
+
+        if (cancelReason != null)
             return true;
-        }
+
         if (parameters.straightLineTargetingDistance() > 0 && !(targetNavigator instanceof StraightLineTargeter)) {
             targetNavigator = new StraightLineTargeter(targetNavigator);
         }
+
         if (!aggro && distance() <= parameters.distanceMargin()) {
             stop();
             return false;
@@ -130,6 +125,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             targetNavigator.setPath();
             updateCounter = 0;
         }
+
         targetNavigator.update();
 
         NMS.look(handle, target);
@@ -141,6 +137,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             }
             attackTicks = parameters.attackDelayTicks();
         }
+
         if (attackTicks > 0) {
             attackTicks--;
         }
@@ -239,9 +236,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         @Override
         public void setPath() {
             Location location = parameters.entityTargetLocationMapper().apply(target);
-            if (location == null) {
+            if (location == null)
                 throw new IllegalStateException("mapper should not return null");
-            }
+
             if (parameters.straightLineTargetingDistance() > 0) {
                 double distance = npc.getStoredLocation().distance(location);
                 if (distance < parameters.straightLineTargetingDistance()) {
@@ -251,6 +248,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                     return;
                 }
             }
+
             active = null;
             fallback.setPath();
         }
@@ -284,12 +282,4 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         void update();
     }
-
-    static final AttackStrategy DEFAULT_ATTACK_STRATEGY = new AttackStrategy() {
-        @Override
-        public boolean handle(LivingEntity attacker, LivingEntity bukkitTarget) {
-            NMS.attack(attacker, bukkitTarget);
-            return false;
-        }
-    };
 }

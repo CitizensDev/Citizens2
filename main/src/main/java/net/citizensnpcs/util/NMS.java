@@ -142,7 +142,9 @@ public class NMS {
 
     public static void cancelMoveDestination(Entity entity) {
         BRIDGE.cancelMoveDestination(entity);
-    }/*
+    }
+
+    /*
      * Yggdrasil's default implementation of this method silently fails instead of throwing
      * an Exception like it should.
      */

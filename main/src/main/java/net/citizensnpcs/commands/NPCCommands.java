@@ -870,6 +870,20 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "deselect",
+            desc = "Deselect currently selected NPC",
+            modifiers = { "deselect", "desel" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.deselect")
+    @Requirements
+    public void deselect(CommandContext args, final CommandSender sender, final NPC npc) {
+        selector.deselect(sender);
+        Messaging.sendTr(sender, Messages.DESELECTED_NPC);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "despawn (id)",
             desc = "Despawn a NPC",
             modifiers = { "despawn" },
@@ -1553,7 +1567,7 @@ public class NPCCommands {
         }
         if (range != null) {
             trait.setRange(range);
-            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANGE_SET, range);
+            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANGE_SET, npc.getName(), range);
             toggle = false;
         }
         if (args.hasFlag('r')) {
