@@ -2395,11 +2395,19 @@ public class NPCCommands {
             @Flag("eid") UUID eid, @Flag("world") String world, @Arg(value = 1, completions = "all") String action)
             throws CommandException {
         if (owner != null) {
-            Player playerOwner = Bukkit.getPlayerExact(owner);
+            UUID uuid = null;
+            try {
+                uuid = UUID.fromString(owner);
+            } catch (IllegalArgumentException ex) {
+                try {
+                    uuid = Bukkit.getOfflinePlayer(owner).getUniqueId();
+                } catch (Exception e) {
+                }
+            }
             for (NPC rem : Lists.newArrayList(CitizensAPI.getNPCRegistry())) {
                 if (!rem.getOrAddTrait(Owner.class).isOwnedBy(sender))
                     continue;
-                if (playerOwner != null && rem.getOrAddTrait(Owner.class).isOwnedBy(playerOwner)) {
+                if (uuid != null && rem.getOrAddTrait(Owner.class).isOwnedBy(uuid)) {
                     history.add(sender, new RemoveNPCHistoryItem(rem));
                     rem.destroy(sender);
                 } else if (rem.getOrAddTrait(Owner.class).isOwnedBy(owner)) {
