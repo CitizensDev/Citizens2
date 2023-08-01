@@ -216,7 +216,7 @@ public class ProtocolLibListener implements Listener {
                 }
 
                 session.onPacketOverwritten();
-                Messaging.log("OVERWRITTEN " + type + " " + packet.getHandle());
+                Messaging.debug("OVERWRITTEN " + type + " " + packet.getHandle());
             }
         });
 
