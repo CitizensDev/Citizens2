@@ -418,7 +418,7 @@ public interface NPC extends Agent, Cloneable {
     public boolean useMinecraftAI();
 
     public enum Metadata {
-        /** The activation range. Integer, defaults to the configured activation range. */
+        /** The activation range. Integer, defaults to the server's configured activation range. */
         ACTIVATION_RANGE("activation-range", Integer.class),
         AGGRESSIVE("entity-aggressive", Boolean.class),
         ALWAYS_USE_NAME_HOLOGRAM("always-use-name-hologram", Boolean.class),
@@ -530,6 +530,10 @@ public interface NPC extends Agent, Cloneable {
          * Whether to reset entity pitch to <code>0</code> every tick (default Minecraft behaviour). Defaults to true.
          */
         RESET_PITCH_ON_TICK("reset-pitch-on-tick", Boolean.class),
+        /**
+         * Whether to reset NPC yaw on spawn. Defaults to the config value (true by default).
+         */
+        RESET_YAW_ON_SPAWN("reset-yaw-on-spawn", Boolean.class),
         /**
          * The Integer delay to respawn in ticks after death. Only works if non-zero.
          */
