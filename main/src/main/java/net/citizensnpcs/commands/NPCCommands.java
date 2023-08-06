@@ -23,7 +23,6 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
@@ -673,7 +672,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --model [model name] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x,y,z,world] --type [type] --item (item) --trait ['trait1, trait2...'] --model [model name] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
             desc = "Create a new NPC",
             flags = "bustpc",
             modifiers = { "create" },
@@ -766,12 +765,7 @@ public class NPCCommands {
             npc.addTrait(PacketNPC.class);
         }
 
-        Location spawnLoc = null;
-        if (sender instanceof Player) {
-            spawnLoc = args.getSenderLocation();
-        } else if (sender instanceof BlockCommandSender) {
-            spawnLoc = args.getSenderLocation();
-        }
+        Location spawnLoc = args.getSenderLocation();
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
                 : new CommandSenderCreateNPCEvent(sender, npc);
@@ -2252,6 +2246,21 @@ public class NPCCommands {
         }
         Messaging.sendTr(sender, remove ? Messages.REMOVED_FROM_PLAYERLIST : Messages.ADDED_TO_PLAYERLIST,
                 npc.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "playsound [sound] (volume) (pitch)",
+            desc = "Plays a sound at the NPC's location",
+            modifiers = { "playsound" },
+            min = 2,
+            max = 4,
+            permission = "citizens.npc.playsound")
+    @Requirements(selected = true, ownership = true)
+    public void playsound(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String sound,
+            @Arg(value = 2, defValue = "1") Float volume, @Arg(value = 3, defValue = "1") Float pitch)
+            throws CommandException {
+        npc.getEntity().getWorld().playSound(npc.getEntity(), sound, volume, pitch);
     }
 
     @Command(

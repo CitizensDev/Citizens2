@@ -21,6 +21,7 @@ import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_11_R1.Entity;
 import net.minecraft.server.v1_11_R1.EntityPlayer;
 import net.minecraft.server.v1_11_R1.EntityTrackerEntry;
+import net.minecraft.server.v1_11_R1.PacketPlayOutAnimation;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private Entity tracker;
@@ -90,6 +91,12 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         final EntityPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         lastUpdatedPlayer = null;
+        NPC npc = ((NPCHolder) tracker).getNPC();
+        if (npc.data().get(NPC.Metadata.RESET_YAW_ON_SPAWN, Setting.RESET_YAW_ON_SPAWN.asBoolean())) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    () -> NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new PacketPlayOutAnimation(tracker, 0)),
+                    1);
+        }
         if (!Setting.DISABLE_TABLIST.asBoolean())
             return;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
