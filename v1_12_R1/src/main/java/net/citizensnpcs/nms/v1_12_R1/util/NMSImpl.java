@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
@@ -55,7 +56,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
-import java.util.function.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -629,8 +629,10 @@ public class NMSImpl implements NMSBridge {
     @Override
     public MCNavigator getTargetNavigator(org.bukkit.entity.Entity entity, Iterable<Vector> dest,
             final NavigatorParameters params) {
-        final PathEntity path = new PathEntity(
-                Iterables.toArray(Iterables.transform(dest, input -> new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ())), PathPoint.class));
+        final PathEntity path = new PathEntity(Iterables.toArray(
+                Iterables.transform(dest,
+                        input -> new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ())),
+                PathPoint.class));
         return getTargetNavigator(entity, params, new Function<NavigationAbstract, Boolean>() {
             @Override
             public Boolean apply(NavigationAbstract input) {
@@ -1122,7 +1124,7 @@ public class NMSImpl implements NMSBridge {
             return;
         if (npc.isProtected()) {
             hook.hooked = null;
-            hook.die();
+            hook.getBukkitEntity().remove();
         }
     }
 

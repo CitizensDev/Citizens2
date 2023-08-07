@@ -282,7 +282,6 @@ public class EnderDragonController extends MobEntityController {
         }
 
         private static final MethodHandle HURT = NMS.getMethodHandle(EnderDragon.class, "c", true, List.class);
-
         private static final MethodHandle KNOCKBACK = NMS.getMethodHandle(EnderDragon.class, "b", true, List.class);
     }
 }

@@ -238,6 +238,9 @@ public class Settings {
         PLAYER_TELEPORT_DELAY("npc.delay-player-teleport-ticks", "npc.delay-player-teleport", -1),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("Whether to remove NPCs from the Java list of players",
                 "npc.player.remove-from-list", true),
+        RESET_YAW_ON_SPAWN(
+                "Whether to reset NPC yaw on spawn. Currently this is implemented by an arm swing animation due to Minecraft limitations.",
+                "npc.default.reset-yaw-on-spawn", true),
         RESOURCE_PACK_PATH("The resource pack path to save resource packs to", "general.resource-pack-path",
                 "plugins/Citizens/resourcepack"),
         SAVE_TASK_DELAY("How often to save NPCs to disk", "storage.save-task.delay", "1hr"),

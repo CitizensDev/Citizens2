@@ -23,7 +23,6 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
@@ -673,7 +672,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x:y:z:world] --type [type] --item (item) --trait ['trait1, trait2...'] --model [model name] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x,y,z,world] --type [type] --item (item) --trait ['trait1, trait2...'] --model [model name] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
             desc = "Create a new NPC",
             flags = "bustpc",
             modifiers = { "create" },
@@ -766,12 +765,7 @@ public class NPCCommands {
             npc.addTrait(PacketNPC.class);
         }
 
-        Location spawnLoc = null;
-        if (sender instanceof Player) {
-            spawnLoc = args.getSenderLocation();
-        } else if (sender instanceof BlockCommandSender) {
-            spawnLoc = args.getSenderLocation();
-        }
+        Location spawnLoc = args.getSenderLocation();
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
                 : new CommandSenderCreateNPCEvent(sender, npc);
@@ -866,6 +860,20 @@ public class NPCCommands {
             output += "Stuck action [[" + npc.getNavigator().getDefaultParameters().stuckAction() + "]]<br>";
             Messaging.send(sender, output);
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "deselect",
+            desc = "Deselect currently selected NPC",
+            modifiers = { "deselect", "desel" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.deselect")
+    @Requirements
+    public void deselect(CommandContext args, final CommandSender sender, final NPC npc) {
+        selector.deselect(sender);
+        Messaging.sendTr(sender, Messages.DESELECTED_NPC);
     }
 
     @Command(
@@ -1553,7 +1561,7 @@ public class NPCCommands {
         }
         if (range != null) {
             trait.setRange(range);
-            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANGE_SET, range);
+            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANGE_SET, npc.getName(), range);
             toggle = false;
         }
         if (args.hasFlag('r')) {
@@ -2242,6 +2250,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "playsound [sound] (volume) (pitch)",
+            desc = "Plays a sound at the NPC's location",
+            modifiers = { "playsound" },
+            min = 2,
+            max = 4,
+            permission = "citizens.npc.playsound")
+    @Requirements(selected = true, ownership = true)
+    public void playsound(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String sound,
+            @Arg(value = 2, defValue = "1") Float volume, @Arg(value = 3, defValue = "1") Float pitch)
+            throws CommandException {
+        npc.getEntity().getWorld().playSound(npc.getEntity(), sound, volume, pitch);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "pose (--save [name] (-d) | --mirror [name] (-d) | --assume [name] | --remove [name] | --default [name]) (--yaw yaw) (--pitch pitch) (-a)",
             desc = "Manage NPC poses",
             flags = "ad",
@@ -2381,11 +2404,19 @@ public class NPCCommands {
             @Flag("eid") UUID eid, @Flag("world") String world, @Arg(value = 1, completions = "all") String action)
             throws CommandException {
         if (owner != null) {
-            Player playerOwner = Bukkit.getPlayerExact(owner);
+            UUID uuid = null;
+            try {
+                uuid = UUID.fromString(owner);
+            } catch (IllegalArgumentException ex) {
+                try {
+                    uuid = Bukkit.getOfflinePlayer(owner).getUniqueId();
+                } catch (Exception e) {
+                }
+            }
             for (NPC rem : Lists.newArrayList(CitizensAPI.getNPCRegistry())) {
                 if (!rem.getOrAddTrait(Owner.class).isOwnedBy(sender))
                     continue;
-                if (playerOwner != null && rem.getOrAddTrait(Owner.class).isOwnedBy(playerOwner)) {
+                if (uuid != null && rem.getOrAddTrait(Owner.class).isOwnedBy(uuid)) {
                     history.add(sender, new RemoveNPCHistoryItem(rem));
                     rem.destroy(sender);
                 } else if (rem.getOrAddTrait(Owner.class).isOwnedBy(owner)) {

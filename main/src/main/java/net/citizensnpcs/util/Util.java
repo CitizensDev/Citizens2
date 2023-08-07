@@ -477,13 +477,6 @@ public class Util {
         }
     }
 
-    /**
-     * Sets the entity's yaw and pitch directly including head yaw.
-     */
-    public static void setRotation(Entity entity, float yaw, float pitch) {
-        NMS.look(entity, yaw, pitch);
-    }
-
     public static void talk(SpeechContext context) {
         if (context.getTalker() == null)
             return;

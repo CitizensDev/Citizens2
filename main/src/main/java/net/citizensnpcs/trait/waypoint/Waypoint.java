@@ -46,7 +46,7 @@ public class Waypoint {
     }
 
     public void describeTriggers(CommandSender sender) {
-        String base = "";
+        String base = " ";
         if (triggers == null)
             return;
         for (int i = 0; i < triggers.size(); i++) {

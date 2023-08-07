@@ -91,9 +91,12 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         final EntityPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         lastUpdatedPlayer = null;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-            NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new PacketPlayOutAnimation(tracker, 0));
-        }, 1);
+        NPC npc = ((NPCHolder) tracker).getNPC();
+        if (npc.data().get(NPC.Metadata.RESET_YAW_ON_SPAWN, Setting.RESET_YAW_ON_SPAWN.asBoolean())) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    () -> NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new PacketPlayOutAnimation(tracker, 0)),
+                    1);
+        }
         if (!Setting.DISABLE_TABLIST.asBoolean())
             return;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),

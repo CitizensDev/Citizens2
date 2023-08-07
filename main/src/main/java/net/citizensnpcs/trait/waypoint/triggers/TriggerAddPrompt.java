@@ -8,16 +8,9 @@ import org.bukkit.conversations.StringPrompt;
 import com.google.common.base.Joiner;
 
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.trait.waypoint.WaypointEditor;
 import net.citizensnpcs.util.Messages;
 
 public class TriggerAddPrompt extends StringPrompt {
-    private final WaypointEditor editor;
-
-    public TriggerAddPrompt(WaypointEditor editor) {
-        this.editor = editor;
-    }
-
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
         input = input.toLowerCase().trim();
@@ -30,10 +23,10 @@ public class TriggerAddPrompt extends StringPrompt {
         split[0] = null;
         Prompt prompt = WaypointTriggerRegistry.getTriggerPromptFrom(input);
         String extraInput = Joiner.on(' ').skipNulls().join(split);
+        context.setSessionData("said", false);
         if (prompt == null) {
             Messaging.sendErrorTr((CommandSender) context.getForWhom(),
                     Messages.WAYPOINT_TRIGGER_EDITOR_INVALID_TRIGGER, input);
-            context.setSessionData("said", false);
             return this;
         } else if (extraInput.length() > 0) {
             WaypointTrigger returned = ((WaypointTriggerPrompt) prompt).createFromShortInput(context, extraInput);

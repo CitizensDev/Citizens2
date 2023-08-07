@@ -58,18 +58,18 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public boolean update() {
-        if (getCancelReason() != null || npc.getStoredLocation().getWorld() != destination.getWorld()) {
+        if (getCancelReason() != null || npc.getStoredLocation().getWorld() != destination.getWorld())
             return true;
-        }
+
         Location currLoc = npc.getEntity().getLocation();
-        if (currLoc.distance(destination) <= params.distanceMargin()) {
+        if (currLoc.distance(destination) <= params.distanceMargin())
             return true;
-        }
+
         if (target != null) {
             destination = params.entityTargetLocationMapper().apply(target);
         }
-        Vector destVector = npc.getStoredLocation().toVector()
-                .add(destination.toVector().subtract(npc.getStoredLocation().toVector()).normalize());
+
+        Vector destVector = currLoc.toVector().add(destination.toVector().subtract(currLoc.toVector()).normalize());
         Location destLoc = destVector.toLocation(destination.getWorld());
         if (!npc.isFlyable() && destVector.getBlockY() > currLoc.getBlockY()) {
             Block block = destLoc.getBlock();
@@ -84,6 +84,7 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             destLoc = block.getLocation();
             destVector = destLoc.toVector();
         }
+
         double dX = destVector.getX() - currLoc.getX();
         double dZ = destVector.getZ() - currLoc.getZ();
         double dY = destVector.getY() - currLoc.getY();
@@ -104,6 +105,7 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             while (normalisedTargetYaw >= 180.0F) {
                 normalisedTargetYaw -= 360.0F;
             }
+
             while (normalisedTargetYaw < -180.0F) {
                 normalisedTargetYaw += 360.0F;
             }

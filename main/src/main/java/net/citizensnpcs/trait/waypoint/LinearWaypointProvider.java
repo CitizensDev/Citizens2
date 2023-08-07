@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -30,8 +28,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.Navigator;
-import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandMessages;
@@ -596,21 +592,21 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public boolean shouldExecute(final GoalSelector selector) {
-            if (paused || currentDestination != null || !npc.isSpawned() || getNavigator().isNavigating()) {
+            if (paused || currentDestination != null || !npc.isSpawned() || getNavigator().isNavigating())
                 return false;
-            }
+
             ensureItr();
             boolean shouldExecute = itr.hasNext();
-            if (!shouldExecute) {
+            if (!shouldExecute)
                 return false;
-            }
+
             this.selector = selector;
             Waypoint next = itr.next();
             final Location npcLoc = npc.getEntity().getLocation(cachedLocation);
             if (npcLoc.getWorld() != next.getLocation().getWorld()
-                    || npcLoc.distance(next.getLocation()) < npc.getNavigator().getLocalParameters().distanceMargin()) {
+                    || npcLoc.distance(next.getLocation()) <= npc.getNavigator().getLocalParameters().distanceMargin())
                 return false;
-            }
+
             currentDestination = next;
             if (cachePaths) {
                 SourceDestinationPair key = new SourceDestinationPair(npcLoc, currentDestination);
@@ -623,26 +619,26 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                     }
                 }
             }
+
             if (!getNavigator().isNavigating()) {
                 getNavigator().setTarget(currentDestination.getLocation());
             }
-            getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
-                @Override
-                public void onCompletion(@Nullable CancelReason cancelReason) {
-                    if (npc.isSpawned() && currentDestination != null
-                            && Util.locationWithinRange(npc.getStoredLocation(), currentDestination.getLocation(),
-                                    Setting.DEFAULT_DISTANCE_MARGIN.asDouble() + 1)) {
-                        currentDestination.onReach(npc);
-                        if (cachePaths && cancelReason == null) {
-                            Iterable<Vector> path = getNavigator().getPathStrategy().getPath();
-                            if (Iterables.size(path) > 0) {
-                                cachedPaths.put(new SourceDestinationPair(npcLoc, currentDestination), path);
-                            }
+
+            double margin = getNavigator().getLocalParameters().distanceMargin();
+            getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
+                if (npc.isSpawned() && currentDestination != null && Util.locationWithinRange(npc.getStoredLocation(),
+                        currentDestination.getLocation(), margin + 1)) {
+                    currentDestination.onReach(npc);
+                    if (cachePaths && cancelReason == null) {
+                        Iterable<Vector> path = getNavigator().getPathStrategy().getPath();
+                        if (Iterables.size(path) > 0) {
+                            cachedPaths.put(new SourceDestinationPair(npcLoc, currentDestination), path);
                         }
                     }
-                    selector.finish();
                 }
+                selector.finish();
             });
+
             return true;
         }
     }
@@ -662,12 +658,12 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+            if (this == obj)
                 return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
+
+            if (obj == null || getClass() != obj.getClass())
                 return false;
-            }
+
             SourceDestinationPair other = (SourceDestinationPair) obj;
             if (from == null) {
                 if (other.from != null) {

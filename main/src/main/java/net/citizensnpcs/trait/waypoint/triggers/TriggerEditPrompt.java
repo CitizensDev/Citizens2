@@ -39,7 +39,7 @@ public class TriggerEditPrompt extends StringPrompt {
         }
         if (input.contains("add")) {
             context.setSessionData("said", false);
-            return new TriggerAddPrompt(editor);
+            return new TriggerAddPrompt();
         }
         return this;
     }

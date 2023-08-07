@@ -135,6 +135,9 @@ public class ShopTrait extends Trait {
         public void display(Player sender) {
             if (viewPermission != null && !sender.hasPermission(viewPermission))
                 return;
+            if (!Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
+                    && !sender.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString()))
+                return;
             if (pages.size() == 0) {
                 Messaging.sendError(sender, "Empty shop");
                 return;

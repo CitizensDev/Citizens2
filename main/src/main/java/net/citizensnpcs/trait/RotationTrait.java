@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Iterables;
@@ -62,8 +63,9 @@ public class RotationTrait extends Trait {
         return lrs;
     }
 
-    private double getEyeY() {
-        return NMS.getHeight(npc.getEntity());
+    private Location getEyeLocation() {
+        return npc instanceof LivingEntity ? ((LivingEntity) npc.getEntity()).getEyeLocation()
+                : npc.getEntity().getLocation();
     }
 
     /**
@@ -87,18 +89,6 @@ public class RotationTrait extends Trait {
 
     public RotationSession getPhysicalSession() {
         return globalSession;
-    }
-
-    private double getX() {
-        return npc.getStoredLocation().getX();
-    }
-
-    private double getY() {
-        return npc.getStoredLocation().getY();
-    }
-
-    private double getZ() {
-        return npc.getStoredLocation().getZ();
     }
 
     @Override
@@ -427,9 +417,8 @@ public class RotationTrait extends Trait {
          *            The target entity to face
          */
         public void rotateToFace(Entity target) {
-            Location loc = target.getLocation();
-            loc.setY(loc.getY() + NMS.getHeight(target));
-            rotateToFace(loc);
+            rotateToFace(
+                    target instanceof LivingEntity ? ((LivingEntity) target).getEyeLocation() : target.getLocation());
         }
 
         /**
@@ -441,14 +430,17 @@ public class RotationTrait extends Trait {
         public void rotateToFace(Location target) {
             t = 0;
             targetPitch = () -> {
-                double dx = target.getX() - getX();
-                double dy = target.getY() - (getY() + getEyeY());
-                double dz = target.getZ() - getZ();
+                Location from = getEyeLocation();
+                double dx = target.getX() - from.getX();
+                double dy = target.getY() - from.getY();
+                double dz = target.getZ() - from.getZ();
                 double diag = Math.sqrt((float) (dx * dx + dz * dz));
                 return (float) -Math.toDegrees(Math.atan2(dy, diag));
             };
             targetYaw = () -> {
-                return (float) Math.toDegrees(Math.atan2(target.getZ() - getZ(), target.getX() - getX())) - 90.0F;
+                Location from = getEyeLocation();
+                return (float) Math.toDegrees(Math.atan2(target.getZ() - from.getZ(), target.getX() - from.getX()))
+                        - 90.0F;
             };
         }
 

@@ -19,7 +19,6 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Pose;
-import net.citizensnpcs.util.Util;
 
 /**
  * Persists named {@link Pose}s.
@@ -64,7 +63,7 @@ public class Poses extends Trait {
         if (!npc.isSpawned()) {
             npc.spawn(npc.getStoredLocation(), SpawnReason.COMMAND);
         }
-        Util.setRotation(npc.getEntity(), yaw, pitch);
+        npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToHave(yaw, pitch);
     }
 
     /**
