@@ -64,7 +64,7 @@ public class RotationTrait extends Trait {
     }
 
     private Location getEyeLocation() {
-        return npc instanceof LivingEntity ? ((LivingEntity) npc.getEntity()).getEyeLocation()
+        return npc.getEntity() instanceof LivingEntity ? ((LivingEntity) npc.getEntity()).getEyeLocation()
                 : npc.getEntity().getLocation();
     }
 
