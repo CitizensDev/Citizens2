@@ -220,17 +220,12 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         @Override
         public Location getCurrentDestination() {
-            if (active == null)
-                return null;
-            return active.getCurrentDestination();
+            return active == null ? null : active.getCurrentDestination();
         }
 
         @Override
         public Iterable<Vector> getPath() {
-            if (active != null) {
-                return active.getPath();
-            }
-            return fallback.getPath();
+            return active != null ? active.getPath() : fallback.getPath();
         }
 
         @Override
@@ -239,14 +234,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             if (location == null)
                 throw new IllegalStateException("mapper should not return null");
 
-            if (parameters.straightLineTargetingDistance() > 0) {
-                double distance = npc.getStoredLocation().distance(location);
-                if (distance < parameters.straightLineTargetingDistance()) {
-                    if (active == null) {
-                        active = new StraightLineNavigationStrategy(npc, target, parameters);
-                    }
-                    return;
-                }
+            if (parameters.straightLineTargetingDistance() > 0
+                    && npc.getStoredLocation().distance(location) <= parameters.straightLineTargetingDistance()) {
+                active = new StraightLineNavigationStrategy(npc, target, parameters);
+                return;
             }
 
             active = null;
