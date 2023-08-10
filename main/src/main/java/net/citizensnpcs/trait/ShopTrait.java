@@ -309,11 +309,11 @@ public class ShopTrait extends Trait {
         @Persist
         private String resultMessage;
         @Persist
-        private boolean purchasableOnce = false;
+        private int timesPurchasable = 0;
         @Persist
         private String alreadyPurchasedMessage;
         @Persist
-        private final List<UUID> purchases = Lists.newArrayList();
+        private final Map<UUID, Integer> purchases = Maps.newHashMap();
 
         public List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
             List<Transaction> pending = Lists.newArrayList();
@@ -376,6 +376,10 @@ public class ShopTrait extends Trait {
                 List<String> lore = Lists.newArrayList();
                 cost.forEach(a -> lore.add(a.describe()));
                 result.forEach(a -> lore.add(a.describe()));
+                if (timesPurchasable > 0) {
+                    lore.add("Times purchasable: " + timesPurchasable);
+                }
+                meta.setLore(lore);
             }
             if (meta.hasLore()) {
                 meta.setLore(Lists.transform(meta.getLore(), line -> placeholders(line, player)));
@@ -398,7 +402,13 @@ public class ShopTrait extends Trait {
 
         public void onClick(NPCShop shop, InventoryClickEvent event, boolean secondClick) {
             Player player = (Player) event.getWhoClicked();
-            if (purchasableOnce && purchases.contains(player.getUniqueId())) {
+            Messaging.severe("timesPurchasable: " + timesPurchasable);
+            Messaging.severe("purchases: " + purchases);
+            // returns null at first???
+            Messaging.severe("get UUID from purchases: " + purchases.get(player.getUniqueId()));
+            Messaging.severe("purchases contain UUID: " + purchases.containsKey(player.getUniqueId()));
+            Messaging.severe("---");
+            if (purchases.containsKey(player.getUniqueId()) && timesPurchasable > 0 && purchases.get(player.getUniqueId()) == timesPurchasable) {
                 if (alreadyPurchasedMessage != null) {
                     Messaging.sendColorless(event.getWhoClicked(),
                             placeholders(alreadyPurchasedMessage, player));
@@ -438,8 +448,9 @@ public class ShopTrait extends Trait {
                 Messaging.sendColorless(event.getWhoClicked(),
                         placeholders(resultMessage, player));
             }
-            if (purchasableOnce) {
-                purchases.add(player.getUniqueId());
+            if (timesPurchasable > 0) {
+                int timesPurchasedAlready = purchases.get(player.getUniqueId()) == null ? 0 : purchases.get(player.getUniqueId());
+                purchases.put(player.getUniqueId(), ++timesPurchasedAlready);
             }
         }
 
@@ -493,9 +504,12 @@ public class ShopTrait extends Trait {
             }
             ctx.getSlot(9 * 3 + 2).setItemStack(new ItemStack(Material.EGG),
                     "Only purchasable once per player",
-                    "Currently: " + modified.purchasableOnce);
+                    "Times purchasable: " + modified.timesPurchasable + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
             ctx.getSlot(9 * 3 + 2).setClickHandler(
-                    InputMenus.toggler(res -> modified.purchasableOnce = res, modified.purchasableOnce));
+                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> String.valueOf(modified.timesPurchasable), s -> {
+                        modified.timesPurchasable = Integer.parseInt(s);
+                        ctx.getSlot(9 * 4 + 2).setDescription("Times purchasable: " + modified.timesPurchasable + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
+                    })));
 
             ctx.getSlot(9 * 4 + 2).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
                     "Set message to send on already purchased, currently:\n",
