@@ -312,7 +312,7 @@ public class ShopTrait extends Trait {
         private int timesPurchasable = 0;
         @Persist
         private String alreadyPurchasedMessage;
-        @Persist
+        @Persist(keyType = UUID.class)
         private final Map<UUID, Integer> purchases = Maps.newHashMap();
 
         public List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
@@ -402,12 +402,6 @@ public class ShopTrait extends Trait {
 
         public void onClick(NPCShop shop, InventoryClickEvent event, boolean secondClick) {
             Player player = (Player) event.getWhoClicked();
-            Messaging.severe("timesPurchasable: " + timesPurchasable);
-            Messaging.severe("purchases: " + purchases);
-            // returns null at first???
-            Messaging.severe("get UUID from purchases: " + purchases.get(player.getUniqueId()));
-            Messaging.severe("purchases contain UUID: " + purchases.containsKey(player.getUniqueId()));
-            Messaging.severe("---");
             if (purchases.containsKey(player.getUniqueId()) && timesPurchasable > 0 && purchases.get(player.getUniqueId()) == timesPurchasable) {
                 if (alreadyPurchasedMessage != null) {
                     Messaging.sendColorless(event.getWhoClicked(),
