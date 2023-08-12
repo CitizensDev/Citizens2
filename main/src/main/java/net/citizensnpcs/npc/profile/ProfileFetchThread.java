@@ -192,16 +192,15 @@ class ProfileFetchThread implements Runnable {
             queue.clear();
         }
 
-        fetchRequests(requests);
+        try {
+            fetchRequests(requests);
+        } catch (Exception ex) {
+            Messaging.severe("Error fetching skins: " + ex.getMessage());
+        }
     }
 
     private static void addHandler(final ProfileRequest request, final ProfileFetchHandler handler) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                request.addHandler(handler);
-            }
-        }, 1);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> request.addHandler(handler), 1);
     }
 
     @Nullable
