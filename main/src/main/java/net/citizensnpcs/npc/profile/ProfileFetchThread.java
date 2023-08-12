@@ -196,6 +196,9 @@ class ProfileFetchThread implements Runnable {
             fetchRequests(requests);
         } catch (Exception ex) {
             Messaging.severe("Error fetching skins: " + ex.getMessage());
+            for (ProfileRequest req : requests) {
+                req.setResult(null, ProfileFetchResult.FAILED);
+            }
         }
     }
 
