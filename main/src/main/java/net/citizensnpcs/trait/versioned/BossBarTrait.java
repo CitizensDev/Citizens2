@@ -133,8 +133,8 @@ public class BossBarTrait extends Trait {
 
         if (track != null && !track.isEmpty()) {
             if (track.equalsIgnoreCase("health")) {
-                LivingEntity entity = (LivingEntity) npc.getEntity();
                 if (npc.getEntity() instanceof LivingEntity) {
+                    LivingEntity entity = (LivingEntity) npc.getEntity();
                     double maxHealth = entity.getMaxHealth();
                     if (SUPPORT_ATTRIBUTES) {
                         try {
