@@ -131,19 +131,21 @@ public class BossBarTrait extends Trait {
         if (bar == null)
             return;
 
-        if (track != null && !track.isEmpty() && npc.getEntity() instanceof LivingEntity) {
-            LivingEntity entity = (LivingEntity) npc.getEntity();
+        if (track != null && !track.isEmpty()) {
             if (track.equalsIgnoreCase("health")) {
-                double maxHealth = entity.getMaxHealth();
-                if (SUPPORT_ATTRIBUTES) {
-                    try {
-                        maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-                    } catch (Throwable t) {
-                        SUPPORT_ATTRIBUTES = false;
+                LivingEntity entity = (LivingEntity) npc.getEntity();
+                if (npc.getEntity() instanceof LivingEntity) {
+                    double maxHealth = entity.getMaxHealth();
+                    if (SUPPORT_ATTRIBUTES) {
+                        try {
+                            maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+                        } catch (Throwable t) {
+                            SUPPORT_ATTRIBUTES = false;
+                        }
                     }
+                    bar.setProgress(entity.getHealth() / maxHealth);
                 }
-                bar.setProgress(entity.getHealth() / maxHealth);
-            } else if (track != null && !track.isEmpty()) {
+            } else {
                 String replaced = Placeholders.replace(track,
                         npc.getEntity() instanceof Player ? (Player) npc.getEntity() : null);
                 Double number = Doubles.tryParse(replaced);
@@ -152,7 +154,7 @@ public class BossBarTrait extends Trait {
                 if (number >= 1 && number <= 100) {
                     number /= 100.0;
                 }
-                bar.setProgress(Math.min(0, Math.max(1, number)));
+                bar.setProgress(Math.max(0, Math.min(1, number)));
             }
         }
         bar.setTitle(title);
