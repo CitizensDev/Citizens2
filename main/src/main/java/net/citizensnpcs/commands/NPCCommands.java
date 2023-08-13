@@ -1,6 +1,10 @@
 package net.citizensnpcs.commands;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -39,12 +43,14 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
@@ -94,6 +100,8 @@ import net.citizensnpcs.commands.gui.NPCConfigurator;
 import net.citizensnpcs.commands.history.CommandHistory;
 import net.citizensnpcs.commands.history.CreateNPCHistoryItem;
 import net.citizensnpcs.commands.history.RemoveNPCHistoryItem;
+import net.citizensnpcs.model.ModelCompletions;
+import net.citizensnpcs.model.ModelRegistry;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
