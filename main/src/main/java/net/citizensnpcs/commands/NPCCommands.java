@@ -2791,14 +2791,14 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.SITTING_SET, npc.getName(), Util.prettyPrintLocation(at));
     }
 
-    @Command(
+     @Command(
             aliases = { "npc" },
-            usage = "skin (-c(lear) -l(atest)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
+            usage = "skin (-e(xport) -c(lear) -l(atest)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
             desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
             modifiers = { "skin" },
             min = 1,
             max = 4,
-            flags = "ctls",
+            flags = "ectls",
             permission = "citizens.npc.skin")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skin(final CommandContext args, final CommandSender sender, final NPC npc, @Flag("url") String url,
@@ -2808,6 +2808,34 @@ public class NPCCommands {
         if (args.hasFlag('c')) {
             trait.clearTexture();
             Messaging.sendTr(sender, Messages.SKIN_CLEARED);
+            return;
+        } else if (args.hasFlag('e')) {
+            if (trait.getTexture() == null)
+                throw new CommandException(Messages.SKIN_REQUIRED);
+            File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
+            File skin = file == null ? new File(skinsFolder, npc.getUniqueId().toString() + ".png")
+                    : new File(skinsFolder, file);
+            if (!skin.getParentFile().equals(skinsFolder) || !skin.getName().endsWith(".png"))
+                throw new CommandException(Messages.INVALID_SKIN_FILE, file);
+
+            try {
+                JSONObject data = (JSONObject) new JSONParser()
+                        .parse(new String(BaseEncoding.base64().decode(trait.getTexture())));
+                JSONObject textures = (JSONObject) data.get("textures");
+                JSONObject skinObj = (JSONObject) textures.get("SKIN");
+                URL textureUrl = new URL(skinObj.get("url").toString().replace("\\", ""));
+                if (!textureUrl.getHost().equals("textures.minecraft.net"))
+                    throw new CommandException(Messages.ERROR_SETTING_SKIN_URL, "Mojang");
+
+                try (ReadableByteChannel in = Channels.newChannel(textureUrl.openStream());
+                        FileOutputStream out = new FileOutputStream(skin)) {
+                    out.getChannel().transferFrom(in, 0, 10000);
+                }
+                Messaging.send(sender, Messages.SKIN_EXPORTED, skin.getName());
+            } catch (Exception e) {
+                throw new CommandException("Couldn't parse texture: " + e.getMessage());
+            }
+
             return;
         } else if (url != null || file != null) {
             Messaging.sendTr(sender, Messages.FETCHING_SKIN, file);
