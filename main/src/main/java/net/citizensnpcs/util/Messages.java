@@ -378,6 +378,7 @@ public class Messages {
     public static final String SIZE_SET = "citizens.commands.npc.size.set";
     public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
     public static final String SKIN_CLEARED = "citizens.commands.npc.skin.cleared";
+    public static final String SKIN_EXPORTED = "citizens.commands.npc.skin.exported";
     public static final String SKIN_LAYERS_SET = "citizens.commands.npc.skin.layers-set";
     public static final String SKIN_REQUIRED = "citizens.commands.npc.skin.missing-skin";
     public static final String SKIN_SET = "citizens.commands.npc.skin.set";
