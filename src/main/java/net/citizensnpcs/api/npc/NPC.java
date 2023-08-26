@@ -527,7 +527,7 @@ public interface NPC extends Agent, Cloneable {
          */
         REMOVE_FROM_PLAYERLIST("removefromplayerlist", Boolean.class),
         /**
-         * Whether to reset entity pitch to <code>0</code> every tick (default Minecraft behaviour). Defaults to true.
+         * Whether to reset entity pitch to <code>0</code> every tick (default Minecraft behaviour). Defaults to false.
          */
         RESET_PITCH_ON_TICK("reset-pitch-on-tick", Boolean.class),
         /**

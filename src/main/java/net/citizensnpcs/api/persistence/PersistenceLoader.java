@@ -26,6 +26,7 @@ import com.google.common.primitives.Primitives;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.kyori.adventure.text.Component;
 
 /**
  * Performs reflective persistence of objects into {@link DataKey}s. {@link Persist} annotations are used to mark fields
@@ -401,6 +402,8 @@ public class PersistenceLoader {
         if (delegate == null) {
             if (registries.containsKey(fieldType))
                 return registries.get(fieldType);
+            if (Component.class.isAssignableFrom(fieldType))
+                return registries.get(Component.class);
             return loadedDelegates.get(persistRedirects.get(fieldType));
         }
         persister = loadedDelegates.get(delegate.value());
@@ -524,7 +527,7 @@ public class PersistenceLoader {
 
     /**
      * Registers a {@link Persister} redirect. Fields with the {@link Persist} annotation with a type that has been
-     * registered using this method will use the Persister by default to load and save data. The
+     * registered using this method will use the supplied {@link Persister} for (de)serialisation. The
      * {@link DelegatePersistence} annotation will be preferred if present.
      *
      * @param clazz
@@ -636,6 +639,7 @@ public class PersistenceLoader {
     private static final Map<Class<?>, PersisterRegistry<?>> registries = new WeakHashMap<>();
 
     static {
+        registerPersistDelegate(Component.class, ComponentPersister.class);
         registerPersistDelegate(Location.class, LocationPersister.class);
         registerPersistDelegate(ItemStack.class, ItemStackPersister.class);
         registerPersistDelegate(EulerAngle.class, EulerAnglePersister.class);
