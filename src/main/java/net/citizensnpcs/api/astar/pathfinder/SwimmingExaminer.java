@@ -36,12 +36,12 @@ public class SwimmingExaminer implements BlockExaminer {
     public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector vector = point.getVector();
         if (!MinecraftBlockExaminer.isLiquidOrInLiquid(
-                source.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ()))) {
+                source.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ())))
             return PassableState.IGNORE;
-        }
-        if (isWaterMob(npc.getEntity())) {
+
+        if (isWaterMob(npc.getEntity()))
             return PassableState.PASSABLE;
-        }
+
         Block block = source.getBlockAt(vector.clone().add(UP));
         return isSwimmableLiquid(block.getType()) || MinecraftBlockExaminer.canStandIn(block) ? PassableState.PASSABLE
                 : PassableState.UNPASSABLE;

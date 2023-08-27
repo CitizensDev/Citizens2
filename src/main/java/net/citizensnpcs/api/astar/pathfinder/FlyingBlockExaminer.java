@@ -46,10 +46,10 @@ public class FlyingBlockExaminer implements NeighbourGeneratorBlockExaminer {
         Vector pos = point.getVector();
         Block above = source.getBlockAt(pos.clone().add(UP));
         Block in = source.getBlockAt(pos);
-        if (MinecraftBlockExaminer.isLiquid(above.getType(), in.getType())) {
+        if (MinecraftBlockExaminer.isLiquid(above.getType(), in.getType()))
             return PassableState.UNPASSABLE;
-        }
-        return PassableState.fromBoolean(MinecraftBlockExaminer.canStandIn(above, in));
+
+        return MinecraftBlockExaminer.canStandIn(above, in) ? PassableState.PASSABLE : PassableState.UNPASSABLE;
     }
 
     private static final Vector UP = new Vector(0, 1, 0);

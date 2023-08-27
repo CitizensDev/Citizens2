@@ -73,10 +73,10 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
             Vector parentPos = point.getParentPoint().getVector();
             if ((parentPos.getX() != pos.getX() || parentPos.getZ() != pos.getZ())
-                    && pos.clone().subtract(point.getParentPoint().getVector()).getY() == 1) {
+                    && pos.clone().subtract(point.getParentPoint().getVector()).getY() == 1)
                 return PassableState.UNPASSABLE;
-            }
         }
+
         return PassableState.PASSABLE;
     }
 

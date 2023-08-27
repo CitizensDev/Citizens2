@@ -9,9 +9,5 @@ public interface BlockExaminer {
         IGNORE,
         PASSABLE,
         UNPASSABLE;
-
-        public static PassableState fromBoolean(boolean b) {
-            return b ? PASSABLE : UNPASSABLE;
-        }
     }
 }
