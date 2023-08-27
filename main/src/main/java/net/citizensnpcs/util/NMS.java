@@ -868,6 +868,10 @@ public class NMS {
         BRIDGE.updateInventoryTitle(player, view, newTitle);
     }
 
+    public static void updateMountedInteractionHeight(Entity entity, Entity mount, double height) {
+        BRIDGE.updateMountedInteractionHeight(entity, mount, height);
+    }
+
     public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {
         BRIDGE.updateNavigationWorld(entity, world);
     }
@@ -879,7 +883,6 @@ public class NMS {
     private static Method ADD_OPENS;
 
     private static NMSBridge BRIDGE;
-
     private static Method GET_MODULE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;
@@ -894,6 +897,7 @@ public class NMS {
     private static MethodHandle UNSAFE_PUT_LONG;
     private static MethodHandle UNSAFE_PUT_OBJECT;
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
+
     static {
         try {
             Class.forName("com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent");

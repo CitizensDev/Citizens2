@@ -270,6 +270,22 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             this.markers = new EntityMarkers<Waypoint>();
         }
 
+        private void addWaypoint(Location at) {
+            Waypoint element = new Waypoint(at);
+            int idx = waypoints.size();
+            if (waypoints.indexOf(selectedWaypoint) != -1) {
+                idx = waypoints.indexOf(selectedWaypoint);
+                waypoints.add(idx, element);
+            } else {
+                waypoints.add(element);
+            }
+
+            if (showingMarkers) {
+                markers.createMarker(element, element.getLocation().clone());
+            }
+            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at), waypoints.size());
+        }
+
         @Override
         public void begin() {
             Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_BEGIN);
@@ -369,6 +385,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                     Messaging.sendTr(event.getPlayer(), cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET
                             : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
                 });
+            } else if (message.equalsIgnoreCase("here")) {
+                event.setCancelled(true);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                        () -> addWaypoint(player.getLocation()));
             }
         }
 
@@ -394,20 +414,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                     }
                 }
 
-                Waypoint element = new Waypoint(at);
-                int idx = waypoints.size();
-                if (waypoints.indexOf(selectedWaypoint) != -1) {
-                    idx = waypoints.indexOf(selectedWaypoint);
-                    waypoints.add(idx, element);
-                } else {
-                    waypoints.add(element);
-                }
-
-                if (showingMarkers) {
-                    markers.createMarker(element, element.getLocation().clone());
-                }
-                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_ADDED_WAYPOINT, formatLoc(at),
-                        waypoints.size());
+                addWaypoint(at);
             } else if (waypoints.size() > 0 && !event.getPlayer().isSneaking()) {
                 event.setCancelled(true);
 

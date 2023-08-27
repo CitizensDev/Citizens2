@@ -166,6 +166,9 @@ public class Settings {
                 "Minecraft will pick a 'close-enough' location when pathfinding to a block if it can't find a direct path<br>Disabled by default",
                 "npc.pathfinding.disable-mc-fallback-navigation", true),
         DISABLE_TABLIST("Whether to remove NPCs from the tablist", "npc.tablist.disable", true),
+        DISPLAY_ENTITY_HOLOGRAMS(
+                "Whether to use display entities for holograms by default. In theory more performant than armor stands. Requires 1.19.4 or above. Defaults to false",
+                "npc.hologram.use-display-entities", false),
         ENTITY_SPAWN_WAIT_DURATION(
                 "Entities are no longer spawned until the chunks are loaded from disk<br>Wait for chunk loading for one second by default, increase if your disk is slow",
                 "general.entity-spawn-wait-ticks", "general.wait-for-entity-spawn", "1s"),

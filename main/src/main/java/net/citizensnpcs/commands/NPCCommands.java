@@ -99,7 +99,7 @@ import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.commands.gui.NPCConfigurator;
 import net.citizensnpcs.commands.history.CommandHistory;
 import net.citizensnpcs.commands.history.CreateNPCHistoryItem;
-import net.citizensnpcs.commands.history.RemoveNPCHistoryItem; 
+import net.citizensnpcs.commands.history.RemoveNPCHistoryItem;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
@@ -2797,7 +2797,7 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.SITTING_SET, npc.getName(), Util.prettyPrintLocation(at));
     }
 
-     @Command(
+    @Command(
             aliases = { "npc" },
             usage = "skin (-e(xport) -c(lear) -l(atest)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
             desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",

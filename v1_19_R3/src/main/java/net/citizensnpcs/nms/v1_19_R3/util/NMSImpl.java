@@ -280,10 +280,12 @@ import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.VecDeltaCodec;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
@@ -304,6 +306,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Interaction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
@@ -1796,6 +1799,22 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void updateMountedInteractionHeight(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity mount,
+            double offset) {
+        Interaction handle = (Interaction) getHandle(entity);
+        offset += -0.5 + getHandle(mount).getPassengersRidingOffset();
+        ((org.bukkit.entity.Interaction) entity).setInteractionHeight((float) offset);
+        mount.addPassenger(entity);
+        handle.setPose(Pose.SNIFFING);
+        Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
+            if (!entity.isValid())
+                return;
+            sendPacketNearby(null, entity.getLocation(), new ClientboundSetEntityDataPacket(handle.getId(),
+                    List.of(new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, 999999f).value())));
+        });
+    }
+
+    @Override
     public void updateNavigationWorld(org.bukkit.entity.Entity entity, World world) {
         if (NAVIGATION_WORLD_FIELD == null)
             return;
@@ -2547,6 +2566,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle HEAD_HEIGHT = NMS.getSetter(Entity.class, "bf");
     private static final MethodHandle HEAD_HEIGHT_METHOD = NMS.getFirstMethodHandle(Entity.class, true, Pose.class,
             EntityDimensions.class);
+    private static EntityDataAccessor<Float> INTERACTION_HEIGHT = null;
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(LivingEntity.class, "bi");
     private static final MethodHandle LOOK_CONTROL_SETTER = NMS.getFirstSetter(Mob.class, LookControl.class);
     private static final MethodHandle MAKE_REQUEST = NMS.getMethodHandle(YggdrasilAuthenticationService.class,
@@ -2599,6 +2619,11 @@ public class NMSImpl implements NMSBridge {
         try {
             RABBIT_TYPE_DATAWATCHER = (EntityDataAccessor<Integer>) NMS
                     .getFirstStaticGetter(Rabbit.class, EntityDataAccessor.class).invoke();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        try {
+            INTERACTION_HEIGHT = (EntityDataAccessor<Float>) NMS.getGetter(Interaction.class, "d").invoke();
         } catch (Throwable e) {
             e.printStackTrace();
         }

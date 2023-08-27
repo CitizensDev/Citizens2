@@ -12,11 +12,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Interaction;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
@@ -55,7 +54,7 @@ public class HologramTrait extends Trait {
     private HologramLine nameLine;
     private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
     private int t;
-    private boolean useTextDisplay;
+    private boolean useDisplayEntities = Setting.DISPLAY_ENTITY_HOLOGRAMS.asBoolean();
 
     public HologramTrait() {
         super("hologramtrait");
@@ -99,9 +98,10 @@ public class HologramTrait extends Trait {
     @SuppressWarnings("deprecation")
     private NPC createHologram(String line, double heightOffset) {
         NPC hologramNPC = null;
-        if (useTextDisplay) {
-            hologramNPC = registry.createNPC(EntityType.TEXT_DISPLAY, line);
+        if (useDisplayEntities) {
+            hologramNPC = registry.createNPC(EntityType.INTERACTION, line);
             hologramNPC.addTrait(new ClickRedirectTrait(npc));
+            hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
         } else {
             hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
             hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
@@ -116,9 +116,9 @@ public class HologramTrait extends Trait {
                         + (direction == HologramDirection.BOTTOM_UP ? heightOffset : getMaxHeight() - heightOffset),
                 0));
 
-        if (useTextDisplay) {
-            ((TextDisplay) hologramNPC.getEntity()).setBillboard(Billboard.CENTER);
-            ((TextDisplay) hologramNPC.getEntity()).setInterpolationDelay(0);
+        if (useDisplayEntities) {
+            ((Interaction) hologramNPC.getEntity()).setInteractionWidth(0);
+            NMS.updateMountedInteractionHeight(hologramNPC.getEntity(), npc.getEntity(), heightOffset);
         }
 
         Matcher itemMatcher = ITEM_MATCHER.matcher(line);
@@ -159,7 +159,7 @@ public class HologramTrait extends Trait {
     }
 
     private double getEntityHeight() {
-        return NMS.getHeight(npc.getEntity()) + (useTextDisplay ? 0.27 : 0);
+        return NMS.getHeight(npc.getEntity());
     }
 
     private double getHeight(int lineNumber) {
@@ -320,7 +320,7 @@ public class HologramTrait extends Trait {
         }
 
         if (nameLine != null && nameLine.hologram.isSpawned()) {
-            if (updatePosition) {
+            if (updatePosition && !useDisplayEntities) {
                 nameLine.hologram.teleport(currentLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
             }
             if (updateName) {
@@ -334,7 +334,7 @@ public class HologramTrait extends Trait {
             if (hologramNPC == null || !hologramNPC.isSpawned())
                 continue;
 
-            if (updatePosition) {
+            if (updatePosition && !useDisplayEntities) {
                 Location tp = currentLoc.clone().add(0, lastEntityHeight
                         + (direction == HologramDirection.BOTTOM_UP ? getHeight(i) : getMaxHeight() - getHeight(i)), 0);
                 hologramNPC.teleport(tp, TeleportCause.PLUGIN);
@@ -443,8 +443,8 @@ public class HologramTrait extends Trait {
         this.customHologramSupplier = nameSupplier;
     }
 
-    public void setUseTextDisplay(boolean use) {
-        this.useTextDisplay = use;
+    public void setUseDisplayEntities(boolean use) {
+        this.useDisplayEntities = use;
         reloadLineHolograms();
     }
 

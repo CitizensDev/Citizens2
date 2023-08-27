@@ -260,7 +260,10 @@ public interface NMSBridge {
 
     public void updateInventoryTitle(Player player, InventoryView view, String newTitle);
 
+    public default void updateMountedInteractionHeight(Entity entity, Entity mount, double height) {
+    }
+
     public void updateNavigationWorld(Entity entity, World world);
 
-    public void updatePathfindingRange(NPC npc, float pathfindingRange);
+    public void updatePathfindingRange(NPC npc, float pathfindingRange);;
 }

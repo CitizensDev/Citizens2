@@ -39,9 +39,9 @@ public class BoundingBoxExaminer implements BlockExaminer {
             if (above == null || below == null)
                 return PassableState.IGNORE;
             float height = (float) (above.minY - below.maxY);
-            if (height < this.height) {
+            if (height < this.height)
                 return PassableState.UNPASSABLE;
-            }
+
         }
         return PassableState.IGNORE;
     }

@@ -71,6 +71,9 @@ public class MountTrait extends Trait {
 
     public void setMountedOn(UUID uuid) {
         this.uuid = uuid;
+        if (npc.isSpawned()) {
+            checkMounted();
+        }
     }
 
     public void unmount() {
