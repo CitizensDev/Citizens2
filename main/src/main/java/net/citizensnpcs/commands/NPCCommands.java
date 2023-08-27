@@ -2580,35 +2580,6 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "scoreboard --addtag [tags] --removetag [tags]",
-            desc = "Controls an NPC's scoreboard",
-            modifiers = { "scoreboard" },
-            min = 1,
-            max = 1,
-            permission = "citizens.npc.scoreboard")
-    public void scoreboard(CommandContext args, CommandSender sender, NPC npc, @Flag("addtag") String addTag,
-            @Flag("removetag") String removeTag) {
-        ScoreboardTrait trait = npc.getOrAddTrait(ScoreboardTrait.class);
-        String output = "";
-        if (addTag != null) {
-            for (String tag : addTag.split(",")) {
-                trait.addTag(tag);
-            }
-            output += " " + Messaging.tr(Messages.ADDED_SCOREBOARD_TAGS, addTag);
-        }
-        if (removeTag != null) {
-            for (String tag : removeTag.split(",")) {
-                trait.removeTag(tag);
-            }
-            output += " " + Messaging.tr(Messages.REMOVED_SCOREBOARD_TAGS, removeTag);
-        }
-        if (!output.isEmpty()) {
-            Messaging.send(sender, output.trim());
-        }
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "script --add [files] --remove [files]",
             desc = "Controls an NPC's scripts",
             modifiers = { "script" },

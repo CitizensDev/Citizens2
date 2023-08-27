@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -12,6 +11,8 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
+
+import com.google.common.collect.Sets;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -33,7 +34,7 @@ public class ScoreboardTrait extends Trait {
     private final PerPlayerMetadata<Boolean> metadata;
     private ChatColor previousGlowingColor;
     @Persist
-    private final Set<String> tags = new HashSet<String>();
+    private Set<String> tags = new HashSet<String>();
 
     public ScoreboardTrait() {
         super("scoreboardtrait");
@@ -49,10 +50,6 @@ public class ScoreboardTrait extends Trait {
                 meta.set(event.getPlayer().getUniqueId(), team.getName(), true);
             }
         });
-    }
-
-    public void addTag(String tag) {
-        tags.add(tag);
     }
 
     private void clearClientTeams(Team team) {
@@ -79,10 +76,6 @@ public class ScoreboardTrait extends Trait {
 
     public ChatColor getColor() {
         return color;
-    }
-
-    public Set<String> getTags() {
-        return tags;
     }
 
     private Team getTeam() {
@@ -128,10 +121,15 @@ public class ScoreboardTrait extends Trait {
     @Override
     public void onSpawn() {
         changed = true;
-    }
+        if (SUPPORT_TAGS) {
+            try {
+                npc.getEntity().getScoreboardTags().clear();
+                npc.getEntity().getScoreboardTags().addAll(tags);
+            } catch (NoSuchMethodError e) {
+                SUPPORT_TAGS = false;
+            }
+        }
 
-    public void removeTag(String tag) {
-        tags.remove(tag);
     }
 
     public void setColor(ChatColor color) {
@@ -162,21 +160,10 @@ public class ScoreboardTrait extends Trait {
                     : npc.getUniqueId().toString();
         }
 
-        Set<String> newTags = new HashSet<String>(tags);
         if (SUPPORT_TAGS) {
             try {
                 if (!npc.getEntity().getScoreboardTags().equals(tags)) {
-                    changed = true;
-                    for (Iterator<String> iterator = npc.getEntity().getScoreboardTags().iterator(); iterator
-                            .hasNext();) {
-                        String oldTag = iterator.next();
-                        if (!newTags.remove(oldTag)) {
-                            iterator.remove();
-                        }
-                    }
-                    for (String tag : newTags) {
-                        npc.getEntity().addScoreboardTag(tag);
-                    }
+                    tags = Sets.newHashSet(npc.getEntity().getScoreboardTags());
                 }
             } catch (NoSuchMethodError e) {
                 SUPPORT_TAGS = false;

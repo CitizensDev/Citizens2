@@ -2,7 +2,6 @@ package net.citizensnpcs.util;
 
 public class Messages {
     public static final String ACTIVATION_RANGE_SET = "citizens.commands.npc.activationrange.set";
-    public static final String ADDED_SCOREBOARD_TAGS = "citizens.commands.npc.scoreboard.added-tags";
     public static final String ADDED_TO_PLAYERLIST = "citizens.commands.npc.playerlist.added";
     public static final String AGE_LOCKED = "citizens.commands.npc.age.locked";
     public static final String AGE_SET_ADULT = "citizens.commands.npc.age.set-adult";
@@ -360,7 +359,6 @@ public class Messages {
     public static final String REMOVE_INCORRECT_SYNTAX = "citizens.commands.npc.remove.incorrect-syntax";
     public static final String REMOVED_ALL_NPCS = "citizens.commands.npc.remove.removed-all";
     public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
-    public static final String REMOVED_SCOREBOARD_TAGS = "citizens.commands.npc.scoreboard.removed-tags";
     public static final String RESPAWN_DELAY_DESCRIBE = "citizens.commands.npc.respawn.describe";
     public static final String RESPAWN_DELAY_SET = "citizens.commands.npc.respawn.delay-set";
     public static final String SADDLED_SET = "citizens.editors.equipment.saddled-set";
