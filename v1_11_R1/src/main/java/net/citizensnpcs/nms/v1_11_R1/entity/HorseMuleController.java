@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftMule;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Mule;
 import org.bukkit.util.Vector;
 
@@ -13,6 +14,7 @@ import net.citizensnpcs.nms.v1_11_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_11_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -20,6 +22,7 @@ import net.minecraft.server.v1_11_R1.AxisAlignedBB;
 import net.minecraft.server.v1_11_R1.BlockPosition;
 import net.minecraft.server.v1_11_R1.Entity;
 import net.minecraft.server.v1_11_R1.EntityHorseMule;
+import net.minecraft.server.v1_11_R1.GenericAttributes;
 import net.minecraft.server.v1_11_R1.IBlockData;
 import net.minecraft.server.v1_11_R1.NBTTagCompound;
 import net.minecraft.server.v1_11_R1.SoundEffect;
@@ -42,7 +45,9 @@ public class HorseMuleController extends MobEntityController {
     }
 
     public static class EntityHorseMuleNPC extends EntityHorseMule implements NPCHolder {
+        private double baseMovementSpeed;
         private final CitizensNPC npc;
+        private boolean riding;
 
         public EntityHorseMuleNPC(World world) {
             this(world, null);
@@ -52,7 +57,9 @@ public class HorseMuleController extends MobEntityController {
             super(world);
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
-                ((Mule) getBukkitEntity()).setDomestication(((Mule) getBukkitEntity()).getMaxDomestication());
+                ((AbstractHorse) getBukkitEntity())
+                        .setDomestication(((AbstractHorse) getBukkitEntity()).getMaxDomestication());
+                baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
         }
 
@@ -171,6 +178,16 @@ public class HorseMuleController extends MobEntityController {
         public void M() {
             super.M();
             if (npc != null) {
+                if (npc.hasTrait(Controllable.class) && npc.getOrAddTrait(Controllable.class).isEnabled()) {
+                    riding = getBukkitEntity().getPassenger() != null;
+                    getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+                            .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
+                } else {
+                    riding = false;
+                }
+                if (riding) {
+                    c(4, true);
+                }
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }

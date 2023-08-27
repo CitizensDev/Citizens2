@@ -47,10 +47,9 @@ public class HorseMuleController extends MobEntityController {
 
     public static class EntityHorseMuleNPC extends EntityHorseMule implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
-
         private boolean riding;
+
         public EntityHorseMuleNPC(World world) {
             this(world, null);
         }

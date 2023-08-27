@@ -47,9 +47,9 @@ public class HorseDonkeyController extends MobEntityController {
 
     public static class EntityHorseDonkeyNPC extends EntityHorseDonkey implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
         private boolean riding;
+
         public EntityHorseDonkeyNPC(World world) {
             this(world, null);
         }

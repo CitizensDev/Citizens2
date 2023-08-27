@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_8_R3.entity;
 
+import java.lang.invoke.MethodHandle;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -13,6 +15,7 @@ import net.citizensnpcs.nms.v1_8_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_8_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -21,6 +24,7 @@ import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityHorse;
+import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
 
@@ -41,7 +45,9 @@ public class HorseController extends MobEntityController {
     }
 
     public static class EntityHorseNPC extends EntityHorse implements NPCHolder {
+        private double baseMovementSpeed;
         private final CitizensNPC npc;
+        private boolean riding;
 
         public EntityHorseNPC(World world) {
             this(world, null);
@@ -52,6 +58,7 @@ public class HorseController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 ((Horse) getBukkitEntity()).setDomestication(((Horse) getBukkitEntity()).getMaxDomestication());
+                baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
         }
 
@@ -141,15 +148,26 @@ public class HorseController extends MobEntityController {
 
         @Override
         public void E() {
-            if (npc == null) {
-                super.E();
-            } else {
+            super.E();
+            if (npc != null) {
+                if (npc.hasTrait(Controllable.class) && npc.getOrAddTrait(Controllable.class).isEnabled()) {
+                    riding = getBukkitEntity().getPassenger() != null;
+                    getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+                            .setValue(baseMovementSpeed * npc.getNavigator().getDefaultParameters().speedModifier());
+                } else {
+                    riding = false;
+                }
+                if (riding) {
+                    try {
+                        C.invoke(this, 4, true);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
         }
-
-        
 
         @Override
         public void g(double x, double y, double z) {
@@ -193,6 +211,8 @@ public class HorseController extends MobEntityController {
         protected String z() {
             return NMSImpl.getSoundEffect(npc, super.z(), NPC.Metadata.AMBIENT_SOUND);
         }
+
+        private static MethodHandle C = NMS.getMethodHandle(EntityHorse.class, "c", true, int.class, boolean.class);
     }
 
     public static class HorseNPC extends CraftHorse implements NPCHolder {
