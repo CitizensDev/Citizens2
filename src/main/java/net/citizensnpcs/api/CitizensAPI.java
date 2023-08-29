@@ -225,6 +225,6 @@ public final class CitizensAPI {
         getImplementation().talk(context);
     }
 
-    private static CitizensPlugin instance = null;
+    private static volatile CitizensPlugin instance = null;
     private static ScriptCompiler scriptCompiler;
 }
