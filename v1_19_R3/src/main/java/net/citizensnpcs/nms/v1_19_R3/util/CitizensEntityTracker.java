@@ -58,7 +58,8 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
     }
 
     public void updateLastPlayer(ServerPlayer lastUpdatedPlayer) {
-        if (tracker.isRemoved() || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+        if (tracker.isRemoved() || tracker.getBukkitEntity().getType() != EntityType.PLAYER
+                || !CitizensAPI.hasImplementation())
             return;
         final ServerPlayer entityplayer = lastUpdatedPlayer;
         NPC npc = ((NPCHolder) tracker).getNPC();

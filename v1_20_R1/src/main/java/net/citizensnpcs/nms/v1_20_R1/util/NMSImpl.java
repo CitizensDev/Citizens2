@@ -380,6 +380,7 @@ public class NMSImpl implements NMSBridge {
     public boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
         int viewDistance = -1;
         ChunkMap chunkMap = null;
+
         try {
             if (entity instanceof Player) {
                 chunkMap = ((ServerChunkCache) getHandle(entity).level().getChunkSource()).chunkMap;

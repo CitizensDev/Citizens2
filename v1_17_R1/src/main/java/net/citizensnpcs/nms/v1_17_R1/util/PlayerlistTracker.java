@@ -35,8 +35,8 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
     }
 
     public void updateLastPlayer() {
-        if (tracker.isRemoved() || lastUpdatedPlayer == null
-                || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+        if (tracker.isRemoved() || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER
+                || !CitizensAPI.hasImplementation())
             return;
         final ServerPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());

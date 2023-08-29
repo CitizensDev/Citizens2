@@ -87,7 +87,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
     }
 
     public void updateLastPlayer(EntityPlayer lastUpdatedPlayer) {
-        if (tracker.dead || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+        if (tracker.dead || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER
+                || !CitizensAPI.hasImplementation())
             return;
         final EntityPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
