@@ -220,6 +220,7 @@ public class EventListen implements Listener {
         if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean() && toRespawn.containsKey(coord)) {
             new Exception("CITIZENS CHUNK LOAD DEBUG " + coord).printStackTrace();
         }
+
         if (event instanceof Cancellable) {
             runnable.run();
         } else {
@@ -267,7 +268,9 @@ public class EventListen implements Listener {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
         if (npc == null)
             return;
+
         event.setCancelled(npc.isProtected());
+
         if (event instanceof EntityCombustByEntityEvent) {
             Bukkit.getPluginManager().callEvent(new NPCCombustByEntityEvent((EntityCombustByEntityEvent) event, npc));
         } else if (event instanceof EntityCombustByBlockEvent) {
@@ -321,9 +324,8 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
         final NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
-        if (npc == null) {
+        if (npc == null)
             return;
-        }
 
         if (!npc.data().get(NPC.Metadata.DROPS_ITEMS, false)) {
             event.getDrops().clear();
@@ -336,6 +338,7 @@ public class EventListen implements Listener {
         int delay = npc.data().get(NPC.Metadata.RESPAWN_DELAY, -1);
         if (delay < 0)
             return;
+
         int deathAnimationTicks = event.getEntity() instanceof LivingEntity ? 20 : 2;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
@@ -375,6 +378,7 @@ public class EventListen implements Listener {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getTarget());
         if (npc == null)
             return;
+
         event.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
         Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
     }
@@ -384,6 +388,7 @@ public class EventListen implements Listener {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
         if (npc == null)
             return;
+
         event.setCancelled(true);
     }
 
@@ -457,6 +462,7 @@ public class EventListen implements Listener {
         skinUpdateTracker.updatePlayer(event.getPlayer(), 20, true);
         if (CitizensAPI.getNPCRegistry().getNPC(event.getPlayer()) == null)
             return;
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             NMS.replaceTracker(event.getPlayer());
             NMS.removeFromServerPlayerList(event.getPlayer());
@@ -472,13 +478,12 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        final NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
-        if (npc == null) {
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
+        if (npc == null)
             return;
-        }
 
         if (npc.requiresNameHologram()) {
-            event.setDeathMessage(event.getDeathMessage().replace(npc.getEntity().getName(), npc.getFullName()));
+            event.setDeathMessage(event.getDeathMessage().replace(event.getEntity().getName(), npc.getFullName()));
         }
     }
 
@@ -493,43 +498,49 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked());
-        if (npc == null || Util.isOffHand(event)) {
+        if (npc == null || Util.isOffHand(event))
             return;
-        }
-        if (npc.hasTrait(ClickRedirectTrait.class)) {
-            npc = npc.getTraitNullable(ClickRedirectTrait.class).getRedirectNPC();
-            if (npc == null)
-                return;
-        }
+
+        ClickRedirectTrait crt = npc.getTraitNullable(ClickRedirectTrait.class);
+        if (crt != null && (npc = crt.getRedirectNPC()) == null)
+            return;
+
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         if (event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
             rightClickEvent.setCancelled(npc.isProtected());
         }
+
         Bukkit.getPluginManager().callEvent(rightClickEvent);
         if (rightClickEvent.isCancelled()) {
             event.setCancelled(true);
             return;
         }
-        if (SUPPORT_STOP_USE_ITEM) {
-            try {
-                PlayerAnimation.STOP_USE_ITEM.play(player);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                        () -> PlayerAnimation.STOP_USE_ITEM.play(player));
-            } catch (UnsupportedOperationException e) {
-                SUPPORT_STOP_USE_ITEM = false;
-            }
-        }
+
         if (npc.hasTrait(CommandTrait.class)) {
             npc.getTraitNullable(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
             rightClickEvent.setDelayedCancellation(true);
         }
+
         if (npc.hasTrait(ShopTrait.class)) {
             npc.getTraitNullable(ShopTrait.class).onRightClick(player);
             rightClickEvent.setDelayedCancellation(true);
         }
+
         if (rightClickEvent.isDelayedCancellation()) {
             event.setCancelled(true);
+        }
+
+        if (event.isCancelled()) {
+            if (SUPPORT_STOP_USE_ITEM) {
+                try {
+                    PlayerAnimation.STOP_USE_ITEM.play(player);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                            () -> PlayerAnimation.STOP_USE_ITEM.play(player));
+                } catch (UnsupportedOperationException e) {
+                    SUPPORT_STOP_USE_ITEM = false;
+                }
+            }
         }
     }
 
@@ -543,9 +554,9 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerLeashEntity(PlayerLeashEntityEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
-        if (npc == null) {
+        if (npc == null)
             return;
-        }
+
         boolean leashProtected = npc.isProtected();
         if (npc.data().get(NPC.Metadata.LEASH_PROTECTED, leashProtected)) {
             event.setCancelled(true);
@@ -568,6 +579,7 @@ public class EventListen implements Listener {
                 event.getPlayer().leaveVehicle();
             }
         }
+
         skinUpdateTracker.removePlayer(event.getPlayer().getUniqueId());
         CitizensAPI.getLocationLookup().onQuit(event);
     }
@@ -583,16 +595,14 @@ public class EventListen implements Listener {
         if (event.getCause() == TeleportCause.PLUGIN && !event.getPlayer().hasMetadata("citizens-force-teleporting")
                 && npc != null && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
             event.setCancelled(true);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    event.getPlayer().setMetadata("citizens-force-teleporting",
-                            new FixedMetadataValue(CitizensAPI.getPlugin(), true));
-                    event.getPlayer().teleport(event.getTo());
-                    event.getPlayer().removeMetadata("citizens-force-teleporting", CitizensAPI.getPlugin());
-                }
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                event.getPlayer().setMetadata("citizens-force-teleporting",
+                        new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+                event.getPlayer().teleport(event.getTo());
+                event.getPlayer().removeMetadata("citizens-force-teleporting", CitizensAPI.getPlugin());
             }, Setting.PLAYER_TELEPORT_DELAY.asTicks());
         }
+
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
     }
 
@@ -615,6 +625,7 @@ public class EventListen implements Listener {
             NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
             if (npc == null)
                 continue;
+
             if (npc.isProtected()) {
                 event.setIntensity(entity, 0);
             }
@@ -634,6 +645,7 @@ public class EventListen implements Listener {
                 if (n++ > 5) {
                     cancel();
                 }
+
                 NMS.removeHookIfNecessary(CitizensAPI.getNPCRegistry(), (FishHook) event.getEntity());
             }
         }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
@@ -642,9 +654,9 @@ public class EventListen implements Listener {
     @EventHandler
     public void onVehicleDamage(VehicleDamageEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getVehicle());
-        if (npc == null) {
+        if (npc == null)
             return;
-        }
+
         event.setCancelled(npc.isProtected());
 
         NPCVehicleDamageEvent damageEvent = new NPCVehicleDamageEvent(npc, event);
@@ -652,6 +664,7 @@ public class EventListen implements Listener {
 
         if (!damageEvent.isCancelled() || !(damageEvent.getDamager() instanceof Player))
             return;
+
         Player damager = (Player) damageEvent.getDamager();
 
         NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
@@ -664,9 +677,9 @@ public class EventListen implements Listener {
     @EventHandler
     public void onVehicleDestroy(VehicleDestroyEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getVehicle());
-        if (npc == null) {
+        if (npc == null)
             return;
-        }
+
         event.setCancelled(npc.isProtected());
     }
 
@@ -701,6 +714,7 @@ public class EventListen implements Listener {
         for (NPC npc : getAllNPCs()) {
             if (npc == null || !npc.isSpawned() || !npc.getEntity().getWorld().equals(event.getWorld()))
                 continue;
+
             boolean despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
             if (event.isCancelled() || !despawned) {
                 for (ChunkCoord coord : toRespawn.keySet()) {
@@ -711,6 +725,7 @@ public class EventListen implements Listener {
                 event.setCancelled(true);
                 return;
             }
+
             if (npc.isSpawned()) {
                 toRespawn.put(new ChunkCoord(npc.getEntity().getLocation()), npc);
                 Messaging.debug("Despawned", npc, "due to world unload at", event.getWorld().getName());
@@ -788,22 +803,26 @@ public class EventListen implements Listener {
         if (ids.size() > 0) {
             Messaging.debug("Respawning all NPCs at", coord, "due to", event);
         }
+
         for (int i = 0; i < ids.size(); i++) {
             NPC npc = ids.get(i);
             if (npc.getOwningRegistry().getById(npc.getId()) != npc) {
                 Messaging.idebug(() -> "Prevented deregistered NPC from respawning " + npc);
                 continue;
             }
+
             if (npc.isSpawned()) {
                 Messaging.idebug(() -> "Can't respawn NPC " + npc + ": already spawned");
                 continue;
             }
+
             boolean success = spawn(npc);
             if (!success) {
                 ids.remove(i--);
                 Messaging.idebug(() -> Joiner.on(' ').join("Couldn't respawn", npc, "during", event, "at", coord));
                 continue;
             }
+
             Messaging.idebug(() -> Joiner.on(' ').join("Spawned", npc, "during", event, "at", coord));
         }
         for (NPC npc : ids) {
@@ -830,8 +849,10 @@ public class EventListen implements Listener {
                 continue;
             toDespawn.add(npc);
         }
+
         if (toDespawn.isEmpty())
             return;
+
         ChunkCoord coord = new ChunkCoord(event.getChunk());
         boolean loadChunk = false;
         for (NPC npc : toDespawn) {
@@ -842,6 +863,7 @@ public class EventListen implements Listener {
                     toRespawn.put(coord, npc);
                     continue;
                 }
+
                 ((Cancellable) event).setCancelled(true);
                 Messaging.debug("Cancelled chunk unload at", coord);
                 respawnAllFromCoord(coord, event);
@@ -853,14 +875,12 @@ public class EventListen implements Listener {
         if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
             new Exception("CITIZENS CHUNK UNLOAD DEBUG " + coord).printStackTrace();
         }
+
         if (loadChunk) {
             Messaging.idebug(() -> Joiner.on(' ').join("Loading chunk in 10 ticks due to forced chunk load at", coord));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    if (!event.getChunk().isLoaded()) {
-                        event.getChunk().load();
-                    }
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                if (!event.getChunk().isLoaded()) {
+                    event.getChunk().load();
                 }
             }, 10);
         }
