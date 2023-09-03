@@ -22,6 +22,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
@@ -40,13 +41,20 @@ import net.citizensnpcs.util.Util;
 public class Text extends Trait implements Runnable, Listener {
     private final Map<UUID, Long> cooldowns = Maps.newHashMap();
     private int currentIndex;
+    @Persist
     private int delay = -1;
+    @Persist(value = "talkitem")
     private String itemInHandPattern = "default";
     private final Plugin plugin;
+    @Persist(value = "random-talker")
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
+    @Persist
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
+    @Persist(value = "realistic-looking")
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
+    @Persist(value = "speech-bubbles")
     private boolean speechBubbles;
+    @Persist(value = "talk-close")
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
     private final List<String> text = new ArrayList<String>();
 
@@ -139,14 +147,6 @@ public class Text extends Trait implements Runnable, Listener {
         if (text.isEmpty()) {
             populateDefaultText();
         }
-
-        talkClose = key.getBoolean("talk-close", talkClose);
-        realisticLooker = key.getBoolean("realistic-looking", realisticLooker);
-        randomTalker = key.getBoolean("random-talker", randomTalker);
-        range = key.getDouble("range", range);
-        delay = key.getInt("delay", delay);
-        speechBubbles = key.getBoolean("speech-bubbles", speechBubbles);
-        itemInHandPattern = key.getString("talkitem", itemInHandPattern);
     }
 
     @EventHandler
@@ -185,13 +185,6 @@ public class Text extends Trait implements Runnable, Listener {
 
     @Override
     public void save(DataKey key) {
-        key.setInt("delay", delay);
-        key.setBoolean("talk-close", talkClose);
-        key.setBoolean("random-talker", randomTalker);
-        key.setBoolean("realistic-looking", realisticLooker);
-        key.setDouble("range", range);
-        key.setString("talkitem", itemInHandPattern);
-        key.setBoolean("speech-bubbles", speechBubbles);
         key.removeKey("text");
         for (int i = 0; i < text.size(); i++) {
             key.setString("text." + String.valueOf(i), text.get(i));
@@ -224,7 +217,7 @@ public class Text extends Trait implements Runnable, Listener {
 
         if (speechBubbles) {
             HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
-            trait.addTemporaryLine(Placeholders.replace(text.get(index), player),
+            trait.addTemporaryLine(Placeholders.replace(text.get(index), player, npc),
                     Setting.DEFAULT_TEXT_SPEECH_BUBBLE_DURATION.asTicks());
         } else {
             npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
@@ -324,5 +317,5 @@ public class Text extends Trait implements Runnable, Listener {
         return speechBubbles;
     }
 
-    private static Random RANDOM = Util.getFastRandom();
+    private static final Random RANDOM = Util.getFastRandom();
 }

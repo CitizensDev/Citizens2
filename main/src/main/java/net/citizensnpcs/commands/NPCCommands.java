@@ -3057,17 +3057,19 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "speak [message] --target [npcid|player name] --range (range to look for entities to speak to in blocks)",
+            usage = "speak [message] --bubble [duration] --target [npcid|player name] --range (range to look for entities to speak to in blocks)",
             desc = "Says a message from the NPC",
             modifiers = { "speak" },
             min = 2,
             permission = "citizens.npc.speak")
-    public void speak(CommandContext args, CommandSender sender, NPC npc, @Flag("type") String type,
-            @Flag("target") String target, @Flag("range") Float range) throws CommandException {
+    public void speak(CommandContext args, CommandSender sender, NPC npc, @Flag("bubble") Duration bubbleDuration,
+            @Flag("type") String type, @Flag("target") String target, @Flag("range") Float range)
+            throws CommandException {
         String message = args.getJoinedStrings(1);
 
         SpeechContext context = new SpeechContext(message);
 
+        Player playerRecipient = null;
         if (target != null) {
             if (target.matches("\\d+")) {
                 NPC targetNPC = CitizensAPI.getNPCRegistry().getById(Integer.valueOf(args.getFlag("target")));
@@ -3077,8 +3079,15 @@ public class NPCCommands {
                 Player player = Bukkit.getPlayerExact(target);
                 if (player != null) {
                     context.addRecipient(player);
+                    playerRecipient = player;
                 }
             }
+        }
+
+        if (bubbleDuration != null) {
+            HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
+            trait.addTemporaryLine(Placeholders.replace(message, playerRecipient, npc), Util.toTicks(bubbleDuration));
+            return;
         }
 
         if (range != null) {

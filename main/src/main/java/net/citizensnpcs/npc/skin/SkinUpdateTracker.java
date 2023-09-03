@@ -28,7 +28,6 @@ import com.google.common.collect.Sets;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Util;
 
@@ -41,7 +40,6 @@ public class SkinUpdateTracker {
     private final Map<SkinnableEntity, Void> navigating = new WeakHashMap<SkinnableEntity, Void>(25);
     private final Map<UUID, PlayerTracker> playerTrackers = new HashMap<UUID, PlayerTracker>(
             Math.max(128, Math.min(1024, Bukkit.getMaxPlayers() / 2)));
-    private final Map<String, NPCRegistry> registries;
     private final NPCNavigationUpdater updater = new NPCNavigationUpdater();
 
     /**
@@ -50,11 +48,7 @@ public class SkinUpdateTracker {
      * @param registries
      *            Map of other registries.
      */
-    public SkinUpdateTracker(Map<String, NPCRegistry> registries) {
-        Preconditions.checkNotNull(registries);
-
-        this.registries = registries;
-
+    public SkinUpdateTracker() {
         updater.runTaskTimer(CitizensAPI.getPlugin(), 1, 1);
         new NPCNavigationTracker().runTaskTimer(CitizensAPI.getPlugin(), 3, 7);
     }
@@ -103,8 +97,7 @@ public class SkinUpdateTracker {
     }
 
     private Iterable<NPC> getAllNPCs() {
-        return Iterables.filter(Iterables.concat(CitizensAPI.getNPCRegistry(), Iterables.concat(registries.values())),
-                Predicates.notNull());
+        return Iterables.filter(Iterables.concat(CitizensAPI.getNPCRegistries()), Predicates.notNull());
     }
 
     private List<SkinnableEntity> getNearbyNPCs(Player player, boolean reset, boolean checkFov) {

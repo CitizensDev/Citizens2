@@ -258,9 +258,9 @@ public class CommandTrait extends Trait {
                 : handIn;
         NPCCommandDispatchEvent event = new NPCCommandDispatchEvent(npc, player);
         Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return;
-        }
+
         Runnable task = new Runnable() {
             Boolean charged = null;
 
