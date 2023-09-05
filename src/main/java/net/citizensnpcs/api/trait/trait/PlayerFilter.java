@@ -20,6 +20,7 @@ import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.PermissionUtil;
 
 @TraitName("playerfilter")
 public class PlayerFilter extends Trait {
@@ -47,22 +48,16 @@ public class PlayerFilter extends Trait {
                 case DENYLIST:
                     if (players != null && players.contains(p.getUniqueId()))
                         return true;
-                    if (groups != null) {
-                        net.milkbowl.vault.permission.Permission permission = Bukkit.getServicesManager()
-                                .getRegistration(net.milkbowl.vault.permission.Permission.class).getProvider();
-                        if (groups.stream().anyMatch(group -> permission.playerInGroup(p, group)))
-                            return true;
-                    }
+                    if (groups != null && PermissionUtil.inGroup(groups, p) == true)
+                        return true;
+
                     break;
                 case ALLOWLIST:
                     if (players != null && !players.contains(p.getUniqueId()))
                         return true;
-                    if (groups != null) {
-                        net.milkbowl.vault.permission.Permission permission = Bukkit.getServicesManager()
-                                .getRegistration(net.milkbowl.vault.permission.Permission.class).getProvider();
-                        if (!groups.stream().anyMatch(group -> permission.playerInGroup(p, group)))
-                            return true;
-                    }
+                    if (groups != null && PermissionUtil.inGroup(groups, p) == false)
+                        return true;
+
                     break;
             }
             return false;

@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 
 import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -27,12 +26,13 @@ public class SpeechContext implements Iterable<Talkable> {
     }
 
     public SpeechContext(NPC talker, String message) {
-        if (talker != null)
+        if (talker != null) {
             setTalker(talker.getEntity());
+        }
         this.message = message;
     }
 
-    public SpeechContext(NPC talker, String message, LivingEntity recipient) {
+    public SpeechContext(NPC talker, String message, Entity recipient) {
         this(talker, message);
         if (recipient != null) {
             addRecipient(recipient);
@@ -43,10 +43,11 @@ public class SpeechContext implements Iterable<Talkable> {
         this.message = message;
     }
 
-    public SpeechContext(String message, LivingEntity recipient) {
+    public SpeechContext(String message, Entity recipient) {
         this.message = message;
-        if (recipient != null)
+        if (recipient != null) {
             addRecipient(recipient);
+        }
     }
 
     /**
@@ -59,15 +60,11 @@ public class SpeechContext implements Iterable<Talkable> {
      *
      */
     public SpeechContext addRecipient(Entity entity) {
-        if (recipients.isEmpty())
+        if (recipients.isEmpty()) {
             recipients = new ArrayList<Talkable>();
+        }
         recipients.add(new TalkableEntity(entity));
         return this;
-    }
-
-    @Deprecated
-    public SpeechContext addRecipient(LivingEntity entity) {
-        return addRecipient((Entity) entity);
     }
 
     /**
@@ -80,8 +77,9 @@ public class SpeechContext implements Iterable<Talkable> {
      *
      */
     public SpeechContext addRecipients(List<Talkable> talkables) {
-        if (recipients.isEmpty())
+        if (recipients.isEmpty()) {
             recipients = new ArrayList<Talkable>();
+        }
         recipients.addAll(talkables);
         return this;
     }
@@ -145,11 +143,6 @@ public class SpeechContext implements Iterable<Talkable> {
      */
     public void setTalker(Entity entity) {
         this.talker = new TalkableEntity(entity);
-    }
-
-    @Deprecated
-    public void setTalker(LivingEntity entity) {
-        setTalker((Entity) entity);
     }
 
     /**

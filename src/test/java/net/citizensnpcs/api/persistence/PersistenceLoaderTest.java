@@ -68,7 +68,10 @@ public class PersistenceLoaderTest {
     @Test
     public void loadsNullSets() {
         SpecificCollectionClassTest test = PersistenceLoader.load(SpecificCollectionClassTest.class, root);
+        PersistenceLoader.save(test, root);
+        PersistenceLoader.load(test, root);
         assertEquals(test.list, null);
+        assertEquals(test.set, null);
     }
 
     @Test
