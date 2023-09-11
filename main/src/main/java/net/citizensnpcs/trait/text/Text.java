@@ -48,7 +48,6 @@ public class Text extends Trait implements Runnable, Listener {
     private final Plugin plugin;
     @Persist(value = "random-talker")
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
-    @Persist
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
     @Persist(value = "realistic-looking")
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
@@ -147,6 +146,8 @@ public class Text extends Trait implements Runnable, Listener {
         if (text.isEmpty()) {
             populateDefaultText();
         }
+
+        range = key.getDouble("range");
     }
 
     @EventHandler
@@ -185,6 +186,7 @@ public class Text extends Trait implements Runnable, Listener {
 
     @Override
     public void save(DataKey key) {
+        key.setDouble("range", range);
         key.removeKey("text");
         for (int i = 0; i < text.size(); i++) {
             key.setString("text." + String.valueOf(i), text.get(i));
