@@ -96,17 +96,28 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_BEGIN);
             }
 
-            private void createWaypointMarkers() {
-                for (Waypoint waypoint : waypoints()) {
-                    createWaypointMarkerWithData(waypoint);
+            private void createDestinationMarker(Waypoint element) {
+                NPC npc = createMarker(element);
+                if (npc != null) {
+                    npc.data().set(NPC.Metadata.GLOWING, true);
                 }
             }
 
-            private void createWaypointMarkerWithData(Waypoint element) {
+            private NPC createMarker(Waypoint element) {
                 Entity entity = markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
                 if (entity == null)
-                    return;
+                    return null;
                 ((NPCHolder) entity).getNPC().data().setPersistent("waypointhashcode", element.hashCode());
+                return ((NPCHolder) entity).getNPC();
+            }
+
+            private void createWaypointMarkers() {
+                for (Waypoint waypoint : guides) {
+                    createMarker(waypoint);
+                }
+                for (Waypoint waypoint : destinations) {
+                    createDestinationMarker(waypoint);
+                }
             }
 
             @Override
@@ -168,7 +179,11 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_ADDED_GUIDE);
                 }
                 if (showPath) {
-                    createWaypointMarkerWithData(element);
+                    if (player.isSneaking()) {
+                        createDestinationMarker(element);
+                    } else {
+                        createMarker(element);
+                    }
                 }
                 rebuildTree();
             }
@@ -304,6 +319,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
     private class GuidedAIGoal implements Goal {
         private GuidedPlan plan;
+        private Waypoint target;
 
         public void onProviderChanged() {
             if (plan == null)
@@ -317,11 +333,15 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         @Override
         public void reset() {
             plan = null;
+            target = null;
         }
 
         @Override
         public void run(GoalSelector selector) {
             if (plan == null || plan.isComplete()) {
+                if (plan.isComplete()) {
+                    target.onReach(npc);
+                }
                 selector.finish();
                 return;
             }
@@ -343,7 +363,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             if (paused || destinations.size() == 0 || !npc.isSpawned() || npc.getNavigator().isNavigating())
                 return false;
 
-            Waypoint target = destinations.get(Util.getFastRandom().nextInt(destinations.size()));
+            this.target = destinations.get(Util.getFastRandom().nextInt(destinations.size()));
             plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(null, new Waypoint(npc.getStoredLocation())));
             return plan != null;
         }
