@@ -18,10 +18,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import ch.ethz.globis.phtree.PhDistanceL;
-import ch.ethz.globis.phtree.PhFilterDistance;
+import ch.ethz.globis.phtree.PhRangeQuery;
 import ch.ethz.globis.phtree.PhTree;
-import ch.ethz.globis.phtree.PhTree.PhKnnQuery;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
@@ -338,10 +336,12 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public void run(GoalSelector selector) {
-            if (plan == null || plan.isComplete()) {
-                if (plan.isComplete()) {
-                    target.onReach(npc);
-                }
+            if (plan != null && plan.isComplete()) {
+                target.onReach(npc);
+                plan = null;
+            }
+
+            if (plan == null) {
                 selector.finish();
                 return;
             }
@@ -435,23 +435,25 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public Iterable<AStarNode> getNeighbours() {
-            PhFilterDistance filter = new PhFilterDistance();
-            filter.set(
-                    new long[] { waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
-                            waypoint.getLocation().getBlockZ() },
-                    PhDistanceL.THIS, distance == -1 ? npc.getNavigator().getDefaultParameters().range() : distance);
             PhTree<Waypoint> source = getParent() == null ? tree : treePlusDestinations;
-            PhKnnQuery<Waypoint> res = source.nearestNeighbour(100, PhDistanceL.THIS, filter,
+            PhRangeQuery<Waypoint> rq = source.rangeQuery(
+                    distance == -1 ? npc.getNavigator().getDefaultParameters().range() : distance,
                     waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
                     waypoint.getLocation().getBlockZ());
             List<AStarNode> neighbours = Lists.newArrayList();
-            res.forEachRemaining(n -> neighbours.add(new GuidedNode(this, n)));
+            rq.forEachRemaining(n -> neighbours.add(new GuidedNode(this, n)));
+
             return neighbours;
         }
 
         @Override
         public int hashCode() {
             return 31 + ((waypoint == null) ? 0 : waypoint.hashCode());
+        }
+
+        @Override
+        public String toString() {
+            return "GuidedNode [" + waypoint + "]";
         }
     }
 
