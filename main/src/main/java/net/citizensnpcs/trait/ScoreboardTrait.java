@@ -22,7 +22,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -73,7 +72,6 @@ public class ScoreboardTrait extends Trait {
             clearClientTeams(team);
         }
         team.addEntry(entityName);
-        Messaging.debug("Created team", teamName, "with entity", entityName);
     }
 
     public ChatColor getColor() {
@@ -96,8 +94,16 @@ public class ScoreboardTrait extends Trait {
             return;
         Team team = Util.getDummyScoreboard().getTeam(teamName);
         npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
-        if (team == null || name == null || !team.hasEntry(name))
+        if (team == null || name == null || !team.hasEntry(name)) {
+            try {
+                if (team != null && team.getSize() == 0) {
+                    clearClientTeams(team);
+                    team.unregister();
+                }
+            } catch (IllegalStateException ex) {
+            }
             return;
+        }
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             if (npc.isSpawned())
                 return;
@@ -106,20 +112,18 @@ public class ScoreboardTrait extends Trait {
             } catch (IllegalStateException ex) {
                 return;
             }
-            if (team.getSize() == 1) {
+            if (team.getSize() <= 1) {
                 clearClientTeams(team);
                 team.unregister();
-                Messaging.debug("Removed team", teamName);
             } else {
                 team.removeEntry(name);
-                Messaging.debug("Removed team entry", name, "from", teamName);
             }
         }, reason == DespawnReason.DEATH && npc.getEntity() instanceof LivingEntity ? 20 : 2);
     }
 
     @Override
     public void onRemove() {
-        onDespawn();
+        onDespawn(DespawnReason.REMOVAL);
     }
 
     @Override
