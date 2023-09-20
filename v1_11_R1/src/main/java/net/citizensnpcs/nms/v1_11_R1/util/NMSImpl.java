@@ -94,7 +94,6 @@ import net.citizensnpcs.api.jnbt.Tag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
@@ -1103,11 +1102,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity) {
+    public void removeHookIfNecessary(FishHook entity) {
         EntityFishingHook hook = (EntityFishingHook) NMSImpl.getHandle(entity);
         if (hook.hooked == null)
             return;
-        NPC npc = npcRegistry.getNPC(hook.hooked.getBukkitEntity());
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(hook.hooked.getBukkitEntity());
         if (npc == null)
             return;
         if (npc.isProtected()) {

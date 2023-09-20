@@ -36,7 +36,6 @@ import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
@@ -156,7 +155,7 @@ public interface NMSBridge {
 
     public void removeFromWorld(org.bukkit.entity.Entity entity);
 
-    public void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity);
+    public void removeHookIfNecessary(FishHook entity);
 
     public void replaceTrackerEntry(Entity entity);
 
