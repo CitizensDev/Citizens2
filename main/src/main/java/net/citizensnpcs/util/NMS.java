@@ -51,7 +51,6 @@ import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
@@ -113,6 +112,8 @@ public class NMS {
 
     public static void callKnockbackEvent(NPC npc, float strength, double dx, double dz,
             Consumer<NPCKnockbackEvent> cb) {
+        if (npc.getEntity() == null)
+            return;
         if (SUPPORT_KNOCKBACK_RESISTANCE && npc.getEntity() instanceof LivingEntity) {
             try {
                 AttributeInstance attribute = ((LivingEntity) npc.getEntity())
@@ -689,8 +690,8 @@ public class NMS {
         BRIDGE.removeFromWorld(entity);
     }
 
-    public static void removeHookIfNecessary(NPCRegistry npcRegistry, FishHook entity) {
-        BRIDGE.removeHookIfNecessary(npcRegistry, entity);
+    public static void removeHookIfNecessary(FishHook entity) {
+        BRIDGE.removeHookIfNecessary(entity);
     }
 
     public static void replaceTracker(Entity entity) {
