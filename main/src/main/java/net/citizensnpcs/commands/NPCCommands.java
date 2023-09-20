@@ -100,6 +100,7 @@ import net.citizensnpcs.commands.gui.NPCConfigurator;
 import net.citizensnpcs.commands.history.CommandHistory;
 import net.citizensnpcs.commands.history.CreateNPCHistoryItem;
 import net.citizensnpcs.commands.history.RemoveNPCHistoryItem;
+import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
@@ -1928,7 +1929,7 @@ public class NPCCommands {
     public void owner(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Owner ownerTrait = npc.getOrAddTrait(Owner.class);
         if (args.argsLength() == 1) {
-            Messaging.sendTr(sender, Messages.NPC_OWNER, npc.getName(), ownerTrait.getOwnerId());
+            Messaging.sendTr(sender, Messages.NPC_OWNER, npc.getName(), ownerTrait.getOwner());
             return;
         }
         OfflinePlayer p;
@@ -3405,6 +3406,9 @@ public class NPCCommands {
             permission = "citizens.npc.wander")
     public void wander(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Waypoints trait = npc.getOrAddTrait(Waypoints.class);
+        if (sender instanceof Player && Editor.hasEditor(((Player) sender))) {
+            Editor.leave(((Player) sender));
+        }
         trait.setWaypointProvider(trait.getCurrentProviderName().equals("wander") ? "linear" : "wander");
         Messaging.sendTr(sender, Messages.WAYPOINT_PROVIDER_SET, trait.getCurrentProviderName());
     }

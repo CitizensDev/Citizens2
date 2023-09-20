@@ -326,9 +326,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public Waypoint getCurrentWaypoint() {
-            if (waypoints.size() == 0 || !editing) {
+            if (waypoints.size() == 0 || !editing)
                 return null;
-            }
+
             return selectedWaypoint == null ? waypoints.get(waypoints.size() - 1) : selectedWaypoint;
         }
 

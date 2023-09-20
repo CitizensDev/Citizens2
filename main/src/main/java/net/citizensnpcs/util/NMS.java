@@ -136,6 +136,7 @@ public class NMS {
         if (!PAPER_KNOCKBACK_EVENT_EXISTS) {
             event.getKnockbackVector().multiply(new Vector(-1, 0, -1));
         }
+
         if (!event.isCancelled()) {
             cb.accept(event);
         }

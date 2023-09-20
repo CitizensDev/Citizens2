@@ -131,6 +131,11 @@ public class Waypoint {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Waypoint [" + location + (triggers == null ? "]" : ", " + triggers.size() + " triggers]");
+    }
+
     static {
         PersistenceLoader.registerPersistDelegate(WaypointTrigger.class, WaypointTriggerRegistry.class);
     }

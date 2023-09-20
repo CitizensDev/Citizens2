@@ -87,7 +87,7 @@ public class EquipmentEditor extends Editor {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (!npc.isSpawned() || !event.getPlayer().equals(player) || Util.isOffHand(event)
+        if (!npc.isSpawned() || menu != null || !event.getPlayer().equals(player) || Util.isOffHand(event)
                 || !npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked())))
             return;
         Equipper equipper = EQUIPPERS.get(npc.getEntity().getType());

@@ -179,7 +179,7 @@ public class Settings {
         HOLOGRAM_UPDATE_RATE("How often to update hologram names (including placeholders)",
                 "npc.hologram.update-rate-ticks", "npc.hologram.update-rate", "1s"),
         INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY("How long to wait before sending skins to joined players",
-                "npc.skins.player-join-update-delay-ticks", "npc.skins.player-join-update-delay", "3s"),
+                "npc.skins.player-join-update-delay-ticks", "npc.skins.player-join-update-delay", "1s"),
         KEEP_CHUNKS_LOADED("Whether to keep NPC chunks loaded", "npc.chunks.always-keep-loaded", false),
         LOCALE("Controls translation files - defaults to your system language, set to en if English required",
                 "general.translation.locale", ""),

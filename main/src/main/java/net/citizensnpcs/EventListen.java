@@ -630,17 +630,18 @@ public class EventListen implements Listener {
     public void onProjectileHit(final ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof FishHook))
             return;
-        NMS.removeHookIfNecessary(CitizensAPI.getNPCRegistry(), (FishHook) event.getEntity());
+        NMS.removeHookIfNecessary((FishHook) event.getEntity());
         new BukkitRunnable() {
             int n = 0;
 
             @Override
             public void run() {
-                if (n++ > 5) {
+                if (n++ > 5 || !CitizensAPI.hasImplementation()) {
                     cancel();
+                    return;
                 }
 
-                NMS.removeHookIfNecessary(CitizensAPI.getNPCRegistry(), (FishHook) event.getEntity());
+                NMS.removeHookIfNecessary((FishHook) event.getEntity());
             }
         }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
     }
