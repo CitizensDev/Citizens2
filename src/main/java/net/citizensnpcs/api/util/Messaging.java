@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -209,9 +208,6 @@ public class Messaging {
     }
 
     private static void sendMessageTo(CommandSender sender, String rawMessage, boolean messageColor) {
-        if (sender instanceof Player) {
-            rawMessage = Placeholders.replace(rawMessage, (Player) sender);
-        }
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
             if (messageColor) {
                 message = prettify(message);

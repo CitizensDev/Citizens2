@@ -73,7 +73,7 @@ public class LocationLookup extends BukkitRunnable {
     @SuppressWarnings("unchecked")
     public <T> PerPlayerMetadata<T> registerMetadata(String key,
             BiConsumer<PerPlayerMetadata<T>, PlayerJoinEvent> onJoin) {
-        return (PerPlayerMetadata<T>) metadata.computeIfAbsent(key, (s) -> new PerPlayerMetadata<T>(onJoin));
+        return (PerPlayerMetadata<T>) metadata.computeIfAbsent(key, s -> new PerPlayerMetadata<T>(onJoin));
     }
 
     @Override
@@ -92,6 +92,7 @@ public class LocationLookup extends BukkitRunnable {
             worlds.remove(world.getUID());
             return;
         }
+
         PhTreeF<Player> tree = worlds.computeIfAbsent(world.getUID(), uid -> PhTreeF.create(3));
         tree.clear();
         Location loc = new Location(null, 0, 0, 0);

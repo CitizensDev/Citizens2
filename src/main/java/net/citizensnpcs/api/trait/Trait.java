@@ -100,6 +100,9 @@ public abstract class Trait implements Listener, Runnable {
     public void onRemove() {
     }
 
+    /**
+     * Called when a trait is removed from the attached {@link NPC}.
+     */
     public void onRemove(RemoveReason reason) {
         onRemove();
     }

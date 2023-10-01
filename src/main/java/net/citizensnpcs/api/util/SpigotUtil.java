@@ -15,9 +15,9 @@ import com.google.common.primitives.Longs;
 
 public class SpigotUtil {
     public static boolean checkYSafe(double y, World world) {
-        if (!SUPPORT_WORLD_HEIGHT || world == null) {
+        if (!SUPPORT_WORLD_HEIGHT || world == null)
             return y >= 0 && y <= 255;
-        }
+
         try {
             return y >= world.getMinHeight() && y <= world.getMaxHeight();
         } catch (Throwable t) {
@@ -30,13 +30,36 @@ public class SpigotUtil {
         return isUsing1_13API() ? 256 : 64;
     }
 
+    public static String getMinecraftPackage() {
+        if (MINECRAFT_PACKAGE == null) {
+            int[] version = getVersion();
+            if (version == null)
+                throw new IllegalStateException();
+            String versionString = "v" + version[0] + "_" + version[1] + "_R";
+            String revision = null;
+            for (int i = 1; i <= 3; i++) {
+                try {
+                    Class.forName("org.bukkit.craftbukkit." + versionString + i + ".CraftServer");
+                    revision = versionString + i;
+                    break;
+                } catch (ClassNotFoundException e) {
+                }
+            }
+            if (revision == null)
+                throw new IllegalStateException();
+            MINECRAFT_PACKAGE = revision;
+        }
+        return MINECRAFT_PACKAGE;
+    }
+
     public static int[] getVersion() {
         if (BUKKIT_VERSION == null) {
-            String version = Bukkit.getVersion();
-            if (version == null || version.isEmpty()) {
-                return new int[] { 1, 8 };
-            }
-            String[] parts = version.split("_");
+            String version = Bukkit.getBukkitVersion();
+
+            if (version == null || version.isEmpty())
+                return BUKKIT_VERSION = new int[] { 1, 8 };
+
+            String[] parts = version.split("\\.");
             return BUKKIT_VERSION = new int[] { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) };
         }
         return BUKKIT_VERSION;
@@ -99,6 +122,7 @@ public class SpigotUtil {
 
     private static int[] BUKKIT_VERSION = null;
     private static Pattern DAY_MATCHER = Pattern.compile("(\\d+d)");
+    private static String MINECRAFT_PACKAGE;
     private static Pattern NUMBER_MATCHER = Pattern.compile("(\\d+)");
     private static boolean SUPPORT_WORLD_HEIGHT = true;
     private static Boolean using1_13API;
