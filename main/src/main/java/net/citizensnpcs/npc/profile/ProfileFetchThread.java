@@ -14,9 +14,7 @@ import org.bukkit.Bukkit;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -122,8 +120,6 @@ class ProfileFetchThread implements Runnable {
     private void fetchRequests(final Collection<ProfileRequest> requests) {
         Preconditions.checkNotNull(requests);
 
-        final GameProfileRepository repo = NMS.getGameProfileRepository();
-
         String[] playerNames = new String[requests.size()];
 
         int i = 0;
@@ -131,16 +127,20 @@ class ProfileFetchThread implements Runnable {
             playerNames[i++] = request.getPlayerName();
         }
 
-        repo.findProfilesByNames(playerNames, Agent.MINECRAFT, new ProfileLookupCallback() {
-            @Override
+        NMS.findProfilesByNames(playerNames, new ProfileLookupCallback() {
+            @SuppressWarnings("unused")
             public void onProfileLookupFailed(GameProfile profile, Exception e) {
+                onProfileLookupFailed(profile.getName(), e);
+            }
+
+            @Override
+            public void onProfileLookupFailed(String profileName, Exception e) {
                 if (Messaging.isDebugging()) {
-                    Messaging.debug(
-                            "Profile lookup for player '" + profile.getName() + "' failed: " + getExceptionMsg(e));
+                    Messaging.debug("Profile lookup for player '" + profileName + "' failed: " + getExceptionMsg(e));
                     Messaging.debug(Throwables.getStackTraceAsString(e));
                 }
 
-                ProfileRequest request = findRequest(profile.getName(), requests);
+                ProfileRequest request = findRequest(profileName, requests);
                 if (request == null)
                     return;
 

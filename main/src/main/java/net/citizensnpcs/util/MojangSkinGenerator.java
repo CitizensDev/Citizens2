@@ -1,6 +1,5 @@
 package net.citizensnpcs.util;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,7 +21,7 @@ public class MojangSkinGenerator {
             throws InterruptedException, ExecutionException {
         return EXECUTOR.submit(() -> {
             DataOutputStream out = null;
-            BufferedReader reader = null;
+            InputStreamReader reader = null;
             try {
                 URL target = new URL("https://api.mineskin.org/generate/upload" + (slim ? "?model=slim" : ""));
                 HttpURLConnection con = (HttpURLConnection) target.openConnection();
@@ -49,15 +48,16 @@ public class MojangSkinGenerator {
                 out.writeBytes("--*****--\r\n");
                 out.flush();
                 out.close();
-                if (con.getResponseCode() != 200) {
-                    if (Messaging.isDebugging()) {
-                        reader = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-                        Messaging.log(new String(CharStreams.toString(reader)));
-                    }
-                    return null;
+                reader = new InputStreamReader(con.getInputStream());
+                String str = CharStreams.toString(reader);
+                if (Messaging.isDebugging()) {
+                    Messaging.debug(str);
                 }
-                reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                JSONObject output = (JSONObject) new JSONParser().parse(reader);
+
+                if (con.getResponseCode() != 200)
+                    return null;
+
+                JSONObject output = (JSONObject) new JSONParser().parse(str);
                 JSONObject data = (JSONObject) output.get("data");
                 con.disconnect();
                 return data;
@@ -82,7 +82,7 @@ public class MojangSkinGenerator {
             throws InterruptedException, ExecutionException {
         return EXECUTOR.submit(() -> {
             DataOutputStream out = null;
-            BufferedReader reader = null;
+            InputStreamReader reader = null;
             try {
                 URL target = new URL("https://api.mineskin.org/generate/url");
                 HttpURLConnection con = (HttpURLConnection) target.openConnection();
@@ -103,15 +103,16 @@ public class MojangSkinGenerator {
                 }
                 out.writeBytes(req.toJSONString().replace("\\", ""));
                 out.close();
-                if (con.getResponseCode() != 200) {
-                    if (Messaging.isDebugging()) {
-                        reader = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-                        Messaging.log(new String(CharStreams.toString(reader)));
-                    }
-                    return null;
+                reader = new InputStreamReader(con.getInputStream());
+                String str = CharStreams.toString(reader);
+                if (Messaging.isDebugging()) {
+                    Messaging.debug(str);
                 }
-                reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                JSONObject output = (JSONObject) new JSONParser().parse(reader);
+
+                if (con.getResponseCode() != 200)
+                    return null;
+
+                JSONObject output = (JSONObject) new JSONParser().parse(str);
                 JSONObject data = (JSONObject) output.get("data");
                 con.disconnect();
                 return data;

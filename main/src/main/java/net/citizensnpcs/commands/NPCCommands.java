@@ -473,21 +473,25 @@ public class NPCCommands {
         } else if (action.equalsIgnoreCase("add")) {
             if (args.argsLength() == 2)
                 throw new CommandUsageException();
+
             if (args.hasFlag('o') && !sender.hasPermission("citizens.admin"))
                 throw new NoPermissionsException();
+
             String command = args.getJoinedStrings(2);
             CommandTrait.Hand hand = args.hasFlag('l') && args.hasFlag('r') ? CommandTrait.Hand.BOTH
                     : args.hasFlag('l') ? CommandTrait.Hand.LEFT : CommandTrait.Hand.RIGHT;
             if (args.hasFlag('s') && hand != CommandTrait.Hand.BOTH) {
                 hand = hand == CommandTrait.Hand.LEFT ? CommandTrait.Hand.SHIFT_LEFT : CommandTrait.Hand.SHIFT_RIGHT;
             }
+
             List<String> perms = Lists.newArrayList();
             if (permissions != null) {
                 perms.addAll(Arrays.asList(permissions.split(",")));
             }
-            if (command.toLowerCase().startsWith("npc select")) {
+
+            if (command.toLowerCase().startsWith("npc select"))
                 throw new CommandException("npc select not currently supported within commands. Use --id <id> instead");
-            }
+
             try {
                 int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
                         .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o')).cooldown(cooldown)
@@ -506,7 +510,7 @@ public class NPCCommands {
                 throw new CommandException(Messages.NPC_COMMAND_INVALID_ERROR_MESSAGE,
                         Util.listValuesPretty(CommandTraitError.values()));
 
-            commands.clearHistory(which, args.argsLength() > 3 ? args.getString(3) : args.getString(3));
+            commands.clearHistory(which, args.argsLength() > 3 ? args.getString(3) : null);
             Messaging.send(sender, Messages.NPC_COMMAND_ERRORS_CLEARED, Util.prettyEnum(which));
         } else if (action.equalsIgnoreCase("sequential")) {
             commands.setExecutionMode(commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? ExecutionMode.LINEAR
@@ -990,16 +994,23 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "follow (player name|NPC id) (-p[rotect])",
+            usage = "follow (player name|NPC id) (-p[rotect]) (--margin [margin])",
             desc = "Toggles NPC following you",
             flags = "p",
             modifiers = { "follow" },
             min = 1,
             max = 2,
             permission = "citizens.npc.follow")
-    public void follow(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public void follow(CommandContext args, CommandSender sender, NPC npc, @Flag("margin") Double margin)
+            throws CommandException {
         boolean protect = args.hasFlag('p');
         FollowTrait trait = npc.getOrAddTrait(FollowTrait.class);
+        if (margin != null) {
+            trait.setFollowingMargin(margin);
+            Messaging.sendTr(sender, Messages.FOLLOW_MARGIN_SET, npc.getName(), margin);
+            return;
+        }
+
         trait.setProtect(protect);
         String name = sender.getName();
         if (args.argsLength() > 1) {
@@ -2092,14 +2103,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathto me | here | cursor | [x] [y] [z]",
+            usage = "pathto me | here | cursor | [x] [y] [z] (--margin [distance margin])",
             desc = "Starts pathfinding to a certain location",
             modifiers = { "pathto" },
             min = 2,
             max = 4,
             permission = "citizens.npc.pathto")
     public void pathto(CommandContext args, CommandSender sender, NPC npc,
-            @Arg(value = 1, completions = { "me", "here", "cursor" }) String option) throws CommandException {
+            @Arg(value = 1, completions = { "me", "here", "cursor" }) String option, @Flag("margin") Double margin)
+            throws CommandException {
         Location loc = npc.getStoredLocation();
         if (args.argsLength() == 2) {
             if ((option.equalsIgnoreCase("me") || option.equalsIgnoreCase("here"))) {
@@ -2115,6 +2127,9 @@ public class NPCCommands {
             loc.setZ(args.getDouble(3));
         }
         npc.getNavigator().setTarget(loc);
+        if (margin != null) {
+            npc.getNavigator().getLocalParameters().distanceMargin(margin);
+        }
     }
 
     @Command(
@@ -2816,13 +2831,13 @@ public class NPCCommands {
 
             return;
         } else if (url != null || file != null) {
-            Messaging.sendTr(sender, Messages.FETCHING_SKIN, file);
+            Messaging.sendTr(sender, Messages.FETCHING_SKIN, url == null ? file : url);
             Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), () -> {
                 try {
                     JSONObject data = null;
                     if (file != null) {
                         File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
-                        File skin = new File(skinsFolder, file);
+                        File skin = new File(skinsFolder, Placeholders.replace(file, sender, npc));
                         if (!skin.exists() || !skin.isFile() || skin.isHidden()
                                 || !skin.getParentFile().equals(skinsFolder)) {
                             Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
@@ -2832,8 +2847,10 @@ public class NPCCommands {
                         data = MojangSkinGenerator.generateFromPNG(Files.readAllBytes(skin.toPath()),
                                 args.hasFlag('s'));
                     } else {
-                        data = MojangSkinGenerator.generateFromURL(url, args.hasFlag('s'));
+                        data = MojangSkinGenerator.generateFromURL(Placeholders.replace(url, sender, npc),
+                                args.hasFlag('s'));
                     }
+
                     String uuid = (String) data.get("uuid");
                     JSONObject texture = (JSONObject) data.get("texture");
                     String textureEncoded = (String) texture.get("value");

@@ -273,8 +273,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return enabled;
     }
 
-    private double updateHorizontalSpeed(Entity handle, Entity passenger, double speed, float speedMod) {
-        double maxSpeed = Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble();
+    private double updateHorizontalSpeed(Entity handle, Entity passenger, double speed, float speedMod,
+            double maxSpeed) {
         Vector vel = handle.getVelocity();
         double oldSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
         double horizontal = NMS.getHorizontalMovement(passenger);
@@ -304,7 +304,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         if (newSpeed > oldSpeed && speed < maxSpeed) {
             return (float) Math.min(maxSpeed, (speed + ((maxSpeed - speed) / 50.0D)));
         } else {
-            return (float) Math.max(0, (speed - ((speed) / 50.0D)));
+            return (float) Math.max(0, (speed - (speed / 50.0D)));
         }
     }
 
@@ -332,7 +332,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                     .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
             if (!Util.isHorse(npc.getEntity().getType())) {
                 // use minecraft horse physics
-                speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, speedMod);
+                speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, speedMod,
+                        Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble());
             }
 
             boolean shouldJump = NMS.shouldJump(rider);
@@ -420,11 +421,13 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 return;
             }
 
-            speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, 1F);
+            speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, 1F,
+                    Setting.MAX_CONTROLLABLE_FLIGHT_SPEED.asDouble());
             boolean shouldJump = NMS.shouldJump(rider);
             if (shouldJump) {
                 npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.25F));
             }
+
             npc.getEntity().setVelocity(npc.getEntity().getVelocity().multiply(new Vector(1, 0.98, 1)));
             setMountedYaw(npc.getEntity());
         }

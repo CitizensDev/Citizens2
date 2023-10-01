@@ -14,9 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -28,6 +26,7 @@ import net.citizensnpcs.npc.profile.ProfileFetchHandler;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.profile.ProfileRequest;
 import net.citizensnpcs.trait.SkinTrait;
+import net.citizensnpcs.util.SkinProperty;
 
 /**
  * Stores data for a single skin.
@@ -39,7 +38,7 @@ public class Skin {
     private volatile boolean isValid = true;
     private final Map<SkinnableEntity, Void> pending = new WeakHashMap<SkinnableEntity, Void>(15);
     private BukkitTask retryTask;
-    private volatile Property skinData;
+    private volatile SkinProperty skinData;
     private volatile UUID skinId;
     private final String skinName;
 
@@ -86,8 +85,7 @@ public class Skin {
         String cachedName = npc.data().get(CACHED_SKIN_UUID_NAME_METADATA);
         String texture = skinTrait.getTexture();
         if (this.skinName.equals(cachedName) && texture != null && !texture.equals("cache")) {
-            Property localData = new Property("textures", texture, skinTrait.getSignature());
-            setNPCTexture(entity, localData);
+            setNPCTexture(entity, new SkinProperty("textures", texture, skinTrait.getSignature()));
 
             // check if NPC prefers to use cached skin over the latest skin.
             if (entity.getNPC().data().has("player-skin-use-latest")) {
@@ -297,7 +295,7 @@ public class Skin {
         }
 
         skinId = profile.getId();
-        skinData = Iterables.getFirst(profile.getProperties().get("textures"), null);
+        skinData = SkinProperty.fromMojangProfile(profile);
 
         List<SkinnableEntity> entities = new ArrayList<SkinnableEntity>(pending.keySet());
         for (SkinnableEntity entity : entities) {
@@ -383,7 +381,8 @@ public class Skin {
         return skin;
     }
 
-    private static void setNPCSkinData(SkinnableEntity entity, String skinName, UUID skinId, Property skinProperty) {
+    private static void setNPCSkinData(SkinnableEntity entity, String skinName, UUID skinId,
+            SkinProperty skinProperty) {
         NPC npc = entity.getNPC();
         SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
 
@@ -391,28 +390,26 @@ public class Skin {
         // for use when the latest skin is not required.
         npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, skinName);
         npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, skinId.toString());
-        if (skinProperty.getValue() != null) {
-            skinTrait.setTexture(skinProperty.getValue(),
-                    skinProperty.getSignature() == null ? "" : skinProperty.getSignature());
+        if (skinProperty.value != null) {
+            skinTrait.setTexture(skinProperty.value, skinProperty.signature == null ? "" : skinProperty.signature);
             setNPCTexture(entity, skinProperty);
         } else {
             skinTrait.clearTexture();
         }
     }
 
-    private static void setNPCTexture(SkinnableEntity entity, Property skinProperty) {
+    private static void setNPCTexture(SkinnableEntity entity, SkinProperty skinProperty) {
         GameProfile profile = entity.getProfile();
 
         // don't set property if already set since this sometimes causes
         // packet errors that disconnect the client.
-        Property current = Iterables.getFirst(profile.getProperties().get("textures"), null);
-        if (current != null && current.getValue().equals(skinProperty.getValue())
-                && (current.getSignature() != null && current.getSignature().equals(skinProperty.getSignature()))) {
+        SkinProperty current = SkinProperty.fromMojangProfile(profile);
+        if (current != null && current.value.equals(skinProperty.value) && current.signature != null
+                && current.signature.equals(skinProperty.signature)) {
             return;
         }
 
-        profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
-        profile.getProperties().put("textures", skinProperty);
+        skinProperty.apply(profile);
     }
 
     private static final Map<String, Skin> CACHE = new HashMap<String, Skin>(20);

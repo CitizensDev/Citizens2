@@ -50,10 +50,7 @@ public class PlayerControllerMove extends ControllerMove {
             this.a.yaw = a(this.a.yaw, f, 90.0F);
             NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
             AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
-            if (!(this.a instanceof EntitySlime)) {
-                speed.setValue(0.1D * this.e);
-            }
-            float movement = (float) (this.e * speed.getValue()) * 10;
+            float movement = (float) (this.e * speed.getValue());
             this.a.o(movement);
             this.a.bj = movement;
             if (shouldSlimeJump() || ((d2 >= NMS.getStepHeight(a.getBukkitEntity())) && (d0 * d0 + d1 * d1 < 1.0D))) {

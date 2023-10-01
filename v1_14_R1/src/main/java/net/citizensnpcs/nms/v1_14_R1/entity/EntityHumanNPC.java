@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_14_R1.entity;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +37,6 @@ import net.citizensnpcs.npc.skin.SkinPacketTracker;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.SkinTrait;
-import net.citizensnpcs.util.EmptySocket;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.AttributeInstance;
@@ -82,6 +80,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
             PlayerInteractManager playerInteractManager, NPC npc) {
         super(minecraftServer, world, gameProfile, playerInteractManager);
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.3D);
         this.npc = (CitizensNPC) npc;
         if (npc != null) {
             skinTracker = new SkinPacketTracker(this);
@@ -255,15 +254,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     private void initialise(MinecraftServer minecraftServer) {
-        Socket socket = new EmptySocket();
-        NetworkManager conn = null;
         try {
-            conn = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
+            NetworkManager conn = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
             playerConnection = new EmptyNetHandler(minecraftServer, conn, this);
             conn.setPacketListener(playerConnection);
-            socket.close();
         } catch (IOException e) {
-            // swallow
         }
         AttributeInstance range = getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         if (range == null) {
@@ -339,7 +334,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))
-                && SpigotUtil.checkYSafe(locY, getBukkitEntity().getWorld())) {
+                && (!npc.isProtected() || SpigotUtil.checkYSafe(locY, getBukkitEntity().getWorld()))) {
             moveWithFallDamage(new Vec3D(0, 0, 0));
         }
         Vec3D mot = getMot();

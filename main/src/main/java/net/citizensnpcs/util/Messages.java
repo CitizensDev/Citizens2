@@ -123,6 +123,7 @@ public class Messages {
     public static final String FETCHING_SKIN = "citizens.commands.npc.skin.fetching";
     public static final String FLYABLE_SET = "citizens.commands.npc.flyable.set";
     public static final String FLYABLE_UNSET = "citizens.commands.npc.flyable.unset";
+    public static final String FOLLOW_MARGIN_SET = "citizens.commands.npc.follow.margin-set";
     public static final String FOLLOW_PLAYER_NOT_INGAME = "citizens.commands.npc.follow.player-not-ingame";
     public static final String FOLLOW_SET = "citizens.commands.npc.follow.set";
     public static final String FOLLOW_UNSET = "citizens.commands.npc.follow.unset";

@@ -1813,7 +1813,6 @@ public class NMSImpl implements NMSBridge {
 
     public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EntityEnderDragon.class,
             true, boolean.class, AxisAlignedBB.class);
-
     private static Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class, Entity.class);
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;

@@ -52,6 +52,7 @@ import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.SkinProperty;
 
 public class ProtocolLibListener implements Listener {
     private final Class<?> flagsClass;
@@ -152,9 +153,10 @@ public class ProtocolLibListener implements Listener {
                     npcInfo.getProfile().getProperties().clear();
                     for (String key : playerProfile.getProperties().keySet()) {
                         npcInfo.getProfile().getProperties().putAll(key,
-                                Iterables.transform(playerProfile.getProperties().get(key),
-                                        skin -> new WrappedSignedProperty(skin.getName(), skin.getValue(),
-                                                skin.getSignature())));
+                                Iterables.transform(playerProfile.getProperties().get(key), skin -> {
+                                    SkinProperty sp = SkinProperty.fromMojang(skin);
+                                    return new WrappedSignedProperty(sp.name, sp.value, sp.signature);
+                                }));
                     }
                     changed = true;
                 }
@@ -219,7 +221,6 @@ public class ProtocolLibListener implements Listener {
                 Messaging.debug("OVERWRITTEN " + type + " " + packet.getHandle());
             }
         });
-
     }
 
     private NPC getNPCFromPacket(PacketEvent event) {

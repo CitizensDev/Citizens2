@@ -236,13 +236,6 @@ public class Util {
         return new XORShiftRNG();
     }
 
-    public static String getMinecraftRevision() {
-        if (MINECRAFT_REVISION == null) {
-            MINECRAFT_REVISION = Bukkit.getServer().getClass().getPackage().getName();
-        }
-        return MINECRAFT_REVISION.substring(MINECRAFT_REVISION.lastIndexOf('.') + 2);
-    }
-
     public static String getTeamName(UUID id) {
         return "CIT-" + id.toString().replace("-", "").substring(0, 12);
     }
@@ -586,7 +579,6 @@ public class Util {
     }
 
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
-    private static String MINECRAFT_REVISION;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {

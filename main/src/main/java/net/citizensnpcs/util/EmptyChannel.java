@@ -50,7 +50,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     protected boolean isCompatible(EventLoop arg0) {
-        return true;
+        return false;
     }
 
     @Override

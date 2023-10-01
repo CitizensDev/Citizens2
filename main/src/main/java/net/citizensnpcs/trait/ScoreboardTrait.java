@@ -22,6 +22,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -210,7 +211,7 @@ public class ScoreboardTrait extends Trait {
         }
 
         if (color != null) {
-            if (SUPPORT_GLOWING_COLOR && Util.getMinecraftRevision().contains("1_12_R1")) {
+            if (SUPPORT_GLOWING_COLOR && SpigotUtil.getMinecraftPackage().contains("1_12_R1")) {
                 SUPPORT_GLOWING_COLOR = false;
             }
             if (SUPPORT_GLOWING_COLOR) {

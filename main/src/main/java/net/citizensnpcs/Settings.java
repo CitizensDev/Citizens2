@@ -183,6 +183,9 @@ public class Settings {
         KEEP_CHUNKS_LOADED("Whether to keep NPC chunks loaded", "npc.chunks.always-keep-loaded", false),
         LOCALE("Controls translation files - defaults to your system language, set to en if English required",
                 "general.translation.locale", ""),
+        MAX_CONTROLLABLE_FLIGHT_SPEED(
+                "The maximum flying speed that controllable NPCs can reach, in Minecraft velocity units",
+                "npc.controllable.max-flying-speed", 0.75),
         MAX_CONTROLLABLE_GROUND_SPEED("The maximum speed that controllable NPCs can reach, in Minecraft velocity units",
                 "npc.controllable.max-ground-speed", 0.5),
         MAX_NPC_LIMIT_CHECKS(
@@ -267,7 +270,7 @@ public class Settings {
                 "Whether to use the Citizens pathfinder instead of the Minecraft pathfinder<br>Much more flexible, but may have different performance characteristics",
                 "npc.pathfinding.use-new-finder", false),
         USE_SCOREBOARD_TEAMS("npc.scoreboard-teams.enable", true),
-        WARN_ON_RELOAD("general.reload-warning-enabled", true);
+        WARN_ON_RELOAD("general.reload-warning-enabled", true),;
 
         protected String comments;
         private Duration duration;

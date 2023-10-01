@@ -28,6 +28,8 @@ public class FollowTrait extends Trait {
     @Persist
     private UUID followingUUID;
     @Persist
+    private double margin = -1;
+    @Persist
     private boolean protect;
 
     public FollowTrait() {
@@ -48,6 +50,10 @@ public class FollowTrait extends Trait {
 
     public Entity getFollowing() {
         return entity;
+    }
+
+    public double getFollowingMargin() {
+        return margin;
     }
 
     /**
@@ -109,9 +115,17 @@ public class FollowTrait extends Trait {
 
         if (!npc.getNavigator().isNavigating()) {
             npc.getNavigator().setTarget(entity, false);
+            if (margin > 0) {
+                npc.getNavigator().getLocalParameters().distanceMargin(margin);
+            }
+
         } else {
             flock.run();
         }
+    }
+
+    public void setFollowingMargin(double margin) {
+        this.margin = margin;
     }
 
     /**

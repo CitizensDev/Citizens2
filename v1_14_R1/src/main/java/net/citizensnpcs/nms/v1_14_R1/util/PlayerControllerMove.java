@@ -49,11 +49,6 @@ public class PlayerControllerMove extends ControllerMove {
             this.a.yaw = a(this.a.yaw, f, 90.0F);
             NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
             AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
-            if (this.a instanceof EntitySlime) {
-                speed.setValue(0.3D * this.e);
-            } else {
-                speed.setValue(0.2D * this.e);
-            }
             float movement = (float) (this.e * speed.getValue());
             this.a.o(movement);
             this.a.bd = movement;

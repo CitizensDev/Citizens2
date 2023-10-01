@@ -84,9 +84,9 @@ public interface NMSBridge {
 
     public double getHeight(Entity entity);
 
-    public float getHorizontalMovement(Entity entity);
+    public float getHorizontalMovement(Entity entity);;
 
-    public CompoundTag getNBT(ItemStack item);;
+    public CompoundTag getNBT(ItemStack item);
 
     public NPC getNPC(Entity entity);
 
@@ -149,9 +149,9 @@ public interface NMSBridge {
 
     public void registerEntityClass(Class<?> clazz);
 
-    public void remove(Entity entity);
+    public void remove(Entity entity);;
 
-    public void removeFromServerPlayerList(Player player);;
+    public void removeFromServerPlayerList(Player player);
 
     public void removeFromWorld(org.bukkit.entity.Entity entity);
 
@@ -167,7 +167,7 @@ public interface NMSBridge {
 
     public void sendTabListRemove(Player recipient, Player listPlayer);
 
-    public void sendTeamPacket(Player recipient, Team team, int mode);
+    public void sendTeamPacket(Player recipient, Team team, int mode);;
 
     default public void setAggressive(Entity entity, boolean aggro) {
     };
@@ -176,13 +176,13 @@ public interface NMSBridge {
         throw new UnsupportedOperationException();
     };
 
-    public void setBodyYaw(Entity entity, float yaw);;
+    public void setBodyYaw(Entity entity, float yaw);
 
-    public void setBoundingBox(Entity entity, BoundingBox box);
+    public void setBoundingBox(Entity entity, BoundingBox box);;
 
     public default void setCamelPose(Entity entity, CamelPose pose) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void setCustomName(Entity entity, Object component, String string);
 

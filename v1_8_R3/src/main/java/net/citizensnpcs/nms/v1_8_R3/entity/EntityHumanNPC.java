@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_8_R3.entity;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ import net.citizensnpcs.npc.skin.SkinPacketTracker;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.SkinTrait;
-import net.citizensnpcs.util.EmptySocket;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.AttributeInstance;
@@ -74,6 +72,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             PlayerInteractManager playerInteractManager, NPC npc) {
         super(minecraftServer, world, gameProfile, playerInteractManager);
         this.npc = (CitizensNPC) npc;
+        this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.3);
+
         if (npc != null) {
             skinTracker = new SkinPacketTracker(this);
             playerInteractManager.setGameMode(WorldSettings.EnumGamemode.SURVIVAL);
@@ -233,17 +233,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     private void initialise(MinecraftServer minecraftServer) {
-        Socket socket = new EmptySocket();
-        NetworkManager conn = null;
         try {
-            conn = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
+            NetworkManager conn = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
             playerConnection = new EmptyNetHandler(minecraftServer, conn, this);
             conn.a(playerConnection);
-            socket.close();
         } catch (IOException e) {
-            // swallow
         } catch (NoSuchMethodError err) {
-            // swallow, reported by a single user on Discord
+            // reported by a single user on Discord
         }
         AttributeInstance range = getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         if (range == null) {
@@ -281,7 +277,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (!navigating && getBukkitEntity() != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
                 && Util.isLoaded(getBukkitEntity().getLocation(LOADED_LOCATION))
-                && SpigotUtil.checkYSafe(locY, getBukkitEntity().getWorld())) {
+                && (!npc.isProtected() || SpigotUtil.checkYSafe(locY, getBukkitEntity().getWorld()))) {
             moveWithFallDamage(0, 0);
         }
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {

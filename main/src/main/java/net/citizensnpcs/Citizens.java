@@ -30,7 +30,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 
 import ch.ethz.globis.phtree.PhTreeHelper;
 import net.byteflux.libby.BukkitLibraryManager;
@@ -64,6 +63,7 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.NBTStorage;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.api.util.YamlStorage;
@@ -87,6 +87,7 @@ import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerUpdateTask;
+import net.citizensnpcs.util.SkinProperty;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
 
@@ -108,9 +109,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         @Override
         public String getTexture(SkullMeta meta) {
-            GameProfile profile = NMS.getProfile(meta);
-            return profile == null ? null
-                    : Iterables.getFirst(profile.getProperties().get("textures"), new Property("", "")).getValue();
+            SkinProperty sp = SkinProperty.fromMojangProfile(NMS.getProfile(meta));
+            return sp == null ? null : sp.value;
         }
 
         @Override
@@ -134,7 +134,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     profile = new GameProfile(UUID.randomUUID(), null);
                 }
             }
-            profile.getProperties().put("textures", new Property("textures", texture));
+            profile.getProperties().put("textures",
+                    new com.mojang.authlib.properties.Property("textures", texture, null));
             NMS.setProfile(meta, profile);
         }
 
@@ -382,7 +383,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         config = new Settings(getDataFolder());
         setupTranslator();
         // Disable if the server is not using the compatible Minecraft version
-        String mcVersion = Util.getMinecraftRevision();
+        String mcVersion = SpigotUtil.getMinecraftPackage();
         try {
             NMS.loadBridge(mcVersion);
         } catch (Exception e) {

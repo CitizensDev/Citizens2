@@ -39,7 +39,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.GameProfileRepository;
+import com.mojang.authlib.ProfileLookupCallback;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -165,6 +165,27 @@ public class NMS {
 
     public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {
         return BRIDGE.fillProfileProperties(profile, requireSecure);
+    }
+
+    public static void findProfilesByNames(String[] names, ProfileLookupCallback cb) {
+        if (FIND_PROFILES_BY_NAMES == null) {
+            try {
+                Class<?> agentClass = Class.forName("com.mojang.authlib.Agent");
+                Object minecraftAgent = agentClass.getField("MINECRAFT").get(null);
+                MethodHandle mh = getMethodHandle(BRIDGE.getGameProfileRepository().getClass(), "findProfilesByNames",
+                        false, String[].class, agentClass, ProfileLookupCallback.class);
+                FIND_PROFILES_BY_NAMES = MethodHandles.insertArguments(mh, 2, minecraftAgent);
+            } catch (Exception e) {
+                FIND_PROFILES_BY_NAMES = getMethodHandle(BRIDGE.getGameProfileRepository().getClass(),
+                        "findProfilesByNames", false, String[].class, ProfileLookupCallback.class);
+            }
+        }
+
+        try {
+            FIND_PROFILES_BY_NAMES.invoke(BRIDGE.getGameProfileRepository(), names, cb);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     public static BlockBreaker getBlockBreaker(Entity entity, Block targetBlock, BlockBreakerConfiguration config) {
@@ -418,10 +439,6 @@ public class NMS {
         return null;
     }
 
-    public static GameProfileRepository getGameProfileRepository() {
-        return BRIDGE.getGameProfileRepository();
-    }
-
     public static MethodHandle getGetter(Class<?> clazz, String name) {
         return getGetter(clazz, name, true);
     }
@@ -625,12 +642,12 @@ public class NMS {
     public static void loadBridge(String rev) throws Exception {
         Class<?> entity = null;
         try {
-            entity = Class.forName("net.minecraft.server.v" + rev + ".Entity");
+            entity = Class.forName("net.minecraft.server." + rev + ".Entity");
         } catch (ClassNotFoundException ex) {
             entity = Class.forName("net.minecraft.world.entity.Entity");
         }
         giveReflectiveAccess(entity, NMS.class);
-        BRIDGE = (NMSBridge) Class.forName("net.citizensnpcs.nms.v" + rev + ".util.NMSImpl").getConstructor()
+        BRIDGE = (NMSBridge) Class.forName("net.citizensnpcs.nms." + rev + ".util.NMSImpl").getConstructor()
                 .newInstance();
     }
 
@@ -883,8 +900,8 @@ public class NMS {
     }
 
     private static Method ADD_OPENS;
-
     private static NMSBridge BRIDGE;
+    private static MethodHandle FIND_PROFILES_BY_NAMES = null;
     private static Method GET_MODULE;
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;

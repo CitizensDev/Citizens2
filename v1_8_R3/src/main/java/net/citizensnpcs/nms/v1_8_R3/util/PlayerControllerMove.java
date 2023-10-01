@@ -70,30 +70,29 @@ public class PlayerControllerMove extends ControllerMove {
     @Override
     public void c() {
         this.a.ba = 0F;
-        if (this.f) {
-            this.f = false;
-            double dX = this.b - this.a.locX;
-            double dZ = this.d - this.a.locZ;
-            double dY = this.c - this.a.locY;
-            double dXZ = Math.sqrt(dX * dX + dZ * dZ);
-            if (Math.abs(dY) < 1.0 && dXZ < 0.025)
-                return;
-            float f = (float) Math.toDegrees(Math.atan2(dZ, dX)) - 90.0F;
-            this.a.yaw = a(this.a.yaw, f, 90.0F);
-            NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
-            AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
-            speed.setValue(0.1D * this.e);
-            float movement = (float) (this.e * speed.getValue()) * 10;
-            this.a.k(movement);
-            this.a.ba = movement;
-            if (shouldSlimeJump() || ((dY >= NMS.getStepHeight(a.getBukkitEntity())) && dXZ < 0.4)) {
-                this.h = cg();
-                this.h /= 3;
-                if (this.a instanceof EntityHumanNPC) {
-                    ((EntityHumanNPC) this.a).getControllerJump().a();
-                } else {
-                    ((EntityInsentient) this.a).getControllerJump().a();
-                }
+        if (!this.f)
+            return;
+        this.f = false;
+        double dX = this.b - this.a.locX;
+        double dZ = this.d - this.a.locZ;
+        double dY = this.c - this.a.locY;
+        double dXZ = Math.sqrt(dX * dX + dZ * dZ);
+        if (Math.abs(dY) < 1.0 && dXZ < 0.025)
+            return;
+        float f = (float) Math.toDegrees(Math.atan2(dZ, dX)) - 90.0F;
+        this.a.yaw = a(this.a.yaw, f, 90.0F);
+        NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
+        AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
+        float movement = (float) (this.e * speed.getValue());
+        this.a.k(movement);
+        this.a.ba = movement;
+        if (shouldSlimeJump() || ((dY >= NMS.getStepHeight(a.getBukkitEntity())) && dXZ < 0.4)) {
+            this.h = cg();
+            this.h /= 3;
+            if (this.a instanceof EntityHumanNPC) {
+                ((EntityHumanNPC) this.a).getControllerJump().a();
+            } else {
+                ((EntityInsentient) this.a).getControllerJump().a();
             }
         }
     }
