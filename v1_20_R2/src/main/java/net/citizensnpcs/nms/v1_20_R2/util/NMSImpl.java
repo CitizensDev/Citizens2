@@ -356,8 +356,6 @@ import net.minecraft.world.scores.PlayerTeam;
 
 @SuppressWarnings("unchecked")
 public class NMSImpl implements NMSBridge {
-    public static MethodHandle CONNECTION_PACKET_LISTENER = NMS.getSetter(Connection.class, "q");
-    public static MethodHandle CONNECTION_DISCONNECT_LISTENER = NMS.getSetter(Connection.class, "p");
     public NMSImpl() {
         loadEntityTypes();
     }
@@ -391,7 +389,7 @@ public class NMSImpl implements NMSBridge {
             e.printStackTrace();
         }
         return success;
-    };
+    }
 
     @Override
     public void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
@@ -459,7 +457,7 @@ public class NMSImpl implements NMSBridge {
         }
         EnchantmentHelper.doPostHurtEffects(source, target);
         EnchantmentHelper.doPostDamageEffects(target, source);
-    }
+    };
 
     @Override
     public void cancelMoveDestination(org.bukkit.entity.Entity entity) {
@@ -1300,6 +1298,9 @@ public class NMSImpl implements NMSBridge {
     public void removeFromWorld(org.bukkit.entity.Entity entity) {
         Preconditions.checkNotNull(entity);
         Entity nmsEntity = ((CraftEntity) entity).getHandle();
+        ServerLevel level = (ServerLevel) nmsEntity.level();
+        if (level.getEntity(entity.getEntityId()) == null)
+            return;
         ((ServerLevel) nmsEntity.level()).getChunkSource().removeEntity(nmsEntity);
     }
 
@@ -2498,7 +2499,9 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_SETTER = NMS.getFirstFinalSetter(ServerPlayer.class,
             PlayerAdvancements.class);
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
@@ -2513,6 +2516,8 @@ public class NMSImpl implements NMSBridge {
             ServerPlayer.class, boolean.class);
     private static final Map<Class<?>, net.minecraft.world.entity.EntityType<?>> CITIZENS_ENTITY_TYPES = Maps
             .newHashMap();
+    public static MethodHandle CONNECTION_DISCONNECT_LISTENER = NMS.getSetter(Connection.class, "p");
+    public static MethodHandle CONNECTION_PACKET_LISTENER = NMS.getSetter(Connection.class, "q");
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getFirstSetter(CraftBossBar.class,
             ServerBossEvent.class);
     private static final float DEFAULT_SPEED = 1F;
