@@ -22,18 +22,16 @@ public class SkinProperty {
         profile.getProperties().put("textures", new com.mojang.authlib.properties.Property(name, value, signature));
     }
 
-    public static SkinProperty fromMojang(com.mojang.authlib.properties.Property prop) {
+    public static SkinProperty fromMojang(Object prop) {
         if (prop == null)
             return null;
-        if (GET_NAME_METHOD != null) {
-            try {
-                return new SkinProperty((String) GET_NAME_METHOD.invoke(prop), (String) GET_VALUE_METHOD.invoke(prop),
-                        (String) GET_SIGNATURE_METHOD.invoke(prop));
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+        try {
+            return new SkinProperty((String) GET_NAME_METHOD.invoke(prop), (String) GET_VALUE_METHOD.invoke(prop),
+                    (String) GET_SIGNATURE_METHOD.invoke(prop));
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
         }
-        return new SkinProperty(prop.name(), prop.value(), prop.signature());
     }
 
     public static SkinProperty fromMojangProfile(GameProfile profile) {
@@ -50,7 +48,17 @@ public class SkinProperty {
     private static MethodHandle GET_VALUE_METHOD = null;
     static {
         GET_NAME_METHOD = NMS.getMethodHandle(com.mojang.authlib.properties.Property.class, "getName", false);
+        if (GET_NAME_METHOD == null) {
+            GET_NAME_METHOD = NMS.getMethodHandle(com.mojang.authlib.properties.Property.class, "name", false);
+        }
         GET_SIGNATURE_METHOD = NMS.getMethodHandle(com.mojang.authlib.properties.Property.class, "getSignature", false);
+        if (GET_SIGNATURE_METHOD == null) {
+            GET_SIGNATURE_METHOD = NMS.getMethodHandle(com.mojang.authlib.properties.Property.class, "signature",
+                    false);
+        }
         GET_VALUE_METHOD = NMS.getMethodHandle(com.mojang.authlib.properties.Property.class, "getValue", false);
+        if (GET_VALUE_METHOD == null) {
+            GET_VALUE_METHOD = NMS.getMethodHandle(com.mojang.authlib.properties.Property.class, "value", false);
+        }
     }
 }
