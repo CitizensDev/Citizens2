@@ -27,6 +27,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.RemoveReason;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
@@ -49,10 +50,6 @@ public class CitizensNPCRegistry implements NPCRegistry {
         name = registryName;
     }
 
-    private CitizensNPC create(EntityType type, UUID uuid, int id, String name) {
-        return new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this);
-    }
-
     @Override
     public NPC createNPC(EntityType type, String name) {
         return createNPC(type, UUID.randomUUID(), generateIntegerId(), name);
@@ -69,10 +66,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
         Preconditions.checkNotNull(name, "name cannot be null");
         Preconditions.checkNotNull(type, "type cannot be null");
-        CitizensNPC npc = create(type, uuid, id, name);
-
-        if (npc == null)
-            throw new IllegalStateException("Could not create NPC.");
+        CitizensNPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this);
+        npc.getOrAddTrait(MobType.class).setType(type);
         npcs.put(id, npc);
         uniqueNPCs.put(npc.getUniqueId(), npc);
         Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));
