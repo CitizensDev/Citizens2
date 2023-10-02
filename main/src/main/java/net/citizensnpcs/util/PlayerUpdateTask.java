@@ -1,10 +1,11 @@
 package net.citizensnpcs.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -25,9 +26,13 @@ public class PlayerUpdateTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        for (Entity entity : PLAYERS_PENDING_REMOVE) {
+        Iterator<Entity> removeIterator = PLAYERS_PENDING_REMOVE.iterator();
+        while (removeIterator.hasNext()) {
+            Entity entity = removeIterator.next();
             PLAYERS.remove(entity.getUniqueId());
+            removeIterator.remove();
         }
+        
         for (Entity entity : PLAYERS_PENDING_ADD) {
             PlayerTick rm = PLAYERS.remove(entity.getUniqueId());
             NPC next = ((NPCHolder) entity).getNPC();
@@ -44,7 +49,6 @@ public class PlayerUpdateTask extends BukkitRunnable {
             }
         }
         PLAYERS_PENDING_ADD.clear();
-        PLAYERS_PENDING_REMOVE.clear();
 
         PLAYERS.values().forEach(Runnable::run);
     }
@@ -78,7 +82,7 @@ public class PlayerUpdateTask extends BukkitRunnable {
         PLAYERS_PENDING_ADD.add(entity);
     }
 
-    private static Map<UUID, PlayerTick> PLAYERS = new HashMap<>();
-    private static List<Entity> PLAYERS_PENDING_ADD = new ArrayList<>();
-    private static List<Entity> PLAYERS_PENDING_REMOVE = new ArrayList<>();
+    private static Map<UUID, PlayerTick> PLAYERS = new ConcurrentHashMap<>();
+    private static List<Entity> PLAYERS_PENDING_ADD = new CopyOnWriteArrayList<>();
+    private static List<Entity> PLAYERS_PENDING_REMOVE = new CopyOnWriteArrayList<>();
 }
