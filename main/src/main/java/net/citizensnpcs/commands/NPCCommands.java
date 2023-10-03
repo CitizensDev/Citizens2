@@ -2272,7 +2272,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "playsound [sound] (volume) (pitch)",
+            usage = "playsound [sound] (volume) (pitch) (--at x:y:z:world)",
             desc = "Plays a sound at the NPC's location",
             modifiers = { "playsound" },
             min = 2,
@@ -2280,9 +2280,10 @@ public class NPCCommands {
             permission = "citizens.npc.playsound")
     @Requirements(selected = true, ownership = true)
     public void playsound(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String sound,
-            @Arg(value = 2, defValue = "1") Float volume, @Arg(value = 3, defValue = "1") Float pitch)
-            throws CommandException {
-        npc.getEntity().getWorld().playSound(npc.getEntity(), sound, volume, pitch);
+            @Arg(value = 2, defValue = "1") Float volume, @Arg(value = 3, defValue = "1") Float pitch,
+            @Flag("at") Location at) throws CommandException {
+        Location loc = at == null ? npc.getStoredLocation() : at;
+        loc.getWorld().playSound(loc, sound, volume, pitch);
     }
 
     @Command(

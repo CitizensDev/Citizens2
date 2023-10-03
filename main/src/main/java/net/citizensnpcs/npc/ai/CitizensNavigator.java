@@ -35,6 +35,7 @@ import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.npc.ai.AStarNavigationStrategy.AStarPlanner;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
@@ -390,6 +391,9 @@ public class CitizensNavigator implements Navigator, Runnable {
     private void stopNavigating(CancelReason reason) {
         if (!isNavigating())
             return;
+        if (reason == CancelReason.STUCK && Messaging.isDebugging()) {
+            Messaging.debug(npc, "navigation ended, stuck", executing);
+        }
         if (session != null) {
             session.end();
             session = null;

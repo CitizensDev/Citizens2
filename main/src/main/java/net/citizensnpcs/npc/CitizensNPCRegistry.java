@@ -74,9 +74,11 @@ public class CitizensNPCRegistry implements NPCRegistry {
         if (type == EntityType.ARMOR_STAND && !npc.hasTrait(ArmorStandTrait.class)) {
             npc.addTrait(ArmorStandTrait.class);
         }
+
         if (Setting.DEFAULT_LOOK_CLOSE.asBoolean()) {
             npc.addTrait(LookClose.class);
         }
+
         npc.addTrait(MountTrait.class);
         return npc;
     }
