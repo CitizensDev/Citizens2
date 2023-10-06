@@ -60,6 +60,9 @@ public class SpigotUtil {
                 return BUKKIT_VERSION = new int[] { 1, 8 };
 
             String[] parts = version.split("\\.");
+            if (parts[1].contains("-")) {
+                parts[1] = parts[1].split("-")[0];
+            }
             return BUKKIT_VERSION = new int[] { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) };
         }
         return BUKKIT_VERSION;

@@ -254,9 +254,10 @@ public class CommandContext {
     public Location getSenderLocation() throws CommandException {
         if (location != null || sender == null)
             return location;
-        if (hasValueFlag("location")) {
+
+        if (hasValueFlag("location"))
             return parseLocation(location, getFlag("location"));
-        }
+
         if (sender instanceof Player) {
             location = ((Player) sender).getLocation();
         } else if (sender instanceof BlockCommandSender) {
