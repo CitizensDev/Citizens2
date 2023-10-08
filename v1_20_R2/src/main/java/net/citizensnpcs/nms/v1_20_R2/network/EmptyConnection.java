@@ -26,7 +26,15 @@ public class EmptyConnection extends Connection {
     }
 
     @Override
+    public void send(Packet packet) {
+    }
+
+    @Override
     public void send(Packet packet, PacketSendListener genericfuturelistener) {
+    }
+
+    @Override
+    public void send(Packet packet, PacketSendListener genericfuturelistener, boolean flag) {
     }
 
     @Override

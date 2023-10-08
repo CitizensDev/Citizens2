@@ -1298,9 +1298,6 @@ public class NMSImpl implements NMSBridge {
     public void removeFromWorld(org.bukkit.entity.Entity entity) {
         Preconditions.checkNotNull(entity);
         Entity nmsEntity = ((CraftEntity) entity).getHandle();
-        ServerLevel level = (ServerLevel) nmsEntity.level();
-        if (level.getEntity(entity.getEntityId()) == null)
-            return;
         ((ServerLevel) nmsEntity.level()).getChunkSource().removeEntity(nmsEntity);
     }
 
