@@ -135,13 +135,16 @@ public class ShopTrait extends Trait {
         public void display(Player sender) {
             if (viewPermission != null && !sender.hasPermission(viewPermission))
                 return;
+
             if (!Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
                     && !sender.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString()))
                 return;
+
             if (pages.size() == 0) {
                 Messaging.sendError(sender, "Empty shop");
                 return;
             }
+
             InventoryMenu.createSelfRegistered(new NPCShopViewer(this, sender)).present(sender);
         }
 
@@ -295,6 +298,8 @@ public class ShopTrait extends Trait {
 
     public static class NPCShopItem implements Cloneable, Persistable {
         @Persist
+        private String alreadyPurchasedMessage;
+        @Persist
         private String clickToConfirmMessage;
         @Persist
         private final List<NPCShopAction> cost = Lists.newArrayList();
@@ -304,16 +309,14 @@ public class ShopTrait extends Trait {
         private ItemStack display;
         @Persist
         private boolean maxRepeatsOnShiftClick;
+        @Persist(keyType = UUID.class)
+        private final Map<UUID, Integer> purchases = Maps.newHashMap();
         @Persist
         private final List<NPCShopAction> result = Lists.newArrayList();
         @Persist
         private String resultMessage;
         @Persist
         private int timesPurchasable = 0;
-        @Persist
-        private String alreadyPurchasedMessage;
-        @Persist(keyType = UUID.class)
-        private final Map<UUID, Integer> purchases = Maps.newHashMap();
 
         public List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
             List<Transaction> pending = Lists.newArrayList();
@@ -402,16 +405,15 @@ public class ShopTrait extends Trait {
 
         public void onClick(NPCShop shop, InventoryClickEvent event, boolean secondClick) {
             Player player = (Player) event.getWhoClicked();
-            if (purchases.containsKey(player.getUniqueId()) && timesPurchasable > 0 && purchases.get(player.getUniqueId()) == timesPurchasable) {
+            if (purchases.containsKey(player.getUniqueId()) && timesPurchasable > 0
+                    && purchases.get(player.getUniqueId()) == timesPurchasable) {
                 if (alreadyPurchasedMessage != null) {
-                    Messaging.sendColorless(event.getWhoClicked(),
-                            placeholders(alreadyPurchasedMessage, player));
+                    Messaging.sendColorless(event.getWhoClicked(), placeholders(alreadyPurchasedMessage, player));
                 }
                 return;
             }
             if (clickToConfirmMessage != null && !secondClick) {
-                Messaging.sendColorless(event.getWhoClicked(),
-                        placeholders(clickToConfirmMessage, player));
+                Messaging.sendColorless(event.getWhoClicked(), placeholders(clickToConfirmMessage, player));
                 return;
             }
             int max = Integer.MAX_VALUE;
@@ -429,8 +431,7 @@ public class ShopTrait extends Trait {
             List<Transaction> take = apply(cost, action -> action.take(event.getWhoClicked(), repeats));
             if (take == null) {
                 if (costMessage != null) {
-                    Messaging.sendColorless(event.getWhoClicked(),
-                            placeholders(costMessage, player));
+                    Messaging.sendColorless(event.getWhoClicked(), placeholders(costMessage, player));
                 }
                 return;
             }
@@ -439,11 +440,11 @@ public class ShopTrait extends Trait {
                 return;
             }
             if (resultMessage != null) {
-                Messaging.sendColorless(event.getWhoClicked(),
-                        placeholders(resultMessage, player));
+                Messaging.sendColorless(event.getWhoClicked(), placeholders(resultMessage, player));
             }
             if (timesPurchasable > 0) {
-                int timesPurchasedAlready = purchases.get(player.getUniqueId()) == null ? 0 : purchases.get(player.getUniqueId());
+                int timesPurchasedAlready = purchases.get(player.getUniqueId()) == null ? 0
+                        : purchases.get(player.getUniqueId());
                 purchases.put(player.getUniqueId(), ++timesPurchasedAlready);
             }
         }
@@ -496,17 +497,18 @@ public class ShopTrait extends Trait {
             if (modified.display != null) {
                 ctx.getSlot(9 * 4 + 4).setItemStack(modified.getDisplayItem(null));
             }
-            ctx.getSlot(9 * 3 + 2).setItemStack(new ItemStack(Material.EGG),
-                    "Only purchasable once per player",
-                    "Times purchasable: " + modified.timesPurchasable + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
-            ctx.getSlot(9 * 3 + 2).setClickHandler(
-                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> String.valueOf(modified.timesPurchasable), s -> {
+            ctx.getSlot(9 * 3 + 2).setItemStack(new ItemStack(Material.EGG), "Only purchasable once per player",
+                    "Times purchasable: " + modified.timesPurchasable
+                            + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
+            ctx.getSlot(9 * 3 + 2).setClickHandler(e -> ctx.getMenu()
+                    .transition(InputMenus.stringSetter(() -> String.valueOf(modified.timesPurchasable), s -> {
                         modified.timesPurchasable = Integer.parseInt(s);
-                        ctx.getSlot(9 * 4 + 2).setDescription("Times purchasable: " + modified.timesPurchasable + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
+                        ctx.getSlot(9 * 4 + 2).setDescription("Times purchasable: " + modified.timesPurchasable
+                                + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
                     })));
 
             ctx.getSlot(9 * 4 + 2).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
-                    "Set message to send on already purchased, currently:\n",
+                    "Set already purchased message, currently:\n",
                     modified.alreadyPurchasedMessage == null ? "Unset" : modified.alreadyPurchasedMessage);
             ctx.getSlot(9 * 4 + 2).setClickHandler(
                     e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.alreadyPurchasedMessage, s -> {
@@ -514,8 +516,8 @@ public class ShopTrait extends Trait {
                         ctx.getSlot(9 * 4 + 2).setDescription(modified.alreadyPurchasedMessage);
                     })));
 
-            ctx.getSlot(9 * 3 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
-                    "Set message to send on successful click, currently:\n",
+            ctx.getSlot(9 * 3 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("EMERALD", "OAK_SIGN", "SIGN")),
+                    "Set successful click message, currently:\n",
                     modified.resultMessage == null ? "Unset" : modified.resultMessage);
             ctx.getSlot(9 * 3 + 3).setClickHandler(
                     e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.resultMessage, s -> {
@@ -524,7 +526,7 @@ public class ShopTrait extends Trait {
                     })));
 
             ctx.getSlot(9 * 3 + 6).setItemStack(new ItemStack(Util.getFallbackMaterial("BARRIER", "FIRE")),
-                    "Set message to send on unsuccessful click, currently:\n",
+                    "Set unsuccessful click message, currently:\n",
                     modified.costMessage == null ? "Unset" : modified.costMessage);
             ctx.getSlot(9 * 3 + 6).setClickHandler(
                     e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.costMessage, s -> {
@@ -590,8 +592,8 @@ public class ShopTrait extends Trait {
                             ? Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore())
                             : "", description -> {
                                 ItemMeta meta = modified.display.getItemMeta();
-                                meta.setLore(Lists.newArrayList(
-                                        Splitter.on("<br>").split(Messaging.parseComponents(description))));
+                                meta.setLore(Lists
+                                        .newArrayList(Splitter.on('\n').split(Messaging.parseComponents(description))));
                                 modified.display.setItemMeta(meta);
                             }));
         }

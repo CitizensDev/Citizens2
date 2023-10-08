@@ -44,8 +44,6 @@ public class HologramTrait extends Trait {
     private BiFunction<String, Player, String> customHologramSupplier;
     @Persist
     private HologramDirection direction = HologramDirection.BOTTOM_UP;
-    @Persist(reify = true)
-    private HologramFilter filter;
     private double lastEntityHeight = 0;
     private boolean lastNameplateVisible;
     @Persist
@@ -323,6 +321,7 @@ public class HologramTrait extends Trait {
             if (updatePosition && !useDisplayEntities) {
                 nameLine.hologram.teleport(currentLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
             }
+
             if (updateName) {
                 nameLine.setText(npc.getRawName());
             }
@@ -451,17 +450,6 @@ public class HologramTrait extends Trait {
     public enum HologramDirection {
         BOTTOM_UP,
         TOP_DOWN;
-    }
-
-    public static class HologramFilter {
-        private HologramFilter() {
-        }
-
-        public static class Builder {
-            public HologramFilter build() {
-                return new HologramFilter();
-            }
-        }
     }
 
     private class HologramLine implements Function<Player, String> {
