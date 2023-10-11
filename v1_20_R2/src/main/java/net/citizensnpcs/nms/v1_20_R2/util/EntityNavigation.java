@@ -196,13 +196,11 @@ public class EntityNavigation extends PathNavigation {
             return null;
         if (this.path != null && !this.path.isDone() && var0.contains(this.targetPos))
             return this.path;
-        this.level.getProfiler().push("pathfind");
         BlockPos var5 = var2 ? this.mob.blockPosition().above() : this.mob.blockPosition();
         int var6 = (int) (var4 + var1);
         PathNavigationRegion var7 = new PathNavigationRegion(this.level, var5.offset(-var6, -var6, -var6),
                 var5.offset(var6, var6, var6));
         Path var8 = this.pathFinder.findPath(var7, this.mob, var0, var4, var3, this.maxVisitedNodesMultiplier);
-        this.level.getProfiler().pop();
         if (var8 != null && var8.getTarget() != null) {
             this.targetPos = var8.getTarget();
             this.reachRange = var3;
