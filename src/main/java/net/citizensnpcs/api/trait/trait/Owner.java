@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -50,10 +51,14 @@ public class Owner extends Trait {
     public boolean isOwnedBy(CommandSender sender) {
         if (sender == null)
             return false;
+
         if (uuid == null && sender instanceof ConsoleCommandSender)
             return true;
 
-        return sender.hasPermission("citizens.admin") || (uuid == null && sender.hasPermission("citizens.admin"));
+        return sender.hasPermission("citizens.admin") || (uuid == null && sender.hasPermission("citizens.admin"))
+                || (uuid != null && sender instanceof OfflinePlayer
+                        && ((OfflinePlayer) sender).getUniqueId().equals(uuid))
+                || (uuid != null && sender instanceof Player && ((Player) sender).getUniqueId().equals(uuid));
     }
 
     public boolean isOwnedBy(String name) {
@@ -67,6 +72,8 @@ public class Owner extends Trait {
     public void setOwner(CommandSender sender) {
         if (sender instanceof OfflinePlayer) {
             this.uuid = ((OfflinePlayer) sender).getUniqueId();
+        } else if (sender instanceof Player) {
+            this.uuid = ((Player) sender).getUniqueId();
         } else {
             this.uuid = null;
         }
