@@ -163,9 +163,9 @@ public class Messaging {
     }
 
     public static String parseComponents(String raw) {
-        if (AUDIENCES != null && MINIMESSAGE != null) {
+        if (AUDIENCES != null && MINIMESSAGE != null)
             return BukkitComponentSerializer.legacy().serialize(MINIMESSAGE.deserialize(convertLegacyCodes(raw)));
-        }
+
         return convertLegacyCodes(raw);
     }
 

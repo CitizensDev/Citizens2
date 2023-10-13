@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -67,31 +66,7 @@ public abstract class AbstractNPC implements NPC {
         }
         return new org.bukkit.inventory.ItemStack(id, data().get(NPC.Metadata.ITEM_AMOUNT, 1), (short) data);
     };
-    private final MetadataStore metadata = new SimpleMetadataStore() {
-        @Override
-        public void remove(String key) {
-            super.remove(key);
-            if (getEntity() != null) {
-                getEntity().removeMetadata(key, CitizensAPI.getPlugin());
-            }
-        }
-
-        @Override
-        public void set(String key, Object data) {
-            super.set(key, data);
-            if (getEntity() != null) {
-                getEntity().setMetadata(key, new FixedMetadataValue(CitizensAPI.getPlugin(), data));
-            }
-        }
-
-        @Override
-        public void setPersistent(String key, Object data) {
-            super.setPersistent(key, data);
-            if (getEntity() != null) {
-                getEntity().setMetadata(key, new FixedMetadataValue(CitizensAPI.getPlugin(), data));
-            }
-        }
-    };
+    private final MetadataStore metadata = new SimpleMetadataStore();
     private String name;
     private final NPCRegistry registry;
     private final List<String> removedTraits = Lists.newArrayList();
