@@ -82,30 +82,42 @@ public class CitizensNPC extends AbstractNPC {
             }
             return true;
         }
+
         NPCDespawnEvent event = new NPCDespawnEvent(this, reason);
         if (reason == DespawnReason.CHUNK_UNLOAD) {
             event.setCancelled(data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean()));
         }
+
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() && reason != DespawnReason.DEATH) {
             Messaging.debug("Couldn't despawn", this, "due to despawn event cancellation. Will load chunk.",
                     getEntity().isValid(), ", DespawnReason." + reason);
             return false;
         }
+
         boolean keepSelected = getOrAddTrait(Spawned.class).shouldSpawn();
         if (!keepSelected) {
             data().remove("selectors");
         }
+
+        if (getEntity() != null) {
+            getEntity().removeMetadata("NPC", CitizensAPI.getPlugin());
+            getEntity().removeMetadata("NPC-ID", CitizensAPI.getPlugin());
+        }
+
         if (getEntity() instanceof Player) {
             PlayerUpdateTask.deregisterPlayer(getEntity());
         }
+
         navigator.onDespawn();
         if (reason == DespawnReason.RELOAD) {
             unloadEvents();
         }
+
         for (Trait trait : new ArrayList<Trait>(traits.values())) {
             trait.onDespawn(reason);
         }
+
         Messaging.debug("Despawned", this, "DespawnReason." + reason);
 
         if (getEntity() instanceof SkinnableEntity) {
@@ -117,6 +129,7 @@ public class CitizensNPC extends AbstractNPC {
         } else {
             entityController.remove();
         }
+
         return true;
     }
 
@@ -330,6 +343,7 @@ public class CitizensNPC extends AbstractNPC {
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
         }
+
         // send skin packets, if applicable, before other NMS packets are sent
         SkinnableEntity skinnable = getEntity() instanceof SkinnableEntity ? ((SkinnableEntity) getEntity()) : null;
         if (skinnable != null) {

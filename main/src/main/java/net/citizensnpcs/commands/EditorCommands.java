@@ -38,6 +38,7 @@ public class EditorCommands {
     public void equip(CommandContext args, Player player, NPC npc) throws CommandException {
         if (!npc.isSpawned())
             throw new CommandException("NPC must be spawned");
+
         Editor.enterOrLeave(player, new EquipmentEditor(player, npc));
     }
 
@@ -54,10 +55,12 @@ public class EditorCommands {
         Editor editor = npc.getOrAddTrait(Waypoints.class).getEditor(player, args);
         if (editor == null)
             return;
+
         if (player.isConversing() && args.argsLength() > 1) {
             player.acceptConversationInput(args.getJoinedStrings(1));
             return;
         }
+
         Editor.enterOrLeave(player, editor);
     }
 

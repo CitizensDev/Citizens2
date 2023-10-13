@@ -59,7 +59,6 @@ import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -586,14 +585,13 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getPlayer());
-        if (event.getCause() == TeleportCause.PLUGIN && !event.getPlayer().hasMetadata("citizens-force-teleporting")
-                && npc != null && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
+        if (event.getCause() == TeleportCause.PLUGIN && npc != null && !npc.data().has("citizens-force-teleporting")
+                && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
             event.setCancelled(true);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-                event.getPlayer().setMetadata("citizens-force-teleporting",
-                        new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+                npc.data().set("citizens-force-teleporting", true);
                 event.getPlayer().teleport(event.getTo());
-                event.getPlayer().removeMetadata("citizens-force-teleporting", CitizensAPI.getPlugin());
+                npc.data().remove("citizens-force-teleporting");
             }, Setting.PLAYER_TELEPORT_DELAY.asTicks());
         }
 

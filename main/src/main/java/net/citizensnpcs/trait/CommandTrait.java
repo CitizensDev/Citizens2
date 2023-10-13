@@ -682,8 +682,8 @@ public class CommandTrait extends Trait {
             return this;
         }
 
-        public NPCCommandBuilder delay(int delay) {
-            this.delay = delay;
+        public NPCCommandBuilder delay(Duration delay) {
+            this.delay = Util.toTicks(delay);
             return this;
         }
 
@@ -838,12 +838,12 @@ public class CommandTrait extends Trait {
                 commandKeys.add(commandKey);
                 Number number = lastUsed.get(commandKey);
                 if (number != null && number.longValue() + (command.cooldown != 0 ? command.cooldown
-                        : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()) <= currentTimeSec) {
+                        : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()) < currentTimeSec) {
                     lastUsed.remove(commandKey);
                 }
                 if (globalCooldowns != null) {
                     number = globalCooldowns.get(commandKey);
-                    if (number != null && number.longValue() + command.globalCooldown <= currentTimeSec) {
+                    if (number != null && number.longValue() + command.globalCooldown < currentTimeSec) {
                         globalCooldowns.remove(commandKey);
                     }
                 }

@@ -112,6 +112,7 @@ public enum PlayerAnimation {
                             cancel();
                             return;
                         }
+
                         NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, radius);
                         NMS.playAnimation(PlayerAnimation.this, player, radius);
                         if (!player.hasMetadata("citizens-using-item-id")) {

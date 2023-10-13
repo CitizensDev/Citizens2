@@ -495,7 +495,7 @@ public class NPCCommands {
             try {
                 int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
                         .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o')).cooldown(cooldown)
-                        .globalCooldown(gcooldown).n(n).delay(Util.toTicks(delay)));
+                        .globalCooldown(gcooldown).n(n).delay(delay));
                 Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
             } catch (NumberFormatException ex) {
                 throw new CommandException(CommandMessages.INVALID_NUMBER);
@@ -733,7 +733,6 @@ public class NPCCommands {
         if (args.hasFlag('t') || temporaryTicks != null) {
             registry = temporaryRegistry;
         }
-
         if (item != null) {
             ItemStack stack = Util.parseItemStack(null, item);
             npc = registry.createNPCUsingItem(type, name, stack);

@@ -137,7 +137,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.3.0</version>
+            <version>4.3.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
