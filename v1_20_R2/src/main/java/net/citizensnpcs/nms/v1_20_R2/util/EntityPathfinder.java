@@ -39,14 +39,14 @@ public class EntityPathfinder extends PathFinder {
         this.maxVisitedNodes = var1;
     }
 
-    public Path findPath(PathNavigationRegion var0, LivingEntity var1, Set<BlockPos> var2, float var3, int var4,
-            float var5) {
+    public Path findPath(PathNavigationRegion var0, LivingEntity var1, Set<BlockPos> var2, float range, int reachRange,
+            float maxVisitedNodesMultiplier) {
         this.openSet.clear();
         this.nodeEvaluator.prepare(var0, var1);
         Node var6 = this.nodeEvaluator.getStart();
         Map<Target, BlockPos> var7 = var2.stream().collect(
                 Collectors.toMap(p -> this.nodeEvaluator.getGoal(p.getX(), p.getY(), p.getZ()), Function.identity()));
-        Path var8 = findPath(null, var6, var7, var3, var4, var5);
+        Path var8 = findPath(null, var6, var7, range, reachRange, maxVisitedNodesMultiplier);
         this.nodeEvaluator.done();
         return var8;
     }
@@ -63,7 +63,7 @@ public class EntityPathfinder extends PathFinder {
         return var8;
     }
 
-    private Path findPath(ProfilerFiller var0, Node var1, Map<Target, BlockPos> var2, float var3, int var4,
+    private Path findPath(ProfilerFiller var0, Node var1, Map<Target, BlockPos> var2, float range, int reachRange,
             float var5) {
         Set<Target> var6 = var2.keySet();
         var1.f = 0.0F;
@@ -74,11 +74,11 @@ public class EntityPathfinder extends PathFinder {
         Set var7 = ImmutableSet.of();
         int var8 = 0;
         Set<Target> var9 = Sets.newHashSetWithExpectedSize(var6.size());
-        int var10 = (int) (this.maxVisitedNodes * var5);
+        int maxVisitedNodesScaled = (int) (this.maxVisitedNodes * var5);
 
         while (!this.openSet.isEmpty()) {
             ++var8;
-            if (var8 >= var10) {
+            if (var8 >= maxVisitedNodesScaled) {
                 break;
             }
 
@@ -88,7 +88,7 @@ public class EntityPathfinder extends PathFinder {
 
             while (var13i.hasNext()) {
                 Target var13 = (Target) var13i.next();
-                if (var11.distanceManhattan(var13) <= var4) {
+                if (var11.distanceManhattan(var13) <= reachRange) {
                     var13.setReached();
                     var9.add(var13);
                 }
@@ -98,7 +98,7 @@ public class EntityPathfinder extends PathFinder {
                 break;
             }
 
-            if (!(var11.distanceTo(var1) >= var3)) {
+            if (!(var11.distanceTo(var1) >= range)) {
                 int var12 = this.nodeEvaluator.getNeighbors(this.neighbors, var11);
 
                 for (int var13 = 0; var13 < var12; ++var13) {
@@ -106,7 +106,7 @@ public class EntityPathfinder extends PathFinder {
                     float var15 = this.distance(var11, var14);
                     var14.walkedDistance = var11.walkedDistance + var15;
                     float var16 = var11.f + var15 + var14.costMalus;
-                    if (var14.walkedDistance < var3 && (!var14.inOpenSet() || var16 < var14.f)) {
+                    if (var14.walkedDistance < range && (!var14.inOpenSet() || var16 < var14.f)) {
                         var14.cameFrom = var11;
                         var14.f = var16;
                         var14.h = this.getBestH(var14, var6) * 1.5F;

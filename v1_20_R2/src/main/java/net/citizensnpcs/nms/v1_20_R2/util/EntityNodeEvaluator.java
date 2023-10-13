@@ -247,16 +247,16 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
             while (var9.hasNext()) {
                 BlockPathTypes varr9 = (BlockPathTypes) var9.next();
-                if (var4.getPathfindingMalus(varr9) < 0.0F) {
+                if (mvmt.getPathfindingMalus(varr9) < 0.0F) {
                     return varr9;
                 }
 
-                if (var4.getPathfindingMalus(varr9) >= var4.getPathfindingMalus(var7)) {
+                if (mvmt.getPathfindingMalus(varr9) >= mvmt.getPathfindingMalus(var7)) {
                     var7 = varr9;
                 }
             }
 
-            if (var6 == BlockPathTypes.OPEN && var4.getPathfindingMalus(var7) == 0.0F && this.entityWidth <= 1) {
+            if (var6 == BlockPathTypes.OPEN && mvmt.getPathfindingMalus(var7) == 0.0F && this.entityWidth <= 1) {
                 return BlockPathTypes.OPEN;
             } else {
                 return var7;
@@ -477,7 +477,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     @Override
     public void prepare(PathNavigationRegion var0, Mob var1) {
         super.prepare(var0, var1);
-        this.oldWaterCost = var1.getPathfindingMalus(BlockPathTypes.WATER);
+        this.oldWaterCost = mvmt.getPathfindingMalus(BlockPathTypes.WATER);
     }
 
     public static BlockPathTypes checkNeighbourBlocks(BlockGetter var0, BlockPos.MutableBlockPos var1,
@@ -618,7 +618,5 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 || CampfireBlock.isLitCampfire(var0) || var0.is(Blocks.LAVA_CAULDRON);
     }
 
-    private static final double DEFAULT_MOB_JUMP_HEIGHT = 1.125;
     public static final double SPACE_BETWEEN_WALL_POSTS = 0.5;
-
 }
