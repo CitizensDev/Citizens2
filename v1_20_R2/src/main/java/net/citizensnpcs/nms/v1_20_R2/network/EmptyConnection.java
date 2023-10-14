@@ -21,6 +21,10 @@ public class EmptyConnection extends Connection {
     }
 
     @Override
+    public void flushChannel() {
+    }
+
+    @Override
     public boolean isConnected() {
         return true;
     }
