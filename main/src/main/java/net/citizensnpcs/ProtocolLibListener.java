@@ -125,18 +125,20 @@ public class ProtocolLibListener implements Listener {
                             uuid -> mirrorTraits.get(uuid));
                     return;
                 }
+
                 List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists().readSafely(0);
                 if (list == null)
                     return;
+
                 boolean changed = false;
                 for (int i = 0; i < list.size(); i++) {
                     PlayerInfoData npcInfo = list.get(i);
                     if (npcInfo == null)
                         continue;
                     MirrorTrait trait = mirrorTraits.get(npcInfo.getProfile().getUUID());
-                    if (trait == null || !trait.isMirroring(event.getPlayer())) {
+                    if (trait == null || !trait.isMirroring(event.getPlayer()))
                         continue;
-                    }
+
                     GameProfile playerProfile = NMS.getProfile(event.getPlayer());
                     if (trait.mirrorName()) {
                         list.set(i,
@@ -166,7 +168,7 @@ public class ProtocolLibListener implements Listener {
             }
         });
         manager.addPacketListener(new PacketAdapter(
-                plugin, ListenerPriority.MONITOR, Arrays.asList(Server.ENTITY_HEAD_ROTATION, Server.ENTITY_LOOK,
+                plugin, ListenerPriority.HIGHEST, Arrays.asList(Server.ENTITY_HEAD_ROTATION, Server.ENTITY_LOOK,
                         Server.REL_ENTITY_MOVE_LOOK, Server.ENTITY_MOVE_LOOK, Server.POSITION, Server.ENTITY_TELEPORT),
                 ListenerOptions.ASYNC) {
             @Override
