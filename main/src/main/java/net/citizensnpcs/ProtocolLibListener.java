@@ -131,6 +131,9 @@ public class ProtocolLibListener implements Listener {
                     return;
 
                 boolean changed = false;
+                GameProfile playerProfile = null;
+                WrappedGameProfile wgp = null;
+                WrappedChatComponent playerName = null;
                 for (int i = 0; i < list.size(); i++) {
                     PlayerInfoData npcInfo = list.get(i);
                     if (npcInfo == null)
@@ -139,19 +142,22 @@ public class ProtocolLibListener implements Listener {
                     if (trait == null || !trait.isMirroring(event.getPlayer()))
                         continue;
 
-                    GameProfile playerProfile = NMS.getProfile(event.getPlayer());
+                    if (playerProfile == null) {
+                        playerProfile = NMS.getProfile(event.getPlayer());
+                        wgp = WrappedGameProfile.fromPlayer(event.getPlayer());
+                        playerName = WrappedChatComponent.fromText(event.getPlayer().getDisplayName());
+                    }
+
                     if (trait.mirrorName()) {
-                        list.set(i,
-                                new PlayerInfoData(
-                                        WrappedGameProfile.fromPlayer(event.getPlayer())
-                                                .withId(npcInfo.getProfile().getId()),
-                                        npcInfo.getLatency(), npcInfo.getGameMode(),
-                                        WrappedChatComponent.fromText(event.getPlayer().getDisplayName())));
+                        list.set(i, new PlayerInfoData(wgp.withId(npcInfo.getProfile().getId()), npcInfo.getLatency(),
+                                npcInfo.getGameMode(), playerName));
                         continue;
                     }
+
                     Collection<Property> textures = playerProfile.getProperties().get("textures");
                     if (textures == null || textures.size() == 0)
                         continue;
+
                     npcInfo.getProfile().getProperties().clear();
                     for (String key : playerProfile.getProperties().keySet()) {
                         npcInfo.getProfile().getProperties().putAll(key,
@@ -162,6 +168,7 @@ public class ProtocolLibListener implements Listener {
                     }
                     changed = true;
                 }
+
                 if (changed) {
                     event.getPacket().getPlayerInfoDataLists().write(0, list);
                 }
