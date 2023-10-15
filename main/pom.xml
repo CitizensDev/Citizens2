@@ -43,10 +43,6 @@
             <id>AlessioDP</id>
             <url>https://repo.alessiodp.com/releases/</url>
         </repository>
-        <repository>
-            <id>viaversion-repo</id>
-            <url>https://repo.viaversion.com</url>
-        </repository> 
     </repositories>
     <dependencies>
         <dependency>
@@ -79,13 +75,7 @@
             <artifactId>ProtocolLib</artifactId>
             <version>5.0.0</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.viaversion</groupId>
-            <artifactId>viaversion-api</artifactId>
-            <version>4.7.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>ch.ethz.globis.phtree</groupId>
             <artifactId>phtree</artifactId>
