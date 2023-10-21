@@ -61,7 +61,7 @@ public class WaypointTriggerRegistry implements Persister<WaypointTrigger> {
 
     static {
         addTrigger("animation", AnimationTrigger.class, AnimationTriggerPrompt.class);
-        addTrigger("command", AnimationTrigger.class, CommandTriggerPrompt.class);
+        addTrigger("command", CommandTrigger.class, CommandTriggerPrompt.class);
         addTrigger("chat", ChatTrigger.class, ChatTriggerPrompt.class);
         addTrigger("delay", DelayTrigger.class, DelayTriggerPrompt.class);
         addTrigger("teleport", TeleportTrigger.class, TeleportTriggerPrompt.class);
