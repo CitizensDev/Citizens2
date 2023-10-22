@@ -72,6 +72,7 @@ public class WardenTrait extends Trait {
                 trait.addAnger(entity, anger);
             }
         }
+
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
         } else {

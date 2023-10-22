@@ -408,6 +408,7 @@ public class NPCCommands {
         } else if (Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble() > 0) {
             cfg.radius(Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble());
         }
+
         BlockBreaker breaker = npc.getBlockBreaker(args.getSenderTargetBlockLocation().getBlock(), cfg);
         npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
     }
@@ -733,6 +734,7 @@ public class NPCCommands {
         if (args.hasFlag('t') || temporaryTicks != null) {
             registry = temporaryRegistry;
         }
+
         if (item != null) {
             ItemStack stack = Util.parseItemStack(null, item);
             npc = registry.createNPCUsingItem(type, name, stack);

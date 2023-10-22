@@ -176,6 +176,8 @@ public class Settings {
         FOLLOW_ACROSS_WORLDS("Whether /npc follow will teleport across worlds to follow its target",
                 "npc.follow.teleport-across-worlds", false),
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "yellow"),
+        HOLOGRAM_ALWAYS_UPDATE_POSITION("Whether to always update the hologram position every tick.",
+                "npc.hologram.always-update-position", false),
         HOLOGRAM_UPDATE_RATE("How often to update hologram names (including placeholders)",
                 "npc.hologram.update-rate-ticks", "npc.hologram.update-rate", "1s"),
         INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY("How long to wait before sending skins to joined players",
@@ -200,7 +202,7 @@ public class Settings {
                 "npc.pathfinding.maximum-new-pathfinder-iterations", "npc.pathfinding.new-finder.maximum-iterations",
                 768),
         MAXIMUM_VISITED_NODES("The maximum number of blocks to check when MINECRAFT pathfinding",
-                "npc.pathfinding.maximum-visited-nodes", "npc.pathfinding.maximum-visited-blocks", 768),
+                "npc.pathfinding.maximum-visited-nodes", "npc.pathfinding.maximum-visited-blocks", 1024),
         MESSAGE_COLOUR("general.color-scheme.message", "<green>"),
         NEW_PATHFINDER_CHECK_BOUNDING_BOXES(
                 "Whether to check bounding boxes when pathfinding such as between fences, inside doors, or other half-blocks",

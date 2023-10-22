@@ -302,24 +302,31 @@ public class HologramTrait extends Trait {
             }
         }
 
-        boolean updatePosition = currentLoc.getWorld() != npc.getStoredLocation().getWorld()
-                || currentLoc.distance(npc.getStoredLocation()) >= 0.001 || lastNameplateVisible != nameplateVisible
-                || Math.abs(lastEntityHeight - getEntityHeight()) >= 0.05;
+        Location npcLoc = npc.getStoredLocation();
+        boolean updatePosition = Setting.HOLOGRAM_ALWAYS_UPDATE_POSITION.asBoolean()
+                || currentLoc.getWorld() != npcLoc.getWorld() || currentLoc.distance(npcLoc) >= 0.001
+                || lastNameplateVisible != nameplateVisible || Math.abs(lastEntityHeight - getEntityHeight()) >= 0.05;
         boolean updateName = false;
+
         if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
             t = 0;
             updateName = true;
         }
+
         lastNameplateVisible = nameplateVisible;
 
         if (updatePosition) {
-            currentLoc = npc.getStoredLocation();
+            currentLoc = npcLoc.clone();
             lastEntityHeight = getEntityHeight();
         }
 
         if (nameLine != null && nameLine.hologram.isSpawned()) {
             if (updatePosition && !useDisplayEntities) {
-                nameLine.hologram.teleport(currentLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
+                nameLine.hologram.teleport(npcLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
+            }
+
+            if (useDisplayEntities && nameLine.hologram.getEntity().getVehicle() == null) {
+                NMS.updateMountedInteractionHeight(nameLine.hologram.getEntity(), npc.getEntity(), 0);
             }
 
             if (updateName) {
@@ -330,19 +337,25 @@ public class HologramTrait extends Trait {
         for (int i = 0; i < lines.size(); i++) {
             HologramLine line = lines.get(i);
             NPC hologramNPC = line.hologram;
+
             if (hologramNPC == null || !hologramNPC.isSpawned())
                 continue;
-
-            if (updatePosition && !useDisplayEntities) {
-                Location tp = currentLoc.clone().add(0, lastEntityHeight
-                        + (direction == HologramDirection.BOTTOM_UP ? getHeight(i) : getMaxHeight() - getHeight(i)), 0);
-                hologramNPC.teleport(tp, TeleportCause.PLUGIN);
-            }
 
             if (line.ticks > 0 && --line.ticks == 0) {
                 line.removeNPC();
                 lines.remove(i--);
                 continue;
+            }
+
+            if (updatePosition && !useDisplayEntities) {
+                Location tp = npcLoc.clone().add(0, lastEntityHeight
+                        + (direction == HologramDirection.BOTTOM_UP ? getHeight(i) : getMaxHeight() - getHeight(i)), 0);
+                hologramNPC.teleport(tp, TeleportCause.PLUGIN);
+            }
+
+            if (useDisplayEntities && hologramNPC.getEntity().getVehicle() == null) {
+                NMS.updateMountedInteractionHeight(hologramNPC.getEntity(), npc.getEntity(),
+                        (direction == HologramDirection.BOTTOM_UP ? getHeight(i) : getMaxHeight() - getHeight(i)));
             }
 
             String text = line.text;
@@ -432,6 +445,7 @@ public class HologramTrait extends Trait {
         } else if (type.equalsIgnoreCase("bottom")) {
             lines.get(idx).mb = margin;
         }
+
         reloadLineHolograms();
     }
 

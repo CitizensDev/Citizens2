@@ -143,6 +143,7 @@ public class CitizensNPC extends AbstractNPC {
     public void faceLocation(Location location) {
         if (!isSpawned())
             return;
+
         Util.faceLocation(getEntity(), location);
     }
 
@@ -191,7 +192,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public void load(final DataKey root) {
         super.load(root);
-        // Spawn the NPC
+
         CurrentLocation spawnLocation = getOrAddTrait(CurrentLocation.class);
         if (getOrAddTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
             if (spawnLocation.getLocation() != null) {
@@ -224,8 +225,10 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public void save(DataKey root) {
         super.save(root);
+
         if (!data().get(NPC.Metadata.SHOULD_SAVE, true))
             return;
+
         navigator.save(root.getRelative("navigator"));
     }
 
@@ -252,10 +255,12 @@ public class CitizensNPC extends AbstractNPC {
             prev = getEntity().getLocation();
             despawn(DespawnReason.PENDING_RESPAWN);
         }
+
         PacketNPC packet = getTraitNullable(PacketNPC.class);
         if (packet != null) {
             newController = packet.wrap(newController);
         }
+
         entityController = newController;
         if (wasSpawned) {
             spawn(prev, SpawnReason.RESPAWN);
@@ -457,14 +462,17 @@ public class CitizensNPC extends AbstractNPC {
     public void teleport(Location location, TeleportCause reason) {
         if (!isSpawned())
             return;
+
         if (hasTrait(SitTrait.class) && getOrAddTrait(SitTrait.class).isSitting()) {
             getOrAddTrait(SitTrait.class).setSitting(location);
         }
+
         Location npcLoc = getEntity().getLocation();
         if (isSpawned() && npcLoc.getWorld() == location.getWorld()) {
             if (npcLoc.distance(location) < 1) {
                 NMS.setHeadYaw(getEntity(), location.getYaw());
             }
+
             if (getEntity().getType() == EntityType.PLAYER && !getEntity().isInsideVehicle()
                     && NMS.getPassengers(getEntity()).size() == 0) {
                 NPCTeleportEvent event = new NPCTeleportEvent(this, location);
@@ -475,6 +483,7 @@ public class CitizensNPC extends AbstractNPC {
                 return;
             }
         }
+
         super.teleport(location, reason);
     }
 
@@ -602,14 +611,20 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private void updateFlyableState() {
+        if (!CitizensAPI.hasImplementation())
+            return;
+
         EntityType type = isSpawned() ? getEntity().getType() : getOrAddTrait(MobType.class).getType();
         if (type == null)
             return;
+
         if (!Util.isAlwaysFlyable(type))
             return;
+
         if (!data().has(NPC.Metadata.FLYABLE)) {
             data().setPersistent(NPC.Metadata.FLYABLE, true);
         }
+
         if (!hasTrait(Gravity.class)) {
             getOrAddTrait(Gravity.class).setEnabled(true);
         }
@@ -624,8 +639,10 @@ public class CitizensNPC extends AbstractNPC {
     private void updateUsingItemState(Player player) {
         boolean useItem = data().get(NPC.Metadata.USING_HELD_ITEM, false),
                 offhand = data().get(NPC.Metadata.USING_OFFHAND_ITEM, false);
+
         if (!SUPPORT_USE_ITEM)
             return;
+
         try {
             if (useItem) {
                 NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);

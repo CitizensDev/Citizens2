@@ -17,9 +17,12 @@ import net.citizensnpcs.util.PlayerAnimation;
 
 public class AnimationTrigger implements WaypointTrigger {
     @Persist(required = true)
-    private final List<PlayerAnimation> animations;
+    private List<PlayerAnimation> animations = Lists.newArrayList();
     @Persist
-    private final Location at;
+    private Location at;
+
+    public AnimationTrigger() {
+    }
 
     public AnimationTrigger(Collection<PlayerAnimation> collection, Location loc) {
         animations = Lists.newArrayList(collection);
@@ -35,9 +38,11 @@ public class AnimationTrigger implements WaypointTrigger {
     public void onWaypointReached(NPC npc, Location waypoint) {
         if (npc.getEntity().getType() != EntityType.PLAYER)
             return;
+
         if (at != null) {
             npc.teleport(at, TeleportCause.PLUGIN);
         }
+
         Player player = (Player) npc.getEntity();
         for (PlayerAnimation animation : animations) {
             animation.play(player);

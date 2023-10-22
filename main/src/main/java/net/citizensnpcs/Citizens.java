@@ -82,6 +82,7 @@ import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.util.Messages;
@@ -560,6 +561,16 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 if (npcRegistry == null)
                     return 0;
                 return Iterables.size(npcRegistry);
+            }));
+            metrics.addCustomChart(new Metrics.AdvancedPie("hologram_direction", () -> {
+                Map<String, Integer> res = Maps.newHashMap();
+                for (NPC npc : npcRegistry) {
+                    HologramTrait hg = npc.getTraitNullable(HologramTrait.class);
+                    if (hg != null) {
+                        res.put(hg.getDirection().name(), res.getOrDefault(hg.getDirection().name(), 0) + 1);
+                    }
+                }
+                return res;
             }));
             metrics.addCustomChart(new Metrics.AdvancedPie("traits", () -> {
                 Map<String, Integer> res = Maps.newHashMap();

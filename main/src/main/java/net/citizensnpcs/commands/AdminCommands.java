@@ -51,6 +51,7 @@ public class AdminCommands {
                 return;
             }
         }
+
         Messaging.sendTr(sender, Messages.CITIZENS_RELOADING);
         try {
             plugin.reload();

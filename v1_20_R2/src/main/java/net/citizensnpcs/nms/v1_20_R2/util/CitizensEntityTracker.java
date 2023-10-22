@@ -101,6 +101,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
             if (REQUIRES_SYNC == null) {
                 REQUIRES_SYNC = !Bukkit.isPrimaryThread();
             }
+
             boolean cancelled = Util.callPossiblySync(() -> {
                 NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
                 try {
@@ -109,8 +110,10 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                     REQUIRES_SYNC = true;
                     throw e;
                 }
+
                 if (event.isCancelled())
                     return true;
+
                 Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
                 if (TRACKING_RANGE_SETTER != null && trackingRange != null
                         && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
@@ -129,15 +132,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         }
 
         super.updatePlayer(entityplayer);
-    }
-
-    private static int getUpdateInterval(TrackedEntity entry) {
-        try {
-            return (int) UPDATE_INTERVAL.invoke(TRACKER_ENTRY.invoke(entry));
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
 
     private static boolean getTrackDelta(TrackedEntity entry) {
@@ -167,13 +161,22 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         return 0;
     }
 
-    private static final MethodHandle UPDATE_INTERVAL = NMS.getGetter(ServerEntity.class, "h");
-    private static final MethodHandle TRACK_DELTA = NMS.getGetter(ServerEntity.class, "i");
+    private static int getUpdateInterval(TrackedEntity entry) {
+        try {
+            return (int) UPDATE_INTERVAL.invoke(TRACKER_ENTRY.invoke(entry));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     private static volatile Boolean REQUIRES_SYNC;
+    private static final MethodHandle TRACK_DELTA = NMS.getGetter(ServerEntity.class, "i");
     private static final MethodHandle TRACKER = NMS.getFirstGetter(TrackedEntity.class, Entity.class);
     private static final MethodHandle TRACKER_ENTRY = NMS.getFirstGetter(TrackedEntity.class, ServerEntity.class);
     private static final MethodHandle TRACKING_RANGE = NMS.getFirstGetter(TrackedEntity.class, int.class);
     private static final MethodHandle TRACKING_RANGE_SETTER = NMS.getFirstFinalSetter(TrackedEntity.class, int.class);
     private static final MethodHandle TRACKING_SET_GETTER = NMS.getFirstGetter(TrackedEntity.class, Set.class);
     private static final MethodHandle TRACKING_SET_SETTER = NMS.getFirstFinalSetter(TrackedEntity.class, Set.class);
+    private static final MethodHandle UPDATE_INTERVAL = NMS.getGetter(ServerEntity.class, "h");
 }

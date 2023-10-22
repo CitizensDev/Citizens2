@@ -1788,7 +1788,7 @@ public class NMSImpl implements NMSBridge {
     public void updateMountedInteractionHeight(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity mount,
             double offset) {
         Interaction handle = (Interaction) getHandle(entity);
-        offset += -0.5 + getHandle(mount).getDimensions(Pose.SITTING).height * 0.75;
+        offset += handle.getMyRidingOffset(getHandle(mount));
         ((org.bukkit.entity.Interaction) entity).setInteractionHeight((float) offset);
         mount.addPassenger(entity);
         handle.setPose(Pose.SNIFFING);
@@ -2222,10 +2222,6 @@ public class NMSImpl implements NMSBridge {
         return toSend;
     }
 
-    public static EntityDataAccessor<Integer> getRabbitTypeField() {
-        return RABBIT_TYPE_DATAWATCHER;
-    }
-
     public static EntityDimensions getSize(Entity entity) {
         try {
             return (EntityDimensions) SIZE_FIELD_GETTER.invoke(entity);
@@ -2576,7 +2572,7 @@ public class NMSImpl implements NMSBridge {
             VecDeltaCodec.class);
     private static final MethodHandle PUFFERFISH_DEFLATE = NMS.getSetter(Pufferfish.class, "bU");
     private static final MethodHandle PUFFERFISH_INFLATE = NMS.getSetter(Pufferfish.class, "bT");
-    private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
+    public static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SERVER_ENTITY_GETTER = NMS.getFirstGetter(TrackedEntity.class,
             ServerEntity.class);
