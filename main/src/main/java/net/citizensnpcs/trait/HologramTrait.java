@@ -38,6 +38,7 @@ import net.citizensnpcs.util.Util;
 /**
  * Persists a hologram attached to the NPC.
  */
+// TODO: refactor this class and remove HologramDirection
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
     private Location currentLoc;
@@ -326,7 +327,7 @@ public class HologramTrait extends Trait {
             }
 
             if (useDisplayEntities && nameLine.hologram.getEntity().getVehicle() == null) {
-                NMS.updateMountedInteractionHeight(nameLine.hologram.getEntity(), npc.getEntity(), 0);
+                npc.getEntity().addPassenger(nameLine.hologram.getEntity());
             }
 
             if (updateName) {
@@ -354,8 +355,7 @@ public class HologramTrait extends Trait {
             }
 
             if (useDisplayEntities && hologramNPC.getEntity().getVehicle() == null) {
-                NMS.updateMountedInteractionHeight(hologramNPC.getEntity(), npc.getEntity(),
-                        (direction == HologramDirection.BOTTOM_UP ? getHeight(i) : getMaxHeight() - getHeight(i)));
+                npc.getEntity().addPassenger(hologramNPC.getEntity());
             }
 
             String text = line.text;
