@@ -999,7 +999,7 @@ public class NMSImpl implements NMSBridge {
         server.getTracker().trackedEntities.a(entity.getEntityId(), replace);
         if (TRACKED_ENTITY_SET != null) {
             try {
-                Set<Object> set = (Set<Object>) TRACKED_ENTITY_SET.get(server.getTracker());
+                Collection<Object> set = (Collection<Object>) TRACKED_ENTITY_SET.get(server.getTracker());
                 set.remove(entry);
                 set.add(replace);
             } catch (IllegalArgumentException e) {

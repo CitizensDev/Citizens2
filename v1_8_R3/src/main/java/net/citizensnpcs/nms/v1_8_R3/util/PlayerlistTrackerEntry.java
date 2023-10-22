@@ -45,8 +45,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                     () -> NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new PacketPlayOutAnimation(tracker, 0)),
                     1);
         }
+
         if (!Setting.DISABLE_TABLIST.asBoolean())
             return;
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
