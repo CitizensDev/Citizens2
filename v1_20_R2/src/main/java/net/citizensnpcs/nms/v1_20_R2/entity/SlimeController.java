@@ -16,7 +16,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -48,7 +47,6 @@ public class SlimeController extends MobEntityController {
 
     public static class EntitySlimeNPC extends Slime implements NPCHolder {
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
 
         public EntitySlimeNPC(EntityType<? extends Slime> types, Level level) {
@@ -67,17 +65,17 @@ public class SlimeController extends MobEntityController {
 
         @Override
         protected boolean canRide(Entity entity) {
-            if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart)) {
+            if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart))
                 return !npc.isProtected();
-            }
+
             return super.canRide(entity);
         }
 
         @Override
         public boolean causeFallDamage(float f, float f1, DamageSource damagesource) {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.causeFallDamage(f, f1, damagesource);
-            }
+
             return false;
         }
 

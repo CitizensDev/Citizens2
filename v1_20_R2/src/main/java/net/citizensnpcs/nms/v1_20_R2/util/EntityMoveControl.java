@@ -54,10 +54,6 @@ public class EntityMoveControl extends MoveControl {
         return this.moving;
     }
 
-    protected int jumpTicks() {
-        return new Random().nextInt(20) + 10;
-    }
-
     @Override
     protected float rotlerp(float f, float f1, float f2) {
         float f3 = Mth.wrapDegrees(f1 - f);
@@ -85,42 +81,42 @@ public class EntityMoveControl extends MoveControl {
         this.moving = true;
     }
 
-    private boolean shouldJump() {
-        if (!(this.entity instanceof Slime))
-            return false;
-
-        if (this.jumpTicks-- <= 0)
-            return true;
-
-        return false;
-    }
-
     @Override
     public void tick() {
         this.entity.zza = 0;
-        if (this.moving) {
-            this.moving = false;
-            double dX = this.tx - this.entity.getX();
-            double dZ = this.tz - this.entity.getZ();
-            double dY = this.ty - this.entity.getY();
-            double dXZ = Math.sqrt(dX * dX + dZ * dZ);
-            if (Math.abs(dY) < 1.0 && dXZ < 0.01) {
-                // this.entity.zza = 0.0F;
-                return;
-            }
-            if (dXZ > 0.4) {
-                float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
-                this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
-                NMS.setHeadYaw(entity.getBukkitEntity(), this.entity.getYRot());
-            }
-            float movement = (float) (this.speedMod * this.entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue());
-            this.entity.setSpeed(movement);
-            this.entity.zza = movement;
-            if (shouldJump() || (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 0.4D)) {
-                this.jumpTicks = jumpTicks();
+        if (!this.moving)
+            return;
+
+        this.moving = false;
+        double dX = this.tx - this.entity.getX();
+        double dZ = this.tz - this.entity.getZ();
+        double dY = this.ty - this.entity.getY();
+        double dXZ = Math.sqrt(dX * dX + dZ * dZ);
+        if (Math.abs(dY) < 1.0 && dXZ < 0.01) {
+            // this.entity.zza = 0.0F;
+            return;
+        }
+
+        if (dXZ > 0.4) {
+            float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
+            this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
+            NMS.setHeadYaw(entity.getBukkitEntity(), this.entity.getYRot());
+        }
+
+        float movement = (float) (this.speedMod * this.entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue());
+        this.entity.setSpeed(movement);
+        this.entity.zza = movement;
+        if (entity instanceof Slime && jumpTicks-- <= 0) {
+            this.jumpTicks = new Random().nextInt(20) + 10;
+            if (((Slime) entity).isAggressive()) {
                 this.jumpTicks /= 3;
-                entity.setJumping(true);
             }
+            ((Slime) entity).getJumpControl().jump();
+        } else if (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 0.4D) {
+            if (entity instanceof Mob) {
+                ((Mob) entity).getJumpControl().jump();
+            }
+            entity.setJumping(true);
         }
     }
 }

@@ -53,9 +53,13 @@ public class EntityMoveControl extends ControllerMove {
             float movement = (float) (this.e * speed.getValue());
             this.a.q(movement);
             this.a.aT = movement;
-            if (shouldSlimeJump() || (d2 >= NMS.getStepHeight(a.getBukkitEntity()) && (d0 * d0 + d1 * d1) < 1.0D)) {
-                this.h = cg();
-                this.h /= 3;
+            if (a instanceof EntitySlime && h-- <= 0) {
+                this.h = new Random().nextInt(20) + 10;
+                if (((EntitySlime) a).isAggressive()) {
+                    this.h /= 3;
+                }
+                ai.getJumpControl().jump();
+            } else if (d2 >= NMS.getStepHeight(a.getBukkitEntity()) && (d0 * d0 + d1 * d1) < 1.0D) {
                 ai.getJumpControl().jump();
             }
         }
@@ -115,15 +119,5 @@ public class EntityMoveControl extends ControllerMove {
     @Override
     public double f() {
         return this.d;
-    }
-
-    private boolean shouldSlimeJump() {
-        if (!(this.a instanceof EntitySlime)) {
-            return false;
-        }
-        if (this.h-- <= 0) {
-            return true;
-        }
-        return false;
     }
 }

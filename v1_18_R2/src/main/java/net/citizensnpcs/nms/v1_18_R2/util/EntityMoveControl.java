@@ -85,16 +85,6 @@ public class EntityMoveControl extends MoveControl {
         this.moving = true;
     }
 
-    private boolean shouldJump() {
-        if (!(this.entity instanceof Slime)) {
-            return false;
-        }
-        if (this.jumpTicks-- <= 0) {
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void tick() {
         this.entity.zza = 0;
@@ -116,9 +106,16 @@ public class EntityMoveControl extends MoveControl {
             float movement = (float) (this.speedMod * this.entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue());
             this.entity.setSpeed(movement);
             this.entity.zza = movement;
-            if (shouldJump() || (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 0.4D)) {
-                this.jumpTicks = jumpTicks();
-                this.jumpTicks /= 3;
+            if (entity instanceof Slime && jumpTicks-- <= 0) {
+                this.jumpTicks = new Random().nextInt(20) + 10;
+                if (((Slime) entity).isAggressive()) {
+                    this.jumpTicks /= 3;
+                }
+                ((Slime) entity).getJumpControl().jump();
+            } else if (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 0.4D) {
+                if (entity instanceof Mob) {
+                    ((Mob) entity).getJumpControl().jump();
+                }
                 entity.setJumping(true);
             }
         }

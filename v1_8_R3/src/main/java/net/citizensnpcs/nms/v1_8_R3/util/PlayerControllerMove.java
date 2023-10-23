@@ -86,9 +86,11 @@ public class PlayerControllerMove extends ControllerMove {
         float movement = (float) (this.e * speed.getValue());
         this.a.k(movement);
         this.a.ba = movement;
-        if (shouldSlimeJump() || ((dY >= NMS.getStepHeight(a.getBukkitEntity())) && dXZ < 0.4)) {
-            this.h = cg();
+        if (a instanceof EntitySlime && h-- <= 0) {
+            this.h = new Random().nextInt(20) + 10;
             this.h /= 3;
+            ((EntityInsentient) this.a).getControllerJump().a();
+        } else if (dY >= NMS.getStepHeight(a.getBukkitEntity()) && (dXZ) < 0.4D) {
             if (this.a instanceof EntityHumanNPC) {
                 ((EntityHumanNPC) this.a).getControllerJump().a();
             } else {
@@ -114,15 +116,5 @@ public class PlayerControllerMove extends ControllerMove {
     @Override
     public double f() {
         return this.d;
-    }
-
-    private boolean shouldSlimeJump() {
-        if (!(this.a instanceof EntitySlime)) {
-            return false;
-        }
-        if (this.h-- <= 0) {
-            return true;
-        }
-        return false;
     }
 }
