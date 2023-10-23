@@ -252,32 +252,37 @@ public class CommandContext {
     }
 
     public Location getSenderLocation() throws CommandException {
-        if (location != null || sender == null)
+        if (location != null)
             return location;
 
-        if (hasValueFlag("location"))
-            return parseLocation(location, getFlag("location"));
-
+        Location base = null;
         if (sender instanceof Player) {
-            location = ((Player) sender).getLocation();
+            base = ((Player) sender).getLocation();
         } else if (sender instanceof BlockCommandSender) {
-            location = ((BlockCommandSender) sender).getBlock().getLocation();
+            base = ((BlockCommandSender) sender).getBlock().getLocation();
         }
-        return location;
+
+        if (hasValueFlag("location"))
+            return location = parseLocation(base, getFlag("location"));
+
+        return location = base;
     }
 
     public Location getSenderTargetBlockLocation() throws CommandException {
-        if (sender == null)
+        if (location != null)
             return location;
-        if (hasValueFlag("location")) {
-            return parseLocation(location, getFlag("location"));
-        }
+
+        Location base = null;
         if (sender instanceof Player) {
-            location = ((Player) sender).getTargetBlock((java.util.Set<org.bukkit.Material>) null, 50).getLocation();
+            base = ((Player) sender).getTargetBlock((java.util.Set<org.bukkit.Material>) null, 50).getLocation();
         } else if (sender instanceof BlockCommandSender) {
-            location = ((BlockCommandSender) sender).getBlock().getLocation();
+            base = ((BlockCommandSender) sender).getBlock().getLocation();
         }
-        return location;
+
+        if (hasValueFlag("location"))
+            return location = parseLocation(base, getFlag("location"));
+
+        return location = base;
     }
 
     public String[] getSlice(int index) {
@@ -377,18 +382,21 @@ public class CommandContext {
                 case 6:
                     if (denizen) {
                         worldName = parts[5].replaceFirst("w@", "");
-                    } else
+                    } else {
                         pitch = Float.parseFloat(parts[5]);
+                    }
                 case 5:
                     if (denizen) {
                         pitch = Float.parseFloat(parts[4]);
-                    } else
+                    } else {
                         yaw = Float.parseFloat(parts[4]);
+                    }
                 case 4:
                     if (denizen && parts.length > 4) {
                         yaw = Float.parseFloat(parts[3]);
-                    } else
+                    } else {
                         worldName = parts[3].replaceFirst("w@", "");
+                    }
                 case 3:
                     x = Double.parseDouble(parts[0]);
                     y = Double.parseDouble(parts[1]);

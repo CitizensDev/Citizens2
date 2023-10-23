@@ -35,7 +35,6 @@ public class StatusMapper extends BehaviorGoalAdapter {
 
     public static Behavior singleUse(Behavior base) {
         return new Behavior() {
-
             @Override
             public void reset() {
                 base.reset();
