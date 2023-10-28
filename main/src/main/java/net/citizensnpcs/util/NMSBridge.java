@@ -48,7 +48,7 @@ import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
 
 public interface NMSBridge {
     default void activate(Entity entity) {
-    };
+    }
 
     public boolean addEntityToWorld(Entity entity, SpawnReason custom);
 
@@ -60,9 +60,9 @@ public interface NMSBridge {
 
     public default Iterable<Object> createBundlePacket(List<Object> packets) {
         return packets;
-    }
+    };
 
-    public EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg);;
+    public EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg);
 
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable;
 
@@ -82,9 +82,9 @@ public interface NMSBridge {
 
     public float getHeadYaw(Entity entity);
 
-    public double getHeight(Entity entity);
+    public double getHeight(Entity entity);;
 
-    public float getHorizontalMovement(Entity entity);;
+    public float getHorizontalMovement(Entity entity);
 
     public CompoundTag getNBT(ItemStack item);
 
@@ -147,9 +147,9 @@ public interface NMSBridge {
 
     public Runnable playerTicker(Player entity);
 
-    public void registerEntityClass(Class<?> clazz);
+    public void registerEntityClass(Class<?> clazz);;
 
-    public void remove(Entity entity);;
+    public void remove(Entity entity);
 
     public void removeFromServerPlayerList(Player player);
 
@@ -165,7 +165,7 @@ public interface NMSBridge {
 
     public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);
 
-    public void sendTabListRemove(Player recipient, Player listPlayer);
+    public void sendTabListRemove(Player recipient, Player listPlayer);;
 
     public void sendTeamPacket(Player recipient, Team team, int mode);;
 
@@ -174,11 +174,11 @@ public interface NMSBridge {
 
     public default void setAllayDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
-    };
+    }
 
-    public void setBodyYaw(Entity entity, float yaw);
+    public void setBodyYaw(Entity entity, float yaw);;
 
-    public void setBoundingBox(Entity entity, BoundingBox box);;
+    public void setBoundingBox(Entity entity, BoundingBox box);
 
     public default void setCamelPose(Entity entity, CamelPose pose) {
         throw new UnsupportedOperationException();
@@ -245,6 +245,9 @@ public interface NMSBridge {
 
     public void setVerticalMovement(Entity bukkitEntity, double d);
 
+    public default void setWardenPose(Entity entity, Object pose) {
+    }
+
     public void setWitherCharged(Wither wither, boolean charged);
 
     public boolean shouldJump(Entity entity);
@@ -264,5 +267,5 @@ public interface NMSBridge {
 
     public void updateNavigationWorld(Entity entity, World world);
 
-    public void updatePathfindingRange(NPC npc, float pathfindingRange);;
+    public void updatePathfindingRange(NPC npc, float pathfindingRange);
 }

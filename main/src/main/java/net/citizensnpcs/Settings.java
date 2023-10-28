@@ -180,6 +180,7 @@ public class Settings {
                 "npc.hologram.always-update-position", false),
         HOLOGRAM_UPDATE_RATE("How often to update hologram names (including placeholders)",
                 "npc.hologram.update-rate-ticks", "npc.hologram.update-rate", "1s"),
+        HOOK_PROTOCOLLIB("Whether to hook into ProtocolLib", "general.interop.protocollib", true),
         INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY("How long to wait before sending skins to joined players",
                 "npc.skins.player-join-update-delay-ticks", "npc.skins.player-join-update-delay", "1s"),
         KEEP_CHUNKS_LOADED("Whether to keep NPC chunks loaded", "npc.chunks.always-keep-loaded", false),

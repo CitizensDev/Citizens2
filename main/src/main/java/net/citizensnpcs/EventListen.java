@@ -232,6 +232,7 @@ public class EventListen implements Listener {
     public void onChunkUnload(final ChunkUnloadEvent event) {
         if (chunkEventListener != null)
             return;
+
         unloadNPCs(event, Arrays.asList(event.getChunk().getEntities()));
     }
 
@@ -401,6 +402,7 @@ public class EventListen implements Listener {
         ChunkCoord coord = new ChunkCoord(event.getSpawnLocation());
         if (toRespawn.containsEntry(coord, event.getNPC()))
             return;
+
         Messaging.debug("Stored", event.getNPC(), "for respawn from NPCNeedsRespawnEvent");
         toRespawn.put(coord, event.getNPC());
     }

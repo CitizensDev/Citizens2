@@ -74,6 +74,7 @@ public class ProtocolLibListener implements Listener {
                 NPC npc = getNPCFromPacket(event);
                 if (npc == null || !npc.data().has(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER))
                     return;
+
                 Function<Player, String> hvs = npc.data().get(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER);
                 int version = manager.getProtocolVersion(event.getPlayer());
                 PacketContainer packet = event.getPacket();
@@ -81,6 +82,7 @@ public class ProtocolLibListener implements Listener {
                     List<WrappedWatchableObject> wwo = packet.getWatchableCollectionModifier().readSafely(0);
                     if (wwo == null)
                         return;
+
                     boolean delta = false;
                     String text = hvs.apply(event.getPlayer());
                     for (WrappedWatchableObject wo : wwo) {
@@ -94,6 +96,7 @@ public class ProtocolLibListener implements Listener {
                         delta = true;
                         break;
                     }
+
                     if (delta) {
                         packet.getWatchableCollectionModifier().write(0, wwo);
                     }
@@ -101,6 +104,7 @@ public class ProtocolLibListener implements Listener {
                     List<WrappedDataValue> wdvs = packet.getDataValueCollectionModifier().readSafely(0);
                     if (wdvs == null)
                         return;
+
                     boolean delta = false;
                     String text = hvs.apply(event.getPlayer());
                     for (WrappedDataValue wdv : wdvs) {
@@ -109,6 +113,7 @@ public class ProtocolLibListener implements Listener {
                         wdv.setValue(Optional.of(Messaging.minecraftComponentFromRawMessage(text)));
                         break;
                     }
+
                     if (delta) {
                         packet.getDataValueCollectionModifier().write(0, wdvs);
                     }
@@ -138,6 +143,7 @@ public class ProtocolLibListener implements Listener {
                     PlayerInfoData npcInfo = list.get(i);
                     if (npcInfo == null)
                         continue;
+
                     MirrorTrait trait = mirrorTraits.get(npcInfo.getProfile().getUUID());
                     if (trait == null || !trait.isMirroring(event.getPlayer()))
                         continue;
@@ -239,6 +245,7 @@ public class ProtocolLibListener implements Listener {
             Integer id = packet.getIntegers().readSafely(0);
             if (id == null)
                 return null;
+
             entity = manager.getEntityFromID(event.getPlayer().getWorld(), id);
         } catch (FieldAccessException | IllegalArgumentException ex) {
             if (!LOGGED_ERROR) {
@@ -271,6 +278,7 @@ public class ProtocolLibListener implements Listener {
             rotationTraits.put(event.getNPC().getEntity().getEntityId(),
                     event.getNPC().getTraitNullable(RotationTrait.class));
         }
+
         if (event.getNPC().hasTrait(MirrorTrait.class)
                 && event.getNPC().getOrAddTrait(MobType.class).getType() == EntityType.PLAYER) {
             mirrorTraits.put(event.getNPC().getEntity().getUniqueId(),

@@ -1,7 +1,9 @@
 package net.citizensnpcs.nms.v1_19_R3.entity.nonliving;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftBlockDisplay;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.util.Vector;
@@ -30,6 +32,17 @@ import net.minecraft.world.phys.Vec3;
 public class BlockDisplayController extends MobEntityController {
     public BlockDisplayController() {
         super(EntityBlockDisplayNPC.class);
+    }
+
+    @Override
+    protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {
+        final EntityBlockDisplayNPC handle = new EntityBlockDisplayNPC(EntityType.BLOCK_DISPLAY,
+                ((CraftWorld) at.getWorld()).getHandle(), npc);
+        if (npc != null) {
+            ((org.bukkit.entity.BlockDisplay) handle.getBukkitEntity())
+                    .setBlock(npc.getItemProvider().get().getType().createBlockData());
+        }
+        return handle.getBukkitEntity();
     }
 
     @Override

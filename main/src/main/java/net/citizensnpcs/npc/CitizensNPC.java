@@ -343,6 +343,7 @@ public class CitizensNPC extends AbstractNPC {
                 Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded", loaded,
                         "is loaded", Util.isLoaded(at));
             }
+
             // we need to wait before trying to spawn
             entityController.remove();
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));

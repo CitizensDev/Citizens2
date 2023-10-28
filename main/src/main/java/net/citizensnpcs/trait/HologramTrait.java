@@ -43,8 +43,6 @@ import net.citizensnpcs.util.Util;
 public class HologramTrait extends Trait {
     private Location currentLoc;
     private BiFunction<String, Player, String> customHologramSupplier;
-    @Persist
-    private HologramDirection direction = HologramDirection.BOTTOM_UP;
     private double lastEntityHeight = 0;
     private boolean lastNameplateVisible;
     @Persist
@@ -110,10 +108,7 @@ public class HologramTrait extends Trait {
             hologramNPC.addTrait(PacketNPC.class);
         }
 
-        hologramNPC.spawn(currentLoc.clone().add(0,
-                getEntityHeight()
-                        + (direction == HologramDirection.BOTTOM_UP ? heightOffset : getMaxHeight() - heightOffset),
-                0));
+        hologramNPC.spawn(currentLoc.clone().add(0, getEntityHeight() + heightOffset, 0));
 
         if (useDisplayEntities) {
             ((Interaction) hologramNPC.getEntity()).setInteractionWidth(0);
@@ -148,13 +143,6 @@ public class HologramTrait extends Trait {
 
         lastEntityHeight = getEntityHeight();
         return hologramNPC;
-    }
-
-    /**
-     * @return The direction that hologram lines are displayed in
-     */
-    public HologramDirection getDirection() {
-        return direction;
     }
 
     private double getEntityHeight() {
@@ -193,10 +181,6 @@ public class HologramTrait extends Trait {
      */
     public List<String> getLines() {
         return Lists.transform(lines, l -> l.text);
-    }
-
-    private double getMaxHeight() {
-        return (lastNameplateVisible ? getLineHeight() : 0) + getHeight(lines.size() - 1);
     }
 
     /**
@@ -349,8 +333,7 @@ public class HologramTrait extends Trait {
             }
 
             if (updatePosition && !useDisplayEntities) {
-                Location tp = npcLoc.clone().add(0, lastEntityHeight
-                        + (direction == HologramDirection.BOTTOM_UP ? getHeight(i) : getMaxHeight() - getHeight(i)), 0);
+                Location tp = npcLoc.clone().add(0, lastEntityHeight + getHeight(i), 0);
                 hologramNPC.teleport(tp, TeleportCause.PLUGIN);
             }
 
@@ -383,17 +366,6 @@ public class HologramTrait extends Trait {
             root.setDouble("lines." + i + ".margin.bottom", line.mb);
             i++;
         }
-    }
-
-    /**
-     * @see #getDirection()
-     * @param direction
-     *            The new direction
-     */
-    public void setDirection(HologramDirection direction) {
-        this.direction = direction;
-
-        reloadLineHolograms();
     }
 
     /**
@@ -459,11 +431,6 @@ public class HologramTrait extends Trait {
     public void setUseDisplayEntities(boolean use) {
         this.useDisplayEntities = use;
         reloadLineHolograms();
-    }
-
-    public enum HologramDirection {
-        BOTTOM_UP,
-        TOP_DOWN;
     }
 
     private class HologramLine implements Function<Player, String> {

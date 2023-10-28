@@ -461,6 +461,8 @@ public class Messages {
     public static final String WANDER_WAYPOINTS_REMOVED_REGION = "citizens.editors.waypoints.wander.removed-region";
     public static final String WANDER_WAYPOINTS_WORLDGUARD_REGION_NOT_FOUND = "citizens.editors.waypoints.wander.worldguard-region-not-found";
     public static final String WANDER_WAYPOINTS_WORLDGUARD_REGION_SET = "citizens.editors.waypoints.wander.worldguard-region-set";
+    public static final String WARDEN_ANGER_ADDED = "citizens.commands.npc.warden.anger-added";
+    public static final String WARDEN_POSE_SET = "citizens.commands.npc.warden.pose-set";
     public static final String WAYPOINT_ADDED = "citizens.commands.waypoints.add.waypoint-added";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WAYPOINT_REMOVED = "citizens.commands.waypoints.waypoint-removed";

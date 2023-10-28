@@ -852,8 +852,12 @@ public class NMS {
         BRIDGE.setTeamNameTagVisible(team, visible);
     }
 
-    public static void setVerticalMovement(org.bukkit.entity.Entity bukkitEntity, double d) {
+    public static void setVerticalMovement(Entity bukkitEntity, double d) {
         BRIDGE.setVerticalMovement(bukkitEntity, d);
+    }
+
+    public static void setWardenPose(Entity entity, Object pose) {
+        BRIDGE.setWardenPose(entity, pose);
     }
 
     public static void setWitherInvulnerable(Wither wither, boolean charged) {

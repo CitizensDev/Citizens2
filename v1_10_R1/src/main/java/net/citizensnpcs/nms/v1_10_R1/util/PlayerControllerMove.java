@@ -116,5 +116,6 @@ public class PlayerControllerMove extends ControllerMove {
 
     @Override
     public double f() {
-        return thi
+        return this.e;
+    }
 }

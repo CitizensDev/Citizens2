@@ -287,6 +287,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
@@ -332,6 +333,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.inventory.AnvilMenu;
@@ -457,7 +459,7 @@ public class NMSImpl implements NMSBridge {
         }
         EnchantmentHelper.doPostHurtEffects(source, target);
         EnchantmentHelper.doPostDamageEffects(target, source);
-    };
+    }
 
     @Override
     public void cancelMoveDestination(org.bukkit.entity.Entity entity) {
@@ -473,7 +475,7 @@ public class NMSImpl implements NMSBridge {
                 t.printStackTrace();
             }
         }
-    }
+    };
 
     @Override
     @SuppressWarnings("rawtypes")
@@ -1642,6 +1644,44 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setWardenPose(org.bukkit.entity.Entity entity, Object pose) {
+        Warden warden = (Warden) getHandle(entity);
+        if (pose == org.bukkit.entity.Pose.DIGGING) {
+            if (warden.hasPose(Pose.DIGGING))
+                return;
+
+            warden.setPose(Pose.DIGGING);
+            warden.playSound(SoundEvents.WARDEN_DIG, 5.0F, 1.0F);
+        } else if (pose == org.bukkit.entity.Pose.EMERGING) {
+            if (warden.hasPose(Pose.EMERGING))
+                return;
+
+            warden.setPose(Pose.EMERGING);
+            warden.playSound(SoundEvents.WARDEN_EMERGE, 5.0F, 1.0F);
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                if (warden.hasPose(Pose.EMERGING)) {
+                    warden.setPose(Pose.STANDING);
+                }
+            }, 134);
+        } else if (pose == org.bukkit.entity.Pose.ROARING) {
+            if (warden.hasPose(Pose.ROARING))
+                return;
+
+            warden.setPose(Pose.ROARING);
+            warden.playSound(SoundEvents.WARDEN_ROAR, 3.0F, 1.0F);
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                if (warden.hasPose(Pose.ROARING)) {
+                    warden.setPose(Pose.STANDING);
+                }
+            }, 84);
+        } else {
+            warden.setPose(Pose.STANDING);
+        }
+    }
+
+    @Override
     public void setWitherCharged(Wither wither, boolean charged) {
         WitherBoss handle = ((CraftWither) wither).getHandle();
         handle.setInvulnerableTicks(charged ? 20 : 0);
@@ -1672,7 +1712,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void sleep(org.bukkit.entity.Player player, boolean sleeping) {
         getHandle(player).setPose(sleeping ? Pose.SLEEPING : Pose.STANDING);
-    }
+    };
 
     @Override
     public void trySwim(org.bukkit.entity.Entity entity) {
@@ -2197,17 +2237,30 @@ public class NMSImpl implements NMSBridge {
         if (pitch == null) {
             pitch = handle.getXRot();
         }
+
         List<Packet<?>> toSend = Lists.newArrayList();
         if (position) {
             TrackedEntity entry = ((ServerLevel) handle.level()).getChunkSource().chunkMap.entityMap
                     .get(handle.getId());
+            if (entry == null) {
+                Messaging.debug("Null tracker entity for ", from);
+                return Collections.emptyList();
+            }
+
             VecDeltaCodec vdc = null;
             try {
-                vdc = (VecDeltaCodec) POSITION_CODEC_GETTER.invoke((ServerEntity) SERVER_ENTITY_GETTER.invoke(entry));
+                ServerEntity serverEntity = (ServerEntity) SERVER_ENTITY_GETTER.invoke(entry);
+                if (serverEntity == null) {
+                    Messaging.debug("Null server entity for ", from);
+                    return Collections.emptyList();
+                }
+
+                vdc = (VecDeltaCodec) POSITION_CODEC_GETTER.invoke(serverEntity);
             } catch (Throwable e) {
                 e.printStackTrace();
                 return Collections.emptyList();
             }
+
             Vec3 pos = handle.trackingPosition();
             toSend.add(new ClientboundMoveEntityPacket.PosRot(handle.getId(), (short) vdc.encodeX(pos),
                     (short) vdc.encodeY(pos), (short) vdc.encodeZ(pos), (byte) (bodyYaw * 256.0F / 360.0F),

@@ -45,6 +45,7 @@ public class DropsTrait extends Trait {
     public void onNPCDeath(NPCDeathEvent event) {
         if (!event.getNPC().equals(npc))
             return;
+
         Random random = Util.getFastRandom();
         for (ItemDrop drop : drops) {
             if (random.nextDouble() < drop.chance) {

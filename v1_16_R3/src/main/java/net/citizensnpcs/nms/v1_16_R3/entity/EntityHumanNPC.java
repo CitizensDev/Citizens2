@@ -147,9 +147,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     public void die(DamageSource damagesource) {
         // players that die are not normally removed from the world. when the
         // NPC dies, we are done with the instance and it should be removed.
-        if (dead) {
+        if (dead)
             return;
-        }
+
         super.die(damagesource);
         Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
             @Override

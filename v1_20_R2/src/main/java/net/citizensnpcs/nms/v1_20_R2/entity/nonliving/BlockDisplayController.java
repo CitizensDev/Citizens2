@@ -1,7 +1,9 @@
 package net.citizensnpcs.nms.v1_20_R2.entity.nonliving;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftBlockDisplay;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.util.Vector;
@@ -14,7 +16,6 @@ import net.citizensnpcs.nms.v1_20_R2.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
@@ -30,6 +31,17 @@ import net.minecraft.world.phys.Vec3;
 public class BlockDisplayController extends MobEntityController {
     public BlockDisplayController() {
         super(EntityBlockDisplayNPC.class);
+    }
+
+    @Override
+    protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {
+        final EntityBlockDisplayNPC handle = new EntityBlockDisplayNPC(EntityType.BLOCK_DISPLAY,
+                ((CraftWorld) at.getWorld()).getHandle(), npc);
+        if (npc != null) {
+            ((org.bukkit.entity.BlockDisplay) handle.getBukkitEntity())
+                    .setBlock(npc.getItemProvider().get().getType().createBlockData());
+        }
+        return handle.getBukkitEntity();
     }
 
     @Override
@@ -111,6 +123,7 @@ public class BlockDisplayController extends MobEntityController {
         public Entity teleportTo(ServerLevel worldserver, Vec3 location) {
             if (npc == null)
                 return super.teleportTo(worldserver, location);
+
             return NMSImpl.teleportAcrossWorld(this, worldserver, location);
         }
 

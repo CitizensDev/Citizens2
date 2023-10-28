@@ -159,9 +159,9 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     public void die(DamageSource damagesource) {
         // players that die are not normally removed from the world. when the
         // NPC dies, we are done with the instance and it should be removed.
-        if (dead) {
+        if (dead)
             return;
-        }
+
         super.die(damagesource);
         Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
             @Override
@@ -389,11 +389,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         super.tick();
         if (npc == null)
             return;
+
         noclip = isSpectator();
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
         npc.update();
+
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
             AxisAlignedBB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().dead) {
@@ -401,6 +403,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             } else {
                 axisalignedbb = this.getBoundingBox().grow(1.0, 0.5, 1.0);
             }
+
             for (Entity entity : this.world.getEntities(this, axisalignedbb)) {
                 if (!entity.dead) {
                     entity.pickup(this);

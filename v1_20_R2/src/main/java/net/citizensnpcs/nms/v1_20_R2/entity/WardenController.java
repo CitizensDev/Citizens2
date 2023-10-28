@@ -15,7 +15,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -94,6 +93,7 @@ public class WardenController extends MobEntityController {
                 super.customServerAiStep();
                 return;
             }
+
             NMSImpl.updateMinecraftAIState(npc, this);
             npc.update();
             if (npc.useMinecraftAI()) {

@@ -123,7 +123,6 @@ import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
-import net.citizensnpcs.trait.HologramTrait.HologramDirection;
 import net.citizensnpcs.trait.HomeTrait;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.LookClose;
@@ -138,7 +137,6 @@ import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.ScoreboardTrait;
-import net.citizensnpcs.trait.ScriptTrait;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.ShopTrait.NPCShop;
@@ -995,15 +993,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "follow (player name|NPC id) (-p[rotect]) (--margin [margin])",
+            usage = "follow (player name|NPC id) (-p[rotect]) (--margin [margin]) (--enable [boolean])",
             desc = "Toggles NPC following you",
             flags = "p",
             modifiers = { "follow" },
             min = 1,
             max = 2,
             permission = "citizens.npc.follow")
-    public void follow(CommandContext args, CommandSender sender, NPC npc, @Flag("margin") Double margin)
-            throws CommandException {
+    public void follow(CommandContext args, CommandSender sender, NPC npc, @Flag("margin") Double margin,
+            @Flag("enable") Boolean explicit) throws CommandException {
         boolean protect = args.hasFlag('p');
         FollowTrait trait = npc.getOrAddTrait(FollowTrait.class);
         if (margin != null) {
@@ -1035,7 +1033,8 @@ public class NPCCommands {
                     args.getString(1));
             return;
         }
-        boolean following = !trait.isEnabled();
+
+        boolean following = explicit == null ? !trait.isEnabled() : explicit;
         trait.follow(following ? player.getPlayer() : null);
         Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
                 player.getName());
@@ -1129,17 +1128,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] | set [line #] [text] | remove [line #] | clear | lineheight [height] | direction [up|down] | margintop [line #] [margin] | marginbottom [line #] [margin]",
+            usage = "hologram add [text] | set [line #] [text] | remove [line #] | clear | lineheight [height] | margintop [line #] [margin] | marginbottom [line #] [margin]",
             desc = "Controls NPC hologram text",
             modifiers = { "hologram" },
             min = 1,
             max = -1,
             permission = "citizens.npc.hologram")
-    public void hologram(CommandContext args, CommandSender sender, NPC npc,
-            @Arg(
-                    value = 1,
-                    completions = { "add", "set", "remove", "clear", "lineheight", "direction", "margintop",
-                            "marginbottom" }) String action)
+    public void hologram(CommandContext args, CommandSender sender, NPC npc, @Arg(
+            value = 1,
+            completions = { "add", "set", "remove", "clear", "lineheight", "margintop", "marginbottom" }) String action)
             throws CommandException {
         HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
         if (args.argsLength() == 1) {
@@ -1194,11 +1191,6 @@ public class NPCCommands {
         } else if (action.equalsIgnoreCase("lineheight")) {
             trait.setLineHeight(args.getDouble(2));
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_HEIGHT_SET, args.getDouble(2));
-        } else if (action.equalsIgnoreCase("direction")) {
-            HologramDirection direction = args.getString(2).equalsIgnoreCase("up") ? HologramDirection.BOTTOM_UP
-                    : HologramDirection.TOP_DOWN;
-            trait.setDirection(direction);
-            Messaging.sendTr(sender, Messages.HOLOGRAM_DIRECTION_SET, Util.prettyEnum(direction));
         } else if (action.equalsIgnoreCase("margintop")) {
             if (args.argsLength() == 2) {
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
@@ -1385,20 +1377,24 @@ public class NPCCommands {
             throws CommandException {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
         if (!type.name().contains("ITEM_FRAME") && !type.name().contains("ITEM_DISPLAY")
-                && type != EntityType.DROPPED_ITEM && type != EntityType.FALLING_BLOCK)
+                && !type.name().contains("BLOCK_DISPLAY") && type != EntityType.DROPPED_ITEM
+                && type != EntityType.FALLING_BLOCK)
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
         ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand() : new ItemStack(mat, 1);
         if (modify != null) {
             stack = Util.parseItemStack(stack, modify);
         }
+
         if (mat == null && !args.hasFlag('h'))
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
         ItemStack fstack = stack.clone();
         npc.setItemProvider(() -> fstack);
+
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
+
         Messaging.sendTr(sender, Messages.ITEM_SET, Util.prettyEnum(stack.getType()));
     }
 
@@ -2594,34 +2590,6 @@ public class NPCCommands {
         if (head != null) {
             NMS.setHeadYaw(npc.getEntity(), head);
         }
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "script --add [files] --remove [files]",
-            desc = "Controls an NPC's scripts",
-            modifiers = { "script" },
-            min = 1,
-            max = 1,
-            permission = "citizens.npc.script")
-    public void script(CommandContext args, CommandSender sender, NPC npc, @Flag("add") String add,
-            @Flag("remove") String remove) {
-        ScriptTrait trait = npc.getOrAddTrait(ScriptTrait.class);
-        if (add != null) {
-            List<String> files = new ArrayList<String>();
-            for (String file : add.split(",")) {
-                if (!trait.validateFile(file)) {
-                    Messaging.sendErrorTr(sender, Messages.INVALID_SCRIPT_FILE, file);
-                    return;
-                }
-                files.add(file);
-            }
-            trait.addScripts(files);
-        }
-        if (remove != null) {
-            trait.removeScripts(Arrays.asList(remove.split(",")));
-        }
-        Messaging.sendTr(sender, Messages.CURRENT_SCRIPTS, npc.getName(), Joiner.on("]],[[ ").join(trait.getScripts()));
     }
 
     @Command(

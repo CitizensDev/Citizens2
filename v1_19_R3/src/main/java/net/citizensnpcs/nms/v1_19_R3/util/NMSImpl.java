@@ -297,6 +297,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
@@ -342,6 +343,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.inventory.AnvilMenu;
@@ -1663,6 +1665,44 @@ public class NMSImpl implements NMSBridge {
             return;
         LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) bukkitEntity);
         handle.xxa = (float) d;
+    }
+
+    @Override
+    public void setWardenPose(org.bukkit.entity.Entity entity, Object pose) {
+        Warden warden = (Warden) getHandle(entity);
+        if (pose == org.bukkit.entity.Pose.DIGGING) {
+            if (warden.hasPose(Pose.DIGGING))
+                return;
+
+            warden.setPose(Pose.DIGGING);
+            warden.playSound(SoundEvents.WARDEN_DIG, 5.0F, 1.0F);
+        } else if (pose == org.bukkit.entity.Pose.EMERGING) {
+            if (warden.hasPose(Pose.EMERGING))
+                return;
+
+            warden.setPose(Pose.EMERGING);
+            warden.playSound(SoundEvents.WARDEN_EMERGE, 5.0F, 1.0F);
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                if (warden.hasPose(Pose.EMERGING)) {
+                    warden.setPose(Pose.STANDING);
+                }
+            }, 134);
+        } else if (pose == org.bukkit.entity.Pose.ROARING) {
+            if (warden.hasPose(Pose.ROARING))
+                return;
+
+            warden.setPose(Pose.ROARING);
+            warden.playSound(SoundEvents.WARDEN_ROAR, 3.0F, 1.0F);
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                if (warden.hasPose(Pose.ROARING)) {
+                    warden.setPose(Pose.STANDING);
+                }
+            }, 84);
+        } else {
+            warden.setPose(Pose.STANDING);
+        }
     }
 
     @Override
