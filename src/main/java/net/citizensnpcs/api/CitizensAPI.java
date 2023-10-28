@@ -150,13 +150,6 @@ public final class CitizensAPI {
     }
 
     /**
-     * @return The folder used for storing scripts
-     */
-    public static File getScriptFolder() {
-        return getImplementation().getScriptFolder();
-    }
-
-    /**
      * Gets the current implementation's {@link TraitFactory}.
      *
      * @see CitizensPlugin

@@ -11,7 +11,7 @@ import net.citizensnpcs.api.util.Storage;
 public class SimpleNPCDataStore implements NPCDataStore {
     private final Storage root;
 
-    protected SimpleNPCDataStore(Storage saves) {
+    public SimpleNPCDataStore(Storage saves) {
         root = saves;
     }
 

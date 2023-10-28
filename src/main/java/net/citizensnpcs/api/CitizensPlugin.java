@@ -1,7 +1,5 @@
 package net.citizensnpcs.api;
 
-import java.io.File;
-
 import org.bukkit.plugin.Plugin;
 
 import net.citizensnpcs.api.ai.speech.SpeechContext;
@@ -75,11 +73,6 @@ public interface CitizensPlugin extends Plugin {
     public NPCRegistry getNPCRegistry();
 
     public ClassLoader getOwningClassLoader();
-
-    /**
-     * @return The folder for storing scripts
-     */
-    public File getScriptFolder();
 
     /**
      * Gets the TraitFactory.
