@@ -24,6 +24,7 @@ public class PlayerAnimationImpl {
             playDefaultAnimation(player, radius, DEFAULTS.get(animation));
             return;
         }
+
         switch (animation) {
             case HURT:
                 sendPacketNearby(new ClientboundHurtAnimationPacket(player), player, radius);

@@ -14,6 +14,7 @@ import com.google.common.collect.ForwardingSet;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
@@ -86,9 +87,15 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     public void updateLastPlayer(EntityPlayer lastUpdatedPlayer) {
+        final EntityPlayer entityplayer = lastUpdatedPlayer;
+        if (lastUpdatedPlayer != null) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(
+                            new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), entityplayer.getBukkitEntity())));
+        }
         if (tracker.dead || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
-        final EntityPlayer entityplayer = lastUpdatedPlayer;
+
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         lastUpdatedPlayer = null;
         NPC npc = ((NPCHolder) tracker).getNPC();
@@ -97,8 +104,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                     () -> NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new PacketPlayOutAnimation(tracker, 0)),
                     1);
         }
+
         if (!Setting.DISABLE_TABLIST.asBoolean())
             return;
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
                 () -> NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity()),
                 Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
@@ -106,7 +115,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
-        if (!tracker.dead && !isTracked(entityplayer) && tracker instanceof NPCHolder) {
+        if (entityplayer instanceof EntityHumanNPC)
+            return;
+
+        if (!isTracked(entityplayer) && tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
             NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);
@@ -123,9 +135,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                 }
             }
         }
-
-        if (entityplayer instanceof EntityHumanNPC)
-            return;
 
         super.updatePlayer(entityplayer);
     }
@@ -186,15 +195,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     private static Field E = NMS.getField(EntityTrackerEntry.class, "e");
-
     private static Field F = NMS.getField(EntityTrackerEntry.class, "f");
-
     private static Field G = NMS.getField(EntityTrackerEntry.class, "g");
-
     private static Field TRACKER = NMS.getField(EntityTrackerEntry.class, "tracker");
-
     private static MethodHandle TRACKING_MAP_GETTER;
-
     private static MethodHandle TRACKING_MAP_SETTER;
     private static final MethodHandle TRACKING_RANGE_SETTER = NMS.getFirstFinalSetter(EntityTrackerEntry.class,
             int.class);

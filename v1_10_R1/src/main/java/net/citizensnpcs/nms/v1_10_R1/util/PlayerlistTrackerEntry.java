@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_10_R1.entity.EntityHumanNPC;
@@ -27,7 +29,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
-        // prevent updates to NPC "viewers"
         if (entityplayer instanceof EntityHumanNPC)
             return;
         Entity tracker = getTracker(this);
@@ -38,8 +39,12 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             if (event.isCancelled())
                 return;
         }
-        if (tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+
+        super.updatePlayer(entityplayer);
+
+        if (tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
+
         if (entityplayer != tracker && c(entityplayer)) {
             if (!this.trackedPlayers.contains(entityplayer)
                     && ((entityplayer.x().getPlayerChunkMap().a(entityplayer, tracker.ac, tracker.ae))
@@ -51,9 +56,12 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                         return;
                     skinnable.getSkinTracker().updateViewer(entityplayer.getBukkitEntity());
                 }
+
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                        () -> Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(
+                                ((NPCHolder) tracker).getNPC(), entityplayer.getBukkitEntity())));
             }
         }
-        super.updatePlayer(entityplayer);
     }
 
     private static int getE(EntityTrackerEntry entry) {

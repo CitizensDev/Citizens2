@@ -126,6 +126,9 @@ public interface NMSBridge {
 
     public boolean isValid(Entity entity);
 
+    public default void linkTextInteraction(Player player, Entity interaction, Entity mount, double height) {
+    }
+
     public void load(CommandManager commands);
 
     public void look(Entity from, Entity to);
@@ -145,9 +148,9 @@ public interface NMSBridge {
 
     public void playAnimation(PlayerAnimation animation, Player player, int radius);
 
-    public Runnable playerTicker(Player entity);
+    public Runnable playerTicker(Player entity);;
 
-    public void registerEntityClass(Class<?> clazz);;
+    public void registerEntityClass(Class<?> clazz);
 
     public void remove(Entity entity);
 
@@ -163,20 +166,20 @@ public interface NMSBridge {
 
     public boolean sendTabListAdd(Player recipient, Player listPlayer);
 
-    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);
+    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);;
 
     public void sendTabListRemove(Player recipient, Player listPlayer);;
 
     public void sendTeamPacket(Player recipient, Team team, int mode);;
 
     default public void setAggressive(Entity entity, boolean aggro) {
-    };
+    }
 
     public default void setAllayDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
-    }
+    };
 
-    public void setBodyYaw(Entity entity, float yaw);;
+    public void setBodyYaw(Entity entity, float yaw);
 
     public void setBoundingBox(Entity entity, BoundingBox box);
 
@@ -261,9 +264,6 @@ public interface NMSBridge {
     public void trySwim(Entity entity, float power);
 
     public void updateInventoryTitle(Player player, InventoryView view, String newTitle);
-
-    public default void updateMountedInteractionHeight(Entity entity, Entity mount, double height) {
-    }
 
     public void updateNavigationWorld(Entity entity, World world);
 

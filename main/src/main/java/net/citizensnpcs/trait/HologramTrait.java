@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Interaction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -36,9 +35,10 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 /**
- * Persists a hologram attached to the NPC.
+ * Manages a set of <em>holograms</em> attached to the NPC. Holograms are lines of text or items that follow the NPC at
+ * some offset (typically vertically offset).
  */
-// TODO: refactor this class and remove HologramDirection
+// TODO: refactor this class
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
     private Location currentLoc;
@@ -99,6 +99,7 @@ public class HologramTrait extends Trait {
             hologramNPC = registry.createNPC(EntityType.INTERACTION, line);
             hologramNPC.addTrait(new ClickRedirectTrait(npc));
             hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
+            hologramNPC.getOrAddTrait(MountTrait.class).setMountedOn(npc.getUniqueId());
         } else {
             hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
             hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
@@ -109,11 +110,6 @@ public class HologramTrait extends Trait {
         }
 
         hologramNPC.spawn(currentLoc.clone().add(0, getEntityHeight() + heightOffset, 0));
-
-        if (useDisplayEntities) {
-            ((Interaction) hologramNPC.getEntity()).setInteractionWidth(0);
-            NMS.updateMountedInteractionHeight(hologramNPC.getEntity(), npc.getEntity(), heightOffset);
-        }
 
         Matcher itemMatcher = ITEM_MATCHER.matcher(line);
         if (itemMatcher.matches()) {
@@ -211,6 +207,27 @@ public class HologramTrait extends Trait {
 
         for (HologramLine line : lines) {
             line.removeNPC();
+        }
+    }
+
+    public void onHologramSeenByPlayer(NPC hologram, Player player) {
+        if (useDisplayEntities && npc.isSpawned()) {
+            double height = -1;
+            if (nameLine != null && hologram.equals(nameLine.hologram)) {
+                height = 0;
+            } else {
+                for (int i = 0; i < lines.size(); i++) {
+                    if (hologram.equals(lines.get(i).hologram)) {
+                        height = getHeight(i);
+                        break;
+                    }
+                }
+            }
+
+            if (height == -1)
+                return;
+
+            NMS.linkTextInteraction(player, hologram.getEntity(), npc.getEntity(), height);
         }
     }
 

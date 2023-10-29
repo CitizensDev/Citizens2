@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
@@ -34,7 +35,13 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     public void updateLastPlayer() {
-        if ((lastUpdatedPlayer == null) || tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
+        if (lastUpdatedPlayer != null) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(),
+                            lastUpdatedPlayer.getBukkitEntity())));
+        }
+
+        if (lastUpdatedPlayer == null || tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
             return;
         final EntityPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
@@ -56,7 +63,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
     @Override
     public void updatePlayer(final EntityPlayer entityplayer) {
-        // prevent updates to NPC "viewers"
         if (entityplayer instanceof EntityHumanNPC)
             return;
         if (!trackedPlayers.contains(entityplayer) && tracker instanceof NPCHolder) {
@@ -66,6 +72,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             if (event.isCancelled())
                 return;
         }
+
         lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);
         lastUpdatedPlayer = null;

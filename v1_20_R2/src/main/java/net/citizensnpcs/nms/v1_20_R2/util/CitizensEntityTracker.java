@@ -11,6 +11,7 @@ import com.google.common.collect.ForwardingSet;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_20_R2.entity.EntityHumanNPC;
@@ -40,6 +41,9 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                     boolean res = super.add(conn);
                     if (res) {
                         updateLastPlayer(conn.getPlayer());
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                                () -> Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(
+                                        ((NPCHolder) tracker).getNPC(), conn.getPlayer().getBukkitEntity())));
                     }
                     return res;
                 }
@@ -62,6 +66,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         if (tracker.isRemoved() || tracker.getBukkitEntity().getType() != EntityType.PLAYER
                 || !CitizensAPI.hasImplementation())
             return;
+
         final ServerPlayer entityplayer = lastUpdatedPlayer;
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             if (tracker.isRemoved() || entityplayer.isRemoved())
@@ -81,6 +86,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
             }
             return;
         }
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             if (tracker.isRemoved() || entityplayer.isRemoved())
                 return;

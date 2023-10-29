@@ -90,6 +90,7 @@ import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
+import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -109,6 +110,7 @@ import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
@@ -428,6 +430,55 @@ public class EventListen implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onNPCLinkToPlayer(NPCLinkToPlayerEvent event) {
+        NPC npc = event.getNPC();
+        ClickRedirectTrait crt = npc.getTraitNullable(ClickRedirectTrait.class);
+        if (crt != null) {
+            HologramTrait ht = crt.getRedirectNPC().getTraitNullable(HologramTrait.class);
+            if (ht != null) {
+                ht.onHologramSeenByPlayer(npc, event.getPlayer());
+            }
+        }
+
+        /* TODO
+        if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+              onNPCPlayerLinkToPlayer(event);
+        }
+        */
+    }
+
+    private void onNPCPlayerLinkToPlayer(NPCLinkToPlayerEvent event) {
+        Entity tracker = event.getNPC().getEntity();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            if (!tracker.isValid() || !event.getPlayer().isValid())
+                return;
+
+            NMS.sendPositionUpdate(tracker, false, null, null, NMS.getHeadYaw(tracker));
+        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks() + 1);
+
+        boolean resetYaw = event.getNPC().data().get(NPC.Metadata.RESET_YAW_ON_SPAWN,
+                Setting.RESET_YAW_ON_SPAWN.asBoolean());
+        boolean sendTabRemove = NMS.sendTabListAdd(event.getPlayer(), (Player) tracker);
+        if (!sendTabRemove || !Setting.DISABLE_TABLIST.asBoolean()) {
+            if (resetYaw) {
+                // Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                // () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()), 1);
+            }
+            return;
+        }
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            if (!tracker.isValid() || !event.getPlayer().isValid())
+                return;
+
+            NMS.sendTabListRemove(event.getPlayer(), (Player) tracker);
+            if (resetYaw) {
+                // PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer());
+            }
+        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCRemove(NPCRemoveEvent event) {
         toRespawn.values().remove(event.getNPC());
@@ -436,12 +487,14 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onNPCSeenByPlayer(NPCSeenByPlayerEvent event) {
         NPC npc = event.getNPC();
-        if (npc.hasTrait(ClickRedirectTrait.class)) {
-            npc = npc.getOrAddTrait(ClickRedirectTrait.class).getRedirectNPC();
+        ClickRedirectTrait crt = npc.getTraitNullable(ClickRedirectTrait.class);
+        if (crt != null) {
+            npc = crt.getRedirectNPC();
         }
 
-        if (npc.hasTrait(PlayerFilter.class)) {
-            event.setCancelled(npc.getOrAddTrait(PlayerFilter.class).onSeenByPlayer(event.getPlayer()));
+        PlayerFilter pf = npc.getTraitNullable(PlayerFilter.class);
+        if (pf != null) {
+            event.setCancelled(pf.onSeenByPlayer(event.getPlayer()));
         }
     }
 

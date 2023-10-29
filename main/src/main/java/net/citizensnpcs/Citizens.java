@@ -95,7 +95,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private boolean enabled;
-    private Locale locale;
     private LocationLookup locationLookup;
     private final NMSHelper nmsHelper = new NMSHelper() {
         private boolean SUPPORT_OWNER_PROFILE = true;
@@ -548,7 +547,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             }
         }
         Translator.setInstance(new File(getDataFolder(), "lang"), locale);
-        this.locale = locale;
     }
 
     private void startMetrics() {
@@ -559,7 +557,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     return 0;
                 return Iterables.size(npcRegistry);
             }));
-            metrics.addCustomChart(new Metrics.SimplePie("locale", () -> locale.toString()));
+            metrics.addCustomChart(new Metrics.SimplePie("locale", () -> Locale.getDefault().toString()));
             metrics.addCustomChart(new Metrics.AdvancedPie("traits", () -> {
                 Map<String, Integer> res = Maps.newHashMap();
                 for (NPC npc : npcRegistry) {

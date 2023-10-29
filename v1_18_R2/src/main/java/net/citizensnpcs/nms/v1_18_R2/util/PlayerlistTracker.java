@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_18_R2.entity.EntityHumanNPC;
@@ -35,9 +36,16 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
     }
 
     public void updateLastPlayer() {
+        if (lastUpdatedPlayer != null) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    () -> Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(),
+                            lastUpdatedPlayer.getBukkitEntity())));
+        }
+
         if (tracker.isRemoved() || lastUpdatedPlayer == null || tracker.getBukkitEntity().getType() != EntityType.PLAYER
                 || !CitizensAPI.hasImplementation())
             return;
+
         final ServerPlayer entityplayer = lastUpdatedPlayer;
         NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         NPC npc = ((NPCHolder) tracker).getNPC();
@@ -46,8 +54,10 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
                     () -> NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0)),
                     1);
         }
+
         if (!Setting.DISABLE_TABLIST.asBoolean())
             return;
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
         }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
@@ -55,7 +65,10 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
 
     @Override
     public void updatePlayer(final ServerPlayer entityplayer) {
-        if (!tracker.isRemoved() && !seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
+        if (entityplayer instanceof EntityHumanNPC)
+            return;
+
+        if (!seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
             NPC npc = ((NPCHolder) tracker).getNPC();
             if (REQUIRES_SYNC == null) {
                 REQUIRES_SYNC = !Bukkit.isPrimaryThread();
@@ -85,10 +98,12 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
 
             if (cancelled)
                 return;
-        }
 
-        if (entityplayer instanceof EntityHumanNPC)
+            this.lastUpdatedPlayer = entityplayer;
+            super.updatePlayer(entityplayer);
+            Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(npc, entityplayer.getBukkitEntity()));
             return;
+        }
 
         this.lastUpdatedPlayer = entityplayer;
         super.updatePlayer(entityplayer);

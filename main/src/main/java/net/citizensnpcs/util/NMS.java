@@ -635,6 +635,10 @@ public class NMS {
         return BRIDGE.isValid(entity);
     }
 
+    public static void linkTextInteraction(Player player, Entity interaction, Entity mount, double height) {
+        BRIDGE.linkTextInteraction(player, interaction, mount, height);
+    }
+
     public static void load(CommandManager commands) {
         BRIDGE.load(commands);
     }
@@ -889,10 +893,6 @@ public class NMS {
 
     public static void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
         BRIDGE.updateInventoryTitle(player, view, newTitle);
-    }
-
-    public static void updateMountedInteractionHeight(Entity entity, Entity mount, double height) {
-        BRIDGE.updateMountedInteractionHeight(entity, mount, height);
     }
 
     public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {
