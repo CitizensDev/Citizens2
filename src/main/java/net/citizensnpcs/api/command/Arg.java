@@ -26,11 +26,11 @@ public @interface Arg {
     int value();
 
     public static interface CompletionsProvider {
-        public Collection<String> getCompletions(CommandContext args, CommandSender sender);
+        public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc);
 
         public static class Identity implements CompletionsProvider {
             @Override
-            public Collection<String> getCompletions(CommandContext args, CommandSender sender) {
+            public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
                 return Collections.emptyList();
             }
         }

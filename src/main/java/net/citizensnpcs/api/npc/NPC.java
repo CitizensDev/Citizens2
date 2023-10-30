@@ -464,6 +464,7 @@ public interface NPC extends Agent, Cloneable {
          * Whether the NPC is currently glowing.
          */
         GLOWING("glowing", Boolean.class),
+        HOLOGRAM_FOR("citizens-hologram-for-npc", UUID.class),
         @SuppressWarnings("serial")
         HOLOGRAM_LINE_SUPPLIER("hologram-line-supplier", new TypeToken<Function<Player, String>>() {
         }),

@@ -41,6 +41,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Arg.CompletionsProvider;
 import net.citizensnpcs.api.command.Arg.FlagValidator;
 import net.citizensnpcs.api.command.exception.CommandException;
@@ -754,7 +755,8 @@ public class CommandManager implements TabCompleter {
                 return Collections.emptyList();
 
             if (completionsProvider != null)
-                return completionsProvider.getCompletions(args, sender);
+                return completionsProvider.getCompletions(args, sender,
+                        CitizensAPI.getDefaultNPCSelector().getSelected(sender));
 
             if (completions.length > 0)
                 return Arrays.asList(completions);
