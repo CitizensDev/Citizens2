@@ -15,17 +15,16 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutAnimation;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityMetadata;
 
 public class PlayerAnimationImpl {
-    public static void play(PlayerAnimation animation, Player bplayer, int radius) {
+    public static void play(PlayerAnimation animation, Player bplayer, Iterable<Player> to) {
         final EntityPlayer player = (EntityPlayer) NMSImpl.getHandle(bplayer);
         if (DEFAULTS.containsKey(animation)) {
-            playDefaultAnimation(player, radius, DEFAULTS.get(animation));
+            playDefaultAnimation(player, to, DEFAULTS.get(animation));
             return;
         }
         switch (animation) {
             case SNEAK:
                 player.setPose(EntityPose.CROUCHING);
-                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
-                        radius);
+                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), to);
                 break;
             case START_ELYTRA:
                 player.startGliding();
@@ -35,36 +34,34 @@ public class PlayerAnimationImpl {
                 break;
             case START_USE_MAINHAND_ITEM:
                 player.c(EnumHand.MAIN_HAND);
-                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
-                        radius);
+                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), to);
                 break;
             case START_USE_OFFHAND_ITEM:
                 player.c(EnumHand.OFF_HAND);
-                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
-                        radius);
+                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), to);
                 break;
             case STOP_SNEAKING:
                 player.setPose(EntityPose.STANDING);
-                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
-                        radius);
+                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), to);
                 break;
             case STOP_USE_ITEM:
                 player.clearActiveItem();
-                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), player,
-                        radius);
+                sendPacketNearby(new PacketPlayOutEntityMetadata(player.getId(), player.getDataWatcher(), true), to);
                 break;
             default:
                 throw new UnsupportedOperationException();
         }
     }
 
-    protected static void playDefaultAnimation(EntityPlayer player, int radius, int code) {
+    protected static void playDefaultAnimation(EntityPlayer player, Iterable<Player> to, int code) {
         PacketPlayOutAnimation packet = new PacketPlayOutAnimation(player, code);
-        sendPacketNearby(packet, player, radius);
+        sendPacketNearby(packet, to);
     }
 
-    protected static void sendPacketNearby(Packet<?> packet, EntityPlayer player, int radius) {
-        NMSImpl.sendPacketNearby(player.getBukkitEntity(), player.getBukkitEntity().getLocation(), packet, radius);
+    protected static void sendPacketNearby(Packet<?> packet, Iterable<Player> to) {
+        for (Player player : to) {
+            NMSImpl.sendPacket(player, packet);
+        }
     }
 
     private static EnumMap<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);

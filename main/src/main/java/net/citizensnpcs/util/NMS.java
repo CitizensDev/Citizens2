@@ -683,8 +683,8 @@ public class NMS {
         BRIDGE.openHorseScreen(horse, equipper);
     }
 
-    public static void playAnimation(PlayerAnimation animation, Player player, int radius) {
-        BRIDGE.playAnimation(animation, player, radius);
+    public static void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to) {
+        BRIDGE.playAnimation(animation, player, to);
     }
 
     public static Runnable playerTicker(Player entity) {

@@ -207,8 +207,8 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean requiresNameHologram() {
-        return super.requiresNameHologram() || (getEntityType() != EntityType.ARMOR_STAND
-                && !getEntityType().name().equals("TEXT_DISPLAY") && Setting.ALWAYS_USE_NAME_HOLOGRAM.asBoolean());
+        return super.requiresNameHologram()
+                || (Setting.ALWAYS_USE_NAME_HOLOGRAM.asBoolean() && !data().has(NPC.Metadata.HOLOGRAM_FOR));
     }
 
     private void resetCachedCoord() {
@@ -646,11 +646,11 @@ public class CitizensNPC extends AbstractNPC {
 
         try {
             if (useItem) {
-                NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
-                NMS.playAnimation(PlayerAnimation.START_USE_MAINHAND_ITEM, player, 64);
+                PlayerAnimation.STOP_USE_ITEM.play(player, 64);
+                PlayerAnimation.START_USE_MAINHAND_ITEM.play(player, 64);
             } else if (offhand) {
-                NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, 64);
-                NMS.playAnimation(PlayerAnimation.START_USE_OFFHAND_ITEM, player, 64);
+                PlayerAnimation.STOP_USE_ITEM.play(player, 64);
+                PlayerAnimation.START_USE_OFFHAND_ITEM.play(player, 64);
             }
         } catch (UnsupportedOperationException ex) {
             SUPPORT_USE_ITEM = false;

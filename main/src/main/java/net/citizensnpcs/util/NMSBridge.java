@@ -146,7 +146,7 @@ public interface NMSBridge {
 
     public void openHorseScreen(Tameable horse, Player equipper);
 
-    public void playAnimation(PlayerAnimation animation, Player player, int radius);
+    public void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to);
 
     public Runnable playerTicker(Player entity);;
 

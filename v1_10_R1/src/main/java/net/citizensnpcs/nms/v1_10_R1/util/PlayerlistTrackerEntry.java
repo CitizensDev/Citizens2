@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -57,9 +56,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                     skinnable.getSkinTracker().updateViewer(entityplayer.getBukkitEntity());
                 }
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                        () -> Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(
-                                ((NPCHolder) tracker).getNPC(), entityplayer.getBukkitEntity())));
+                Bukkit.getPluginManager().callEvent(
+                        new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), entityplayer.getBukkitEntity()));
             }
         }
     }

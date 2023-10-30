@@ -904,8 +904,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void playAnimation(PlayerAnimation animation, Player player, int radius) {
-        PlayerAnimationImpl.play(animation, player, radius);
+    public void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to) {
+        PlayerAnimationImpl.play(animation, player, to);
     }
 
     @Override
@@ -1733,10 +1733,6 @@ public class NMSImpl implements NMSBridge {
         if (packet == null)
             return;
         ((EntityPlayer) getHandle(player)).playerConnection.sendPacket(packet);
-    }
-
-    public static void sendPacketNearby(Player from, Location location, Packet<?> packet) {
-        sendPacketNearby(from, location, packet, 64);
     }
 
     public static void sendPacketNearby(Player from, Location location, Packet<?> packet, double radius) {

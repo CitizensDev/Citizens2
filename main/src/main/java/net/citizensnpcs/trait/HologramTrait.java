@@ -1,27 +1,33 @@
 package net.citizensnpcs.trait;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.command.Arg.CompletionsProvider;
+import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -29,6 +35,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
@@ -109,6 +116,7 @@ public class HologramTrait extends Trait {
             hologramNPC.addTrait(PacketNPC.class);
         }
 
+        hologramNPC.data().set(NPC.Metadata.HOLOGRAM_FOR, npc.getUniqueId().toString());
         hologramNPC.spawn(currentLoc.clone().add(0, getEntityHeight() + heightOffset, 0));
 
         Matcher itemMatcher = ITEM_MATCHER.matcher(line);
@@ -227,6 +235,7 @@ public class HologramTrait extends Trait {
             if (height == -1)
                 return;
 
+            Messaging.debug(npc, "hologram interaction ", hologram.getEntity(), "height offset set to", height);
             NMS.linkTextInteraction(player, hologram.getEntity(), npc.getEntity(), height);
         }
     }
@@ -327,10 +336,6 @@ public class HologramTrait extends Trait {
                 nameLine.hologram.teleport(npcLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
             }
 
-            if (useDisplayEntities && nameLine.hologram.getEntity().getVehicle() == null) {
-                npc.getEntity().addPassenger(nameLine.hologram.getEntity());
-            }
-
             if (updateName) {
                 nameLine.setText(npc.getRawName());
             }
@@ -352,10 +357,6 @@ public class HologramTrait extends Trait {
             if (updatePosition && !useDisplayEntities) {
                 Location tp = npcLoc.clone().add(0, lastEntityHeight + getHeight(i), 0);
                 hologramNPC.teleport(tp, TeleportCause.PLUGIN);
-            }
-
-            if (useDisplayEntities && hologramNPC.getEntity().getVehicle() == null) {
-                npc.getEntity().addPassenger(hologramNPC.getEntity());
             }
 
             String text = line.text;
@@ -511,13 +512,19 @@ public class HologramTrait extends Trait {
         }
     }
 
-    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)([:].*?)?>");
-    private static boolean SUPPORTS_TEXT_DISPLAY = false;
-    static {
-        try {
-            EntityType.valueOf("TEXT_DISPLAY");
-            SUPPORTS_TEXT_DISPLAY = true;
-        } catch (IllegalArgumentException iae) {
+    public static class TabCompletions implements CompletionsProvider {
+        @Override
+        public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
+            if (npc != null && LINE_ARGS.contains(args.getString(1).toLowerCase())) {
+                HologramTrait ht = npc.getOrAddTrait(HologramTrait.class);
+                return IntStream.range(0, ht.getLines().size()).mapToObj(Integer::toString)
+                        .collect(Collectors.toList());
+            }
+            return Collections.emptyList();
         }
+
+        private static final List<String> LINE_ARGS = ImmutableList.of("set", "remove", "margintop", "marginbottom");
     }
+
+    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)([:].*?)?>");
 }

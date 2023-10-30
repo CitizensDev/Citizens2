@@ -195,7 +195,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public DataWatcher getDataWatcher() {
-        if (trackerEntry != null && trackerEntry.isUpdating()) {
+        if (trackerEntry != null) {
             trackerEntry.updateLastPlayer();
         }
         return super.getDataWatcher();

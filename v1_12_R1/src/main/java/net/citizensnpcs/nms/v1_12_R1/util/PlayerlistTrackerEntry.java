@@ -6,14 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.ForwardingSet;
 
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -23,7 +19,6 @@ import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import net.minecraft.server.v1_12_R1.EntityTrackerEntry;
-import net.minecraft.server.v1_12_R1.PacketPlayOutAnimation;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private final Entity tracker;
@@ -88,30 +83,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     public void updateLastPlayer(EntityPlayer lastUpdatedPlayer) {
-        final EntityPlayer entityplayer = lastUpdatedPlayer;
         if (lastUpdatedPlayer != null) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                    () -> Bukkit.getPluginManager().callEvent(
-                            new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), entityplayer.getBukkitEntity())));
+            Bukkit.getPluginManager().callEvent(
+                    new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), lastUpdatedPlayer.getBukkitEntity()));
         }
-
-        if (lastUpdatedPlayer == null || tracker.dead || tracker.getBukkitEntity().getType() != EntityType.PLAYER)
-            return;
-        NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
-        lastUpdatedPlayer = null;
-        NPC npc = ((NPCHolder) tracker).getNPC();
-        if (npc.data().get(NPC.Metadata.RESET_YAW_ON_SPAWN, Setting.RESET_YAW_ON_SPAWN.asBoolean())) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                    () -> NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new PacketPlayOutAnimation(tracker, 0)),
-                    1);
-        }
-
-        if (!Setting.DISABLE_TABLIST.asBoolean())
-            return;
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                () -> NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity()),
-                Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
     }
 
     @Override

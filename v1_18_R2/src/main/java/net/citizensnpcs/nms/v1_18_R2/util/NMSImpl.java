@@ -1174,8 +1174,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void playAnimation(PlayerAnimation animation, Player player, int radius) {
-        PlayerAnimationImpl.play(animation, player, radius);
+    public void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to) {
+        PlayerAnimationImpl.play(animation, player, to);
     }
 
     @Override

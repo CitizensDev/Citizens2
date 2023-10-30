@@ -918,14 +918,15 @@ public class NMSImpl implements NMSBridge {
             org.bukkit.entity.Entity mount, double offset) {
         Interaction handle = (Interaction) getHandle(entity);
         offset += handle.getMyRidingOffset(getHandle(mount));
-        sendPacket(player, new ClientboundBundlePacket(List.of(
-                new ClientboundSetEntityDataPacket(entity.getEntityId(),
-                        List.of(new SynchedEntityData.DataItem<>(INTERACTION_WIDTH, 0f).value(),
-                                new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, (float) offset).value(),
-                                new SynchedEntityData.DataItem<>(DATA_POSE, Pose.CROAKING).value())),
-                new ClientboundSetPassengersPacket(getHandle(mount)),
-                new ClientboundSetEntityDataPacket(entity.getEntityId(),
-                        List.of(new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, 999999f).value())))));
+        sendPacket(player,
+                new ClientboundBundlePacket(List.of(
+                        new ClientboundSetEntityDataPacket(entity.getEntityId(),
+                                List.of(new SynchedEntityData.DataItem<>(INTERACTION_WIDTH, 0f).value(),
+                                        new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, (float) offset).value(),
+                                        new SynchedEntityData.DataItem<>(DATA_POSE, Pose.CROAKING).value())),
+                        new ClientboundSetPassengersPacket(getHandle(mount)),
+                        new ClientboundSetEntityDataPacket(entity.getEntityId(),
+                                List.of(new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, 999999f).value())))));
     }
 
     @Override
@@ -1279,8 +1280,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void playAnimation(PlayerAnimation animation, Player player, int radius) {
-        PlayerAnimationImpl.play(animation, player, radius);
+    public void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to) {
+        PlayerAnimationImpl.play(animation, player, to);
     }
 
     @Override

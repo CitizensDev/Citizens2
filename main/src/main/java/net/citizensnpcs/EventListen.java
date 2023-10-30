@@ -433,19 +433,18 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onNPCLinkToPlayer(NPCLinkToPlayerEvent event) {
         NPC npc = event.getNPC();
+        if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
+            onNPCPlayerLinkToPlayer(event);
+        }
+
         ClickRedirectTrait crt = npc.getTraitNullable(ClickRedirectTrait.class);
         if (crt != null) {
             HologramTrait ht = crt.getRedirectNPC().getTraitNullable(HologramTrait.class);
             if (ht != null) {
-                ht.onHologramSeenByPlayer(npc, event.getPlayer());
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                        () -> ht.onHologramSeenByPlayer(npc, event.getPlayer()));
             }
         }
-
-        /* TODO
-        if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
-              onNPCPlayerLinkToPlayer(event);
-        }
-        */
     }
 
     private void onNPCPlayerLinkToPlayer(NPCLinkToPlayerEvent event) {
@@ -462,8 +461,8 @@ public class EventListen implements Listener {
         boolean sendTabRemove = NMS.sendTabListAdd(event.getPlayer(), (Player) tracker);
         if (!sendTabRemove || !Setting.DISABLE_TABLIST.asBoolean()) {
             if (resetYaw) {
-                // Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                // () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()), 1);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                        () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()));
             }
             return;
         }
@@ -474,7 +473,7 @@ public class EventListen implements Listener {
 
             NMS.sendTabListRemove(event.getPlayer(), (Player) tracker);
             if (resetYaw) {
-                // PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer());
+                PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer());
             }
         }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
     }

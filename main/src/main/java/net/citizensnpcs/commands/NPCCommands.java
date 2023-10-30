@@ -1136,7 +1136,8 @@ public class NPCCommands {
             permission = "citizens.npc.hologram")
     public void hologram(CommandContext args, CommandSender sender, NPC npc, @Arg(
             value = 1,
-            completions = { "add", "set", "remove", "clear", "lineheight", "margintop", "marginbottom" }) String action)
+            completions = { "add", "set", "remove", "clear", "lineheight", "margintop", "marginbottom" }) String action,
+            @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion)
             throws CommandException {
         HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
         if (args.argsLength() == 1) {

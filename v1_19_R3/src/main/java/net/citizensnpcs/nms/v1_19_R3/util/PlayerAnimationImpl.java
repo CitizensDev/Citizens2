@@ -18,19 +18,19 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Pose;
 
 public class PlayerAnimationImpl {
-    public static void play(PlayerAnimation animation, Player bplayer, int radius) {
+    public static void play(PlayerAnimation animation, Player bplayer, Iterable<Player> to) {
         final ServerPlayer player = (ServerPlayer) NMSImpl.getHandle(bplayer);
         if (DEFAULTS.containsKey(animation)) {
-            playDefaultAnimation(player, radius, DEFAULTS.get(animation));
+            playDefaultAnimation(player, to, DEFAULTS.get(animation));
             return;
         }
         switch (animation) {
             case HURT:
-                sendPacketNearby(new ClientboundHurtAnimationPacket(player), player, radius);
+                sendPacketNearby(new ClientboundHurtAnimationPacket(player), to);
                 break;
             case SNEAK:
                 player.setPose(Pose.CROUCHING);
-                sendEntityData(radius, player);
+                sendEntityData(to, player);
                 break;
             case START_ELYTRA:
                 player.startFallFlying();
@@ -40,42 +40,44 @@ public class PlayerAnimationImpl {
                 break;
             case START_USE_MAINHAND_ITEM:
                 player.startUsingItem(InteractionHand.MAIN_HAND);
-                sendEntityData(radius, player);
+                sendEntityData(to, player);
                 player.getBukkitEntity().setMetadata("citizens-using-item-remaining-ticks",
                         new FixedMetadataValue(CitizensAPI.getPlugin(), player.getUseItemRemainingTicks()));
                 break;
             case START_USE_OFFHAND_ITEM:
                 player.startUsingItem(InteractionHand.OFF_HAND);
-                sendEntityData(radius, player);
+                sendEntityData(to, player);
                 player.getBukkitEntity().setMetadata("citizens-using-item-remaining-ticks",
                         new FixedMetadataValue(CitizensAPI.getPlugin(), player.getUseItemRemainingTicks()));
                 break;
             case STOP_SNEAKING:
                 player.setPose(Pose.STANDING);
-                sendEntityData(radius, player);
+                sendEntityData(to, player);
                 break;
             case STOP_USE_ITEM:
                 player.stopUsingItem();
-                sendEntityData(radius, player);
+                sendEntityData(to, player);
                 break;
             default:
                 throw new UnsupportedOperationException();
         }
     }
 
-    protected static void playDefaultAnimation(ServerPlayer player, int radius, int code) {
-        sendPacketNearby(new ClientboundAnimatePacket(player, code), player, radius);
+    protected static void playDefaultAnimation(ServerPlayer player, Iterable<Player> to, int code) {
+        ClientboundAnimatePacket packet = new ClientboundAnimatePacket(player, code);
+        sendPacketNearby(packet, to);
     }
 
-    private static void sendEntityData(int radius, final ServerPlayer player) {
+    private static void sendEntityData(Iterable<Player> to, final ServerPlayer player) {
         if (!player.getEntityData().isDirty())
             return;
-        sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData().packDirty()), player,
-                radius);
+        sendPacketNearby(new ClientboundSetEntityDataPacket(player.getId(), player.getEntityData().packDirty()), to);
     }
 
-    protected static void sendPacketNearby(Packet<?> packet, ServerPlayer player, int radius) {
-        NMSImpl.sendPacketNearby(player.getBukkitEntity(), player.getBukkitEntity().getLocation(), packet, radius);
+    protected static void sendPacketNearby(Packet<?> packet, Iterable<Player> to) {
+        for (Player player : to) {
+            NMSImpl.sendPacket(player, packet);
+        }
     }
 
     private static Map<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);

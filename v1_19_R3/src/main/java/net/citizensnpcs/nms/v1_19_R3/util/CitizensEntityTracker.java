@@ -4,13 +4,9 @@ import java.lang.invoke.MethodHandle;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 import com.google.common.collect.ForwardingSet;
 
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -18,7 +14,6 @@ import net.citizensnpcs.nms.v1_19_R3.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerEntity;
@@ -39,10 +34,8 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                 public boolean add(ServerPlayerConnection conn) {
                     boolean res = super.add(conn);
                     if (res) {
-                        updateLastPlayer(conn.getPlayer());
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                                () -> Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(
-                                        ((NPCHolder) tracker).getNPC(), conn.getPlayer().getBukkitEntity())));
+                        Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(),
+                                conn.getPlayer().getBukkitEntity()));
                     }
                     return res;
                 }
@@ -59,31 +52,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
 
     public CitizensEntityTracker(ChunkMap map, TrackedEntity entry) {
         this(map, getTracker(entry), getTrackingDistance(entry), getE(entry), getF(entry));
-    }
-
-    public void updateLastPlayer(ServerPlayer lastUpdatedPlayer) {
-        if (tracker.isRemoved() || tracker.getBukkitEntity().getType() != EntityType.PLAYER
-                || !CitizensAPI.hasImplementation())
-            return;
-        final ServerPlayer entityplayer = lastUpdatedPlayer;
-        NPC npc = ((NPCHolder) tracker).getNPC();
-        boolean resetYaw = npc.data().get(NPC.Metadata.RESET_YAW_ON_SPAWN, Setting.RESET_YAW_ON_SPAWN.asBoolean());
-        boolean sendTabRemove = NMS.sendTabListAdd(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
-        if (!sendTabRemove || !Setting.DISABLE_TABLIST.asBoolean()) {
-            if (resetYaw) {
-                Bukkit.getScheduler()
-                        .scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> NMSImpl
-                                .sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0)),
-                                1);
-            }
-            return;
-        }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-            if (resetYaw) {
-                NMSImpl.sendPacket(entityplayer.getBukkitEntity(), new ClientboundAnimatePacket(tracker, 0));
-            }
-            NMS.sendTabListRemove(entityplayer.getBukkitEntity(), (Player) tracker.getBukkitEntity());
-        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
     }
 
     @Override
