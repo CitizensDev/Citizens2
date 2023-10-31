@@ -476,7 +476,7 @@ public class NMSImpl implements NMSBridge {
                 t.printStackTrace();
             }
         }
-    };
+    }
 
     @Override
     @SuppressWarnings("rawtypes")
@@ -1724,7 +1724,7 @@ public class NMSImpl implements NMSBridge {
             ENTITY_REGISTRY_SETTER.invoke(null, ENTITY_REGISTRY.get());
         } catch (Throwable e) {
         }
-    };
+    }
 
     @Override
     public void sleep(org.bukkit.entity.Player player, boolean sleeping) {

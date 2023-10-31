@@ -59,6 +59,7 @@ public class ChestBoatController extends MobEntityController {
         private double ap;
         private double ar;
         private final CitizensNPC npc;
+
         public EntityChestBoatNPC(EntityType<? extends Boat> types, Level level) {
             this(types, level, null);
         }

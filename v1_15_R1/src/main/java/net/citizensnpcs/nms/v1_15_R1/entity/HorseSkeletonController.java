@@ -59,6 +59,7 @@ public class HorseSkeletonController extends MobEntityController {
         private final CitizensNPC npc;
 
         private boolean riding;
+
         public EntityHorseSkeletonNPC(EntityTypes<? extends EntityHorseSkeleton> types, World world) {
             this(types, world, null);
         }
@@ -154,6 +155,11 @@ public class HorseSkeletonController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public float dp() {
+            return NMS.getJumpPower(npc, super.dp());
         }
 
         @Override

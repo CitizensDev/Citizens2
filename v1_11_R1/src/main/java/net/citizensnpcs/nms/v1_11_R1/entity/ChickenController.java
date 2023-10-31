@@ -102,6 +102,11 @@ public class ChickenController extends MobEntityController {
         }
 
         @Override
+        public float cl() {
+            return NMS.getJumpPower(npc, super.cl());
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_11_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.

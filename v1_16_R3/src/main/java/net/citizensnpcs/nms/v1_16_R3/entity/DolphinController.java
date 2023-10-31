@@ -57,6 +57,7 @@ public class DolphinController extends MobEntityController {
         private final CitizensNPC npc;
 
         private ControllerMove oldMoveController;
+
         public EntityDolphinNPC(EntityTypes<? extends EntityDolphin> types, World world) {
             this(types, world, null);
         }
@@ -140,6 +141,11 @@ public class DolphinController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public float dJ() {
+            return NMS.getJumpPower(npc, super.dJ());
         }
 
         @Override

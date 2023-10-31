@@ -53,6 +53,7 @@ public class PhantomController extends MobEntityController {
         private LookControl oldLookController;
 
         private MoveControl oldMoveController;
+
         public EntityPhantomNPC(EntityType<? extends Phantom> types, Level level) {
             this(types, level, null);
         }
@@ -140,6 +141,11 @@ public class PhantomController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public float getJumpPower() {
+            return NMS.getJumpPower(npc, super.getJumpPower());
         }
 
         @Override

@@ -56,6 +56,7 @@ public class BoatController extends MobEntityController {
         private float aq;
         private float as;
         private final CitizensNPC npc;
+
         public EntityBoatNPC(EntityTypes<? extends EntityBoat> types, World world) {
             this(types, world, null);
         }

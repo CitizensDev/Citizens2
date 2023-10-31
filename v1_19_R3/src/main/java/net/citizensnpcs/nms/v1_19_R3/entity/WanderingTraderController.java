@@ -55,6 +55,7 @@ public class WanderingTraderController extends MobEntityController {
         private boolean blockTrades = true;
 
         private final CitizensNPC npc;
+
         public EntityWanderingTraderNPC(EntityType<? extends WanderingTrader> types, Level level) {
             this(types, level, null);
         }
@@ -127,6 +128,11 @@ public class WanderingTraderController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public float getJumpPower() {
+            return NMS.getJumpPower(npc, super.getJumpPower());
         }
 
         @Override

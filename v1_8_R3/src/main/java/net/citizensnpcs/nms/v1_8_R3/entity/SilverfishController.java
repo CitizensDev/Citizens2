@@ -68,6 +68,11 @@ public class SilverfishController extends MobEntityController {
         }
 
         @Override
+        public float bE() {
+            return NMS.getJumpPower(npc, super.bE());
+        }
+
+        @Override
         protected String bo() {
             return NMSImpl.getSoundEffect(npc, super.bo(), NPC.Metadata.HURT_SOUND);
         }
@@ -116,8 +121,6 @@ public class SilverfishController extends MobEntityController {
             if (npc != null)
                 npc.update();
         }
-
-        
 
         @Override
         public void g(double x, double y, double z) {

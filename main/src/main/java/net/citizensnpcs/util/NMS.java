@@ -469,6 +469,16 @@ public class NMS {
         return BRIDGE.getHorizontalMovement(bukkitEntity);
     }
 
+    public static float getJumpPower(NPC npc, float original) {
+        if (npc == null)
+            return original;
+        if (npc.data().has(NPC.Metadata.JUMP_POWER_SUPPLIER)) {
+            return npc.data().<Function<NPC, Float>> get(NPC.Metadata.JUMP_POWER_SUPPLIER).apply(npc);
+        }
+
+        return original;
+    }
+
     public static Method getMethod(Class<?> clazz, String method, boolean log, Class<?>... params) {
         if (clazz == null)
             return null;

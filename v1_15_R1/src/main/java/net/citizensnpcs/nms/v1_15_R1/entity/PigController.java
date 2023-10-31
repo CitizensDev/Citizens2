@@ -132,6 +132,11 @@ public class PigController extends MobEntityController {
         }
 
         @Override
+        public float dp() {
+            return NMS.getJumpPower(npc, super.dp());
+        }
+
+        @Override
         public boolean dY() {
             // block carrot-on-a-stick behaviour
             return npc == null ? super.dY() : false;

@@ -157,6 +157,11 @@ public class VillagerController extends MobEntityController {
         }
 
         @Override
+        public float dJ() {
+            return NMS.getJumpPower(npc, super.dJ());
+        }
+
+        @Override
         public boolean eN() {
             if (blockingATrade) {
                 blockingATrade = false;

@@ -128,6 +128,11 @@ public class EnderDragonController extends MobEntityController {
         }
 
         @Override
+        public float dp() {
+            return NMS.getJumpPower(npc, super.dp());
+        }
+
+        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new EnderDragonNPC(this));

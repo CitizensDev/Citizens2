@@ -68,6 +68,11 @@ public class GuardianController extends MobEntityController {
         }
 
         @Override
+        public float bE() {
+            return NMS.getJumpPower(npc, super.bE());
+        }
+
+        @Override
         protected String bo() {
             return NMSImpl.getSoundEffect(npc, super.bo(), NPC.Metadata.HURT_SOUND);
         }
@@ -110,8 +115,6 @@ public class GuardianController extends MobEntityController {
                 super.e(f, f1);
             }
         }
-
-        
 
         @Override
         public void g(double x, double y, double z) {

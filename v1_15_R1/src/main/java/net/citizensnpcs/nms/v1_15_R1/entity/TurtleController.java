@@ -52,6 +52,7 @@ public class TurtleController extends MobEntityController {
         private ControllerJump oldJumpController;
 
         private ControllerMove oldMoveController;
+
         public EntityTurtleNPC(EntityTypes<? extends EntityTurtle> types, World world) {
             this(types, world, null);
         }
@@ -130,6 +131,11 @@ public class TurtleController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public float dp() {
+            return NMS.getJumpPower(npc, super.dp());
         }
 
         @Override

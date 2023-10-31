@@ -57,6 +57,7 @@ public class HorseDonkeyController extends MobEntityController {
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
+
         private boolean riding;
         public EntityHorseDonkeyNPC(EntityTypes<? extends EntityHorseDonkey> types, World world) {
             this(types, world, null);
@@ -152,6 +153,11 @@ public class HorseDonkeyController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public float dJ() {
+            return NMS.getJumpPower(npc, super.dJ());
         }
 
         @Override

@@ -56,6 +56,7 @@ public class DolphinController extends MobEntityController {
         private final CitizensNPC npc;
 
         private MoveControl oldMoveController;
+
         public EntityDolphinNPC(EntityType<? extends Dolphin> types, Level level) {
             this(types, level, null);
         }
@@ -122,6 +123,11 @@ public class DolphinController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public float getJumpPower() {
+            return NMS.getJumpPower(npc, super.getJumpPower());
         }
 
         @Override

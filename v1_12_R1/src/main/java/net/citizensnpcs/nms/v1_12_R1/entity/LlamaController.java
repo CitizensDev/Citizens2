@@ -49,6 +49,7 @@ public class LlamaController extends MobEntityController {
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
+
         private boolean riding;
         public EntityLlamaNPC(World world) {
             this(world, null);
@@ -117,6 +118,11 @@ public class LlamaController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public float ct() {
+            return NMS.getJumpPower(npc, super.ct());
         }
 
         @Override

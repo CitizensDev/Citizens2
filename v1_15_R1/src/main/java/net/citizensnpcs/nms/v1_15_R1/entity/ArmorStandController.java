@@ -15,6 +15,7 @@ import net.citizensnpcs.nms.v1_15_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_15_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.AxisAlignedBB;
 import net.minecraft.server.v1_15_R1.EntityArmorStand;
@@ -99,6 +100,11 @@ public class ArmorStandController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public float dp() {
+            return NMS.getJumpPower(npc, super.dp());
         }
 
         @Override

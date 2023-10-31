@@ -19,7 +19,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -62,6 +61,7 @@ public class AllayController extends MobEntityController {
         private final CitizensNPC npc;
 
         private int taskId = -1;
+
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level) {
             this(types, level, null);
         }
@@ -131,6 +131,11 @@ public class AllayController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public float getJumpPower() {
+            return NMS.getJumpPower(npc, super.getJumpPower());
         }
 
         @Override

@@ -46,9 +46,9 @@ public class HorseDonkeyController extends MobEntityController {
 
     public static class EntityHorseDonkeyNPC extends EntityHorseDonkey implements NPCHolder {
         private double baseMovementSpeed;
+
         private final CitizensNPC npc;
         private boolean riding;
-
         public EntityHorseDonkeyNPC(World world) {
             this(world, null);
         }
@@ -103,6 +103,11 @@ public class HorseDonkeyController extends MobEntityController {
         @Override
         protected SoundEffect bX() {
             return NMSImpl.getSoundEffect(npc, super.bX(), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public float cl() {
+            return NMS.getJumpPower(npc, super.cl());
         }
 
         @Override

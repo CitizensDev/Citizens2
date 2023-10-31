@@ -60,6 +60,7 @@ public class HorseSkeletonController extends MobEntityController {
         private final CitizensNPC npc;
 
         private boolean riding;
+
         public EntityHorseSkeletonNPC(EntityType<? extends SkeletonHorse> types, Level level) {
             this(types, level, null);
         }
@@ -149,6 +150,11 @@ public class HorseSkeletonController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public float getJumpPower() {
+            return NMS.getJumpPower(npc, super.getJumpPower());
         }
 
         @Override

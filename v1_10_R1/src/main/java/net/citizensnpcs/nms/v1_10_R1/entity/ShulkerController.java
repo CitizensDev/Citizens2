@@ -80,6 +80,11 @@ public class ShulkerController extends MobEntityController {
         }
 
         @Override
+        public float ck() {
+            return NMS.getJumpPower(npc, super.ck());
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_10_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.

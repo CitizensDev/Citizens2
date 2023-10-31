@@ -58,6 +58,7 @@ public class HorseController extends MobEntityController {
         private final CitizensNPC npc;
 
         private boolean riding;
+
         public EntityHorseNPC(EntityTypes<? extends EntityHorse> types, World world) {
             this(types, world, null);
         }
@@ -147,6 +148,11 @@ public class HorseController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public float cX() {
+            return NMS.getJumpPower(npc, super.cX());
         }
 
         @Override

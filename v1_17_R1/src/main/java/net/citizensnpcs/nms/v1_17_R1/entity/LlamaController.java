@@ -56,6 +56,7 @@ public class LlamaController extends MobEntityController {
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
+
         private boolean riding;
         public EntityLlamaNPC(EntityType<? extends Llama> types, Level level) {
             this(types, level, null);
@@ -146,6 +147,11 @@ public class LlamaController extends MobEntityController {
         @Override
         protected SoundEvent getHurtSound(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.getHurtSound(damagesource), NPC.Metadata.HURT_SOUND);
+        }
+
+        @Override
+        public float getJumpPower() {
+            return NMS.getJumpPower(npc, super.getJumpPower());
         }
 
         @Override

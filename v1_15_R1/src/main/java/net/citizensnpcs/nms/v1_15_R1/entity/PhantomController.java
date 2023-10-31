@@ -51,6 +51,7 @@ public class PhantomController extends MobEntityController {
         private ControllerLook oldLookController;
 
         private ControllerMove oldMoveController;
+
         public EntityPhantomNPC(EntityTypes<? extends EntityPhantom> types, World world) {
             this(types, world, null);
         }
@@ -130,6 +131,11 @@ public class PhantomController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public float dp() {
+            return NMS.getJumpPower(npc, super.dp());
         }
 
         @Override

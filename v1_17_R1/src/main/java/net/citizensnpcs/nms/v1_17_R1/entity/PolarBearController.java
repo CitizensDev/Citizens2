@@ -100,6 +100,11 @@ public class PolarBearController extends MobEntityController {
         }
 
         @Override
+        public float getJumpPower() {
+            return NMS.getJumpPower(npc, super.getJumpPower());
+        }
+
+        @Override
         public int getMaxFallDistance() {
             return NMS.getFallDistance(npc, super.getMaxFallDistance());
         }

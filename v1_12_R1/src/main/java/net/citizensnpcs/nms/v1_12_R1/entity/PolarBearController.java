@@ -86,6 +86,11 @@ public class PolarBearController extends MobEntityController {
         }
 
         @Override
+        public float ct() {
+            return NMS.getJumpPower(npc, super.ct());
+        }
+
+        @Override
         protected SoundEffect d(DamageSource damagesource) {
             return NMSImpl.getSoundEffect(npc, super.d(damagesource), NPC.Metadata.HURT_SOUND);
         }

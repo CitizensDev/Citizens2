@@ -56,6 +56,7 @@ public class VillagerController extends MobEntityController {
         private boolean blockingATrade;
 
         private final CitizensNPC npc;
+
         private BehaviorController<EntityVillager> previousBehaviorController;
         public EntityVillagerNPC(EntityTypes<? extends EntityVillager> types, World world) {
             this(types, world, null);
@@ -145,6 +146,11 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public float cX() {
+            return NMS.getJumpPower(npc, super.cX());
         }
 
         @Override

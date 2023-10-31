@@ -56,6 +56,7 @@ public class WanderingTraderController extends MobEntityController {
         private boolean blockingATrade;
 
         private boolean blockTrades = true;
+
         private final CitizensNPC npc;
         public EntityWanderingTraderNPC(EntityTypes<? extends EntityVillagerTrader> types, World world) {
             this(types, world, null);
@@ -145,6 +146,11 @@ public class WanderingTraderController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+        }
+
+        @Override
+        public float cX() {
+            return NMS.getJumpPower(npc, super.cX());
         }
 
         @Override

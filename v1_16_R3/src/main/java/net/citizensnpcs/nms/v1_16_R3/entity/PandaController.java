@@ -131,6 +131,11 @@ public class PandaController extends MobEntityController {
         }
 
         @Override
+        public float dJ() {
+            return NMS.getJumpPower(npc, super.dJ());
+        }
+
+        @Override
         public void g(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
                 super.g(vec3d);

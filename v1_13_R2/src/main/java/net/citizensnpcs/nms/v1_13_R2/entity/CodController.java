@@ -143,6 +143,11 @@ public class CodController extends MobEntityController {
         }
 
         @Override
+        public float cG() {
+            return NMS.getJumpPower(npc, super.cG());
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_13_R2.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.

@@ -127,6 +127,11 @@ public class CaveSpiderController extends MobEntityController {
         }
 
         @Override
+        public float dp() {
+            return NMS.getJumpPower(npc, super.dp());
+        }
+
+        @Override
         public void e(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
                 super.e(vec3d);

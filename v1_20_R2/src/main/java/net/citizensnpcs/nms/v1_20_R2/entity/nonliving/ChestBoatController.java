@@ -15,7 +15,6 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,6 +58,7 @@ public class ChestBoatController extends MobEntityController {
         private double ap;
         private double ar;
         private final CitizensNPC npc;
+
         public EntityChestBoatNPC(EntityType<? extends Boat> types, Level level) {
             this(types, level, null);
         }

@@ -155,6 +155,11 @@ public class PufferFishController extends MobEntityController {
         }
 
         @Override
+        public float dp() {
+            return NMS.getJumpPower(npc, super.dp());
+        }
+
+        @Override
         public void e(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
                 if (!NMSImpl.moveFish(npc, this, vec3d)) {

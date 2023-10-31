@@ -58,6 +58,7 @@ public class WanderingTraderController extends MobEntityController {
         private boolean blockTrades = true;
 
         private final CitizensNPC npc;
+
         public EntityWanderingTraderNPC(EntityTypes<? extends EntityVillagerTrader> types, World world) {
             this(types, world, null);
         }
@@ -152,6 +153,11 @@ public class WanderingTraderController extends MobEntityController {
         @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
+        }
+
+        @Override
+        public float dJ() {
+            return NMS.getJumpPower(npc, super.dJ());
         }
 
         @Override

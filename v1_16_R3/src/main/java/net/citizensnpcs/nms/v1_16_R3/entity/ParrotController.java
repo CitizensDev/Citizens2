@@ -116,6 +116,11 @@ public class ParrotController extends MobEntityController {
         }
 
         @Override
+        public float dJ() {
+            return NMS.getJumpPower(npc, super.dJ());
+        }
+
+        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new ParrotNPC(this));

@@ -138,6 +138,11 @@ public class CatController extends MobEntityController {
         }
 
         @Override
+        public float cX() {
+            return NMS.getJumpPower(npc, super.cX());
+        }
+
+        @Override
         public boolean d(NBTTagCompound save) {
             return npc == null ? super.d(save) : false;
         }

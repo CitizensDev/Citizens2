@@ -53,6 +53,7 @@ public class HorseSkeletonController extends MobEntityController {
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
+
         private boolean riding;
         public EntityHorseSkeletonNPC(World world) {
             this(world, null);
@@ -139,6 +140,11 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.c(f, f1);
             }
+        }
+
+        @Override
+        public float cG() {
+            return NMS.getJumpPower(npc, super.cG());
         }
 
         @Override
