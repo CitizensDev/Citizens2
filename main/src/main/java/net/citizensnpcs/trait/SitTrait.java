@@ -12,6 +12,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 
 @TraitName("sittrait")
@@ -38,7 +39,11 @@ public class SitTrait extends Trait {
         if (chair != null) {
             if (chair.getEntity() != null) {
                 chair.getEntity().eject();
-                npc.getEntity().teleport(npc.getEntity().getLocation().clone().add(0, 0.3, 0));
+                Location npcLoc = npc.getEntity().getLocation().clone();
+                if (requiresPassengerOffsetCorrection()) {
+                    npcLoc = npcLoc.add(0, 0.3, 0);
+                }
+                npc.getEntity().teleport(npcLoc);
             }
             chair.destroy();
             chair = null;
@@ -48,6 +53,11 @@ public class SitTrait extends Trait {
     @Override
     public void onRemove() {
         onDespawn();
+    }
+
+    private boolean requiresPassengerOffsetCorrection() {
+        return SpigotUtil.getVersion() != null && SpigotUtil.getVersion().length >= 2
+                && SpigotUtil.getVersion()[1] <= 19;
     }
 
     @Override
@@ -86,7 +96,11 @@ public class SitTrait extends Trait {
     }
 
     public void setSitting(Location at) {
-        this.sittingAt = at != null ? at.clone().add(0, -0.3, 0) : null;
+        this.sittingAt = at != null ? at.clone() : null;
+        if (requiresPassengerOffsetCorrection()) {
+            sittingAt = sittingAt.add(0, 0.3, 0);
+        }
+
         if (at == null) {
             onDespawn();
         }
