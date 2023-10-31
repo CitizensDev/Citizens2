@@ -484,6 +484,9 @@ public interface NPC extends Agent, Cloneable {
          * The Item ID. String.
          */
         ITEM_ID("item-type-id", String.class),
+        @SuppressWarnings("serial")
+        JUMP_POWER_SUPPLIER("jump-power-supplier", new TypeToken<Function<NPC, Float>>() {
+        }),
         /**
          * Whether to keep chunk loaded.
          */
