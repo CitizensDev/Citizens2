@@ -106,7 +106,6 @@ public class HologramTrait extends Trait {
             hologramNPC = registry.createNPC(EntityType.INTERACTION, line);
             hologramNPC.addTrait(new ClickRedirectTrait(npc));
             hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
-            hologramNPC.getOrAddTrait(MountTrait.class).setMountedOn(npc.getUniqueId());
         } else {
             hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
             hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
@@ -339,6 +338,10 @@ public class HologramTrait extends Trait {
             if (updateName) {
                 nameLine.setText(npc.getRawName());
             }
+
+            if (useDisplayEntities && nameLine.hologram.getEntity().getVehicle() == null) {
+                npc.getEntity().addPassenger(nameLine.hologram.getEntity());
+            }
         }
 
         for (int i = 0; i < lines.size(); i++) {
@@ -357,6 +360,10 @@ public class HologramTrait extends Trait {
             if (updatePosition && !useDisplayEntities) {
                 Location tp = npcLoc.clone().add(0, lastEntityHeight + getHeight(i), 0);
                 hologramNPC.teleport(tp, TeleportCause.PLUGIN);
+            }
+
+            if (useDisplayEntities && hologramNPC.getEntity().getVehicle() == null) {
+                npc.getEntity().addPassenger(hologramNPC.getEntity());
             }
 
             String text = line.text;
