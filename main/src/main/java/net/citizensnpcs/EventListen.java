@@ -442,7 +442,7 @@ public class EventListen implements Listener {
             HologramTrait ht = crt.getRedirectNPC().getTraitNullable(HologramTrait.class);
             if (ht != null) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                        () -> ht.onHologramSeenByPlayer(npc, event.getPlayer()));
+                        () -> ht.onHologramSeenByPlayer(npc, event.getPlayer()), 3);
             }
         }
     }
