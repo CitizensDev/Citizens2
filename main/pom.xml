@@ -151,7 +151,7 @@
                 <directory>${basedir}/src/main/resources</directory>
                 <includes>
                     <include>plugin.yml</include>
-                    <include>*.properties</include>
+                    <include>*.json</include>
                 </includes>
             </resource>
             <resource>
