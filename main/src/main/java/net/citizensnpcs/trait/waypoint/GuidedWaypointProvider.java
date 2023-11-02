@@ -364,6 +364,11 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 return false;
 
             this.target = destinations.get(Util.getFastRandom().nextInt(destinations.size()));
+            if (target.getLocation().getWorld().equals(npc.getEntity().getWorld())) {
+                target = null;
+                return false;
+            }
+
             plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(null, new Waypoint(npc.getStoredLocation())));
             return plan != null;
         }
@@ -436,12 +441,12 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         @Override
         public Iterable<AStarNode> getNeighbours() {
             PhTree<Waypoint> source = getParent() == null ? tree : treePlusDestinations;
-            PhRangeQuery<Waypoint> rq = source.rangeQuery(
+            PhRangeQuery<Waypoint> query = source.rangeQuery(
                     distance == -1 ? npc.getNavigator().getDefaultParameters().range() : distance,
                     waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
                     waypoint.getLocation().getBlockZ());
             List<AStarNode> neighbours = Lists.newArrayList();
-            rq.forEachRemaining(n -> neighbours.add(new GuidedNode(this, n)));
+            query.forEachRemaining(wp -> neighbours.add(new GuidedNode(this, wp)));
 
             return neighbours;
         }
