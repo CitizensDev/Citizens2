@@ -36,6 +36,7 @@ public class Decorator extends BehaviorGoalAdapter {
         for (Runnable runnable : resetCallbacks) {
             runnable.run();
         }
+
         wrapping.reset();
     }
 
@@ -44,10 +45,12 @@ public class Decorator extends BehaviorGoalAdapter {
         for (Runnable runnable : runCallbacks) {
             runnable.run();
         }
+
         BehaviorStatus status = wrapping.run();
         for (Function<BehaviorStatus, BehaviorStatus> transformer : statusTransformers) {
             status = transformer.apply(status);
         }
+
         return status;
     }
 
@@ -57,6 +60,7 @@ public class Decorator extends BehaviorGoalAdapter {
         for (Predicate<Boolean> transformer : shouldExecutePredicates) {
             shouldExecute = transformer.test(shouldExecute);
         }
+
         return shouldExecute;
     }
 
@@ -76,29 +80,33 @@ public class Decorator extends BehaviorGoalAdapter {
         }
 
         public Builder withPreRunCallback(Runnable callback) {
-            if (runCallbacks == Collections.EMPTY_LIST)
+            if (runCallbacks == Collections.EMPTY_LIST) {
                 runCallbacks = Lists.newArrayList();
+            }
             runCallbacks.add(callback);
             return this;
         }
 
         public Builder withResetCallback(Runnable callback) {
-            if (resetCallbacks == Collections.EMPTY_LIST)
+            if (resetCallbacks == Collections.EMPTY_LIST) {
                 resetCallbacks = Lists.newArrayList();
+            }
             resetCallbacks.add(callback);
             return this;
         }
 
         public Builder withShouldExecutePredicate(Predicate<Boolean> predicate) {
-            if (shouldExecutePredicates == Collections.EMPTY_LIST)
+            if (shouldExecutePredicates == Collections.EMPTY_LIST) {
                 shouldExecutePredicates = Lists.newArrayList();
+            }
             shouldExecutePredicates.add(predicate);
             return this;
         }
 
         public Builder withStatusTransformer(Function<BehaviorStatus, BehaviorStatus> transformer) {
-            if (statusTransformers == Collections.EMPTY_LIST)
+            if (statusTransformers == Collections.EMPTY_LIST) {
                 statusTransformers = Lists.newArrayList();
+            }
             statusTransformers.add(transformer);
             return this;
         }
