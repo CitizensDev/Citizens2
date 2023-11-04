@@ -55,7 +55,7 @@ public class Owner extends Trait {
         if (uuid == null && sender instanceof ConsoleCommandSender)
             return true;
 
-        return sender.hasPermission("citizens.admin") || (uuid == null && sender.hasPermission("citizens.admin"))
+        return sender.hasPermission("citizens.ignore-owner") || sender.hasPermission("citizens.admin")
                 || (uuid != null && sender instanceof OfflinePlayer
                         && ((OfflinePlayer) sender).getUniqueId().equals(uuid))
                 || (uuid != null && sender instanceof Player && ((Player) sender).getUniqueId().equals(uuid));
