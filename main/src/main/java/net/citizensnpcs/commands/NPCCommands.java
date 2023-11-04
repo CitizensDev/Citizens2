@@ -41,7 +41,9 @@ import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -185,6 +187,7 @@ public class NPCCommands {
         } else {
             npc.data().setPersistent(NPC.Metadata.ACTIVATION_RANGE, range);
         }
+
         Messaging.sendTr(sender, Messages.ACTIVATION_RANGE_SET, range);
     }
 
@@ -405,6 +408,18 @@ public class NPCCommands {
             cfg.radius(radius);
         } else if (Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble() > 0) {
             cfg.radius(Setting.DEFAULT_BLOCK_BREAKER_RADIUS.asDouble());
+        }
+
+        if (npc.getEntity() instanceof InventoryHolder) {
+            cfg.blockBreaker((block, itemstack) -> {
+                org.bukkit.inventory.Inventory inventory = ((InventoryHolder) npc.getEntity()).getInventory();
+                Location location = npc.getEntity().getLocation();
+                for (ItemStack drop : block.getDrops(itemstack)) {
+                    for (ItemStack unadded : inventory.addItem(drop).values()) {
+                        location.getWorld().dropItemNaturally(npc.getEntity().getLocation(), unadded);
+                    }
+                }
+            });
         }
 
         BlockBreaker breaker = npc.getBlockBreaker(args.getSenderTargetBlockLocation().getBlock(), cfg);
@@ -1755,7 +1770,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "mount (--onnpc <npc id>) (-c (ancel))",
+            usage = "mount (--onnpc <npc id|uuid>) (-c(ancel))",
             desc = "Mounts a controllable NPC",
             modifiers = { "mount" },
             min = 1,
@@ -1772,28 +1787,34 @@ public class NPCCommands {
             } catch (IllegalArgumentException ex) {
                 mount = CitizensAPI.getNPCRegistry().getById(args.getFlagInteger("onnpc"));
             }
-            if (mount == null || !mount.isSpawned()) {
+
+            if (mount == null || !mount.isSpawned())
                 throw new CommandException(Messaging.tr(Messages.MOUNT_NPC_MUST_BE_SPAWNED, onnpc));
-            }
-            if (mount.equals(npc)) {
+
+            if (mount.equals(npc))
                 throw new CommandException(Messages.TRIED_TO_MOUNT_NPC_ON_ITSELF);
-            }
+
             NMS.mount(mount.getEntity(), npc.getEntity());
             return;
-        } else if (args.hasFlag('c')) {
+        }
+
+        if (args.hasFlag('c')) {
             npc.getOrAddTrait(MountTrait.class).unmount();
             return;
         }
+
         boolean enabled = npc.hasTrait(Controllable.class) && npc.getOrAddTrait(Controllable.class).isEnabled();
         if (!enabled) {
             Messaging.sendTr(sender, Messages.NPC_NOT_CONTROLLABLE, npc.getName());
             return;
         }
-        if (!(sender instanceof Player)) {
+
+        if (!(sender instanceof Player))
             throw new CommandException(CommandMessages.MUST_BE_INGAME);
-        }
+
         Player player = (Player) sender;
         boolean success = npc.getOrAddTrait(Controllable.class).mount(player);
+
         if (!success) {
             Messaging.sendTr(player, Messages.FAILED_TO_MOUNT_NPC, npc.getName());
         }
@@ -1941,6 +1962,7 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.NPC_OWNER, npc.getName(), ownerTrait.getOwner());
             return;
         }
+
         OfflinePlayer p;
         UUID uuid;
         if (args.getString(1).equalsIgnoreCase("SERVER")) {
@@ -1950,8 +1972,10 @@ public class NPCCommands {
         } else {
             uuid = UUID.fromString(args.getString(1));
         }
+
         if (ownerTrait.isOwnedBy(uuid))
             throw new CommandException(Messages.ALREADY_OWNER, uuid, npc.getName());
+
         ownerTrait.setOwner(uuid);
         boolean serverOwner = uuid == null;
         Messaging.sendTr(sender, serverOwner ? Messages.OWNER_SET_SERVER : Messages.OWNER_SET, npc.getName(), uuid);
@@ -1998,6 +2022,7 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.PAINTING_ART_SET, npc.getName(), Util.prettyEnum(art));
             return;
         }
+
         throw new CommandUsageException();
     }
 
@@ -2151,7 +2176,7 @@ public class NPCCommands {
         if (rightclick != null) {
             trait.setRightClick(rightclick);
             Messaging.sendTr(sender,
-                    rightclick ? Messages.PAUSEPATHFINDING_RIGHTCLICK_SET : Messages.PAUSEPATHFINDING_RIGHTCLICK_SET,
+                    rightclick ? Messages.PAUSEPATHFINDING_RIGHTCLICK_SET : Messages.PAUSEPATHFINDING_RIGHTCLICK_UNSET,
                     npc.getName());
         }
         if (ticks != null) {
@@ -2306,6 +2331,7 @@ public class NPCCommands {
             if (yaw != null) {
                 loc.setYaw(yaw);
             }
+
             if (pitch != null) {
                 loc.setPitch(pitch);
             }
@@ -2506,8 +2532,10 @@ public class NPCCommands {
         }
         if (npc == null)
             throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
+
         if (!(sender instanceof ConsoleCommandSender) && !npc.getOrAddTrait(Owner.class).isOwnedBy(sender))
             throw new CommandException(CommandMessages.MUST_BE_OWNER);
+
         if (!sender.hasPermission("citizens.npc.remove") && !sender.hasPermission("citizens.admin"))
             throw new NoPermissionsException();
 
@@ -2578,6 +2606,7 @@ public class NPCCommands {
             npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToHave(yaw, pitch);
             return;
         }
+
         if (yaw != null) {
             NMS.setBodyYaw(npc.getEntity(), yaw);
             if (npc.getEntity().getType() == EntityType.PLAYER) {
@@ -2585,9 +2614,11 @@ public class NPCCommands {
                 PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
             }
         }
+
         if (pitch != null) {
             NMS.setPitch(npc.getEntity(), pitch);
         }
+
         if (head != null) {
             NMS.setHeadYaw(npc.getEntity(), head);
         }
@@ -2613,10 +2644,12 @@ public class NPCCommands {
             selector.select(sender, toSelect);
             Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
         };
+
         NPCRegistry registry = registryName != null ? CitizensAPI.getNamedNPCRegistry(registryName)
                 : CitizensAPI.getNPCRegistry();
         if (registry == null)
             throw new CommandException(Messages.UNKNOWN_NPC_REGISTRY, args.getFlag("registry"));
+
         if (args.argsLength() <= 1) {
             if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
@@ -2649,6 +2682,7 @@ public class NPCCommands {
             @Arg(2) ItemStack item) throws CommandException {
         if (slot == null)
             throw new CommandUsageException();
+
         if (item == null && args.argsLength() == 3 && args.getString(2).equalsIgnoreCase("hand")) {
             if (!(sender instanceof Player))
                 throw new ServerCommandException();
@@ -2757,7 +2791,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-e(xport) -c(lear) -l(atest)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
+            usage = "skin (-e(xport) -c(lear) -l(atest) -s(kull)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
             desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
             modifiers = { "skin" },
             min = 1,
@@ -2776,9 +2810,11 @@ public class NPCCommands {
         } else if (args.hasFlag('e')) {
             if (trait.getTexture() == null)
                 throw new CommandException(Messages.SKIN_REQUIRED);
+
             File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
             File skin = file == null ? new File(skinsFolder, npc.getUniqueId().toString() + ".png")
                     : new File(skinsFolder, file);
+
             if (!skin.getParentFile().equals(skinsFolder) || !skin.getName().endsWith(".png"))
                 throw new CommandException(Messages.INVALID_SKIN_FILE, file);
 
@@ -2788,6 +2824,7 @@ public class NPCCommands {
                 JSONObject textures = (JSONObject) data.get("textures");
                 JSONObject skinObj = (JSONObject) textures.get("SKIN");
                 URL textureUrl = new URL(skinObj.get("url").toString().replace("\\", ""));
+
                 if (!textureUrl.getHost().equals("textures.minecraft.net"))
                     throw new CommandException(Messages.ERROR_SETTING_SKIN_URL, "Mojang");
 
@@ -2795,6 +2832,7 @@ public class NPCCommands {
                         FileOutputStream out = new FileOutputStream(skin)) {
                     out.getChannel().transferFrom(in, 0, 10000);
                 }
+
                 Messaging.send(sender, Messages.SKIN_EXPORTED, skin.getName());
             } catch (Exception e) {
                 throw new CommandException("Couldn't parse texture: " + e.getMessage());
@@ -2815,6 +2853,7 @@ public class NPCCommands {
                                     () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
                             return;
                         }
+
                         data = MojangSkinGenerator.generateFromPNG(Files.readAllBytes(skin.toPath()),
                                 args.hasFlag('s'));
                     } else {
@@ -2826,6 +2865,7 @@ public class NPCCommands {
                     JSONObject texture = (JSONObject) data.get("texture");
                     String textureEncoded = (String) texture.get("value");
                     String signature = (String) texture.get("signature");
+
                     Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
                         try {
                             trait.setSkinPersistent(uuid, signature, textureEncoded);
@@ -2846,6 +2886,7 @@ public class NPCCommands {
         } else if (args.hasFlag('t')) {
             if (args.argsLength() != 4)
                 throw new CommandException(Messages.SKIN_REQUIRED);
+
             trait.setSkinPersistent(args.getString(1), args.getString(3), args.getString(2));
             Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), args.getString(1));
             return;
@@ -2866,6 +2907,7 @@ public class NPCCommands {
             if (args.hasFlag('l')) {
                 trait.setShouldUpdateSkins(true);
             }
+
             skinName = args.getString(1);
         }
         Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), skinName);
@@ -2888,20 +2930,25 @@ public class NPCCommands {
         if (cape != null) {
             trait.setVisible(Layer.CAPE, cape);
         }
+
         if (hat != null) {
             trait.setVisible(Layer.HAT, hat);
         }
+
         if (jacket != null) {
             trait.setVisible(Layer.JACKET, jacket);
         }
+
         if (sleeves != null) {
             trait.setVisible(Layer.LEFT_SLEEVE, sleeves);
             trait.setVisible(Layer.RIGHT_SLEEVE, sleeves);
         }
+
         if (pants != null) {
             trait.setVisible(Layer.LEFT_PANTS, pants);
             trait.setVisible(Layer.RIGHT_PANTS, pants);
         }
+
         Messaging.sendTr(sender, Messages.SKIN_LAYERS_SET, npc.getName(), trait.isVisible(Layer.CAPE),
                 trait.isVisible(Layer.HAT), trait.isVisible(Layer.JACKET),
                 trait.isVisible(Layer.LEFT_SLEEVE) || trait.isVisible(Layer.RIGHT_SLEEVE),
@@ -2923,6 +2970,7 @@ public class NPCCommands {
             trait.describe(sender);
             return;
         }
+
         int size = Math.max(-2, args.getInteger(1));
         trait.setSize(size);
         Messaging.sendTr(sender, Messages.SIZE_SET, npc.getName(), size);
@@ -2952,9 +3000,11 @@ public class NPCCommands {
             ambientSound = deathSound = hurtSound = "";
             npc.data().setPersistent(NPC.Metadata.SILENT, true);
         }
+
         if (args.hasFlag('s')) {
             npc.data().setPersistent(NPC.Metadata.SILENT, !npc.data().get(NPC.Metadata.SILENT, false));
         }
+
         if (args.hasFlag('d')) {
             ambientSound = deathSound = hurtSound = null;
             npc.data().setPersistent(NPC.Metadata.SILENT, false);
@@ -2977,16 +3027,19 @@ public class NPCCommands {
                 hurtSound = args.getFlag("hurt").equals("d") ? null : args.getFlag("hurt");
             }
         }
+
         if (deathSound == null) {
             npc.data().remove(NPC.Metadata.DEATH_SOUND);
         } else {
             npc.data().setPersistent(NPC.Metadata.DEATH_SOUND, deathSound);
         }
+
         if (hurtSound == null) {
             npc.data().remove(NPC.Metadata.HURT_SOUND);
         } else {
             npc.data().setPersistent(NPC.Metadata.HURT_SOUND, hurtSound);
         }
+
         if (ambientSound == null) {
             npc.data().remove(NPC.Metadata.AMBIENT_SOUND);
         } else {
@@ -2996,17 +3049,21 @@ public class NPCCommands {
         if (ambientSound != null && ambientSound.isEmpty()) {
             ambientSound = "none";
         }
+
         if (hurtSound != null && hurtSound.isEmpty()) {
             hurtSound = "none";
         }
+
         if (deathSound != null && deathSound.isEmpty()) {
             deathSound = "none";
         }
+
         if ((!Strings.isNullOrEmpty(ambientSound) && !ambientSound.equals("none"))
                 || (!Strings.isNullOrEmpty(deathSound) && !deathSound.equals("none"))
                 || (!Strings.isNullOrEmpty(hurtSound) && !hurtSound.equals("none"))) {
             npc.data().setPersistent(NPC.Metadata.SILENT, false);
         }
+
         Messaging.sendTr(sender, Messages.SOUND_SET, npc.getName(), ambientSound, hurtSound, deathSound);
     }
 
@@ -3047,6 +3104,7 @@ public class NPCCommands {
                 Messaging.sendTr(sender, Messages.NPC_SPAWNED, respawn.getName());
             }
         };
+
         if (args.argsLength() > 1) {
             NPCCommandSelector.startWithCallback(callback, CitizensAPI.getNPCRegistry(), sender, args,
                     args.getString(1));
@@ -3450,12 +3508,15 @@ public class NPCCommands {
         if (args.hasFlag('a')) {
             trait.setAngry(!trait.isAngry());
         }
+
         if (args.hasFlag('s')) {
             trait.setSitting(!trait.isSitting());
         }
+
         if (args.hasFlag('t')) {
             trait.setTamed(!trait.isTamed());
         }
+
         if (collar != null) {
             String unparsed = collar;
             DyeColor color = null;
@@ -3473,6 +3534,7 @@ public class NPCCommands {
                 throw new CommandException(Messages.COLLAR_COLOUR_NOT_SUPPORTED, unparsed);
             trait.setCollarColor(color);
         }
+
         Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), trait.isAngry(), trait.isSitting(),
                 trait.isTamed(), trait.getCollarColor().name());
     }

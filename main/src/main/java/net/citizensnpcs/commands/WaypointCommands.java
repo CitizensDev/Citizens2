@@ -52,6 +52,8 @@ public class WaypointCommands {
         if (index == null) {
             index = waypoints.size();
         }
+        if (index > waypoints.size() || index < 0)
+            throw new CommandException("Index out of range. Can't be more than " + waypoints.size());
         waypoints.add(index, new Waypoint(loc));
         Messaging.sendTr(sender, Messages.WAYPOINT_ADDED, Util.prettyPrintLocation(loc), index);
     }
@@ -65,8 +67,9 @@ public class WaypointCommands {
             max = 1,
             permission = "citizens.waypoints.disableteleport")
     public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        npc.data().setPersistent(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION, !npc.data()
-                .get(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION, !Setting.DEFAULT_STUCK_ACTION.asString().contains("teleport")));
+        npc.data().setPersistent(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION,
+                !npc.data().get(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION,
+                        !Setting.DEFAULT_STUCK_ACTION.asString().contains("teleport")));
         if (npc.data().get(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION,
                 !Setting.DEFAULT_STUCK_ACTION.asString().contains("teleport"))) {
             npc.getNavigator().getDefaultParameters().stuckAction(null);

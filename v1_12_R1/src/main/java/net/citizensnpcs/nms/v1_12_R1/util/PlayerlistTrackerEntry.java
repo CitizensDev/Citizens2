@@ -22,7 +22,6 @@ import net.minecraft.server.v1_12_R1.EntityTrackerEntry;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private final Entity tracker;
-
     private Map<EntityPlayer, Boolean> trackingMap;
 
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {
@@ -179,7 +178,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private static MethodHandle TRACKING_MAP_SETTER;
     private static final MethodHandle TRACKING_RANGE_SETTER = NMS.getFirstFinalSetter(EntityTrackerEntry.class,
             int.class);
-
     private static final MethodHandle TRACKING_SET_SETTER = NMS.getFirstFinalSetter(EntityTrackerEntry.class,
             Set.class);
     private static Field U = NMS.getField(EntityTrackerEntry.class, "u");

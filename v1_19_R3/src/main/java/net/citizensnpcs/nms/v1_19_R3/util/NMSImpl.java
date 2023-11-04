@@ -940,14 +940,14 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void linkTextInteraction(org.bukkit.entity.Player player, org.bukkit.entity.Entity entity,
             org.bukkit.entity.Entity mount, double offset) {
-        Interaction handle = (Interaction) getHandle(entity);
         offset += -0.5 + getHandle(mount).getPassengersRidingOffset();
         sendPacket(player,
                 new ClientboundBundlePacket(List.of(
                         new ClientboundSetEntityDataPacket(entity.getEntityId(),
                                 List.of(new SynchedEntityData.DataItem<>(INTERACTION_WIDTH, 0f).value(),
                                         new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, (float) offset).value(),
-                                        new SynchedEntityData.DataItem<>(DATA_POSE, Pose.CROAKING).value())),
+                                        new SynchedEntityData.DataItem<>(DATA_POSE, Pose.CROAKING).value(),
+                                        new SynchedEntityData.DataItem<>(DATA_NAME_VISIBLE, true).value())),
                         new ClientboundSetPassengersPacket(getHandle(mount)),
                         new ClientboundSetEntityDataPacket(entity.getEntityId(),
                                 List.of(new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, 999999f).value())))));
@@ -1190,7 +1190,7 @@ public class NMSImpl implements NMSBridge {
     public void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
         if (getHandle(passenger) == null)
             return;
-        getHandle(passenger).startRiding(getHandle(entity));
+        getHandle(passenger).startRiding(getHandle(entity), true);
     }
 
     @Override
@@ -2595,6 +2595,7 @@ public class NMSImpl implements NMSBridge {
             .newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getFirstSetter(CraftBossBar.class,
             ServerBossEvent.class);
+    private static EntityDataAccessor<Boolean> DATA_NAME_VISIBLE = null;
     private static EntityDataAccessor<Pose> DATA_POSE = null;
     private static final float DEFAULT_SPEED = 1F;
     public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EnderDragon.class, true,
@@ -2689,6 +2690,7 @@ public class NMSImpl implements NMSBridge {
 
         try {
             DATA_POSE = (EntityDataAccessor<Pose>) NMS.getGetter(Entity.class, "ar").invoke();
+            DATA_NAME_VISIBLE = (EntityDataAccessor<Boolean>) NMS.getGetter(Entity.class, "aS").invoke();
         } catch (Throwable e) {
             e.printStackTrace();
         }

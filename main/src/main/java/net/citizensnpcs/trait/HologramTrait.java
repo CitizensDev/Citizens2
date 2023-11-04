@@ -105,7 +105,6 @@ public class HologramTrait extends Trait {
         if (useDisplayEntities) {
             hologramNPC = registry.createNPC(EntityType.INTERACTION, line);
             hologramNPC.addTrait(new ClickRedirectTrait(npc));
-            hologramNPC.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
         } else {
             hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
             hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);

@@ -21,7 +21,6 @@ import net.minecraft.server.v1_11_R1.EntityTrackerEntry;
 
 public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private Entity tracker;
-
     private Map<EntityPlayer, Boolean> trackingMap;
 
     public PlayerlistTrackerEntry(Entity entity, int i, int j, int k, boolean flag) {

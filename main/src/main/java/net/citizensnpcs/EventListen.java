@@ -290,6 +290,7 @@ public class EventListen implements Listener {
             }
             return;
         }
+
         event.setCancelled(npc.isProtected());
 
         if (event instanceof EntityDamageByEntityEvent) {
@@ -349,6 +350,7 @@ public class EventListen implements Listener {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getEntity());
         if (npc == null || npc.getEntity().getType() != EntityType.PLAYER)
             return;
+
         event.setCancelled(true);
         npc.despawn(DespawnReason.PENDING_RESPAWN);
         event.getTo().getChunk();
@@ -442,7 +444,7 @@ public class EventListen implements Listener {
             HologramTrait ht = crt.getRedirectNPC().getTraitNullable(HologramTrait.class);
             if (ht != null) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                        () -> ht.onHologramSeenByPlayer(npc, event.getPlayer()), 3);
+                        () -> ht.onHologramSeenByPlayer(npc, event.getPlayer()), 2);
             }
         }
     }
@@ -741,10 +743,14 @@ public class EventListen implements Listener {
                     || event.getVehicle() instanceof Minecart)) {
                 event.setCancelled(true);
             }
+
             return;
         }
-        if (npc.getEntity() instanceof Vehicle
-                && (!npc.hasTrait(Controllable.class) || !npc.getTraitNullable(Controllable.class).isEnabled())) {
+
+        if (rider != null || !(npc instanceof Vehicle))
+            return;
+
+        if (!npc.hasTrait(Controllable.class) || !npc.getTraitNullable(Controllable.class).isEnabled()) {
             event.setCancelled(true);
         }
     }

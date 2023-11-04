@@ -1118,7 +1118,7 @@ public class NMSImpl implements NMSBridge {
     public void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
         if (NMSImpl.getHandle(passenger) == null)
             return;
-        NMSImpl.getHandle(passenger).startRiding(NMSImpl.getHandle(entity));
+        NMSImpl.getHandle(passenger).startRiding(NMSImpl.getHandle(entity), true);
     }
 
     @Override

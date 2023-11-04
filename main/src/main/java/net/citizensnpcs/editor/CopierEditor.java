@@ -34,21 +34,24 @@ public class CopierEditor extends Editor {
 
     @EventHandler
     public void onBlockClick(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null || !event.getPlayer().equals(player)) {
+        if (event.getClickedBlock() == null || !event.getPlayer().equals(player))
             return;
-        }
+
         NPC copy = npc.clone();
         if (!copy.getRawName().equals(name)) {
             copy.setName(name);
         }
 
         if (copy.isSpawned() && player.isOnline()) {
-            Location location = player.getLocation();
+            Location location = event.getClickedBlock().getLocation();
+            location.setYaw(player.getLocation().getYaw());
+            location.setPitch(player.getLocation().getPitch());
             location.getChunk().load();
             copy.teleport(location, TeleportCause.PLUGIN);
             copy.getOrAddTrait(CurrentLocation.class).setLocation(location);
         }
 
         Messaging.sendTr(player, Messages.NPC_COPIED, npc.getName());
+        event.setCancelled(true);
     }
 }
