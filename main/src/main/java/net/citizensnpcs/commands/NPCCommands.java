@@ -2849,6 +2849,17 @@ public class NPCCommands {
             trait.setSkinPersistent(args.getString(1), args.getString(3), args.getString(2));
             Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), args.getString(1));
             return;
+        } else if (args.hasFlag('s') && npc.getEntity() instanceof Player) {
+            ItemStack is = new ItemStack(Material.PLAYER_HEAD);
+            SkullMeta sm = (SkullMeta) is.getItemMeta();
+            NMS.setProfile(sm, NMS.getProfile((Player) npc.getEntity()));
+            is.setItemMeta(sm);
+            if (sender instanceof Player && ((Player) sender).getInventory().addItem(is).isEmpty()) {
+            } else if (args.getSenderLocation() != null) {
+                args.getSenderLocation().getWorld().dropItem(args.getSenderLocation(), is);
+            } else {
+                throw new ServerCommandException();
+            }
         } else {
             if (args.argsLength() != 2)
                 throw new CommandException(Messages.SKIN_REQUIRED);
