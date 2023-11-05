@@ -34,7 +34,7 @@ public class Inventory extends Trait {
     private ItemStack[] contents;
     private boolean registeredListener;
     private org.bukkit.inventory.Inventory view;
-    private final Set<InventoryView> viewers = new HashSet<InventoryView>();
+    private final Set<InventoryView> viewers = new HashSet<>();
 
     public Inventory() {
         super("inventory");
@@ -47,9 +47,8 @@ public class Inventory extends Trait {
      * @return ItemStack array of an NPC's inventory contents
      */
     public ItemStack[] getContents() {
-        if (view != null && !viewers.isEmpty()) {
+        if (view != null && !viewers.isEmpty())
             return view.getContents();
-        }
         if (npc.isSpawned()) {
             saveContents(npc.getEntity());
         }
@@ -91,7 +90,7 @@ public class Inventory extends Trait {
         }
         String name = npc.getName().length() >= 19 ? npc.getName().substring(0, 19) + "~" : npc.getName();
         view = Bukkit.createInventory(
-                npc.getEntity() instanceof InventoryHolder ? ((InventoryHolder) npc.getEntity()) : null, size,
+                npc.getEntity() instanceof InventoryHolder ? (InventoryHolder) npc.getEntity() : null, size,
                 name + "'s Inventory");
         for (int i = 0; i < view.getSize(); i++) {
             view.setItem(i, contents[i]);
@@ -135,8 +134,9 @@ public class Inventory extends Trait {
             }, CitizensAPI.getPlugin());
         }
         for (int i = 0; i < view.getSize(); i++) {
-            if (i >= contents.length)
+            if (i >= contents.length) {
                 break;
+            }
             view.setItem(i, contents[i]);
         }
         viewers.add(sender.openInventory(view));
@@ -216,10 +216,8 @@ public class Inventory extends Trait {
                     dest = ((Horse) npc.getEntity()).getInventory();
                 }
             }
-        } else {
-            if (npc.getEntity() instanceof Horse) {
-                dest = ((Horse) npc.getEntity()).getInventory();
-            }
+        } else if (npc.getEntity() instanceof Horse) {
+            dest = ((Horse) npc.getEntity()).getInventory();
         }
 
         if (dest == null)
@@ -253,9 +251,8 @@ public class Inventory extends Trait {
             view.setItem(slot, item);
         } else if (contents.length > slot) {
             contents[slot] = item;
-        } else {
+        } else
             throw new IndexOutOfBoundsException();
-        }
 
         if (npc.getEntity() instanceof InventoryHolder) {
             ((InventoryHolder) npc.getEntity()).getInventory().setItem(slot, item);

@@ -2,24 +2,24 @@ package net.citizensnpcs.api.jnbt;
 
 /*
  * JNBT License
- * 
+ *
  * Copyright (c) 2010 Graham Edgecombe
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the JNBT team nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,7 +30,7 @@ package net.citizensnpcs.api.jnbt;
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE. 
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
 import java.io.Closeable;
@@ -47,14 +47,14 @@ import java.util.Map;
  * This class reads <strong>NBT</strong>, or <strong>Named Binary Tag</strong> streams, and produces an object graph of
  * subclasses of the <code>Tag</code> object.
  * </p>
- * 
+ *
  * <p>
  * The NBT format was created by Markus Persson, and the specification may be found at
  * <a href="http://www.minecraft.net/docs/NBT.txt"> http://www.minecraft.net/docs/NBT.txt</a>.
  * </p>
- * 
+ *
  * @author Graham Edgecombe
- * 
+ *
  */
 public final class NBTInputStream implements Closeable {
 
@@ -65,7 +65,7 @@ public final class NBTInputStream implements Closeable {
 
     /**
      * Creates a new <code>NBTInputStream</code>, which will source its data from the specified input stream.
-     * 
+     *
      * @param is
      *            The input stream.
      * @throws IOException
@@ -82,7 +82,7 @@ public final class NBTInputStream implements Closeable {
 
     /**
      * Reads an NBT tag from the stream.
-     * 
+     *
      * @return The tag that was read.
      * @throws IOException
      *             if an I/O error occurs.
@@ -93,7 +93,7 @@ public final class NBTInputStream implements Closeable {
 
     /**
      * Reads an NBT from the stream.
-     * 
+     *
      * @param depth
      *            The depth of this tag.
      * @return The tag that was read.
@@ -118,7 +118,7 @@ public final class NBTInputStream implements Closeable {
 
     /**
      * Reads the payload of a tag, given the name and type.
-     * 
+     *
      * @param type
      *            The type.
      * @param name
@@ -132,11 +132,10 @@ public final class NBTInputStream implements Closeable {
     private Tag readTagPayload(int type, String name, int depth) throws IOException {
         switch (type) {
             case NBTConstants.TYPE_END:
-                if (depth == 0) {
+                if (depth == 0)
                     throw new IOException("TAG_End found without a TAG_Compound/TAG_List tag preceding it.");
-                } else {
+                else
                     return new EndTag();
-                }
             case NBTConstants.TYPE_BYTE:
                 return new ByteTag(name, is.readByte());
             case NBTConstants.TYPE_SHORT:
@@ -163,18 +162,17 @@ public final class NBTInputStream implements Closeable {
                 int childType = is.readByte();
                 length = is.readInt();
 
-                List<Tag> tagList = new ArrayList<Tag>();
+                List<Tag> tagList = new ArrayList<>();
                 for (int i = 0; i < length; ++i) {
                     Tag tag = readTagPayload(childType, "", depth + 1);
-                    if (tag instanceof EndTag) {
+                    if (tag instanceof EndTag)
                         throw new IOException("TAG_End not permitted in a list.");
-                    }
                     tagList.add(tag);
                 }
 
                 return new ListTag(name, NBTUtils.getTypeClass(childType), tagList);
             case NBTConstants.TYPE_COMPOUND:
-                Map<String, Tag> tagMap = new HashMap<String, Tag>();
+                Map<String, Tag> tagMap = new HashMap<>();
                 while (true) {
                     Tag tag = readTag(depth + 1);
                     if (tag instanceof EndTag) {

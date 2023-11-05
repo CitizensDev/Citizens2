@@ -123,7 +123,7 @@ public class SimpleGoalController implements GoalController {
 
             @Override
             public GoalEntry next() {
-                return (cur = itr.next());
+                return cur = itr.next();
             }
 
             @Override
@@ -142,8 +142,9 @@ public class SimpleGoalController implements GoalController {
             Goal test = possibleGoals.get(i).getGoal();
             if (test.equals(behavior)) {
                 possibleGoals.remove(i--);
-                if (test == executingRootGoal)
+                if (test == executingRootGoal) {
                     finishCurrentGoalExecution();
+                }
             }
         }
     }
@@ -153,8 +154,9 @@ public class SimpleGoalController implements GoalController {
         Preconditions.checkNotNull(goal, "goal cannot be null");
         for (int j = 0; j < possibleGoals.size(); ++j) {
             Goal test = possibleGoals.get(j).getGoal();
-            if (!test.equals(goal))
+            if (!test.equals(goal)) {
                 continue;
+            }
             possibleGoals.remove(j--);
             if (test == executingRootGoal) {
                 finishCurrentGoalExecution();
@@ -168,8 +170,9 @@ public class SimpleGoalController implements GoalController {
                     break;
                 }
             }
-            if (!foundOther)
+            if (!foundOther) {
                 hasPrioritisableGoal = false;
+            }
         }
     }
 
@@ -223,8 +226,9 @@ public class SimpleGoalController implements GoalController {
                 GoalEntry next = possibleGoals.get(j);
                 boolean unequalPriorities = next.getPriority() != entry.getPriority();
                 if (unequalPriorities || j == 0) {
-                    if (unequalPriorities)
+                    if (unequalPriorities) {
                         j++; // we want the previous entry where entry.priority
+                    }
                     // == next.priority
                     int ran = (int) Math.floor(Math.random() * (i - j + 1) + j);
                     if (ran >= possibleGoals.size() || ran < 0) {

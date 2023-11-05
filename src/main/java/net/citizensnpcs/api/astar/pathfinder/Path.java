@@ -74,9 +74,8 @@ public class Path implements Plan {
 
     @Override
     public void update(Agent agent) {
-        if (isComplete()) {
+        if (isComplete())
             return;
-        }
         path[index].onComplete((NPC) agent);
         ++index;
     }

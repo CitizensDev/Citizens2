@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.persistence;
 
+import org.bukkit.inventory.ItemStack;
+
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
-
-import org.bukkit.inventory.ItemStack;
 
 public class ItemStackPersister implements Persister<ItemStack> {
     @Override

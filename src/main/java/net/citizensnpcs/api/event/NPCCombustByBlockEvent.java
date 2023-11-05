@@ -1,10 +1,10 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityCombustByBlockEvent;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class NPCCombustByBlockEvent extends NPCCombustEvent {
     private final EntityCombustByBlockEvent event;
@@ -18,7 +18,7 @@ public class NPCCombustByBlockEvent extends NPCCombustEvent {
      * The combuster can be lava or a block that is on fire.
      * <p />
      * WARNING: block may be null.
-     * 
+     *
      * @return the Block that set the combustee alight.
      */
     public Block getCombuster() {

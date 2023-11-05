@@ -73,7 +73,7 @@ public class LocationLookup extends BukkitRunnable {
     @SuppressWarnings("unchecked")
     public <T> PerPlayerMetadata<T> registerMetadata(String key,
             BiConsumer<PerPlayerMetadata<T>, PlayerJoinEvent> onJoin) {
-        return (PerPlayerMetadata<T>) metadata.computeIfAbsent(key, s -> new PerPlayerMetadata<T>(onJoin));
+        return (PerPlayerMetadata<T>) metadata.computeIfAbsent(key, s -> new PerPlayerMetadata<>(onJoin));
     }
 
     @Override
@@ -129,10 +129,9 @@ public class LocationLookup extends BukkitRunnable {
         }
 
         public void set(UUID key, String value, T marker) {
-            if (marker instanceof Location || marker instanceof World) {
+            if (marker instanceof Location || marker instanceof World)
                 throw new IllegalArgumentException("Invalid marker");
-            }
-            sent.computeIfAbsent(key, (k) -> Maps.newHashMap()).put(value, marker);
+            sent.computeIfAbsent(key, k -> Maps.newHashMap()).put(value, marker);
         }
     }
 }

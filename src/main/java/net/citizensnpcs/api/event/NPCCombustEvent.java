@@ -1,10 +1,10 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityCombustEvent;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class NPCCombustEvent extends NPCEvent implements Cancellable {
     private boolean cancelled;
@@ -41,7 +41,7 @@ public class NPCCombustEvent extends NPCEvent implements Cancellable {
      * The number of seconds the combustee should be alight for.
      * <p />
      * This value will only ever increase the combustion time, not decrease existing combustion times.
-     * 
+     *
      * @param duration
      *            the time in seconds to be alight for.
      */

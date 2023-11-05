@@ -9,24 +9,24 @@ import java.util.zip.GZIPOutputStream;
 
 /*
  * JNBT License
- * 
+ *
  * Copyright (c) 2010 Graham Edgecombe
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the JNBT team nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,7 +37,7 @@ import java.util.zip.GZIPOutputStream;
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE. 
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
 /**
@@ -45,14 +45,14 @@ import java.util.zip.GZIPOutputStream;
  * This class writes <strong>NBT</strong>, or <strong>Named Binary Tag</strong> <code>Tag</code> objects to an
  * underlying <code>OutputStream</code>.
  * </p>
- * 
+ *
  * <p>
  * The NBT format was created by Markus Persson, and the specification may be found at
  * <a href="http://www.minecraft.net/docs/NBT.txt"> http://www.minecraft.net/docs/NBT.txt</a>.
  * </p>
- * 
+ *
  * @author Graham Edgecombe
- * 
+ *
  */
 public final class NBTOutputStream implements Closeable {
 
@@ -63,7 +63,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Creates a new <code>NBTOutputStream</code>, which will write data to the specified underlying output stream.
-     * 
+     *
      * @param os
      *            The output stream.
      * @throws IOException
@@ -80,7 +80,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_Byte_Array</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -94,7 +94,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_Byte</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -106,7 +106,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_Compound</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -121,7 +121,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_Double</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -133,7 +133,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_Empty</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -145,7 +145,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_Float</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -165,7 +165,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_Int</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -177,7 +177,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_List</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -197,7 +197,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_Long</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -209,7 +209,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_Short</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -221,7 +221,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a <code>TAG_String</code> tag.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException
@@ -235,7 +235,7 @@ public final class NBTOutputStream implements Closeable {
 
     /**
      * Writes a tag.
-     * 
+     *
      * @param tag
      *            The tag to write.
      * @throws IOException
@@ -250,16 +250,15 @@ public final class NBTOutputStream implements Closeable {
         os.writeShort(nameBytes.length);
         os.write(nameBytes);
 
-        if (type == NBTConstants.TYPE_END) {
+        if (type == NBTConstants.TYPE_END)
             throw new IOException("Named TAG_End not permitted.");
-        }
 
         writeTagPayload(tag);
     }
 
     /**
      * Writes tag payload.
-     * 
+     *
      * @param tag
      *            The tag.
      * @throws IOException

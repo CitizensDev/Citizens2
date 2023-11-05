@@ -28,8 +28,9 @@ public class BehaviorTreeTest {
             @Override
             public Behavior apply(List<Behavior> input) {
                 Behavior b = input.get(idx++);
-                if (idx >= input.size())
+                if (idx >= input.size()) {
                     idx = 0;
+                }
                 return b;
             }
         }).retryChildren().build();
@@ -99,23 +100,26 @@ public class BehaviorTreeTest {
 
         @Override
         public void reset() {
-            if (loggingTag > 0)
+            if (loggingTag > 0) {
                 System.err.println(loggingTag + ": reset");
+            }
             resetCount++;
         }
 
         @Override
         public BehaviorStatus run() {
-            if (loggingTag > 0)
+            if (loggingTag > 0) {
                 System.err.println(loggingTag + ": run " + ret);
+            }
             runCount++;
             return ret;
         }
 
         @Override
         public boolean shouldExecute() {
-            if (loggingTag > 0)
+            if (loggingTag > 0) {
                 System.err.println(loggingTag + ": shouldExecute");
+            }
             shouldExecuteCount++;
             return true;
         }

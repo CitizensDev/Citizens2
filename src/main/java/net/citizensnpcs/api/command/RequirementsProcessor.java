@@ -30,7 +30,7 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
     public void process(CommandSender sender, CommandContext context, Annotation instance, Object[] methodArgs)
             throws CommandException {
         Requirements requirements = (Requirements) instance;
-        NPC npc = (methodArgs.length >= 3 && methodArgs[2] instanceof NPC) ? (NPC) methodArgs[2] : null;
+        NPC npc = methodArgs.length >= 3 && methodArgs[2] instanceof NPC ? (NPC) methodArgs[2] : null;
 
         boolean canRedefineSelected = (context.hasValueFlag("uuid") || context.hasValueFlag("id"))
                 && sender.hasPermission("npc.select");
@@ -50,23 +50,20 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
             }
         }
 
-        if (requirements.selected() && npc == null) {
+        if (requirements.selected() && npc == null)
             throw new RequirementMissingException(error);
-        }
 
         if (requirements.ownership() && npc != null && !sender.hasPermission("citizens.admin")
-                && !npc.getOrAddTrait(Owner.class).isOwnedBy(sender)) {
+                && !npc.getOrAddTrait(Owner.class).isOwnedBy(sender))
             throw new RequirementMissingException(Messaging.tr(CommandMessages.MUST_BE_OWNER));
-        }
 
         if (npc == null)
             return;
 
         for (Class<? extends Trait> clazz : requirements.traits()) {
-            if (!npc.hasTrait(clazz)) {
+            if (!npc.hasTrait(clazz))
                 throw new RequirementMissingException(
                         Messaging.tr(CommandMessages.MISSING_TRAIT, clazz.getSimpleName()));
-            }
         }
 
         Set<EntityType> types = Sets.newEnumSet(Arrays.asList(requirements.types()), EntityType.class);
@@ -76,13 +73,11 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
         types.removeAll(Sets.newHashSet(requirements.excludedTypes()));
 
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
-        if (!types.contains(type)) {
+        if (!types.contains(type))
             throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE,
                     type.name().toLowerCase().replace('_', ' ')));
-        }
-        if (requirements.livingEntity() && !type.isAlive()) {
+        if (requirements.livingEntity() && !type.isAlive())
             throw new RequirementMissingException(
                     Messaging.tr(CommandMessages.REQUIREMENTS_MUST_BE_LIVING_ENTITY, methodArgs));
-        }
     }
 }

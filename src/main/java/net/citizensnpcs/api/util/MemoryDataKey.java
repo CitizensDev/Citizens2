@@ -2,6 +2,7 @@ package net.citizensnpcs.api.util;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -25,21 +26,12 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if ((obj == null) || (getClass() != obj.getClass()))
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
         MemoryDataKey other = (MemoryDataKey) obj;
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
+        if (!Objects.equals(path, other.path)) {
             return false;
         }
         return true;
@@ -69,7 +61,7 @@ public class MemoryDataKey extends DataKey {
         if (key.isEmpty())
             return path;
         if (key.charAt(0) == '.')
-            return path.isEmpty() ? key.substring(1, key.length()) : path + key;
+            return path.isEmpty() ? key.substring(1) : path + key;
         return path.isEmpty() ? key : path + "." + key;
     }
 
@@ -110,7 +102,7 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public int hashCode() {
-        return 31 + ((path == null) ? 0 : path.hashCode());
+        return 31 + (path == null ? 0 : path.hashCode());
     }
 
     @Override
@@ -122,7 +114,7 @@ public class MemoryDataKey extends DataKey {
     public String name() {
         if (name == null) {
             int idx = path.lastIndexOf('.');
-            name = idx == -1 ? path : path.substring(idx + 1, path.length());
+            name = idx == -1 ? path : path.substring(idx + 1);
         }
         return name;
     }

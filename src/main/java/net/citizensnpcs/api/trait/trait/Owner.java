@@ -56,9 +56,9 @@ public class Owner extends Trait {
             return true;
 
         return sender.hasPermission("citizens.ignore-owner") || sender.hasPermission("citizens.admin")
-                || (uuid != null && sender instanceof OfflinePlayer
-                        && ((OfflinePlayer) sender).getUniqueId().equals(uuid))
-                || (uuid != null && sender instanceof Player && ((Player) sender).getUniqueId().equals(uuid));
+                || uuid != null && sender instanceof OfflinePlayer
+                        && ((OfflinePlayer) sender).getUniqueId().equals(uuid)
+                || uuid != null && sender instanceof Player && ((Player) sender).getUniqueId().equals(uuid);
     }
 
     public boolean isOwnedBy(String name) {

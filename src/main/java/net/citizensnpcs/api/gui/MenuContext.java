@@ -54,9 +54,8 @@ public class MenuContext implements SlotSource {
 
     @Override
     public InventoryMenuSlot getSlot(int i) {
-        if (slots[i] == null) {
+        if (slots[i] == null)
             return slots[i] = new InventoryMenuSlot(this, i);
-        }
         return slots[i];
     }
 

@@ -61,9 +61,8 @@ public class Placeholders implements Listener {
                         ? Bukkit.getServer().getOnlinePlayers()
                         : location.getWorld().getPlayers();
                 Player possible = Iterables.get(players, new Random().nextInt(players.size()), null);
-                if (possible != null) {
+                if (possible != null)
                     return possible.getName();
-                }
                 break;
             case "<random_npc>":
             case "<random_npc_id>":
@@ -78,25 +77,25 @@ public class Placeholders implements Listener {
                         .map(CitizensAPI.getNPCRegistry()::getNPC).filter(e -> e != null && e.getEntity() != excluding)
                         .min((a, b) -> Double.compare(a.getEntity().getLocation().distanceSquared(location),
                                 b.getEntity().getLocation().distanceSquared(location)));
-                if (closestNPC.isPresent()) {
+                if (closestNPC.isPresent())
                     return Integer.toString(closestNPC.get().getId());
-                }
                 break;
             case "<nearest_player>":
                 double min = Double.MAX_VALUE;
                 Entity closest = null;
                 for (Player entity : CitizensAPI.getLocationLookup().getNearbyPlayers(location, 25)) {
-                    if (entity == excluding || CitizensAPI.getNPCRegistry().isNPC(entity))
+                    if (entity == excluding || CitizensAPI.getNPCRegistry().isNPC(entity)) {
                         continue;
+                    }
                     double dist = entity.getLocation().distanceSquared(location);
-                    if (dist > min)
+                    if (dist > min) {
                         continue;
+                    }
                     min = dist;
                     closest = entity;
                 }
-                if (closest != null) {
+                if (closest != null)
                     return closest.getName();
-                }
                 break;
             case "<world>":
                 return location.getWorld().getName();
@@ -123,9 +122,8 @@ public class Placeholders implements Listener {
     private static String replace(String text, CommandSender sender, NPC npc, boolean name) {
         text = replace(text, sender instanceof OfflinePlayer ? (OfflinePlayer) sender
                 : sender instanceof BlockCommandSender ? getPlayer((BlockCommandSender) sender) : null);
-        if (npc == null || text == null) {
+        if (npc == null || text == null)
             return text;
-        }
         StringBuffer out = new StringBuffer();
         Matcher matcher = PLACEHOLDER_MATCHER.matcher(text);
         while (matcher.find()) {
@@ -163,12 +161,10 @@ public class Placeholders implements Listener {
     }
 
     public static String replace(String text, OfflinePlayer player) {
-        if (player == null || (!player.isOnline() && !player.hasPlayedBefore())) {
+        if (player == null || !player.isOnline() && !player.hasPlayedBefore())
             return setPlaceholderAPIPlaceholders(text, player);
-        }
-        if (text == null) {
+        if (text == null)
             return text;
-        }
         if (player.getPlayer() != null) {
             StringBuffer out = new StringBuffer();
             Matcher matcher = PLAYER_PLACEHOLDER_MATCHER.matcher(text);
@@ -198,9 +194,8 @@ public class Placeholders implements Listener {
     }
 
     private static String setPlaceholderAPIPlaceholders(String text, OfflinePlayer player) {
-        if (!PLACEHOLDERAPI_ENABLED) {
+        if (!PLACEHOLDERAPI_ENABLED)
             return text;
-        }
         try {
             return PlaceholderAPI.setPlaceholders(player, text);
         } catch (Throwable t) {

@@ -18,8 +18,6 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Lists;
 
-import net.citizensnpcs.api.ai.event.CancelReason;
-import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.PathPoint.PathCallback;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.SpigotUtil;
@@ -31,14 +29,11 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
         Material below = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ());
         Material in = source.getMaterialAt(pos);
-        if (above == WEB || in == WEB)
-            return 2F;
-        if (below == Material.SOUL_SAND || below == Material.ICE)
+        if (above == WEB || in == WEB || below == Material.SOUL_SAND || below == Material.ICE)
             return 2F;
         if (isLiquidOrInLiquid(source.getWorld().getBlockAt(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))) {
-            if (in == Material.LAVA) {
+            if (in == Material.LAVA)
                 return 3F;
-            }
             return 2F;
         }
         return 0F; // TODO: add light level-specific costs?
@@ -63,9 +58,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
         if (isClimbable(in.getType()) && (isClimbable(above.getType()) || isClimbable(below))) {
             point.addCallback(new LadderClimber());
-        } else if (!canStandIn(above) || !canStandIn(in)) {
+        } else if (!canStandIn(above) || !canStandIn(in))
             return PassableState.UNPASSABLE;
-        }
 
         if (!canJumpOn(below)) {
             if (point.getParentPoint() == null)
@@ -99,9 +93,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
                 @Override
                 public void run() {
-                    if (index + 1 >= path.size()) {
+                    if (index + 1 >= path.size())
                         return;
-                    }
                     Location loc = npc.getEntity().getLocation(dummy);
                     Material in = loc.getBlock().getType();
                     Block next = path.get(index + 1);
@@ -113,7 +106,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                             if (sneakingForScaffolding) {
                                 npc.data().set(NPC.Metadata.SNEAKING, sneakingForScaffolding = false);
                             }
-                        } else if ((isScaffolding(in) || isScaffolding(next.getType()))) {
+                        } else if (isScaffolding(in) || isScaffolding(next.getType())) {
                             if (loc.distance(next.getLocation().add(0.5, 1, 0.5)) < 0.4) {
                                 npc.data().set(NPC.Metadata.SNEAKING, sneakingForScaffolding = true);
                             }
@@ -125,12 +118,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                     }
                 }
             });
-            npc.getNavigator().getLocalParameters().addSingleUseCallback(new NavigatorCallback() {
-                @Override
-                public void onCompletion(CancelReason cancelReason) {
-                    npc.data().set("running-ladder", false);
-                    npc.data().set(NPC.Metadata.SNEAKING, false);
-                }
+            npc.getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
+                npc.data().set("running-ladder", false);
+                npc.data().set(NPC.Metadata.SNEAKING, false);
             });
             added = true;
         }
@@ -226,8 +216,9 @@ public class MinecraftBlockExaminer implements BlockExaminer {
         for (int y = -yradius; y <= yradius; y++) {
             for (int x = -xradius; x <= xradius; x++) {
                 for (int z = -xradius; z <= xradius; z++) {
-                    if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4))
+                    if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4)) {
                         continue;
+                    }
 
                     Block relative = base.getRelative(x, y, z);
                     if (filter.apply(relative) && canStandOn(relative.getRelative(BlockFace.DOWN)))
@@ -245,9 +236,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             return location;
         for (int y = 0; y <= radius; y++) {
             Block relative = base.getRelative(0, y, 0);
-            if (canStandOn(relative.getRelative(BlockFace.DOWN))) {
+            if (canStandOn(relative.getRelative(BlockFace.DOWN)))
                 return relative.getLocation();
-            }
         }
         return location;
     }
@@ -262,9 +252,8 @@ public class MinecraftBlockExaminer implements BlockExaminer {
 
     public static boolean isLiquid(Material... materials) {
         for (Material mat : materials) {
-            if (LIQUIDS.contains(mat)) {
+            if (LIQUIDS.contains(mat))
                 return true;
-            }
         }
         return false;
     }

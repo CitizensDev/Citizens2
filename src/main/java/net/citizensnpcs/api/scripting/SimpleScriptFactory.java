@@ -12,8 +12,9 @@ public class SimpleScriptFactory implements ScriptFactory {
     SimpleScriptFactory(CompiledScript src, ContextProvider... providers) {
         if (src == null)
             throw new IllegalArgumentException("src cannot be null");
-        if (providers == null)
+        if (providers == null) {
             providers = new ContextProvider[0];
+        }
         this.src = src;
         this.providers = providers;
     }

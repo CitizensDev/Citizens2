@@ -71,8 +71,9 @@ public class SimpleGoalControllerTest {
 
         @Override
         public void run(GoalSelector selector) {
-            if (++times >= maxTimes)
+            if (++times >= maxTimes) {
                 selector.finish();
+            }
         }
 
         @Override

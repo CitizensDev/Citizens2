@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.ai.event;
 
+import org.bukkit.event.Event;
+
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.npc.NPC;
-
-import org.bukkit.event.Event;
 
 public abstract class NavigationEvent extends Event {
     private final Navigator navigator;

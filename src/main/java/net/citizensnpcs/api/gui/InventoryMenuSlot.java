@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -54,21 +55,14 @@ public class InventoryMenuSlot {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         InventoryMenuSlot other = (InventoryMenuSlot) obj;
-        if (index != other.index) {
+        if (index != other.index)
             return false;
-        }
-        if (inventory == null) {
-            if (other.inventory != null) {
-                return false;
-            }
-        } else if (!inventory.equals(other.inventory)) {
+        if (!Objects.equals(inventory, other.inventory)) {
             return false;
         }
         return true;
@@ -92,7 +86,7 @@ public class InventoryMenuSlot {
     @Override
     public int hashCode() {
         int result = 31 + index;
-        return 31 * result + ((inventory == null) ? 0 : inventory.hashCode());
+        return 31 * result + (inventory == null ? 0 : inventory.hashCode());
     }
 
     void initialise(MenuSlot data) {
@@ -101,8 +95,9 @@ public class InventoryMenuSlot {
             Material mat = null;
             for (String str : data.compatMaterial()) {
                 mat = Material.getMaterial(str);
-                if (mat != null)
+                if (mat != null) {
                     break;
+                }
             }
             defaultItem = new ItemStack(mat, data.amount());
         } else if (data.material() != null) {
@@ -126,8 +121,8 @@ public class InventoryMenuSlot {
     }
 
     void onClick(CitizensInventoryClickEvent event) {
-        if ((actionFilter == null && handlers.isEmpty())
-                || (actionFilter != null && !actionFilter.contains(event.getAction()))) {
+        if (actionFilter == null && handlers.isEmpty()
+                || actionFilter != null && !actionFilter.contains(event.getAction())) {
             event.setCancelled(true);
             event.setResult(Result.DENY);
         }

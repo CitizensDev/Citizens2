@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -50,18 +51,12 @@ public class YamlStorage implements FileStorage {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         YamlStorage other = (YamlStorage) obj;
-        if (file == null) {
-            if (other.file != null) {
-                return false;
-            }
-        } else if (!file.equals(other.file)) {
+        if (!Objects.equals(file, other.file)) {
             return false;
         }
         return true;
@@ -79,7 +74,7 @@ public class YamlStorage implements FileStorage {
 
     @Override
     public int hashCode() {
-        return 31 + ((file == null) ? 0 : file.hashCode());
+        return 31 + (file == null ? 0 : file.hashCode());
     }
 
     @Override
@@ -134,12 +129,10 @@ public class YamlStorage implements FileStorage {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+            if (this == obj)
                 return true;
-            }
-            if (!super.equals(obj) || getClass() != obj.getClass()) {
+            if (!super.equals(obj) || getClass() != obj.getClass())
                 return false;
-            }
             YamlKey other = (YamlKey) obj;
             return getOuterType().equals(other.getOuterType());
         }
@@ -253,9 +246,8 @@ public class YamlStorage implements FileStorage {
         @Override
         public String getString(String key) {
             String path = createRelativeKey(key);
-            if (pathExists(path)) {
+            if (pathExists(path))
                 return config.get(path).toString();
-            }
             return "";
         }
 
@@ -264,7 +256,7 @@ public class YamlStorage implements FileStorage {
             ConfigurationSection section = config.getConfigurationSection(path);
             if (section == null)
                 return Collections.emptyList();
-            List<DataKey> res = new ArrayList<DataKey>();
+            List<DataKey> res = new ArrayList<>();
             for (String key : section.getKeys(false)) {
                 res.add(getRelative(key));
             }
@@ -286,9 +278,8 @@ public class YamlStorage implements FileStorage {
         @Override
         public boolean keyExists(String key) {
             Object value = config.get(createRelativeKey(key));
-            if (value == null) {
+            if (value == null)
                 return false;
-            }
             return true;
         }
 

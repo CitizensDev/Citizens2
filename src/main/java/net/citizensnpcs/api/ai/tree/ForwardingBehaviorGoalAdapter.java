@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.ai.tree;
 
+import java.util.Objects;
+
 /**
  * Forwards all calls to a secondary {@link Behavior}.
  */
@@ -12,18 +14,12 @@ public class ForwardingBehaviorGoalAdapter extends BehaviorGoalAdapter {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         ForwardingBehaviorGoalAdapter other = (ForwardingBehaviorGoalAdapter) obj;
-        if (behavior == null) {
-            if (other.behavior != null) {
-                return false;
-            }
-        } else if (!behavior.equals(other.behavior)) {
+        if (!Objects.equals(behavior, other.behavior)) {
             return false;
         }
         return true;
@@ -35,7 +31,7 @@ public class ForwardingBehaviorGoalAdapter extends BehaviorGoalAdapter {
 
     @Override
     public int hashCode() {
-        return 31 + ((behavior == null) ? 0 : behavior.hashCode());
+        return 31 + (behavior == null ? 0 : behavior.hashCode());
     }
 
     @Override

@@ -61,7 +61,7 @@ public interface PathPoint {
          *            The point that was reached
          */
         default void onReached(NPC npc, Block point) {
-        };
+        }
 
         /**
          * Run every tick when moving towards a specific block.

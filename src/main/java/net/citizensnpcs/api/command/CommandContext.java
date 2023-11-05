@@ -45,7 +45,7 @@ import net.citizensnpcs.api.command.exception.CommandException;
 
 public class CommandContext {
     protected String[] args;
-    protected final Set<Character> flags = new HashSet<Character>();
+    protected final Set<Character> flags = new HashSet<>();
     private Location location = null;
     private final String[] rawArgs;
     private final CommandSender sender;
@@ -66,8 +66,9 @@ public class CommandContext {
             } else if (args[i].charAt(0) == '{') {
                 String json = args[i];
                 for (int inner = i + 1; inner < args.length; inner++) {
-                    if (CharMatcher.is('{').countIn(json) - CharMatcher.is('}').countIn(json) == 0)
+                    if (CharMatcher.is('{').countIn(json) - CharMatcher.is('}').countIn(json) == 0) {
                         break;
+                    }
                     json += " " + args[inner];
                     args[inner] = "";
                 }
@@ -80,8 +81,9 @@ public class CommandContext {
                     continue;
                 }
                 for (int inner = i + 1; inner < args.length; inner++) {
-                    if (args[inner].isEmpty())
+                    if (args[inner].isEmpty()) {
                         continue;
+                    }
                     String test = args[inner].trim();
                     quoted += " " + test;
                     if (test.charAt(test.length() - 1) == quote) {
@@ -98,8 +100,9 @@ public class CommandContext {
         for (i = 1; i < args.length; ++i) {
             // second pass for flags
             int length = args[i].length();
-            if (length == 0)
+            if (length == 0) {
                 continue;
+            }
             if (i + 1 < args.length && length > 2 && VALUE_FLAG.matcher(args[i]).matches()) {
                 int inner = i + 1;
                 while (args[inner].length() == 0) {
@@ -127,8 +130,9 @@ public class CommandContext {
         List<String> copied = Lists.newArrayList();
         for (String arg : args) {
             arg = arg.trim();
-            if (arg == null || arg.isEmpty())
+            if (arg == null || arg.isEmpty()) {
                 continue;
+            }
             copied.add(arg.trim());
         }
         this.args = copied.toArray(new String[copied.size()]);
@@ -164,9 +168,8 @@ public class CommandContext {
 
     public String getFlag(String ch, String def) {
         final String value = valueFlags.get(ch);
-        if (value == null) {
+        if (value == null)
             return def;
-        }
 
         return value;
     }
@@ -177,9 +180,8 @@ public class CommandContext {
 
     public double getFlagDouble(String ch, double def) throws NumberFormatException {
         final String value = valueFlags.get(ch);
-        if (value == null) {
+        if (value == null)
             return def;
-        }
 
         return Double.parseDouble(value);
     }
@@ -190,9 +192,8 @@ public class CommandContext {
 
     public int getFlagInteger(String ch, int def) throws NumberFormatException {
         final String value = valueFlags.get(ch);
-        if (value == null) {
+        if (value == null)
             return def;
-        }
 
         return Integer.parseInt(value);
     }
@@ -207,9 +208,8 @@ public class CommandContext {
 
     public int getFlagTicks(String ch, int def) throws NumberFormatException {
         final String value = valueFlags.get(ch);
-        if (value == null) {
+        if (value == null)
             return def;
-        }
 
         return parseTicks(value);
     }
@@ -313,9 +313,8 @@ public class CommandContext {
 
     public boolean hasAnyValueFlag(String... strings) {
         for (String s : strings) {
-            if (hasValueFlag(s)) {
+            if (hasValueFlag(s))
                 return true;
-            }
         }
         return false;
     }
@@ -338,16 +337,15 @@ public class CommandContext {
 
     public EulerAngle parseEulerAngle(String input) {
         List<Double> pose = Lists
-                .newArrayList(Iterables.transform(Splitter.on(',').split(input), (s) -> Double.parseDouble(s)));
+                .newArrayList(Iterables.transform(Splitter.on(',').split(input), Double::parseDouble));
         return new EulerAngle(pose.get(0), pose.get(1), pose.get(2));
     }
 
     public int parseTicks(String dur) {
         dur = dur.trim();
         char last = Character.toLowerCase(dur.charAt(dur.length() - 1));
-        if (Character.isDigit(last)) {
+        if (Character.isDigit(last))
             return Integer.parseInt(dur);
-        }
         int factor = 1;
         if (last == 's') {
             factor = 20;

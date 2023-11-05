@@ -22,9 +22,8 @@ public class TimerDecorator extends BehaviorGoalAdapter {
 
     @Override
     public BehaviorStatus run() {
-        if (++ticks >= limit) {
+        if (++ticks >= limit)
             return BehaviorStatus.FAILURE;
-        }
         return wrapping.run();
     }
 

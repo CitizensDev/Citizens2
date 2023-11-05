@@ -45,9 +45,8 @@ public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
 
     @Override
     public BehaviorStatus run() {
-        if (finished) {
+        if (finished)
             return reason == null ? BehaviorStatus.SUCCESS : BehaviorStatus.FAILURE;
-        }
         return BehaviorStatus.RUNNING;
     }
 

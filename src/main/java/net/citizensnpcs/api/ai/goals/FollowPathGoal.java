@@ -32,9 +32,8 @@ public class FollowPathGoal extends BehaviorGoalAdapter {
 
     @Override
     public BehaviorStatus run() {
-        if (idx >= path.size()) {
+        if (idx >= path.size())
             return BehaviorStatus.SUCCESS;
-        }
         if (!npc.getNavigator().isNavigating()) {
             setPath();
         }

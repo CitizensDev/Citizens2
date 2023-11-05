@@ -85,9 +85,8 @@ public class Equipment extends Trait {
     }
 
     private EntityEquipment getEquipmentFromEntity(Entity entity) {
-        if (entity instanceof LivingEntity) {
+        if (entity instanceof LivingEntity)
             return ((LivingEntity) entity).getEquipment();
-        }
         throw new RuntimeException("Unsupported entity equipment");
     }
 
@@ -195,10 +194,8 @@ public class Equipment extends Trait {
     private void saveOrRemove(DataKey key, ItemStack item) {
         if (item != null) {
             ItemStorage.saveItem(key, item);
-        } else {
-            if (key.keyExists("")) {
-                key.removeKey("");
-            }
+        } else if (key.keyExists("")) {
+            key.removeKey("");
         }
     }
 
@@ -290,7 +287,7 @@ public class Equipment extends Trait {
         LEGGINGS(3),
         OFF_HAND(5);
 
-        private int index;
+        private final int index;
 
         EquipmentSlot(int index) {
             this.index = index;

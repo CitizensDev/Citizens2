@@ -41,9 +41,9 @@ import com.google.common.collect.Maps;
 
 /**
  * A class which contains NBT-related utility methods.
- * 
+ *
  * @author Graham Edgecombe
- * 
+ *
  */
 public final class NBTUtils {
 
@@ -56,25 +56,25 @@ public final class NBTUtils {
 
     public static Tag createTag(String name, Object value) {
         Class<?> clazz = value.getClass();
-        if (clazz == byte.class || clazz == Byte.class) {
+        if (clazz == byte.class || clazz == Byte.class)
             return new ByteTag(name, (Byte) value);
-        } else if (clazz == short.class || clazz == Short.class) {
+        else if (clazz == short.class || clazz == Short.class)
             return new ShortTag(name, (Short) value);
-        } else if (clazz == int.class || clazz == Integer.class) {
+        else if (clazz == int.class || clazz == Integer.class)
             return new IntTag(name, (Integer) value);
-        } else if (clazz == long.class || clazz == Long.class) {
+        else if (clazz == long.class || clazz == Long.class)
             return new LongTag(name, (Long) value);
-        } else if (clazz == float.class || clazz == Float.class) {
+        else if (clazz == float.class || clazz == Float.class)
             return new FloatTag(name, (Float) value);
-        } else if (clazz == double.class || clazz == Double.class) {
+        else if (clazz == double.class || clazz == Double.class)
             return new DoubleTag(name, (Double) value);
-        } else if (clazz == byte[].class) {
+        else if (clazz == byte[].class)
             return new ByteArrayTag(name, (byte[]) value);
-        } else if (clazz == int[].class) {
+        else if (clazz == int[].class)
             return new IntArrayTag(name, (int[]) value);
-        } else if (clazz == String.class) {
+        else if (clazz == String.class)
             return new StringTag(name, (String) value);
-        } else if (List.class.isAssignableFrom(clazz)) {
+        else if (List.class.isAssignableFrom(clazz)) {
             List<?> list = (List<?>) value;
             if (list.isEmpty())
                 throw new IllegalArgumentException("cannot set empty list");
@@ -86,9 +86,8 @@ public final class NBTUtils {
                     throw new IllegalArgumentException("cannot convert list value to tag");
                 if (tagClass == null) {
                     tagClass = tag.getClass();
-                } else if (tagClass != tag.getClass()) {
+                } else if (tagClass != tag.getClass())
                     throw new IllegalArgumentException("list values must be of homogeneous type");
-                }
                 newList.add(tag);
             }
             return new ListTag(name, tagClass, newList);
@@ -112,7 +111,7 @@ public final class NBTUtils {
 
     /**
      * Gets the class of a type of tag.
-     * 
+     *
      * @param type
      *            The type.
      * @return The class.
@@ -152,7 +151,7 @@ public final class NBTUtils {
 
     /**
      * Gets the type code of a tag class.
-     * 
+     *
      * @param clazz
      *            The tag class.
      * @return The type code.
@@ -160,69 +159,67 @@ public final class NBTUtils {
      *             if the tag class is invalid.
      */
     public static int getTypeCode(Class<? extends Tag> clazz) {
-        if (clazz.equals(ByteArrayTag.class)) {
+        if (clazz.equals(ByteArrayTag.class))
             return NBTConstants.TYPE_BYTE_ARRAY;
-        } else if (clazz.equals(ByteTag.class)) {
+        else if (clazz.equals(ByteTag.class))
             return NBTConstants.TYPE_BYTE;
-        } else if (clazz.equals(CompoundTag.class)) {
+        else if (clazz.equals(CompoundTag.class))
             return NBTConstants.TYPE_COMPOUND;
-        } else if (clazz.equals(DoubleTag.class)) {
+        else if (clazz.equals(DoubleTag.class))
             return NBTConstants.TYPE_DOUBLE;
-        } else if (clazz.equals(EndTag.class)) {
+        else if (clazz.equals(EndTag.class))
             return NBTConstants.TYPE_END;
-        } else if (clazz.equals(FloatTag.class)) {
+        else if (clazz.equals(FloatTag.class))
             return NBTConstants.TYPE_FLOAT;
-        } else if (clazz.equals(IntTag.class)) {
+        else if (clazz.equals(IntTag.class))
             return NBTConstants.TYPE_INT;
-        } else if (clazz.equals(ListTag.class)) {
+        else if (clazz.equals(ListTag.class))
             return NBTConstants.TYPE_LIST;
-        } else if (clazz.equals(LongTag.class)) {
+        else if (clazz.equals(LongTag.class))
             return NBTConstants.TYPE_LONG;
-        } else if (clazz.equals(ShortTag.class)) {
+        else if (clazz.equals(ShortTag.class))
             return NBTConstants.TYPE_SHORT;
-        } else if (clazz.equals(StringTag.class)) {
+        else if (clazz.equals(StringTag.class))
             return NBTConstants.TYPE_STRING;
-        } else if (clazz.equals(IntArrayTag.class)) {
+        else if (clazz.equals(IntArrayTag.class))
             return NBTConstants.TYPE_INT_ARRAY;
-        } else {
+        else
             throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
-        }
     }
 
     /**
      * Gets the type name of a tag.
-     * 
+     *
      * @param clazz
      *            The tag class.
      * @return The type name.
      */
     public static String getTypeName(Class<? extends Tag> clazz) {
-        if (clazz.equals(ByteArrayTag.class)) {
+        if (clazz.equals(ByteArrayTag.class))
             return "TAG_Byte_Array";
-        } else if (clazz.equals(ByteTag.class)) {
+        else if (clazz.equals(ByteTag.class))
             return "TAG_Byte";
-        } else if (clazz.equals(CompoundTag.class)) {
+        else if (clazz.equals(CompoundTag.class))
             return "TAG_Compound";
-        } else if (clazz.equals(DoubleTag.class)) {
+        else if (clazz.equals(DoubleTag.class))
             return "TAG_Double";
-        } else if (clazz.equals(EndTag.class)) {
+        else if (clazz.equals(EndTag.class))
             return "TAG_End";
-        } else if (clazz.equals(FloatTag.class)) {
+        else if (clazz.equals(FloatTag.class))
             return "TAG_Float";
-        } else if (clazz.equals(IntTag.class)) {
+        else if (clazz.equals(IntTag.class))
             return "TAG_Int";
-        } else if (clazz.equals(ListTag.class)) {
+        else if (clazz.equals(ListTag.class))
             return "TAG_List";
-        } else if (clazz.equals(LongTag.class)) {
+        else if (clazz.equals(LongTag.class))
             return "TAG_Long";
-        } else if (clazz.equals(ShortTag.class)) {
+        else if (clazz.equals(ShortTag.class))
             return "TAG_Short";
-        } else if (clazz.equals(StringTag.class)) {
+        else if (clazz.equals(StringTag.class))
             return "TAG_String";
-        } else if (clazz.equals(IntArrayTag.class)) {
+        else if (clazz.equals(IntArrayTag.class))
             return "TAG_Int_Array";
-        } else {
+        else
             throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
-        }
     }
 }

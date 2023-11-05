@@ -1,10 +1,10 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class PlayerCreateNPCEvent extends CommandSenderCreateNPCEvent implements Cancellable {
     public PlayerCreateNPCEvent(Player player, NPC npc) {

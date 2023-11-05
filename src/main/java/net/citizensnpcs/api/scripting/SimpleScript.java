@@ -20,8 +20,9 @@ public class SimpleScript implements Script {
         this.engine = src.getEngine();
         this.invocable = (Invocable) engine;
         this.bindings = engine.createBindings();
-        for (ContextProvider provider : providers)
+        for (ContextProvider provider : providers) {
             provider.provide(this);
+        }
         this.root = src.eval(bindings);
     }
 

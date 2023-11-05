@@ -24,11 +24,10 @@ public class AsyncChunkSnapshotBlockSource extends CachingChunkBlockSource<Chunk
         // TODO: pre-load multiple chunks on cache miss
         Callable<ChunkSnapshot> call = () -> world.getChunkAt(x, z).getChunkSnapshot(false, false, false);
         try {
-            if (!Bukkit.isPrimaryThread()) {
+            if (!Bukkit.isPrimaryThread())
                 return Bukkit.getScheduler().callSyncMethod(null, call).get();
-            } else {
+            else
                 return call.call();
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

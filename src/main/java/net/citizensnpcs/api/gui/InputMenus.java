@@ -92,7 +92,7 @@ public class InputMenus {
         }
 
         public static <T> Choice<T> of(T value, Material display, String description, boolean active) {
-            Choice<T> ret = new Choice<T>();
+            Choice<T> ret = new Choice<>();
             ret.active = active;
             ret.material = display;
             ret.value = value;
@@ -118,11 +118,10 @@ public class InputMenus {
 
         @Override
         public Inventory createInventory(String title) {
-            if (choices.length <= 3) {
+            if (choices.length <= 3)
                 return Bukkit.createInventory(null, InventoryType.HOPPER, this.title);
-            } else {
+            else
                 return Bukkit.createInventory(null, Math.min(54, choices.length / 5 * 9 + 9), this.title);
-            }
         }
 
         @Override
@@ -131,7 +130,7 @@ public class InputMenus {
                 final Choice<T> choice = choices[i];
                 final InventoryMenuSlot slot = ctx.getSlot(i * 2);
                 slot.setItemStack(choice.createDisplayItem());
-                slot.setClickHandler((evt) -> {
+                slot.setClickHandler(evt -> {
                     evt.setCancelled(true);
                     boolean newState = !choice.isActive();
                     switch (type) {
@@ -219,13 +218,13 @@ public class InputMenus {
     @SuppressWarnings("unchecked")
     public static <T> InventoryMenuPage picker(String title, Consumer<Choice<T>> callback,
             InputMenus.Choice<T>... choices) {
-        return new ChoiceInputMenu<T>(title, Choice.Type.PICKER, (chosen) -> {
+        return new ChoiceInputMenu<>(title, Choice.Type.PICKER, chosen -> {
             callback.accept(chosen.size() > 0 ? chosen.get(0) : null);
         }, choices);
     }
 
     public static InventoryMenuPage stringSetter(Supplier<String> initialValue, Consumer<String> callback) {
-        return new StringInputMenu(initialValue, (s) -> {
+        return new StringInputMenu(initialValue, s -> {
             callback.accept(s);
             return true;
         });
@@ -234,11 +233,11 @@ public class InputMenus {
     @SuppressWarnings("unchecked")
     public static <T> InventoryMenuPage toggle(String title, Consumer<List<Choice<T>>> callback,
             InputMenus.Choice<T>... choices) {
-        return new ChoiceInputMenu<T>(title, Choice.Type.TOGGLE, callback, choices);
+        return new ChoiceInputMenu<>(title, Choice.Type.TOGGLE, callback, choices);
     }
 
     public static BooleanSlotHandler toggler(Consumer<Boolean> consumer, boolean initialValue) {
-        return new BooleanSlotHandler((b) -> {
+        return new BooleanSlotHandler(b -> {
             consumer.accept(b);
             return b ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
         }, initialValue);

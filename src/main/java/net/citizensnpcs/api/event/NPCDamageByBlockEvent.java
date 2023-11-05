@@ -1,10 +1,10 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class NPCDamageByBlockEvent extends NPCDamageEvent {
     private final Block damager;

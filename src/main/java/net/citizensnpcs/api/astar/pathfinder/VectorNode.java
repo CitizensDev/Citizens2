@@ -1,6 +1,7 @@
 package net.citizensnpcs.api.astar.pathfinder;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -60,18 +61,12 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         VectorNode other = (VectorNode) obj;
-        if (location == null) {
-            if (other.location != null) {
-                return false;
-            }
-        } else if (!location.equals(other.location)) {
+        if (!Objects.equals(location, other.location)) {
             return false;
         }
         return true;
@@ -106,8 +101,9 @@ public class VectorNode extends AStarNode implements PathPoint {
         }
         List<AStarNode> nodes = Lists.newArrayList();
         for (PathPoint sub : neighbours) {
-            if (!isPassable(sub))
+            if (!isPassable(sub)) {
                 continue;
+            }
             nodes.add((AStarNode) sub);
         }
         return nodes;
@@ -122,15 +118,17 @@ public class VectorNode extends AStarNode implements PathPoint {
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 for (int z = -1; z <= 1; z++) {
-                    if (x == 0 && y == 0 && z == 0)
+                    if (x == 0 && y == 0 && z == 0) {
                         continue;
+                    }
                     int modY = location.getBlockY() + y;
                     if (!SpigotUtil.checkYSafe(modY, source.getWorld())) {
                         continue;
                     }
                     Vector mod = new Vector(location.getX() + x, modY, location.getZ() + z);
-                    if (mod.equals(location))
+                    if (mod.equals(location)) {
                         continue;
+                    }
                     if (x != 0 && z != 0 && checkPassable) {
                         if (!isPassable(point.createAtOffset(new Vector(location.getX() + x, modY, location.getZ())))
                                 || !isPassable(
@@ -165,7 +163,7 @@ public class VectorNode extends AStarNode implements PathPoint {
 
     @Override
     public int hashCode() {
-        return 31 + ((location == null) ? 0 : location.hashCode());
+        return 31 + (location == null ? 0 : location.hashCode());
     }
 
     public float heuristicDistance(Vector goal) {
@@ -176,8 +174,9 @@ public class VectorNode extends AStarNode implements PathPoint {
         boolean passable = false;
         for (BlockExaminer examiner : info.examiners) {
             PassableState state = examiner.isPassable(info.blockSource, mod);
-            if (state == PassableState.IGNORE)
+            if (state == PassableState.IGNORE) {
                 continue;
+            }
             passable = state == PassableState.PASSABLE ? true : false;
         }
         return passable;

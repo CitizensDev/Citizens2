@@ -2,6 +2,7 @@ package net.citizensnpcs.api.npc;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -175,18 +176,12 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         AbstractNPC other = (AbstractNPC) obj;
-        if (uuid == null) {
-            if (other.uuid != null) {
-                return false;
-            }
-        } else if (!uuid.equals(other.uuid)) {
+        if (!Objects.equals(uuid, other.uuid)) {
             return false;
         }
         return true;
@@ -343,8 +338,9 @@ public abstract class AbstractNPC implements NPC {
             keys.remove(locationKey);
         }
         for (DataKey key : keys) {
-            if (key.name().equals("speech"))
+            if (key.name().equals("speech")) {
                 continue;
+            }
             loadTraitFromKey(key);
         }
     }
@@ -394,9 +390,9 @@ public abstract class AbstractNPC implements NPC {
     @Override
     public boolean requiresNameHologram() {
         return getEntityType() != EntityType.ARMOR_STAND && !getEntityType().name().equals("TEXT_DISPLAY")
-                && ((name.length() > 16 && getEntityType() == EntityType.PLAYER)
+                && (name.length() > 16 && getEntityType() == EntityType.PLAYER
                         || data().get(NPC.Metadata.ALWAYS_USE_NAME_HOLOGRAM, false)
-                        || (coloredNameStringCache != null && coloredNameStringCache.contains("§x"))
+                        || coloredNameStringCache != null && coloredNameStringCache.contains("§x")
                         || !Placeholders.replaceName(name, null, this).equals(name));
     }
 

@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Map;
+import java.util.Objects;
 
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -24,24 +25,18 @@ public abstract class DataKey {
         if (from.isEmpty())
             return path;
         if (from.charAt(0) == '.')
-            return path.isEmpty() ? from.substring(1, from.length()) : path + from;
+            return path.isEmpty() ? from.substring(1) : path + from;
         return path.isEmpty() ? from : path + '.' + from;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         DataKey other = (DataKey) obj;
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
+        if (!Objects.equals(path, other.path)) {
             return false;
         }
         return true;
@@ -122,7 +117,7 @@ public abstract class DataKey {
     @Override
     public int hashCode() {
         final int prime = 31;
-        return prime + ((path == null) ? 0 : path.hashCode());
+        return prime + (path == null ? 0 : path.hashCode());
     }
 
     public boolean keyExists() {

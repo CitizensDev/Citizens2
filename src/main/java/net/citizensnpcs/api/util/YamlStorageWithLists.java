@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -55,18 +56,12 @@ public class YamlStorageWithLists implements FileStorage {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         YamlStorageWithLists other = (YamlStorageWithLists) obj;
-        if (file == null) {
-            if (other.file != null) {
-                return false;
-            }
-        } else if (!file.equals(other.file)) {
+        if (!Objects.equals(file, other.file)) {
             return false;
         }
         return true;
@@ -84,7 +79,7 @@ public class YamlStorageWithLists implements FileStorage {
 
     @Override
     public int hashCode() {
-        return 31 + ((file == null) ? 0 : file.hashCode());
+        return 31 + (file == null ? 0 : file.hashCode());
     }
 
     @Override
@@ -139,12 +134,10 @@ public class YamlStorageWithLists implements FileStorage {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+            if (this == obj)
                 return true;
-            }
-            if (!super.equals(obj) || getClass() != obj.getClass()) {
+            if (!super.equals(obj) || getClass() != obj.getClass())
                 return false;
-            }
             YamlKey other = (YamlKey) obj;
             return getOuterType().equals(other.getOuterType());
         }
@@ -176,22 +169,19 @@ public class YamlStorageWithLists implements FileStorage {
                     };
                 } else if (relative instanceof Map) {
                     Map map = (Map) relative;
-                    next = k -> {
-                        return map.get(k);
-                    };
+                    next = k -> map.get(k);
                 }
             }
 
             if (relative == null)
                 return def;
 
-            if (relative instanceof ConfigurationSection) {
+            if (relative instanceof ConfigurationSection)
                 return ((ConfigurationSection) relative).get(path.substring(i2));
-            } else if (relative instanceof List) {
+            else if (relative instanceof List)
                 return ((List) relative).get(Ints.tryParse(path.substring(i2)));
-            } else if (relative instanceof Map) {
+            else if (relative instanceof Map)
                 return ((Map) relative).get(path.substring(i2));
-            }
 
             throw new RuntimeException();
         }
@@ -200,9 +190,8 @@ public class YamlStorageWithLists implements FileStorage {
         public boolean getBoolean(String key) {
             String path = createRelativeKey(key);
             Object val = get(path, null);
-            if (val != null) {
+            if (val != null)
                 return Boolean.parseBoolean(val.toString());
-            }
             return false;
         }
 
@@ -221,9 +210,8 @@ public class YamlStorageWithLists implements FileStorage {
             String path = createRelativeKey(key);
             Object val = get(path, def);
             if (val != null) {
-                if (val instanceof Number) {
+                if (val instanceof Number)
                     return ((Number) val).doubleValue();
-                }
                 String str = val.toString();
                 return str.isEmpty() ? def : Double.parseDouble(str);
             }
@@ -245,9 +233,8 @@ public class YamlStorageWithLists implements FileStorage {
             String path = createRelativeKey(key);
             Object val = get(path, def);
             if (val != null) {
-                if (val instanceof Number) {
+                if (val instanceof Number)
                     return ((Number) val).intValue();
-                }
                 String str = val.toString();
                 return str.isEmpty() ? def : Integer.parseInt(str);
             }
@@ -269,9 +256,8 @@ public class YamlStorageWithLists implements FileStorage {
             String path = createRelativeKey(key);
             Object val = get(path, def);
             if (val != null) {
-                if (val instanceof Number) {
+                if (val instanceof Number)
                     return ((Number) val).longValue();
-                }
                 String str = val.toString();
                 return str.isEmpty() ? def : Long.parseLong(str);
             }
@@ -302,9 +288,8 @@ public class YamlStorageWithLists implements FileStorage {
         public String getString(String key) {
             String path = createRelativeKey(key);
             Object val = get(path, null);
-            if (val != null) {
+            if (val != null)
                 return val.toString();
-            }
             return "";
         }
 
@@ -313,15 +298,15 @@ public class YamlStorageWithLists implements FileStorage {
             Object value = get(path, null);
             if (value == null)
                 return Collections.emptyList();
-            if (value instanceof List) {
-                return IntStream.range(0, ((List) value).size()).mapToObj(i -> getRelative(i))
+            if (value instanceof List)
+                return IntStream.range(0, ((List) value).size()).mapToObj(this::getRelative)
                         .collect(Collectors.toList());
-            } else if (value instanceof Map) {
-                return ((Map<String, Object>) value).keySet().stream().map(k -> getRelative(k))
+            else if (value instanceof Map)
+                return ((Map<String, Object>) value).keySet().stream().map(this::getRelative)
                         .collect(Collectors.toList());
-            } else {
+            else {
                 ConfigurationSection section = (ConfigurationSection) value;
-                return section.getKeys(false).stream().map(k -> getRelative(k)).collect(Collectors.toList());
+                return section.getKeys(false).stream().map(this::getRelative).collect(Collectors.toList());
             }
         }
 
@@ -379,7 +364,7 @@ public class YamlStorageWithLists implements FileStorage {
                 int nextSegment = path.indexOf('.', i1 + 1);
                 if (nextSegment != -1 && Ints.tryParse(path.substring(i1 + 1, nextSegment)) != null) {
                     if (!(next instanceof List)) {
-                        next = new ArrayList<Object>();
+                        next = new ArrayList<>();
                         if (prev instanceof ConfigurationSection) {
                             ((ConfigurationSection) prev).set(curr, next);
                         } else if (prev instanceof Map) {
@@ -397,9 +382,8 @@ public class YamlStorageWithLists implements FileStorage {
                 prev = next;
             }
 
-            if (prev == null) {
+            if (prev == null)
                 throw new RuntimeException();
-            }
 
             if (prev instanceof ConfigurationSection) {
                 ((ConfigurationSection) prev).set(path.substring(i2), value);

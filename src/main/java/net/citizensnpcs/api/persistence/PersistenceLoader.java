@@ -93,9 +93,8 @@ public class PersistenceLoader {
         }
 
         public DataKey getDataKey(DataKey root) {
-            if (!persistAnnotation.namespace().isEmpty()) {
+            if (!persistAnnotation.namespace().isEmpty())
                 return root.getFromRoot("global." + persistAnnotation.namespace());
-            }
             return root;
         }
 
@@ -141,7 +140,7 @@ public class PersistenceLoader {
     }
 
     public static <T> PersisterRegistry<T> createRegistry(Class<?> base) {
-        PersisterRegistry<T> registry = new PersisterRegistry<T>();
+        PersisterRegistry<T> registry = new PersisterRegistry<>();
         registries.put(base, registry);
         return registry;
     }
@@ -154,7 +153,7 @@ public class PersistenceLoader {
         if (ext.isEmpty())
             return parent;
         if (ext.charAt(0) == '.')
-            return parent.isEmpty() ? ext.substring(1, ext.length()) : parent + ext;
+            return parent.isEmpty() ? ext.substring(1) : parent + ext;
         return parent.isEmpty() ? ext : parent + '.' + ext;
     }
 
@@ -184,14 +183,12 @@ public class PersistenceLoader {
             Set set;
             if (Set.class.isAssignableFrom(collectionType)) {
                 set = (Set) collectionType.newInstance();
+            } else if (field.getType().isEnum()) {
+                set = EnumSet.noneOf((Class<? extends Enum>) field.getType());
             } else {
-                if (field.getType().isEnum()) {
-                    set = EnumSet.noneOf((Class<? extends Enum>) field.getType());
-                } else {
-                    set = (Set) (oldValue != null && Set.class.isAssignableFrom(oldValue.getClass())
-                            ? oldValue.getClass().newInstance()
-                            : Sets.newHashSet());
-                }
+                set = (Set) (oldValue != null && Set.class.isAssignableFrom(oldValue.getClass())
+                        ? oldValue.getClass().newInstance()
+                        : Sets.newHashSet());
             }
             deserialiseCollection(set, root, field);
             value = set;
@@ -248,32 +245,25 @@ public class PersistenceLoader {
             }
             Class<?> clazz = value.getClass();
             if (clazz == Integer.class && type != Integer.class && type != Double.class && type != Long.class
-                    && type != Float.class) {
+                    && type != Float.class)
                 return;
-            }
-            if (clazz == Float.class && type != Double.class && type != Float.class) {
+            if (clazz == Float.class && type != Double.class && type != Float.class)
                 return;
-            }
             if (clazz == Double.class && type != Double.class) {
                 if (type == Float.class) {
                     value = ((Double) value).floatValue();
-                } else {
+                } else
                     return;
-                }
             }
             if (clazz == Byte.class && type != Short.class && type != Byte.class && type != Integer.class
-                    && type != Double.class && type != Long.class && type != Float.class) {
+                    && type != Double.class && type != Long.class && type != Float.class)
                 return;
-            }
             if (clazz == Short.class && type != Short.class && type != Integer.class && type != Double.class
-                    && type != Long.class && type != Float.class) {
+                    && type != Long.class && type != Float.class)
                 return;
-            }
             if (clazz == Character.class && type != Character.class && type != Short.class && type != Integer.class
-                    && type != Double.class && type != Long.class && type != Float.class) {
+                    && type != Double.class && type != Long.class && type != Float.class)
                 return;
-            }
-            field.set(instance, value);
         } else {
             if (value != null && !type.isAssignableFrom(value.getClass())) {
                 if (root.getRelative(field.key).getSubKeys().iterator().hasNext()
@@ -282,15 +272,16 @@ public class PersistenceLoader {
                 }
                 return;
             }
-            field.set(instance, value);
         }
+        field.set(instance, value);
     }
 
     private static void deserialiseCollection(Collection<Object> collection, DataKey root, PersistField field) {
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
             Object loaded = deserialiseCollectionValue(field, subKey, field.persistAnnotation.valueType());
-            if (loaded == null)
+            if (loaded == null) {
                 continue;
+            }
             collection.add(loaded);
         }
     }
@@ -305,24 +296,18 @@ public class PersistenceLoader {
                 clazz = Primitives.wrap(clazz);
             }
             if (type != clazz) {
-                if (type == Long.class) {
+                if (type == Long.class)
                     return ((Number) deserialised).longValue();
-                }
-                if (type == Byte.class) {
+                if (type == Byte.class)
                     return ((Number) deserialised).byteValue();
-                }
-                if (type == Short.class) {
+                if (type == Short.class)
                     return ((Number) deserialised).shortValue();
-                }
-                if (type == Float.class) {
+                if (type == Float.class)
                     return ((Number) deserialised).floatValue();
-                }
-                if (type == Double.class) {
+                if (type == Double.class)
                     return ((Number) deserialised).doubleValue();
-                }
-                if (type == Integer.class) {
+                if (type == Integer.class)
                     return ((Number) deserialised).intValue();
-                }
             }
         }
         return deserialised;
@@ -331,8 +316,9 @@ public class PersistenceLoader {
     private static void deserialiseMap(Map<Object, Object> map, DataKey root, PersistField field) {
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
             Object loaded = deserialiseCollectionValue(field, subKey, field.persistAnnotation.valueType());
-            if (loaded == null)
+            if (loaded == null) {
                 continue;
+            }
             Object key = subKey.name();
             Class<?> type = field.persistAnnotation.keyType();
             if (type != String.class) {
@@ -357,9 +343,8 @@ public class PersistenceLoader {
                     }
                 } else if (type == UUID.class) {
                     key = UUID.fromString(String.valueOf(key));
-                } else {
+                } else
                     throw new UnsupportedOperationException();
-                }
             }
             map.put(key, loaded);
         }
@@ -435,8 +420,9 @@ public class PersistenceLoader {
                 continue;
             }
             DelegatePersistence delegate = field.getAnnotation(DelegatePersistence.class);
-            if (delegate == null)
+            if (delegate == null) {
                 continue;
+            }
             Class<? extends Persister<?>> delegateClass = delegate.value();
             ensureDelegateLoaded(delegateClass);
             Persister<?> in = loadedDelegates.get(delegateClass);
@@ -446,7 +432,7 @@ public class PersistenceLoader {
                 continue;
             }
         }
-        return Collections2.transform(toFilter, (a) -> new PersistField(a)).toArray(new PersistField[toFilter.size()]);
+        return Collections2.transform(toFilter, PersistField::new).toArray(new PersistField[toFilter.size()]);
     }
 
     private static Class<?> getGenericType(Field field) {
@@ -600,9 +586,9 @@ public class PersistenceLoader {
                 String key = createRelativeKey(field.key, i);
                 serialiseValue(field, root.getRelative(key), ints[i]);
             }
-        } else if (field.key.equals("$key")) {
+        } else if (field.key.equals("$key"))
             return;
-        } else {
+        else {
             serialiseValue(field, root.getRelative(field.key), fieldValue);
         }
     }
@@ -618,9 +604,8 @@ public class PersistenceLoader {
         } else if (value instanceof Enum) {
             root.setRaw("", ((Enum<?>) value).name());
         } else {
-            if (root.getSubKeys().iterator().hasNext() && !(value instanceof Collection)) {
+            if (root.getSubKeys().iterator().hasNext() && !(value instanceof Collection))
                 return;
-            }
             root.setRaw("", value);
         }
     }

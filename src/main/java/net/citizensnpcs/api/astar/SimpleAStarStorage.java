@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
-
 import java.util.function.Supplier;
+
 import com.google.common.collect.Maps;
 
 /**
@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 public class SimpleAStarStorage implements AStarStorage {
     private final Map<AStarNode, Float> closed = Maps.newHashMapWithExpectedSize(512);
     private final Map<AStarNode, Float> open = Maps.newHashMapWithExpectedSize(128);
-    private final Queue<AStarNode> queue = new PriorityQueue<AStarNode>(128);
+    private final Queue<AStarNode> queue = new PriorityQueue<>(128);
 
     @Override
     public void close(AStarNode node) {
@@ -60,10 +60,5 @@ public class SimpleAStarStorage implements AStarStorage {
         return "SimpleAStarStorage [closed=" + closed + ", open=" + open + "]";
     }
 
-    public static final Supplier<AStarStorage> FACTORY = new Supplier<AStarStorage>() {
-        @Override
-        public AStarStorage get() {
-            return new SimpleAStarStorage();
-        }
-    };
+    public static final Supplier<AStarStorage> FACTORY = () -> new SimpleAStarStorage();
 }

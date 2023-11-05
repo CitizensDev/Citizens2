@@ -46,16 +46,14 @@ public class PlayerFilter extends Trait {
         this.filter = p -> {
             switch (mode) {
                 case DENYLIST:
-                    if (players != null && players.contains(p.getUniqueId()))
-                        return true;
-                    if (groups != null && PermissionUtil.inGroup(groups, p) == true)
+                    if ((players != null && players.contains(p.getUniqueId())) || (groups != null && PermissionUtil.inGroup(groups, p) == true))
                         return true;
 
                     break;
                 case ALLOWLIST:
                     if (players != null && !players.contains(p.getUniqueId()))
                         return true;
-                    if (groups != null && PermissionUtil.inGroup(groups, p) == false)
+                    if (groups != null && !PermissionUtil.inGroup(groups, p))
                         return true;
 
                     break;

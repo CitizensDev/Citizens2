@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.zip.GZIPInputStream;
 
@@ -80,9 +81,9 @@ public class NBTStorage implements FileStorage {
         try {
             stream = new NBTInputStream(new GZIPInputStream(new FileInputStream(file)));
             Tag tag = stream.readTag();
-            if (tag == null || !(tag instanceof CompoundTag)) {
+            if (tag == null || !(tag instanceof CompoundTag))
                 return false;
-            } else {
+            else {
                 root.clear();
                 root.putAll(((CompoundTag) tag).getValue());
             }
@@ -143,27 +144,20 @@ public class NBTStorage implements FileStorage {
             if (sub.isEmpty())
                 return parent;
             if (sub.charAt(0) == '.')
-                return parent.isEmpty() ? sub.substring(1, sub.length()) : parent + sub;
+                return parent.isEmpty() ? sub.substring(1) : parent + sub;
             return parent.isEmpty() ? sub : parent + "." + sub;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+            if (this == obj)
                 return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass())
                 return false;
-            }
             NBTKey other = (NBTKey) obj;
-            if (!getOuterType().equals(other.getOuterType())) {
+            if (!getOuterType().equals(other.getOuterType()))
                 return false;
-            }
-            if (path == null) {
-                if (other.path != null) {
-                    return false;
-                }
-            } else if (!path.equals(other.path)) {
+            if (!Objects.equals(path, other.path)) {
                 return false;
             }
             return true;
@@ -172,19 +166,18 @@ public class NBTStorage implements FileStorage {
         private Number extractNumber(Tag tag) {
             if (tag == null)
                 return null;
-            if (tag instanceof DoubleTag) {
+            if (tag instanceof DoubleTag)
                 return ((DoubleTag) tag).getValue();
-            } else if (tag instanceof IntTag) {
+            else if (tag instanceof IntTag)
                 return ((IntTag) tag).getValue();
-            } else if (tag instanceof ShortTag) {
+            else if (tag instanceof ShortTag)
                 return ((ShortTag) tag).getValue();
-            } else if (tag instanceof ByteTag) {
+            else if (tag instanceof ByteTag)
                 return ((ByteTag) tag).getValue();
-            } else if (tag instanceof FloatTag) {
+            else if (tag instanceof FloatTag)
                 return ((FloatTag) tag).getValue();
-            } else if (tag instanceof LongTag) {
+            else if (tag instanceof LongTag)
                 return ((LongTag) tag).getValue();
-            }
             return null;
         }
 
@@ -292,11 +285,12 @@ public class NBTStorage implements FileStorage {
             return subKeys;
         }
 
+        @Override
         public Map<String, Object> getValuesDeep() {
             Tag tag = findLastTag(path, false);
             if (!(tag instanceof CompoundTag))
                 return Collections.emptyMap();
-            Queue<Node> node = new ArrayDeque<Node>(ImmutableList.of(new Node(tag)));
+            Queue<Node> node = new ArrayDeque<>(ImmutableList.of(new Node(tag)));
             Map<String, Object> values = Maps.newHashMap();
             while (!node.isEmpty()) {
                 Node root = node.poll();
@@ -314,7 +308,7 @@ public class NBTStorage implements FileStorage {
 
         @Override
         public int hashCode() {
-            return 31 * (31 + getOuterType().hashCode()) + ((path == null) ? 0 : path.hashCode());
+            return 31 * (31 + getOuterType().hashCode()) + (path == null ? 0 : path.hashCode());
         }
 
         @Override

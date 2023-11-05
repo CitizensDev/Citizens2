@@ -29,9 +29,8 @@ public class CohesionBehavior implements FlockBehavior {
         }
         Vector center = positions.multiply(1.0 / nearby.size());
         Vector temp = npc.getEntity().getLocation(cacheLoc).toVector().subtract(center);
-        if (temp.length() == 0) {
+        if (temp.length() == 0)
             return new Vector(0, 0, 0);
-        }
         return temp.normalize().multiply(weight);
     }
 }

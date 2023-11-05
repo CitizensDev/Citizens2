@@ -7,7 +7,7 @@ public interface ScriptFactory {
 
     /**
      * Creates a new local context of the {@link Script}.
-     * 
+     *
      * @return The new Script.
      */
     Script newInstance();

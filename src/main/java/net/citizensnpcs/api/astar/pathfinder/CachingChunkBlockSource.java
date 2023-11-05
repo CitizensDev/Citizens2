@@ -44,15 +44,13 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
 
     @Override
     public BoundingBox getCollisionBox(int x, int y, int z) {
-        if (!SpigotUtil.checkYSafe(y, world)) {
+        if (!SpigotUtil.checkYSafe(y, world))
             return BoundingBox.EMPTY;
-        }
         T chunk = getSpecific(x, z);
         if (chunk != null)
             return getCollisionBox(chunk, x & 15, y, z & 15);
-        if (!SUPPORT_BOUNDING_BOX) {
+        if (!SUPPORT_BOUNDING_BOX)
             return null;
-        }
         try {
             return BoundingBox.convert(world.getBlockAt(x, y, z).getBoundingBox());
         } catch (NoSuchMethodError e) {
@@ -67,9 +65,8 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
 
     @Override
     public Material getMaterialAt(int x, int y, int z) {
-        if (!SpigotUtil.checkYSafe(y, world)) {
+        if (!SpigotUtil.checkYSafe(y, world))
             return Material.AIR;
-        }
         T chunk = getSpecific(x, z);
         if (chunk != null)
             return getType(chunk, x & 15, y, z & 15);
@@ -82,19 +79,17 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
         int zz = (z >> 4) - chunkZ;
         if (xx >= 0 && xx < chunks.length) {
             Object[] inner = chunks[xx];
-            if (zz >= 0 && zz < inner.length) {
+            if (zz >= 0 && zz < inner.length)
                 return (T) inner[zz];
-            }
         }
         ChunkCoord key = new ChunkCoord(x >> 4, z >> 4);
         ChunkCache prev = chunkCache.get(key);
         if (prev == null) {
             chunkCache.put(key, prev = new ChunkCache());
-        } else if (prev.obj != null) {
+        } else if (prev.obj != null)
             return prev.obj;
-        } else if (++prev.hitCount >= 2) {
+        else if (++prev.hitCount >= 2)
             return prev.obj = getChunkObject(x >> 4, z >> 4);
-        }
         return null;
     }
 
@@ -120,12 +115,10 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+            if (this == obj)
                 return true;
-            }
-            if (obj == null) {
+            if (obj == null)
                 return false;
-            }
             ChunkCoord other = (ChunkCoord) obj;
             return x == other.x && z == other.z;
         }

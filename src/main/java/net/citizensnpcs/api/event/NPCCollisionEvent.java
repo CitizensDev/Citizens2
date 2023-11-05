@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class NPCCollisionEvent extends NPCEvent {
     private final Entity entity;
@@ -15,7 +15,7 @@ public class NPCCollisionEvent extends NPCEvent {
 
     /**
      * Returns the {@link Entity} that collided with the {@link NPC}.
-     * 
+     *
      * @return The collided entity
      */
     public Entity getCollidedWith() {

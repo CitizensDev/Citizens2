@@ -1,8 +1,8 @@
 package net.citizensnpcs.api.ai.event;
 
-import net.citizensnpcs.api.ai.Navigator;
-
 import org.bukkit.event.HandlerList;
+
+import net.citizensnpcs.api.ai.Navigator;
 
 public class NavigationCancelEvent extends NavigationCompleteEvent {
     private final CancelReason reason;

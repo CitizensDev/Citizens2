@@ -156,9 +156,8 @@ public class Messaging {
     }
 
     public static Object minecraftComponentFromRawMessage(String raw) {
-        if (AUDIENCES != null && MINIMESSAGE != null) {
+        if (AUDIENCES != null && MINIMESSAGE != null)
             return MinecraftComponentSerializer.get().serialize(MINIMESSAGE.deserialize(convertLegacyCodes(raw)));
-        }
         return null;
     }
 

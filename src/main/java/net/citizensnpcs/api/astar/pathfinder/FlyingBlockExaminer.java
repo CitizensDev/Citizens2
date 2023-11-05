@@ -16,9 +16,8 @@ public class FlyingBlockExaminer implements NeighbourGeneratorBlockExaminer {
         Vector pos = point.getVector();
         Material above = source.getMaterialAt(pos.clone().add(UP));
         Material in = source.getMaterialAt(pos);
-        if (above == WEB || in == WEB) {
+        if (above == WEB || in == WEB)
             return 0.5F;
-        }
         return 0F;
     }
 
@@ -28,8 +27,9 @@ public class FlyingBlockExaminer implements NeighbourGeneratorBlockExaminer {
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 for (int z = -1; z <= 1; z++) {
-                    if (x == 0 && y == 0 && z == 0)
+                    if (x == 0 && y == 0 && z == 0) {
                         continue;
+                    }
                     Vector mod = point.getVector().clone().add(new Vector(x, y, z));
                     if (mod.getY() < 0 || mod.getY() > 255 || mod.equals(point.getVector())) {
                         continue;

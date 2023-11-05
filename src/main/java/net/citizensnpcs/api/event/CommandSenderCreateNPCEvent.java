@@ -1,10 +1,10 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class CommandSenderCreateNPCEvent extends NPCCreateEvent implements Cancellable {
     private boolean cancelled;
@@ -49,7 +49,7 @@ public class CommandSenderCreateNPCEvent extends NPCCreateEvent implements Cance
     /**
      * Sets the reason for cancelling the event. This will be sent to the {@link CommandSender} creator to explain why
      * the NPC cannot be created.
-     * 
+     *
      * @param reason
      *            The reason explaining the cancellation
      */

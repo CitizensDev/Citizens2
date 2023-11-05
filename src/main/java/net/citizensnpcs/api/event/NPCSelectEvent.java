@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
+
+import net.citizensnpcs.api.npc.NPC;
 
 /**
  * Called when an NPC is selected by a player.
@@ -23,7 +23,7 @@ public class NPCSelectEvent extends NPCEvent {
 
     /**
      * Gets the selector of the NPC.
-     * 
+     *
      * @return CommandSender that selected an NPC
      */
     public CommandSender getSelector() {

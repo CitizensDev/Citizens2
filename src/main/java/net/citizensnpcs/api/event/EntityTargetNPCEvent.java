@@ -1,12 +1,12 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class EntityTargetNPCEvent extends NPCEvent implements Cancellable {
     private boolean cancelled;
@@ -20,7 +20,7 @@ public class EntityTargetNPCEvent extends NPCEvent implements Cancellable {
 
     /**
      * Returns the Entity involved in this event
-     * 
+     *
      * @return Entity who is involved in this event
      */
     public Entity getEntity() {
@@ -34,7 +34,7 @@ public class EntityTargetNPCEvent extends NPCEvent implements Cancellable {
 
     /**
      * Returns the reason for the targeting
-     * 
+     *
      * @return The reason
      */
     public TargetReason getReason() {

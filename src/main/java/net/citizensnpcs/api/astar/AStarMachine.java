@@ -1,7 +1,8 @@
 package net.citizensnpcs.api.astar;
 
-import com.google.common.base.Preconditions;
 import java.util.function.Supplier;
+
+import com.google.common.base.Preconditions;
 
 public class AStarMachine<N extends AStarNode, P extends Plan> {
     private Supplier<AStarStorage> storageSupplier;
@@ -75,23 +76,21 @@ public class AStarMachine<N extends AStarNode, P extends Plan> {
         int iterations = 0;
         while (true) {
             node = (N) storage.removeBestNode();
-            if (node == null) {
+            if (node == null)
                 return null;
-            }
-            if (goal.isFinished(node)) {
+            if (goal.isFinished(node))
                 return (P) node.buildPlan();
-            }
             storage.close(node);
             for (AStarNode neighbour : node.getNeighbours()) {
                 f(goal, node, (N) neighbour);
-                if (!storage.shouldExamine(neighbour))
+                if (!storage.shouldExamine(neighbour)) {
                     continue;
+                }
                 storage.open(neighbour);
                 neighbour.parent = node;
             }
-            if (maxIterations >= 0 && iterations++ >= maxIterations) {
+            if (maxIterations >= 0 && iterations++ >= maxIterations)
                 return null;
-            }
         }
     }
 
@@ -170,6 +169,6 @@ public class AStarMachine<N extends AStarNode, P extends Plan> {
      */
     public static <N extends AStarNode, P extends Plan> AStarMachine<N, P> createWithStorage(
             Supplier<AStarStorage> storageSupplier) {
-        return new AStarMachine<N, P>(storageSupplier);
+        return new AStarMachine<>(storageSupplier);
     }
 }

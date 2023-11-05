@@ -34,7 +34,7 @@ public class Flocker implements Runnable {
 
     @Override
     public void run() {
-        Collection<NPC> nearby = Collections2.filter(flock.getNearby(npc), npc -> npc.isSpawned());
+        Collection<NPC> nearby = Collections2.filter(flock.getNearby(npc), NPC::isSpawned);
         if (nearby.isEmpty())
             return;
         Vector base = new Vector(0, 0, 0);
@@ -58,9 +58,8 @@ public class Flocker implements Runnable {
     }
 
     private static Vector clip(double max, Vector vector) {
-        if (vector.length() > max) {
+        if (vector.length() > max)
             return vector.normalize().multiply(max);
-        }
         return vector;
     }
 

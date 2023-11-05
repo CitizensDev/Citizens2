@@ -54,9 +54,8 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         return block -> {
             if ((MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(BlockFace.UP))
                     || MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(0, 2, 0)))
-                    && npc.getNavigator().getDefaultParameters().avoidWater()) {
+                    && npc.getNavigator().getDefaultParameters().avoidWater())
                 return false;
-            }
             if (worldguardRegion != null) {
                 Object region = worldguardRegion.get();
                 if (region != null) {
@@ -81,9 +80,8 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private Location findRandomPosition() {
         Location found = MinecraftBlockExaminer.findRandomValidLocation(npc.getStoredLocation(), pathfind ? xrange : 1,
                 pathfind ? yrange : 1, blockFilter(), RANDOM);
-        if (found == null && fallback != null) {
+        if (found == null && fallback != null)
             return fallback.apply(npc);
-        }
         return found;
     }
 
@@ -111,15 +109,13 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         if (paused || forceFinish)
             return BehaviorStatus.SUCCESS;
         if (pathfind) {
-            if (!npc.getNavigator().isNavigating()) {
+            if (!npc.getNavigator().isNavigating())
                 return BehaviorStatus.SUCCESS;
-            }
         } else {
             if (npc.getEntity().getLocation().distance(target) >= 0.1) {
                 npc.setMoveDestination(target);
-            } else {
+            } else
                 return BehaviorStatus.SUCCESS;
-            }
             if (movingTicks-- <= 0) {
                 npc.setMoveDestination(null);
                 return BehaviorStatus.SUCCESS;
@@ -147,10 +143,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
 
     @Override
     public boolean shouldExecute() {
-        if (!npc.isSpawned() || npc.getNavigator().isNavigating() || paused)
-            return false;
-
-        if (delayedTicks-- > 0)
+        if (!npc.isSpawned() || npc.getNavigator().isNavigating() || paused || (delayedTicks-- > 0))
             return false;
 
         Location dest = findRandomPosition();
@@ -160,7 +153,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
         if (pathfind) {
             npc.getNavigator().setTarget(dest);
             npc.getNavigator().getLocalParameters().stuckAction(null);
-            npc.getNavigator().getLocalParameters().addSingleUseCallback((reason) -> forceFinish = true);
+            npc.getNavigator().getLocalParameters().addSingleUseCallback(reason -> forceFinish = true);
         } else {
             Random random = new Random();
             dest.setX(dest.getX() + random.nextDouble() * 0.5);

@@ -6,7 +6,7 @@ public interface AttackStrategy {
     /**
      * Tries to attack the supplied target from the supplied attacker. Returns <code>true</code> if the attack was
      * handled, or false if the default attack strategy should be used.
-     * 
+     *
      * @param attacker
      *            The entity attacker to use
      * @param target

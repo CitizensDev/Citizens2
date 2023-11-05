@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.ai;
 
+import java.util.Objects;
+
 import net.citizensnpcs.api.ai.GoalController.GoalEntry;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.ForwardingBehaviorGoalAdapter;
@@ -20,18 +22,12 @@ public class SimpleGoalEntry implements GoalEntry {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         SimpleGoalEntry other = (SimpleGoalEntry) obj;
-        if (goal == null) {
-            if (other.goal != null) {
-                return false;
-            }
-        } else if (!goal.equals(other.goal)) {
+        if (!Objects.equals(goal, other.goal)) {
             return false;
         }
         return priority == other.priority;
@@ -57,6 +53,6 @@ public class SimpleGoalEntry implements GoalEntry {
     @Override
     public int hashCode() {
         final int prime = 31;
-        return prime * (prime + ((goal == null) ? 0 : goal.hashCode())) + priority;
+        return prime * (prime + (goal == null ? 0 : goal.hashCode())) + priority;
     }
 }

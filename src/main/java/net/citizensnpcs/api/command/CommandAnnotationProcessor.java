@@ -2,9 +2,9 @@ package net.citizensnpcs.api.command;
 
 import java.lang.annotation.Annotation;
 
-import net.citizensnpcs.api.command.exception.CommandException;
-
 import org.bukkit.command.CommandSender;
+
+import net.citizensnpcs.api.command.exception.CommandException;
 
 public interface CommandAnnotationProcessor {
     /**

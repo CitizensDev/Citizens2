@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.util;
 
+import java.util.Objects;
+
 import org.bukkit.entity.Entity;
 
 public class EntityDim {
@@ -22,35 +24,21 @@ public class EntityDim {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if ((obj == null) || (getClass() != obj.getClass()))
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
         EntityDim other = (EntityDim) obj;
-        if (Double.doubleToLongBits(height) != Double.doubleToLongBits(other.height)) {
+        if (Double.doubleToLongBits(height) != Double.doubleToLongBits(other.height))
             return false;
-        }
-        if (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width)) {
+        if (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width))
             return false;
-        }
         return true;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(height);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(width);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Objects.hash(height, width);
     }
 
     public EntityDim mul(float scale) {

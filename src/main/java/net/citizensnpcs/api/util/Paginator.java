@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 public class Paginator {
     private boolean console;
     private String header;
-    private final List<String> lines = new ArrayList<String>();
+    private final List<String> lines = new ArrayList<>();
     private String pageCommand;
     private boolean pageSwitcher;
 
@@ -70,8 +70,9 @@ public class Paginator {
         }
         String text = header == null ? "" : wrapHeader("[[" + header + " <white>" + pageDisplay);
 
-        if (lines.size() < endIndex)
+        if (lines.size() < endIndex) {
             endIndex = lines.size();
+        }
         for (String line : lines.subList(startIndex, endIndex)) {
             text += "\n" + line;
         }
@@ -97,9 +98,8 @@ public class Paginator {
         if (text != null) {
             Messaging.send(sender, text);
             return true;
-        } else {
+        } else
             return false;
-        }
     }
 
     public static String wrapHeader(Object string) {

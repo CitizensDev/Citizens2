@@ -71,7 +71,7 @@ public class ScriptCompiler {
 
     public ScriptCompiler(ClassLoader overrideClassLoader) {
         engineManager = new ScriptEngineManager(overrideClassLoader);
-        classLoader = new WeakReference<ClassLoader>(overrideClassLoader);
+        classLoader = new WeakReference<>(overrideClassLoader);
     }
 
     public boolean canCompile(File file) {

@@ -35,31 +35,17 @@ public class BoundingBox {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         BoundingBox other = (BoundingBox) obj;
-        if (Double.doubleToLongBits(maxX) != Double.doubleToLongBits(other.maxX)) {
+        if ((Double.doubleToLongBits(maxX) != Double.doubleToLongBits(other.maxX)) || (Double.doubleToLongBits(maxY) != Double.doubleToLongBits(other.maxY)) || (Double.doubleToLongBits(maxZ) != Double.doubleToLongBits(other.maxZ)) || (Double.doubleToLongBits(minX) != Double.doubleToLongBits(other.minX)))
             return false;
-        }
-        if (Double.doubleToLongBits(maxY) != Double.doubleToLongBits(other.maxY)) {
+        if (Double.doubleToLongBits(minY) != Double.doubleToLongBits(other.minY))
             return false;
-        }
-        if (Double.doubleToLongBits(maxZ) != Double.doubleToLongBits(other.maxZ)) {
+        if (Double.doubleToLongBits(minZ) != Double.doubleToLongBits(other.minZ))
             return false;
-        }
-        if (Double.doubleToLongBits(minX) != Double.doubleToLongBits(other.minX)) {
-            return false;
-        }
-        if (Double.doubleToLongBits(minY) != Double.doubleToLongBits(other.minY)) {
-            return false;
-        }
-        if (Double.doubleToLongBits(minZ) != Double.doubleToLongBits(other.minZ)) {
-            return false;
-        }
         return true;
     }
 
@@ -68,17 +54,17 @@ public class BoundingBox {
         final int prime = 31;
         int result = 1;
         long temp = Double.doubleToLongBits(maxX);
-        result = prime * 1 + (int) (temp ^ (temp >>> 32));
+        result = prime * 1 + (int) (temp ^ temp >>> 32);
         temp = Double.doubleToLongBits(maxY);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (int) (temp ^ temp >>> 32);
         temp = Double.doubleToLongBits(maxZ);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (int) (temp ^ temp >>> 32);
         temp = Double.doubleToLongBits(minX);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (int) (temp ^ temp >>> 32);
         temp = Double.doubleToLongBits(minY);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (int) (temp ^ temp >>> 32);
         temp = Double.doubleToLongBits(minZ);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (int) (temp ^ temp >>> 32);
         return result;
     }
 

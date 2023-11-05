@@ -26,9 +26,8 @@ public class SwimmingExaminer implements BlockExaminer {
     public float getCost(BlockSource source, PathPoint point) {
         // penalise non water blocks for fish
         if (isWaterMob(npc.getEntity())
-                && !MinecraftBlockExaminer.isLiquidOrInLiquid(source.getBlockAt(point.getVector()))) {
+                && !MinecraftBlockExaminer.isLiquidOrInLiquid(source.getBlockAt(point.getVector())))
             return 1F;
-        }
         return 0;
     }
 
@@ -49,10 +48,10 @@ public class SwimmingExaminer implements BlockExaminer {
 
     private boolean isSwimmableLiquid(Material material) {
         if (material == Material.LAVA
-                || (!SpigotUtil.isUsing1_13API() && material == Material.valueOf("STATIONARY_LAVA")))
+                || !SpigotUtil.isUsing1_13API() && material == Material.valueOf("STATIONARY_LAVA"))
             return canSwimInLava();
         return material == Material.WATER
-                || (!SpigotUtil.isUsing1_13API() && material == Material.valueOf("STATIONARY_WATER"));
+                || !SpigotUtil.isUsing1_13API() && material == Material.valueOf("STATIONARY_WATER");
     }
 
     public void setCanSwimInLava(boolean canSwimInLava) {

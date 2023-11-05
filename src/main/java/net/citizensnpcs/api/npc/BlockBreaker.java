@@ -19,7 +19,7 @@ import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
  */
 public abstract class BlockBreaker extends BehaviorGoalAdapter {
     public static class BlockBreakerConfiguration {
-        private BiConsumer<Block, ItemStack> blockBreaker = (block, item) -> block.breakNaturally(item);
+        private BiConsumer<Block, ItemStack> blockBreaker = Block::breakNaturally;
         private Runnable callback;
         private org.bukkit.inventory.ItemStack itemStack;
         private float modifier = 1;

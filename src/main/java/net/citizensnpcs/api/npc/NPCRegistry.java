@@ -62,7 +62,7 @@ public interface NPCRegistry extends Iterable<NPC> {
      *            ItemStack to configure with
      * @return Created NPC
      */
-    public NPC createNPCUsingItem(EntityType type, String name, ItemStack item);;
+    public NPC createNPCUsingItem(EntityType type, String name, ItemStack item);
 
     /**
      * Deregisters the {@link NPC} and removes all data about it from the data store.

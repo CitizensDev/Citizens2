@@ -1,8 +1,8 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.event.HandlerList;
+
+import net.citizensnpcs.api.npc.NPC;
 
 public class NPCCreateEvent extends NPCEvent {
     public NPCCreateEvent(NPC npc) {

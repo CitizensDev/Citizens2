@@ -22,16 +22,14 @@ public class LocationPersister implements Persister<Location> {
     }
 
     private float normalise(double d) {
-        if (Double.isNaN(d)) {
+        if (Double.isNaN(d))
             return 0F;
-        }
         return (float) (!Double.isFinite(d) ? 0 : d);
     }
 
     private double round(double z) {
-        if (Double.isInfinite(z) || Double.isNaN(z)) {
+        if (Double.isInfinite(z) || Double.isNaN(z))
             return 0F;
-        }
         return new BigDecimal(z).setScale(4, RoundingMode.HALF_DOWN).doubleValue();
     }
 

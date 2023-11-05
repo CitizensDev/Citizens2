@@ -15,7 +15,7 @@ public class HPACluster {
     final int clusterZ;
     private final HPAGraph graph;
     private final int level;
-    private final List<HPAGraphNode> nodes = new ArrayList<HPAGraphNode>();
+    private final List<HPAGraphNode> nodes = new ArrayList<>();
 
     public HPACluster(HPAGraph graph, int level, int clusterSize, int clusterX, int clusterY, int clusterZ) {
         this.graph = graph;
@@ -28,13 +28,12 @@ public class HPACluster {
 
     private HPAGraphNode[] addEntranceNode(HPAEntrance entrance) {
         assert entrance.minX == entrance.maxX || entrance.minZ == entrance.maxZ;
-        if (entrance.maxX - entrance.minX > 6) {
+        if (entrance.maxX - entrance.minX > 6)
             return new HPAGraphNode[] { getOrAddNode(entrance.minX, entrance.minZ),
                     getOrAddNode(entrance.maxX, entrance.minZ) };
-        } else if (entrance.maxZ - entrance.minZ > 6) {
+        else if (entrance.maxZ - entrance.minZ > 6)
             return new HPAGraphNode[] { getOrAddNode(entrance.minX, entrance.minZ),
                     getOrAddNode(entrance.minX, entrance.maxZ) };
-        }
         int x = (int) (entrance.minX == entrance.maxX ? entrance.minX
                 : Math.floor((entrance.minX + entrance.maxX) / 2.0));
         int z = (int) (entrance.minZ == entrance.maxZ ? entrance.minZ
@@ -61,8 +60,9 @@ public class HPACluster {
             for (int j = i + 1; j < nodes.size(); j++) {
                 HPAGraphNode n2 = nodes.get(j);
                 float weight = graph.pathfind(node, n2, level - 1).cost;
-                if (!Float.isFinite(weight))
+                if (!Float.isFinite(weight)) {
                     continue;
+                }
                 node.connect(level, n2, HPAGraphEdge.EdgeType.INTRA, weight);
             }
         }
@@ -173,9 +173,8 @@ public class HPACluster {
 
     private HPAGraphNode getOrAddNode(int x, int z) {
         for (HPAGraphNode node : nodes) {
-            if (node.x == this.clusterX + x && node.z == this.clusterZ + z) {
+            if (node.x == this.clusterX + x && node.z == this.clusterZ + z)
                 return node;
-            }
         }
         HPAGraphNode node = new HPAGraphNode(this.clusterX + x, clusterY, this.clusterZ + z);
         nodes.add(node);
@@ -185,9 +184,8 @@ public class HPACluster {
     public boolean hasWalkableNodes() {
         for (int i = 0; i < clusterSize; i++) {
             for (int j = 0; j < clusterSize; j++) {
-                if (offsetWalkable(i, j)) {
+                if (offsetWalkable(i, j))
                     return true;
-                }
             }
         }
         return false;
@@ -196,8 +194,9 @@ public class HPACluster {
     public void insert(HPAGraphNode node) {
         nodes.add(node);
         for (HPAGraphNode other : nodes) {
-            if (other == node)
+            if (other == node) {
                 continue;
+            }
             float cost = pathfind(node, other, false).cost;
             if (Float.isFinite(cost)) {
                 node.connect(level, other, HPAGraphEdge.EdgeType.INTRA, cost);
@@ -211,33 +210,34 @@ public class HPACluster {
 
     private AStarSolution pathfind(HPAGraphNode start, HPAGraphNode dest, boolean getPath) {
         ReversableAStarNode startNode = new ClusterNode(start.x, start.z);
-        if (start.x == dest.x && start.y == dest.y && start.z == dest.y) {
+        if (start.x == dest.x && start.y == dest.y && start.z == dest.y)
             return new AStarSolution(getPath ? null : startNode.reconstructSolution(), 0);
-        }
-        Map<ReversableAStarNode, Float> open = new HashMap<ReversableAStarNode, Float>();
-        Map<ReversableAStarNode, Float> closed = new HashMap<ReversableAStarNode, Float>();
-        Queue<ReversableAStarNode> frontier = new PriorityQueue<ReversableAStarNode>();
+        Map<ReversableAStarNode, Float> open = new HashMap<>();
+        Map<ReversableAStarNode, Float> closed = new HashMap<>();
+        Queue<ReversableAStarNode> frontier = new PriorityQueue<>();
         frontier.add(startNode);
         open.put(startNode, startNode.g);
         while (!frontier.isEmpty()) {
             ClusterNode node = (ClusterNode) frontier.poll();
-            if (node.x == dest.x && node.z == dest.z) {
+            if (node.x == dest.x && node.z == dest.z)
                 return new AStarSolution(getPath ? null : node.reconstructSolution(), node.g);
-            }
             closed.put(node, node.g);
             open.remove(node);
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dz = -1; dz <= 1; dz++) {
-                    if (dx == 0 && dz == 0)
+                    if (dx == 0 && dz == 0) {
                         continue;
+                    }
                     if (node.x + dx < 0 || node.z + dz < 0 || node.x + dx >= 16 || node.z + dz >= 16) {
                         continue;
                     }
-                    if (!offsetWalkable(dx, dz))
+                    if (!offsetWalkable(dx, dz)) {
                         continue;
+                    }
                     ClusterNode neighbour = new ClusterNode(node.x + dx, node.z + dz);
-                    if (closed.containsKey(neighbour))
+                    if (closed.containsKey(neighbour)) {
                         continue;
+                    }
                     neighbour.parent = node;
                     // TODO: chebyshev?
                     neighbour.g = (float) (node.g
@@ -245,9 +245,10 @@ public class HPACluster {
                     neighbour.h = (float) Math
                             .sqrt(Math.pow(neighbour.x - dest.x, 2) + Math.pow(neighbour.z - dest.z, 2));
                     if (open.containsKey(neighbour)) {
-                        if (neighbour.g > open.get(neighbour))
+                        if (neighbour.g > open.get(neighbour)) {
                             continue;
-                        // TODO: do we have to do this? frontier.remove(neighbour);
+                            // TODO: do we have to do this? frontier.remove(neighbour);
+                        }
                     }
                     open.put(neighbour, neighbour.g);
                     frontier.add(neighbour);

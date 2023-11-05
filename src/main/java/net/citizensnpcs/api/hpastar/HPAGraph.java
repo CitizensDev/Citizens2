@@ -36,7 +36,7 @@ public class HPAGraph {
         this.cz = cz;
 
         while (clusters.size() <= MAX_DEPTH) {
-            clusters.add(new ArrayList<HPACluster>());
+            clusters.add(new ArrayList<>());
             if (clusters.size() != phtrees.size()) {
                 phtrees.add(PhTreeSolid.create(3));
             }
@@ -59,8 +59,9 @@ public class HPAGraph {
             for (int ci = 0; ci < MAX_CLUSTER_SIZE; ci += clusterSize) {
                 for (int cj = 0; cj < MAX_CLUSTER_SIZE; cj += clusterSize) {
                     HPACluster cluster = new HPACluster(this, 0, clusterSize, baseX + ci, y, baseZ + cj);
-                    if (!cluster.hasWalkableNodes())
+                    if (!cluster.hasWalkableNodes()) {
                         continue;
+                    }
                     newClusters.add(cluster);
                     baseLevel.put(
                             new long[] { cluster.clusterX, cluster.clusterY, cluster.clusterZ }, new long[] {
@@ -79,25 +80,25 @@ public class HPAGraph {
                             cluster.clusterZ + clusterSize });
             while (q.hasNext()) {
                 HPACluster neighbour = q.nextValue();
-                if (neighbour == cluster || neighbours.get(cluster).contains(neighbour))
-                    continue;
-
                 // TODO: diagonal connections using length=sqrt(2)
-                if (neighbour.clusterX - cluster.clusterX != 0 && neighbour.clusterZ - cluster.clusterZ != 0)
+                if (neighbour == cluster || neighbours.get(cluster).contains(neighbour) || (neighbour.clusterX - cluster.clusterX != 0 && neighbour.clusterZ - cluster.clusterZ != 0)) {
                     continue;
+                }
                 int dx = neighbour.clusterX - cluster.clusterX;
                 int dz = neighbour.clusterZ - cluster.clusterZ;
                 Direction direction = null;
-                if (dx > 0)
+                if (dx > 0) {
                     direction = Direction.EAST;
-                else if (dx < 0)
+                } else if (dx < 0) {
                     direction = Direction.WEST;
-                else if (dz > 0)
+                } else if (dz > 0) {
                     direction = Direction.NORTH;
-                else if (dz < 0)
+                } else if (dz < 0) {
                     direction = Direction.SOUTH;
-                if (direction == null)
+                }
+                if (direction == null) {
                     continue;
+                }
                 cluster.connect(neighbour, direction);
                 neighbours.get(cluster).add(neighbour);
                 neighbours.get(neighbour).add(cluster);
@@ -109,7 +110,7 @@ public class HPAGraph {
         }
         addClustersAtDepth(0, newClusters);
         for (int depth = 1; depth <= MAX_DEPTH; depth++) {
-            newClusters = new ArrayList<HPACluster>();
+            newClusters = new ArrayList<>();
             clusterSize = (int) (BASE_CLUSTER_SIZE * Math.pow(2, depth));
 
             for (int y = 0; y < 128; y++) {
@@ -120,8 +121,9 @@ public class HPAGraph {
                                 new long[] { cluster.clusterX, cluster.clusterY, cluster.clusterZ },
                                 new long[] { cluster.clusterX + clusterSize, cluster.clusterY,
                                         cluster.clusterZ + clusterSize }));
-                        if (parentClusters.size() == 0)
+                        if (parentClusters.size() == 0) {
                             continue;
+                        }
                         cluster.buildFrom(parentClusters);
                         phtrees.get(depth).put(new long[] { cluster.clusterX, cluster.clusterY, cluster.clusterZ },
                                 new long[] { cluster.clusterX + clusterSize, cluster.clusterY,
@@ -143,7 +145,7 @@ public class HPAGraph {
 
     public Plan findPath(Location start, Location goal) {
         // insert into each layer
-        List<HPACluster> clustersToClean = new ArrayList<HPACluster>();
+        List<HPACluster> clustersToClean = new ArrayList<>();
         HPAGraphNode startNode = new HPAGraphNode(start.getBlockX(), start.getBlockY(), start.getBlockZ()),
                 goalNode = new HPAGraphNode(goal.getBlockX(), goal.getBlockY(), goal.getBlockZ());
         int i = 0;
@@ -171,9 +173,9 @@ public class HPAGraph {
     }
 
     AStarSolution pathfind(HPAGraphNode start, HPAGraphNode dest, int level) {
-        Map<ReversableAStarNode, Float> open = new HashMap<ReversableAStarNode, Float>();
-        Map<ReversableAStarNode, Float> closed = new HashMap<ReversableAStarNode, Float>();
-        Queue<ReversableAStarNode> frontier = new PriorityQueue<ReversableAStarNode>();
+        Map<ReversableAStarNode, Float> open = new HashMap<>();
+        Map<ReversableAStarNode, Float> closed = new HashMap<>();
+        Queue<ReversableAStarNode> frontier = new PriorityQueue<>();
         ReversableAStarNode startNode = new HPAGraphAStarNode(start, null);
         frontier.add(startNode);
         open.put(startNode, startNode.g);
@@ -181,9 +183,8 @@ public class HPAGraph {
             HPAGraphAStarNode node = (HPAGraphAStarNode) frontier.poll();
             List<HPAGraphEdge> edges = node.node.getEdges(level);
             for (HPAGraphEdge edge : edges) {
-                if (edge.to.equals(dest)) {
+                if (edge.to.equals(dest))
                     return new AStarSolution(node.reconstructSolution(), node.g);
-                }
             }
             if (start != node.node) {
                 closed.put(node, node.g);
@@ -191,14 +192,16 @@ public class HPAGraph {
             open.remove(node);
             for (HPAGraphEdge edge : edges) {
                 HPAGraphAStarNode neighbour = new HPAGraphAStarNode(edge.to, edge);
-                if (closed.containsKey(neighbour))
+                if (closed.containsKey(neighbour)) {
                     continue;
+                }
                 neighbour.parent = node;
                 neighbour.g = node.g + edge.weight;
                 neighbour.h = (float) Math.sqrt(Math.pow(edge.to.x - dest.x, 2) + Math.pow(edge.to.z - dest.z, 2));
                 if (open.containsKey(neighbour)) {
-                    if (neighbour.g > open.get(neighbour))
+                    if (neighbour.g > open.get(neighbour)) {
                         continue;
+                    }
                     frontier.remove(neighbour);
                 }
                 open.put(neighbour, neighbour.g);
@@ -209,9 +212,8 @@ public class HPAGraph {
     }
 
     public boolean walkable(int x, int y, int z) {
-        if (y == 0) {
+        if (y == 0)
             return false;
-        }
         return MinecraftBlockExaminer.canStandOn(blockSource.getWorld().getBlockAt(x, y - 1, z));
     }
 

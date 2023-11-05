@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class HPAGraphNode {
-    final List<List<HPAGraphEdge>> edges = new ArrayList<List<HPAGraphEdge>>();
+    final List<List<HPAGraphEdge>> edges = new ArrayList<>();
     final int x;
     final int y;
     final int z;
@@ -18,10 +18,10 @@ public class HPAGraphNode {
 
     public void connect(int level, HPAGraphNode to, HPAGraphEdge.EdgeType type, float weight) {
         while (level >= edges.size()) {
-            edges.add(new ArrayList<HPAGraphEdge>());
+            edges.add(new ArrayList<>());
         }
         while (level >= to.edges.size()) {
-            to.edges.add(new ArrayList<HPAGraphEdge>());
+            to.edges.add(new ArrayList<>());
         }
         edges.get(level).add(new HPAGraphEdge(this, to, type, weight));
         to.edges.get(level).add(new HPAGraphEdge(to, this, type, weight));
@@ -33,23 +33,19 @@ public class HPAGraphNode {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         HPAGraphNode other = (HPAGraphNode) obj;
-        if (x != other.x || y != other.y || z != other.z) {
+        if (x != other.x || y != other.y || z != other.z)
             return false;
-        }
         return true;
     }
 
     public List<HPAGraphEdge> getEdges(int level) {
-        if (level >= edges.size()) {
+        if (level >= edges.size())
             return Collections.emptyList();
-        }
         return edges.get(level);
     }
 

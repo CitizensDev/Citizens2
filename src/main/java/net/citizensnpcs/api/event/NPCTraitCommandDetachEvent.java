@@ -1,10 +1,10 @@
 package net.citizensnpcs.api.event;
 
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
+
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.Trait;
 
 public class NPCTraitCommandDetachEvent extends NPCEvent {
     private final CommandSender sender;

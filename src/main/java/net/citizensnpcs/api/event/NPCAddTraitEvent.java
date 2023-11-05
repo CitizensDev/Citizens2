@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.event;
 
+import org.bukkit.event.HandlerList;
+
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
-
-import org.bukkit.event.HandlerList;
 
 public class NPCAddTraitEvent extends NPCTraitEvent {
     public NPCAddTraitEvent(NPC npc, Trait trait) {

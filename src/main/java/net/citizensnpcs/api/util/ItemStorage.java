@@ -85,7 +85,7 @@ public class ItemStorage {
     }
 
     private static Map<Enchantment, Integer> deserialiseEnchantments(DataKey root, ItemStack res) {
-        Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
+        Map<Enchantment, Integer> enchantments = new HashMap<>();
         for (DataKey subKey : root.getSubKeys()) {
             Enchantment enchantment = deserialiseEnchantment(subKey.name());
             if (enchantment != null) {
@@ -142,8 +142,9 @@ public class ItemStorage {
         if (root.keyExists("lore")) {
             ItemMeta meta = ensureMeta(res);
             List<String> lore = Lists.newArrayList();
-            for (DataKey key : root.getRelative("lore").getIntegerSubKeys())
+            for (DataKey key : root.getRelative("lore").getIntegerSubKeys()) {
                 lore.add(key.getString(""));
+            }
             meta.setLore(lore);
             res.setItemMeta(meta);
         }
@@ -329,16 +330,14 @@ public class ItemStorage {
             material = Material.getMaterial(key.getKey().toUpperCase(), false);
         } else {
             String raw = root.getString("type", root.getString("id"));
-            if (raw == null || raw.length() == 0) {
+            if (raw == null || raw.length() == 0)
                 return null;
-            }
             material = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(raw, true) : Material.matchMaterial(raw);
         }
-        if (material == null || material == Material.AIR) {
+        if (material == null || material == Material.AIR)
             return null;
-        }
         ItemStack res = new ItemStack(material, root.getInt("amount"),
-                (short) (root.getInt("durability", root.getInt("data", 0))));
+                (short) root.getInt("durability", root.getInt("data", 0)));
         if (root.keyExists("mdata") && res.getData() != null) {
             res.getData().setData((byte) root.getInt("mdata")); // TODO: what to migrate to?
         }

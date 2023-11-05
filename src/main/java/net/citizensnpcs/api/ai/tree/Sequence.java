@@ -24,13 +24,11 @@ public class Sequence extends Composite {
     private BehaviorStatus getContinuationStatus() {
         resetCurrent();
         if (continueRunning) {
-            if (++executingIndex >= getBehaviors().size()) {
+            if (++executingIndex >= getBehaviors().size())
                 return BehaviorStatus.FAILURE;
-            }
             return BehaviorStatus.RUNNING;
-        } else {
+        } else
             return BehaviorStatus.FAILURE;
-        }
     }
 
     @Override
@@ -78,13 +76,11 @@ public class Sequence extends Composite {
     }
 
     private BehaviorStatus selectNext(List<Behavior> behaviors) {
-        if (++executingIndex >= behaviors.size()) {
+        if (++executingIndex >= behaviors.size())
             return BehaviorStatus.SUCCESS;
-        }
         executing = behaviors.get(executingIndex);
-        if (!executing.shouldExecute()) {
+        if (!executing.shouldExecute())
             return getContinuationStatus();
-        }
         return BehaviorStatus.RUNNING;
     }
 

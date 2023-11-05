@@ -61,7 +61,7 @@ public class SpeechContext implements Iterable<Talkable> {
      */
     public SpeechContext addRecipient(Entity entity) {
         if (recipients.isEmpty()) {
-            recipients = new ArrayList<Talkable>();
+            recipients = new ArrayList<>();
         }
         recipients.add(new TalkableEntity(entity));
         return this;
@@ -78,7 +78,7 @@ public class SpeechContext implements Iterable<Talkable> {
      */
     public SpeechContext addRecipients(List<Talkable> talkables) {
         if (recipients.isEmpty()) {
-            recipients = new ArrayList<Talkable>();
+            recipients = new ArrayList<>();
         }
         recipients.addAll(talkables);
         return this;
@@ -108,7 +108,7 @@ public class SpeechContext implements Iterable<Talkable> {
      * @return true if recipients are specified.
      */
     public boolean hasRecipients() {
-        return (recipients.isEmpty()) ? false : true;
+        return recipients.isEmpty() ? false : true;
     }
 
     /**

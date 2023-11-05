@@ -3,7 +3,7 @@ package net.citizensnpcs.api.astar;
 public interface AStarGoal<T extends AStarNode> {
     /**
      * Returns the cost of moving between the two supplied {@link AStarNode}s.
-     * 
+     *
      * @param from
      *            The node to start from
      * @param to
@@ -15,7 +15,7 @@ public interface AStarGoal<T extends AStarNode> {
     /**
      * Returns the initial cost value when starting from the supplied {@link AStarNode}. This represents an initial
      * estimate for reaching the goal state from the start node.
-     * 
+     *
      * @param node
      *            The start node
      * @return The initial cost
@@ -24,7 +24,7 @@ public interface AStarGoal<T extends AStarNode> {
 
     /**
      * Returns the estimated heuristic cost of traversing from the supplied {@link AStarNode} to the goal.
-     * 
+     *
      * @param from
      *            The start node
      * @return The heuristic cost
@@ -34,7 +34,7 @@ public interface AStarGoal<T extends AStarNode> {
     /**
      * Returns whether the supplied {@link AStarNode} represents the goal state for this <code>AStarGoal</code>. This
      * will halt execution of the calling {@link AStarMachine}.
-     * 
+     *
      * @param node
      *            The node to check
      * @return Whether the node is the goal state

@@ -58,10 +58,10 @@ public class PersistenceLoaderTest {
         }
         CollectionTest test = PersistenceLoader.load(CollectionTest.class, root);
         for (int i = 0; i < 6; i++) {
-            assertThat(test.list.get(i).intValue(), is(i));
+            assertThat(test.list.get(i), is(i));
             assertThat(test.set.contains(i), is(true));
             assertThat(test.map.containsKey(Integer.toString(i)), is(true));
-            assertThat(test.map.get(Integer.toString(i)).intValue(), is(i));
+            assertThat(test.map.get(Integer.toString(i)), is(i));
         }
     }
 
@@ -141,9 +141,12 @@ public class PersistenceLoaderTest {
         root.setString("global.test.abc", "test");
         root.setString("test2", "test");
         root.setString("map.test", "value2");
-        assertThat(PersistenceLoader.load(StaticPersistenceTest.class, root).MAP.get("test"), equalTo("value2"));
-        assertThat(PersistenceLoader.load(StaticPersistenceTest.class, root).cba, equalTo("test"));
-        assertThat(PersistenceLoader.load(StaticPersistenceTest.class, root).abc, equalTo("test"));
+        PersistenceLoader.load(StaticPersistenceTest.class, root);
+        assertThat(StaticPersistenceTest.MAP.get("test"), equalTo("value2"));
+        PersistenceLoader.load(StaticPersistenceTest.class, root);
+        assertThat(StaticPersistenceTest.cba, equalTo("test"));
+        PersistenceLoader.load(StaticPersistenceTest.class, root);
+        assertThat(StaticPersistenceTest.abc, equalTo("test"));
     }
 
     @Test
@@ -217,7 +220,7 @@ public class PersistenceLoaderTest {
 
     public static class InferenceTest {
         @Persist
-        public Map<String, Integer> map = new ConcurrentHashMap<String, Integer>();
+        public Map<String, Integer> map = new ConcurrentHashMap<>();
     }
 
     public static class ListTest {
@@ -307,11 +310,11 @@ public class PersistenceLoaderTest {
 
     public static class TestMap {
         @Persist(value = "enabled", collectionType = ConcurrentHashMap.class)
-        private final Map<String, Boolean> enabled = new ConcurrentHashMap<String, Boolean>();
+        private final Map<String, Boolean> enabled = new ConcurrentHashMap<>();
     }
 
     public static class TestMapReify {
         @Persist(reify = true, valueType = SuperclassTest.class)
-        private final Map<String, SuperclassTest> enabled = new HashMap<String, SuperclassTest>();
+        private final Map<String, SuperclassTest> enabled = new HashMap<>();
     }
 }

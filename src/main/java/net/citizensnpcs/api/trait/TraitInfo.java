@@ -1,7 +1,8 @@
 package net.citizensnpcs.api.trait;
 
-import com.google.common.base.Preconditions;
 import java.util.function.Supplier;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Builds a trait.
@@ -26,7 +27,7 @@ public final class TraitInfo {
     public void checkValid() {
         if (supplier == null) {
             try {
-                trait.getConstructor(new Class<?>[] {});
+                trait.getConstructor();
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException("Trait class must have a no-arguments constructor");
             }

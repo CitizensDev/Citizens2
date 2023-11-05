@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -82,9 +81,8 @@ public class InventoryMenu implements Listener, Runnable {
 
     private boolean acceptFilter(InventoryAction needle, InventoryAction[] haystack) {
         for (InventoryAction type : haystack) {
-            if (needle == type) {
+            if (needle == type)
                 return true;
-            }
         }
         return haystack.length == 0;
     }
@@ -146,7 +144,7 @@ public class InventoryMenu implements Listener, Runnable {
             case CHEST:
                 int size = dim[0] * dim[1];
                 if (size % 9 != 0) {
-                    size += 9 - (size % 9);
+                    size += 9 - size % 9;
                 }
                 dim[0] = Math.min(54, size) / 9;
                 dim[1] = 9;
@@ -246,9 +244,8 @@ public class InventoryMenu implements Listener, Runnable {
             event.setCancelled(true);
         }
 
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return;
-        }
 
         for (InventoryMenuTransition transition : page.transitions) {
             Class<? extends InventoryMenuPage> next = transition.accept(slot);
@@ -291,8 +288,9 @@ public class InventoryMenu implements Listener, Runnable {
 
                 // TODO: figure out a better way to communicate from click handlers to here that the shift-click was
                 // "accepted" with different item handling behavior and that processing should stop
-                if (dest.getItem(i) != null && dest.getItem(i).isSimilar(merging))
+                if (dest.getItem(i) != null && dest.getItem(i).isSimilar(merging)) {
                     break;
+                }
 
             } else if (contents[i].isSimilar(event.getCurrentItem())) {
                 ItemStack stack = contents[i].clone();
@@ -369,11 +367,10 @@ public class InventoryMenu implements Listener, Runnable {
     }
 
     private InventoryView openInventory(HumanEntity player, Inventory inventory, String title) {
-        if (inventory.getType() == InventoryType.ANVIL) {
+        if (inventory.getType() == InventoryType.ANVIL)
             return CitizensAPI.getNMSHelper().openAnvilInventory((Player) player, inventory, title);
-        } else {
+        else
             return player.openInventory(inventory);
-        }
     }
 
     private InventoryMenuPattern parsePattern(int[] dim, List<InventoryMenuTransition> transitions,
@@ -394,7 +391,7 @@ public class InventoryMenu implements Listener, Runnable {
         int col = 0;
         for (int i = 0; i < pattern.length(); i++) {
             char c = pattern.charAt(i);
-            if (c == '\n' || (c == '\\' && i + 1 < pattern.length() && pattern.charAt(i + 1) == 'n')) {
+            if (c == '\n' || c == '\\' && i + 1 < pattern.length() && pattern.charAt(i + 1) == 'n') {
                 if (c != '\n') {
                     i++;
                 }
@@ -526,23 +523,20 @@ public class InventoryMenu implements Listener, Runnable {
         for (Invokable<ClickHandler> invokable : info.clickHandlers) {
             int idx = posToIndex(dim, invokable.data.slot());
             InventoryMenuSlot slot = page.ctx.getSlot(idx);
-            slot.addClickHandler(new Consumer<CitizensInventoryClickEvent>() {
-                @Override
-                public void accept(CitizensInventoryClickEvent event) {
-                    if (event.getSlot() != idx)
-                        return;
-                    if (acceptFilter(event.getAction(), invokable.data.filter())) {
-                        try {
-                            // TODO: optional args?
-                            invokable.method.invoke(page.page, slot, event);
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        event.setCancelled(true);
-                        event.setResult(Result.DENY);
-                        return;
+            slot.addClickHandler(event -> {
+                if (event.getSlot() != idx)
+                    return;
+                if (acceptFilter(event.getAction(), invokable.data.filter())) {
+                    try {
+                        // TODO: optional args?
+                        invokable.method.invoke(page.page, slot, event);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
                     }
+                } else {
+                    event.setCancelled(true);
+                    event.setResult(Result.DENY);
+                    return;
                 }
             });
         }
@@ -600,8 +594,9 @@ public class InventoryMenu implements Listener, Runnable {
             views = Lists.newArrayListWithExpectedSize(old.size());
             for (InventoryView view : old) {
                 view.close();
-                if (!view.getPlayer().isValid() || inventory == null)
+                if (!view.getPlayer().isValid() || inventory == null) {
                     continue;
+                }
                 views.add(openInventory(view.getPlayer(), inventory, page.ctx.getTitle()));
             }
             transitioning = false;
@@ -677,7 +672,7 @@ public class InventoryMenu implements Listener, Runnable {
                     }
                 }
                 for (T t : annotations) {
-                    bindables.add(new Bindable<T>(bind, t));
+                    bindables.add(new Bindable<>(bind, t));
                 }
             }
 
@@ -687,11 +682,11 @@ public class InventoryMenu implements Listener, Runnable {
             for (AccessibleObject object : reflect) {
                 object.setAccessible(true);
                 for (T t : object.getAnnotationsByType(annotationType)) {
-                    bindables.add(new Bindable<T>(null, t));
+                    bindables.add(new Bindable<>(null, t));
                 }
             }
             for (T t : clazz.getAnnotationsByType(annotationType)) {
-                bindables.add(new Bindable<T>(null, t));
+                bindables.add(new Bindable<>(null, t));
             }
             return bindables.toArray(new Bindable[bindables.size()]);
         }
@@ -703,14 +698,14 @@ public class InventoryMenu implements Listener, Runnable {
                 method.setAccessible(true);
                 for (ClickHandler handler : method.getAnnotationsByType(ClickHandler.class)) {
                     try {
-                        invokables.add(new Invokable<ClickHandler>(handler, LOOKUP.unreflect(method)));
+                        invokables.add(new Invokable<>(handler, LOOKUP.unreflect(method)));
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 }
                 for (MenuSlot slot : method.getAnnotationsByType(MenuSlot.class)) {
                     try {
-                        invokables.add(new Invokable<ClickHandler>(new ClickHandler() {
+                        invokables.add(new Invokable<>(new ClickHandler() {
                             @Override
                             public Class<? extends Annotation> annotationType() {
                                 return ClickHandler.class;
@@ -738,8 +733,9 @@ public class InventoryMenu implements Listener, Runnable {
             Map<String, MethodHandle> injectables = Maps.newHashMap();
             for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
-                if (!field.isAnnotationPresent(InjectContext.class))
+                if (!field.isAnnotationPresent(InjectContext.class)) {
                     continue;
+                }
                 try {
                     injectables.put(field.getName(), LOOKUP.unreflectSetter(field));
                 } catch (IllegalAccessException e) {
@@ -785,9 +781,8 @@ public class InventoryMenu implements Listener, Runnable {
     private static void cacheInfo(Class<? extends InventoryMenuPage> clazz) {
         InventoryMenuInfo info = new InventoryMenuInfo(clazz);
         info.menuAnnotation = clazz.getAnnotation(Menu.class);
-        if (info.menuAnnotation == null) {
+        if (info.menuAnnotation == null)
             throw new IllegalArgumentException("Missing menu annotation");
-        }
         try {
             Constructor<? extends InventoryMenuPage> found = clazz.getDeclaredConstructor();
             found.setAccessible(true);
@@ -850,5 +845,5 @@ public class InventoryMenu implements Listener, Runnable {
         return new InventoryMenu(CACHED_INFOS.get(clazz), context);
     }
 
-    private static Map<Class<? extends InventoryMenuPage>, InventoryMenuInfo> CACHED_INFOS = new WeakHashMap<Class<? extends InventoryMenuPage>, InventoryMenuInfo>();
+    private static Map<Class<? extends InventoryMenuPage>, InventoryMenuInfo> CACHED_INFOS = new WeakHashMap<>();
 }

@@ -7,7 +7,6 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -56,16 +55,13 @@ public class EventRegistrar implements ContextProvider {
             anonymousListeners.put(handler, bukkitListener);
 
             PluginManager manager = plugin.getServer().getPluginManager();
-            manager.registerEvent(eventClass, bukkitListener, EventPriority.NORMAL, new EventExecutor() {
-                @Override
-                public void execute(Listener bukkitListener, Event event) throws EventException {
-                    try {
-                        if (!eventClass.isAssignableFrom(event.getClass()))
-                            return;
-                        handler.handle(event);
-                    } catch (Throwable t) {
-                        throw new EventException(t);
-                    }
+            manager.registerEvent(eventClass, bukkitListener, EventPriority.NORMAL, (bukkitListener1, event) -> {
+                try {
+                    if (!eventClass.isAssignableFrom(event.getClass()))
+                        return;
+                    handler.handle(event);
+                } catch (Throwable t) {
+                    throw new EventException(t);
                 }
             }, plugin);
         }

@@ -32,9 +32,8 @@ public class MoveToGoal extends BehaviorGoalAdapter {
 
     @Override
     public BehaviorStatus run() {
-        if (finished) {
+        if (finished)
             return reason == null ? BehaviorStatus.SUCCESS : BehaviorStatus.FAILURE;
-        }
         return BehaviorStatus.RUNNING;
     }
 

@@ -15,7 +15,7 @@ public class ReversableAStarNode implements Comparable<ReversableAStarNode> {
     }
 
     public List<ReversableAStarNode> reconstructSolution() {
-        List<ReversableAStarNode> parents = new ArrayList<ReversableAStarNode>();
+        List<ReversableAStarNode> parents = new ArrayList<>();
         ReversableAStarNode start = this;
         while (start != null) {
             parents.add(start);

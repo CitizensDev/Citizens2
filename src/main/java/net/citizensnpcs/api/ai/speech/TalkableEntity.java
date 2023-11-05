@@ -28,18 +28,15 @@ public class TalkableEntity implements Talkable {
      */
     @Override
     public int compareTo(Object o) {
-        if (!(o instanceof Entity)) {
+        if (!(o instanceof Entity))
             return -1;
-            // If NPC and matches, return 0
-        } else if (CitizensAPI.getNPCRegistry().isNPC((Entity) o) && CitizensAPI.getNPCRegistry().isNPC(entity)
+        // If NPC and matches, return 0
+        else if ((CitizensAPI.getNPCRegistry().isNPC((Entity) o) && CitizensAPI.getNPCRegistry().isNPC(entity)
                 && CitizensAPI.getNPCRegistry().getNPC((Entity) o).getUniqueId()
-                        .equals(CitizensAPI.getNPCRegistry().getNPC(entity).getUniqueId())) {
+                        .equals(CitizensAPI.getNPCRegistry().getNPC(entity).getUniqueId())) || entity.equals(o))
             return 0;
-        } else if (entity.equals(o)) {
-            return 0;
-        } else {
+        else
             return 1;
-        }
     }
 
     @Override
@@ -49,13 +46,12 @@ public class TalkableEntity implements Talkable {
 
     @Override
     public String getName() {
-        if (CitizensAPI.getNPCRegistry().isNPC(entity)) {
+        if (CitizensAPI.getNPCRegistry().isNPC(entity))
             return CitizensAPI.getNPCRegistry().getNPC(entity).getFullName();
-        } else if (entity instanceof Player) {
+        else if (entity instanceof Player)
             return ((Player) entity).getName();
-        } else {
+        else
             return entity.getType().name().replace("_", " ");
-        }
     }
 
     private void talk(NPC npc, String message) {

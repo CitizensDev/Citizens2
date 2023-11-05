@@ -1,9 +1,9 @@
 package net.citizensnpcs.api.ai.event;
 
+import org.bukkit.event.HandlerList;
+
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.ai.StuckAction;
-
-import org.bukkit.event.HandlerList;
 
 public class NavigationStuckEvent extends NavigationEvent {
     private StuckAction action;

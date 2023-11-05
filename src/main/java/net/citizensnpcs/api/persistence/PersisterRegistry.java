@@ -27,11 +27,11 @@ public class PersisterRegistry<T> implements Persister<T> {
     }
 
     public void register(String type, Class<? extends T> clazz) {
-        registry.put(type, new WeakReference<Class<? extends T>>(clazz));
+        registry.put(type, new WeakReference<>(clazz));
     }
 
     public Iterable<Class<? extends T>> registeredTypes() {
-        return Iterables.transform(registry.values(), ref -> ref.get());
+        return Iterables.transform(registry.values(), WeakReference::get);
     }
 
     @Override
