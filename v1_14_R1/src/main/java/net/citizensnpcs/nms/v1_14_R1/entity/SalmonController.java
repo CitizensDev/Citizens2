@@ -75,7 +75,7 @@ public class SalmonController extends MobEntityController {
 
         @Override
         public void a(Entity entity, float strength, double dx, double dz) {
-            NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
+            NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
@@ -84,9 +84,8 @@ public class SalmonController extends MobEntityController {
             if (npc == null || !npc.isProtected())
                 return super.a(entityhuman, enumhand);
             ItemStack itemstack = entityhuman.b(enumhand);
-            if (itemstack.getItem() == Items.WATER_BUCKET && isAlive()) {
+            if (itemstack.getItem() == Items.WATER_BUCKET && isAlive())
                 return false;
-            }
             return super.a(entityhuman, enumhand);
         }
 
@@ -99,9 +98,8 @@ public class SalmonController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            if (npc == null) {
+            if (npc == null)
                 return super.b(tag);
-            }
             Vec3D old = getMot().add(0, 0, 0);
             boolean res = super.b(tag);
             if (!npc.isPushableByFluids()) {
@@ -127,8 +125,9 @@ public class SalmonController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -195,11 +194,10 @@ public class SalmonController extends MobEntityController {
 
         @Override
         public boolean isClimbing() {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.isClimbing();
-            } else {
+            else
                 return false;
-            }
         }
 
         @Override
@@ -232,9 +230,8 @@ public class SalmonController extends MobEntityController {
 
         @Override
         protected boolean n(Entity entity) {
-            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract))
                 return !npc.isProtected();
-            }
             return super.n(entity);
         }
     }

@@ -224,9 +224,8 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
 
     @Override
     public EntityType get(ResourceLocation key) {
-        if (entities.containsKey(key)) {
+        if (entities.containsKey(key))
             return entities.get(key);
-        }
         return wrapped.get(key);
     }
 
@@ -242,17 +241,15 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
 
     @Override
     public int getId(EntityType key) {
-        if (entityIds.containsKey(key)) {
+        if (entityIds.containsKey(key))
             return entityIds.get(key);
-        }
         return wrapped.getId(key);
     }
 
     @Override
     public ResourceLocation getKey(EntityType value) {
-        if (entityClasses.containsKey(value)) {
+        if (entityClasses.containsKey(value))
             return entityClasses.get(value);
-        }
         return wrapped.getKey(value);
     }
 
@@ -263,9 +260,8 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
 
     @Override
     public Optional<EntityType<?>> getOptional(ResourceLocation var0) {
-        if (entities.containsKey(var0)) {
+        if (entities.containsKey(var0))
             return Optional.of(entities.get(var0));
-        }
         return this.wrapped.getOptional(var0);
     }
 

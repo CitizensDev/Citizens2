@@ -74,7 +74,7 @@ public class EntityNavigation extends NavigationAbstract {
 
     @Override
     protected boolean a() {
-        return (this.a.isOnGround() || p() || this.a.isPassenger());
+        return this.a.isOnGround() || p() || this.a.isPassenger();
     }
 
     @Override
@@ -87,18 +87,21 @@ public class EntityNavigation extends NavigationAbstract {
     public PathEntity a(BlockPosition var0, int var1) {
         if (this.b.getType(var0).isAir()) {
             BlockPosition var2 = var0.down();
-            while (var2.getY() > 0 && this.b.getType(var2).isAir())
+            while (var2.getY() > 0 && this.b.getType(var2).isAir()) {
                 var2 = var2.down();
+            }
             if (var2.getY() > 0)
                 return supera(var2.up(), var1);
-            while (var2.getY() < this.b.getBuildHeight() && this.b.getType(var2).isAir())
+            while (var2.getY() < this.b.getBuildHeight() && this.b.getType(var2).isAir()) {
                 var2 = var2.up();
+            }
             var0 = var2;
         }
         if (this.b.getType(var0).getMaterial().isBuildable()) {
             BlockPosition var2 = var0.up();
-            while (var2.getY() < this.b.getBuildHeight() && this.b.getType(var2).getMaterial().isBuildable())
+            while (var2.getY() < this.b.getBuildHeight() && this.b.getType(var2).getMaterial().isBuildable()) {
                 var2 = var2.up();
+            }
             return supera(var2, var1);
         }
         return supera(var0, var1);
@@ -121,7 +124,7 @@ public class EntityNavigation extends NavigationAbstract {
     @Override
     public boolean a(Entity var0, double var1) {
         PathEntity var3 = a(var0, 1);
-        return (var3 != null && a(var3, var1));
+        return var3 != null && a(var3, var1);
     }
 
     @Override
@@ -172,8 +175,9 @@ public class EntityNavigation extends NavigationAbstract {
             this.c = null;
             return false;
         }
-        if (!var0.a(this.c))
+        if (!var0.a(this.c)) {
             this.c = var0;
+        }
         if (m())
             return false;
         D_();
@@ -187,7 +191,7 @@ public class EntityNavigation extends NavigationAbstract {
     }
 
     protected boolean a(PathType var0) {
-        if ((var0 == PathType.WATER) || (var0 == PathType.LAVA) || (var0 == PathType.OPEN))
+        if (var0 == PathType.WATER || var0 == PathType.LAVA || var0 == PathType.OPEN)
             return false;
         return true;
     }
@@ -199,7 +203,7 @@ public class EntityNavigation extends NavigationAbstract {
 
     @Override
     protected PathEntity a(Set<BlockPosition> var0, int var1, boolean var2, int var3) {
-        if (var0.isEmpty() || (this.a.locY() < 0.0D) || !a())
+        if (var0.isEmpty() || this.a.locY() < 0.0D || !a())
             return null;
         if (this.c != null && !this.c.c() && var0.contains(this.p))
             return this.c;
@@ -242,7 +246,7 @@ public class EntityNavigation extends NavigationAbstract {
             } else {
                 this.h = var1;
                 double var2 = var0.f(Vec3D.c(this.h));
-                this.k = (this.a.dN() > 0.0F) ? (var2 / this.a.dN() * 1000.0D) : 0.0D;
+                this.k = this.a.dN() > 0.0F ? var2 / this.a.dN() * 1000.0D : 0.0D;
             }
             if (this.k > 0.0D && this.i > this.k * 3.0D) {
                 e();
@@ -274,14 +278,16 @@ public class EntityNavigation extends NavigationAbstract {
         double var17 = 1.0D / Math.abs(var9);
         double var19 = var5 - var0.x;
         double var21 = var6 - var0.z;
-        if (var7 >= 0.0D)
+        if (var7 >= 0.0D) {
             var19++;
-        if (var9 >= 0.0D)
+        }
+        if (var9 >= 0.0D) {
             var21++;
+        }
         var19 /= var7;
         var21 /= var9;
-        int var23 = (var7 < 0.0D) ? -1 : 1;
-        int var24 = (var9 < 0.0D) ? -1 : 1;
+        int var23 = var7 < 0.0D ? -1 : 1;
+        int var24 = var9 < 0.0D ? -1 : 1;
         int var25 = MathHelper.floor(var1.x);
         int var26 = MathHelper.floor(var1.z);
         int var27 = var25 - var5;
@@ -314,8 +320,9 @@ public class EntityNavigation extends NavigationAbstract {
         PathPoint var1 = this.c.d();
         Vec3D var2 = new Vec3D((var1.a + this.a.locX()) / 2.0D, (var1.b + this.a.locY()) / 2.0D,
                 (var1.c + this.a.locZ()) / 2.0D);
-        if (var0.a(var2, (this.c.e() - this.c.f())))
+        if (var0.a(var2, this.c.e() - this.c.f())) {
             j();
+        }
     }
 
     private boolean b(int var0, int var1, int var2, int var3, int var4, int var5, Vec3D var6, double var7,
@@ -324,8 +331,9 @@ public class EntityNavigation extends NavigationAbstract {
                 new BlockPosition(var0 + var3 - 1, var1 + var4 - 1, var2 + var5 - 1))) {
             double var13 = var12.getX() + 0.5D - var6.x;
             double var15 = var12.getZ() + 0.5D - var6.z;
-            if (var13 * var7 + var15 * var9 < 0.0D)
+            if (var13 * var7 + var15 * var9 < 0.0D) {
                 continue;
+            }
             if (!this.b.getType(var12).a(this.b, var12, PathMode.LAND))
                 return false;
         }
@@ -333,8 +341,8 @@ public class EntityNavigation extends NavigationAbstract {
     }
 
     public boolean b(PathType pathtype) {
-        return (pathtype != PathType.DANGER_FIRE && pathtype != PathType.DANGER_CACTUS
-                && pathtype != PathType.DANGER_OTHER);
+        return pathtype != PathType.DANGER_FIRE && pathtype != PathType.DANGER_CACTUS
+                && pathtype != PathType.DANGER_OTHER;
     }
 
     private boolean b(Vec3D var0) {
@@ -346,14 +354,15 @@ public class EntityNavigation extends NavigationAbstract {
         Vec3D var2 = Vec3D.c(this.c.d(this.c.f() + 1));
         Vec3D var3 = var2.d(var1);
         Vec3D var4 = var0.d(var1);
-        return (var3.b(var4) > 0.0D);
+        return var3.b(var4) > 0.0D;
     }
 
     @Override
     public void c() {
         this.e++;
-        if (this.m)
+        if (this.m) {
             j();
+        }
         if (m())
             return;
         if (a()) {
@@ -362,8 +371,9 @@ public class EntityNavigation extends NavigationAbstract {
             Vec3D vec3D1 = b();
             Vec3D vec3D2 = this.c.a(this.a);
             if (vec3D1.y > vec3D2.y && !this.a.isOnGround() && MathHelper.floor(vec3D1.x) == MathHelper.floor(vec3D2.x)
-                    && MathHelper.floor(vec3D1.z) == MathHelper.floor(vec3D2.z))
+                    && MathHelper.floor(vec3D1.z) == MathHelper.floor(vec3D2.z)) {
                 this.c.a();
+            }
         }
         if (m())
             return;
@@ -446,23 +456,24 @@ public class EntityNavigation extends NavigationAbstract {
     @Override
     protected void l() {
         Vec3D var0 = b();
-        this.l = (this.a.getWidth() > 0.75F) ? (this.a.getWidth() / 2.0F) : (0.75F - this.a.getWidth() / 2.0F);
+        this.l = this.a.getWidth() > 0.75F ? this.a.getWidth() / 2.0F : 0.75F - this.a.getWidth() / 2.0F;
         BaseBlockPosition var1 = this.c.g();
         double var2 = Math.abs(this.a.locX() - (var1.getX() + 0.5D));
         double var4 = Math.abs(this.a.locY() - var1.getY());
         double var6 = Math.abs(this.a.locZ() - (var1.getZ() + 0.5D));
-        boolean var8 = (var2 < this.l && var6 < this.l && var4 < 1.0D);
+        boolean var8 = var2 < this.l && var6 < this.l && var4 < 1.0D;
         boolean b2 = Math.abs(this.a.locX() - (var1.getX() + 0.5D)) < this.l
                 && Math.abs(this.a.locZ() - (var1.getZ() + 0.5D)) < this.l
                 && Math.abs(this.a.locY() - var1.getY()) < 1.0D; // old-style calc
-        if (var8 || b2 || (b((this.c.h()).l) && b(var0)))
+        if (var8 || b2 || b(this.c.h().l) && b(var0)) {
             this.c.a();
+        }
         a(var0);
     }
 
     @Override
     public boolean m() {
-        return (this.c == null || this.c.c());
+        return this.c == null || this.c.c();
     }
 
     @Override
@@ -477,7 +488,7 @@ public class EntityNavigation extends NavigationAbstract {
 
     @Override
     protected boolean p() {
-        return (this.a.aH() || this.a.aQ());
+        return this.a.aH() || this.a.aQ();
     }
 
     @Override
@@ -503,12 +514,13 @@ public class EntityNavigation extends NavigationAbstract {
             return;
         for (int var0 = 0; var0 < this.c.e(); var0++) {
             PathPoint var1 = this.c.a(var0);
-            PathPoint var2 = (var0 + 1 < this.c.e()) ? this.c.a(var0 + 1) : null;
+            PathPoint var2 = var0 + 1 < this.c.e() ? this.c.a(var0 + 1) : null;
             IBlockData var3 = this.b.getType(new BlockPosition(var1.a, var1.b, var1.c));
             if (var3.a(Blocks.CAULDRON)) {
                 this.c.a(var0, var1.a(var1.a, var1.b + 1, var1.c));
-                if (var2 != null && var1.b >= var2.b)
+                if (var2 != null && var1.b >= var2.b) {
                     this.c.a(var0 + 1, var1.a(var2.a, var1.b + 1, var2.c));
+                }
             }
         }
     }

@@ -56,7 +56,7 @@ public class PlayerControllerMove extends ControllerMove {
                 this.h = new Random().nextInt(20) + 10;
                 this.h /= 3;
                 ((EntityInsentient) this.a).getControllerJump().jump();
-            } else if (d2 >= NMS.getStepHeight(a.getBukkitEntity()) && (d0 * d0 + d1 * d1) < 1.0D) {
+            } else if (d2 >= NMS.getStepHeight(a.getBukkitEntity()) && d0 * d0 + d1 * d1 < 1.0D) {
                 if (this.a instanceof EntityHumanNPC) {
                     ((EntityHumanNPC) this.a).getControllerJump().jump();
                 } else {
@@ -85,9 +85,9 @@ public class PlayerControllerMove extends ControllerMove {
             f3 = -f2;
         }
         float f4 = f + f3;
-        if (f4 < 0.0F)
+        if (f4 < 0.0F) {
             f4 += 360.0F;
-        else if (f4 > 360.0F) {
+        } else if (f4 > 360.0F) {
             f4 -= 360.0F;
         }
         return f4;

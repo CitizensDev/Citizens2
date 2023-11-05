@@ -27,9 +27,8 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
 
     @Override
     public int a(Object key) {
-        if (entityIds.containsKey(key)) {
+        if (entityIds.containsKey(key))
             return entityIds.get(key);
-        }
         return wrapped.a((EntityTypes) key);
     }
 
@@ -62,25 +61,22 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
 
     @Override
     public EntityTypes get(MinecraftKey key) {
-        if (entities.containsKey(key)) {
+        if (entities.containsKey(key))
             return entities.get(key);
-        }
         return wrapped.get(key);
     }
 
     @Override
     public MinecraftKey getKey(Object value) {
-        if (entityClasses.containsKey(value)) {
+        if (entityClasses.containsKey(value))
             return entityClasses.get(value);
-        }
         return wrapped.getKey((EntityTypes) value);
     }
 
     @Override
     public Optional getOptional(MinecraftKey var0) {
-        if (entities.containsKey(var0)) {
+        if (entities.containsKey(var0))
             return Optional.of(entities.get(var0));
-        }
         return this.wrapped.getOptional(var0);
     }
 

@@ -13,7 +13,7 @@ import net.minecraft.server.v1_10_R1.PathPoint;
 
 public class PlayerPathfinder {
     private final Path a = new Path();
-    private final Set<PathPoint> b = new HashSet<PathPoint>();
+    private final Set<PathPoint> b = new HashSet<>();
     private final PathPoint[] c = new PathPoint[32];
     private final PlayerPathfinderNormal d;
 
@@ -53,10 +53,10 @@ public class PlayerPathfinder {
         }
         PathPoint[] arrayOfPathPoint = new PathPoint[i];
         localPathPoint = paramPathPoint2;
-        arrayOfPathPoint[(--i)] = localPathPoint;
+        arrayOfPathPoint[--i] = localPathPoint;
         while (localPathPoint.h != null) {
             localPathPoint = localPathPoint.h;
-            arrayOfPathPoint[(--i)] = localPathPoint;
+            arrayOfPathPoint[--i] = localPathPoint;
         }
         return new PathEntity(arrayOfPathPoint);
     }
@@ -88,25 +88,24 @@ public class PlayerPathfinder {
             for (int k = 0; k < j; k++) {
                 PathPoint localPathPoint = this.c[k];
                 float f1 = localObject2.c(localPathPoint);
-                localPathPoint.j = (localObject2.j + f1);
-                localPathPoint.k = (f1 + localPathPoint.l);
+                localPathPoint.j = localObject2.j + f1;
+                localPathPoint.k = f1 + localPathPoint.l;
                 float f2 = localObject2.e + localPathPoint.k;
-                if ((localPathPoint.j < paramFloat) && ((!localPathPoint.a()) || (f2 < localPathPoint.e))) {
-                    localPathPoint.h = (localObject2);
+                if (localPathPoint.j < paramFloat && (!localPathPoint.a() || f2 < localPathPoint.e)) {
+                    localPathPoint.h = localObject2;
                     localPathPoint.e = f2;
-                    localPathPoint.f = (localPathPoint.c(paramPathPoint2) + localPathPoint.l);
+                    localPathPoint.f = localPathPoint.c(paramPathPoint2) + localPathPoint.l;
                     if (localPathPoint.a()) {
                         this.a.a(localPathPoint, localPathPoint.e + localPathPoint.f);
                     } else {
-                        localPathPoint.g = (localPathPoint.e + localPathPoint.f);
+                        localPathPoint.g = localPathPoint.e + localPathPoint.f;
                         this.a.a(localPathPoint);
                     }
                 }
             }
         }
-        if (localObject1 == paramPathPoint1) {
+        if (localObject1 == paramPathPoint1)
             return null;
-        }
         Object localObject2 = a(paramPathPoint1, (PathPoint) localObject1);
         return (PathEntity) localObject2;
     }

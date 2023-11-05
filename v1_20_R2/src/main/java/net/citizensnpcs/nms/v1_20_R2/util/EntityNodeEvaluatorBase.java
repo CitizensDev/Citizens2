@@ -21,7 +21,7 @@ public abstract class EntityNodeEvaluatorBase extends NodeEvaluator {
     protected PathNavigationRegion level;
     protected LivingEntity mob;
     protected MobAI mvmt;
-    protected final Int2ObjectMap<Node> nodes = new Int2ObjectOpenHashMap<Node>();
+    protected final Int2ObjectMap<Node> nodes = new Int2ObjectOpenHashMap<>();
 
     @Override
     public boolean canFloat() {
@@ -57,9 +57,7 @@ public abstract class EntityNodeEvaluatorBase extends NodeEvaluator {
 
     @Override
     protected Node getNode(int var0, int var1, int var2) {
-        return this.nodes.computeIfAbsent(Node.createHash(var0, var1, var2), (var3) -> {
-            return new Node(var0, var1, var2);
-        });
+        return this.nodes.computeIfAbsent(Node.createHash(var0, var1, var2), var3 -> new Node(var0, var1, var2));
     }
 
     @Override

@@ -68,9 +68,9 @@ public class EntityMoveControl extends MoveControl {
             f3 = -f2;
         }
         float f4 = f + f3;
-        if (f4 < 0.0F)
+        if (f4 < 0.0F) {
             f4 += 360.0F;
-        else if (f4 > 360.0F) {
+        } else if (f4 > 360.0F) {
             f4 -= 360.0F;
         }
         return f4;
@@ -94,10 +94,9 @@ public class EntityMoveControl extends MoveControl {
             double dZ = this.tz - this.entity.getZ();
             double dY = this.ty - this.entity.getY();
             double dXZ = Math.sqrt(dX * dX + dZ * dZ);
-            if (Math.abs(dY) < 1.0 && dXZ < 0.01) {
+            if (Math.abs(dY) < 1.0 && dXZ < 0.01)
                 // this.entity.zza = 0.0F;
                 return;
-            }
             if (dXZ > 0.4) {
                 float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
                 this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));

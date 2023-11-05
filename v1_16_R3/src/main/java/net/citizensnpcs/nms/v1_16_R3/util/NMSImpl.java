@@ -507,9 +507,8 @@ public class NMSImpl implements NMSBridge {
             throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
         MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer()
                 .getMinecraftSessionService();
-        if (!(sessionService instanceof YggdrasilMinecraftSessionService)) {
+        if (!(sessionService instanceof YggdrasilMinecraftSessionService))
             return sessionService.fillProfileProperties(profile, requireSecure);
-        }
         YggdrasilAuthenticationService auth = ((YggdrasilMinecraftSessionService) sessionService)
                 .getAuthenticationService();
         URL url = HttpAuthenticationService
@@ -543,17 +542,15 @@ public class NMSImpl implements NMSBridge {
                 bserver = ((EntityWither) NMSImpl.getHandle(entity)).bossBattle;
             } else if (entity.getType() == EntityType.ENDER_DRAGON) {
                 Object battleObject = ENDERDRAGON_BATTLE_FIELD.invoke(NMSImpl.getHandle(entity));
-                if (battleObject == null) {
+                if (battleObject == null)
                     return null;
-                }
                 bserver = ((EnderDragonBattle) battleObject).bossBattle;
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        if (bserver == null) {
+        if (bserver == null)
             return null;
-        }
         BossBar ret = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SEGMENTED_10);
         try {
             CRAFT_BOSSBAR_HANDLE_FIELD.invoke(ret, bserver);
@@ -580,9 +577,8 @@ public class NMSImpl implements NMSBridge {
         Entity handle = getHandle(entity);
         ControllerMove controller = handle instanceof EntityInsentient ? ((EntityInsentient) handle).getControllerMove()
                 : handle instanceof MobAI ? ((MobAI) handle).getMoveControl() : null;
-        if (controller == null || !controller.b()) {
+        if (controller == null || !controller.b())
             return null;
-        }
         return new Location(entity.getWorld(), controller.d(), controller.e(), controller.f());
     }
 
@@ -593,9 +589,8 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public float getHeadYaw(org.bukkit.entity.Entity entity) {
-        if (!(entity instanceof LivingEntity)) {
+        if (!(entity instanceof LivingEntity))
             return entity.getLocation().getYaw();
-        }
         return getHandle((LivingEntity) entity).getHeadRotation();
     }
 
@@ -656,7 +651,7 @@ public class NMSImpl implements NMSBridge {
         Entity handle = NMSImpl.getHandle(entity);
         if (handle == null || handle.passengers == null)
             return Lists.newArrayList();
-        return Lists.transform(handle.passengers, input -> input.getBukkitEntity());
+        return Lists.transform(handle.passengers, Entity::getBukkitEntity);
     }
 
     @Override
@@ -668,9 +663,8 @@ public class NMSImpl implements NMSBridge {
     public GameProfile getProfile(SkullMeta meta) {
         if (SKULL_PROFILE_FIELD == null) {
             SKULL_PROFILE_FIELD = NMS.getField(meta.getClass(), "profile", false);
-            if (SKULL_PROFILE_FIELD == null) {
+            if (SKULL_PROFILE_FIELD == null)
                 return null;
-            }
         }
         try {
             return (GameProfile) SKULL_PROFILE_FIELD.get(meta);
@@ -710,8 +704,8 @@ public class NMSImpl implements NMSBridge {
         if (!npc.isSpawned() || !(npc.getEntity() instanceof LivingEntity))
             return DEFAULT_SPEED;
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) npc.getEntity());
-        if (handle == null)
-            return DEFAULT_SPEED;
+        if (handle == null) {
+        }
         return DEFAULT_SPEED;
         // return (float)
         // handle.getAttributeInstance(GenericAttributes.d).getValue();
@@ -730,23 +724,14 @@ public class NMSImpl implements NMSBridge {
         PathPoint last = list.size() > 0 ? list.get(list.size() - 1) : null;
         final PathEntity path = new PathEntity(list, last != null ? new BlockPosition(last.a, last.b, last.c) : null,
                 true);
-        return getTargetNavigator(entity, params, new Function<NavigationAbstract, Boolean>() {
-            @Override
-            public Boolean apply(NavigationAbstract input) {
-                return input.a(path, params.speed());
-            }
-        });
+        return getTargetNavigator(entity, params, input -> input.a(path, params.speed()));
     }
 
     @Override
     public MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final Location dest,
             final NavigatorParameters params) {
-        return getTargetNavigator(entity, params, new Function<NavigationAbstract, Boolean>() {
-            @Override
-            public Boolean apply(NavigationAbstract input) {
-                return input.a(dest.getX(), dest.getY(), dest.getZ(), params.speed());
-            }
-        });
+        return getTargetNavigator(entity, params,
+                input -> input.a(dest.getX(), dest.getY(), dest.getZ(), params.speed()));
     }
 
     private MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final NavigatorParameters params,
@@ -852,11 +837,10 @@ public class NMSImpl implements NMSBridge {
     @Override
     public org.bukkit.entity.Entity getVehicle(org.bukkit.entity.Entity entity) {
         Entity handle = NMSImpl.getHandle(entity);
-        if (handle == null) {
+        if (handle == null)
             return null;
-        }
         Entity e = handle.getVehicle();
-        return (e == handle || e == null) ? null : e.getBukkitEntity();
+        return e == handle || e == null ? null : e.getBukkitEntity();
     }
 
     @Override
@@ -1041,7 +1025,7 @@ public class NMSImpl implements NMSBridge {
     public void look(org.bukkit.entity.Entity entity, Location to, boolean headOnly, boolean immediate) {
         Entity handle = NMSImpl.getHandle(entity);
         if (immediate || headOnly || BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
-                || (!(handle instanceof EntityInsentient) && !(handle instanceof MobAI))) {
+                || !(handle instanceof EntityInsentient) && !(handle instanceof MobAI)) {
             Location fromLocation = entity.getLocation(FROM_LOCATION);
             double xDiff, yDiff, zDiff;
             xDiff = to.getX() - fromLocation.getX();
@@ -1052,8 +1036,9 @@ public class NMSImpl implements NMSBridge {
             double yaw = Math.toDegrees(Math.acos(xDiff / distanceXZ));
             double pitch = Math.toDegrees(Math.acos(yDiff / distanceY))
                     - (handle.getBukkitEntity().getType() == EntityType.PHANTOM ? 45 : 90);
-            if (zDiff < 0.0)
+            if (zDiff < 0.0) {
                 yaw += Math.abs(180 - yaw) * 2;
+            }
             if (handle.getBukkitEntity().getType() == EntityType.ENDER_DRAGON) {
                 yaw = Util.getDragonYaw(handle.getBukkitEntity(), xDiff, zDiff);
             } else {
@@ -1084,7 +1069,7 @@ public class NMSImpl implements NMSBridge {
     public void look(org.bukkit.entity.Entity from, org.bukkit.entity.Entity to) {
         Entity handle = NMSImpl.getHandle(from), target = NMSImpl.getHandle(to);
         if (BAD_CONTROLLER_LOOK.contains(handle.getBukkitEntity().getType())
-                || (!(handle instanceof EntityInsentient) && !(handle instanceof MobAI))) {
+                || !(handle instanceof EntityInsentient) && !(handle instanceof MobAI)) {
             if (to instanceof LivingEntity) {
                 look(from, ((LivingEntity) to).getEyeLocation(), false, true);
             } else {
@@ -1133,14 +1118,12 @@ public class NMSImpl implements NMSBridge {
             @Override
             public CraftInventoryView getBukkitView() {
                 if (this.bukkitEntity != null) {
-                    return this.bukkitEntity;
-                } else {
                     this.bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(),
                             new CitizensInventoryAnvil(this.containerAccess.getLocation(), this.repairInventory,
                                     this.resultInventory, this, anvil),
                             this);
-                    return this.bukkitEntity;
                 }
+                return this.bukkitEntity;
             }
         };
         container.getBukkitView().setItem(0, anvil.getItem(0));
@@ -1183,8 +1166,9 @@ public class NMSImpl implements NMSBridge {
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
             EntityTypes<?> type = ENTITY_REGISTRY.findType(search);
             MinecraftKey key = ENTITY_REGISTRY.getKey(type);
-            if (key == null || type == null)
+            if (key == null || type == null) {
                 continue;
+            }
             CITIZENS_ENTITY_TYPES.put(clazz, type);
             int code = ENTITY_REGISTRY.a(type);
             ENTITY_REGISTRY.put(code, key, type);
@@ -1476,9 +1460,8 @@ public class NMSImpl implements NMSBridge {
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SET_PROFILE_METHOD == null) {
             SET_PROFILE_METHOD = NMS.getMethodHandle(meta.getClass(), "setProfile", true, GameProfile.class);
-            if (SET_PROFILE_METHOD == null) {
+            if (SET_PROFILE_METHOD == null)
                 return;
-            }
         }
         try {
             SET_PROFILE_METHOD.invoke(meta, profile);
@@ -1766,9 +1749,8 @@ public class NMSImpl implements NMSBridge {
         @Override
         public void setPath() {
             Location location = parameters.entityTargetLocationMapper().apply(target);
-            if (location == null) {
+            if (location == null)
                 throw new IllegalStateException("mapper should not return null");
-            }
             navigation.a(location.getX(), location.getY(), location.getZ(), parameters.speed());
         }
 
@@ -1856,9 +1838,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static CompoundTag convertNBT(net.minecraft.server.v1_16_R3.NBTTagCompound tag) {
-        if (tag == null) {
+        if (tag == null)
             return new CompoundTag("", Collections.EMPTY_MAP);
-        }
         Map<String, Tag> tags = Maps.newHashMap();
         for (String key : tag.getKeys()) {
             tags.put(key, convertNBT(key, tag.get(key)));
@@ -1867,25 +1848,25 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static Tag convertNBT(String key, net.minecraft.server.v1_16_R3.NBTBase base) {
-        if (base instanceof net.minecraft.server.v1_16_R3.NBTTagInt) {
+        if (base instanceof net.minecraft.server.v1_16_R3.NBTTagInt)
             return new IntTag(key, ((net.minecraft.server.v1_16_R3.NBTTagInt) base).asInt());
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagFloat) {
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagFloat)
             return new FloatTag(key, ((net.minecraft.server.v1_16_R3.NBTTagFloat) base).asFloat());
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagDouble) {
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagDouble)
             return new DoubleTag(key, ((net.minecraft.server.v1_16_R3.NBTTagDouble) base).asDouble());
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagLong) {
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagLong)
             return new LongTag(key, ((net.minecraft.server.v1_16_R3.NBTTagLong) base).asLong());
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagShort) {
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagShort)
             return new ShortTag(key, ((net.minecraft.server.v1_16_R3.NBTTagShort) base).asShort());
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagByte) {
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagByte)
             return new ByteTag(key, ((net.minecraft.server.v1_16_R3.NBTTagByte) base).asByte());
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagByteArray) {
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagByteArray)
             return new ByteArrayTag(key, ((net.minecraft.server.v1_16_R3.NBTTagByteArray) base).getBytes());
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagIntArray) {
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagIntArray)
             return new IntArrayTag(key, ((net.minecraft.server.v1_16_R3.NBTTagIntArray) base).getInts());
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagString) {
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagString)
             return new StringTag(key, base.asString());
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagList) {
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagList) {
             List<net.minecraft.server.v1_16_R3.NBTBase> list = (List<net.minecraft.server.v1_16_R3.NBTBase>) base;
             List<Tag> converted = Lists.newArrayList();
             if (list.size() > 0) {
@@ -1895,19 +1876,17 @@ public class NMSImpl implements NMSBridge {
                 }
                 return new ListTag(key, tagType, converted);
             }
-            return null;
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagCompound) {
-            return convertNBT(((net.minecraft.server.v1_16_R3.NBTTagCompound) base));
-        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagEnd) {
+        } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagCompound)
+            return convertNBT((net.minecraft.server.v1_16_R3.NBTTagCompound) base);
+        else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagEnd)
             return new EndTag();
-        }
         return null;
     }
 
     public static void flyingMoveLogic(EntityLiving entity, Vec3D vec3d) {
         if (entity.doAITick() || entity.cs()) {
             double d0 = 0.08D;
-            boolean flag = ((entity.getMot()).y <= 0.0D);
+            boolean flag = entity.getMot().y <= 0.0D;
             if (flag && entity.hasEffect(MobEffects.SLOW_FALLING)) {
                 d0 = 0.01D;
                 entity.fallDistance = 0.0F;
@@ -1918,26 +1897,31 @@ public class NMSImpl implements NMSBridge {
                 float f = entity.isSprinting() ? 0.9F : 0.8F;
                 float f1 = 0.02F;
                 float f2 = EnchantmentManager.e(entity);
-                if (f2 > 3.0F)
+                if (f2 > 3.0F) {
                     f2 = 3.0F;
-                if (!entity.isOnGround())
+                }
+                if (!entity.isOnGround()) {
                     f2 *= 0.5F;
+                }
                 if (f2 > 0.0F) {
                     f += (0.54600006F - f) * f2 / 3.0F;
                     f1 += (entity.dN() - f1) * f2 / 3.0F;
                 }
-                if (entity.hasEffect(MobEffects.DOLPHINS_GRACE))
+                if (entity.hasEffect(MobEffects.DOLPHINS_GRACE)) {
                     f = 0.96F;
+                }
                 entity.a(f1, vec3d);
                 entity.move(EnumMoveType.SELF, entity.getMot());
                 Vec3D vec3d1 = entity.getMot();
-                if (entity.positionChanged && entity.isClimbing())
+                if (entity.positionChanged && entity.isClimbing()) {
                     vec3d1 = new Vec3D(vec3d1.x, 0.2D, vec3d1.z);
+                }
                 entity.setMot(vec3d1.d(f, 0.800000011920929D, f));
                 Vec3D vec3d2 = entity.a(d0, flag, entity.getMot());
                 entity.setMot(vec3d2);
-                if (entity.positionChanged && entity.e(vec3d2.x, vec3d2.y + 0.6D - entity.locY() + d1, vec3d2.z))
+                if (entity.positionChanged && entity.e(vec3d2.x, vec3d2.y + 0.6D - entity.locY() + d1, vec3d2.z)) {
                     entity.setMot(vec3d2.x, 0.30000001192092896D, vec3d2.z);
+                }
             } else if (entity.aQ() /*&& entity.cT()*/ && !entity.a(fluid.getType())) {
                 double d1 = entity.locY();
                 entity.a(0.02F, vec3d);
@@ -1949,15 +1933,18 @@ public class NMSImpl implements NMSBridge {
                 } else {
                     entity.setMot(entity.getMot().a(0.5D));
                 }
-                if (!entity.isNoGravity())
+                if (!entity.isNoGravity()) {
                     entity.setMot(entity.getMot().add(0.0D, -d0 / 4.0D, 0.0D));
+                }
                 Vec3D vec3d3 = entity.getMot();
-                if (entity.positionChanged && entity.e(vec3d3.x, vec3d3.y + 0.6D - entity.locY() + d1, vec3d3.z))
+                if (entity.positionChanged && entity.e(vec3d3.x, vec3d3.y + 0.6D - entity.locY() + d1, vec3d3.z)) {
                     entity.setMot(vec3d3.x, 0.3D, vec3d3.z);
+                }
             } else if (entity.isGliding()) {
                 Vec3D vec3d4 = entity.getMot();
-                if (vec3d4.y > -0.5D)
+                if (vec3d4.y > -0.5D) {
                     entity.fallDistance = 1.0F;
+                }
                 Vec3D vec3d5 = entity.getLookDirection();
                 float f = entity.pitch * 0.017453292F;
                 double d2 = Math.sqrt(vec3d5.x * vec3d5.x + vec3d5.z * vec3d5.z);
@@ -1974,9 +1961,10 @@ public class NMSImpl implements NMSBridge {
                     double d5 = d3 * -MathHelper.sin(f) * 0.04D;
                     vec3d4 = vec3d4.add(-vec3d5.x * d5 / d2, d5 * 3.2D, -vec3d5.z * d5 / d2);
                 }
-                if (d2 > 0.0D)
+                if (d2 > 0.0D) {
                     vec3d4 = vec3d4.add((vec3d5.x / d2 * d3 - vec3d4.x) * 0.1D, 0.0D,
                             (vec3d5.z / d2 * d3 - vec3d4.z) * 0.1D);
+                }
                 entity.setMot(vec3d4.d(0.9900000095367432D, 0.9800000190734863D, 0.9900000095367432D));
                 entity.move(EnumMoveType.SELF, entity.getMot());
                 if (entity.positionChanged && !entity.world.isClientSide) {
@@ -1993,13 +1981,14 @@ public class NMSImpl implements NMSBridge {
                     }
                 }
                 if (entity.isOnGround() && !entity.world.isClientSide && entity.getFlag(7)
-                        && !CraftEventFactory.callToggleGlideEvent(entity, false).isCancelled())
+                        && !CraftEventFactory.callToggleGlideEvent(entity, false).isCancelled()) {
                     entity.setFlag(7, false);
+                }
             } else {
                 BlockPosition blockposition = new BlockPosition(entity.locX(),
-                        (entity.getBoundingBox()).minY - 0.5000001D, entity.locZ());// entity.ar();
+                        entity.getBoundingBox().minY - 0.5000001D, entity.locZ());// entity.ar();
                 float f5 = entity.world.getType(blockposition).getBlock().getFrictionFactor();
-                float f = entity.isOnGround() ? (f5 * 0.91F) : 0.91F;
+                float f = entity.isOnGround() ? f5 * 0.91F : 0.91F;
                 Vec3D vec3d6 = entity.a(vec3d, f5);
                 double d7 = vec3d6.y;
                 if (entity.hasEffect(MobEffects.LEVITATION)) {
@@ -2114,9 +2103,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static boolean moveFish(NPC npc, EntityInsentient handle, Vec3D vec3d, float speed) {
-        if (npc == null) {
+        if (npc == null)
             return false;
-        }
         if (!npc.useMinecraftAI() && handle.isInWater() && !npc.getNavigator().isNavigating()) {
             handle.a(speed > 0 ? speed : handle instanceof EntityTurtle ? 0.1F : 0.01F, vec3d);
             handle.move(EnumMoveType.SELF, handle.getMot());
@@ -2167,7 +2155,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void sendPacketNearby(Player from, Location location, Packet<?> packet, double radius) {
-        List<Packet<?>> list = new ArrayList<Packet<?>>();
+        List<Packet<?>> list = new ArrayList<>();
         list.add(packet);
         sendPacketsNearby(from, location, list, radius);
     }
@@ -2176,8 +2164,8 @@ public class NMSImpl implements NMSBridge {
         radius *= radius;
         final org.bukkit.World world = location.getWorld();
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
-            if (world != player.getWorld() || (from != null && !player.canSee(from))
-                    || (location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius)) {
+            if (world != player.getWorld() || from != null && !player.canSee(from)
+                    || location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius) {
                 continue;
             }
             for (Packet<?> packet : packets) {
@@ -2205,14 +2193,10 @@ public class NMSImpl implements NMSBridge {
                 AttributeProvider provider = (AttributeProvider) ATTRIBUTE_MAP.invoke(entity.getAttributeMap());
                 Map<AttributeBase, AttributeModifiable> all = Maps
                         .newHashMap((Map<AttributeBase, AttributeModifiable>) ATTRIBUTE_PROVIDER_MAP.invoke(provider));
-                all.put(GenericAttributes.FOLLOW_RANGE,
-                        new AttributeModifiable(GenericAttributes.FOLLOW_RANGE, new Consumer<AttributeModifiable>() {
-                            @Override
-                            public void accept(AttributeModifiable att) {
-                                throw new UnsupportedOperationException(
-                                        "Tried to change value for default attribute instance FOLLOW_RANGE");
-                            }
-                        }));
+                all.put(GenericAttributes.FOLLOW_RANGE, new AttributeModifiable(GenericAttributes.FOLLOW_RANGE, att -> {
+                    throw new UnsupportedOperationException(
+                            "Tried to change value for default attribute instance FOLLOW_RANGE");
+                }));
                 ATTRIBUTE_PROVIDER_MAP_SETTER.invoke(provider, ImmutableMap.copyOf(all));
             } catch (Throwable e) {
                 e.printStackTrace();

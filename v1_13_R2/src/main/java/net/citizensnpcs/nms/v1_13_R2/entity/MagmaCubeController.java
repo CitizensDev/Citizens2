@@ -71,7 +71,7 @@ public class MagmaCubeController extends MobEntityController {
 
         @Override
         public void a(Entity entity, float strength, double dx, double dz) {
-            NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
+            NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
@@ -86,9 +86,8 @@ public class MagmaCubeController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            if (npc == null) {
+            if (npc == null)
                 return super.b(tag);
-            }
             double mx = motX;
             double my = motY;
             double mz = motZ;
@@ -123,8 +122,9 @@ public class MagmaCubeController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -194,9 +194,8 @@ public class MagmaCubeController extends MobEntityController {
 
         @Override
         protected boolean n(Entity entity) {
-            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract))
                 return !npc.isProtected();
-            }
             return super.n(entity);
         }
 
@@ -219,11 +218,10 @@ public class MagmaCubeController extends MobEntityController {
 
         @Override
         public boolean z_() {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.z_();
-            } else {
+            else
                 return false;
-            }
         }
     }
 

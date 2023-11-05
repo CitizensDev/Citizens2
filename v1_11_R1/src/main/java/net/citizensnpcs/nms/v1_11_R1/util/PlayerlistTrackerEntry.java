@@ -106,9 +106,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private static int getE(EntityTrackerEntry entry) {
         try {
             Entity entity = getTracker(entry);
-            if (entity instanceof NPCHolder) {
+            if (entity instanceof NPCHolder)
                 return ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.TRACKING_RANGE, (Integer) E.get(entry));
-            }
             return (Integer) E.get(entry);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

@@ -131,21 +131,20 @@ public class BoatController extends MobEntityController {
             byte b0 = 5;
             double d0 = 0.0D;
             for (int i = 0; i < b0; i++) {
-                double d1 = (getBoundingBox()).b + ((getBoundingBox()).e - (getBoundingBox()).b) * (i + 0) / b0
-                        - 0.125D;
-                double d2 = (getBoundingBox()).b + ((getBoundingBox()).e - (getBoundingBox()).b) * (i + 1) / b0
-                        - 0.125D;
-                AxisAlignedBB axisalignedbb = new AxisAlignedBB((getBoundingBox()).a, d1, (getBoundingBox()).c,
-                        (getBoundingBox()).d, d2, (getBoundingBox()).f);
-                if (this.world.b(axisalignedbb, Material.WATER))
+                double d1 = getBoundingBox().b + (getBoundingBox().e - getBoundingBox().b) * (i + 0) / b0 - 0.125D;
+                double d2 = getBoundingBox().b + (getBoundingBox().e - getBoundingBox().b) * (i + 1) / b0 - 0.125D;
+                AxisAlignedBB axisalignedbb = new AxisAlignedBB(getBoundingBox().a, d1, getBoundingBox().c,
+                        getBoundingBox().d, d2, getBoundingBox().f);
+                if (this.world.b(axisalignedbb, Material.WATER)) {
                     d0 += 1.0D / b0;
+                }
             }
             double d3 = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ);
             if (d3 > 0.2975D) {
                 double d4 = Math.cos(this.yaw * Math.PI / 180.0D);
                 double d5 = Math.sin(this.yaw * Math.PI / 180.0D);
                 for (int j = 0; j < 1.0D + d3 * 60.0D; j++) {
-                    double d6 = (this.random.nextFloat() * 2.0F - 1.0F);
+                    double d6 = this.random.nextFloat() * 2.0F - 1.0F;
                     double d7 = (this.random.nextInt(2) * 2 - 1) * 0.7D;
                     if (this.random.nextBoolean()) {
                         double d8 = this.locX - d4 * d6 * 0.8D + d5 * d7;
@@ -164,22 +163,25 @@ public class BoatController extends MobEntityController {
                 double d = d0 * 2.0D - 1.0D;
                 this.motY += 0.04D * d;
             } else {
-                if (this.motY < 0.0D)
+                if (this.motY < 0.0D) {
                     this.motY /= 2.0D;
+                }
                 this.motY += 0.007D;
             }
             if (this.passenger instanceof EntityLiving) {
                 EntityLiving entityliving = (EntityLiving) this.passenger;
                 float f = this.passenger.yaw + -entityliving.aZ * 90.0F;
-                this.motX += -Math.sin((f * 3.1415927F / 180.0F)) * this.b * entityliving.ba * 0.05000000074505806D;
-                this.motZ += Math.cos((f * 3.1415927F / 180.0F)) * this.b * entityliving.ba * 0.05000000074505806D;
+                this.motX += -Math.sin(f * 3.1415927F / 180.0F) * this.b * entityliving.ba * 0.05000000074505806D;
+                this.motZ += Math.cos(f * 3.1415927F / 180.0F) * this.b * entityliving.ba * 0.05000000074505806D;
             } else if (this.unoccupiedDeceleration >= 0.0D) {
                 this.motX *= this.unoccupiedDeceleration;
                 this.motZ *= this.unoccupiedDeceleration;
-                if (this.motX <= 1.0E-5D)
+                if (this.motX <= 1.0E-5D) {
                     this.motX = 0.0D;
-                if (this.motZ <= 1.0E-5D)
+                }
+                if (this.motZ <= 1.0E-5D) {
                     this.motZ = 0.0D;
+                }
             }
             double d4 = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ);
             if (d4 > 0.35D) {
@@ -190,16 +192,18 @@ public class BoatController extends MobEntityController {
             }
             if (d4 > d3 && this.b < 0.35D) {
                 this.b += (0.35D - this.b) / 35.0D;
-                if (this.b > 0.35D)
+                if (this.b > 0.35D) {
                     this.b = 0.35D;
+                }
             } else {
                 this.b -= (this.b - 0.07D) / 35.0D;
-                if (this.b < 0.07D)
+                if (this.b < 0.07D) {
                     this.b = 0.07D;
+                }
             }
             for (int k = 0; k < 4; k++) {
-                int l = MathHelper.floor(this.locX + ((k % 2) - 0.5D) * 0.8D);
-                int j = MathHelper.floor(this.locZ + ((k / 2) - 0.5D) * 0.8D);
+                int l = MathHelper.floor(this.locX + (k % 2 - 0.5D) * 0.8D);
+                int j = MathHelper.floor(this.locZ + (k / 2 - 0.5D) * 0.8D);
                 for (int i1 = 0; i1 < 2; i1++) {
                     int j1 = MathHelper.floor(this.locY) + i1;
                     BlockPosition blockposition = new BlockPosition(l, j1, j);
@@ -235,13 +239,16 @@ public class BoatController extends MobEntityController {
             double d5 = this.yaw;
             double d10 = this.lastX - this.locX;
             double d11 = this.lastZ - this.locZ;
-            if (d10 * d10 + d11 * d11 > 0.001D)
+            if (d10 * d10 + d11 * d11 > 0.001D) {
                 d5 = (float) (MathHelper.b(d11, d10) * 180.0D / Math.PI);
+            }
             double d12 = MathHelper.g(d5 - this.yaw);
-            if (d12 > 20.0D)
+            if (d12 > 20.0D) {
                 d12 = 20.0D;
-            if (d12 < -20.0D)
+            }
+            if (d12 < -20.0D) {
                 d12 = -20.0D;
+            }
             this.yaw += d12;
         }
     }

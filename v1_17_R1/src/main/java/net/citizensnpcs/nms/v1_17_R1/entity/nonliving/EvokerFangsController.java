@@ -71,9 +71,8 @@ public class EvokerFangsController extends MobEntityController {
 
         @Override
         public InteractionResult interactAt(Player entityhuman, Vec3 vec3d, InteractionHand enumhand) {
-            if (npc == null) {
+            if (npc == null)
                 return super.interactAt(entityhuman, vec3d, enumhand);
-            }
             PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(
                     (org.bukkit.entity.Player) entityhuman.getBukkitEntity(), getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);
@@ -124,9 +123,8 @@ public class EvokerFangsController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
-            if (npc == null) {
+            if (npc == null)
                 return super.updateFluidHeightAndDoFluidPushing(Tag, d0);
-            }
             Vec3 old = getDeltaMovement().add(0, 0, 0);
             boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
             if (!npc.isPushableByFluids()) {

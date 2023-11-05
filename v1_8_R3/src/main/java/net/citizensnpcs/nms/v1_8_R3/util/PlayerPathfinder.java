@@ -36,9 +36,8 @@ public class PlayerPathfinder {
         Object localObject = paramPathPoint1;
         while (!this.a.e()) {
             PathPoint localPathPoint1 = this.a.c();
-            if (localPathPoint1.equals(paramPathPoint2)) {
+            if (localPathPoint1.equals(paramPathPoint2))
                 return a(paramPathPoint1, paramPathPoint2);
-            }
             if (localPathPoint1.b(paramPathPoint2) < ((PathPoint) localObject).b(paramPathPoint2)) {
                 localObject = localPathPoint1;
             }
@@ -49,7 +48,7 @@ public class PlayerPathfinder {
                 try {
                     float e = E.getFloat(localObject);
                     float f = e + localPathPoint1.b(localPathPoint2);
-                    if ((f < paramFloat * 2.0F) && ((!localPathPoint2.a()) || (f < e))) {
+                    if (f < paramFloat * 2.0F && (!localPathPoint2.a() || f < e)) {
                         H.set(localPathPoint2, localPathPoint1);
                         E.set(localPathPoint2, f);
                         newF = localPathPoint2.b(paramPathPoint2);
@@ -68,9 +67,8 @@ public class PlayerPathfinder {
                 }
             }
         }
-        if (localObject == paramPathPoint1) {
+        if (localObject == paramPathPoint1)
             return null;
-        }
         return a(paramPathPoint1, (PathPoint) localObject);
     }
 
@@ -111,11 +109,11 @@ public class PlayerPathfinder {
         }
         PathPoint[] arrayOfPathPoint = new PathPoint[i];
         localPathPoint = paramPathPoint2;
-        arrayOfPathPoint[(--i)] = localPathPoint;
+        arrayOfPathPoint[--i] = localPathPoint;
         try {
             while (H.get(localPathPoint) != null) {
                 localPathPoint = (PathPoint) H.get(localPathPoint);
-                arrayOfPathPoint[(--i)] = localPathPoint;
+                arrayOfPathPoint[--i] = localPathPoint;
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

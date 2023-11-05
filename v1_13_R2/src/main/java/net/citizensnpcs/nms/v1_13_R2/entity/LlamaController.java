@@ -55,6 +55,7 @@ public class LlamaController extends MobEntityController {
         private final CitizensNPC npc;
 
         private boolean riding;
+
         public EntityLlamaNPC(World world) {
             this(world, null);
         }
@@ -91,7 +92,7 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public void a(Entity entity, float strength, double dx, double dz) {
-            NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
+            NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
@@ -106,9 +107,8 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            if (npc == null) {
+            if (npc == null)
                 return super.b(tag);
-            }
             double mx = motX;
             double my = motY;
             double mz = motZ;
@@ -128,9 +128,8 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public boolean bT() {
-            if (npc != null && riding) {
+            if (npc != null && riding)
                 return true;
-            }
             return super.bT();
         }
 
@@ -235,19 +234,17 @@ public class LlamaController extends MobEntityController {
 
         @Override
         protected boolean n(Entity entity) {
-            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract)) {
+            if (npc != null && (entity instanceof EntityBoat || entity instanceof EntityMinecartAbstract))
                 return !npc.isProtected();
-            }
             return super.n(entity);
         }
 
         @Override
         public boolean z_() {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.z_();
-            } else {
+            else
                 return false;
-            }
         }
     }
 

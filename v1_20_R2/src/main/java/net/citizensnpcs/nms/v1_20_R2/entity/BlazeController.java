@@ -60,9 +60,8 @@ public class BlazeController extends MobEntityController {
 
         @Override
         protected boolean canRide(Entity entity) {
-            if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart)) {
+            if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart))
                 return !npc.isProtected();
-            }
             return super.canRide(entity);
         }
 
@@ -137,7 +136,7 @@ public class BlazeController extends MobEntityController {
 
         @Override
         public void knockback(double strength, double dx, double dz) {
-            NMS.callKnockbackEvent(npc, (float) strength, dx, dz, (evt) -> super.knockback((float) evt.getStrength(),
+            NMS.callKnockbackEvent(npc, (float) strength, dx, dz, evt -> super.knockback((float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
@@ -178,9 +177,8 @@ public class BlazeController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            if (npc == null) {
+            if (npc == null)
                 return super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
-            }
             Vec3 old = getDeltaMovement().add(0, 0, 0);
             boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
             if (!npc.isPushableByFluids()) {

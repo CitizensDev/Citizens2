@@ -37,13 +37,13 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
 
     protected float getStrength(BlockState block) {
         float base = block.getDestroySpeed(null, BlockPos.ZERO);
-        return base < 0.0F ? 0.0F : (!isDestroyable(block) ? 1.0F / base / 100.0F : strengthMod(block) / base / 30.0F);
+        return base < 0.0F ? 0.0F : !isDestroyable(block) ? 1.0F / base / 100.0F : strengthMod(block) / base / 30.0F;
     }
 
     private boolean isDestroyable(BlockState block) {
-        if (block.requiresCorrectToolForDrops()) {
+        if (block.requiresCorrectToolForDrops())
             return true;
-        } else {
+        else {
             ItemStack current = getCurrentItem();
             return current != null ? current.isCorrectToolForDrops(block) : false;
         }

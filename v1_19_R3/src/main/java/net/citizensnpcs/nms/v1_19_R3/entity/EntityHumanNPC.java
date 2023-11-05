@@ -83,9 +83,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean causeFallDamage(float f, float f1, DamageSource damagesource) {
-        if (npc == null || !npc.isFlyable()) {
+        if (npc == null || !npc.isFlyable())
             return super.causeFallDamage(f, f1, damagesource);
-        }
         return false;
     }
 
@@ -100,9 +99,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     public void die(DamageSource damagesource) {
         // players that die are not normally removed from the world. when the
         // NPC dies, we are done with the instance and it should be removed.
-        if (dead) {
+        if (dead)
             return;
-        }
         super.die(damagesource);
         Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
             EntityHumanNPC.this.getLevel().removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
@@ -211,9 +209,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public Component getTabListDisplayName() {
-        if (Setting.DISABLE_TABLIST.asBoolean()) {
+        if (Setting.DISABLE_TABLIST.asBoolean())
             return MutableComponent.create(new LiteralContents(""));
-        }
         return super.getTabListDisplayName();
     }
 
@@ -225,12 +222,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         boolean damaged = super.hurt(damagesource, f);
         if (damaged && hurtMarked) {
             hurtMarked = false;
-            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    EntityHumanNPC.this.hurtMarked = true;
-                }
-            });
+            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), (Runnable) () -> EntityHumanNPC.this.hurtMarked = true);
         }
         return damaged;
     }
@@ -253,9 +245,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean isInWall() {
-        if (npc == null || noPhysics || isSleeping()) {
+        if (npc == null || noPhysics || isSleeping())
             return super.isInWall();
-        }
         return Util.inBlock(getBukkitEntity());
     }
 
@@ -266,7 +257,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public void knockback(double strength, double dx, double dz) {
-        NMS.callKnockbackEvent(npc, (float) strength, dx, dz, (evt) -> super.knockback((float) evt.getStrength(),
+        NMS.callKnockbackEvent(npc, (float) strength, dx, dz, evt -> super.knockback((float) evt.getStrength(),
                 evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
     }
 
@@ -298,11 +289,10 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean onClimbable() {
-        if (npc == null || !npc.isFlyable()) {
+        if (npc == null || !npc.isFlyable())
             return super.onClimbable();
-        } else {
+        else
             return false;
-        }
     }
 
     @Override
@@ -402,9 +392,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
         @Override
         public boolean canSee(org.bukkit.entity.Entity entity) {
-            if (entity != null && entity.getType().name().contains("ITEM_FRAME")) {
+            if (entity != null && entity.getType().name().contains("ITEM_FRAME"))
                 return false; // optimise for large maps in item frames
-            }
             return super.canSee(entity);
         }
 

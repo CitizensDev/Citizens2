@@ -89,7 +89,7 @@ public class ChestBoatController extends MobEntityController {
         private Status getStatus() {
             Status entityboat_Status = u();
             if (entityboat_Status != null) {
-                this.aC = (getBoundingBox()).maxY;
+                this.aC = getBoundingBox().maxY;
                 return entityboat_Status;
             }
             if (t())
@@ -165,7 +165,7 @@ public class ChestBoatController extends MobEntityController {
                         if (fluid.is(FluidTags.WATER)) {
                             float f = l1 + fluid.getHeight(this.level(), blockposition_mutableblockposition);
                             this.aC = Math.max(f, this.aC);
-                            m = flag | ((axisalignedbb.minY < f) ? true : false);
+                            m = flag | (axisalignedbb.minY < f ? true : false);
                         }
                     }
                 }
@@ -191,7 +191,7 @@ public class ChestBoatController extends MobEntityController {
                 this.ap = 0.05F;
                 if (this.aF == Status.IN_AIR && this.aE != Status.IN_AIR && this.aE != Status.ON_LAND) {
                     this.aC = getY(1.0D);
-                    setPos(getX(), (getWaterLevelAbove() - getBbHeight()) + 0.101D, getZ());
+                    setPos(getX(), getWaterLevelAbove() - getBbHeight() + 0.101D, getZ());
                     setDeltaMovement(getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
                     this.aE = Status.IN_WATER;
                 } else {
@@ -217,7 +217,7 @@ public class ChestBoatController extends MobEntityController {
                     this.ar *= this.ap;
                     if (d2 > 0.0D) {
                         Vec3 vec3d1 = getDeltaMovement();
-                        setDeltaMovement(vec3d1.x, (vec3d1.y + d2 * 0.0615D), vec3d1.z);
+                        setDeltaMovement(vec3d1.x, vec3d1.y + d2 * 0.0615D, vec3d1.z);
                     }
                 }
                 move(MoverType.SELF, getDeltaMovement());
@@ -245,8 +245,8 @@ public class ChestBoatController extends MobEntityController {
                     for (int i2 = i1; i2 < j1; i2++) {
                         blockposition_mutableblockposition.set(k1, l1, i2);
                         FluidState fluid = this.level().getFluidState(blockposition_mutableblockposition);
-                        if (fluid.is(FluidTags.WATER) && d0 < (blockposition_mutableblockposition.getY()
-                                + fluid.getHeight(this.level(), blockposition_mutableblockposition))) {
+                        if (fluid.is(FluidTags.WATER) && d0 < blockposition_mutableblockposition.getY()
+                                + fluid.getHeight(this.level(), blockposition_mutableblockposition)) {
                             if (!fluid.isSource())
                                 return Status.UNDER_FLOWING_WATER;
                             flag = true;
@@ -259,9 +259,8 @@ public class ChestBoatController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            if (npc == null) {
+            if (npc == null)
                 return super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
-            }
             Vec3 old = getDeltaMovement().add(0, 0, 0);
             boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
             if (!npc.isPushableByFluids()) {

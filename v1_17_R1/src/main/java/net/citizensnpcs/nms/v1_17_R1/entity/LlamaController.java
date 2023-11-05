@@ -58,6 +58,7 @@ public class LlamaController extends MobEntityController {
         private final CitizensNPC npc;
 
         private boolean riding;
+
         public EntityLlamaNPC(EntityType<? extends Llama> types, Level level) {
             this(types, level, null);
         }
@@ -74,17 +75,15 @@ public class LlamaController extends MobEntityController {
 
         @Override
         protected boolean canRide(Entity entity) {
-            if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart)) {
+            if (npc != null && (entity instanceof Boat || entity instanceof AbstractMinecart))
                 return !npc.isProtected();
-            }
             return super.canRide(entity);
         }
 
         @Override
         public boolean causeFallDamage(float f, float f1, DamageSource damagesource) {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.causeFallDamage(f, f1, damagesource);
-            }
             return false;
         }
 
@@ -171,9 +170,8 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public boolean isControlledByLocalInstance() {
-            if (npc != null && riding) {
+            if (npc != null && riding)
                 return true;
-            }
             return super.isControlledByLocalInstance();
         }
 
@@ -190,7 +188,7 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public void knockback(double strength, double dx, double dz) {
-            NMS.callKnockbackEvent(npc, (float) strength, dx, dz, (evt) -> super.knockback((float) evt.getStrength(),
+            NMS.callKnockbackEvent(npc, (float) strength, dx, dz, evt -> super.knockback((float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
@@ -201,11 +199,10 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public boolean onClimbable() {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.onClimbable();
-            } else {
+            else
                 return false;
-            }
         }
 
         @Override
@@ -251,9 +248,8 @@ public class LlamaController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(Tag<Fluid> Tag, double d0) {
-            if (npc == null) {
+            if (npc == null)
                 return super.updateFluidHeightAndDoFluidPushing(Tag, d0);
-            }
             Vec3 old = getDeltaMovement().add(0, 0, 0);
             boolean res = super.updateFluidHeightAndDoFluidPushing(Tag, d0);
             if (!npc.isPushableByFluids()) {

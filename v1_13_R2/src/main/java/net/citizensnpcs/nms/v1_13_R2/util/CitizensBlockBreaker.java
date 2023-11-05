@@ -37,13 +37,13 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
 
     private float getStrength(IBlockData block) {
         float base = block.getBlock().a(block, null, new BlockPosition(0, 0, 0));
-        return base < 0.0F ? 0.0F : (!isDestroyable(block) ? 1.0F / base / 100.0F : strengthMod(block) / base / 30.0F);
+        return base < 0.0F ? 0.0F : !isDestroyable(block) ? 1.0F / base / 100.0F : strengthMod(block) / base / 30.0F;
     }
 
     private boolean isDestroyable(IBlockData block) {
-        if (block.getMaterial().isAlwaysDestroyable()) {
+        if (block.getMaterial().isAlwaysDestroyable())
             return true;
-        } else {
+        else {
             ItemStack current = getCurrentItem();
             return current != null ? current.b(block) : false;
         }
@@ -66,7 +66,7 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
                 }
             }
             if (handle.hasEffect(MobEffects.FASTER_DIG)) {
-                f *= (1.0F + (handle.getEffect(MobEffects.FASTER_DIG).getAmplifier() + 1) * 0.2F);
+                f *= 1.0F + (handle.getEffect(MobEffects.FASTER_DIG).getAmplifier() + 1) * 0.2F;
             }
             if (handle.hasEffect(MobEffects.SLOWER_DIG)) {
                 float f1 = 1.0F;

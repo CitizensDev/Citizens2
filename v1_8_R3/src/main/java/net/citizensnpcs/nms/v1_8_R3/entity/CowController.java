@@ -84,7 +84,7 @@ public class CowController extends MobEntityController {
 
         @Override
         public void a(Entity entity, float strength, double dx, double dz) {
-            NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
+            NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
@@ -94,9 +94,8 @@ public class CowController extends MobEntityController {
                 return super.a(entityhuman);
             ItemStack itemstack = entityhuman.inventory.getItemInHand();
             if (itemstack != null && itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild
-                    && !this.isBaby()) {
+                    && !this.isBaby())
                 return false;
-            }
             return super.a(entityhuman);
         }
 
@@ -181,8 +180,9 @@ public class CowController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(bukkitEntity instanceof NPCHolder))
+            if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new CowNPC(this);
+            }
             return super.getBukkitEntity();
         }
 
@@ -193,11 +193,10 @@ public class CowController extends MobEntityController {
 
         @Override
         public boolean k_() {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.k_();
-            } else {
+            else
                 return false;
-            }
         }
 
         @Override

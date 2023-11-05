@@ -46,9 +46,9 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
 
         if (entityplayer != tracker && c(entityplayer)) {
             if (!this.trackedPlayers.contains(entityplayer)
-                    && ((entityplayer.x().getPlayerChunkMap().a(entityplayer, tracker.ac, tracker.ae))
-                            || (tracker.attachedToPlayer))) {
-                if ((tracker instanceof SkinnableEntity)) {
+                    && (entityplayer.x().getPlayerChunkMap().a(entityplayer, tracker.ac, tracker.ae)
+                            || tracker.attachedToPlayer)) {
+                if (tracker instanceof SkinnableEntity) {
                     SkinnableEntity skinnable = (SkinnableEntity) tracker;
                     Player player = skinnable.getBukkitEntity();
                     if (!entityplayer.getBukkitEntity().canSee(player))
@@ -65,9 +65,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     private static int getE(EntityTrackerEntry entry) {
         try {
             Entity entity = getTracker(entry);
-            if (entity instanceof NPCHolder) {
+            if (entity instanceof NPCHolder)
                 return ((NPCHolder) entity).getNPC().data().get(NPC.Metadata.TRACKING_RANGE, (Integer) E.get(entry));
-            }
             return (Integer) E.get(entry);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

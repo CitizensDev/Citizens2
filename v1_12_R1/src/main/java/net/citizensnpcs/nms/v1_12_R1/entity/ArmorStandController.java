@@ -67,9 +67,8 @@ public class ArmorStandController extends MobEntityController {
 
         @Override
         public EnumInteractionResult a(EntityHuman entityhuman, Vec3D vec3d, EnumHand enumhand) {
-            if (npc == null) {
+            if (npc == null)
                 return super.a(entityhuman, vec3d, enumhand);
-            }
             PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) entityhuman.getBukkitEntity(),
                     getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);

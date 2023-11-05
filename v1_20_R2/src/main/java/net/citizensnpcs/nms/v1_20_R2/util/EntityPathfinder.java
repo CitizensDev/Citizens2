@@ -98,7 +98,7 @@ public class EntityPathfinder extends PathFinder {
                 break;
             }
 
-            if (!(var11.distanceTo(var1) >= range)) {
+            if ((var11.distanceTo(var1) < range)) {
                 int var12 = this.nodeEvaluator.getNeighbors(this.neighbors, var11);
 
                 for (int var13 = 0; var13 < var12; ++var13) {
@@ -121,15 +121,13 @@ public class EntityPathfinder extends PathFinder {
             }
         }
 
-        Optional<Path> var11 = !var9.isEmpty() ? var9.stream().map((var1x) -> {
-            return this.reconstructPath(var1x.getBestNode(), var2.get(var1x), true);
-        }).min(Comparator.comparingInt(Path::getNodeCount)) : getFallbackDestinations(var2, var6).findFirst();
+        Optional<Path> var11 = !var9.isEmpty() ? var9.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var2.get(var1x), true)).min(Comparator.comparingInt(Path::getNodeCount)) : getFallbackDestinations(var2, var6).findFirst();
         /*var6.stream().map((var1x) -> {
            return this.reconstructPath(var1x.getBestNode(), (BlockPos)var2.get(var1x), false);
         }).min(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount))*/
-        if (var11.isEmpty()) {
+        if (var11.isEmpty())
             return null;
-        } else {
+        else {
             Path var12 = var11.get();
             return var12;
         }
@@ -146,12 +144,9 @@ public class EntityPathfinder extends PathFinder {
     }
 
     public Stream<Path> getFallbackDestinations(Map<Target, BlockPos> var1, Set<Target> var5) {
-        if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean()) {
+        if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean())
             return Stream.empty();
-        }
-        return var5.stream().map((var1x) -> {
-            return this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false);
-        }).sorted(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
+        return var5.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false)).sorted(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
     }
 
     private Path reconstructPath(Node var0, BlockPos var1, boolean var2) {

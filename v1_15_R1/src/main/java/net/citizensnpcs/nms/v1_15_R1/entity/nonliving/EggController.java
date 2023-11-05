@@ -76,9 +76,8 @@ public class EggController extends AbstractEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            if (npc == null) {
+            if (npc == null)
                 return super.b(tag);
-            }
             Vec3D old = getMot().add(0, 0, 0);
             boolean res = super.b(tag);
             if (!npc.isPushableByFluids()) {

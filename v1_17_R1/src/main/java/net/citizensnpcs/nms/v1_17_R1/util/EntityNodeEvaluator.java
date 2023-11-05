@@ -35,15 +35,15 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
-    private final Long2ObjectMap<BlockPathTypes> l = new Long2ObjectOpenHashMap<BlockPathTypes>();
-    private final Object2BooleanMap<AABB> m = new Object2BooleanOpenHashMap<AABB>();
+    private final Long2ObjectMap<BlockPathTypes> l = new Long2ObjectOpenHashMap<>();
+    private final Object2BooleanMap<AABB> m = new Object2BooleanOpenHashMap<>();
     protected float oldWaterCost;
 
     private boolean canReachWithoutCollision(Node var0) {
         Vec3 var1 = new Vec3(var0.x - this.mob.getX(), var0.y - this.mob.getY(), var0.z - this.mob.getZ());
         AABB var2 = this.mob.getBoundingBox();
         int var3 = Mth.ceil(var1.length() / var2.getSize());
-        var1 = var1.scale((1.0F / var3));
+        var1 = var1.scale(1.0F / var3);
         for (int var4 = 1; var4 <= var3; var4++) {
             var2 = var2.move(var1);
             if (hasCollisions(var2))
@@ -62,17 +62,21 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
     protected BlockPathTypes evaluateBlockPathType(BlockGetter var0, boolean var1, boolean var2, BlockPos var3,
             BlockPathTypes var4) {
-        if (var4 == BlockPathTypes.DOOR_WOOD_CLOSED && var1 && var2)
+        if (var4 == BlockPathTypes.DOOR_WOOD_CLOSED && var1 && var2) {
             var4 = BlockPathTypes.WALKABLE_DOOR;
-        if (var4 == BlockPathTypes.DOOR_OPEN && !var2)
+        }
+        if (var4 == BlockPathTypes.DOOR_OPEN && !var2) {
             var4 = BlockPathTypes.BLOCKED;
+        }
         if (var4 == BlockPathTypes.RAIL
                 && !(var0.getBlockState(var3).getBlock() instanceof net.minecraft.world.level.block.BaseRailBlock)
                 && !(var0.getBlockState(var3.down())
-                        .getBlock() instanceof net.minecraft.world.level.block.BaseRailBlock))
+                        .getBlock() instanceof net.minecraft.world.level.block.BaseRailBlock)) {
             var4 = BlockPathTypes.UNPASSABLE_RAIL;
-        if (var4 == BlockPathTypes.LEAVES)
+        }
+        if (var4 == BlockPathTypes.LEAVES) {
             var4 = BlockPathTypes.BLOCKED;
+        }
         return var4;
     }
 
@@ -91,9 +95,10 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             var8.type = var12;
             var8.costMalus = Math.max(var8.costMalus, var13);
         }
-        if (var7 == BlockPathTypes.FENCE && var8 != null && var8.costMalus >= 0.0F && !canReachWithoutCollision(var8))
+        if (var7 == BlockPathTypes.FENCE && var8 != null && var8.costMalus >= 0.0F && !canReachWithoutCollision(var8)) {
             var8 = null;
-        if (var12 == BlockPathTypes.WALKABLE || (isAmphibious() && var12 == BlockPathTypes.WATER))
+        }
+        if (var12 == BlockPathTypes.WALKABLE || isAmphibious() && var12 == BlockPathTypes.WATER)
             return var8;
         if ((var8 == null || var8.costMalus < 0.0F) && var3 > 0 && var12 != BlockPathTypes.FENCE
                 && var12 != BlockPathTypes.UNPASSABLE_RAIL && var12 != BlockPathTypes.TRAPDOOR
@@ -101,15 +106,16 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             var8 = findAcceptedNode(var0, var1 + 1, var2, var3 - 1, var4, var6, var7);
             if (var8 != null && (var8.type == BlockPathTypes.OPEN || var8.type == BlockPathTypes.WALKABLE)
                     && this.mob.getBbWidth() < 1.0F) {
-                double var16 = (var0 - var6.getStepX()) + 0.5D;
-                double var18 = (var2 - var6.getStepZ()) + 0.5D;
+                double var16 = var0 - var6.getStepX() + 0.5D;
+                double var18 = var2 - var6.getStepZ() + 0.5D;
                 AABB var20 = new AABB(var16 - var14,
-                        getFloorLevel(this.level, var9.set(var16, (var1 + 1), var18)) + 0.001D, var18 - var14,
+                        getFloorLevel(this.level, var9.set(var16, var1 + 1, var18)) + 0.001D, var18 - var14,
                         var16 + var14,
                         this.mob.getBbHeight() + getFloorLevel(this.level, var9.set(var8.x, var8.y, var8.z)) - 0.002D,
                         var18 + var14);
-                if (hasCollisions(var20))
+                if (hasCollisions(var20)) {
                     var8 = null;
+                }
             }
         }
         if (!isAmphibious() && var12 == BlockPathTypes.WATER && !canFloat()) {
@@ -188,8 +194,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         for (BlockPathTypes var15 : var10) {
             if (mvmt.getPathfindingMalus(var15) < 0.0F)
                 return var15;
-            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13))
+            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13)) {
                 var13 = var15;
+            }
         }
         if (var11 == BlockPathTypes.OPEN && mvmt.getPathfindingMalus(var13) == 0.0F && var5 <= 1)
             return BlockPathTypes.OPEN;
@@ -211,8 +218,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         for (BlockPathTypes var15 : var10) {
             if (var4.getPathfindingMalus(var15) < 0.0F)
                 return var15;
-            if (var4.getPathfindingMalus(var15) >= var4.getPathfindingMalus(var13))
+            if (var4.getPathfindingMalus(var15) >= var4.getPathfindingMalus(var13)) {
                 var13 = var15;
+            }
         }
         if (var11 == BlockPathTypes.OPEN && var4.getPathfindingMalus(var13) == 0.0F && var5 <= 1)
             return BlockPathTypes.OPEN;
@@ -237,8 +245,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         for (BlockPathTypes var15 : var10) {
             if (mvmt.getPathfindingMalus(var15) < 0.0F)
                 return var15;
-            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13))
+            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13)) {
                 var13 = var15;
+            }
         }
         if (var11 == BlockPathTypes.OPEN && mvmt.getPathfindingMalus(var13) == 0.0F && var5 <= 1)
             return BlockPathTypes.OPEN;
@@ -255,8 +264,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                     int var17 = var14 + var3;
                     BlockPathTypes var18 = getBlockPathType(var0, var15, var16, var17);
                     var18 = evaluateBlockPathType(var0, var7, var8, var11, var18);
-                    if (var12 == 0 && var13 == 0 && var14 == 0)
+                    if (var12 == 0 && var13 == 0 && var14 == 0) {
                         var10 = var18;
+                    }
                     var9.add(var18);
                 }
             }
@@ -291,33 +301,42 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         int var3 = 0;
         BlockPathTypes var4 = getCachedBlockType(this.mob, var1.x, var1.y + 1, var1.z);
         BlockPathTypes var5 = getCachedBlockType(this.mob, var1.x, var1.y, var1.z);
-        if (this.mvmt.getPathfindingMalus(var4) >= 0.0F && var5 != BlockPathTypes.STICKY_HONEY)
+        if (this.mvmt.getPathfindingMalus(var4) >= 0.0F && var5 != BlockPathTypes.STICKY_HONEY) {
             var3 = Mth.floor(Math.max(1.0F, this.mob.maxUpStep));
+        }
         double var6 = getFloorLevel(new BlockPos(var1.x, var1.y, var1.z));
         Node var8 = findAcceptedNode(var1.x, var1.y, var1.z + 1, var3, var6, Direction.SOUTH, var5);
-        if (isNeighborValid(var8, var1))
+        if (isNeighborValid(var8, var1)) {
             var0[var2++] = var8;
+        }
         Node var9 = findAcceptedNode(var1.x - 1, var1.y, var1.z, var3, var6, Direction.WEST, var5);
-        if (isNeighborValid(var9, var1))
+        if (isNeighborValid(var9, var1)) {
             var0[var2++] = var9;
+        }
         Node var10 = findAcceptedNode(var1.x + 1, var1.y, var1.z, var3, var6, Direction.EAST, var5);
-        if (isNeighborValid(var10, var1))
+        if (isNeighborValid(var10, var1)) {
             var0[var2++] = var10;
+        }
         Node var11 = findAcceptedNode(var1.x, var1.y, var1.z - 1, var3, var6, Direction.NORTH, var5);
-        if (isNeighborValid(var11, var1))
+        if (isNeighborValid(var11, var1)) {
             var0[var2++] = var11;
+        }
         Node var12 = findAcceptedNode(var1.x - 1, var1.y, var1.z - 1, var3, var6, Direction.NORTH, var5);
-        if (isDiagonalValid(var1, var9, var11, var12))
+        if (isDiagonalValid(var1, var9, var11, var12)) {
             var0[var2++] = var12;
+        }
         Node var13 = findAcceptedNode(var1.x + 1, var1.y, var1.z - 1, var3, var6, Direction.NORTH, var5);
-        if (isDiagonalValid(var1, var10, var11, var13))
+        if (isDiagonalValid(var1, var10, var11, var13)) {
             var0[var2++] = var13;
+        }
         Node var14 = findAcceptedNode(var1.x - 1, var1.y, var1.z + 1, var3, var6, Direction.SOUTH, var5);
-        if (isDiagonalValid(var1, var9, var8, var14))
+        if (isDiagonalValid(var1, var9, var8, var14)) {
             var0[var2++] = var14;
+        }
         Node var15 = findAcceptedNode(var1.x + 1, var1.y, var1.z + 1, var3, var6, Direction.SOUTH, var5);
-        if (isDiagonalValid(var1, var10, var8, var15))
+        if (isDiagonalValid(var1, var10, var8, var15)) {
             var0[var2++] = var15;
+        }
         return var2;
     }
 
@@ -344,8 +363,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             BlockPos blockPos = this.mob.blockPosition();
             while ((this.level.getBlockState(blockPos).isAir() || this.level.getBlockState(blockPos)
                     .isPathfindable(this.level, blockPos, PathComputationType.LAND))
-                    && blockPos.getY() > this.mob.level.getMinBuildHeight())
+                    && blockPos.getY() > this.mob.level.getMinBuildHeight()) {
                 blockPos = blockPos.down();
+            }
             var0 = blockPos.up().getY();
         }
         BlockPos var3 = this.mob.blockPosition();
@@ -374,7 +394,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
     private boolean hasPositiveMalus(BlockPos var0) {
         BlockPathTypes var1 = getBlockPathType(this.mob, var0);
-        return (this.mvmt.getPathfindingMalus(var1) >= 0.0F);
+        return this.mvmt.getPathfindingMalus(var1) >= 0.0F;
     }
 
     protected boolean isAmphibious() {
@@ -389,14 +409,14 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         if (var1.type == BlockPathTypes.WALKABLE_DOOR || var2.type == BlockPathTypes.WALKABLE_DOOR
                 || var3.type == BlockPathTypes.WALKABLE_DOOR)
             return false;
-        boolean var4 = (var2.type == BlockPathTypes.FENCE && var1.type == BlockPathTypes.FENCE
-                && this.mob.getBbWidth() < 0.5D);
-        return (var3.costMalus >= 0.0F && (var2.y < var0.y || var2.costMalus >= 0.0F || var4)
-                && (var1.y < var0.y || var1.costMalus >= 0.0F || var4));
+        boolean var4 = var2.type == BlockPathTypes.FENCE && var1.type == BlockPathTypes.FENCE
+                && this.mob.getBbWidth() < 0.5D;
+        return var3.costMalus >= 0.0F && (var2.y < var0.y || var2.costMalus >= 0.0F || var4)
+                && (var1.y < var0.y || var1.costMalus >= 0.0F || var4);
     }
 
     protected boolean isNeighborValid(Node var0, Node var1) {
-        return (var0 != null && !var0.closed && (var0.costMalus >= 0.0F || var1.costMalus < 0.0F));
+        return var0 != null && !var0.closed && (var0.costMalus >= 0.0F || var1.costMalus < 0.0F);
     }
 
     @Override
@@ -465,8 +485,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             return BlockPathTypes.RAIL;
         if (var3 instanceof net.minecraft.world.level.block.LeavesBlock)
             return BlockPathTypes.LEAVES;
-        if (var2.is(BlockTags.FENCES) || var2.is(BlockTags.WALLS) || (var3 instanceof FenceGateBlock
-                && !((Boolean) var2.getValue((Property<?>) FenceGateBlock.OPEN)).booleanValue()))
+        if (var2.is(BlockTags.FENCES) || var2.is(BlockTags.WALLS) || var3 instanceof FenceGateBlock
+                && !((Boolean) var2.getValue((Property<?>) FenceGateBlock.OPEN)).booleanValue())
             return BlockPathTypes.FENCE;
         if (!var2.isPathfindable(var0, var1, PathComputationType.LAND))
             return BlockPathTypes.BLOCKED;
@@ -482,19 +502,24 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         BlockPathTypes var5 = getBlockPathTypeRaw(var0, var1);
         if (var5 == BlockPathTypes.OPEN && var3 >= var0.getMinBuildHeight() + 1) {
             BlockPathTypes var6 = getBlockPathTypeRaw(var0, var1.set(var2, var3 - 1, var4));
-            var5 = (var6 == BlockPathTypes.WALKABLE || var6 == BlockPathTypes.OPEN || var6 == BlockPathTypes.WATER
-                    || var6 == BlockPathTypes.LAVA) ? BlockPathTypes.OPEN : BlockPathTypes.WALKABLE;
-            if (var6 == BlockPathTypes.DAMAGE_FIRE)
+            var5 = var6 == BlockPathTypes.WALKABLE || var6 == BlockPathTypes.OPEN || var6 == BlockPathTypes.WATER
+                    || var6 == BlockPathTypes.LAVA ? BlockPathTypes.OPEN : BlockPathTypes.WALKABLE;
+            if (var6 == BlockPathTypes.DAMAGE_FIRE) {
                 var5 = BlockPathTypes.DAMAGE_FIRE;
-            if (var6 == BlockPathTypes.DAMAGE_CACTUS)
+            }
+            if (var6 == BlockPathTypes.DAMAGE_CACTUS) {
                 var5 = BlockPathTypes.DAMAGE_CACTUS;
-            if (var6 == BlockPathTypes.DAMAGE_OTHER)
+            }
+            if (var6 == BlockPathTypes.DAMAGE_OTHER) {
                 var5 = BlockPathTypes.DAMAGE_OTHER;
-            if (var6 == BlockPathTypes.STICKY_HONEY)
+            }
+            if (var6 == BlockPathTypes.STICKY_HONEY) {
                 var5 = BlockPathTypes.STICKY_HONEY;
+            }
         }
-        if (var5 == BlockPathTypes.WALKABLE)
+        if (var5 == BlockPathTypes.WALKABLE) {
             var5 = checkNeighbourBlocks(var0, var1.set(var2, var3, var4), var5);
+        }
         return var5;
     }
 
@@ -505,7 +530,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     public static boolean isBurningBlock(BlockState var0) {
-        return (var0.is(BlockTags.FIRE) || var0.is(Blocks.LAVA) || var0.is(Blocks.MAGMA_BLOCK)
-                || CampfireBlock.isLitCampfire(var0) || var0.is(Blocks.LAVA_CAULDRON));
+        return var0.is(BlockTags.FIRE) || var0.is(Blocks.LAVA) || var0.is(Blocks.MAGMA_BLOCK)
+                || CampfireBlock.isLitCampfire(var0) || var0.is(Blocks.LAVA_CAULDRON);
     }
 }

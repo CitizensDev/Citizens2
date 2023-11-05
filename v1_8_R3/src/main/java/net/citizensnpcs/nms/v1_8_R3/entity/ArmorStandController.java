@@ -65,9 +65,8 @@ public class ArmorStandController extends MobEntityController {
 
         @Override
         public boolean a(EntityHuman entityhuman, Vec3D vec3d) {
-            if (npc == null) {
+            if (npc == null)
                 return super.a(entityhuman, vec3d);
-            }
             PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) entityhuman.getBukkitEntity(),
                     getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);

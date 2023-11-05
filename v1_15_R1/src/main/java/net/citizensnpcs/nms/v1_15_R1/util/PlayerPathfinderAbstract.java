@@ -42,9 +42,7 @@ public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
 
     @Override
     protected PathPoint a(int var0, int var1, int var2) {
-        return (PathPoint) this.c.computeIfAbsent(PathPoint.b(var0, var1, var2), (var3) -> {
-            return new PathPoint(var0, var1, var2);
-        });
+        return (PathPoint) this.c.computeIfAbsent(PathPoint.b(var0, var1, var2), var3 -> new PathPoint(var0, var1, var2));
     }
 
     @Override

@@ -49,6 +49,7 @@ public class SlimeController extends MobEntityController {
         private final CitizensNPC npc;
 
         private MoveControl oldMoveController;
+
         public EntitySlimeNPC(EntityType<? extends Slime> types, Level level) {
             this(types, level, null);
         }
@@ -149,7 +150,7 @@ public class SlimeController extends MobEntityController {
 
         @Override
         public void knockback(double strength, double dx, double dz) {
-            NMS.callKnockbackEvent(npc, (float) strength, dx, dz, (evt) -> super.knockback((float) evt.getStrength(),
+            NMS.callKnockbackEvent(npc, (float) strength, dx, dz, evt -> super.knockback((float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
@@ -160,11 +161,10 @@ public class SlimeController extends MobEntityController {
 
         @Override
         public boolean onClimbable() {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.onClimbable();
-            } else {
+            else
                 return false;
-            }
         }
 
         @Override
@@ -239,9 +239,8 @@ public class SlimeController extends MobEntityController {
 
         @Override
         public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> tagkey, double d0) {
-            if (npc == null) {
+            if (npc == null)
                 return super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
-            }
             Vec3 old = getDeltaMovement().add(0, 0, 0);
             boolean res = super.updateFluidHeightAndDoFluidPushing(tagkey, d0);
             if (!npc.isPushableByFluids()) {

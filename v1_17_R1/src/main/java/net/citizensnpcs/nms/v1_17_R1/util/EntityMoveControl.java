@@ -69,9 +69,9 @@ public class EntityMoveControl extends MoveControl {
             f3 = -f2;
         }
         float f4 = f + f3;
-        if (f4 < 0.0F)
+        if (f4 < 0.0F) {
             f4 += 360.0F;
-        else if (f4 > 360.0F) {
+        } else if (f4 > 360.0F) {
             f4 -= 360.0F;
         }
         return f4;

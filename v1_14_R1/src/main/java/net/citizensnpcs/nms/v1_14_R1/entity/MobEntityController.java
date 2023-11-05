@@ -83,7 +83,7 @@ public abstract class MobEntityController extends AbstractEntityController {
         }
     }
 
-    private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = new WeakHashMap<Class<?>, Constructor<?>>();
+    private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = new WeakHashMap<>();
     private static final MethodHandle UUID_FIELD = NMS.getSetter(net.minecraft.server.v1_14_R1.Entity.class,
             "uniqueID");
 }

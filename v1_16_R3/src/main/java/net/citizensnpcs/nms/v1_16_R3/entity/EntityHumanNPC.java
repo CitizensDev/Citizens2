@@ -95,17 +95,15 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean a(EntityPlayer entityplayer) {
-        if (npc != null && playerlistTracker == null) {
+        if (npc != null && playerlistTracker == null)
             return false;
-        }
         return super.a(entityplayer);
     }
 
     @Override
     public boolean b(float f, float f1) {
-        if (npc == null || !npc.isFlyable()) {
+        if (npc == null || !npc.isFlyable())
             return super.b(f, f1);
-        }
         return false;
     }
 
@@ -127,12 +125,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         boolean damaged = super.damageEntity(damagesource, f);
         if (damaged && velocityChanged) {
             velocityChanged = false;
-            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), new Runnable() {
-                @Override
-                public void run() {
-                    EntityHumanNPC.this.velocityChanged = true;
-                }
-            });
+            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), (Runnable) () -> EntityHumanNPC.this.velocityChanged = true);
         }
         return damaged;
     }
@@ -151,12 +144,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return;
 
         super.die(damagesource);
-        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                ((WorldServer) world).removeEntity(EntityHumanNPC.this);
-            }
-        }, 15); // give enough time for death and smoke animation
+        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), (Runnable) () -> ((WorldServer) world).removeEntity(EntityHumanNPC.this), 15); // give enough time for death and smoke animation
     }
 
     @Override
@@ -188,9 +176,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public IChatBaseComponent getPlayerListName() {
-        if (Setting.DISABLE_TABLIST.asBoolean()) {
+        if (Setting.DISABLE_TABLIST.asBoolean())
             return new ChatComponentText("");
-        }
         return super.getPlayerListName();
     }
 
@@ -228,9 +215,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean inBlock() {
-        if (npc == null || noclip || isSleeping()) {
+        if (npc == null || noclip || isSleeping())
             return super.inBlock();
-        }
         return Util.inBlock(getBukkitEntity());
     }
 
@@ -252,11 +238,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean isClimbing() {
-        if (npc == null || !npc.isFlyable()) {
+        if (npc == null || !npc.isFlyable())
             return super.isClimbing();
-        } else {
+        else
             return false;
-        }
     }
 
     @Override
@@ -396,7 +381,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         for (EnumItemSlot slot : EnumItemSlot.values()) {
             ItemStack equipment = getEquipment(slot);
             ItemStack cache = equipmentCache.get(slot);
-            if (!(cache == null && equipment == null)
+            if (((cache != null) || (equipment != null))
                     && (cache == null ^ equipment == null || !ItemStack.equals(cache, equipment))) {
                 if (cache != null && !cache.isEmpty()) {
                     this.getAttributeMap().a(cache.a(slot));

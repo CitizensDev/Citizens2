@@ -24,7 +24,6 @@ import net.minecraft.server.level.ServerLevel;
 
 public class HumanController extends AbstractEntityController {
     public HumanController() {
-        super();
     }
 
     @Override

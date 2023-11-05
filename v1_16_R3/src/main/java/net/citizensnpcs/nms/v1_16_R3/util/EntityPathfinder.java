@@ -42,9 +42,7 @@ public class EntityPathfinder extends Pathfinder {
         this.d.a();
         this.c.a(var0, var1);
         PathPoint var6 = this.c.b();
-        Map var7 = var2.stream().collect(Collectors.toMap((var0x) -> {
-            return this.c.a((double) var0x.getX(), (double) var0x.getY(), (double) var0x.getZ());
-        }, Function.identity()));
+        Map var7 = var2.stream().collect(Collectors.toMap(var0x -> this.c.a((double) var0x.getX(), (double) var0x.getY(), (double) var0x.getZ()), Function.identity()));
         PathEntity var8 = this.a(var6, var7, var3, var4, var5);
         this.c.a();
         return var8;
@@ -54,9 +52,7 @@ public class EntityPathfinder extends Pathfinder {
         this.d.a();
         this.c.a(var0, var1);
         PathPoint var6 = this.c.b();
-        Map var7 = var2.stream().collect(Collectors.toMap((var0x) -> {
-            return this.c.a((double) var0x.getX(), (double) var0x.getY(), (double) var0x.getZ());
-        }, Function.identity()));
+        Map var7 = var2.stream().collect(Collectors.toMap(var0x -> this.c.a((double) var0x.getX(), (double) var0x.getY(), (double) var0x.getZ()), Function.identity()));
         PathEntity var8 = this.a(var6, var7, var3, var4, var5);
         this.c.a();
         return var8;
@@ -93,10 +89,12 @@ public class EntityPathfinder extends Pathfinder {
                     var8.add(pathDestination);
                 }
             }
-            if (!var8.isEmpty())
+            if (!var8.isEmpty()) {
                 break;
-            if (pathPoint.a(var0) >= var2)
+            }
+            if (pathPoint.a(var0) >= var2) {
                 continue;
+            }
             int i = this.c.a(this.a, pathPoint);
             for (int var12 = 0; var12 < i; var12++) {
                 PathPoint var13 = this.a[var12];
@@ -116,12 +114,10 @@ public class EntityPathfinder extends Pathfinder {
                 }
             }
         }
-        Optional var10 = !var8.isEmpty() ? var8.stream().map((var1x) -> {
-            return this.a(var1x.d(), (BlockPosition) var1.get(var1x), true);
-        }).min(Comparator.comparingInt(PathEntity::e)) : getFallbackDestinations(var1, var5).findFirst();
-        if (!var10.isPresent()) {
+        Optional var10 = !var8.isEmpty() ? var8.stream().map(var1x -> this.a(var1x.d(), (BlockPosition) var1.get(var1x), true)).min(Comparator.comparingInt(PathEntity::e)) : getFallbackDestinations(var1, var5).findFirst();
+        if (!var10.isPresent())
             return null;
-        } else {
+        else {
             PathEntity var11 = (PathEntity) var10.get();
             return var11;
         }
@@ -139,11 +135,8 @@ public class EntityPathfinder extends Pathfinder {
 
     public Stream<PathEntity> getFallbackDestinations(Map<PathDestination, BlockPosition> var1,
             Set<PathDestination> var5) {
-        if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean()) {
+        if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean())
             return Stream.empty();
-        }
-        return var5.stream().map((var1x) -> {
-            return this.a(var1x.d(), var1.get(var1x), false);
-        }).sorted(Comparator.comparingDouble(PathEntity::n).thenComparingInt(PathEntity::e));
+        return var5.stream().map(var1x -> this.a(var1x.d(), var1.get(var1x), false)).sorted(Comparator.comparingDouble(PathEntity::n).thenComparingInt(PathEntity::e));
     }
 }

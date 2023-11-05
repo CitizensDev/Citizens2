@@ -59,7 +59,7 @@ import net.minecraft.server.v1_8_R3.WorldSettings;
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
     private PlayerControllerJump controllerJump;
     private PlayerControllerMove controllerMove;
-    private final Map<Integer, ItemStack> equipmentCache = new HashMap<Integer, ItemStack>();
+    private final Map<Integer, ItemStack> equipmentCache = new HashMap<>();
     private int jumpTicks = 0;
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
@@ -91,9 +91,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean a(EntityPlayer entityplayer) {
-        if (npc != null && trackerEntry == null) {
+        if (npc != null && trackerEntry == null)
             return false;
-        }
         return super.a(entityplayer);
     }
 
@@ -140,16 +139,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     public void die(DamageSource damagesource) {
         // players that die are not normally removed from the world. when the
         // NPC dies, we are done with the instance and it should be removed.
-        if (dead) {
+        if (dead)
             return;
-        }
         super.die(damagesource);
-        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                world.removeEntity(EntityHumanNPC.this);
-            }
-        }, 15); // give enough time for death and smoke animation
+        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> world.removeEntity(EntityHumanNPC.this), 15); // give enough time for death and smoke animation
     }
 
     @Override
@@ -217,9 +210,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean inBlock() {
-        if (npc == null || noclip || isSleeping()) {
+        if (npc == null || noclip || isSleeping())
             return super.inBlock();
-        }
         return Util.inBlock(getBukkitEntity());
     }
 
@@ -250,11 +242,10 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean k_() {
-        if (npc == null || !npc.isFlyable()) {
+        if (npc == null || !npc.isFlyable())
             return super.k_();
-        } else {
+        else
             return false;
-        }
     }
 
     @Override
@@ -383,7 +374,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         for (int slot = 0; slot < this.inventory.armor.length; slot++) {
             ItemStack equipment = getEquipment(slot);
             ItemStack cache = equipmentCache.get(slot);
-            if (!(cache == null && equipment == null)
+            if (((cache != null) || (equipment != null))
                     && (cache == null ^ equipment == null || !ItemStack.equals(cache, equipment))) {
                 itemChanged = true;
                 if (cache != null) {

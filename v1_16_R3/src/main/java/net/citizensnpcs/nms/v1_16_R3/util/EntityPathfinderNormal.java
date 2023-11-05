@@ -74,21 +74,23 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
     }
 
     private PathType a(EntityLiving var0, int var1, int var2, int var3) {
-        return this.k.computeIfAbsent(BlockPosition.a(var1, var2, var3), (var4) -> {
-            return this.a(this.a, var1, var2, var3, var0, this.d, this.e, this.f, this.d(), this.c());
-        });
+        return this.k.computeIfAbsent(BlockPosition.a(var1, var2, var3), var4 -> this.a(this.a, var1, var2, var3, var0, this.d, this.e, this.f, this.d(), this.c()));
     }
 
     protected PathType a(IBlockAccess var0, boolean var1, boolean var2, BlockPosition var3, PathType var4) {
-        if (var4 == PathType.DOOR_WOOD_CLOSED && var1 && var2)
+        if (var4 == PathType.DOOR_WOOD_CLOSED && var1 && var2) {
             var4 = PathType.WALKABLE;
-        if (var4 == PathType.DOOR_OPEN && !var2)
+        }
+        if (var4 == PathType.DOOR_OPEN && !var2) {
             var4 = PathType.BLOCKED;
+        }
         if (var4 == PathType.RAIL && !(var0.getType(var3).getBlock() instanceof BlockMinecartTrackAbstract)
-                && !(var0.getType(var3.down()).getBlock() instanceof BlockMinecartTrackAbstract))
+                && !(var0.getType(var3.down()).getBlock() instanceof BlockMinecartTrackAbstract)) {
             var4 = PathType.UNPASSABLE_RAIL;
-        if (var4 == PathType.LEAVES)
+        }
+        if (var4 == PathType.LEAVES) {
             var4 = PathType.BLOCKED;
+        }
         return var4;
     }
 
@@ -112,8 +114,9 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
         for (PathType var15 : var10) {
             if (mvmt.getPathfindingMalus(var15) < 0.0F)
                 return var15;
-            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13))
+            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13)) {
                 var13 = var15;
+            }
         }
         if (var11 == PathType.OPEN && mvmt.getPathfindingMalus(var13) == 0.0F && var5 <= 1)
             return PathType.OPEN;
@@ -134,8 +137,9 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
         for (PathType var15 : var10) {
             if (mvmt.getPathfindingMalus(var15) < 0.0F)
                 return var15;
-            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13))
+            if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13)) {
                 var13 = var15;
+            }
         }
         if (var11 == PathType.OPEN && mvmt.getPathfindingMalus(var13) == 0.0F && var5 <= 1)
             return PathType.OPEN;
@@ -152,8 +156,9 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                     int var17 = var14 + var3;
                     PathType var18 = a(var0, var15, var16, var17);
                     var18 = a(var0, var7, var8, var11, var18);
-                    if (var12 == 0 && var13 == 0 && var14 == 0)
+                    if (var12 == 0 && var13 == 0 && var14 == 0) {
                         var10 = var18;
+                    }
                     var9.add(var18);
                 }
             }
@@ -175,21 +180,23 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
             var8.l = var12;
             var8.k = Math.max(var8.k, var13);
         }
-        if (var7 == PathType.FENCE && var8 != null && var8.k >= 0.0F && !a(var8))
+        if (var7 == PathType.FENCE && var8 != null && var8.k >= 0.0F && !a(var8)) {
             var8 = null;
+        }
         if (var12 == PathType.WALKABLE)
             return var8;
         if ((var8 == null || var8.k < 0.0F) && var3 > 0 && var12 != PathType.FENCE && var12 != PathType.UNPASSABLE_RAIL
                 && var12 != PathType.TRAPDOOR) {
             var8 = a(var0, var1 + 1, var2, var3 - 1, var4, var6, var7);
             if (var8 != null && (var8.l == PathType.OPEN || var8.l == PathType.WALKABLE) && this.b.getWidth() < 1.0F) {
-                double var16 = (var0 - var6.getAdjacentX()) + 0.5D;
-                double var18 = (var2 - var6.getAdjacentZ()) + 0.5D;
+                double var16 = var0 - var6.getAdjacentX() + 0.5D;
+                double var18 = var2 - var6.getAdjacentZ() + 0.5D;
                 AxisAlignedBB var20 = new AxisAlignedBB(var16 - var14,
-                        aa(this.a, var9.c(var16, (var1 + 1), var18)) + 0.001D, var18 - var14, var16 + var14,
+                        aa(this.a, var9.c(var16, var1 + 1, var18)) + 0.001D, var18 - var14, var16 + var14,
                         this.b.getHeight() + aa(this.a, var9.c(var8.a, var8.b, var8.c)) - 0.002D, var18 + var14);
-                if (a(var20))
+                if (a(var20)) {
                     var8 = null;
+                }
             }
         }
         if (var12 == PathType.WATER && !e()) {
@@ -253,7 +260,7 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
         Vec3D var1 = new Vec3D(var0.a - this.b.locX(), var0.b - this.b.locY(), var0.c - this.b.locZ());
         AxisAlignedBB var2 = this.b.getBoundingBox();
         int var3 = MathHelper.f(var1.f() / var2.a());
-        var1 = var1.a((1.0F / var3));
+        var1 = var1.a(1.0F / var3);
         for (int var4 = 1; var4 <= var3; var4++) {
             var2 = var2.c(var1);
             if (a(var2))
@@ -263,7 +270,7 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
     }
 
     private boolean a(PathPoint var0, PathPoint var1) {
-        return (var0 != null && !var0.i && (var0.k >= 0.0F || var1.k < 0.0F));
+        return var0 != null && !var0.i && (var0.k >= 0.0F || var1.k < 0.0F);
     }
 
     private boolean a(PathPoint var0, PathPoint var1, PathPoint var2, PathPoint var3) {
@@ -273,9 +280,9 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
             return false;
         if (var1.l == PathType.WALKABLE_DOOR || var2.l == PathType.WALKABLE_DOOR || var3.l == PathType.WALKABLE_DOOR)
             return false;
-        boolean var4 = (var2.l == PathType.FENCE && var1.l == PathType.FENCE && this.b.getWidth() < 0.5D);
-        return (var3.k >= 0.0F && (var2.b < var0.b || var2.k >= 0.0F || var4)
-                && (var1.b < var0.b || var1.k >= 0.0F || var4));
+        boolean var4 = var2.l == PathType.FENCE && var1.l == PathType.FENCE && this.b.getWidth() < 0.5D;
+        return var3.k >= 0.0F && (var2.b < var0.b || var2.k >= 0.0F || var4)
+                && (var1.b < var0.b || var1.k >= 0.0F || var4);
     }
 
     @Override
@@ -284,33 +291,42 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
         int var3 = 0;
         PathType var4 = a(this.b, var1.a, var1.b + 1, var1.c);
         PathType var5 = a(this.b, var1.a, var1.b, var1.c);
-        if (mvmt.getPathfindingMalus(var4) >= 0.0F && var5 != PathType.STICKY_HONEY)
+        if (mvmt.getPathfindingMalus(var4) >= 0.0F && var5 != PathType.STICKY_HONEY) {
             var3 = MathHelper.d(Math.max(1.0F, this.b.G));
+        }
         double var6 = aa(this.a, new BlockPosition(var1.a, var1.b, var1.c));
         PathPoint var8 = a(var1.a, var1.b, var1.c + 1, var3, var6, EnumDirection.SOUTH, var5);
-        if (a(var8, var1))
+        if (a(var8, var1)) {
             var0[var2++] = var8;
+        }
         PathPoint var9 = a(var1.a - 1, var1.b, var1.c, var3, var6, EnumDirection.WEST, var5);
-        if (a(var9, var1))
+        if (a(var9, var1)) {
             var0[var2++] = var9;
+        }
         PathPoint var10 = a(var1.a + 1, var1.b, var1.c, var3, var6, EnumDirection.EAST, var5);
-        if (a(var10, var1))
+        if (a(var10, var1)) {
             var0[var2++] = var10;
+        }
         PathPoint var11 = a(var1.a, var1.b, var1.c - 1, var3, var6, EnumDirection.NORTH, var5);
-        if (a(var11, var1))
+        if (a(var11, var1)) {
             var0[var2++] = var11;
+        }
         PathPoint var12 = a(var1.a - 1, var1.b, var1.c - 1, var3, var6, EnumDirection.NORTH, var5);
-        if (a(var1, var9, var11, var12))
+        if (a(var1, var9, var11, var12)) {
             var0[var2++] = var12;
+        }
         PathPoint var13 = a(var1.a + 1, var1.b, var1.c - 1, var3, var6, EnumDirection.NORTH, var5);
-        if (a(var1, var10, var11, var13))
+        if (a(var1, var10, var11, var13)) {
             var0[var2++] = var13;
+        }
         PathPoint var14 = a(var1.a - 1, var1.b, var1.c + 1, var3, var6, EnumDirection.SOUTH, var5);
-        if (a(var1, var9, var8, var14))
+        if (a(var1, var9, var8, var14)) {
             var0[var2++] = var14;
+        }
         PathPoint var15 = a(var1.a + 1, var1.b, var1.c + 1, var3, var6, EnumDirection.SOUTH, var5);
-        if (a(var1, var10, var8, var15))
+        if (a(var1, var10, var8, var15)) {
             var0[var2++] = var15;
+        }
         return var2;
     }
 
@@ -337,8 +353,9 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
             BlockPosition blockPosition = this.b.getChunkCoordinates();
             while ((this.a.getType(blockPosition).isAir()
                     || this.a.getType(blockPosition).a(this.a, blockPosition, PathMode.LAND))
-                    && blockPosition.getY() > 0)
+                    && blockPosition.getY() > 0) {
                 blockPosition = blockPosition.down();
+            }
             var0 = blockPosition.up().getY();
         }
         BlockPosition var3 = this.b.getChunkCoordinates();
@@ -363,7 +380,7 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
 
     private boolean b(BlockPosition var0) {
         PathType var1 = a(this.b, var0);
-        return (mvmt.getPathfindingMalus(var1) >= 0.0F);
+        return mvmt.getPathfindingMalus(var1) >= 0.0F;
     }
 
     public static PathType a(IBlockAccess var0, BlockPosition.MutableBlockPosition var1) {
@@ -373,19 +390,25 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
         PathType var5 = b(var0, var1);
         if (var5 == PathType.OPEN && var3 >= 1) {
             PathType var6 = b(var0, var1.d(var2, var3 - 1, var4));
-            var5 = (var6 == PathType.WALKABLE || var6 == PathType.OPEN || var6 == PathType.WATER
-                    || var6 == PathType.LAVA) ? PathType.OPEN : PathType.WALKABLE;
-            if (var6 == PathType.DAMAGE_FIRE)
+            var5 = var6 == PathType.WALKABLE || var6 == PathType.OPEN || var6 == PathType.WATER || var6 == PathType.LAVA
+                    ? PathType.OPEN
+                    : PathType.WALKABLE;
+            if (var6 == PathType.DAMAGE_FIRE) {
                 var5 = PathType.DAMAGE_FIRE;
-            if (var6 == PathType.DAMAGE_CACTUS)
+            }
+            if (var6 == PathType.DAMAGE_CACTUS) {
                 var5 = PathType.DAMAGE_CACTUS;
-            if (var6 == PathType.DAMAGE_OTHER)
+            }
+            if (var6 == PathType.DAMAGE_OTHER) {
                 var5 = PathType.DAMAGE_OTHER;
-            if (var6 == PathType.STICKY_HONEY)
+            }
+            if (var6 == PathType.STICKY_HONEY) {
                 var5 = PathType.STICKY_HONEY;
+            }
         }
-        if (var5 == PathType.WALKABLE)
+        if (var5 == PathType.WALKABLE) {
             var5 = a(var0, var1.d(var2, var3, var4), var5);
+        }
         return var5;
     }
 
@@ -415,7 +438,7 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
     }
 
     private static boolean a(IBlockData var0) {
-        return (var0.a(TagsBlock.FIRE) || var0.a(Blocks.LAVA) || var0.a(Blocks.MAGMA_BLOCK) || BlockCampfire.g(var0));
+        return var0.a(TagsBlock.FIRE) || var0.a(Blocks.LAVA) || var0.a(Blocks.MAGMA_BLOCK) || BlockCampfire.g(var0);
     }
 
     public static double aa(IBlockAccess var0, BlockPosition var1) {
@@ -458,7 +481,7 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
         if (var3 instanceof BlockLeaves)
             return PathType.LEAVES;
         if (var3.a(TagsBlock.FENCES) || var3.a(TagsBlock.WALLS)
-                || (var3 instanceof BlockFenceGate && !var2.get(BlockFenceGate.OPEN).booleanValue()))
+                || var3 instanceof BlockFenceGate && !var2.get(BlockFenceGate.OPEN).booleanValue())
             return PathType.FENCE;
         if (!var2.a(var0, var1, PathMode.LAND))
             return PathType.BLOCKED;

@@ -191,25 +191,22 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
 
     @Override
     public EntityType get(ResourceLocation key) {
-        if (entities.containsKey(key)) {
+        if (entities.containsKey(key))
             return entities.get(key);
-        }
         return wrapped.get(key);
     }
 
     @Override
     public int getId(Object key) {
-        if (entityIds.containsKey(key)) {
+        if (entityIds.containsKey(key))
             return entityIds.get(key);
-        }
         return wrapped.getId((EntityType) key);
     }
 
     @Override
     public ResourceLocation getKey(Object value) {
-        if (entityClasses.containsKey(value)) {
+        if (entityClasses.containsKey(value))
             return entityClasses.get(value);
-        }
         return wrapped.getKey((EntityType) value);
     }
 
@@ -220,9 +217,8 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
 
     @Override
     public Optional getOptional(ResourceLocation var0) {
-        if (entities.containsKey(var0)) {
+        if (entities.containsKey(var0))
             return Optional.of(entities.get(var0));
-        }
         return this.wrapped.getOptional(var0);
     }
 

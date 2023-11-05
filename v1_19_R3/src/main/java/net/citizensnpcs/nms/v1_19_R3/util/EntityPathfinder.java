@@ -81,10 +81,12 @@ public class EntityPathfinder extends PathFinder {
                     var9.add(target);
                 }
             }
-            if (!var9.isEmpty())
+            if (!var9.isEmpty()) {
                 break;
-            if (node.distanceTo(var1) >= var3)
+            }
+            if (node.distanceTo(var1) >= var3) {
                 continue;
+            }
             int i = this.nodeEvaluator.getNeighbors(this.neighbors, node);
             for (int var13 = 0; var13 < i; var13++) {
                 Node var14 = this.neighbors[var13];
@@ -125,12 +127,9 @@ public class EntityPathfinder extends PathFinder {
     }
 
     public Stream<Path> getFallbackDestinations(Map<Target, BlockPos> var1, Set<Target> var5) {
-        if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean()) {
+        if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean())
             return Stream.empty();
-        }
-        return var5.stream().map((var1x) -> {
-            return this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false);
-        }).sorted(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
+        return var5.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false)).sorted(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
     }
 
     private Path reconstructPath(Node var0, BlockPos var1, boolean var2) {

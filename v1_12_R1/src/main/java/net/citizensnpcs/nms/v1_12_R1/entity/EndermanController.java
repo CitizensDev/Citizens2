@@ -75,7 +75,7 @@ public class EndermanController extends MobEntityController {
 
         @Override
         public void a(Entity entity, float strength, double dx, double dz) {
-            NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
+            NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
@@ -103,8 +103,9 @@ public class EndermanController extends MobEntityController {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.
             super.collide(entity);
-            if (npc != null)
+            if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
         }
 
         @Override
@@ -167,9 +168,8 @@ public class EndermanController extends MobEntityController {
 
         @Override
         public boolean j(double d1, double d2, double d3) {
-            if (npc == null) {
+            if (npc == null)
                 return super.j(d1, d2, d3);
-            }
             return false;
         }
 
@@ -190,11 +190,10 @@ public class EndermanController extends MobEntityController {
 
         @Override
         public boolean m_() {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.m_();
-            } else {
+            else
                 return false;
-            }
         }
 
         @Override

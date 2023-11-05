@@ -88,7 +88,7 @@ public class CowController extends MobEntityController {
 
         @Override
         public void a(Entity entity, float strength, double dx, double dz) {
-            NMS.callKnockbackEvent(npc, strength, dx, dz, (evt) -> super.a(entity, (float) evt.getStrength(),
+            NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
         }
 
@@ -97,9 +97,8 @@ public class CowController extends MobEntityController {
             if (npc == null || !npc.isProtected())
                 return super.a(entityhuman, enumhand);
             ItemStack itemstack = entityhuman.b(enumhand);
-            if (itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild && !this.isBaby()) {
+            if (itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild && !this.isBaby())
                 return false;
-            }
             return super.a(entityhuman, enumhand);
         }
 
@@ -207,11 +206,10 @@ public class CowController extends MobEntityController {
 
         @Override
         public boolean m_() {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.m_();
-            } else {
+            else
                 return false;
-            }
         }
     }
 }

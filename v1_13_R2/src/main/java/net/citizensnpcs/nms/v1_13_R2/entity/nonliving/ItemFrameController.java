@@ -63,9 +63,8 @@ public class ItemFrameController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            if (npc == null) {
+            if (npc == null)
                 return super.b(tag);
-            }
             double mx = motX;
             double my = motY;
             double mz = motZ;

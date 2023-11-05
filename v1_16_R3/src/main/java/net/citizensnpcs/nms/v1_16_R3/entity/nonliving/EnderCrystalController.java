@@ -60,9 +60,8 @@ public class EnderCrystalController extends MobEntityController {
 
         @Override
         public boolean a(Tag<FluidType> tag, double d0) {
-            if (npc == null) {
+            if (npc == null)
                 return super.a(tag, d0);
-            }
             Vec3D old = getMot().add(0, 0, 0);
             boolean res = super.a(tag, d0);
             if (!npc.isPushableByFluids()) {

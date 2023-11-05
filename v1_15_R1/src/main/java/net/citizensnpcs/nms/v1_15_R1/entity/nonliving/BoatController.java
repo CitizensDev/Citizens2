@@ -73,9 +73,8 @@ public class BoatController extends MobEntityController {
 
         @Override
         public boolean b(Tag<FluidType> tag) {
-            if (npc == null) {
+            if (npc == null)
                 return super.b(tag);
-            }
             Vec3D old = getMot().add(0, 0, 0);
             boolean res = super.b(tag);
             if (!npc.isPushableByFluids()) {
@@ -128,7 +127,7 @@ public class BoatController extends MobEntityController {
         private EnumStatus s() {
             EnumStatus entityboat_enumstatus = v();
             if (entityboat_enumstatus != null) {
-                this.aD = (getBoundingBox()).maxY;
+                this.aD = getBoundingBox().maxY;
                 return entityboat_enumstatus;
             }
             if (u())
@@ -152,7 +151,7 @@ public class BoatController extends MobEntityController {
                 this.aq = 0.05F;
                 if (this.aG == EnumStatus.IN_AIR && this.aF != EnumStatus.IN_AIR && this.aF != EnumStatus.ON_LAND) {
                     this.aD = e(1.0D);
-                    setPosition(locX(), (k() - getHeight()) + 0.101D, locZ());
+                    setPosition(locX(), k() - getHeight() + 0.101D, locZ());
                     setMot(getMot().d(1.0D, 0.0D, 1.0D));
                     this.aF = EnumStatus.IN_WATER;
                 } else {
@@ -169,8 +168,9 @@ public class BoatController extends MobEntityController {
                         this.aq = 0.9F;
                     } else if (this.aF == EnumStatus.ON_LAND) {
                         this.aq = this.aE;
-                        if (getRidingPassenger() instanceof EntityHuman)
+                        if (getRidingPassenger() instanceof EntityHuman) {
                             this.aE /= 2.0F;
+                        }
                     }
                     Vec3D vec3d = getMot();
                     setMot(vec3d.x * this.aq, vec3d.y + d1, vec3d.z * this.aq);
@@ -211,7 +211,7 @@ public class BoatController extends MobEntityController {
                             if (fluid.a(TagsFluid.WATER)) {
                                 float f = l1 + fluid.getHeight(this.world, blockposition_pooledblockposition);
                                 this.aD = Math.max(f, this.aD);
-                                m = flag | ((axisalignedbb.minY < f) ? true : false);
+                                m = flag | (axisalignedbb.minY < f ? true : false);
                             }
                         }
                     }
@@ -261,8 +261,8 @@ public class BoatController extends MobEntityController {
                         for (int i2 = i1; i2 < j1; i2++) {
                             blockposition_pooledblockposition.d(k1, l1, i2);
                             Fluid fluid = this.world.getFluid(blockposition_pooledblockposition);
-                            if (fluid.a(TagsFluid.WATER) && d0 < (blockposition_pooledblockposition.getY()
-                                    + fluid.getHeight(this.world, blockposition_pooledblockposition))) {
+                            if (fluid.a(TagsFluid.WATER) && d0 < blockposition_pooledblockposition.getY()
+                                    + fluid.getHeight(this.world, blockposition_pooledblockposition)) {
                                 if (!fluid.isSource()) {
                                     EnumStatus entityboat_enumstatus = EnumStatus.UNDER_FLOWING_WATER;
                                     return entityboat_enumstatus;
