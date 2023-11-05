@@ -10,8 +10,8 @@ import com.google.common.base.Preconditions;
 public final class TraitInfo {
     private boolean defaultTrait;
     private String name;
-    private boolean trackStats;
     private Supplier<? extends Trait> supplier;
+    private boolean trackStats;
     private final Class<? extends Trait> trait;
     private boolean triedAnnotation;
 

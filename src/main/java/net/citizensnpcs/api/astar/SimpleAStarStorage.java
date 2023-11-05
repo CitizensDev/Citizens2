@@ -60,5 +60,5 @@ public class SimpleAStarStorage implements AStarStorage {
         return "SimpleAStarStorage [closed=" + closed + ", open=" + open + "]";
     }
 
-    public static final Supplier<AStarStorage> FACTORY = () -> new SimpleAStarStorage();
+    public static final Supplier<AStarStorage> FACTORY = SimpleAStarStorage::new;
 }

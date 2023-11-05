@@ -60,11 +60,8 @@ public class InventoryMenuSlot {
         if (obj == null || getClass() != obj.getClass())
             return false;
         InventoryMenuSlot other = (InventoryMenuSlot) obj;
-        if (index != other.index)
+        if ((index != other.index) || !Objects.equals(inventory, other.inventory))
             return false;
-        if (!Objects.equals(inventory, other.inventory)) {
-            return false;
-        }
         return true;
     }
 

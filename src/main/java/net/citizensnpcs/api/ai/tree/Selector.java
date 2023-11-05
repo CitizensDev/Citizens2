@@ -134,5 +134,6 @@ public class Selector extends Composite {
     }
 
     private static final Random RANDOM = new Random();
-    private static final Function<List<Behavior>, Behavior> RANDOM_SELECTION = behaviors -> behaviors.get(RANDOM.nextInt(behaviors.size()));
+    private static final Function<List<Behavior>, Behavior> RANDOM_SELECTION = behaviors -> behaviors
+            .get(RANDOM.nextInt(behaviors.size()));
 }

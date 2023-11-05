@@ -44,7 +44,6 @@ public class DoorExaminer implements BlockExaminer {
             point.addCallback(new DoorOpener());
             return PassableState.PASSABLE;
         }
-
         return PassableState.IGNORE;
     }
 
@@ -97,7 +96,6 @@ public class DoorExaminer implements BlockExaminer {
                         cancel();
                         return;
                     }
-
                     if (npc.getStoredLocation().distance(doorCentre) > 1.8) {
                         close(npc, point);
                         cancel();
@@ -151,7 +149,10 @@ public class DoorExaminer implements BlockExaminer {
 
         @Override
         public void run(NPC npc, Block point, List<Block> path, int index) {
-            if (opened || (!MinecraftBlockExaminer.isDoor(point.getType()) && !MinecraftBlockExaminer.isGate(point.getType())) || (npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5)) > 2.5))
+            if (opened
+                    || !MinecraftBlockExaminer.isDoor(point.getType())
+                            && !MinecraftBlockExaminer.isGate(point.getType())
+                    || npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5)) > 2.5)
                 return;
             open(npc, point);
             opened = true;

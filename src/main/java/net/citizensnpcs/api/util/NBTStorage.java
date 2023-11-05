@@ -155,11 +155,8 @@ public class NBTStorage implements FileStorage {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             NBTKey other = (NBTKey) obj;
-            if (!getOuterType().equals(other.getOuterType()))
+            if (!getOuterType().equals(other.getOuterType()) || !Objects.equals(path, other.path))
                 return false;
-            if (!Objects.equals(path, other.path)) {
-                return false;
-            }
             return true;
         }
 

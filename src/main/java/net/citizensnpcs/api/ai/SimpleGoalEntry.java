@@ -27,9 +27,8 @@ public class SimpleGoalEntry implements GoalEntry {
         if (obj == null || getClass() != obj.getClass())
             return false;
         SimpleGoalEntry other = (SimpleGoalEntry) obj;
-        if (!Objects.equals(goal, other.goal)) {
+        if (!Objects.equals(goal, other.goal))
             return false;
-        }
         return priority == other.priority;
     }
 

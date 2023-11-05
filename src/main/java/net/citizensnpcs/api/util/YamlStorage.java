@@ -56,9 +56,8 @@ public class YamlStorage implements FileStorage {
         if (obj == null || getClass() != obj.getClass())
             return false;
         YamlStorage other = (YamlStorage) obj;
-        if (!Objects.equals(file, other.file)) {
+        if (!Objects.equals(file, other.file))
             return false;
-        }
         return true;
     }
 

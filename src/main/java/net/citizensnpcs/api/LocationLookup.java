@@ -92,7 +92,6 @@ public class LocationLookup extends BukkitRunnable {
             worlds.remove(world.getUID());
             return;
         }
-
         PhTreeF<Player> tree = worlds.computeIfAbsent(world.getUID(), uid -> PhTreeF.create(3));
         tree.clear();
         Location loc = new Location(null, 0, 0, 0);

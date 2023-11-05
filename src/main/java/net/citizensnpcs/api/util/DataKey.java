@@ -36,9 +36,8 @@ public abstract class DataKey {
         if (obj == null || getClass() != obj.getClass())
             return false;
         DataKey other = (DataKey) obj;
-        if (!Objects.equals(path, other.path)) {
+        if (!Objects.equals(path, other.path))
             return false;
-        }
         return true;
     }
 

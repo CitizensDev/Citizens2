@@ -26,12 +26,10 @@ public class EntityDim {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if ((obj == null) || (getClass() != obj.getClass()))
+        if (obj == null || getClass() != obj.getClass())
             return false;
         EntityDim other = (EntityDim) obj;
-        if (Double.doubleToLongBits(height) != Double.doubleToLongBits(other.height))
-            return false;
-        if (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width))
+        if ((Double.doubleToLongBits(height) != Double.doubleToLongBits(other.height)) || (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width)))
             return false;
         return true;
     }

@@ -36,7 +36,6 @@ public class Decorator extends BehaviorGoalAdapter {
         for (Runnable runnable : resetCallbacks) {
             runnable.run();
         }
-
         wrapping.reset();
     }
 
@@ -45,12 +44,10 @@ public class Decorator extends BehaviorGoalAdapter {
         for (Runnable runnable : runCallbacks) {
             runnable.run();
         }
-
         BehaviorStatus status = wrapping.run();
         for (Function<BehaviorStatus, BehaviorStatus> transformer : statusTransformers) {
             status = transformer.apply(status);
         }
-
         return status;
     }
 
@@ -60,7 +57,6 @@ public class Decorator extends BehaviorGoalAdapter {
         for (Predicate<Boolean> transformer : shouldExecutePredicates) {
             shouldExecute = transformer.test(shouldExecute);
         }
-
         return shouldExecute;
     }
 

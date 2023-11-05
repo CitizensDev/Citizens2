@@ -60,7 +60,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             point.addCallback(new LadderClimber());
         } else if (!canStandIn(above) || !canStandIn(in))
             return PassableState.UNPASSABLE;
-
         if (!canJumpOn(below)) {
             if (point.getParentPoint() == null)
                 return PassableState.UNPASSABLE;
@@ -70,7 +69,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                     && pos.clone().subtract(point.getParentPoint().getVector()).getY() == 1)
                 return PassableState.UNPASSABLE;
         }
-
         return PassableState.PASSABLE;
     }
 
@@ -219,7 +217,6 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                     if (!base.getWorld().isChunkLoaded(base.getX() + x >> 4, base.getZ() + z >> 4)) {
                         continue;
                     }
-
                     Block relative = base.getRelative(x, y, z);
                     if (filter.apply(relative) && canStandOn(relative.getRelative(BlockFace.DOWN)))
                         return relative.getLocation();

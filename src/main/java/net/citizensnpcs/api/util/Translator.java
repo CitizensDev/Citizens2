@@ -134,11 +134,10 @@ public class Translator {
                     new Thread(new SaveResource(resourceDir, locale.toString() + ".json")).start();
                 }
             }
-
         }
         try (Reader in = new InputStreamReader(is, charset)) {
             return (JSONObject) jp.parse(in);
-        } catch (ParseException | IOException e) {
+        } catch (NullPointerException | ParseException | IOException e) {
             return Maps.newHashMap();
         }
     }

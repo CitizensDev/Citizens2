@@ -31,9 +31,10 @@ public class TalkableEntity implements Talkable {
         if (!(o instanceof Entity))
             return -1;
         // If NPC and matches, return 0
-        else if ((CitizensAPI.getNPCRegistry().isNPC((Entity) o) && CitizensAPI.getNPCRegistry().isNPC(entity)
-                && CitizensAPI.getNPCRegistry().getNPC((Entity) o).getUniqueId()
-                        .equals(CitizensAPI.getNPCRegistry().getNPC(entity).getUniqueId())) || entity.equals(o))
+        else if (CitizensAPI.getNPCRegistry().isNPC((Entity) o)
+                && CitizensAPI.getNPCRegistry().isNPC(entity) && CitizensAPI.getNPCRegistry().getNPC((Entity) o)
+                        .getUniqueId().equals(CitizensAPI.getNPCRegistry().getNPC(entity).getUniqueId())
+                || entity.equals(o))
             return 0;
         else
             return 1;

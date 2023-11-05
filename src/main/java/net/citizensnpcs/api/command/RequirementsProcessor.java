@@ -49,7 +49,6 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
                         + Messaging.tr(CommandMessages.ID_NOT_FOUND, context.getFlag("id", context.getFlag("uuid")));
             }
         }
-
         if (requirements.selected() && npc == null)
             throw new RequirementMissingException(error);
 
@@ -65,7 +64,6 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
                 throw new RequirementMissingException(
                         Messaging.tr(CommandMessages.MISSING_TRAIT, clazz.getSimpleName()));
         }
-
         Set<EntityType> types = Sets.newEnumSet(Arrays.asList(requirements.types()), EntityType.class);
         if (types.contains(EntityType.UNKNOWN)) {
             types = EnumSet.allOf(EntityType.class);

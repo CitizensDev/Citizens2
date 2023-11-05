@@ -204,7 +204,6 @@ public class Inventory extends Trait {
         } else if (npc.getEntity() instanceof StorageMinecart) {
             dest = ((StorageMinecart) npc.getEntity()).getInventory();
         }
-
         if (SUPPORT_ABSTRACT_HORSE) {
             try {
                 if (npc.getEntity() instanceof AbstractHorse) {
@@ -219,20 +218,17 @@ public class Inventory extends Trait {
         } else if (npc.getEntity() instanceof Horse) {
             dest = ((Horse) npc.getEntity()).getInventory();
         }
-
         if (dest == null)
             return;
 
         if (maxCopySize == -1) {
             maxCopySize = dest.getSize();
         }
-
         for (int i = 0; i < maxCopySize; i++) {
             if (i < contents.length) {
                 dest.setItem(i, contents[i]);
             }
         }
-
         if (view == null)
             return;
 
@@ -253,11 +249,9 @@ public class Inventory extends Trait {
             contents[slot] = item;
         } else
             throw new IndexOutOfBoundsException();
-
         if (npc.getEntity() instanceof InventoryHolder) {
             ((InventoryHolder) npc.getEntity()).getInventory().setItem(slot, item);
         }
-
         if (slot == 0 && npc.getEntity() instanceof LivingEntity) {
             npc.getOrAddTrait(Equipment.class).setItemInHand(item);
         }

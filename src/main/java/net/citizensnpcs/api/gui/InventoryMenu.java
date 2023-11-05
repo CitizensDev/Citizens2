@@ -214,7 +214,6 @@ public class InventoryMenu implements Listener, Runnable {
             handleShiftClick(event, dest, toNPC);
             return;
         }
-
         if (!isOurInventory(clicked))
             return;
 
@@ -228,7 +227,6 @@ public class InventoryMenu implements Listener, Runnable {
             default:
                 break;
         }
-
         if (event.getSlot() < 0)
             return;
 
@@ -243,7 +241,6 @@ public class InventoryMenu implements Listener, Runnable {
             // transitioned during event
             event.setCancelled(true);
         }
-
         if (event.isCancelled())
             return;
 
@@ -285,13 +282,11 @@ public class InventoryMenu implements Listener, Runnable {
                     event.setCurrentItem(null);
                     break;
                 }
-
                 // TODO: figure out a better way to communicate from click handlers to here that the shift-click was
                 // "accepted" with different item handling behavior and that processing should stop
                 if (dest.getItem(i) != null && dest.getItem(i).isSimilar(merging)) {
                     break;
                 }
-
             } else if (contents[i].isSimilar(event.getCurrentItem())) {
                 ItemStack stack = contents[i].clone();
                 merging.setAmount(Math.min(amount, stack.getType().getMaxStackSize() - stack.getAmount()));
@@ -384,7 +379,6 @@ public class InventoryMenu implements Listener, Runnable {
         for (MenuTransition transition : patternInfo.data.transitions()) {
             transitionMap.put(transition.pat(), transition);
         }
-
         List<InventoryMenuSlot> patternSlots = Lists.newArrayList();
         List<InventoryMenuTransition> patternTransitions = Lists.newArrayList();
         int row = 0;
@@ -415,7 +409,6 @@ public class InventoryMenu implements Listener, Runnable {
             }
             col++;
         }
-
         return new InventoryMenuPattern(patternInfo.data, patternSlots, patternTransitions);
     }
 
@@ -675,7 +668,6 @@ public class InventoryMenu implements Listener, Runnable {
                     bindables.add(new Bindable<>(bind, t));
                 }
             }
-
             List<AccessibleObject> reflect = Lists.newArrayList();
             reflect.addAll(Arrays.asList(clazz.getDeclaredConstructors()));
             reflect.addAll(Arrays.asList(clazz.getDeclaredMethods()));

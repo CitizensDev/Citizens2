@@ -71,7 +71,6 @@ public class HPAGraph {
                 }
             }
         }
-
         Multimap<HPACluster, HPACluster> neighbours = HashMultimap.create();
         for (HPACluster cluster : newClusters) {
             PhQueryS<HPACluster> q = baseLevel.queryIntersect(
@@ -81,7 +80,8 @@ public class HPAGraph {
             while (q.hasNext()) {
                 HPACluster neighbour = q.nextValue();
                 // TODO: diagonal connections using length=sqrt(2)
-                if (neighbour == cluster || neighbours.get(cluster).contains(neighbour) || (neighbour.clusterX - cluster.clusterX != 0 && neighbour.clusterZ - cluster.clusterZ != 0)) {
+                if (neighbour == cluster || neighbours.get(cluster).contains(neighbour)
+                        || neighbour.clusterX - cluster.clusterX != 0 && neighbour.clusterZ - cluster.clusterZ != 0) {
                     continue;
                 }
                 int dx = neighbour.clusterX - cluster.clusterX;
@@ -134,7 +134,6 @@ public class HPAGraph {
                     }
                 }
             }
-
             addClustersAtDepth(depth, newClusters);
         }
     }

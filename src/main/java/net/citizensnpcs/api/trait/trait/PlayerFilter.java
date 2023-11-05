@@ -24,6 +24,8 @@ import net.citizensnpcs.api.util.PermissionUtil;
 
 @TraitName("playerfilter")
 public class PlayerFilter extends Trait {
+    @Persist
+    private double applyRange = -1;
     private final Set<UUID> children = Sets.newHashSet();
     private Function<Player, Boolean> filter;
     @Persist
@@ -44,16 +46,21 @@ public class PlayerFilter extends Trait {
     public PlayerFilter(BiConsumer<Player, Entity> hideFunction, BiConsumer<Player, Entity> viewFunction) {
         this();
         this.filter = p -> {
+            if (applyRange != -1 && npc.isSpawned()) {
+                if (p.getLocation().getWorld() != npc.getEntity().getLocation().getWorld())
+                    return false;
+                if (p.getLocation().distance(npc.getEntity().getLocation()) > applyRange)
+                    return false;
+            }
             switch (mode) {
                 case DENYLIST:
-                    if ((players != null && players.contains(p.getUniqueId())) || (groups != null && PermissionUtil.inGroup(groups, p) == true))
+                    if (players != null && players.contains(p.getUniqueId())
+                            || groups != null && PermissionUtil.inGroup(groups, p) == true)
                         return true;
 
                     break;
                 case ALLOWLIST:
-                    if (players != null && !players.contains(p.getUniqueId()))
-                        return true;
-                    if (groups != null && !PermissionUtil.inGroup(groups, p))
+                    if ((players != null && !players.contains(p.getUniqueId())) || (groups != null && !PermissionUtil.inGroup(groups, p)))
                         return true;
 
                     break;
@@ -107,6 +114,10 @@ public class PlayerFilter extends Trait {
     public void clear() {
         players = null;
         groups = null;
+    }
+
+    public double getApplyRange() {
+        return applyRange;
     }
 
     /**
@@ -233,6 +244,18 @@ public class PlayerFilter extends Trait {
 
     public void setAllowlist() {
         this.mode = Mode.ALLOWLIST;
+        recalculate();
+    }
+
+    /**
+     * Sets the range in blocks where the filter applies. For example, if the range is 25 blocks and the Player is more
+     * than 25 blocks away, the filter is ignored and the Player will not be hidden.
+     *
+     * @param range
+     *            The new range
+     */
+    public void setApplyRange(double range) {
+        this.applyRange = range;
         recalculate();
     }
 

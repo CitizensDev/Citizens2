@@ -61,9 +61,8 @@ public class YamlStorageWithLists implements FileStorage {
         if (obj == null || getClass() != obj.getClass())
             return false;
         YamlStorageWithLists other = (YamlStorageWithLists) obj;
-        if (!Objects.equals(file, other.file)) {
+        if (!Objects.equals(file, other.file))
             return false;
-        }
         return true;
     }
 
@@ -172,7 +171,6 @@ public class YamlStorageWithLists implements FileStorage {
                     next = k -> map.get(k);
                 }
             }
-
             if (relative == null)
                 return def;
 
@@ -360,7 +358,6 @@ public class YamlStorageWithLists implements FileStorage {
                         next = list.get(idx);
                     }
                 }
-
                 int nextSegment = path.indexOf('.', i1 + 1);
                 if (nextSegment != -1 && Ints.tryParse(path.substring(i1 + 1, nextSegment)) != null) {
                     if (!(next instanceof List)) {
@@ -381,7 +378,6 @@ public class YamlStorageWithLists implements FileStorage {
                 }
                 prev = next;
             }
-
             if (prev == null)
                 throw new RuntimeException();
 

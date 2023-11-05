@@ -40,11 +40,12 @@ public class BoundingBox {
         if (obj == null || getClass() != obj.getClass())
             return false;
         BoundingBox other = (BoundingBox) obj;
-        if ((Double.doubleToLongBits(maxX) != Double.doubleToLongBits(other.maxX)) || (Double.doubleToLongBits(maxY) != Double.doubleToLongBits(other.maxY)) || (Double.doubleToLongBits(maxZ) != Double.doubleToLongBits(other.maxZ)) || (Double.doubleToLongBits(minX) != Double.doubleToLongBits(other.minX)))
+        if (Double.doubleToLongBits(maxX) != Double.doubleToLongBits(other.maxX)
+                || Double.doubleToLongBits(maxY) != Double.doubleToLongBits(other.maxY)
+                || Double.doubleToLongBits(maxZ) != Double.doubleToLongBits(other.maxZ)
+                || Double.doubleToLongBits(minX) != Double.doubleToLongBits(other.minX))
             return false;
-        if (Double.doubleToLongBits(minY) != Double.doubleToLongBits(other.minY))
-            return false;
-        if (Double.doubleToLongBits(minZ) != Double.doubleToLongBits(other.minZ))
+        if ((Double.doubleToLongBits(minY) != Double.doubleToLongBits(other.minY)) || (Double.doubleToLongBits(minZ) != Double.doubleToLongBits(other.minZ)))
             return false;
         return true;
     }

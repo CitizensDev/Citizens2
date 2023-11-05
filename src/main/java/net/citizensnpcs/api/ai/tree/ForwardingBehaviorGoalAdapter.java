@@ -19,9 +19,8 @@ public class ForwardingBehaviorGoalAdapter extends BehaviorGoalAdapter {
         if (obj == null || getClass() != obj.getClass())
             return false;
         ForwardingBehaviorGoalAdapter other = (ForwardingBehaviorGoalAdapter) obj;
-        if (!Objects.equals(behavior, other.behavior)) {
+        if (!Objects.equals(behavior, other.behavior))
             return false;
-        }
         return true;
     }
 

@@ -117,11 +117,9 @@ public class CommandManager implements TabCompleter {
             }
             info = commands.get(cmdName + " *");
         }
-
         if (info == null && args.length > 2) {
             info = getCommand(cmdName, args[1], args[2]);
         }
-
         if (info == null)
             throw new UnhandledCommandException();
 
@@ -149,14 +147,12 @@ public class CommandManager implements TabCompleter {
                     throw new CommandUsageException("Unknown flag: " + flag, getUsage(args, cmd));
             }
         }
-
         methodArgs[0] = context;
 
         for (Annotation annotation : info.annotations) {
             CommandAnnotationProcessor processor = annotationProcessors.get(annotation.annotationType());
             processor.process(sender, context, annotation, methodArgs);
         }
-
         if (info.methodArguments.size() > 0) {
             methodArgs = Arrays.copyOf(methodArgs, methodArgs.length + info.methodArguments.size());
             for (Entry<Integer, InjectedCommandArgument> entry : info.methodArguments.entrySet()) {
@@ -193,7 +189,6 @@ public class CommandManager implements TabCompleter {
                 methodArgs[entry.getKey()] = val;
             }
         }
-
         try {
             info.method.invoke(info.instance, methodArgs);
         } catch (IllegalArgumentException e) {
@@ -292,7 +287,6 @@ public class CommandManager implements TabCompleter {
                 closest = split[1];
             }
         }
-
         return closest;
     }
 
@@ -414,12 +408,10 @@ public class CommandManager implements TabCompleter {
             }
             return results;
         }
-
         CommandInfo cmd = getCommand(command.getName().toLowerCase(), args[0]);
         if (cmd == null && args.length > 1) {
             cmd = getCommand(command.getName().toLowerCase(), args[0], args[1]);
         }
-
         if (cmd == null)
             return results;
 
@@ -442,11 +434,11 @@ public class CommandManager implements TabCompleter {
             hyphenStrippedArg = lastArg.replaceFirst("--", "");
             boolean isEmpty = lastArg.isEmpty() || ImmutableSet.of("-", "--").contains(lastArg);
             for (String valueFlag : cmd.valueFlags()) {
-                if ((lastArg.startsWith("--") && valueFlag.startsWith(hyphenStrippedArg)) || (isEmpty && !context.hasValueFlag(valueFlag))) {
+                if (lastArg.startsWith("--") && valueFlag.startsWith(hyphenStrippedArg)
+                        || isEmpty && !context.hasValueFlag(valueFlag)) {
                     results.add("--" + valueFlag);
                 }
             }
-
             String flags = cmd.commandAnnotation.flags();
             for (int i = 0; i < flags.length(); i++) {
                 char c = flags.charAt(i);
@@ -498,10 +490,10 @@ public class CommandManager implements TabCompleter {
     // Register the methods of a class.
     private void registerMethods(Class<?> clazz, Method parent, Object obj) {
         for (Method method : clazz.getMethods()) {
-            if (!method.isAnnotationPresent(Command.class) || (!Modifier.isStatic(method.getModifiers()) && obj == null)) {
+            if (!method.isAnnotationPresent(Command.class)
+                    || !Modifier.isStatic(method.getModifiers()) && obj == null) {
                 continue;
             }
-
             Command cmd = method.getAnnotation(Command.class);
             CommandInfo info = new CommandInfo(cmd, method);
 
@@ -514,7 +506,6 @@ public class CommandManager implements TabCompleter {
                     annotations.add(annotation);
                 }
             }
-
             for (Annotation annotation : method.getAnnotations()) {
                 Class<? extends Annotation> annotationClass = annotation.annotationType();
                 if (!annotationProcessors.containsKey(annotationClass)) {
@@ -529,16 +520,13 @@ public class CommandManager implements TabCompleter {
                 }
                 annotations.add(annotation);
             }
-
             if (annotations.size() > 0) {
                 info.annotations = annotations;
             }
-
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes.length <= 1 || parameterTypes[1] == CommandSender.class) {
                 info.serverCommand = true;
             }
-
             Parameter[] parameters = method.getParameters();
             for (int i = 0; i < parameters.length; i++) {
                 for (Annotation ann : parameters[i].getAnnotations()) {
@@ -549,7 +537,6 @@ public class CommandManager implements TabCompleter {
                     }
                 }
             }
-
             for (String alias : cmd.aliases()) {
                 for (String modifier : cmd.modifiers()) {
                     commands.put(alias + " " + modifier, info);
@@ -642,9 +629,8 @@ public class CommandManager implements TabCompleter {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             CommandInfo other = (CommandInfo) obj;
-            if (!Objects.equals(commandAnnotation, other.commandAnnotation)) {
+            if (!Objects.equals(commandAnnotation, other.commandAnnotation))
                 return false;
-            }
             return true;
         }
 
@@ -756,7 +742,6 @@ public class CommandManager implements TabCompleter {
                 return Lists.transform(Arrays.asList(constants), Enum::name);
             } else if (paramType == boolean.class || paramType == Boolean.class)
                 return Arrays.asList("true", "false");
-
             return Collections.emptyList();
         }
 
@@ -776,8 +761,7 @@ public class CommandManager implements TabCompleter {
 
     private static String capitalize(Object string) {
         String capitalize = string.toString();
-        return capitalize.length() == 0 ? ""
-                : Character.toUpperCase(capitalize.charAt(0)) + capitalize.substring(1);
+        return capitalize.length() == 0 ? "" : Character.toUpperCase(capitalize.charAt(0)) + capitalize.substring(1);
     }
 
     private static String format(Command command, String alias) {
@@ -812,7 +796,6 @@ public class CommandManager implements TabCompleter {
         for (i = 0; i <= n; i++) {
             p[i] = i;
         }
-
         for (j = 1; j <= m; j++) {
             t_j = t.charAt(j - 1);
             d[0] = j;
@@ -823,13 +806,11 @@ public class CommandManager implements TabCompleter {
                 // and up +cost
                 d[i] = Math.min(Math.min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
             }
-
             // copy current distance counts to 'previous row' distance counts
             _d = p;
             p = d;
             d = _d;
         }
-
         // our last action in the above loop was to switch d and p, so p now
         // actually has the most recent cost counts
         return p[n];

@@ -112,7 +112,6 @@ public class CommandContext {
                         break;
                     }
                 }
-
                 if (inner != -1) {
                     valueFlags.put(args[i].toLowerCase().substring(2), args[inner]);
                     if (clearFlags) {
@@ -261,7 +260,6 @@ public class CommandContext {
         } else if (sender instanceof BlockCommandSender) {
             base = ((BlockCommandSender) sender).getBlock().getLocation();
         }
-
         if (hasValueFlag("location"))
             return location = parseLocation(base, getFlag("location"));
 
@@ -278,7 +276,6 @@ public class CommandContext {
         } else if (sender instanceof BlockCommandSender) {
             base = ((BlockCommandSender) sender).getBlock().getLocation();
         }
-
         if (hasValueFlag("location"))
             return location = parseLocation(base, getFlag("location"));
 
@@ -336,8 +333,7 @@ public class CommandContext {
     }
 
     public EulerAngle parseEulerAngle(String input) {
-        List<Double> pose = Lists
-                .newArrayList(Iterables.transform(Splitter.on(',').split(input), Double::parseDouble));
+        List<Double> pose = Lists.newArrayList(Iterables.transform(Splitter.on(',').split(input), Double::parseDouble));
         return new EulerAngle(pose.get(0), pose.get(1), pose.get(2));
     }
 

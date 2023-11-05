@@ -80,7 +80,6 @@ public class SimpleMetadataStore implements MetadataStore {
                 setPersistent(sub.name(), sub.getRaw(""));
             }
         }
-
     }
 
     @Override
@@ -101,7 +100,6 @@ public class SimpleMetadataStore implements MetadataStore {
                 key.setRaw(entry.getKey(), entry.getValue().value);
             }
         }
-
         for (Entry<NPC.Metadata, MetadataObject> entry : npcMetadata.entrySet()) {
             if (entry.getValue().persistent) {
                 key.setRaw(entry.getKey().getKey(), entry.getValue().value);
@@ -117,7 +115,6 @@ public class SimpleMetadataStore implements MetadataStore {
         } else {
             this.npcMetadata.put(key, new MetadataObject(data, false));
         }
-
     }
 
     @Override
@@ -128,7 +125,6 @@ public class SimpleMetadataStore implements MetadataStore {
         } else {
             metadata.put(key, new MetadataObject(data, false));
         }
-
     }
 
     @Override

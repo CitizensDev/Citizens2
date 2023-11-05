@@ -49,9 +49,9 @@ public class NPCCombustEvent extends NPCEvent implements Cancellable {
         event.setDuration(duration);
     }
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 }

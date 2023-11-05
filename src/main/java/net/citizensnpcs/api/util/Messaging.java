@@ -55,7 +55,6 @@ public class Messaging {
 
                 return out + writer;
             }
-
             return out;
         }
     }
@@ -71,7 +70,6 @@ public class Messaging {
             LOGGER = Bukkit.getLogger();
             DEBUG_LOGGER = LOGGER;
         }
-
         if (CitizensAPI.getPlugin() != null) {
             try {
                 AUDIENCES = BukkitAudiences.create(CitizensAPI.getPlugin());
@@ -83,7 +81,6 @@ public class Messaging {
                 }
             }
         }
-
         if (debugFile != null) {
             DEBUG_LOGGER = Logger.getLogger("CitizensDebug");
             try {

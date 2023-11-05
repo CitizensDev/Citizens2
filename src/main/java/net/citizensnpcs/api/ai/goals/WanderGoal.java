@@ -143,7 +143,7 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
 
     @Override
     public boolean shouldExecute() {
-        if (!npc.isSpawned() || npc.getNavigator().isNavigating() || paused || (delayedTicks-- > 0))
+        if (!npc.isSpawned() || npc.getNavigator().isNavigating() || paused || delayedTicks-- > 0)
             return false;
 
         Location dest = findRandomPosition();

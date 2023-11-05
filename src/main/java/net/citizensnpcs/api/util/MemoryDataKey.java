@@ -28,12 +28,11 @@ public class MemoryDataKey extends DataKey {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if ((obj == null) || (getClass() != obj.getClass()))
+        if (obj == null || getClass() != obj.getClass())
             return false;
         MemoryDataKey other = (MemoryDataKey) obj;
-        if (!Objects.equals(path, other.path)) {
+        if (!Objects.equals(path, other.path))
             return false;
-        }
         return true;
     }
 

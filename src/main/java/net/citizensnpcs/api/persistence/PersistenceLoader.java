@@ -264,14 +264,12 @@ public class PersistenceLoader {
             if (clazz == Character.class && type != Character.class && type != Short.class && type != Integer.class
                     && type != Double.class && type != Long.class && type != Float.class)
                 return;
-        } else {
-            if (value != null && !type.isAssignableFrom(value.getClass())) {
-                if (root.getRelative(field.key).getSubKeys().iterator().hasNext()
-                        && field.field.getType() == String.class && field.delegate == null) {
-                    field.set(instance, root.getRelative(field.key).name());
-                }
-                return;
+        } else if (value != null && !type.isAssignableFrom(value.getClass())) {
+            if (root.getRelative(field.key).getSubKeys().iterator().hasNext() && field.field.getType() == String.class
+                    && field.delegate == null) {
+                field.set(instance, root.getRelative(field.key).name());
             }
+            return;
         }
         field.set(instance, value);
     }
@@ -468,7 +466,6 @@ public class PersistenceLoader {
                     }
                 }
             }
-
             instance = (T) constructor.newInstance();
         } catch (Exception e) {
             Messaging.severe("Error creating instance for " + clazz + " using " + root);

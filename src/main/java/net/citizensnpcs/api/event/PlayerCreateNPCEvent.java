@@ -24,9 +24,9 @@ public class PlayerCreateNPCEvent extends CommandSenderCreateNPCEvent implements
         return handlers;
     }
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 }

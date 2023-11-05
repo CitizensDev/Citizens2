@@ -100,11 +100,9 @@ public abstract class AbstractNPC implements NPC {
             Messaging.severe("Cannot register a null trait. Was it registered properly?");
             return;
         }
-
         if (trait.getNPC() == null) {
             trait.linkToNPC(this);
         }
-
         // if an existing trait is being replaced, we need to remove the
         // currently registered runnable to avoid conflicts
         Class<? extends Trait> clazz = trait.getClass();
@@ -115,14 +113,12 @@ public abstract class AbstractNPC implements NPC {
         if (isSpawned()) {
             trait.onSpawn();
         }
-
         if (trait.isRunImplemented()) {
             if (replaced != null) {
                 runnables.remove(replaced);
             }
             runnables.add(trait);
         }
-
         Bukkit.getPluginManager().callEvent(new NPCAddTraitEvent(this, trait));
     }
 
@@ -181,9 +177,8 @@ public abstract class AbstractNPC implements NPC {
         if (obj == null || getClass() != obj.getClass())
             return false;
         AbstractNPC other = (AbstractNPC) obj;
-        if (!Objects.equals(uuid, other.uuid)) {
+        if (!Objects.equals(uuid, other.uuid))
             return false;
-        }
         return true;
     }
 
@@ -411,7 +406,6 @@ public abstract class AbstractNPC implements NPC {
         } else {
             root.removeKey("itemprovider");
         }
-
         // Save all existing traits
         StringBuilder traitNames = new StringBuilder();
         for (Trait trait : traits.values()) {

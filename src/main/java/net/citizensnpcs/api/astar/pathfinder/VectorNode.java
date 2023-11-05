@@ -66,9 +66,8 @@ public class VectorNode extends AStarNode implements PathPoint {
         if (obj == null || getClass() != obj.getClass())
             return false;
         VectorNode other = (VectorNode) obj;
-        if (!Objects.equals(location, other.location)) {
+        if (!Objects.equals(location, other.location))
             return false;
-        }
         return true;
     }
 

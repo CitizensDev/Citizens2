@@ -30,6 +30,13 @@ public abstract class AStarNode implements Comparable<AStarNode> {
         return parent;
     }
 
+    protected float getPathCost() {
+        return g + h;
+    }
+
+    @Override
+    public abstract int hashCode();
+
     @SuppressWarnings("unchecked")
     protected <T extends AStarNode> Iterable<T> orderedPath() {
         if (parents != null)
@@ -43,11 +50,4 @@ public abstract class AStarNode implements Comparable<AStarNode> {
         Collections.reverse(parents);
         return (Iterable<T>) parents;
     }
-
-    protected float getPathCost() {
-        return g + h;
-    }
-
-    @Override
-    public abstract int hashCode();
 }

@@ -25,6 +25,11 @@ public interface NPCDataStore {
     void loadInto(NPCRegistry registry);
 
     /**
+     * Reloads the data store from source (such as a file on disk).
+     */
+    void reloadFromSource();
+
+    /**
      * Notifies the data store to save all stored data to disk. May be asynchronous.
      */
     void saveToDisk();
@@ -49,9 +54,4 @@ public interface NPCDataStore {
      *            The registry to store NPCs from
      */
     void storeAll(NPCRegistry registry);
-
-    /**
-     * Reloads the data store from source (such as a file on disk).
-     */
-    void reloadFromSource();
 }

@@ -112,7 +112,6 @@ public final class NBTInputStream implements Closeable {
         } else {
             name = "";
         }
-
         return readTagPayload(type, name, depth);
     }
 

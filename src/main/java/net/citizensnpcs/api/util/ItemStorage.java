@@ -190,7 +190,6 @@ public class ItemStorage {
             }
             res.setItemMeta(meta);
         }
-
         if (root.keyExists("enchantmentstorage")) {
             EnchantmentStorageMeta meta = ensureMeta(res);
             for (DataKey key : root.getRelative("enchantmentstorage").getSubKeys()) {
@@ -198,7 +197,6 @@ public class ItemStorage {
             }
             res.setItemMeta(meta);
         }
-
         if (root.keyExists("skull")) {
             SkullMeta meta = ensureMeta(res);
             if (SUPPORT_OWNING_PLAYER) {
@@ -208,21 +206,17 @@ public class ItemStorage {
                     SUPPORT_OWNING_PLAYER = false;
                 }
             }
-
             if (root.keyExists("skull.uuid") && SUPPORT_OWNING_PLAYER) {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(root.getString("skull.uuid")));
                 meta.setOwningPlayer(offlinePlayer);
             } else if (root.keyExists("skull.owner") && !root.getString("skull.owner").isEmpty()) {
                 meta.setOwner(root.getString("skull.owner", ""));
             }
-
             if (root.keyExists("skull.texture") && !root.getString("skull.texture").isEmpty()) {
                 CitizensAPI.getNMSHelper().setTexture(root.getString("skull.texture", ""), meta);
             }
-
             res.setItemMeta(meta);
         }
-
         if (root.keyExists("banner")) {
             BannerMeta meta = ensureMeta(res);
             if (root.keyExists("banner.basecolor")) {
@@ -237,7 +231,6 @@ public class ItemStorage {
             }
             res.setItemMeta(meta);
         }
-
         if (root.keyExists("potion")) {
             PotionMeta meta = ensureMeta(res);
             try {
@@ -255,7 +248,6 @@ public class ItemStorage {
             }
             res.setItemMeta(meta);
         }
-
         if (root.keyExists("crossbow") && SUPPORTS_1_14_API) {
             CrossbowMeta meta = null;
             try {
@@ -271,13 +263,11 @@ public class ItemStorage {
                 res.setItemMeta(meta);
             }
         }
-
         if (root.keyExists("repaircost") && res.getItemMeta() instanceof Repairable) {
             ItemMeta meta = ensureMeta(res);
             ((Repairable) meta).setRepairCost(root.getInt("repaircost"));
             res.setItemMeta(meta);
         }
-
         if (root.keyExists("attributes") && SUPPORTS_ATTRIBUTES) {
             ItemMeta meta = ensureMeta(res);
             try {
@@ -300,7 +290,6 @@ public class ItemStorage {
             }
             res.setItemMeta(meta);
         }
-
         ItemMeta meta = res.getItemMeta();
         if (meta != null) {
             try {
@@ -310,7 +299,6 @@ public class ItemStorage {
             }
             res.setItemMeta(meta);
         }
-
         Bukkit.getPluginManager().callEvent(new CitizensDeserialiseMetaEvent(root, res));
     }
 
@@ -341,7 +329,6 @@ public class ItemStorage {
         if (root.keyExists("mdata") && res.getData() != null) {
             res.getData().setData((byte) root.getInt("mdata")); // TODO: what to migrate to?
         }
-
         if (root.keyExists("enchantments")) {
             Map<Enchantment, Integer> enchantments = deserialiseEnchantments(root.getRelative("enchantments"), res);
             res.addUnsafeEnchantments(enchantments);
@@ -376,7 +363,6 @@ public class ItemStorage {
         } else {
             key.removeKey("durability");
         }
-
         if (!SpigotUtil.isUsing1_13API() && item.getData() != null) {
             key.setInt("mdata", item.getData().getData());
         } else {

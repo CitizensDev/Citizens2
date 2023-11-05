@@ -36,9 +36,9 @@ public class NPCDespawnEvent extends NPCEvent implements Cancellable {
         cancelled = cancel;
     }
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static final HandlerList handlers = new HandlerList();
 }
