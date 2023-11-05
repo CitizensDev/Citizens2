@@ -71,7 +71,6 @@ public class WardenTrait extends Trait {
             } catch (IllegalArgumentException iae) {
                 entity = Bukkit.getOfflinePlayer(player).getPlayer();
             }
-
             if (entity != null) {
                 trait.addAnger(entity, anger);
                 output = Messaging.tr(Messages.WARDEN_ANGER_ADDED, entity, anger);
@@ -86,11 +85,9 @@ public class WardenTrait extends Trait {
             NMS.setWardenPose(npc.getEntity(), Pose.ROARING);
             output = Messaging.tr(Messages.WARDEN_POSE_SET, npc.getName(), "roar");
         }
-
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

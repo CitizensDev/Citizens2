@@ -2,6 +2,7 @@ package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ import net.citizensnpcs.util.NMS;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final String name;
-    private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<NPC>();
+    private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<>();
     private final NPCDataStore saves;
     private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
 
@@ -74,11 +75,9 @@ public class CitizensNPCRegistry implements NPCRegistry {
         if (type == EntityType.ARMOR_STAND && !npc.hasTrait(ArmorStandTrait.class)) {
             npc.addTrait(ArmorStandTrait.class);
         }
-
         if (Setting.DEFAULT_LOOK_CLOSE.asBoolean()) {
             npc.addTrait(LookClose.class);
         }
-
         npc.addTrait(MountTrait.class);
         return npc;
     }
@@ -93,9 +92,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
             npc.data().set(NPC.Metadata.ITEM_ID, item.getType().name());
             npc.data().set(NPC.Metadata.ITEM_DATA, item.getData().getData());
             npc.setItemProvider(() -> item);
-        } else {
+        } else
             throw new UnsupportedOperationException("Not an item entity type");
-        }
         return npc;
     }
 
@@ -174,14 +172,13 @@ public class CitizensNPCRegistry implements NPCRegistry {
         if (npc != null)
             return npc;
         for (NPCRegistry registry : CitizensAPI.getNPCRegistries()) {
-            if (registry == this)
+            if (registry == this) {
                 continue;
-            NPC other = registry.getByUniqueId(uuid);
-            if (other != null) {
-                return other;
             }
+            NPC other = registry.getByUniqueId(uuid);
+            if (other != null)
+                return other;
         }
-
         return null;
     }
 
@@ -243,8 +240,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public Iterable<NPC> sorted() {
-        List<NPC> vals = new ArrayList<NPC>(npcs.valueCollection());
-        Collections.sort(vals, (a, b) -> Integer.compare(a.getId(), b.getId()));
+        List<NPC> vals = new ArrayList<>(npcs.valueCollection());
+        Collections.sort(vals, Comparator.comparing(NPC::getId));
         return vals;
     }
 }

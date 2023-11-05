@@ -125,7 +125,6 @@ public class LookClose extends Trait implements Toggleable {
             }
             sessions.clear();
         }
-
         if (lookingAt != null && !isValid(lookingAt)) {
             NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, lookingAt, null);
             Bukkit.getPluginManager().callEvent(event);
@@ -135,7 +134,6 @@ public class LookClose extends Trait implements Toggleable {
                 lookingAt = null;
             }
         }
-
         Player old = lookingAt;
         if (lookingAt != null) {
             if (randomSwitchTargets && t <= 0) {
@@ -150,19 +148,18 @@ public class LookClose extends Trait implements Toggleable {
             Location npcLoc = npc.getStoredLocation();
             for (Player player : getNearbyPlayers()) {
                 double dist = player.getLocation().distance(npcLoc);
-                if (dist > min)
+                if (dist > min) {
                     continue;
+                }
                 min = dist;
                 lookingAt = player;
             }
         }
-
         if (old != lookingAt) {
             NPCLookCloseChangeTargetEvent event = new NPCLookCloseChangeTargetEvent(npc, old, lookingAt);
             Bukkit.getPluginManager().callEvent(event);
-            if (lookingAt != event.getNewTarget() && event.getNewTarget() != null && !isValid(event.getNewTarget())) {
+            if (lookingAt != event.getNewTarget() && event.getNewTarget() != null && !isValid(event.getNewTarget()))
                 return;
-            }
             lookingAt = event.getNewTarget();
         }
     }
@@ -176,11 +173,12 @@ public class LookClose extends Trait implements Toggleable {
                         .map(e -> (Player) e).collect(Collectors.toList())
                 : CitizensAPI.getLocationLookup().getNearbyPlayers(npcLoc, range);
         for (Player player : nearby) {
-            if (player == lookingAt || (!targetNPCs && CitizensAPI.getNPCRegistry().getNPC(player) != null))
+            if (player == lookingAt || !targetNPCs && CitizensAPI.getNPCRegistry().getNPC(player) != null) {
                 continue;
-            if (player.getLocation().getWorld() != npcLoc.getWorld() || isInvisible(player))
+            }
+            if (player.getLocation().getWorld() != npcLoc.getWorld() || isInvisible(player)) {
                 continue;
-
+            }
             options.add(player);
         }
         return options;
@@ -221,9 +219,8 @@ public class LookClose extends Trait implements Toggleable {
 
     private boolean isPluginVanished(Player player) {
         for (MetadataValue meta : player.getMetadata("vanished")) {
-            if (meta.asBoolean()) {
+            if (meta.asBoolean())
                 return true;
-            }
         }
         return false;
     }
@@ -274,7 +271,6 @@ public class LookClose extends Trait implements Toggleable {
             lookingAt = null;
             return;
         }
-
         if (enableRandomLook) {
             if (!npc.getNavigator().isNavigating() && lookingAt == null && t <= 0) {
                 randomLook();
@@ -283,22 +279,15 @@ public class LookClose extends Trait implements Toggleable {
         }
         t--;
 
-        if (!enabled) {
+        if (!enabled || npc.getNavigator().isNavigating() && disableWhileNavigating()) {
             lookingAt = null;
             return;
         }
-
-        if (npc.getNavigator().isNavigating() && disableWhileNavigating()) {
-            lookingAt = null;
-            return;
-        }
-
         findNewTarget();
 
         if (npc.getNavigator().isNavigating() || npc.getNavigator().isPaused()) {
             npc.getNavigator().setPaused(lookingAt != null);
         }
-
         if (lookingAt == null)
             return;
 
@@ -348,15 +337,15 @@ public class LookClose extends Trait implements Toggleable {
      * Sets the delay between random looking in ticks
      */
     public void setRandomLookDelay(int delay) {
-        this.randomLookDelay = delay;
+        randomLookDelay = delay;
     }
 
     public void setRandomLookPitchRange(float min, float max) {
-        this.randomPitchRange = new float[] { min, max };
+        randomPitchRange = new float[] { min, max };
     }
 
     public void setRandomLookYawRange(float min, float max) {
-        this.randomYawRange = new float[] { min, max };
+        randomYawRange = new float[] { min, max };
     }
 
     public void setRandomlySwitchTargets(boolean randomSwitchTargets) {
@@ -374,11 +363,11 @@ public class LookClose extends Trait implements Toggleable {
      * Enables/disables realistic looking (using line of sight checks). More computationally expensive.
      */
     public void setRealisticLooking(boolean realistic) {
-        this.realisticLooking = realistic;
+        realisticLooking = realistic;
     }
 
     public void setTargetNPCs(boolean target) {
-        this.targetNPCs = target;
+        targetNPCs = target;
     }
 
     public boolean targetNPCs() {

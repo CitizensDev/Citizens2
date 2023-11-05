@@ -72,7 +72,6 @@ public class EntityPathfinder extends Pathfinder {
             var4 = var4.h;
             var3.add(0, var4);
         }
-
         return new PathEntity(var3, var1, var2);
     }
 
@@ -95,17 +94,13 @@ public class EntityPathfinder extends Pathfinder {
                     pathDestination.e();
                     var8.add(pathDestination);
                 }
-
             }
-
             if (!var8.isEmpty()) {
                 break;
             }
-
             if (pathPoint.a(var0) >= var2) {
                 continue;
             }
-
             int i = this.c.a(this.a, pathPoint);
             for (int var12 = 0; var12 < i; var12++) {
                 PathPoint var13 = this.a[var12];
@@ -122,13 +117,9 @@ public class EntityPathfinder extends Pathfinder {
                         var13.g = var13.e + var13.f;
                         this.d.a(var13);
                     }
-
                 }
-
             }
-
         }
-
         Optional var10 = !var8.isEmpty()
                 ? var8.stream().map(var1x -> this.a(var1x.d(), (BlockPosition) var1.get(var1x), true)).min(
                         Comparator.comparingInt(PathEntity::e))
@@ -139,7 +130,6 @@ public class EntityPathfinder extends Pathfinder {
             PathEntity var11 = (PathEntity) var10.get();
             return var11;
         }
-
     }
 
     private float a(PathPoint var0, Set<PathDestination> var1) {
@@ -149,7 +139,6 @@ public class EntityPathfinder extends Pathfinder {
             var4.a(var5, var0);
             var2 = Math.min(var5, var2);
         }
-
         return var2;
     }
 

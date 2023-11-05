@@ -51,7 +51,7 @@ public class Gravity extends Trait implements Toggleable {
     }
 
     public void setEnabled(boolean enabled) {
-        this.nogravity = enabled;
+        nogravity = enabled;
     }
 
     @Override

@@ -23,24 +23,24 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
     private final NavigatorParameters parameters;
     private final Location target;
 
-    MCNavigationStrategy(final NPC npc, Iterable<Vector> path, NavigatorParameters params) {
+    MCNavigationStrategy(NPC npc, Iterable<Vector> path, NavigatorParameters params) {
         super(TargetType.LOCATION);
         List<Vector> list = Lists.newArrayList(path);
-        this.target = list.get(list.size() - 1).toLocation(npc.getStoredLocation().getWorld());
-        this.parameters = params;
+        target = list.get(list.size() - 1).toLocation(npc.getStoredLocation().getWorld());
+        parameters = params;
         entity = npc.getEntity();
-        this.navigator = NMS.getTargetNavigator(npc.getEntity(), list, params);
+        navigator = NMS.getTargetNavigator(npc.getEntity(), list, params);
     }
 
-    MCNavigationStrategy(final NPC npc, Location dest, NavigatorParameters params) {
+    MCNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         if (!MinecraftBlockExaminer.canStandIn(dest.getBlock())) {
             dest = MinecraftBlockExaminer.findValidLocationAbove(dest, 2);
         }
-        this.target = Util.getCenterLocation(dest.getBlock());
-        this.parameters = params;
+        target = Util.getCenterLocation(dest.getBlock());
+        parameters = params;
         entity = npc.getEntity();
-        this.navigator = NMS.getTargetNavigator(entity, target, params);
+        navigator = NMS.getTargetNavigator(entity, target, params);
     }
 
     @Override

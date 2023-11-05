@@ -31,7 +31,6 @@ public class PlayerPathfinder {
         } catch (IllegalAccessException e1) {
             e1.printStackTrace();
         }
-
         this.a.a();
         this.a.a(paramPathPoint1);
         Object localObject = paramPathPoint1;
@@ -42,7 +41,6 @@ public class PlayerPathfinder {
             if (localPathPoint1.b(paramPathPoint2) < ((PathPoint) localObject).b(paramPathPoint2)) {
                 localObject = localPathPoint1;
             }
-
             localPathPoint1.i = true;
             int i = this.c.a(this.b, paramEntity, localPathPoint1, paramPathPoint2, paramFloat);
             for (int j = 0; j < i; j++) {
@@ -61,19 +59,14 @@ public class PlayerPathfinder {
                             G.set(localPathPoint2, f + newF);
                             this.a.a(localPathPoint2);
                         }
-
                     }
-
                 } catch (IllegalArgumentException e1) {
                     e1.printStackTrace();
                 } catch (IllegalAccessException e1) {
                     e1.printStackTrace();
                 }
-
             }
-
         }
-
         if (localObject == paramPathPoint1)
             return null;
         return a(paramPathPoint1, (PathPoint) localObject);
@@ -109,13 +102,11 @@ public class PlayerPathfinder {
                 i++;
                 localPathPoint = (PathPoint) H.get(localPathPoint);
             }
-
         } catch (IllegalArgumentException e1) {
             e1.printStackTrace();
         } catch (IllegalAccessException e1) {
             e1.printStackTrace();
         }
-
         PathPoint[] arrayOfPathPoint = new PathPoint[i];
         localPathPoint = paramPathPoint2;
         arrayOfPathPoint[--i] = localPathPoint;
@@ -124,13 +115,11 @@ public class PlayerPathfinder {
                 localPathPoint = (PathPoint) H.get(localPathPoint);
                 arrayOfPathPoint[--i] = localPathPoint;
             }
-
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return new PathEntity(arrayOfPathPoint);
     }
 

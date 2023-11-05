@@ -61,7 +61,6 @@ public class HorseController extends MobEntityController {
                 ((Horse) getBukkitEntity()).setDomestication(((Horse) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
-
         }
 
         @Override
@@ -75,7 +74,6 @@ public class HorseController extends MobEntityController {
                 super.a(flag);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
@@ -84,7 +82,6 @@ public class HorseController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -126,7 +123,6 @@ public class HorseController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -147,7 +143,6 @@ public class HorseController extends MobEntityController {
             if (npc == null) {
                 super.D();
             }
-
         }
 
         @Override
@@ -155,7 +150,6 @@ public class HorseController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
             }
-
         }
 
         @Override
@@ -169,20 +163,16 @@ public class HorseController extends MobEntityController {
                 } else {
                     riding = false;
                 }
-
                 if (riding) {
                     try {
                         C.invoke(this, 4, true);
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
-
                 }
-
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
-
         }
 
         @Override
@@ -191,7 +181,6 @@ public class HorseController extends MobEntityController {
             if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -201,7 +190,6 @@ public class HorseController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1);
             }
-
         }
 
         @Override
@@ -209,7 +197,6 @@ public class HorseController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new HorseNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 

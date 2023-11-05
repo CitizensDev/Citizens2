@@ -67,7 +67,7 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     }
 
     public void setBoundingBoxFunction(Function<EntityDim, BoundingBox> func) {
-        this.function = func;
+        function = func;
     }
 
     public void setHeight(float height) {

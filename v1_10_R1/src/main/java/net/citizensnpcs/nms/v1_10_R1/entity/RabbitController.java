@@ -57,7 +57,6 @@ public class RabbitController extends MobEntityController {
                 super.a(flag);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
@@ -66,7 +65,6 @@ public class RabbitController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -103,7 +101,6 @@ public class RabbitController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -116,7 +113,6 @@ public class RabbitController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
             }
-
         }
 
         @Override
@@ -125,7 +121,6 @@ public class RabbitController extends MobEntityController {
             if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -135,7 +130,6 @@ public class RabbitController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1);
             }
-
         }
 
         @Override
@@ -148,7 +142,6 @@ public class RabbitController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new RabbitNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -172,7 +165,6 @@ public class RabbitController extends MobEntityController {
             if (npc == null) {
                 super.L();
             }
-
         }
 
         @Override
@@ -184,7 +176,6 @@ public class RabbitController extends MobEntityController {
             } else {
                 super.M();
             }
-
         }
 
         @Override
@@ -203,7 +194,6 @@ public class RabbitController extends MobEntityController {
                 this.datawatcher.set(NMSImpl.getRabbitTypeField(), i);
                 return;
             }
-
             super.setRabbitType(i);
         }
     }

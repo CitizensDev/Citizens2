@@ -78,7 +78,6 @@ public class MushroomCowController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -86,7 +85,6 @@ public class MushroomCowController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
-
         }
 
         @Override
@@ -96,7 +94,6 @@ public class MushroomCowController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
-
         }
 
         @Override
@@ -109,7 +106,6 @@ public class MushroomCowController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new MushroomCowNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -186,7 +182,6 @@ public class MushroomCowController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -196,7 +191,6 @@ public class MushroomCowController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -207,7 +201,6 @@ public class MushroomCowController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -229,7 +222,6 @@ public class MushroomCowController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
-
         }
 
         @Override
@@ -241,7 +233,6 @@ public class MushroomCowController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

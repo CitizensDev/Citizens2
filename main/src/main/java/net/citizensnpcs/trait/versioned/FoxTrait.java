@@ -92,10 +92,9 @@ public class FoxTrait extends Trait {
         String output = "";
         if (rawtype != null) {
             Fox.Type type = Util.matchEnum(Fox.Type.values(), args.getFlag("type"));
-            if (type == null) {
+            if (type == null)
                 throw new CommandUsageException(
                         Messaging.tr(Messages.INVALID_FOX_TYPE, Util.listValuesPretty(Fox.Type.values())), null);
-            }
             trait.setType(type);
             output += ' ' + Messaging.tr(Messages.FOX_TYPE_SET, args.getFlag("type"), npc.getName());
         }
@@ -116,8 +115,7 @@ public class FoxTrait extends Trait {
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

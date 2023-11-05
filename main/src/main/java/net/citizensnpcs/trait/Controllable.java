@@ -74,7 +74,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         } else if (args.hasValueFlag("explicittype")) {
             explicitType = Util.matchEnum(EntityType.values(), args.getFlag("explicittype"));
         }
-
         if (npc.isSpawned()) {
             loadController();
         }
@@ -90,10 +89,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
         if (!player.hasPermission(
                 "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", ""))
-                || !player.hasPermission("citizens.npc.controllable"))
-            return;
-
-        if (ownerRequired && !npc.getOrAddTrait(Owner.class).isOwnedBy(player))
+                || !player.hasPermission("citizens.npc.controllable")
+                || ownerRequired && !npc.getOrAddTrait(Owner.class).isOwnedBy(player))
             return;
 
         NMS.mount(npc.getEntity(), player);
@@ -146,9 +143,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
      */
     public boolean mount(Player toMount) {
         List<Entity> passengers = NMS.getPassengers(npc.getEntity());
-        if (passengers.size() != 0) {
+        if (passengers.size() != 0)
             return false;
-        }
         boolean found = false;
         for (Entity passenger : passengers) {
             if (passenger != null && passenger == toMount) {
@@ -156,9 +152,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 break;
             }
         }
-        if (found) {
+        if (found)
             return false;
-        }
         enterOrLeaveVehicle(toMount);
         return true;
     }
@@ -232,7 +227,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
      *            the explicit type
      */
     public void setExplicitType(EntityType type) {
-        this.explicitType = type;
+        explicitType = type;
     }
 
     private void setMountedYaw(Entity entity) {
@@ -240,9 +235,8 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             return; // EnderDragon handles this separately
         Location loc = entity.getLocation();
         Vector vel = entity.getVelocity();
-        if (vel.lengthSquared() == 0) {
+        if (vel.lengthSquared() == 0)
             return;
-        }
 
         double tX = loc.getX() + vel.getX();
         double tZ = loc.getZ() + vel.getZ();
@@ -287,7 +281,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
 
             vel = vel.setX(dXcos * speed * speedMod).setZ(dXsin * speed * speedMod);
         }
-
         vel = vel.add(new Vector(
                 passenger.getVelocity().getX() * speedMod * Setting.CONTROLLABLE_GROUND_DIRECTION_MODIFIER.asDouble(),
                 0D,
@@ -301,11 +294,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
         handle.setVelocity(vel);
 
-        if (newSpeed > oldSpeed && speed < maxSpeed) {
-            return (float) Math.min(maxSpeed, (speed + ((maxSpeed - speed) / 50.0D)));
-        } else {
-            return (float) Math.max(0, (speed - (speed / 50.0D)));
-        }
+        if (newSpeed > oldSpeed && speed < maxSpeed)
+            return (float) Math.min(maxSpeed, speed + (maxSpeed - speed) / 50.0D);
+        else
+            return (float) Math.max(0, speed - speed / 50.0D);
     }
 
     public class GroundController implements MovementController {
@@ -329,13 +321,12 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         public void run(Player rider) {
             boolean onGround = NMS.isOnGround(npc.getEntity());
             float speedMod = npc.getNavigator().getDefaultParameters()
-                    .modifiedSpeed((onGround ? GROUND_SPEED : AIR_SPEED));
+                    .modifiedSpeed(onGround ? GROUND_SPEED : AIR_SPEED);
             if (!Util.isHorse(npc.getEntity().getType())) {
                 // use minecraft horse physics
                 speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, speedMod,
                         Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble());
             }
-
             boolean shouldJump = NMS.shouldJump(rider);
             if (shouldJump) {
                 if (onGround && jumpTicks == 0) {
@@ -420,14 +411,12 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
                 npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.001F));
                 return;
             }
-
             speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, 1F,
                     Setting.MAX_CONTROLLABLE_FLIGHT_SPEED.asDouble());
             boolean shouldJump = NMS.shouldJump(rider);
             if (shouldJump) {
                 npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.25F));
             }
-
             npc.getEntity().setVelocity(npc.getEntity().getVelocity().multiply(new Vector(1, 0.98, 1)));
             setMountedYaw(npc.getEntity());
         }
@@ -461,7 +450,7 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
     }
 
-    private static final Map<EntityType, Constructor<? extends MovementController>> CONTROLLER_TYPES = Maps
+    private static Map<EntityType, Constructor<? extends MovementController>> CONTROLLER_TYPES = Maps
             .newEnumMap(EntityType.class);
 
     static {

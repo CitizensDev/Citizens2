@@ -48,7 +48,6 @@ public class ProfileFetcher {
         if (THREAD_TASK != null) {
             THREAD_TASK.cancel();
         }
-
         PROFILE_THREAD = new ProfileFetchThread();
         THREAD_TASK = Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD, 21, 20);
     }

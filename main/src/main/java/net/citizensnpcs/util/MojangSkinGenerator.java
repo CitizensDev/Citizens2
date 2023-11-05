@@ -53,7 +53,6 @@ public class MojangSkinGenerator {
                 if (Messaging.isDebugging()) {
                     Messaging.debug(str);
                 }
-
                 if (con.getResponseCode() != 200)
                     return null;
 
@@ -108,7 +107,6 @@ public class MojangSkinGenerator {
                 if (Messaging.isDebugging()) {
                     Messaging.debug(str);
                 }
-
                 if (con.getResponseCode() != 200)
                     return null;
 

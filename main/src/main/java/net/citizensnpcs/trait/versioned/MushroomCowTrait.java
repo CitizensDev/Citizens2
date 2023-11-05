@@ -71,8 +71,7 @@ public class MushroomCowTrait extends Trait {
             Messaging.sendTr(sender, Messages.MUSHROOM_COW_VARIANT_SET, npc.getName(), variant);
             hasArg = true;
         }
-        if (!hasArg) {
+        if (!hasArg)
             throw new CommandUsageException();
-        }
     }
 }

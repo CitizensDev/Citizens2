@@ -67,7 +67,6 @@ public class AreaEffectCloudController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -79,7 +78,6 @@ public class AreaEffectCloudController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -92,7 +90,6 @@ public class AreaEffectCloudController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new AreaEffectCloudNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -112,7 +109,6 @@ public class AreaEffectCloudController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -122,7 +118,6 @@ public class AreaEffectCloudController extends MobEntityController {
             } else {
                 super.tick();
             }
-
         }
     }
 }

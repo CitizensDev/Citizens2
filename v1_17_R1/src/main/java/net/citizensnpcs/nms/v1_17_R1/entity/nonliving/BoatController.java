@@ -71,7 +71,6 @@ public class BoatController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new BoatNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -91,7 +90,6 @@ public class BoatController extends MobEntityController {
                 this.aC = getBoundingBox().maxY;
                 return entityboat_Status;
             }
-
             if (t())
                 return Status.IN_WATER;
             float f = getGroundFriction();
@@ -99,7 +97,6 @@ public class BoatController extends MobEntityController {
                 this.aD = f;
                 return Status.ON_LAND;
             }
-
             return Status.IN_AIR;
         }
 
@@ -120,7 +117,6 @@ public class BoatController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -131,7 +127,6 @@ public class BoatController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -141,7 +136,6 @@ public class BoatController extends MobEntityController {
             } else {
                 NMSImpl.setSize(this, firstTick);
             }
-
         }
 
         @Override
@@ -171,13 +165,9 @@ public class BoatController extends MobEntityController {
                             this.aC = Math.max(f, this.aC);
                             m = flag | (axisalignedbb.minY < f ? true : false);
                         }
-
                     }
-
                 }
-
             }
-
             return m;
         }
 
@@ -212,9 +202,7 @@ public class BoatController extends MobEntityController {
                         if (getControllingPassenger() instanceof ServerPlayer) {
                             this.aD /= 2.0F;
                         }
-
                     }
-
                     Vec3 vec3d = getDeltaMovement();
                     setDeltaMovement(vec3d.x * this.ap, vec3d.y + d1, vec3d.z * this.ap);
                     this.ar *= this.ap;
@@ -222,18 +210,14 @@ public class BoatController extends MobEntityController {
                         Vec3 vec3d1 = getDeltaMovement();
                         setDeltaMovement(vec3d1.x, vec3d1.y + d2 * 0.0615D, vec3d1.z);
                     }
-
                 }
-
                 move(MoverType.SELF, getDeltaMovement());
                 if (isVehicle()) {
                     setYRot((float) (getYRot() + this.ar));
                 }
-
             } else {
                 super.tick();
             }
-
         }
 
         private Status u() {
@@ -258,13 +242,9 @@ public class BoatController extends MobEntityController {
                                 return Status.UNDER_FLOWING_WATER;
                             flag = true;
                         }
-
                     }
-
                 }
-
             }
-
             return flag ? Status.UNDER_WATER : null;
         }
 
@@ -277,7 +257,6 @@ public class BoatController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

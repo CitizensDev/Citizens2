@@ -109,14 +109,14 @@ public class SkinTrait extends Trait {
      * @see #fetchDefaultSkin
      */
     public void setFetchDefaultSkin(boolean fetch) {
-        this.fetchDefaultSkin = fetch;
+        fetchDefaultSkin = fetch;
     }
 
     /**
      * @see #shouldUpdateSkins()
      */
     public void setShouldUpdateSkins(boolean update) {
-        this.updateSkins = update;
+        updateSkins = update;
     }
 
     /**
@@ -170,14 +170,14 @@ public class SkinTrait extends Trait {
             throw new IllegalArgumentException("Invalid texture data");
 
         this.signature = signature;
-        this.textureRaw = data;
-        this.updateSkins = false;
+        textureRaw = data;
+        updateSkins = false;
         npc.data().setPersistent(Skin.CACHED_SKIN_UUID_NAME_METADATA, skinName.toLowerCase());
         onSkinChange(false);
     }
 
     public void setTexture(String value, String signature) {
-        this.textureRaw = value;
+        textureRaw = value;
         this.signature = signature;
     }
 

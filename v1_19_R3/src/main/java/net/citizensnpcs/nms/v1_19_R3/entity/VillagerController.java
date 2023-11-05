@@ -65,7 +65,6 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3);
             }
-
         }
 
         @Override
@@ -87,7 +86,6 @@ public class VillagerController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -95,7 +93,6 @@ public class VillagerController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
-
         }
 
         @Override
@@ -103,16 +100,13 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
-
             super.customServerAiStep();
             if (npc != null) {
                 npc.update();
                 if (npc.data().get(NPC.Metadata.RESET_PITCH_ON_TICK, true)) {
                     NMS.setPitch(getBukkitEntity(), 0);
                 }
-
             }
-
         }
 
         @Override
@@ -125,7 +119,6 @@ public class VillagerController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new VillagerNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -176,7 +169,6 @@ public class VillagerController extends MobEntityController {
                 blockingATrade = false;
                 return true;
             }
-
             return super.isTrading();
         }
 
@@ -199,9 +191,7 @@ public class VillagerController extends MobEntityController {
                 if (list != null) {
                     list.clear();
                 }
-
             }
-
             return super.mobInteract(entityhuman, enumhand);
         }
 
@@ -219,7 +209,6 @@ public class VillagerController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -229,7 +218,6 @@ public class VillagerController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -240,7 +228,6 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -260,7 +247,6 @@ public class VillagerController extends MobEntityController {
             if (npc == null) {
                 super.thunderHit(worldserver, entitylightning);
             }
-
         }
 
         @Override
@@ -270,7 +256,6 @@ public class VillagerController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
-
         }
 
         @Override
@@ -282,7 +267,6 @@ public class VillagerController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

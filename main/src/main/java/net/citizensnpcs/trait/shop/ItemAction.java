@@ -56,18 +56,18 @@ public class ItemAction extends NPCShopAction {
         ItemStack[] contents = source.getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack toMatch = contents[i];
-            if (toMatch == null || toMatch.getType() == Material.AIR)
+            if (toMatch == null || toMatch.getType() == Material.AIR || tooDamaged(toMatch)) {
                 continue;
-            if (tooDamaged(toMatch))
-                continue;
+            }
             toMatch = toMatch.clone();
             for (int j = 0; j < items.size(); j++) {
-                if (toMatch == null)
+                if (toMatch == null) {
                     break;
+                }
                 ItemStack item = items.get(j);
-                if (req.get(j) <= 0 || !matches(item, toMatch))
+                if (req.get(j) <= 0 || !matches(item, toMatch)) {
                     continue;
-
+                }
                 int remaining = req.get(j);
                 int taken = toMatch.getAmount() > remaining ? remaining : toMatch.getAmount();
 
@@ -76,7 +76,6 @@ public class ItemAction extends NPCShopAction {
                 } else {
                     toMatch.setAmount(toMatch.getAmount() - taken);
                 }
-
                 if (modify) {
                     if (toMatch == null) {
                         source.clear(i);
@@ -92,9 +91,8 @@ public class ItemAction extends NPCShopAction {
 
     @Override
     public String describe() {
-        if (items.size() == 1) {
+        if (items.size() == 1)
             return items.get(0).getAmount() + " " + Util.prettyEnum(items.get(0).getType());
-        }
         String description = items.size() + " items";
         for (int i = 0; i < items.size(); i++) {
             ItemStack item = items.get(i);
@@ -113,24 +111,25 @@ public class ItemAction extends NPCShopAction {
             return 0;
 
         Inventory source = ((InventoryHolder) entity).getInventory();
-        List<Integer> req = items.stream().map(i -> i.getAmount()).collect(Collectors.toList());
+        List<Integer> req = items.stream().map(ItemStack::getAmount).collect(Collectors.toList());
         List<Integer> has = items.stream().map(i -> 0).collect(Collectors.toList());
         ItemStack[] contents = source.getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack toMatch = contents[i];
-            if (toMatch == null || toMatch.getType() == Material.AIR)
+            if (toMatch == null || toMatch.getType() == Material.AIR || tooDamaged(toMatch))
                 continue;
-            if (tooDamaged(toMatch))
-                continue;
+
             toMatch = toMatch.clone();
             for (int j = 0; j < items.size(); j++) {
                 if (!matches(items.get(j), toMatch))
                     continue;
+
                 int remaining = req.get(j);
                 int taken = toMatch.getAmount() > remaining ? remaining : toMatch.getAmount();
                 has.set(j, has.get(j) + taken);
-                if (toMatch.getAmount() - taken <= 0)
+                if (toMatch.getAmount() - taken <= 0) {
                     break;
+                }
                 toMatch.setAmount(toMatch.getAmount() - taken);
             }
         }
@@ -164,12 +163,12 @@ public class ItemAction extends NPCShopAction {
     }
 
     private boolean matches(ItemStack a, ItemStack b) {
-        if (a.getType() != b.getType())
+        if (a.getType() != b.getType() || metaFilter.size() > 0 && !metaMatches(a, b, metaFilter))
             return false;
-        if (metaFilter.size() > 0 && !metaMatches(a, b, metaFilter))
-            return false;
+
         if (compareSimilarity && !a.isSimilar(b))
             return false;
+
         return true;
     }
 
@@ -181,22 +180,20 @@ public class ItemAction extends NPCShopAction {
             Tag acc = source;
             Tag cmp = compare;
             for (int i = 0; i < parts.length; i++) {
-                if (acc == null)
-                    return false;
-                if (cmp == null)
+                if (acc == null || cmp == null)
                     return false;
                 if (i < parts.length - 1) {
                     if (!(acc instanceof CompoundTag) || !(cmp instanceof CompoundTag))
                         return false;
-                    if (parts[i].equals(acc.getName()) && acc.getName().equals(cmp.getName()))
+                    if (parts[i].equals(acc.getName()) && acc.getName().equals(cmp.getName())) {
                         continue;
+                    }
                     acc = ((CompoundTag) acc).getValue().get(parts[i]);
                     cmp = ((CompoundTag) cmp).getValue().get(parts[i]);
                     continue;
                 }
-                if (!acc.getName().equals(parts[i]) || !cmp.getName().equals(parts[i]))
-                    return false;
-                if (!acc.getValue().equals(cmp.getValue()))
+                if (!acc.getName().equals(parts[i]) || !cmp.getName().equals(parts[i])
+                        || !acc.getValue().equals(cmp.getValue()))
                     return false;
             }
         }
@@ -207,10 +204,9 @@ public class ItemAction extends NPCShopAction {
     public Transaction take(Entity entity, int repeats) {
         if (!(entity instanceof InventoryHolder))
             return Transaction.fail();
+
         Inventory source = ((InventoryHolder) entity).getInventory();
-        return Transaction.create(() -> {
-            return containsItems(source, repeats, false);
-        }, () -> {
+        return Transaction.create(() -> containsItems(source, repeats, false), () -> {
             containsItems(source, repeats, true);
         }, () -> {
             source.addItem(items.stream().map(ItemStack::clone).toArray(ItemStack[]::new));
@@ -220,8 +216,10 @@ public class ItemAction extends NPCShopAction {
     private boolean tooDamaged(ItemStack toMatch) {
         if (!requireUndamaged)
             return false;
+
         if (SpigotUtil.isUsing1_13API())
             return toMatch.getItemMeta() instanceof Damageable && ((Damageable) toMatch.getItemMeta()).getDamage() != 0;
+
         return toMatch.getDurability() == toMatch.getType().getMaxDurability();
     }
 
@@ -253,20 +251,19 @@ public class ItemAction extends NPCShopAction {
                     event.setCancelled(true);
                 });
             }
-
             ctx.getSlot(3 * 9 + 1).setItemStack(new ItemStack(Material.ANVIL), "Must have no damage",
                     base.requireUndamaged ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
             ctx.getSlot(3 * 9 + 1)
-                    .addClickHandler(InputMenus.toggler((res) -> base.requireUndamaged = res, base.requireUndamaged));
+                    .addClickHandler(InputMenus.toggler(res -> base.requireUndamaged = res, base.requireUndamaged));
             ctx.getSlot(3 * 9 + 2).setItemStack(
                     new ItemStack(Util.getFallbackMaterial("COMPARATOR", "REDSTONE_COMPARATOR")),
                     "Compare item similarity", base.compareSimilarity ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
             ctx.getSlot(3 * 9 + 2)
-                    .addClickHandler(InputMenus.toggler((res) -> base.compareSimilarity = res, base.compareSimilarity));
+                    .addClickHandler(InputMenus.toggler(res -> base.compareSimilarity = res, base.compareSimilarity));
             ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Material.BOOK), "NBT comparison filter",
                     Joiner.on("\n").join(base.metaFilter));
             ctx.getSlot(3 * 9 + 3)
-                    .addClickHandler((event) -> ctx.getMenu()
+                    .addClickHandler(event -> ctx.getMenu()
                             .transition(InputMenus.stringSetter(() -> Joiner.on(',').join(base.metaFilter),
                                     res -> base.metaFilter = res == null ? null : Arrays.asList(res.split(",")))));
         }

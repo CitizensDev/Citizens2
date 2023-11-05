@@ -58,7 +58,6 @@ public class MinecartSpawnerController extends MobEntityController {
                 motY = my;
                 motZ = mz;
             }
-
             return res;
         }
 
@@ -70,7 +69,6 @@ public class MinecartSpawnerController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -84,7 +82,6 @@ public class MinecartSpawnerController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -104,7 +101,6 @@ public class MinecartSpawnerController extends MobEntityController {
                 npc.update();
                 NMSImpl.minecartItemLogic(this);
             }
-
         }
     }
 }

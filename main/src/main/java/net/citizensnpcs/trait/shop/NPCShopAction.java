@@ -45,7 +45,7 @@ public abstract class NPCShopAction implements Cloneable {
         private final Runnable rollback;
 
         public Transaction(Supplier<Boolean> isPossible, Runnable execute, Runnable rollback) {
-            this.possible = isPossible;
+            possible = isPossible;
             this.execute = execute;
             this.rollback = rollback;
         }
@@ -88,7 +88,6 @@ public abstract class NPCShopAction implements Cloneable {
         GUI.add(gui);
     }
 
-    private static final List<GUI> GUI = Lists.newArrayList();
-    private static final PersisterRegistry<NPCShopAction> REGISTRY = PersistenceLoader
-            .createRegistry(NPCShopAction.class);
+    private static List<GUI> GUI = Lists.newArrayList();
+    private static PersisterRegistry<NPCShopAction> REGISTRY = PersistenceLoader.createRegistry(NPCShopAction.class);
 }

@@ -19,11 +19,11 @@ public class RemoveNPCHistoryItem implements CommandHistoryItem {
     private final UUID uuid;
 
     public RemoveNPCHistoryItem(NPC from) {
-        this.key = new MemoryDataKey();
+        key = new MemoryDataKey();
         from.save(key);
-        this.type = from.getOrAddTrait(MobType.class).getType();
-        this.uuid = from.getUniqueId();
-        this.id = from.getId();
+        type = from.getOrAddTrait(MobType.class).getType();
+        uuid = from.getUniqueId();
+        id = from.getId();
     }
 
     @Override

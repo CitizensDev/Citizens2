@@ -44,14 +44,12 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                         if (res == null) {
                             updateLastPlayer(player);
                         }
-
                         return res;
                     }
                 });
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-
         } else {
             try {
                 Set<EntityPlayer> delegate = super.trackedPlayers;
@@ -62,7 +60,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                         if (res) {
                             updateLastPlayer(player);
                         }
-
                         return res;
                     }
 
@@ -74,9 +71,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-
         }
-
     }
 
     public PlayerlistTracker(PlayerChunkMap map, EntityTracker entry) {
@@ -92,7 +87,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
             Bukkit.getPluginManager().callEvent(
                     new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), lastUpdatedPlayer.getBukkitEntity()));
         }
-
     }
 
     @Override
@@ -116,11 +110,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
-
             }
-
         }
-
         super.updatePlayer(entityplayer);
     }
 
@@ -130,7 +121,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -140,7 +130,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
@@ -150,7 +139,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -160,7 +148,6 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -180,9 +167,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                 TRACKING_MAP_SETTER = NMS.getFirstSetter(EntityTracker.class, Map.class);
                 TRACKING_MAP_GETTER = NMS.getFirstGetter(EntityTracker.class, Map.class);
             }
-
         } catch (Exception e) {
         }
-
     }
 }

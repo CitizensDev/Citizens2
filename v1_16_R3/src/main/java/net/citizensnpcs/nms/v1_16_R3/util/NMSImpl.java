@@ -351,21 +351,17 @@ public class NMSImpl implements NMSBridge {
                 viewDistance = (int) PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER.invoke(chunkMap);
                 PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, -1);
             }
-
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         boolean success = getHandle(entity).world.addEntity(getHandle(entity), custom);
         try {
             if (chunkMap != null) {
                 PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, viewDistance);
             }
-
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return success;
     }
 
@@ -381,14 +377,12 @@ public class NMSImpl implements NMSBridge {
         } else if (!handle.world.getPlayers().contains(handle)) {
             ((List) handle.world.getPlayers()).add(handle);
         }
-
         try {
             CHUNKMAP_UPDATE_PLAYER_STATUS.invoke(((WorldServer) handle.world).getChunkProvider().playerChunkMap, handle,
                     !remove);
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         // PlayerUpdateTask.addOrRemove(entity, remove);
     }
 
@@ -401,12 +395,10 @@ public class NMSImpl implements NMSBridge {
             PlayerAnimation.ARM_SWING.play((Player) handle.getBukkitEntity());
             return;
         }
-
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).attackEntity(target);
             return;
         }
-
         AttributeModifiable attackDamage = handle.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE);
         float f = (float) (attackDamage == null ? 1 : attackDamage.getValue());
         int i = 0;
@@ -414,7 +406,6 @@ public class NMSImpl implements NMSBridge {
             f += EnchantmentManager.a(handle.getItemInMainHand(), target.getMonsterType());
             i += EnchantmentManager.a(Enchantments.KNOCKBACK, handle);
         }
-
         boolean flag = target.damageEntity(DamageSource.mobAttack(handle), f);
         if (!flag)
             return;
@@ -423,12 +414,10 @@ public class NMSImpl implements NMSBridge {
                     Math.cos(handle.yaw * Math.PI / 180.0F) * i * 0.5F);
             handle.setMot(handle.getMot().d(0.6, 1, 0.6));
         }
-
         int fireAspectLevel = EnchantmentManager.getFireAspectEnchantmentLevel(handle);
         if (fireAspectLevel > 0) {
             target.setOnFire(fireAspectLevel * 4);
         }
-
     }
 
     @Override
@@ -443,9 +432,7 @@ public class NMSImpl implements NMSBridge {
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-
         }
-
     }
 
     @Override
@@ -478,21 +465,16 @@ public class NMSImpl implements NMSBridge {
                         if (!changed && !ItemStack.matches(old, curr)) {
                             changed = true;
                         }
-
                         equipment.put(slot, curr);
                     }
-
                     if (changed) {
                         List<com.mojang.datafixers.util.Pair<EnumItemSlot, ItemStack>> vals = Lists.newArrayList();
                         for (EnumItemSlot slot : EnumItemSlot.values()) {
                             vals.add(com.mojang.datafixers.util.Pair.of(slot, equipment.get(slot)));
                         }
-
                         agg.send(new PacketPlayOutEntityEquipment(handle.getId(), vals));
                     }
-
                 }
-
                 tracker.a();
             }
 
@@ -513,9 +495,7 @@ public class NMSImpl implements NMSBridge {
                     if (callback != null) {
                         callback.accept(entity);
                     }
-
                 }
-
                 linked.clear();
             }
         };
@@ -566,11 +546,9 @@ public class NMSImpl implements NMSBridge {
                     return null;
                 bserver = ((EnderDragonBattle) battleObject).bossBattle;
             }
-
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         if (bserver == null)
             return null;
         BossBar ret = Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SEGMENTED_10);
@@ -579,7 +557,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return ret;
     }
 
@@ -689,13 +666,11 @@ public class NMSImpl implements NMSBridge {
             if (SKULL_PROFILE_FIELD == null)
                 return null;
         }
-
         try {
             return (GameProfile) SKULL_PROFILE_FIELD.get(meta);
         } catch (Exception e) {
             return null;
         }
-
     }
 
     @Override
@@ -713,11 +688,9 @@ public class NMSImpl implements NMSBridge {
                 MinecraftKey key = (MinecraftKey) SOUNDEFFECT_KEY.invoke(effect);
                 return key.getKey();
             }
-
         } catch (Throwable e) {
             throw new CommandException(Messages.INVALID_SOUND);
         }
-
     }
 
     @Override
@@ -733,7 +706,6 @@ public class NMSImpl implements NMSBridge {
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) npc.getEntity());
         if (handle == null) {
         }
-
         return DEFAULT_SPEED;
         // return (float)
         // handle.getAttributeInstance(GenericAttributes.d).getValue();
@@ -778,9 +750,7 @@ public class NMSImpl implements NMSBridge {
             } else {
                 ((EntityInsentient) raw).a(PathType.WATER, oldWater + 1F);
             }
-
         }
-
         navigation.q().b(params.hasExaminer(DoorExaminer.class));
         return new MCNavigator() {
             float lastSpeed;
@@ -793,7 +763,6 @@ public class NMSImpl implements NMSBridge {
                     PathPoint pp = navigation.k().a(i);
                     blocks.add(entity.getWorld().getBlockAt(pp.a, pp.b, pp.c));
                 }
-
                 return blocks;
             }
 
@@ -813,16 +782,13 @@ public class NMSImpl implements NMSBridge {
                     List<org.bukkit.block.Block> blocks = getBlocks(entity, navigation);
                     Util.sendBlockChanges(blocks, null);
                 }
-
                 if (oldWater >= 0) {
                     if (raw instanceof MobAI) {
                         ((MobAI) raw).setPathfindingMalus(PathType.WATER, oldWater);
                     } else {
                         ((EntityInsentient) raw).a(PathType.WATER, oldWater);
                     }
-
                 }
-
                 stopNavigation(navigation);
             }
 
@@ -837,15 +803,12 @@ public class NMSImpl implements NMSBridge {
                             SIZE_FIELD_SETTER.invoke(handle,
                                     new EntitySize(Math.min(0.99F, size.width), size.height, false));
                         }
-
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
-
                     if (!function.apply(navigation)) {
                         reason = CancelReason.STUCK;
                     }
-
                     try {
                         SIZE_FIELD_SETTER.invoke(handle, size);
                     } catch (Throwable e) {
@@ -853,14 +816,11 @@ public class NMSImpl implements NMSBridge {
                         // minecraft requires that an entity fit onto both blocks if width >= 1f, but we'd prefer to
                         // make it just fit on 1 so hack around it a bit.
                     }
-
                     lastSpeed = params.speed();
                 }
-
                 if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
                     Util.sendBlockChanges(getBlocks(entity, navigation), Material.DANDELION);
                 }
-
                 navigation.a((double) params.speed());
                 return NMSImpl.isNavigationFinished(navigation);
             }
@@ -1079,37 +1039,30 @@ public class NMSImpl implements NMSBridge {
             if (zDiff < 0.0) {
                 yaw += Math.abs(180 - yaw) * 2;
             }
-
             if (handle.getBukkitEntity().getType() == EntityType.ENDER_DRAGON) {
                 yaw = Util.getDragonYaw(handle.getBukkitEntity(), xDiff, zDiff);
             } else {
                 yaw = yaw - 90;
             }
-
             if (headOnly) {
                 setHeadYaw(entity, (float) yaw);
             } else {
                 look(entity, (float) yaw, (float) pitch);
             }
-
             return;
         }
-
         if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerLook().a(to.getX(), to.getY(), to.getZ(),
                     ((EntityInsentient) handle).ep(), ((EntityInsentient) handle).O());
             while (((EntityLiving) handle).aC >= 180F) {
                 ((EntityLiving) handle).aC -= 360F;
             }
-
             while (((EntityLiving) handle).aC < -180F) {
                 ((EntityLiving) handle).aC += 360F;
             }
-
         } else if (handle instanceof NPCHolder) {
             ((NPCHolder) handle).getNPC().getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(to);
         }
-
     }
 
     @Override
@@ -1122,22 +1075,18 @@ public class NMSImpl implements NMSBridge {
             } else {
                 look(from, to.getLocation(), false, true);
             }
-
         } else if (handle instanceof EntityInsentient) {
             ((EntityInsentient) handle).getControllerLook().a(target, ((EntityInsentient) handle).ep(),
                     ((EntityInsentient) handle).O());
             while (((EntityLiving) handle).aC >= 180F) {
                 ((EntityLiving) handle).aC -= 360F;
             }
-
             while (((EntityLiving) handle).aC < -180F) {
                 ((EntityLiving) handle).aC += 360F;
             }
-
         } else if (handle instanceof NPCHolder) {
             ((NPCHolder) handle).getNPC().getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(to);
         }
-
     }
 
     @Override
@@ -1174,7 +1123,6 @@ public class NMSImpl implements NMSBridge {
                                     this.resultInventory, this, anvil),
                             this);
                 }
-
                 return this.bukkitEntity;
             }
         };
@@ -1221,13 +1169,11 @@ public class NMSImpl implements NMSBridge {
             if (key == null || type == null) {
                 continue;
             }
-
             CITIZENS_ENTITY_TYPES.put(clazz, type);
             int code = ENTITY_REGISTRY.a(type);
             ENTITY_REGISTRY.put(code, key, type);
             return;
         }
-
         throw new IllegalArgumentException("unable to find valid entity superclass for class " + clazz.toString());
     }
 
@@ -1265,7 +1211,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         if (hooked == null)
             return;
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(hooked.getBukkitEntity());
@@ -1277,10 +1222,8 @@ public class NMSImpl implements NMSBridge {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-
             hook.getBukkitEntity().remove();
         }
-
     }
 
     @Override
@@ -1295,7 +1238,6 @@ public class NMSImpl implements NMSBridge {
         if (getHandle(entity) instanceof EntityHumanNPC) {
             ((EntityHumanNPC) getHandle(entity)).setTracked(replace);
         }
-
     }
 
     @Override
@@ -1305,11 +1247,9 @@ public class NMSImpl implements NMSBridge {
         if (bodyYaw == null) {
             bodyYaw = handle.yaw;
         }
-
         if (pitch == null) {
             pitch = handle.pitch;
         }
-
         List<Packet<?>> toSend = Lists.newArrayList();
         if (position) {
             EntityTracker entry = ((WorldServer) handle.world).getChunkProvider().playerChunkMap.trackedEntities
@@ -1321,7 +1261,6 @@ public class NMSImpl implements NMSBridge {
                 e.printStackTrace();
                 return;
             }
-
             Vec3D pos = handle.getPositionVector().d(ete.b());
             toSend.add(new PacketPlayOutRelEntityMoveLook(handle.getId(), (short) pos.x, (short) pos.y, (short) pos.z,
                     (byte) (bodyYaw * 256.0F / 360.0F), (byte) (pitch * 256.0F / 360.0F), handle.isOnGround()));
@@ -1329,11 +1268,9 @@ public class NMSImpl implements NMSBridge {
             toSend.add(new PacketPlayOutEntityLook(handle.getId(), (byte) (bodyYaw * 256.0F / 360.0F),
                     (byte) (pitch * 256.0F / 360.0F), handle.isOnGround()));
         }
-
         if (headYaw != null) {
             toSend.add(new PacketPlayOutEntityHeadRotation(handle, (byte) (headYaw * 256.0F / 360.0F)));
         }
-
         sendPacketsNearby(null, from.getLocation(), toSend, 64);
     }
 
@@ -1357,7 +1294,6 @@ public class NMSImpl implements NMSBridge {
             entities[i] = (EntityPlayer) skinnable;
             i++;
         }
-
         NMSImpl.sendPacket(recipient,
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entities));
     }
@@ -1378,14 +1314,12 @@ public class NMSImpl implements NMSBridge {
         if (TEAM_FIELD == null) {
             TEAM_FIELD = NMS.getGetter(team.getClass(), "team");
         }
-
         try {
             ScoreboardTeam nmsTeam = (ScoreboardTeam) TEAM_FIELD.invoke(team);
             sendPacket(recipient, new PacketPlayOutScoreboardTeam(nmsTeam, mode));
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -1421,7 +1355,6 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof MobAI) {
             ((MobAI) handle).getMoveControl().a(x, y, z, speed);
         }
-
     }
 
     @Override
@@ -1446,7 +1379,6 @@ public class NMSImpl implements NMSBridge {
         if (!(handle instanceof EntityHuman)) {
             handle.aA = yaw; // TODO: why this
         }
-
         handle.setHeadRotation(yaw);
     }
 
@@ -1492,11 +1424,9 @@ public class NMSImpl implements NMSBridge {
                         npc.data().get("flying-nogravity-float"));
                 npc.data().remove("flying-nogravity-float");
             }
-
         } catch (Throwable t) {
             t.printStackTrace();
         }
-
     }
 
     @Override
@@ -1533,13 +1463,11 @@ public class NMSImpl implements NMSBridge {
             if (SET_PROFILE_METHOD == null)
                 return;
         }
-
         try {
             SET_PROFILE_METHOD.invoke(meta, profile);
         } catch (Throwable t) {
             t.printStackTrace();
         }
-
     }
 
     @Override
@@ -1553,7 +1481,6 @@ public class NMSImpl implements NMSBridge {
         } else if (handle instanceof MobAI) {
             ((MobAI) handle).getJumpControl().jump();
         }
-
     }
 
     @Override
@@ -1571,7 +1498,6 @@ public class NMSImpl implements NMSBridge {
         if (entity instanceof Player) {
             ((Player) entity).setSneaking(sneaking);
         }
-
         EntityPose pose = sneaking ? EntityPose.CROUCHING : EntityPose.STANDING;
         getHandle(entity).setPose(pose);
     }
@@ -1604,7 +1530,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
@@ -1617,7 +1542,6 @@ public class NMSImpl implements NMSBridge {
             field.invoke(null, ENTITY_REGISTRY.get());
         } catch (Throwable e) {
         }
-
     }
 
     @Override
@@ -1627,7 +1551,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -1643,7 +1566,6 @@ public class NMSImpl implements NMSBridge {
         if (RANDOM.nextFloat() <= 0.85F && handle.isInWater()) {
             handle.setMot(handle.getMot().getX(), handle.getMot().getY() + power, handle.getMot().getZ());
         }
-
     }
 
     @Override
@@ -1733,7 +1655,6 @@ public class NMSImpl implements NMSBridge {
                 menuType = Containers.CRAFTING;
                 break;
         }
-
         Container active = handle.activeContainer;
         handle.playerConnection
                 .sendPacket(new PacketPlayOutOpenWindow(active.windowId, menuType, new ChatComponentText(newTitle)));
@@ -1756,7 +1677,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -1768,7 +1688,6 @@ public class NMSImpl implements NMSBridge {
             ((MobAI) en).updatePathfindingRange(pathfindingRange);
             return;
         }
-
         if (NAVIGATION_S == null)
             return;
         NavigationAbstract navigation = ((EntityInsentient) en).getNavigation();
@@ -1780,7 +1699,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     private static class CitizensInventoryAnvil extends CraftInventoryAnvil implements ForwardingInventory {
@@ -1890,7 +1808,6 @@ public class NMSImpl implements NMSBridge {
             e.printStackTrace();
             return;
         }
-
         float oldw = size.width;
         float oldl = size.height;
         cb.accept(datawatcherobject);
@@ -1898,7 +1815,6 @@ public class NMSImpl implements NMSBridge {
             living.setPosition(living.locX() - 0.01, living.locY(), living.locZ() - 0.01);
             living.setPosition(living.locX() + 0.01, living.locY(), living.locZ() + 0.01);
         }
-
     }
 
     public static void clearGoals(NPC npc, PathfinderGoalSelector... goalSelectors) {
@@ -1911,17 +1827,14 @@ public class NMSImpl implements NMSBridge {
                 if (!list.isEmpty()) {
                     npc.data().set("selector" + i, Lists.newArrayList(list));
                 }
-
                 list.clear();
             } catch (Exception e) {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
             } catch (Throwable e) {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
             }
-
             i++;
         }
-
     }
 
     private static CompoundTag convertNBT(net.minecraft.server.v1_16_R3.NBTTagCompound tag) {
@@ -1931,7 +1844,6 @@ public class NMSImpl implements NMSBridge {
         for (String key : tag.getKeys()) {
             tags.put(key, convertNBT(key, tag.get(key)));
         }
-
         return new CompoundTag("", tags);
     }
 
@@ -1962,10 +1874,8 @@ public class NMSImpl implements NMSBridge {
                 for (int i = 0; i < list.size(); i++) {
                     converted.add(convertNBT("", list.get(i)));
                 }
-
                 return new ListTag(key, tagType, converted);
             }
-
         } else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagCompound)
             return convertNBT((net.minecraft.server.v1_16_R3.NBTTagCompound) base);
         else if (base instanceof net.minecraft.server.v1_16_R3.NBTTagEnd)
@@ -1981,7 +1891,6 @@ public class NMSImpl implements NMSBridge {
                 d0 = 0.01D;
                 entity.fallDistance = 0.0F;
             }
-
             Fluid fluid = entity.world.getFluid(entity.getChunkCoordinates());
             if (entity.isInWater() /*&& entity.cT() */ && !entity.a(fluid.getType())) {
                 double d1 = entity.locY();
@@ -1991,34 +1900,28 @@ public class NMSImpl implements NMSBridge {
                 if (f2 > 3.0F) {
                     f2 = 3.0F;
                 }
-
                 if (!entity.isOnGround()) {
                     f2 *= 0.5F;
                 }
-
                 if (f2 > 0.0F) {
                     f += (0.54600006F - f) * f2 / 3.0F;
                     f1 += (entity.dN() - f1) * f2 / 3.0F;
                 }
-
                 if (entity.hasEffect(MobEffects.DOLPHINS_GRACE)) {
                     f = 0.96F;
                 }
-
                 entity.a(f1, vec3d);
                 entity.move(EnumMoveType.SELF, entity.getMot());
                 Vec3D vec3d1 = entity.getMot();
                 if (entity.positionChanged && entity.isClimbing()) {
                     vec3d1 = new Vec3D(vec3d1.x, 0.2D, vec3d1.z);
                 }
-
                 entity.setMot(vec3d1.d(f, 0.800000011920929D, f));
                 Vec3D vec3d2 = entity.a(d0, flag, entity.getMot());
                 entity.setMot(vec3d2);
                 if (entity.positionChanged && entity.e(vec3d2.x, vec3d2.y + 0.6D - entity.locY() + d1, vec3d2.z)) {
                     entity.setMot(vec3d2.x, 0.30000001192092896D, vec3d2.z);
                 }
-
             } else if (entity.aQ() /*&& entity.cT()*/ && !entity.a(fluid.getType())) {
                 double d1 = entity.locY();
                 entity.a(0.02F, vec3d);
@@ -2030,22 +1933,18 @@ public class NMSImpl implements NMSBridge {
                 } else {
                     entity.setMot(entity.getMot().a(0.5D));
                 }
-
                 if (!entity.isNoGravity()) {
                     entity.setMot(entity.getMot().add(0.0D, -d0 / 4.0D, 0.0D));
                 }
-
                 Vec3D vec3d3 = entity.getMot();
                 if (entity.positionChanged && entity.e(vec3d3.x, vec3d3.y + 0.6D - entity.locY() + d1, vec3d3.z)) {
                     entity.setMot(vec3d3.x, 0.3D, vec3d3.z);
                 }
-
             } else if (entity.isGliding()) {
                 Vec3D vec3d4 = entity.getMot();
                 if (vec3d4.y > -0.5D) {
                     entity.fallDistance = 1.0F;
                 }
-
                 Vec3D vec3d5 = entity.getLookDirection();
                 float f = entity.pitch * 0.017453292F;
                 double d2 = Math.sqrt(vec3d5.x * vec3d5.x + vec3d5.z * vec3d5.z);
@@ -2058,17 +1957,14 @@ public class NMSImpl implements NMSBridge {
                     double d5 = vec3d4.y * -0.1D * f3;
                     vec3d4 = vec3d4.add(vec3d5.x * d5 / d2, d5, vec3d5.z * d5 / d2);
                 }
-
                 if (f < 0.0F && d2 > 0.0D) {
                     double d5 = d3 * -MathHelper.sin(f) * 0.04D;
                     vec3d4 = vec3d4.add(-vec3d5.x * d5 / d2, d5 * 3.2D, -vec3d5.z * d5 / d2);
                 }
-
                 if (d2 > 0.0D) {
                     vec3d4 = vec3d4.add((vec3d5.x / d2 * d3 - vec3d4.x) * 0.1D, 0.0D,
                             (vec3d5.z / d2 * d3 - vec3d4.z) * 0.1D);
                 }
-
                 entity.setMot(vec3d4.d(0.9900000095367432D, 0.9800000190734863D, 0.9900000095367432D));
                 entity.move(EnumMoveType.SELF, entity.getMot());
                 if (entity.positionChanged && !entity.world.isClientSide) {
@@ -2081,17 +1977,13 @@ public class NMSImpl implements NMSBridge {
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
-
                         entity.damageEntity(DamageSource.FLY_INTO_WALL, f4);
                     }
-
                 }
-
                 if (entity.isOnGround() && !entity.world.isClientSide && entity.getFlag(7)
                         && !CraftEventFactory.callToggleGlideEvent(entity, false).isCancelled()) {
                     entity.setFlag(7, false);
                 }
-
             } else {
                 BlockPosition blockposition = new BlockPosition(entity.locX(),
                         entity.getBoundingBox().minY - 0.5000001D, entity.locZ());// entity.ar();
@@ -2108,16 +2000,12 @@ public class NMSImpl implements NMSBridge {
                     } else {
                         d7 = 0.0D;
                     }
-
                 } else if (!entity.isNoGravity()) {
                     d7 -= d0;
                 }
-
                 entity.setMot(vec3d6.x * f, d7 * 0.9800000190734863D, vec3d6.z * f);
             }
-
         }
-
         entity.a(entity, entity instanceof EntityBird);
     }
 
@@ -2127,7 +2015,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -2163,7 +2050,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -2173,7 +2059,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -2210,7 +2095,6 @@ public class NMSImpl implements NMSBridge {
         if (mat != null) {
             minecart.setDisplayBlock(Block.getByCombinedId(mat.getId()).getBlock().getBlockData());
         }
-
         minecart.setDisplayBlockOffset(offset);
     }
 
@@ -2227,7 +2111,6 @@ public class NMSImpl implements NMSBridge {
             handle.setMot(handle.getMot().a(0.9));
             return true;
         }
-
         return false;
     }
 
@@ -2238,7 +2121,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     public static void restoreGoals(NPC npc, PathfinderGoalSelector... goalSelectors) {
@@ -2253,16 +2135,13 @@ public class NMSImpl implements NMSBridge {
                 if (old != null) {
                     list.addAll(old);
                 }
-
             } catch (Exception e) {
                 Messaging.logTr(Messages.ERROR_RESTORING_GOALS, e.getLocalizedMessage());
             } catch (Throwable e) {
                 Messaging.logTr(Messages.ERROR_RESTORING_GOALS, e.getLocalizedMessage());
             }
-
             i++;
         }
-
     }
 
     public static void sendPacket(Player player, Packet<?> packet) {
@@ -2289,13 +2168,10 @@ public class NMSImpl implements NMSBridge {
                     || location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius) {
                 continue;
             }
-
             for (Packet<?> packet : packets) {
                 NMSImpl.sendPacket(player, packet);
             }
-
         }
-
     }
 
     public static void sendPacketsNearby(Player from, Location location, Packet<?>... packets) {
@@ -2308,7 +2184,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     public static void setAttribute(EntityLiving entity, AttributeBase attribute, double value) {
@@ -2326,10 +2201,8 @@ public class NMSImpl implements NMSBridge {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-
             range = entity.getAttributeMap().a(attribute);
         }
-
         range.setValue(value);
     }
 
@@ -2339,7 +2212,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     public static void setLookControl(EntityInsentient mob, ControllerLook control) {
@@ -2348,7 +2220,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     public static void setNotInSchool(EntityFish entity) {
@@ -2356,11 +2227,9 @@ public class NMSImpl implements NMSBridge {
             if (ENTITY_FISH_NUM_IN_SCHOOL != null) {
                 ENTITY_FISH_NUM_IN_SCHOOL.invoke(entity, 2);
             }
-
         } catch (Throwable ex) {
             ex.printStackTrace();
         }
-
     }
 
     public static void setSize(Entity entity, boolean justCreated) {
@@ -2383,13 +2252,10 @@ public class NMSImpl implements NMSBridge {
                     float f = entitysize.width - entitysize1.width;
                     entity.move(EnumMoveType.SELF, new Vec3D(f, 0.0D, f));
                 }
-
             }
-
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     public static void setSize(Entity entity, EntitySize size) {
@@ -2399,7 +2265,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     public static void stopNavigation(NavigationAbstract navigation) {
@@ -2417,7 +2282,6 @@ public class NMSImpl implements NMSBridge {
         } else if (entity instanceof MobAI) {
             ((MobAI) entity).tickAI();
         }
-
     }
 
     public static void updateMinecraftAIState(NPC npc, EntityInsentient entity) {
@@ -2430,7 +2294,6 @@ public class NMSImpl implements NMSBridge {
                 getBehaviorMap(entity).putAll(behavior);
                 npc.data().remove("behavior-map");
             }
-
         } else {
             NMSImpl.clearGoals(npc, entity.goalSelector, entity.targetSelector);
             TreeMap behaviorMap = getBehaviorMap(entity);
@@ -2438,9 +2301,7 @@ public class NMSImpl implements NMSBridge {
                 npc.data().set("behavior-map", new TreeMap(behaviorMap));
                 behaviorMap.clear();
             }
-
         }
-
     }
 
     public static void updateNavigation(NavigationAbstract navigation) {
@@ -2522,7 +2383,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
         }
-
         try {
             ENDERMAN_ANGRY = (DataWatcherObject<Boolean>) NMS.getField(EntityEnderman.class, "bo").get(null);
         } catch (IllegalArgumentException e) {
@@ -2530,6 +2390,5 @@ public class NMSImpl implements NMSBridge {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
     }
 }

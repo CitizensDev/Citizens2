@@ -1,5 +1,6 @@
 package net.citizensnpcs.util;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -28,19 +29,16 @@ public class ChunkCoord {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
+
         ChunkCoord other = (ChunkCoord) obj;
-        if (worldUUID == null) {
-            if (other.worldUUID != null) {
-                return false;
-            }
-        } else if (!worldUUID.equals(other.worldUUID)) {
+        if (!Objects.equals(worldUUID, other.worldUUID)) {
             return false;
+
         }
         return x == other.x && z == other.z;
     }
@@ -53,7 +51,7 @@ public class ChunkCoord {
     @Override
     public int hashCode() {
         final int prime = 31;
-        return prime * (prime * (prime + ((worldUUID == null) ? 0 : worldUUID.hashCode())) + x) + z;
+        return prime * (prime * (prime + (worldUUID == null ? 0 : worldUUID.hashCode())) + x) + z;
     }
 
     public void setForceLoaded(boolean b) {

@@ -55,11 +55,11 @@ public class Text extends Trait implements Runnable, Listener {
     private boolean speechBubbles;
     @Persist(value = "talk-close")
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
-    private final List<String> text = new ArrayList<String>();
+    private final List<String> text = new ArrayList<>();
 
     public Text() {
         super("text");
-        this.plugin = CitizensAPI.getPlugin();
+        plugin = CitizensAPI.getPlugin();
     }
 
     /**
@@ -87,10 +87,10 @@ public class Text extends Trait implements Runnable, Listener {
     /**
      * Builds a text editor in game for the supplied {@link Player}.
      */
-    public Editor getEditor(final Player player) {
-        final Conversation conversation = new ConversationFactory(plugin).withLocalEcho(false)
-                .withEscapeSequence("/npc text").withEscapeSequence("exit").withModality(false)
-                .withFirstPrompt(new TextBasePrompt(this)).buildConversation(player);
+    public Editor getEditor(Player player) {
+        Conversation conversation = new ConversationFactory(plugin).withLocalEcho(false).withEscapeSequence("/npc text")
+                .withEscapeSequence("exit").withModality(false).withFirstPrompt(new TextBasePrompt(this))
+                .buildConversation(player);
         return new Editor() {
             @Override
             public void begin() {
@@ -142,11 +142,9 @@ public class Text extends Trait implements Runnable, Listener {
         for (DataKey sub : key.getRelative("text").getIntegerSubKeys()) {
             text.add(sub.getString(""));
         }
-
         if (text.isEmpty()) {
             populateDefaultText();
         }
-
         range = key.getDouble("range");
     }
 
@@ -178,8 +176,9 @@ public class Text extends Trait implements Runnable, Listener {
             return;
 
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(), range)) {
-            if (player.getGameMode() == GameMode.SPECTATOR)
+            if (player.getGameMode() == GameMode.SPECTATOR) {
                 continue;
+            }
             talk(player);
         }
     }
@@ -216,7 +215,6 @@ public class Text extends Trait implements Runnable, Listener {
             }
             index = currentIndex++;
         }
-
         if (speechBubbles) {
             HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
             trait.addTemporaryLine(Placeholders.replace(text.get(index), player, npc),
@@ -271,7 +269,6 @@ public class Text extends Trait implements Runnable, Listener {
 
             cooldowns.remove(player.getUniqueId());
         }
-
         sendText(player);
 
         int delay = this.delay == -1
@@ -280,35 +277,35 @@ public class Text extends Trait implements Runnable, Listener {
                 : this.delay;
         if (delay <= 0)
             return;
-        cooldowns.put(player.getUniqueId(), System.currentTimeMillis() + (delay * 50));
+        cooldowns.put(player.getUniqueId(), System.currentTimeMillis() + delay * 50);
     }
 
     /**
      * Toggles talking at random intervals.
      */
     public boolean toggleRandomTalker() {
-        return (randomTalker = !randomTalker);
+        return randomTalker = !randomTalker;
     }
 
     /**
      * Toggles requiring line of sight before talking.
      */
     public boolean toggleRealisticLooking() {
-        return (realisticLooker = !realisticLooker);
+        return realisticLooker = !realisticLooker;
     }
 
     /**
      * Toggles using speech bubbles instead of messages.
      */
     public boolean toggleSpeechBubbles() {
-        return (speechBubbles = !speechBubbles);
+        return speechBubbles = !speechBubbles;
     }
 
     /**
      * Toggles talking to nearby Players.
      */
     public boolean toggleTalkClose() {
-        return (talkClose = !talkClose);
+        return talkClose = !talkClose;
     }
 
     public boolean useRealisticLooking() {
@@ -319,5 +316,5 @@ public class Text extends Trait implements Runnable, Listener {
         return speechBubbles;
     }
 
-    private static final Random RANDOM = Util.getFastRandom();
+    private static Random RANDOM = Util.getFastRandom();
 }

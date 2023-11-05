@@ -53,7 +53,6 @@ public class ThrownExpBottleController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -67,7 +66,6 @@ public class ThrownExpBottleController extends MobEntityController {
             if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -75,7 +73,6 @@ public class ThrownExpBottleController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new ThrownExpBottleNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -91,11 +88,9 @@ public class ThrownExpBottleController extends MobEntityController {
                 if (!npc.isProtected()) {
                     super.m();
                 }
-
             } else {
                 super.m();
             }
-
         }
     }
 

@@ -82,7 +82,6 @@ public class GhastController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -101,7 +100,6 @@ public class GhastController extends MobEntityController {
             if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -114,7 +112,6 @@ public class GhastController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new GhastNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -133,7 +130,6 @@ public class GhastController extends MobEntityController {
             if (npc == null) {
                 super.L();
             }
-
         }
 
         @Override
@@ -141,7 +137,6 @@ public class GhastController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
-
             super.M();
         }
     }

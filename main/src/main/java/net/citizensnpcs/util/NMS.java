@@ -136,7 +136,6 @@ public class NMS {
         if (!PAPER_KNOCKBACK_EVENT_EXISTS) {
             event.getKnockbackVector().multiply(new Vector(-1, 0, -1));
         }
-
         if (!event.isCancelled()) {
             cb.accept(event);
         }
@@ -180,7 +179,6 @@ public class NMS {
                         "findProfilesByNames", false, String[].class, ProfileLookupCallback.class);
             }
         }
-
         try {
             FIND_PROFILES_BY_NAMES.invoke(BRIDGE.getGameProfileRepository(), names, cb);
         } catch (Throwable e) {
@@ -201,9 +199,9 @@ public class NMS {
     }
 
     public static BoundingBox getCollisionBox(Block block) {
-        if (block.getType() == Material.AIR) {
+        if (block.getType() == Material.AIR)
             return BoundingBox.EMPTY;
-        }
+
         return BRIDGE.getCollisionBox(block).add(block.getX(), block.getY(), block.getZ());
     }
 
@@ -244,8 +242,9 @@ public class NMS {
     private static List<Field> getFieldsMatchingType(Class<?> clazz, Class<?> type, boolean allowStatic) {
         List<Field> found = Lists.newArrayList();
         for (Field field : clazz.getDeclaredFields()) {
-            if (allowStatic ^ Modifier.isStatic(field.getModifiers()))
+            if (allowStatic ^ Modifier.isStatic(field.getModifiers())) {
                 continue;
+            }
             if (field.getType() == type) {
                 found.add(field);
                 field.setAccessible(true);
@@ -385,14 +384,16 @@ public class NMS {
         try {
             Method first = null;
             for (Method method : clazz.getDeclaredMethods()) {
-                if (returnType != null && !returnType.equals(method.getReturnType()))
+                if (returnType != null && !returnType.equals(method.getReturnType())) {
                     continue;
+                }
                 Class<?>[] paramTypes = method.getParameterTypes();
                 if (paramTypes.length == params.length) {
                     first = method;
                     for (int i = 0; i < paramTypes.length; i++) {
                         if (paramTypes[i] != params[i]) {
                             first = null;
+                            break;
                         }
                     }
                     if (first != null) {
@@ -472,9 +473,8 @@ public class NMS {
     public static float getJumpPower(NPC npc, float original) {
         if (npc == null)
             return original;
-        if (npc.data().has(NPC.Metadata.JUMP_POWER_SUPPLIER)) {
+        if (npc.data().has(NPC.Metadata.JUMP_POWER_SUPPLIER))
             return npc.data().<Function<NPC, Float>> get(NPC.Metadata.JUMP_POWER_SUPPLIER).apply(npc);
-        }
 
         return original;
     }
@@ -816,9 +816,9 @@ public class NMS {
     }
 
     public static void setPeekShulker(org.bukkit.entity.Entity entity, int peek) {
-        if (!entity.getType().name().equals("SHULKER")) {
+        if (!entity.getType().name().equals("SHULKER"))
             throw new IllegalArgumentException("entity must be a shulker");
-        }
+
         BRIDGE.setPeekShulker(entity, peek);
     }
 

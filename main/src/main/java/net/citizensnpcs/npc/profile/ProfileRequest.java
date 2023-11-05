@@ -61,10 +61,9 @@ public class ProfileRequest {
             handler.onResult(this);
             return;
         }
-
-        if (handlers == null)
-            handlers = new ArrayDeque<ProfileFetchHandler>();
-
+        if (handlers == null) {
+            handlers = new ArrayDeque<>();
+        }
         handlers.addLast(handler);
     }
 
@@ -105,24 +104,20 @@ public class ProfileRequest {
      * @param result
      *            The result of the request.
      */
-    void setResult(final @Nullable GameProfile profile, final ProfileFetchResult result) {
+    void setResult(@Nullable GameProfile profile, ProfileFetchResult result) {
         if (!CitizensAPI.hasImplementation())
             return;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                ProfileRequest.this.profile = profile;
-                ProfileRequest.this.result = result;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            ProfileRequest.this.profile = profile;
+            ProfileRequest.this.result = result;
 
-                if (handlers == null)
-                    return;
+            if (handlers == null)
+                return;
 
-                while (!handlers.isEmpty()) {
-                    handlers.removeFirst().onResult(ProfileRequest.this);
-                }
-
-                handlers = null;
+            while (!handlers.isEmpty()) {
+                handlers.removeFirst().onResult(ProfileRequest.this);
             }
+            handlers = null;
         });
     }
 }

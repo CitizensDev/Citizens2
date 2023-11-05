@@ -36,7 +36,6 @@ public class SleepTrait extends Trait {
             }
             return;
         }
-
         if (SUPPORT_BLOCKDATA == null) {
             try {
                 SUPPORT_BLOCKDATA = true;
@@ -45,14 +44,13 @@ public class SleepTrait extends Trait {
                 SUPPORT_BLOCKDATA = false;
             }
         }
-
         if (npc.getEntity() instanceof Player) {
             Player player = (Player) npc.getEntity();
             if (!SUPPORT_BLOCKSTATE) {
                 NMS.sleep(player, true);
             } else {
                 try {
-                    if ((SUPPORT_BLOCKDATA && at.getBlock().getBlockData() instanceof Bed)
+                    if (SUPPORT_BLOCKDATA && at.getBlock().getBlockData() instanceof Bed
                             || at.getBlock().getState() instanceof Bed) {
                         player.sleep(at, true);
                     } else {

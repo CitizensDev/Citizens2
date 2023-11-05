@@ -65,7 +65,6 @@ public class TropicalFishController extends MobEntityController {
                 this.oldMoveController = this.moveControl;
                 this.moveControl = new MoveControl(this);
             }
-
         }
 
         @Override
@@ -74,12 +73,10 @@ public class TropicalFishController extends MobEntityController {
             if (npc != null) {
                 this.verticalCollision = false;
             }
-
             super.aiStep();
             if (npc != null) {
                 this.verticalCollision = lastInWater;
             }
-
         }
 
         @Override
@@ -101,7 +98,6 @@ public class TropicalFishController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -109,7 +105,6 @@ public class TropicalFishController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
-
         }
 
         @Override
@@ -118,23 +113,18 @@ public class TropicalFishController extends MobEntityController {
                 if (!npc.useMinecraftAI()) {
                     NMSImpl.setNotInSchool(this);
                 }
-
                 NMSImpl.updateMinecraftAIState(npc, this);
                 if (npc.useMinecraftAI() && this.moveControl != this.oldMoveController) {
                     this.moveControl = this.oldMoveController;
                 }
-
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
                     this.moveControl = new EntityMoveControl(this);
                 }
-
             }
-
             super.customServerAiStep();
             if (npc != null) {
                 npc.update();
             }
-
         }
 
         @Override
@@ -147,7 +137,6 @@ public class TropicalFishController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new TropicalFishNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -227,7 +216,6 @@ public class TropicalFishController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -238,7 +226,6 @@ public class TropicalFishController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -259,11 +246,9 @@ public class TropicalFishController extends MobEntityController {
                 if (!NMSImpl.moveFish(npc, this, vec3d)) {
                     super.travel(vec3d);
                 }
-
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
-
         }
 
         @Override
@@ -275,7 +260,6 @@ public class TropicalFishController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

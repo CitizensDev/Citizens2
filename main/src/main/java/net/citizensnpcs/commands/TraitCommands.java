@@ -42,7 +42,6 @@ public class TraitCommands {
                 failed.add(String.format("%s: No permission", traitName));
                 continue;
             }
-
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
                 failed.add(String.format("%s: Trait not found", traitName));
@@ -108,7 +107,6 @@ public class TraitCommands {
                 failed.add(String.format("%s: No permission", traitName));
                 continue;
             }
-
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
                 failed.add(String.format("%s: Trait not found", traitName));
@@ -122,10 +120,12 @@ public class TraitCommands {
             removeTrait(npc, clazz, sender);
             removed.add(StringHelper.wrap(traitName));
         }
-        if (removed.size() > 0)
+        if (removed.size() > 0) {
             Messaging.sendTr(sender, Messages.TRAITS_REMOVED, Joiner.on(", ").join(removed));
-        if (failed.size() > 0)
+        }
+        if (failed.size() > 0) {
             Messaging.sendTr(sender, Messages.FAILED_TO_REMOVE, Joiner.on(", ").join(failed));
+        }
     }
 
     private void removeTrait(NPC npc, Class<? extends Trait> clazz, CommandSender sender) {
@@ -150,7 +150,6 @@ public class TraitCommands {
                 failed.add(String.format("%s: No permission", traitName));
                 continue;
             }
-
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
                 failed.add(String.format("%s: Trait not found", traitName));

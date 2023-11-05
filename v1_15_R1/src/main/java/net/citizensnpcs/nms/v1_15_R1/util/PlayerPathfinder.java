@@ -74,7 +74,6 @@ public class PlayerPathfinder extends Pathfinder {
             var4 = var4.h;
             var3.add(0, var4);
         }
-
         return new PathEntity(var3, var1, var2);
     }
 
@@ -93,14 +92,12 @@ public class PlayerPathfinder extends Pathfinder {
             if (var6 >= var7) {
                 break;
             }
-
             PathPoint var8 = this.a.c();
             var8.i = true;
             var5.stream().filter(var2x -> (var8.c(var2x) <= var3)).forEach(PathDestination::e);
             if (var5.stream().anyMatch(PathDestination::f)) {
                 break;
             }
-
             if (var8.a(var0) < var2) {
                 int var9 = this.e.a(this.c, var8);
                 for (int var10 = 0; var10 < var9; ++var10) {
@@ -118,15 +115,10 @@ public class PlayerPathfinder extends Pathfinder {
                             var11.g = var11.e + var11.f;
                             this.a.a(var11);
                         }
-
                     }
-
                 }
-
             }
-
         }
-
         Stream var8;
         if (var5.stream().anyMatch(PathDestination::f)) {
             var8 = var5.stream().filter(PathDestination::f).map(var1x -> this.a(var1x.d(), var1.get(var1x), true))
@@ -134,7 +126,6 @@ public class PlayerPathfinder extends Pathfinder {
         } else {
             var8 = getFallbackDestinations(var1, var5);
         }
-
         Optional var9 = var8.findFirst();
         if (!var9.isPresent())
             return null;
@@ -142,7 +133,6 @@ public class PlayerPathfinder extends Pathfinder {
             PathEntity var10 = (PathEntity) var9.get();
             return var10;
         }
-
     }
 
     private float a(PathPoint var0, Set var1) {
@@ -153,7 +143,6 @@ public class PlayerPathfinder extends Pathfinder {
             var5 = var0.a(var6);
             var6.a(var5, var0);
         }
-
         return var2;
     }
 

@@ -31,17 +31,17 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
     public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
         this.npc = npc;
-        this.parameters = params;
-        this.handle = npc.getEntity();
+        parameters = params;
+        handle = npc.getEntity();
         this.target = target;
         TargetNavigator nms = NMS.getTargetNavigator(npc.getEntity(), target, params);
-        this.targetNavigator = nms != null && !params.useNewPathfinder() ? nms : new AStarTargeter();
+        targetNavigator = nms != null && !params.useNewPathfinder() ? nms : new AStarTargeter();
         this.aggro = aggro;
     }
 
     private boolean canAttack() {
         BoundingBox handleBB = NMS.getBoundingBox(handle), targetBB = NMS.getBoundingBox(target);
-        return attackTicks <= 0 && (handleBB.maxY > targetBB.minY && handleBB.minY < targetBB.maxY)
+        return attackTicks <= 0 && handleBB.maxY > targetBB.minY && handleBB.minY < targetBB.maxY
                 && distance() <= parameters.attackRange() && ((LivingEntity) handle).hasLineOfSight(target);
     }
 
@@ -105,19 +105,16 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             cancelReason = CancelReason.TARGET_DIED;
             return true;
         }
-
         if (target.getWorld() != handle.getWorld()) {
             cancelReason = CancelReason.TARGET_MOVED_WORLD;
             return true;
         }
-
         if (cancelReason != null)
             return true;
 
         if (parameters.straightLineTargetingDistance() > 0 && !(targetNavigator instanceof StraightLineTargeter)) {
             targetNavigator = new StraightLineTargeter(targetNavigator);
         }
-
         if (!aggro && distance() <= parameters.distanceMargin()) {
             stop();
             return false;
@@ -125,7 +122,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             targetNavigator.setPath();
             updateCounter = 0;
         }
-
         targetNavigator.update();
 
         NMS.look(handle, target);
@@ -137,11 +133,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             }
             attackTicks = parameters.attackDelayTicks();
         }
-
         if (attackTicks > 0) {
             attackTicks--;
         }
-
         return false;
     }
 
@@ -179,9 +173,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
         private void setStrategy() {
             Location location = parameters.entityTargetLocationMapper().apply(target);
-            if (location == null) {
+            if (location == null)
                 throw new IllegalStateException("mapper should not return null");
-            }
             if (!npc.isFlyable()) {
                 Block block = location.getBlock();
                 while (!MinecraftBlockExaminer.canStandOn(block.getRelative(BlockFace.DOWN))) {
@@ -239,7 +232,6 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                 active = new StraightLineNavigationStrategy(npc, target, parameters);
                 return;
             }
-
             active = null;
             fallback.setPath();
         }

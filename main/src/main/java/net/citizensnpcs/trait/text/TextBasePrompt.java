@@ -60,7 +60,6 @@ public class TextBasePrompt extends StringPrompt {
                 Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
             }
         }
-
         Messaging.send(sender, getPromptText(context));
 
         if (input.equalsIgnoreCase("delay")) {
@@ -100,9 +99,7 @@ public class TextBasePrompt extends StringPrompt {
             }
         } else {
             Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_EDIT_TYPE);
-            return this;
         }
-
         return this;
     }
 
@@ -117,7 +114,7 @@ public class TextBasePrompt extends StringPrompt {
                         colorToggleableText(text.isRandomTalker()), colorToggleableText(text.useSpeechBubbles()),
                         colorToggleableText(text.useRealisticLooking())));
         int page = context.getSessionData("page") == null ? 1 : (int) context.getSessionData("page");
-        text.sendPage(((Player) context.getForWhom()), page);
+        text.sendPage((Player) context.getForWhom(), page);
         return "";
     }
 }

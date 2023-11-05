@@ -98,7 +98,7 @@ public class CommandAction extends NPCShopAction {
         @Override
         public void initialise(MenuContext ctx) {
             for (int i = 0; i < 3 * 9; i++) {
-                final int idx = i;
+                int idx = i;
                 ctx.getSlot(i).clear();
                 if (i < base.commands.size()) {
                     ctx.getSlot(i).setItemStack(new ItemStack(Material.FEATHER), "<f>Set command",
@@ -114,7 +114,7 @@ public class CommandAction extends NPCShopAction {
                         return;
                     }
                     ctx.getMenu().transition(InputMenus
-                            .stringSetter(() -> idx < base.commands.size() ? base.commands.get(idx) : "", (res) -> {
+                            .stringSetter(() -> idx < base.commands.size() ? base.commands.get(idx) : "", res -> {
                                 if (res == null) {
                                     if (idx < base.commands.size()) {
                                         base.commands.remove(idx);
@@ -131,11 +131,11 @@ public class CommandAction extends NPCShopAction {
             }
             ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("COMMAND_BLOCK", "COMMAND")),
                     "Run commands as server", base.server ? ChatColor.GREEN + "On" : ChatColor.RED + "OFF");
-            ctx.getSlot(3 * 9 + 3).addClickHandler(InputMenus.toggler((res) -> base.server = res, base.server));
+            ctx.getSlot(3 * 9 + 3).addClickHandler(InputMenus.toggler(res -> base.server = res, base.server));
             ctx.getSlot(3 * 9 + 4).setItemStack(
                     new ItemStack(Util.getFallbackMaterial("COMPARATOR", "REDSTONE_COMPARATOR")), "Run commands as op",
                     base.op ? ChatColor.GREEN + "On" : ChatColor.RED + "OFF");
-            ctx.getSlot(3 * 9 + 4).addClickHandler(InputMenus.clickToggle((res) -> {
+            ctx.getSlot(3 * 9 + 4).addClickHandler(InputMenus.clickToggle(res -> {
                 base.op = res;
                 return res ? ChatColor.GREEN + "On" : ChatColor.RED + "Off";
             }, base.server));

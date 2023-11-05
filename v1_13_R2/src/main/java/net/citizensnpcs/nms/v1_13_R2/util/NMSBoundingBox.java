@@ -41,9 +41,7 @@ public class NMSBoundingBox {
             } catch (Exception ex2) {
                 ex.printStackTrace();
             }
-
         }
-
         return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
     }
 

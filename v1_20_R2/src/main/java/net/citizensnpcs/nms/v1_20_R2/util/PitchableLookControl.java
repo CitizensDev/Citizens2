@@ -18,7 +18,6 @@ public class PitchableLookControl extends LookControl {
         } else {
             resetOnTick = () -> true;
         }
-
     }
 
     @Override

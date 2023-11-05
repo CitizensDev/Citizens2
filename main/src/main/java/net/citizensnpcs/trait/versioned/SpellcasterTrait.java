@@ -38,7 +38,6 @@ public class SpellcasterTrait extends Trait {
         if (spell != null) {
             ((Spellcaster) npc.getEntity()).setSpell(spell);
         }
-
     }
 
     public void setSpell(Spell spell) {
@@ -65,8 +64,7 @@ public class SpellcasterTrait extends Trait {
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

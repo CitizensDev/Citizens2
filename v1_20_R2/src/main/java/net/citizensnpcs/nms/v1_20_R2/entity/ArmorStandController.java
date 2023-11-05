@@ -60,7 +60,6 @@ public class ArmorStandController extends MobEntityController {
             if (npc != null) {
                 ai = new BasicMobAI(this);
             }
-
         }
 
         @Override
@@ -73,7 +72,6 @@ public class ArmorStandController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new ArmorStandNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -109,7 +107,6 @@ public class ArmorStandController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -120,7 +117,6 @@ public class ArmorStandController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -142,7 +138,6 @@ public class ArmorStandController extends MobEntityController {
                 npc.update();
                 ai.tickAI();
             }
-
         }
 
         @Override
@@ -154,7 +149,6 @@ public class ArmorStandController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

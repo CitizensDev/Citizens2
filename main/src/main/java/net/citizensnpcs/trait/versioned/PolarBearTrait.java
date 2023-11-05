@@ -62,8 +62,7 @@ public class PolarBearTrait extends Trait {
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

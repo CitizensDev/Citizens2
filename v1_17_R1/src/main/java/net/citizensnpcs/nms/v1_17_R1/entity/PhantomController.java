@@ -66,7 +66,6 @@ public class PhantomController extends MobEntityController {
                 this.lookControl = new LookControl(this);
                 // TODO: phantom pitch reversed
             }
-
         }
 
         @Override
@@ -78,19 +77,15 @@ public class PhantomController extends MobEntityController {
                     this.moveControl = this.oldMoveController;
                     this.lookControl = this.oldLookController;
                 }
-
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
                     this.moveControl = new EntityMoveControl(this);
                     this.lookControl = new LookControl(this);
                 }
-
                 if (npc.isProtected()) {
                     this.setSecondsOnFire(0);
                 }
-
                 npc.update();
             }
-
         }
 
         @Override
@@ -112,7 +107,6 @@ public class PhantomController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -120,7 +114,6 @@ public class PhantomController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
-
         }
 
         @Override
@@ -133,7 +126,6 @@ public class PhantomController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new PhantomNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -210,7 +202,6 @@ public class PhantomController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -220,7 +211,6 @@ public class PhantomController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -231,7 +221,6 @@ public class PhantomController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -251,7 +240,6 @@ public class PhantomController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
-
         }
 
         @Override
@@ -263,7 +251,6 @@ public class PhantomController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

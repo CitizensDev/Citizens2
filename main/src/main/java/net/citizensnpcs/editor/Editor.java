@@ -58,5 +58,5 @@ public abstract class Editor implements Listener {
         EDITING.clear();
     }
 
-    private static final Map<UUID, Editor> EDITING = new HashMap<UUID, Editor>();
+    private static final Map<UUID, Editor> EDITING = new HashMap<>();
 }

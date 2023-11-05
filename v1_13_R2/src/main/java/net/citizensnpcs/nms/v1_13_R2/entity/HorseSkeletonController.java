@@ -68,7 +68,6 @@ public class HorseSkeletonController extends MobEntityController {
                         .setDomestication(((SkeletonHorse) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
-
         }
 
         @Override
@@ -82,7 +81,6 @@ public class HorseSkeletonController extends MobEntityController {
                 super.a(flag);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
@@ -91,7 +89,6 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -107,7 +104,6 @@ public class HorseSkeletonController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }
-
         }
 
         @Override
@@ -123,7 +119,6 @@ public class HorseSkeletonController extends MobEntityController {
                 motY = my;
                 motZ = mz;
             }
-
             return res;
         }
 
@@ -144,7 +139,6 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.c(f, f1);
             }
-
         }
 
         @Override
@@ -160,7 +154,6 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -189,7 +182,6 @@ public class HorseSkeletonController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -197,7 +189,6 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new HorseSkeletonNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -216,7 +207,6 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc == null) {
                 super.I();
             }
-
         }
 
         @Override
@@ -235,15 +225,12 @@ public class HorseSkeletonController extends MobEntityController {
                 } else {
                     riding = false;
                 }
-
                 if (riding) {
                     d(4, true); // datawatcher method
                 }
-
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
-
         }
 
         @Override

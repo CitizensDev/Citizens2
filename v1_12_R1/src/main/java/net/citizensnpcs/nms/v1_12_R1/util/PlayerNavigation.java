@@ -114,11 +114,8 @@ public class PlayerNavigation extends NavigationAbstract {
                             || localPathType == PathType.DAMAGE_OTHER)
                         return false;
                 }
-
             }
-
         }
-
         return true;
     }
 
@@ -128,11 +125,9 @@ public class PlayerNavigation extends NavigationAbstract {
             this.c = null;
             return false;
         }
-
         if (!paramPathEntity.a(this.c)) {
             this.c = paramPathEntity;
         }
-
         q_();
         if (this.c.d() <= 0)
             return false;
@@ -149,11 +144,9 @@ public class PlayerNavigation extends NavigationAbstract {
             if (paramVec3D.distanceSquared(this.k) < 2.25D) {
                 p();
             }
-
             this.j = this.e;
             this.k = paramVec3D;
         }
-
         if (this.c != null && !this.c.b()) {
             Vec3D localVec3D = this.c.f();
             if (localVec3D.equals(this.l)) {
@@ -163,17 +156,14 @@ public class PlayerNavigation extends NavigationAbstract {
                 double d1 = paramVec3D.f(this.l);
                 this.o = this.a.cy() > 0.0F ? d1 / this.a.cy() * 1000.0D : 0.0D;
             }
-
             if (this.o > 0.0D && this.m > this.o * 3.0D) {
                 this.l = Vec3D.a;
                 this.m = 0L;
                 this.o = 0.0D;
                 p();
             }
-
             this.n = System.currentTimeMillis();
         }
-
     }
 
     @Override
@@ -201,11 +191,9 @@ public class PlayerNavigation extends NavigationAbstract {
         if (d1 >= 0.0D) {
             d7 += 1.0D;
         }
-
         if (d2 >= 0.0D) {
             d8 += 1.0D;
         }
-
         d7 /= d1;
         d8 /= d2;
         int m = d1 < 0.0D ? -1 : 1;
@@ -224,11 +212,9 @@ public class PlayerNavigation extends NavigationAbstract {
                 k += n;
                 i4 = i2 - k;
             }
-
             if (!a(j, (int) paramVec3D1.y, k, paramInt1, paramInt2, paramInt3, paramVec3D1, d1, d2))
                 return false;
         }
-
         return true;
     }
 
@@ -245,27 +231,22 @@ public class PlayerNavigation extends NavigationAbstract {
             while (localBlockPosition.getY() > 0 && this.b.getType(localBlockPosition).getMaterial() == Material.AIR) {
                 localBlockPosition = localBlockPosition.down();
             }
-
             if (localBlockPosition.getY() > 0)
                 return b2(localBlockPosition.up());
             while (localBlockPosition.getY() < this.b.getHeight()
                     && this.b.getType(localBlockPosition).getMaterial() == Material.AIR) {
                 localBlockPosition = localBlockPosition.up();
             }
-
             paramBlockPosition = localBlockPosition;
         }
-
         if (this.b.getType(paramBlockPosition).getMaterial().isBuildable()) {
             localBlockPosition = paramBlockPosition.up();
             while (localBlockPosition.getY() < this.b.getHeight()
                     && this.b.getType(localBlockPosition).getMaterial().isBuildable()) {
                 localBlockPosition = localBlockPosition.up();
             }
-
             return b2(localBlockPosition);
         }
-
         return b2(paramBlockPosition);
     }
 
@@ -284,9 +265,7 @@ public class PlayerNavigation extends NavigationAbstract {
                 if (!localBlock.b(this.b, localBlockPosition))
                     return false;
             }
-
         }
-
         return true;
     }
 
@@ -322,7 +301,6 @@ public class PlayerNavigation extends NavigationAbstract {
         if (this.g) {
             k();
         }
-
         if (o())
             return;
         if (b()) {
@@ -335,9 +313,7 @@ public class PlayerNavigation extends NavigationAbstract {
                     && MathHelper.floor(localVec3D.z) == MathHelper.floor(localObject.z)) {
                 this.c.c(this.c.e() + 1);
             }
-
         }
-
         m();
         if (o())
             return;
@@ -380,11 +356,9 @@ public class PlayerNavigation extends NavigationAbstract {
                 this.p = this.b.getTime();
                 this.g = false;
             }
-
         } else {
             this.g = true;
         }
-
     }
 
     @Override
@@ -405,9 +379,7 @@ public class PlayerNavigation extends NavigationAbstract {
                 i1 = i2;
                 break;
             }
-
         }
-
         this.f = this.a.width > 0.75F ? this.a.width / 2.0F : 0.75F - this.a.width / 2.0F;
         Vec3D localVec3D2 = this.c.f();
         if (MathHelper.e((float) (this.a.locX - (localVec3D2.x + 0.5D))) < this.f
@@ -415,7 +387,6 @@ public class PlayerNavigation extends NavigationAbstract {
                 && Math.abs(this.a.locY - localVec3D2.y) < 1.0D) {
             this.c.c(this.c.e() + 1);
         }
-
         int i3 = MathHelper.f(this.a.width);
         int i4 = MathHelper.f(this.a.length);
         int i5 = i3;
@@ -424,9 +395,7 @@ public class PlayerNavigation extends NavigationAbstract {
                 this.c.c(i6);
                 break;
             }
-
         }
-
         a(localVec3D1);
     }
 
@@ -458,11 +427,8 @@ public class PlayerNavigation extends NavigationAbstract {
                     this.c.b(j - 1);
                     return;
                 }
-
             }
-
         }
-
     }
 
     @Override
@@ -486,7 +452,6 @@ public class PlayerNavigation extends NavigationAbstract {
             if (k > 16)
                 return (int) this.a.getBoundingBox().b;
         }
-
         return j;
     }
 

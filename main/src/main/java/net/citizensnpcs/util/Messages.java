@@ -160,6 +160,7 @@ public class Messages {
     public static final String HOLOGRAM_MARGIN_SET = "citizens.commands.npc.hologram.margin-set";
     public static final String HOLOGRAM_TEXT_MISSING = "citizens.commands.npc.hologram.text-missing";
     public static final String HOLOGRAM_TEXT_REMOVED = "citizens.commands.npc.hologram.text-removed";
+    public static final String HOLOGRAM_VIEW_RANGE_SET = "citizens.commands.npc.hologram.view-range-set";
     public static final String HOME_TRAIT_DELAY_SET = "citizens.commands.npc.home.delay-set";
     public static final String HOME_TRAIT_DISTANCE_SET = "citizens.commands.npc.home.distance-set";
     public static final String HOME_TRAIT_LOCATION_SET = "citizens.commands.npc.home.home-set";
@@ -331,6 +332,7 @@ public class Messages {
     public static final String PIGLIN_DANCING_UNSET = "citizens.commands.npc.piglin.dancing-unset";
     public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
     public static final String PLAYERFILTER_ALLOWLIST_SET = "citizens.commands.npc.playerfilter.allowlist-set";
+    public static final String PLAYERFILTER_APPLYRANGE_SET = "citizens.commands.npc.playerfilter.applyrange-set";
     public static final String PLAYERFILTER_CLEARED = "citizens.commands.npc.playerfilter.cleared";
     public static final String PLAYERFILTER_DENYLIST_SET = "citizens.commands.npc.playerfilter.denylist-set";
     public static final String PLAYERFILTER_EMPTY_SET = "citizens.commands.npc.playerfilter.emptied";

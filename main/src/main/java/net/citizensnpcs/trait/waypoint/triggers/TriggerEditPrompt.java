@@ -68,7 +68,7 @@ public class TriggerEditPrompt extends StringPrompt {
     }
 
     public static Conversation start(Player player, WaypointEditor editor) {
-        final Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
+        Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
                 .addConversationAbandonedListener(event -> Messaging
                         .sendTr((CommandSender) event.getContext().getForWhom(), Messages.WAYPOINT_TRIGGER_EDITOR_EXIT))
                 .withEscapeSequence("exit").withEscapeSequence("triggers").withEscapeSequence("/npc path")

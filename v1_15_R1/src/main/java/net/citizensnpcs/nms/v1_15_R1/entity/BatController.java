@@ -59,7 +59,6 @@ public class BatController extends MobEntityController {
             if (npc != null) {
                 setAsleep(false);
             }
-
         }
 
         @Override
@@ -82,7 +81,6 @@ public class BatController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -96,7 +94,6 @@ public class BatController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -107,7 +104,6 @@ public class BatController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -125,7 +121,6 @@ public class BatController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new BatNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -160,7 +155,6 @@ public class BatController extends MobEntityController {
             if (vector != null) {
                 super.h(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -177,10 +171,8 @@ public class BatController extends MobEntityController {
                 if (npc.useMinecraftAI()) {
                     super.mobTick();
                 }
-
                 npc.update();
             }
-
         }
 
         @Override

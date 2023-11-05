@@ -20,15 +20,15 @@ public class Powered extends Trait implements Toggleable {
         super("powered");
     }
 
+    public boolean isPowered() {
+        return powered;
+    }
+
     @Override
     public void onSpawn() {
         if (npc.getEntity() instanceof Creeper) {
             ((Creeper) npc.getEntity()).setPowered(powered);
         }
-    }
-
-    public boolean isPowered() {
-        return powered;
     }
 
     @Override

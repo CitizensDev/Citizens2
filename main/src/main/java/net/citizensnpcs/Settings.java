@@ -147,7 +147,7 @@ public class Settings {
         DEFAULT_TEXT("npc.default.talk-close.text.0", "Hi, I'm <npc>!") {
             @Override
             public void loadFromKey(DataKey root) {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 for (DataKey key : root.getRelative("npc.default.talk-close.text").getSubKeys()) {
                     list.add(key.getString(""));
                 }
@@ -290,7 +290,7 @@ public class Settings {
             if (migrate.contains(".")) {
                 this.migrate = migrate;
             } else {
-                this.comments = migrate;
+                comments = migrate;
             }
             this.path = path;
             this.value = value;
@@ -316,9 +316,8 @@ public class Settings {
         }
 
         public int asInt() {
-            if (value instanceof String) {
+            if (value instanceof String)
                 return Integer.parseInt(value.toString());
-            }
             return ((Number) value).intValue();
         }
 

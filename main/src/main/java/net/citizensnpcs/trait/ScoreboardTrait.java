@@ -35,18 +35,20 @@ public class ScoreboardTrait extends Trait {
     private final PerPlayerMetadata<Boolean> metadata;
     private ChatColor previousGlowingColor;
     @Persist
-    private Set<String> tags = new HashSet<String>();
+    private Set<String> tags = new HashSet<>();
 
     public ScoreboardTrait() {
         super("scoreboardtrait");
         metadata = CitizensAPI.getLocationLookup().<Boolean> registerMetadata("scoreboard", (meta, event) -> {
             for (NPC npc : CitizensAPI.getNPCRegistry()) {
                 ScoreboardTrait trait = npc.getTraitNullable(ScoreboardTrait.class);
-                if (trait == null)
+                if (trait == null) {
                     continue;
+                }
                 Team team = trait.getTeam();
-                if (team == null || meta.has(event.getPlayer().getUniqueId(), team.getName()))
+                if (team == null || meta.has(event.getPlayer().getUniqueId(), team.getName())) {
                     continue;
+                }
                 NMS.sendTeamPacket(event.getPlayer(), team, 0);
                 meta.set(event.getPlayer().getUniqueId(), team.getName(), true);
             }
@@ -161,13 +163,11 @@ public class ScoreboardTrait extends Trait {
             npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
             return;
         }
-
         if (npc.isSpawned()) {
             lastName = npc.getEntity() instanceof Player && npc.getEntity().getName() != null
                     ? npc.getEntity().getName()
                     : npc.getUniqueId().toString();
         }
-
         if (SUPPORT_TAGS) {
             try {
                 if (!npc.getEntity().getScoreboardTags().equals(tags)) {
@@ -177,7 +177,6 @@ public class ScoreboardTrait extends Trait {
                 SUPPORT_TAGS = false;
             }
         }
-
         if (SUPPORT_TEAM_SETOPTION) {
             try {
                 OptionStatus visibility = nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER;
@@ -193,7 +192,6 @@ public class ScoreboardTrait extends Trait {
         } else {
             NMS.setTeamNameTagVisible(team, nameVisibility);
         }
-
         if (SUPPORT_COLLIDABLE_SETOPTION) {
             try {
                 OptionStatus collide = npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected())
@@ -209,7 +207,6 @@ public class ScoreboardTrait extends Trait {
                 SUPPORT_COLLIDABLE_SETOPTION = false;
             }
         }
-
         if (color != null) {
             if (SUPPORT_GLOWING_COLOR && SpigotUtil.getMinecraftPackage().contains("1_12_R1")) {
                 SUPPORT_GLOWING_COLOR = false;
@@ -217,7 +214,7 @@ public class ScoreboardTrait extends Trait {
             if (SUPPORT_GLOWING_COLOR) {
                 try {
                     if (team.getColor() == null || previousGlowingColor == null
-                            || (previousGlowingColor != null && color != previousGlowingColor)) {
+                            || previousGlowingColor != null && color != previousGlowingColor) {
                         team.setColor(color);
                         previousGlowingColor = color;
                         changed = true;
@@ -225,22 +222,19 @@ public class ScoreboardTrait extends Trait {
                 } catch (NoSuchMethodError err) {
                     SUPPORT_GLOWING_COLOR = false;
                 }
-            } else {
-                if (team.getPrefix() == null || team.getPrefix().length() == 0 || previousGlowingColor == null
-                        || (previousGlowingColor != null
-                                && !team.getPrefix().equals(previousGlowingColor.toString()))) {
-                    team.setPrefix(color.toString());
-                    previousGlowingColor = color;
-                    changed = true;
-                }
+            } else if (team.getPrefix() == null || team.getPrefix().length() == 0 || previousGlowingColor == null
+                    || previousGlowingColor != null && !team.getPrefix().equals(previousGlowingColor.toString())) {
+                team.setPrefix(color.toString());
+                previousGlowingColor = color;
+                changed = true;
             }
         }
-
         if (!changed)
             return;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasMetadata("NPC"))
+            if (player.hasMetadata("NPC")) {
                 continue;
+            }
             if (metadata.has(player.getUniqueId(), team.getName())) {
                 NMS.sendTeamPacket(player, team, 2);
             } else {

@@ -64,7 +64,6 @@ public class PolarBearController extends MobEntityController {
                 super.a(datawatcherobject);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
@@ -83,7 +82,6 @@ public class PolarBearController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -97,7 +95,6 @@ public class PolarBearController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -108,7 +105,6 @@ public class PolarBearController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -126,7 +122,6 @@ public class PolarBearController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new PolarBearNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -161,7 +156,6 @@ public class PolarBearController extends MobEntityController {
             if (vector != null) {
                 super.h(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -176,7 +170,6 @@ public class PolarBearController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
-
         }
 
         @Override

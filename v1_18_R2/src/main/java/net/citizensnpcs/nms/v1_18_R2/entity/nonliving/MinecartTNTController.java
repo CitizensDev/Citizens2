@@ -72,7 +72,6 @@ public class MinecartTNTController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -83,7 +82,6 @@ public class MinecartTNTController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -105,7 +103,6 @@ public class MinecartTNTController extends MobEntityController {
                 npc.update();
                 NMSImpl.minecartItemLogic(this);
             }
-
         }
 
         @Override
@@ -117,7 +114,6 @@ public class MinecartTNTController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

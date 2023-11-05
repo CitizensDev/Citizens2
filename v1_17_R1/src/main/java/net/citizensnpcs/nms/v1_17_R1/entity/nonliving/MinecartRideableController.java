@@ -52,7 +52,6 @@ public class MinecartRideableController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new MinecartRideableNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -83,7 +82,6 @@ public class MinecartRideableController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -94,7 +92,6 @@ public class MinecartRideableController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -109,7 +106,6 @@ public class MinecartRideableController extends MobEntityController {
                 npc.update();
                 NMSImpl.minecartItemLogic(this);
             }
-
         }
 
         @Override
@@ -121,7 +117,6 @@ public class MinecartRideableController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

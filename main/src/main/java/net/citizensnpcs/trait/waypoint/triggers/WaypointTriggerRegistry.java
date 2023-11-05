@@ -56,8 +56,8 @@ public class WaypointTriggerRegistry implements Persister<WaypointTrigger> {
         }
     }
 
-    private static final Map<String, Class<? extends Prompt>> TRIGGER_PROMPTS = Maps.newHashMap();
-    private static final Map<String, Class<? extends WaypointTrigger>> TRIGGERS = Maps.newHashMap();
+    private static Map<String, Class<? extends Prompt>> TRIGGER_PROMPTS = Maps.newHashMap();
+    private static Map<String, Class<? extends WaypointTrigger>> TRIGGERS = Maps.newHashMap();
 
     static {
         addTrigger("animation", AnimationTrigger.class, AnimationTriggerPrompt.class);

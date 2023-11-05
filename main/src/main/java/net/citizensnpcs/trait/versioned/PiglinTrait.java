@@ -61,9 +61,8 @@ public class PiglinTrait extends Trait {
                     npc.getName());
             hasArg = true;
         }
-        if (!hasArg) {
+        if (!hasArg)
             throw new CommandUsageException();
-        }
     }
 
 }

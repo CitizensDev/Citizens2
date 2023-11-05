@@ -57,7 +57,6 @@ public class PigController extends MobEntityController {
                 super.a(flag);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
@@ -66,7 +65,6 @@ public class PigController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -103,7 +101,6 @@ public class PigController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -122,7 +119,6 @@ public class PigController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
             }
-
         }
 
         @Override
@@ -131,7 +127,6 @@ public class PigController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -141,7 +136,6 @@ public class PigController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1);
             }
-
         }
 
         @Override
@@ -154,7 +148,6 @@ public class PigController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new PigNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -173,7 +166,6 @@ public class PigController extends MobEntityController {
             if (npc == null) {
                 super.L();
             }
-
         }
 
         @Override
@@ -182,7 +174,6 @@ public class PigController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
-
         }
 
         @Override
@@ -198,7 +189,6 @@ public class PigController extends MobEntityController {
             if (npc == null) {
                 super.onLightningStrike(entitylightning);
             }
-
         }
     }
 

@@ -71,7 +71,6 @@ public class DolphinController extends MobEntityController {
                 this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
                         .setValue(this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue() / 10);
             }
-
         }
 
         @Override
@@ -84,7 +83,6 @@ public class DolphinController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -99,11 +97,9 @@ public class DolphinController extends MobEntityController {
                 if (!NMSImpl.moveFish(npc, this, f, f1, f2, cK())) {
                     super.a(f, f1, f2);
                 }
-
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }
-
         }
 
         @Override
@@ -124,7 +120,6 @@ public class DolphinController extends MobEntityController {
                 motY = my;
                 motZ = mz;
             }
-
             return res;
         }
 
@@ -138,7 +133,6 @@ public class DolphinController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.c(f, f1);
             }
-
         }
 
         @Override
@@ -154,7 +148,6 @@ public class DolphinController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -183,7 +176,6 @@ public class DolphinController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -191,7 +183,6 @@ public class DolphinController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new DolphinNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -210,7 +201,6 @@ public class DolphinController extends MobEntityController {
             if (npc == null) {
                 super.I();
             }
-
         }
 
         @Override
@@ -230,13 +220,11 @@ public class DolphinController extends MobEntityController {
             if (npc != null && npc.isProtected()) {
                 inProtectedTick = true;
             }
-
             super.tick();
             inProtectedTick = false;
             if (npc != null) {
                 npc.update();
             }
-
         }
 
         @Override

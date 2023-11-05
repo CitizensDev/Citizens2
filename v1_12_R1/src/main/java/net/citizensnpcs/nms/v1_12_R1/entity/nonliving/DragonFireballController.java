@@ -68,11 +68,9 @@ public class DragonFireballController extends MobEntityController {
                 if (!npc.isProtected()) {
                     super.B_();
                 }
-
             } else {
                 super.B_();
             }
-
         }
 
         @Override
@@ -83,7 +81,6 @@ public class DragonFireballController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -97,7 +94,6 @@ public class DragonFireballController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -105,7 +101,6 @@ public class DragonFireballController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new DragonFireballNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -126,7 +121,6 @@ public class DragonFireballController extends MobEntityController {
             } else {
                 NMSImpl.setSize(this, f, f1, justCreated);
             }
-
         }
     }
 }

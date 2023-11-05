@@ -29,12 +29,12 @@ public class LinearWaypointsCompleteEvent extends CitizensEvent {
     }
 
     public void setNextWaypoints(Iterator<Waypoint> waypoints) {
-        this.next = waypoints;
+        next = waypoints;
     }
-
-    private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
+    private static HandlerList handlers = new HandlerList();
 }

@@ -43,11 +43,10 @@ public abstract class AbstractEntityController implements EntityController {
         if (bukkitEntity instanceof Player) {
             NMS.removeFromWorld(bukkitEntity);
             NMS.remove(bukkitEntity);
-            bukkitEntity = null;
         } else {
             bukkitEntity.remove();
-            bukkitEntity = null;
         }
+        bukkitEntity = null;
     }
 
     @Override

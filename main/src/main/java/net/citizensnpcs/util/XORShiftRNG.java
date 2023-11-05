@@ -70,14 +70,14 @@ public class XORShiftRNG extends Random {
     protected int next(int bits) {
         try {
             lock.lock();
-            int t = (state1 ^ (state1 >> 7));
+            int t = state1 ^ state1 >> 7;
             state1 = state2;
             state2 = state3;
             state3 = state4;
             state4 = state5;
-            state5 = (state5 ^ (state5 << 6)) ^ (t ^ (t << 13));
+            state5 = state5 ^ state5 << 6 ^ t ^ t << 13;
             int value = (state2 + state2 + 1) * state5;
-            return value >>> (32 - bits);
+            return value >>> 32 - bits;
         } finally {
             lock.unlock();
         }
@@ -94,8 +94,8 @@ public class XORShiftRNG extends Random {
      * @return The 32-bit integer represented by the four bytes.
      */
     public static int convertBytesToInt(byte[] bytes, int offset) {
-        return (BITWISE_BYTE_TO_INT & bytes[offset + 3]) | ((BITWISE_BYTE_TO_INT & bytes[offset + 2]) << 8)
-                | ((BITWISE_BYTE_TO_INT & bytes[offset + 1]) << 16) | ((BITWISE_BYTE_TO_INT & bytes[offset]) << 24);
+        return BITWISE_BYTE_TO_INT & bytes[offset + 3] | (BITWISE_BYTE_TO_INT & bytes[offset + 2]) << 8
+                | (BITWISE_BYTE_TO_INT & bytes[offset + 1]) << 16 | (BITWISE_BYTE_TO_INT & bytes[offset]) << 24;
     }
 
     /**
@@ -108,9 +108,9 @@ public class XORShiftRNG extends Random {
      * @since 1.1
      */
     public static int[] convertBytesToInts(byte[] bytes) {
-        if (bytes.length % 4 != 0) {
+        if (bytes.length % 4 != 0)
             throw new IllegalArgumentException("Number of input bytes must be a multiple of 4.");
-        }
+
         int[] ints = new int[bytes.length / 4];
         for (int i = 0; i < ints.length; i++) {
             ints[i] = convertBytesToInt(bytes, i * 4);

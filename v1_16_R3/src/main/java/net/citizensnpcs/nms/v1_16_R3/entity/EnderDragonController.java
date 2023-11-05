@@ -84,7 +84,6 @@ public class EnderDragonController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -98,7 +97,6 @@ public class EnderDragonController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -109,7 +107,6 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -127,7 +124,6 @@ public class EnderDragonController extends MobEntityController {
             if (getDragonControllerManager().a().getControllerPhase() == DragonControllerPhase.HOVER) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -141,7 +137,6 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new EnderDragonNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -176,7 +171,6 @@ public class EnderDragonController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -190,25 +184,20 @@ public class EnderDragonController extends MobEntityController {
                 npc.update();
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
-
             if (npc != null && !npc.useMinecraftAI()) {
                 if (dl()) {
                     setHealth(0F);
                     return;
                 }
-
                 if (this.d < 0) {
                     for (int i = 0; i < this.c.length; ++i) {
                         this.c[i][0] = this.yaw;
                         this.c[i][1] = this.locY();
                     }
-
                 }
-
                 if (++this.d == this.c.length) {
                     this.d = 0;
                 }
-
                 this.c[this.d][0] = this.yaw;
                 this.c[this.d][1] = this.locY();
 
@@ -221,22 +210,18 @@ public class EnderDragonController extends MobEntityController {
                     children[j].lastY = children[j].E = vec3.y;
                     children[j].lastZ = children[j].F = vec3.z;
                 }
-
                 if (getRidingPassenger() != null) {
                     yaw = getRidingPassenger().getBukkitYaw() - 180;
                 }
-
                 Vec3D mot = getMot();
                 if (mot.getX() != 0 || mot.getY() != 0 || mot.getZ() != 0) {
                     mot = mot.d(0.98, 0.98, 0.98);
                     if (getRidingPassenger() == null) {
                         yaw = Util.getDragonYaw(getBukkitEntity(), mot.x, mot.z);
                     }
-
                     setPosition(locX() + mot.getX(), locY() + mot.getY(), locZ() + mot.getZ());
                     setMot(mot);
                 }
-
                 if (npc.hasTrait(EnderDragonTrait.class) && npc.getOrAddTrait(EnderDragonTrait.class).isDestroyWalls()
                         && NMSImpl.ENDERDRAGON_CHECK_WALLS != null) {
                     for (int i = 0; i < 3; i++) {
@@ -246,11 +231,8 @@ public class EnderDragonController extends MobEntityController {
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
-
                     }
-
                 }
-
                 if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
                     try {
                         KNOCKBACK.invoke(this, this.world.getEntities(this,
@@ -264,13 +246,10 @@ public class EnderDragonController extends MobEntityController {
                     } catch (Throwable t) {
                         t.printStackTrace();
                     }
-
                 }
-
             } else {
                 super.movementTick();
             }
-
         }
 
         @Override

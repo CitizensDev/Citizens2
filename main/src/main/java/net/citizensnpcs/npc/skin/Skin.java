@@ -22,9 +22,7 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.npc.profile.ProfileFetchHandler;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
-import net.citizensnpcs.npc.profile.ProfileRequest;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.SkinProperty;
 
@@ -36,7 +34,7 @@ public class Skin {
     private int fetchRetries = -1;
     private boolean hasFetched;
     private volatile boolean isValid = true;
-    private final Map<SkinnableEntity, Void> pending = new WeakHashMap<SkinnableEntity, Void>(15);
+    private final Map<SkinnableEntity, Void> pending = new WeakHashMap<>(15);
     private BukkitTask retryTask;
     private volatile SkinProperty skinData;
     private volatile UUID skinId;
@@ -58,7 +56,6 @@ public class Skin {
 
             CACHE.put(this.skinName, this);
         }
-
         // fetch();
     }
 
@@ -84,29 +81,27 @@ public class Skin {
         // If npc requires latest skin, cache is used for faster availability until the latest skin can be loaded.
         String cachedName = npc.data().get(CACHED_SKIN_UUID_NAME_METADATA);
         String texture = skinTrait.getTexture();
-        if (this.skinName.equals(cachedName) && texture != null && !texture.equals("cache")) {
+        if (skinName.equals(cachedName) && texture != null && !texture.equals("cache")) {
             setNPCTexture(entity, new SkinProperty("textures", texture, skinTrait.getSignature()));
 
             // check if NPC prefers to use cached skin over the latest skin.
             if (entity.getNPC().data().has("player-skin-use-latest")) {
                 entity.getNPC().data().remove("player-skin-use-latest");
             }
-            if (!skinTrait.shouldUpdateSkins()) {
+            if (!skinTrait.shouldUpdateSkins())
                 // cache preferred
                 return true;
-            }
         }
-
         if (!hasSkinData()) {
             String defaultSkinName = ChatColor.stripColor(npc.getName()).toLowerCase();
 
-            if (npc.hasTrait(SkinTrait.class) && this.skinName.equals(defaultSkinName)
+            if (npc.hasTrait(SkinTrait.class) && skinName.equals(defaultSkinName)
                     && !npc.getOrAddTrait(SkinTrait.class).fetchDefaultSkin())
                 return false;
 
-            if (hasFetched) {
+            if (hasFetched)
                 return true;
-            } else {
+            else {
                 if (!fetching) {
                     fetch();
                 }
@@ -114,7 +109,6 @@ public class Skin {
                 return false;
             }
         }
-
         setNPCSkinData(entity, skinName, skinId, skinData);
 
         return true;
@@ -144,64 +138,54 @@ public class Skin {
     }
 
     private void fetch() {
-        final int maxRetries = Setting.MAX_NPC_SKIN_RETRIES.asInt();
+        int maxRetries = Setting.MAX_NPC_SKIN_RETRIES.asInt();
         if (maxRetries > -1 && fetchRetries >= maxRetries) {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Reached max skin fetch retries for '" + skinName + "'");
             }
             return;
         }
-
         if (skinName.length() < 3 || skinName.length() > 16) {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Skin name invalid length '" + skinName + "'");
             }
             return;
         }
-
-        if (skinName.toLowerCase().startsWith("cit-")) {
+        if (skinName.toLowerCase().startsWith("cit-"))
             return;
-        }
 
         fetching = true;
 
-        ProfileFetcher.fetch(this.skinName, new ProfileFetchHandler() {
-            @Override
-            public void onResult(ProfileRequest request) {
-                hasFetched = true;
+        ProfileFetcher.fetch(skinName, request -> {
+            hasFetched = true;
 
-                switch (request.getResult()) {
-                    case NOT_FOUND:
-                        isValid = false;
+            switch (request.getResult()) {
+                case NOT_FOUND:
+                    isValid = false;
+                    break;
+                case TOO_MANY_REQUESTS:
+                    if (maxRetries == 0) {
                         break;
-                    case TOO_MANY_REQUESTS:
-                        if (maxRetries == 0) {
-                            break;
-                        }
-                        fetchRetries++;
-                        long delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
-                        retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                fetch();
-                            }
-                        }, delay);
+                    }
+                    fetchRetries++;
+                    long delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
+                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), (Runnable) this::fetch,
+                            delay);
 
-                        Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
-                        break;
-                    case SUCCESS:
-                        GameProfile profile = request.getProfile();
-                        setData(profile);
-                        break;
-                    default:
-                        break;
-                }
+                    Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
+                    break;
+                case SUCCESS:
+                    GameProfile profile = request.getProfile();
+                    setData(profile);
+                    break;
+                default:
+                    break;
             }
         });
     }
 
     private void fetchForced() {
-        final int maxRetries = Setting.MAX_NPC_SKIN_RETRIES.asInt();
+        int maxRetries = Setting.MAX_NPC_SKIN_RETRIES.asInt();
         if (maxRetries > -1 && fetchRetries >= maxRetries) {
             Messaging.idebug(() -> "Reached max skin fetch retries for '" + skinName + "'");
             return;
@@ -210,44 +194,35 @@ public class Skin {
             Messaging.idebug(() -> "Skin name invalid length '" + skinName + "'");
             return;
         }
-
-        if (skinName.toLowerCase().startsWith("cit-")) {
+        if (skinName.toLowerCase().startsWith("cit-"))
             return;
-        }
 
         fetching = true;
 
-        ProfileFetcher.fetchForced(this.skinName, new ProfileFetchHandler() {
-            @Override
-            public void onResult(ProfileRequest request) {
-                hasFetched = true;
+        ProfileFetcher.fetchForced(skinName, request -> {
+            hasFetched = true;
 
-                switch (request.getResult()) {
-                    case NOT_FOUND:
-                        isValid = false;
+            switch (request.getResult()) {
+                case NOT_FOUND:
+                    isValid = false;
+                    break;
+                case TOO_MANY_REQUESTS:
+                    if (maxRetries == 0) {
                         break;
-                    case TOO_MANY_REQUESTS:
-                        if (maxRetries == 0) {
-                            break;
-                        }
-                        fetchRetries++;
-                        int delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
-                        retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), new Runnable() {
-                            @Override
-                            public void run() {
-                                fetchForced();
-                            }
-                        }, delay);
+                    }
+                    fetchRetries++;
+                    int delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
+                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
+                            (Runnable) this::fetchForced, delay);
 
-                        Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
-                        break;
-                    case SUCCESS:
-                        GameProfile profile = request.getProfile();
-                        setData(profile);
-                        break;
-                    default:
-                        break;
-                }
+                    Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
+                    break;
+                case SUCCESS:
+                    GameProfile profile = request.getProfile();
+                    setData(profile);
+                    break;
+                default:
+                    break;
             }
         });
     }
@@ -288,16 +263,14 @@ public class Skin {
             isValid = false;
             return;
         }
-
         if (!profile.getName().toLowerCase().equals(skinName)) {
             Messaging.debug("GameProfile name (" + profile.getName() + ") and " + "skin name (" + skinName
                     + ") do not match. Has the user renamed recently?");
         }
-
         skinId = profile.getId();
         skinData = SkinProperty.fromMojangProfile(profile);
 
-        List<SkinnableEntity> entities = new ArrayList<SkinnableEntity>(pending.keySet());
+        List<SkinnableEntity> entities = new ArrayList<>(pending.keySet());
         for (SkinnableEntity entity : entities) {
             applyAndRespawn(entity);
         }
@@ -371,13 +344,11 @@ public class Skin {
         synchronized (CACHE) {
             skin = CACHE.get(skinName);
         }
-
         if (skin == null) {
             skin = new Skin(skinName);
         } else if (forceUpdate) {
             skin.fetchForced();
         }
-
         return skin;
     }
 
@@ -405,14 +376,13 @@ public class Skin {
         // packet errors that disconnect the client.
         SkinProperty current = SkinProperty.fromMojangProfile(profile);
         if (current != null && current.value.equals(skinProperty.value) && current.signature != null
-                && current.signature.equals(skinProperty.signature)) {
+                && current.signature.equals(skinProperty.signature))
             return;
-        }
 
         skinProperty.apply(profile);
     }
 
-    private static final Map<String, Skin> CACHE = new HashMap<String, Skin>(20);
-    public static final String CACHED_SKIN_UUID_METADATA = "cached-skin-uuid";
-    public static final String CACHED_SKIN_UUID_NAME_METADATA = "cached-skin-uuid-name";
+    private static Map<String, Skin> CACHE = new HashMap<>(20);
+    public static String CACHED_SKIN_UUID_METADATA = "cached-skin-uuid";
+    public static String CACHED_SKIN_UUID_NAME_METADATA = "cached-skin-uuid-name";
 }

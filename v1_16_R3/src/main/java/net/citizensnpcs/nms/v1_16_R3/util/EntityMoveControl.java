@@ -46,7 +46,6 @@ public class EntityMoveControl extends ControllerMove {
                 this.a.aT = 0.0F;
                 return;
             }
-
             float f = (float) Math.toDegrees(Math.atan2(d1, d0)) - 90.0F;
             this.a.yaw = a(this.a.yaw, f, 90.0F);
             NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
@@ -59,14 +58,11 @@ public class EntityMoveControl extends ControllerMove {
                 if (((EntitySlime) a).isAggressive()) {
                     this.h /= 3;
                 }
-
                 ai.getJumpControl().jump();
             } else if (d2 >= NMS.getStepHeight(a.getBukkitEntity()) && d0 * d0 + d1 * d1 < 1.0D) {
                 ai.getJumpControl().jump();
             }
-
         }
-
     }
 
     @Override
@@ -84,18 +80,15 @@ public class EntityMoveControl extends ControllerMove {
         if (f3 > f2) {
             f3 = f2;
         }
-
         if (f3 < -f2) {
             f3 = -f2;
         }
-
         float f4 = f + f3;
         if (f4 < 0.0F) {
             f4 += 360.0F;
         } else if (f4 > 360.0F) {
             f4 -= 360.0F;
         }
-
         return f4;
     }
 

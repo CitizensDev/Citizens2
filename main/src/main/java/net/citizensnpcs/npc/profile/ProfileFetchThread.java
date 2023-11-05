@@ -31,8 +31,8 @@ import net.citizensnpcs.util.NMS;
  * @see ProfileFetcher
  */
 class ProfileFetchThread implements Runnable {
-    private final Deque<ProfileRequest> queue = new ArrayDeque<ProfileRequest>();
-    private final Map<String, ProfileRequest> requested = new HashMap<String, ProfileRequest>(40);
+    private final Deque<ProfileRequest> queue = new ArrayDeque<>();
+    private final Map<String, ProfileRequest> requested = new HashMap<>(40);
     private final Object sync = new Object(); // sync for queue & requested fields
 
     ProfileFetchThread() {
@@ -65,7 +65,6 @@ class ProfileFetchThread implements Runnable {
                 queue.add(request);
             }
         }
-
         if (handler != null) {
             if (request.getResult() == ProfileFetchResult.PENDING
                     || request.getResult() == ProfileFetchResult.TOO_MANY_REQUESTS) {
@@ -100,7 +99,6 @@ class ProfileFetchThread implements Runnable {
                 return;
             }
         }
-
         if (handler != null) {
             if (request.getResult() == ProfileFetchResult.PENDING
                     || request.getResult() == ProfileFetchResult.TOO_MANY_REQUESTS) {
@@ -117,7 +115,7 @@ class ProfileFetchThread implements Runnable {
      * @param requests
      *            The profile requests.
      */
-    private void fetchRequests(final Collection<ProfileRequest> requests) {
+    private void fetchRequests(Collection<ProfileRequest> requests) {
         Preconditions.checkNotNull(requests);
 
         String[] playerNames = new String[requests.size()];
@@ -126,7 +124,6 @@ class ProfileFetchThread implements Runnable {
         for (ProfileRequest request : requests) {
             playerNames[i++] = request.getPlayerName();
         }
-
         NMS.findProfilesByNames(playerNames, new ProfileLookupCallback() {
             @SuppressWarnings("unused")
             public void onProfileLookupFailed(GameProfile profile, Exception e) {
@@ -139,7 +136,6 @@ class ProfileFetchThread implements Runnable {
                     Messaging.debug("Profile lookup for player '" + profileName + "' failed: " + getExceptionMsg(e));
                     Messaging.debug(Throwables.getStackTraceAsString(e));
                 }
-
                 ProfileRequest request = findRequest(profileName, requests);
                 if (request == null)
                     return;
@@ -154,7 +150,7 @@ class ProfileFetchThread implements Runnable {
             }
 
             @Override
-            public void onProfileLookupSucceeded(final GameProfile profile) {
+            public void onProfileLookupSucceeded(GameProfile profile) {
                 Messaging.idebug(() -> "Fetched profile " + profile.getId() + " for player " + profile.getName());
 
                 ProfileRequest request = findRequest(profile.getName(), requests);
@@ -169,7 +165,6 @@ class ProfileFetchThread implements Runnable {
                                 + getExceptionMsg(e) + " " + isTooManyRequests(e));
                         Messaging.debug(Throwables.getStackTraceAsString(e));
                     }
-
                     if (isTooManyRequests(e)) {
                         request.setResult(null, ProfileFetchResult.TOO_MANY_REQUESTS);
                     } else {
@@ -188,10 +183,9 @@ class ProfileFetchThread implements Runnable {
             if (queue.isEmpty())
                 return;
 
-            requests = new ArrayList<ProfileRequest>(queue);
+            requests = new ArrayList<>(queue);
             queue.clear();
         }
-
         try {
             fetchRequests(requests);
         } catch (Exception ex) {
@@ -202,7 +196,7 @@ class ProfileFetchThread implements Runnable {
         }
     }
 
-    private static void addHandler(final ProfileRequest request, final ProfileFetchHandler handler) {
+    private static void addHandler(ProfileRequest request, ProfileFetchHandler handler) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> request.addHandler(handler), 1);
     }
 
@@ -211,9 +205,8 @@ class ProfileFetchThread implements Runnable {
         name = name.toLowerCase();
 
         for (ProfileRequest request : requests) {
-            if (request.getPlayerName().equals(name)) {
+            if (request.getPlayerName().equals(name))
                 return request;
-            }
         }
         return null;
     }
@@ -226,19 +219,18 @@ class ProfileFetchThread implements Runnable {
         String message = e.getMessage();
         String cause = e.getCause() != null ? e.getCause().getMessage() : null;
 
-        return (message != null && message.contains("did not find"))
-                || (cause != null && cause.contains("did not find"));
+        return message != null && message.contains("did not find") || cause != null && cause.contains("did not find");
     }
 
     private static boolean isTooManyRequests(Throwable e) {
         String message = e.getMessage();
         String cause = e.getCause() != null ? e.getCause().getMessage() : null;
 
-        return (message != null && message.contains("too many requests"))
-                || (cause != null && cause.contains("too many requests"));
+        return message != null && message.contains("too many requests")
+                || cause != null && cause.contains("too many requests");
     }
 
-    private static void sendResult(final ProfileFetchHandler handler, final ProfileRequest request) {
+    private static void sendResult(ProfileFetchHandler handler, ProfileRequest request) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> handler.onResult(request), 1);
     }
 }

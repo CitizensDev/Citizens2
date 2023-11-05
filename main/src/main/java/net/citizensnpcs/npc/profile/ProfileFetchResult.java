@@ -5,14 +5,6 @@ package net.citizensnpcs.npc.profile;
  */
 public enum ProfileFetchResult {
     /**
-     * The profile has not been fetched yet.
-     */
-    PENDING,
-    /**
-     * The profile was successfully fetched.
-     */
-    SUCCESS,
-    /**
      * The profile request failed for unknown reasons.
      */
     FAILED,
@@ -20,6 +12,14 @@ public enum ProfileFetchResult {
      * The profile request failed because the profile was not found.
      */
     NOT_FOUND,
+    /**
+     * The profile has not been fetched yet.
+     */
+    PENDING,
+    /**
+     * The profile was successfully fetched.
+     */
+    SUCCESS,
     /**
      * The profile request failed because too many requests were sent.
      */

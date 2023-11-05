@@ -130,8 +130,8 @@ public class WaypointCommands {
             waypoints.describeProviders(sender);
             return;
         }
-        if (sender instanceof Player && Editor.hasEditor(((Player) sender))) {
-            Editor.leave(((Player) sender));
+        if (sender instanceof Player && Editor.hasEditor((Player) sender)) {
+            Editor.leave((Player) sender);
         }
         boolean success = waypoints.setWaypointProvider(args.getString(1));
         if (!success)

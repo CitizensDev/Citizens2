@@ -80,7 +80,6 @@ public class BoatController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -92,7 +91,6 @@ public class BoatController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -105,7 +103,6 @@ public class BoatController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new BoatNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -125,7 +122,6 @@ public class BoatController extends MobEntityController {
             if (vector != null) {
                 super.h(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         private EnumStatus s() {
@@ -134,7 +130,6 @@ public class BoatController extends MobEntityController {
                 this.aD = getBoundingBox().maxY;
                 return entityboat_enumstatus;
             }
-
             if (u())
                 return EnumStatus.IN_WATER;
             float f = l();
@@ -142,7 +137,6 @@ public class BoatController extends MobEntityController {
                 this.aE = f;
                 return EnumStatus.ON_LAND;
             }
-
             return EnumStatus.IN_AIR;
         }
 
@@ -177,9 +171,7 @@ public class BoatController extends MobEntityController {
                         if (getRidingPassenger() instanceof EntityHuman) {
                             this.aE /= 2.0F;
                         }
-
                     }
-
                     Vec3D vec3d = getMot();
                     setMot(vec3d.x * this.aq, vec3d.y + d1, vec3d.z * this.aq);
                     this.as *= this.aq;
@@ -187,18 +179,14 @@ public class BoatController extends MobEntityController {
                         Vec3D vec3d1 = getMot();
                         setMot(vec3d1.x, (vec3d1.y + d2 * 0.0615D) * 0.75D, vec3d1.z);
                     }
-
                 }
-
                 move(EnumMoveType.SELF, getMot());
                 if (isVehicle()) {
                     this.yaw += this.as;
                 }
-
             } else {
                 super.tick();
             }
-
         }
 
         private boolean u() {
@@ -225,13 +213,9 @@ public class BoatController extends MobEntityController {
                                 this.aD = Math.max(f, this.aD);
                                 m = flag | (axisalignedbb.minY < f ? true : false);
                             }
-
                         }
-
                     }
-
                 }
-
             } catch (Throwable throwable1) {
                 throwable = throwable1;
                 throw throwable1;
@@ -243,12 +227,10 @@ public class BoatController extends MobEntityController {
                         } catch (Throwable throwable2) {
                             throwable.addSuppressed(throwable2);
                         }
-
                     } else {
                         blockposition_pooledblockposition.close();
                     }
             }
-
             return m;
         }
 
@@ -259,7 +241,6 @@ public class BoatController extends MobEntityController {
             } else {
                 NMSImpl.setSize(this, justCreated);
             }
-
         }
 
         private EnumStatus v() {
@@ -286,16 +267,11 @@ public class BoatController extends MobEntityController {
                                     EnumStatus entityboat_enumstatus = EnumStatus.UNDER_FLOWING_WATER;
                                     return entityboat_enumstatus;
                                 }
-
                                 flag = true;
                             }
-
                         }
-
                     }
-
                 }
-
                 return flag ? EnumStatus.UNDER_WATER : null;
             } catch (Throwable throwable1) {
                 throwable = throwable1;
@@ -308,12 +284,10 @@ public class BoatController extends MobEntityController {
                         } catch (Throwable throwable2) {
                             throwable.addSuppressed(throwable2);
                         }
-
                     } else {
                         blockposition_pooledblockposition.close();
                     }
             }
-
         }
     }
 }

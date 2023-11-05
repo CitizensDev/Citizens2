@@ -25,9 +25,8 @@ public class AnimationTriggerPrompt extends StringPrompt implements WaypointTrig
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("back")) {
+        if (input.equalsIgnoreCase("back"))
             return (Prompt) context.getSessionData("previous");
-        }
         if (input.startsWith("at ")) {
             try {
                 at = CommandContext.parseLocation(
@@ -40,18 +39,15 @@ public class AnimationTriggerPrompt extends StringPrompt implements WaypointTrig
             }
             return this;
         }
-
         if (input.equalsIgnoreCase("finish")) {
             context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, new AnimationTrigger(animations, at));
             return (Prompt) context.getSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY);
         }
-
         PlayerAnimation animation = Util.matchEnum(PlayerAnimation.values(), input);
         if (animation == null) {
             Messaging.sendErrorTr((CommandSender) context.getForWhom(), Messages.INVALID_ANIMATION, input,
                     getValidAnimations());
         }
-
         animations.add(animation);
         Messaging.sendTr((CommandSender) context.getForWhom(), Messages.ANIMATION_ADDED, input);
         return this;

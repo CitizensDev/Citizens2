@@ -57,11 +57,11 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         if (event.getSelected() != null)
             return event.getSelected();
 
-        if (sender instanceof Player) {
+        if (sender instanceof Player)
             return getSelectedFromMetadatable((Player) sender);
-        } else if (sender instanceof BlockCommandSender) {
+        else if (sender instanceof BlockCommandSender)
             return getSelectedFromMetadatable(((BlockCommandSender) sender).getBlock());
-        } else if (sender instanceof ConsoleCommandSender) {
+        else if (sender instanceof ConsoleCommandSender) {
             if (consoleSelectedNPC == null)
                 return null;
             return CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(consoleSelectedNPC);
@@ -90,7 +90,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
             if (value.equals("console")) {
                 consoleSelectedNPC = null;
             } else if (value.startsWith("@")) {
-                String[] parts = value.substring(1, value.length()).split(":");
+                String[] parts = value.substring(1).split(":");
                 World world = Bukkit.getWorld(parts[0]);
                 if (world != null) {
                     Block block = world.getBlockAt(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]),
@@ -159,7 +159,6 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
             consoleSelectedNPC = npc.getUniqueId();
             selectors.add("console");
         }
-
         Bukkit.getPluginManager().callEvent(new NPCSelectEvent(npc, sender));
     }
 

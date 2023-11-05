@@ -17,9 +17,8 @@ public class CommandTriggerPrompt extends StringPrompt implements WaypointTrigge
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("back")) {
+        if (input.equalsIgnoreCase("back"))
             return (Prompt) context.getSessionData("previous");
-        }
         if (input.equalsIgnoreCase("finish")) {
             context.setSessionData(WaypointTriggerPrompt.CREATED_TRIGGER_KEY, new CommandTrigger(commands));
             return (Prompt) context.getSessionData(WaypointTriggerPrompt.RETURN_PROMPT_KEY);

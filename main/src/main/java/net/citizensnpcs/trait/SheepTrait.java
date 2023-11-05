@@ -34,7 +34,7 @@ public class SheepTrait extends Trait {
 
     @EventHandler
     private void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
-        if (npc != null && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity()))) {
+        if (npc != null && npc.isProtected() && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity()))) {
             event.setCancelled(true);
         }
     }

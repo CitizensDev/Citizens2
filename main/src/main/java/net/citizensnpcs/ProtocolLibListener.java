@@ -48,6 +48,8 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.ClickRedirectTrait;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
@@ -55,15 +57,15 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.SkinProperty;
 
 public class ProtocolLibListener implements Listener {
-    private final Class<?> flagsClass;
-    private final ProtocolManager manager;
+    private Class<?> flagsClass;
+    private ProtocolManager manager;
     private final Map<UUID, MirrorTrait> mirrorTraits = Maps.newConcurrentMap();
-    private final Citizens plugin;
+    private Citizens plugin;
     private final Map<Integer, RotationTrait> rotationTraits = Maps.newConcurrentMap();
 
     public ProtocolLibListener(Citizens plugin) {
         this.plugin = plugin;
-        this.manager = ProtocolLibrary.getProtocolManager();
+        manager = ProtocolLibrary.getProtocolManager();
         flagsClass = MinecraftReflection.getMinecraftClass("RelativeMovement", "world.entity.RelativeMovement",
                 "EnumPlayerTeleportFlags", "PacketPlayOutPosition$EnumPlayerTeleportFlags",
                 "network.protocol.game.PacketPlayOutPosition$EnumPlayerTeleportFlags");
@@ -72,50 +74,59 @@ public class ProtocolLibListener implements Listener {
             @Override
             public void onPacketSending(PacketEvent event) {
                 NPC npc = getNPCFromPacket(event);
-                if (npc == null || !npc.data().has(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER))
+                if (npc == null)
                     return;
 
-                Function<Player, String> hvs = npc.data().get(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER);
-                int version = manager.getProtocolVersion(event.getPlayer());
                 PacketContainer packet = event.getPacket();
-                if (version < 761) {
-                    List<WrappedWatchableObject> wwo = packet.getWatchableCollectionModifier().readSafely(0);
-                    if (wwo == null)
-                        return;
-
+                int version = manager.getProtocolVersion(event.getPlayer());
+                if (npc.data().has(NPC.Metadata.HOLOGRAM_FOR) || npc.data().has(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER)) {
+                    Function<Player, String> hvs = npc.data().get(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER);
+                    Object fakeName = null;
+                    if (hvs != null) {
+                        String suppliedName = hvs.apply(event.getPlayer());
+                        fakeName = version <= 340 ? suppliedName
+                                : Optional.of(Messaging.minecraftComponentFromRawMessage(suppliedName));
+                    }
+                    boolean sneaking = npc.getOrAddTrait(ClickRedirectTrait.class).getRedirectNPC()
+                            .getOrAddTrait(HologramTrait.class).isHologramSneaking(npc, event.getPlayer());
                     boolean delta = false;
-                    String text = hvs.apply(event.getPlayer());
-                    for (WrappedWatchableObject wo : wwo) {
-                        if (wo.getIndex() != 2)
-                            continue;
-                        if (version <= 340) {
-                            wo.setValue(text);
-                        } else {
-                            wo.setValue(Optional.of(Messaging.minecraftComponentFromRawMessage(text)));
+
+                    if (version < 761) {
+                        List<WrappedWatchableObject> wwo = packet.getWatchableCollectionModifier().readSafely(0);
+                        if (wwo == null)
+                            return;
+
+                        for (WrappedWatchableObject wo : wwo) {
+                            if (fakeName != null && wo.getIndex() == 2) {
+                                wo.setValue(fakeName);
+                                delta = true;
+                            } else if (sneaking && wo.getIndex() == 0) {
+                                byte b = (byte) (((Number) wo.getValue()).byteValue() | 0x02);
+                                wo.setValue(b);
+                                delta = true;
+                            }
                         }
-                        delta = true;
-                        break;
-                    }
+                        if (delta) {
+                            packet.getWatchableCollectionModifier().write(0, wwo);
+                        }
+                    } else {
+                        List<WrappedDataValue> wdvs = packet.getDataValueCollectionModifier().readSafely(0);
+                        if (wdvs == null)
+                            return;
 
-                    if (delta) {
-                        packet.getWatchableCollectionModifier().write(0, wwo);
-                    }
-                } else {
-                    List<WrappedDataValue> wdvs = packet.getDataValueCollectionModifier().readSafely(0);
-                    if (wdvs == null)
-                        return;
-
-                    boolean delta = false;
-                    String text = hvs.apply(event.getPlayer());
-                    for (WrappedDataValue wdv : wdvs) {
-                        if (wdv.getIndex() != 2)
-                            continue;
-                        wdv.setValue(Optional.of(Messaging.minecraftComponentFromRawMessage(text)));
-                        break;
-                    }
-
-                    if (delta) {
-                        packet.getDataValueCollectionModifier().write(0, wdvs);
+                        for (WrappedDataValue wdv : wdvs) {
+                            if (fakeName != null && wdv.getIndex() == 2) {
+                                wdv.setValue(fakeName);
+                                delta = true;
+                            } else if (sneaking && wdv.getIndex() == 0) {
+                                byte b = (byte) (((Number) wdv.getValue()).byteValue() | 0x02);
+                                wdv.setValue(b);
+                                delta = true;
+                            }
+                        }
+                        if (delta) {
+                            packet.getDataValueCollectionModifier().write(0, wdvs);
+                        }
                     }
                 }
             }
@@ -130,7 +141,6 @@ public class ProtocolLibListener implements Listener {
                             uuid -> mirrorTraits.get(uuid));
                     return;
                 }
-
                 List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists().readSafely(0);
                 if (list == null)
                     return;
@@ -153,13 +163,11 @@ public class ProtocolLibListener implements Listener {
                         wgp = WrappedGameProfile.fromPlayer(event.getPlayer());
                         playerName = WrappedChatComponent.fromText(event.getPlayer().getDisplayName());
                     }
-
                     if (trait.mirrorName()) {
                         list.set(i, new PlayerInfoData(wgp.withId(npcInfo.getProfile().getId()), npcInfo.getLatency(),
                                 npcInfo.getGameMode(), playerName));
                         continue;
                     }
-
                     Collection<Property> textures = playerProfile.getProperties().get("textures");
                     if (textures == null || textures.size() == 0)
                         continue;
@@ -174,7 +182,6 @@ public class ProtocolLibListener implements Listener {
                     }
                     changed = true;
                 }
-
                 if (changed) {
                     event.getPacket().getPlayerInfoDataLists().write(0, list);
                 }
@@ -202,7 +209,6 @@ public class ProtocolLibListener implements Listener {
                     }
                     return;
                 }
-
                 RotationTrait trait = rotationTraits.get(eid);
                 if (trait == null)
                     return;
@@ -215,10 +221,8 @@ public class ProtocolLibListener implements Listener {
                 PacketType type = event.getPacketType();
                 if (type == Server.ENTITY_HEAD_ROTATION) {
                     packet.getBytes().write(0, degToByte(session.getHeadYaw()));
-                } else if (type == Server.ENTITY_LOOK) {
-                    packet.getBytes().write(0, degToByte(session.getBodyYaw()));
-                    packet.getBytes().write(1, degToByte(session.getPitch()));
-                } else if (type == Server.ENTITY_MOVE_LOOK || type == Server.REL_ENTITY_MOVE_LOOK) {
+                } else if (type == Server.ENTITY_LOOK || type == Server.ENTITY_MOVE_LOOK
+                        || type == Server.REL_ENTITY_MOVE_LOOK) {
                     packet.getBytes().write(0, degToByte(session.getBodyYaw()));
                     packet.getBytes().write(1, degToByte(session.getPitch()));
                 } else if (type == Server.POSITION) {
@@ -231,7 +235,6 @@ public class ProtocolLibListener implements Listener {
                     packet.getFloat().write(0, session.getBodyYaw());
                     packet.getFloat().write(1, session.getPitch());
                 }
-
                 session.onPacketOverwritten();
                 Messaging.debug("OVERWRITTEN " + type + " " + packet.getHandle());
             }
@@ -258,7 +261,6 @@ public class ProtocolLibListener implements Listener {
             }
             return null;
         }
-
         return entity instanceof NPCHolder ? ((NPCHolder) entity).getNPC() : null;
     }
 
@@ -278,7 +280,6 @@ public class ProtocolLibListener implements Listener {
             rotationTraits.put(event.getNPC().getEntity().getEntityId(),
                     event.getNPC().getTraitNullable(RotationTrait.class));
         }
-
         if (event.getNPC().hasTrait(MirrorTrait.class)
                 && event.getNPC().getOrAddTrait(MobType.class).getType() == EntityType.PLAYER) {
             mirrorTraits.put(event.getNPC().getEntity().getUniqueId(),

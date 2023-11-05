@@ -71,8 +71,7 @@ public class SnifferTrait extends Trait {
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

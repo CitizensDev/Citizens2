@@ -28,7 +28,7 @@ import net.citizensnpcs.util.NMS;
  */
 public class SkinPacketTracker {
     private final SkinnableEntity entity;
-    private final Map<UUID, PlayerEntry> inProgress = new HashMap<UUID, PlayerEntry>(
+    private final Map<UUID, PlayerEntry> inProgress = new HashMap<>(
             Math.max(128, Math.min(1024, Bukkit.getMaxPlayers() / 2)));
     private boolean isRemoved;
     private Skin skin;
@@ -43,7 +43,7 @@ public class SkinPacketTracker {
         Preconditions.checkNotNull(entity);
 
         this.entity = entity;
-        this.skin = Skin.get(entity);
+        skin = Skin.get(entity);
 
         if (LISTENER == null) {
             LISTENER = new PlayerListener();
@@ -76,10 +76,7 @@ public class SkinPacketTracker {
      */
     void notifyRemovePacketSent(UUID playerId) {
         PlayerEntry entry = inProgress.get(playerId);
-        if (entry == null)
-            return;
-
-        if (entry.removeCount == 0)
+        if (entry == null || entry.removeCount == 0)
             return;
 
         entry.removeCount -= 1;
@@ -94,7 +91,7 @@ public class SkinPacketTracker {
      * Notify that the NPC skin has been changed.
      */
     public void notifySkinChange(boolean forceUpdate) {
-        this.skin = Skin.get(entity, forceUpdate);
+        skin = Skin.get(entity, forceUpdate);
         skin.applyAndRespawn(entity);
     }
 
@@ -111,9 +108,9 @@ public class SkinPacketTracker {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 
         for (Player player : players) {
-            if (player.hasMetadata("NPC"))
+            if (player.hasMetadata("NPC")) {
                 continue;
-
+            }
             // send packet now and later to ensure removal from player list
             NMS.sendTabListRemove(player, entity.getBukkitEntity());
             TAB_LIST_REMOVER.sendPacket(player, entity);
@@ -137,7 +134,7 @@ public class SkinPacketTracker {
         }.runTaskLater(CitizensAPI.getPlugin(), 15);
     }
 
-    private void scheduleRemovePacket(final PlayerEntry entry) {
+    private void scheduleRemovePacket(PlayerEntry entry) {
         if (isRemoved || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled()
                 || !shouldRemoveFromTabList())
             return;
@@ -177,7 +174,7 @@ public class SkinPacketTracker {
      * @param player
      *            The player.
      */
-    public void updateViewer(final Player player) {
+    public void updateViewer(Player player) {
         Preconditions.checkNotNull(player);
 
         if (isRemoved || player.hasMetadata("NPC"))
@@ -189,7 +186,6 @@ public class SkinPacketTracker {
         } else {
             entry = new PlayerEntry(player);
         }
-
         TAB_LIST_REMOVER.cancelPackets(player, entity);
 
         inProgress.put(player.getUniqueId(), entry);
@@ -199,7 +195,7 @@ public class SkinPacketTracker {
         }
     }
 
-    private class PlayerEntry {
+    private static class PlayerEntry {
         Player player;
         int removeCount;
         BukkitTask removeTask;
@@ -228,6 +224,6 @@ public class SkinPacketTracker {
     }
 
     private static PlayerListener LISTENER;
-    private static final int PACKET_DELAY_REMOVE = 2;
-    private static final TabListRemover TAB_LIST_REMOVER = new TabListRemover();
+    private static int PACKET_DELAY_REMOVE = 2;
+    private static TabListRemover TAB_LIST_REMOVER = new TabListRemover();
 }

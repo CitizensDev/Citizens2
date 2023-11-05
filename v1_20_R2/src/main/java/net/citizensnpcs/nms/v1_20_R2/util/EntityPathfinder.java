@@ -81,7 +81,6 @@ public class EntityPathfinder extends PathFinder {
             if (var8 >= maxVisitedNodesScaled) {
                 break;
             }
-
             Node var11 = this.openSet.pop();
             var11.closed = true;
             Iterator var13i = var6.iterator();
@@ -92,13 +91,10 @@ public class EntityPathfinder extends PathFinder {
                     var13.setReached();
                     var9.add(var13);
                 }
-
             }
-
             if (!var9.isEmpty()) {
                 break;
             }
-
             if ((var11.distanceTo(var1) < range)) {
                 int var12 = this.nodeEvaluator.getNeighbors(this.neighbors, var11);
 
@@ -117,15 +113,10 @@ public class EntityPathfinder extends PathFinder {
                             var14.h += var14.f;
                             this.openSet.insert(var14);
                         }
-
                     }
-
                 }
-
             }
-
         }
-
         Optional<Path> var11 = !var9.isEmpty()
                 ? var9.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var2.get(var1x), true)).min(
                         Comparator.comparingInt(Path::getNodeCount))
@@ -139,7 +130,6 @@ public class EntityPathfinder extends PathFinder {
             Path var12 = var11.get();
             return var12;
         }
-
     }
 
     private float getBestH(Node var0, Set<Target> var1) {
@@ -149,7 +139,6 @@ public class EntityPathfinder extends PathFinder {
             var4.updateBest(var5, var0);
             var2 = Math.min(var5, var2);
         }
-
         return var2;
     }
 
@@ -169,7 +158,6 @@ public class EntityPathfinder extends PathFinder {
             var4 = var4.cameFrom;
             var3.add(0, var4);
         }
-
         return new Path(var3, var1, var2);
     }
 }

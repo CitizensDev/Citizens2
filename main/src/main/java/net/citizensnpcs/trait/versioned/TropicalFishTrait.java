@@ -56,7 +56,7 @@ public class TropicalFishTrait extends Trait {
     }
 
     public void setBodyColor(DyeColor color) {
-        this.bodyColor = color;
+        bodyColor = color;
     }
 
     public void setPattern(Pattern pattern) {
@@ -64,7 +64,7 @@ public class TropicalFishTrait extends Trait {
     }
 
     public void setPatternColor(DyeColor color) {
-        this.patternColor = color;
+        patternColor = color;
     }
 
     @Command(
@@ -81,33 +81,29 @@ public class TropicalFishTrait extends Trait {
         TropicalFishTrait trait = npc.getOrAddTrait(TropicalFishTrait.class);
         String output = "";
         if (args.hasValueFlag("body")) {
-            if (body == null) {
+            if (body == null)
                 throw new CommandException(Messages.INVALID_TROPICALFISH_COLOR,
                         Util.listValuesPretty(DyeColor.values()));
-            }
             trait.setBodyColor(body);
             output += Messaging.tr(Messages.TROPICALFISH_BODY_COLOR_SET, Util.prettyEnum(body));
         }
         if (args.hasValueFlag("patterncolor")) {
-            if (patterncolor == null) {
+            if (patterncolor == null)
                 throw new CommandException(Messages.INVALID_TROPICALFISH_COLOR,
                         Util.listValuesPretty(DyeColor.values()));
-            }
             trait.setPatternColor(patterncolor);
             output += Messaging.tr(Messages.TROPICALFISH_PATTERN_COLOR_SET, Util.prettyEnum(patterncolor));
         }
         if (args.hasValueFlag("pattern")) {
-            if (pattern == null) {
+            if (pattern == null)
                 throw new CommandException(Messages.INVALID_TROPICALFISH_PATTERN,
                         Util.listValuesPretty(Pattern.values()));
-            }
             trait.setPattern(pattern);
             output += Messaging.tr(Messages.TROPICALFISH_PATTERN_SET, Util.prettyEnum(pattern));
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

@@ -59,13 +59,10 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             if (localPathType2 == PathType.DAMAGE_FIRE || localBlock == Blocks.df) {
                 localPathType1 = PathType.DAMAGE_FIRE;
             }
-
             if (localPathType2 == PathType.DAMAGE_CACTUS) {
                 localPathType1 = PathType.DAMAGE_CACTUS;
             }
-
         }
-
         localPathType1 = a(paramIBlockAccess, paramInt1, paramInt2, paramInt3, localPathType1);
         return localPathType1;
     }
@@ -87,9 +84,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             if (paramEntityInsentient.a(localPathType2) >= paramEntityInsentient.a((PathType) localObject)) {
                 localObject = localPathType2;
             }
-
         }
-
         if (localPathType1 == PathType.OPEN && paramEntityInsentient.a((PathType) localObject) == 0.0F)
             return PathType.OPEN;
         return (PathType) localObject;
@@ -113,9 +108,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             if (paramEntityInsentient.a(localPathType2) >= paramEntityInsentient.a((PathType) localObject)) {
                 localObject = localPathType2;
             }
-
         }
-
         if (localPathType1 == PathType.OPEN && paramEntityInsentient.a((PathType) localObject) == 0.0F)
             return PathType.OPEN;
         return (PathType) localObject;
@@ -134,11 +127,9 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     if (localPathType == PathType.DOOR_WOOD_CLOSED && paramBoolean1 && paramBoolean2) {
                         localPathType = PathType.WALKABLE;
                     }
-
                     if (localPathType == PathType.DOOR_OPEN && !paramBoolean2) {
                         localPathType = PathType.BLOCKED;
                     }
-
                     if (localPathType == PathType.RAIL
                             && !(paramIBlockAccess.getType(paramBlockPosition)
                                     .getBlock() instanceof BlockMinecartTrackAbstract)
@@ -146,18 +137,13 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                                     .getBlock() instanceof BlockMinecartTrackAbstract)) {
                         localPathType = PathType.FENCE;
                     }
-
                     if (i == 0 && k == 0 && m == 0) {
                         paramPathType = localPathType;
                     }
-
                     paramEnumSet.add(localPathType);
                 }
-
             }
-
         }
-
         return paramPathType;
     }
 
@@ -176,15 +162,10 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                         } else if (localBlock == Blocks.FIRE) {
                             paramPathType = PathType.DANGER_FIRE;
                         }
-
                     }
-
                 }
-
             }
-
         }
-
         localPooledBlockPosition.t();
         return paramPathType;
     }
@@ -198,7 +179,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         if (this.b.a(localPathType) >= 0.0F) {
             k = MathHelper.d(Math.max(1.0F, this.b.P));
         }
-
         BlockPosition localBlockPosition = new BlockPosition(paramPathPoint1.a, paramPathPoint1.b, paramPathPoint1.c)
                 .down();
         double d = paramPathPoint1.b - (1.0D - this.a.getType(localBlockPosition).e(this.a, localBlockPosition).e);
@@ -213,19 +193,15 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         if (localPathPoint1 != null && !localPathPoint1.i && localPathPoint1.a(paramPathPoint2) < paramFloat) {
             paramArrayOfPathPoint[i++] = localPathPoint1;
         }
-
         if (localPathPoint2 != null && !localPathPoint2.i && localPathPoint2.a(paramPathPoint2) < paramFloat) {
             paramArrayOfPathPoint[i++] = localPathPoint2;
         }
-
         if (localPathPoint3 != null && !localPathPoint3.i && localPathPoint3.a(paramPathPoint2) < paramFloat) {
             paramArrayOfPathPoint[i++] = localPathPoint3;
         }
-
         if (localPathPoint4 != null && !localPathPoint4.i && localPathPoint4.a(paramPathPoint2) < paramFloat) {
             paramArrayOfPathPoint[i++] = localPathPoint4;
         }
-
         int m = localPathPoint4 == null || localPathPoint4.m == PathType.OPEN || localPathPoint4.l != 0.0F ? 1 : 0;
         int n = localPathPoint1 == null || localPathPoint1.m == PathType.OPEN || localPathPoint1.l != 0.0F ? 1 : 0;
         int i1 = localPathPoint3 == null || localPathPoint3.m == PathType.OPEN || localPathPoint3.l != 0.0F ? 1 : 0;
@@ -237,36 +213,28 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             if (localPathPoint5 != null && !localPathPoint5.i && localPathPoint5.a(paramPathPoint2) < paramFloat) {
                 paramArrayOfPathPoint[i++] = localPathPoint5;
             }
-
         }
-
         if (m != 0 && i1 != 0) {
             localPathPoint5 = pa(paramPathPoint1.a + 1, paramPathPoint1.b, paramPathPoint1.c - 1, k, d,
                     EnumDirection.NORTH);
             if (localPathPoint5 != null && !localPathPoint5.i && localPathPoint5.a(paramPathPoint2) < paramFloat) {
                 paramArrayOfPathPoint[i++] = localPathPoint5;
             }
-
         }
-
         if (n != 0 && i2 != 0) {
             localPathPoint5 = pa(paramPathPoint1.a - 1, paramPathPoint1.b, paramPathPoint1.c + 1, k, d,
                     EnumDirection.SOUTH);
             if (localPathPoint5 != null && !localPathPoint5.i && localPathPoint5.a(paramPathPoint2) < paramFloat) {
                 paramArrayOfPathPoint[i++] = localPathPoint5;
             }
-
         }
-
         if (n != 0 && i1 != 0) {
             localPathPoint5 = pa(paramPathPoint1.a + 1, paramPathPoint1.b, paramPathPoint1.c + 1, k, d,
                     EnumDirection.SOUTH);
             if (localPathPoint5 != null && !localPathPoint5.i && localPathPoint5.a(paramPathPoint2) < paramFloat) {
                 paramArrayOfPathPoint[i++] = localPathPoint5;
             }
-
         }
-
         return i;
     }
 
@@ -285,7 +253,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                         MathHelper.floor(this.b.locZ));
                 localObject2 = this.a.getType(localObject1).getBlock();
             }
-
         } else if (this.b.onGround) {
             i = MathHelper.floor(this.b.getBoundingBox().b + 0.5D);
         } else {
@@ -294,10 +261,8 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     || this.a.getType(localObject1).getBlock().b(this.a, localObject1)) && localObject1.getY() > 0) {
                 localObject1 = localObject1.down();
             }
-
             i = localObject1.up().getY();
         }
-
         localObject1 = new BlockPosition(this.b);
         Object localObject2 = pa(this.b, localObject1.getX(), i, localObject1.getZ());
         if (this.b.a((PathType) localObject2) < 0.0F) {
@@ -311,9 +276,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 if (this.b.a(localPathType) >= 0.0F)
                     return a(localBlockPosition.getX(), localBlockPosition.getY(), localBlockPosition.getZ());
             }
-
         }
-
         return a(localObject1.getX(), i, localObject1.getZ());
     }
 
@@ -342,7 +305,6 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             localPathPoint.m = localPathType1;
             localPathPoint.l = Math.max(localPathPoint.l, f);
         }
-
         if (localPathType1 == PathType.WALKABLE)
             return localPathPoint;
         if (localPathPoint == null && paramInt4 > 0 && localPathType1 != PathType.FENCE
@@ -359,11 +321,8 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 if (this.b.world.a(localAxisAlignedBB3)) {
                     localPathPoint = null;
                 }
-
             }
-
         }
-
         if (localPathType1 == PathType.OPEN) {
             AxisAlignedBB localAxisAlignedBB4 = new AxisAlignedBB(paramInt1 - d2 + 0.5D, paramInt2 + 0.001D,
                     paramInt3 - d2 + 0.5D, paramInt1 + d2 + 0.5D, paramInt2 + this.b.length, paramInt3 + d2 + 0.5D);
@@ -377,9 +336,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     localPathPoint.l = Math.max(localPathPoint.l, f);
                     return localPathPoint;
                 }
-
             }
-
             int i = 0;
             while (paramInt2 > 0 && localPathType1 == PathType.OPEN) {
                 paramInt2--;
@@ -393,11 +350,8 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                     localPathPoint.l = Math.max(localPathPoint.l, f);
                 } else if (f < 0.0F)
                     return null;
-
             }
-
         }
-
         return localPathPoint;
     }
 

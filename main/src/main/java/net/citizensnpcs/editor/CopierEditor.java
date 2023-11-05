@@ -19,7 +19,7 @@ public class CopierEditor extends Editor {
     public CopierEditor(Player player, NPC npc) {
         this.player = player;
         this.npc = npc;
-        this.name = npc.getRawName();
+        name = npc.getRawName();
     }
 
     @Override
@@ -41,7 +41,6 @@ public class CopierEditor extends Editor {
         if (!copy.getRawName().equals(name)) {
             copy.setName(name);
         }
-
         if (copy.isSpawned() && player.isOnline()) {
             Location location = event.getClickedBlock().getLocation();
             location.setYaw(player.getLocation().getYaw());
@@ -50,7 +49,6 @@ public class CopierEditor extends Editor {
             copy.teleport(location, TeleportCause.PLUGIN);
             copy.getOrAddTrait(CurrentLocation.class).setLocation(location);
         }
-
         Messaging.sendTr(player, Messages.NPC_COPIED, npc.getName());
         event.setCancelled(true);
     }

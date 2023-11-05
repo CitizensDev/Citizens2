@@ -39,9 +39,7 @@ public abstract class MobEntityController extends AbstractEntityController {
             if (mob.getLookControl().getClass() == LookControl.class) {
                 NMSImpl.setLookControl(mob, new PitchableLookControl(mob));
             }
-
         }
-
         entity.absMoveTo(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         if (npc != null) {
             // entity.onGround isn't updatedright away - we approximate here so
@@ -50,14 +48,11 @@ public abstract class MobEntityController extends AbstractEntityController {
             if (beneath.isSolid()) {
                 entity.setOnGround(true);
             }
-
             entity.setUUID(npc.getUniqueId());
             if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
                 npc.getOrAddTrait(ScoreboardTrait.class).createTeam(npc.getUniqueId().toString());
             }
-
         }
-
         return entity.getBukkitEntity();
     }
 
@@ -68,7 +63,6 @@ public abstract class MobEntityController extends AbstractEntityController {
             ex.printStackTrace();
             return null;
         }
-
     }
 
     private static Constructor<?> getConstructor(Class<?> clazz) {
@@ -81,7 +75,6 @@ public abstract class MobEntityController extends AbstractEntityController {
         } catch (Exception ex) {
             throw new IllegalStateException("unable to find an entity constructor");
         }
-
     }
 
     private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = new WeakHashMap<>();

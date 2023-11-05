@@ -35,7 +35,6 @@ public class SitTrait extends Trait {
             ((Sittable) npc.getEntity()).setSitting(false);
             return;
         }
-
         if (chair != null) {
             if (chair.getEntity() != null) {
                 chair.getEntity().eject();
@@ -72,7 +71,6 @@ public class SitTrait extends Trait {
             }
             return;
         }
-
         if (chair == null) {
             NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("SitRegistry");
             if (registry == null) {
@@ -85,22 +83,19 @@ public class SitTrait extends Trait {
                 return;
             }
         }
-
         if (chair.isSpawned() && !NMS.getPassengers(chair.getEntity()).contains(npc.getEntity())) {
             NMS.mount(chair.getEntity(), npc.getEntity());
         }
-
         if (chair.getStoredLocation() != null && chair.getStoredLocation().distance(sittingAt) >= 0.03) {
             chair.teleport(sittingAt.clone(), TeleportCause.PLUGIN);
         }
     }
 
     public void setSitting(Location at) {
-        this.sittingAt = at != null ? at.clone() : null;
+        sittingAt = at != null ? at.clone() : null;
         if (requiresPassengerOffsetCorrection()) {
             sittingAt = sittingAt.add(0, 0.3, 0);
         }
-
         if (at == null) {
             onDespawn();
         }

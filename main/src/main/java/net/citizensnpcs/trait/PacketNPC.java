@@ -64,9 +64,8 @@ public class PacketNPC extends Trait {
     }
 
     public EntityController wrap(EntityController controller) {
-        if (!(controller instanceof PacketController)) {
+        if (!(controller instanceof PacketController))
             return new PacketController(controller);
-        }
         return controller;
     }
 
@@ -74,7 +73,7 @@ public class PacketNPC extends Trait {
         private final EntityController base;
 
         public PacketController(EntityController controller) {
-            this.base = controller;
+            base = controller;
         }
 
         @Override

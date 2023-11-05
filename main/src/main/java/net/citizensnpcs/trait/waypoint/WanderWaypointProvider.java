@@ -67,10 +67,10 @@ public class WanderWaypointProvider implements WaypointProvider {
     }
 
     @Override
-    public WaypointEditor createEditor(final CommandSender sender, CommandContext args) {
+    public WaypointEditor createEditor(CommandSender sender, CommandContext args) {
         return new WaypointEditor() {
             boolean editingRegions = false;
-            EntityMarkers<Location> markers = new EntityMarkers<Location>();
+            EntityMarkers<Location> markers = new EntityMarkers<>();
 
             @Override
             public void begin() {
@@ -190,9 +190,8 @@ public class WanderWaypointProvider implements WaypointProvider {
 
             @EventHandler(ignoreCancelled = true)
             public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-                if (!sender.equals(event.getPlayer()) || !editingRegions || Util.isOffHand(event))
-                    return;
-                if (!event.getRightClicked().hasMetadata("wandermarker"))
+                if (!sender.equals(event.getPlayer()) || !editingRegions || Util.isOffHand(event)
+                        || !event.getRightClicked().hasMetadata("wandermarker"))
                     return;
                 regionCentres.remove(event.getRightClicked().getMetadata("wandermarker").get(0).value());
                 markers.removeMarker((Location) event.getRightClicked().getMetadata("wandermarker").get(0).value());
@@ -268,7 +267,7 @@ public class WanderWaypointProvider implements WaypointProvider {
         if (currentGoal == null) {
             currentGoal = WanderGoal.builder(npc).xrange(xrange).yrange(yrange).pathfind(pathfind)
                     .tree(() -> regionCentres.isEmpty() ? null : tree).delay(delay)
-                    .worldguardRegion(() -> getWorldGuardRegion()).build();
+                    .worldguardRegion(this::getWorldGuardRegion).build();
             if (paused) {
                 currentGoal.pause();
             }
@@ -332,8 +331,8 @@ public class WanderWaypointProvider implements WaypointProvider {
     }
 
     public void setWorldGuardRegion(String region) {
-        this.worldguardRegion = region;
-        this.worldguardRegionCache = null;
+        worldguardRegion = region;
+        worldguardRegionCache = null;
     }
 
     public void setXYRange(int xrange, int yrange) {
@@ -378,6 +377,6 @@ public class WanderWaypointProvider implements WaypointProvider {
         }
     }
 
-    private static final int DEFAULT_XRANGE = 25;
-    private static final int DEFAULT_YRANGE = 3;
+    private static int DEFAULT_XRANGE = 25;
+    private static int DEFAULT_YRANGE = 3;
 }

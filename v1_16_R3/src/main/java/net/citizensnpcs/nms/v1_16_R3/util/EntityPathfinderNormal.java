@@ -82,20 +82,16 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
         if (var4 == PathType.DOOR_WOOD_CLOSED && var1 && var2) {
             var4 = PathType.WALKABLE;
         }
-
         if (var4 == PathType.DOOR_OPEN && !var2) {
             var4 = PathType.BLOCKED;
         }
-
         if (var4 == PathType.RAIL && !(var0.getType(var3).getBlock() instanceof BlockMinecartTrackAbstract)
                 && !(var0.getType(var3.down()).getBlock() instanceof BlockMinecartTrackAbstract)) {
             var4 = PathType.UNPASSABLE_RAIL;
         }
-
         if (var4 == PathType.LEAVES) {
             var4 = PathType.BLOCKED;
         }
-
         return var4;
     }
 
@@ -122,9 +118,7 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
             if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13)) {
                 var13 = var15;
             }
-
         }
-
         if (var11 == PathType.OPEN && mvmt.getPathfindingMalus(var13) == 0.0F && var5 <= 1)
             return PathType.OPEN;
         return var13;
@@ -147,9 +141,7 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
             if (mvmt.getPathfindingMalus(var15) >= mvmt.getPathfindingMalus(var13)) {
                 var13 = var15;
             }
-
         }
-
         if (var11 == PathType.OPEN && mvmt.getPathfindingMalus(var13) == 0.0F && var5 <= 1)
             return PathType.OPEN;
         return var13;
@@ -168,14 +160,10 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                     if (var12 == 0 && var13 == 0 && var14 == 0) {
                         var10 = var18;
                     }
-
                     var9.add(var18);
                 }
-
             }
-
         }
-
         return var10;
     }
 
@@ -193,11 +181,9 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
             var8.l = var12;
             var8.k = Math.max(var8.k, var13);
         }
-
         if (var7 == PathType.FENCE && var8 != null && var8.k >= 0.0F && !a(var8)) {
             var8 = null;
         }
-
         if (var12 == PathType.WALKABLE)
             return var8;
         if ((var8 == null || var8.k < 0.0F) && var3 > 0 && var12 != PathType.FENCE && var12 != PathType.UNPASSABLE_RAIL
@@ -212,11 +198,8 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                 if (a(var20)) {
                     var8 = null;
                 }
-
             }
-
         }
-
         if (var12 == PathType.WATER && !e()) {
             if (a(this.b, var0, var1 - 1, var2) != PathType.WATER)
                 return var8;
@@ -229,12 +212,9 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                     var8.k = Math.max(var8.k, mvmt.getPathfindingMalus(var12));
                     continue;
                 }
-
                 return var8;
             }
-
         }
-
         if (var12 == PathType.OPEN) {
             int var16 = 0;
             int var17 = var1;
@@ -246,14 +226,12 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                     var18.k = -1.0F;
                     return var18;
                 }
-
                 if (var16++ >= this.b.bP()) {
                     PathPoint var18 = a(var0, var1, var2);
                     var18.l = PathType.BLOCKED;
                     var18.k = -1.0F;
                     return var18;
                 }
-
                 var12 = a(this.b, var0, var1, var2);
                 var13 = mvmt.getPathfindingMalus(var12);
                 if (var12 != PathType.OPEN && var13 >= 0.0F) {
@@ -262,25 +240,20 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                     var8.k = Math.max(var8.k, var13);
                     break;
                 }
-
                 if (var13 < 0.0F) {
                     PathPoint var18 = a(var0, var1, var2);
                     var18.l = PathType.BLOCKED;
                     var18.k = -1.0F;
                     return var18;
                 }
-
             }
-
         }
-
         if (var12 == PathType.FENCE) {
             var8 = a(var0, var1, var2);
             var8.i = true;
             var8.l = var12;
             var8.k = var12.a();
         }
-
         return var8;
     }
 
@@ -294,7 +267,6 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
             if (a(var2))
                 return false;
         }
-
         return true;
     }
 
@@ -323,48 +295,39 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
         if (mvmt.getPathfindingMalus(var4) >= 0.0F && var5 != PathType.STICKY_HONEY) {
             var3 = MathHelper.d(Math.max(1.0F, this.b.G));
         }
-
         double var6 = aa(this.a, new BlockPosition(var1.a, var1.b, var1.c));
         PathPoint var8 = a(var1.a, var1.b, var1.c + 1, var3, var6, EnumDirection.SOUTH, var5);
         if (a(var8, var1)) {
             var0[var2++] = var8;
         }
-
         PathPoint var9 = a(var1.a - 1, var1.b, var1.c, var3, var6, EnumDirection.WEST, var5);
         if (a(var9, var1)) {
             var0[var2++] = var9;
         }
-
         PathPoint var10 = a(var1.a + 1, var1.b, var1.c, var3, var6, EnumDirection.EAST, var5);
         if (a(var10, var1)) {
             var0[var2++] = var10;
         }
-
         PathPoint var11 = a(var1.a, var1.b, var1.c - 1, var3, var6, EnumDirection.NORTH, var5);
         if (a(var11, var1)) {
             var0[var2++] = var11;
         }
-
         PathPoint var12 = a(var1.a - 1, var1.b, var1.c - 1, var3, var6, EnumDirection.NORTH, var5);
         if (a(var1, var9, var11, var12)) {
             var0[var2++] = var12;
         }
-
         PathPoint var13 = a(var1.a + 1, var1.b, var1.c - 1, var3, var6, EnumDirection.NORTH, var5);
         if (a(var1, var10, var11, var13)) {
             var0[var2++] = var13;
         }
-
         PathPoint var14 = a(var1.a - 1, var1.b, var1.c + 1, var3, var6, EnumDirection.SOUTH, var5);
         if (a(var1, var9, var8, var14)) {
             var0[var2++] = var14;
         }
-
         PathPoint var15 = a(var1.a + 1, var1.b, var1.c + 1, var3, var6, EnumDirection.SOUTH, var5);
         if (a(var1, var10, var8, var15)) {
             var0[var2++] = var15;
         }
-
         return var2;
     }
 
@@ -378,14 +341,12 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                 var0++;
                 var2 = this.a.getType(var1.c(this.b.locX(), var0, this.b.locZ()));
             }
-
             var0--;
         } else if (e() && this.b.isInWater()) {
             while (var2.getBlock() == Blocks.WATER || var2.getFluid() == FluidTypes.WATER.a(false)) {
                 var0++;
                 var2 = this.a.getType(var1.c(this.b.locX(), var0, this.b.locZ()));
             }
-
             var0--;
         } else if (this.b.isOnGround()) {
             var0 = MathHelper.floor(this.b.locY() + 0.5D);
@@ -396,10 +357,8 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                     && blockPosition.getY() > 0) {
                 blockPosition = blockPosition.down();
             }
-
             var0 = blockPosition.up().getY();
         }
-
         BlockPosition var3 = this.b.getChunkCoordinates();
         PathType var4 = a(this.b, var3.getX(), var0, var3.getZ());
         if (mvmt.getPathfindingMalus(var4) < 0.0F) {
@@ -413,9 +372,7 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                 var6.k = mvmt.getPathfindingMalus(var6.l);
                 return var6;
             }
-
         }
-
         PathPoint var5 = a(var3.getX(), var0, var3.getZ());
         var5.l = a(this.b, var5.a());
         var5.k = mvmt.getPathfindingMalus(var5.l);
@@ -440,25 +397,19 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
             if (var6 == PathType.DAMAGE_FIRE) {
                 var5 = PathType.DAMAGE_FIRE;
             }
-
             if (var6 == PathType.DAMAGE_CACTUS) {
                 var5 = PathType.DAMAGE_CACTUS;
             }
-
             if (var6 == PathType.DAMAGE_OTHER) {
                 var5 = PathType.DAMAGE_OTHER;
             }
-
             if (var6 == PathType.STICKY_HONEY) {
                 var5 = PathType.STICKY_HONEY;
             }
-
         }
-
         if (var5 == PathType.WALKABLE) {
             var5 = a(var0, var1.d(var2, var3, var4), var5);
         }
-
         return var5;
     }
 
@@ -481,13 +432,9 @@ public class EntityPathfinderNormal extends EntityPathfinderAbstract {
                         if (var0.getFluid(var1).a(TagsFluid.WATER))
                             return PathType.WATER_BORDER;
                     }
-
                 }
-
             }
-
         }
-
         return var2;
     }
 

@@ -61,7 +61,6 @@ public class TNTPrimedController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -73,7 +72,6 @@ public class TNTPrimedController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -86,7 +84,6 @@ public class TNTPrimedController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new TNTPrimedNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -106,7 +103,6 @@ public class TNTPrimedController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -116,7 +112,6 @@ public class TNTPrimedController extends MobEntityController {
             } else {
                 super.tick();
             }
-
         }
     }
 

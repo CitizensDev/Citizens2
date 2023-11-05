@@ -2,6 +2,7 @@ package net.citizensnpcs.trait.waypoint;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -66,27 +67,13 @@ public class Waypoint {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         Waypoint other = (Waypoint) obj;
-        if (location == null) {
-            if (other.location != null) {
-                return false;
-            }
-        } else if (!location.equals(other.location)) {
+        if (!Objects.equals(location, other.location) || !Objects.equals(triggers, other.triggers))
             return false;
-        }
-        if (triggers == null) {
-            if (other.triggers != null) {
-                return false;
-            }
-        } else if (!triggers.equals(other.triggers)) {
-            return false;
-        }
         return true;
     }
 
@@ -100,9 +87,9 @@ public class Waypoint {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime + ((location == null) ? 0 : location.hashCode());
-        return prime * result + ((triggers == null) ? 0 : triggers.hashCode());
+        int prime = 31;
+        int result = prime + (location == null ? 0 : location.hashCode());
+        return prime * result + (triggers == null ? 0 : triggers.hashCode());
     }
 
     /**
@@ -114,17 +101,19 @@ public class Waypoint {
         runTriggers(npc, 0);
     }
 
-    private void runTriggers(final NPC npc, int start) {
+    private void runTriggers(NPC npc, int start) {
         List<WaypointTrigger> triggers = Lists.newArrayList(this.triggers);
         for (int i = start; i < triggers.size(); i++) {
             WaypointTrigger trigger = triggers.get(i);
             trigger.onWaypointReached(npc, location.clone());
-            if (!(trigger instanceof DelayTrigger))
+            if (!(trigger instanceof DelayTrigger)) {
                 continue;
+            }
             int delay = ((DelayTrigger) trigger).getDelay();
-            if (delay <= 0)
+            if (delay <= 0) {
                 continue;
-            final int newStart = i + 1;
+            }
+            int newStart = i + 1;
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> runTriggers(npc, newStart),
                     delay);
             break;

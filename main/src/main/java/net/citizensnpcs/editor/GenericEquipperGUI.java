@@ -73,32 +73,32 @@ public class GenericEquipperGUI extends InventoryMenuPage {
 
     @ClickHandler(slot = { 1, 5 })
     public void setBoots(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-        set(EquipmentSlot.BOOTS, event, (type) -> type == Material.AIR || type.name().endsWith("BOOTS"));
+        set(EquipmentSlot.BOOTS, event, type -> type == Material.AIR || type.name().endsWith("BOOTS"));
     }
 
     @ClickHandler(slot = { 1, 3 })
     public void setChest(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
         set(EquipmentSlot.CHESTPLATE, event,
-                (type) -> type == Material.AIR || type.name().endsWith("CHESTPLATE") || type.name().equals("ELYTRA"));
+                type -> type == Material.AIR || type.name().endsWith("CHESTPLATE") || type.name().equals("ELYTRA"));
     }
 
     @ClickHandler(slot = { 1, 0 })
     public void setHand(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-        set(EquipmentSlot.HAND, event, (type) -> true);
+        set(EquipmentSlot.HAND, event, type -> true);
     }
 
     @ClickHandler(slot = { 1, 2 })
     public void setHelmet(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-        set(EquipmentSlot.HELMET, event, (type) -> true);
+        set(EquipmentSlot.HELMET, event, type -> true);
     }
 
     @ClickHandler(slot = { 1, 4 })
     public void setLeggings(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-        set(EquipmentSlot.LEGGINGS, event, (type) -> type == Material.AIR || type.name().endsWith("LEGGINGS"));
+        set(EquipmentSlot.LEGGINGS, event, type -> type == Material.AIR || type.name().endsWith("LEGGINGS"));
     }
 
     @ClickHandler(slot = { 1, 1 })
     public void setOffhand(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-        set(EquipmentSlot.OFF_HAND, event, (type) -> true);
+        set(EquipmentSlot.OFF_HAND, event, type -> true);
     }
 }

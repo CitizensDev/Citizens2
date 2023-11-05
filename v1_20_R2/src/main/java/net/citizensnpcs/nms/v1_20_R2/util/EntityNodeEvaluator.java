@@ -52,7 +52,6 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             if (this.hasCollisions(var1))
                 return false;
         }
-
         return true;
     }
 
@@ -74,16 +73,13 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         if (var2 == BlockPathTypes.DOOR_WOOD_CLOSED && this.canOpenDoors() && var3) {
             var2 = BlockPathTypes.WALKABLE_DOOR;
         }
-
         if (var2 == BlockPathTypes.DOOR_OPEN && !var3) {
             var2 = BlockPathTypes.BLOCKED;
         }
-
         if (var2 == BlockPathTypes.RAIL && !(var0.getBlockState(var1).getBlock() instanceof BaseRailBlock)
                 && !(var0.getBlockState(var1.below()).getBlock() instanceof BaseRailBlock)) {
             var2 = BlockPathTypes.UNPASSABLE_RAIL;
         }
-
         return var2;
     }
 
@@ -101,12 +97,10 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             if (var13 >= 0.0F) {
                 var8 = this.getNodeAndUpdateCostToMax(var0, var1, var2, var12, var13);
             }
-
             if (doesBlockHavePartialCollision(var7) && var8 != null && var8.costMalus >= 0.0F
                     && !this.canReachWithoutCollision(var8)) {
                 var8 = null;
             }
-
             if (var12 == BlockPathTypes.WALKABLE || this.isAmphibious() && var12 == BlockPathTypes.WATER) {
                 if ((var8 == null || var8.costMalus < 0.0F) && var3 > 0
                         && (var12 != BlockPathTypes.FENCE || this.canWalkOverFences())
@@ -127,11 +121,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         if (this.hasCollisions(var20)) {
                             var8 = null;
                         }
-
                     }
-
                 }
-
                 if (!this.isAmphibious() && var12 == BlockPathTypes.WATER && !this.canFloat()) {
                     if (this.getCachedBlockType(this.mob, var0, var1 - 1, var2) != BlockPathTypes.WATER)
                         return var8;
@@ -145,9 +136,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         var8 = this.getNodeAndUpdateCostToMax(var0, var1, var2, var12,
                                 this.mvmt.getPathfindingMalus(var12));
                     }
-
                 }
-
                 if (var12 == BlockPathTypes.OPEN) {
                     int var16 = 0;
                     int var17 = var1;
@@ -166,25 +155,19 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                             var8 = this.getNodeAndUpdateCostToMax(var0, var1, var2, var12, var13);
                             break;
                         }
-
                         if (var13 < 0.0F)
                             return this.getBlockedNode(var0, var1, var2);
                     }
-
                 }
-
                 if (doesBlockHavePartialCollision(var12) && var8 == null) {
                     var8 = this.getNode(var0, var1, var2);
                     var8.closed = true;
                     var8.type = var12;
                     var8.costMalus = var12.getMalus();
                 }
-
             }
-
             return var8;
         }
-
     }
 
     private Node getBlockedNode(int var0, int var1, int var2) {
@@ -219,9 +202,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 if (mvmt.getPathfindingMalus(varr9) >= mvmt.getPathfindingMalus(var7)) {
                     var7 = varr9;
                 }
-
             }
-
             if (var6 == BlockPathTypes.OPEN && mvmt.getPathfindingMalus(var7) == 0.0F && this.entityWidth <= 1)
                 return BlockPathTypes.OPEN;
             else
@@ -250,9 +231,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 if (mvmt.getPathfindingMalus(varr9) >= mvmt.getPathfindingMalus(var7)) {
                     var7 = varr9;
                 }
-
             }
-
             if (var6 == BlockPathTypes.OPEN && mvmt.getPathfindingMalus(var7) == 0.0F && this.entityWidth <= 1)
                 return BlockPathTypes.OPEN;
             else
@@ -277,14 +256,10 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                     if (var7 == 0 && var8 == 0 && var9 == 0) {
                         var5 = var13;
                     }
-
                     var4.add(var13);
                 }
-
             }
-
         }
-
         return var5;
     }
 
@@ -317,48 +292,39 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         if (this.mvmt.getPathfindingMalus(var4) >= 0.0F && var5 != BlockPathTypes.STICKY_HONEY) {
             var3 = Mth.floor(Math.max(1.0F, this.mob.maxUpStep()));
         }
-
         double var6 = this.getFloorLevel(new BlockPos(var1.x, var1.y, var1.z));
         Node var8 = this.findAcceptedNode(var1.x, var1.y, var1.z + 1, var3, var6, Direction.SOUTH, var5);
         if (this.isNeighborValid(var8, var1)) {
             var0[var2++] = var8;
         }
-
         Node var9 = this.findAcceptedNode(var1.x - 1, var1.y, var1.z, var3, var6, Direction.WEST, var5);
         if (this.isNeighborValid(var9, var1)) {
             var0[var2++] = var9;
         }
-
         Node var10 = this.findAcceptedNode(var1.x + 1, var1.y, var1.z, var3, var6, Direction.EAST, var5);
         if (this.isNeighborValid(var10, var1)) {
             var0[var2++] = var10;
         }
-
         Node var11 = this.findAcceptedNode(var1.x, var1.y, var1.z - 1, var3, var6, Direction.NORTH, var5);
         if (this.isNeighborValid(var11, var1)) {
             var0[var2++] = var11;
         }
-
         Node var12 = this.findAcceptedNode(var1.x - 1, var1.y, var1.z - 1, var3, var6, Direction.NORTH, var5);
         if (this.isDiagonalValid(var1, var9, var11, var12)) {
             var0[var2++] = var12;
         }
-
         Node var13 = this.findAcceptedNode(var1.x + 1, var1.y, var1.z - 1, var3, var6, Direction.NORTH, var5);
         if (this.isDiagonalValid(var1, var10, var11, var13)) {
             var0[var2++] = var13;
         }
-
         Node var14 = this.findAcceptedNode(var1.x - 1, var1.y, var1.z + 1, var3, var6, Direction.SOUTH, var5);
         if (this.isDiagonalValid(var1, var9, var8, var14)) {
             var0[var2++] = var14;
         }
-
         Node var15 = this.findAcceptedNode(var1.x + 1, var1.y, var1.z + 1, var3, var6, Direction.SOUTH, var5);
         if (this.isDiagonalValid(var1, var10, var8, var15)) {
             var0[var2++] = var15;
         }
-
         return var2;
     }
 
@@ -382,11 +348,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         --var0;
                         break;
                     }
-
                     ++var0;
                     var2 = this.level.getBlockState(var1.set(this.mob.getX(), var0, this.mob.getZ()));
                 }
-
             } else if (this.mob.onGround()) {
                 var0 = Mth.floor(this.mob.getY() + 0.5);
             } else {
@@ -394,23 +358,18 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         || this.level.getBlockState(var3).isPathfindable(this.level, var3, PathComputationType.LAND))
                         && var3.getY() > this.mob.level().getMinBuildHeight(); var3 = var3.below()) {
                 }
-
                 var0 = var3.above().getY();
             }
-
         } else {
             while (true) {
                 if (!this.mob.canStandOnFluid(var2.getFluidState())) {
                     --var0;
                     break;
                 }
-
                 ++var0;
                 var2 = this.level.getBlockState(var1.set(this.mob.getX(), var0, this.mob.getZ()));
             }
-
         }
-
         var3 = this.mob.blockPosition();
         if (!this.canStartAt(var1.set(var3.getX(), var0, var3.getZ()))) {
             AABB var4 = this.mob.getBoundingBox();
@@ -420,7 +379,6 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                     || this.canStartAt(var1.set(var4.maxX, var0, var4.maxZ)))
                 return this.getStartNode(var1);
         }
-
         return this.getStartNode(new BlockPos(var3.getX(), var0, var3.getZ()));
     }
 
@@ -451,7 +409,6 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         && (var1.y < var0.y || var1.costMalus >= 0.0F || var4);
             } else
                 return false;
-
         } else
             return false;
     }
@@ -496,13 +453,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         if (var9.is(Blocks.WITHER_ROSE) || var9.is(Blocks.POINTED_DRIPSTONE))
                             return BlockPathTypes.DAMAGE_CAUTIOUS;
                     }
-
                 }
-
             }
-
         }
-
         return var2;
     }
 
@@ -568,29 +521,22 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             if (var6 == BlockPathTypes.DAMAGE_FIRE) {
                 var5 = BlockPathTypes.DAMAGE_FIRE;
             }
-
             if (var6 == BlockPathTypes.DAMAGE_OTHER) {
                 var5 = BlockPathTypes.DAMAGE_OTHER;
             }
-
             if (var6 == BlockPathTypes.STICKY_HONEY) {
                 var5 = BlockPathTypes.STICKY_HONEY;
             }
-
             if (var6 == BlockPathTypes.POWDER_SNOW) {
                 var5 = BlockPathTypes.DANGER_POWDER_SNOW;
             }
-
             if (var6 == BlockPathTypes.DAMAGE_CAUTIOUS) {
                 var5 = BlockPathTypes.DAMAGE_CAUTIOUS;
             }
-
         }
-
         if (var5 == BlockPathTypes.WALKABLE) {
             var5 = checkNeighbourBlocks(var0, var1.set(var2, var3, var4), var5);
         }
-
         return var5;
     }
 

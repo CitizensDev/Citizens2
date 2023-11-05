@@ -53,7 +53,6 @@ public class TextDisplayController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new TextDisplayNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -84,7 +83,6 @@ public class TextDisplayController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -95,7 +93,6 @@ public class TextDisplayController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -116,7 +113,6 @@ public class TextDisplayController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
-
         }
 
         @Override
@@ -128,7 +124,6 @@ public class TextDisplayController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

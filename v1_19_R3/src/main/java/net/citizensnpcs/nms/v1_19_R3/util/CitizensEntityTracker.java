@@ -37,7 +37,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                         Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(),
                                 conn.getPlayer().getBukkitEntity()));
                     }
-
                     return res;
                 }
 
@@ -49,7 +48,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     public CitizensEntityTracker(ChunkMap map, TrackedEntity entry) {
@@ -66,7 +64,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
             if (REQUIRES_SYNC == null) {
                 REQUIRES_SYNC = !Bukkit.isPrimaryThread();
             }
-
             boolean cancelled = Util.callPossiblySync(() -> {
                 NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
                 try {
@@ -75,7 +72,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                     REQUIRES_SYNC = true;
                     throw e;
                 }
-
                 if (event.isCancelled())
                     return true;
                 Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
@@ -87,16 +83,13 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
-
                 }
-
                 return false;
             }, REQUIRES_SYNC);
 
             if (cancelled)
                 return;
         }
-
         super.updatePlayer(entityplayer);
     }
 
@@ -106,7 +99,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -116,7 +108,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
@@ -126,7 +117,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -136,7 +126,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 

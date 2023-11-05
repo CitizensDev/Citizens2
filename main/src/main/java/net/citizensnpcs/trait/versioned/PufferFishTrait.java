@@ -29,7 +29,7 @@ public class PufferFishTrait extends Trait {
     }
 
     public void setPuffState(int state) {
-        this.puffState = state;
+        puffState = state;
     }
 
     @Command(

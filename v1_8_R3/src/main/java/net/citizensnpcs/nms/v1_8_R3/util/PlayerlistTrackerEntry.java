@@ -41,14 +41,12 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                         if (res == null) {
                             updateLastPlayer(player);
                         }
-
                         return res;
                     }
                 });
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-
         } else {
             try {
                 Set<EntityPlayer> delegate = super.trackedPlayers;
@@ -59,7 +57,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                         if (res) {
                             updateLastPlayer(player);
                         }
-
                         return res;
                     }
 
@@ -71,9 +68,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-
         }
-
     }
 
     public PlayerlistTrackerEntry(EntityTrackerEntry entry) {
@@ -90,7 +85,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                     new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), lastUpdatedPlayer.getBukkitEntity()));
             lastUpdatedPlayer = null;
         }
-
     }
 
     @Override
@@ -104,7 +98,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             if (event.isCancelled())
                 return;
         }
-
         super.updatePlayer(entityplayer);
     }
 
@@ -119,7 +112,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -131,7 +123,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -143,7 +134,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
@@ -161,9 +151,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                 TRACKING_MAP_SETTER = NMS.getFirstSetter(EntityTrackerEntry.class, Map.class);
                 TRACKING_MAP_GETTER = NMS.getFirstGetter(EntityTrackerEntry.class, Map.class);
             }
-
         } catch (Exception e) {
         }
-
     }
 }

@@ -72,25 +72,20 @@ public class EnderDragonController extends MobEntityController {
                 npc.update();
 
             }
-
             if (npc != null && !npc.useMinecraftAI()) {
                 if (isDeadOrDying()) {
                     setHealth(0F);
                     return;
                 }
-
                 if (this.posPointer < 0) {
                     for (int i = 0; i < this.positions.length; ++i) {
                         this.positions[i][0] = this.getYRot();
                         this.positions[i][1] = this.getY();
                     }
-
                 }
-
                 if (++this.posPointer == this.positions.length) {
                     this.posPointer = 0;
                 }
-
                 this.positions[this.posPointer][0] = this.getYRot();
                 this.positions[this.posPointer][1] = this.getY();
 
@@ -105,22 +100,18 @@ public class EnderDragonController extends MobEntityController {
                     subEntities[j].yo = subEntities[j].yOld = vec3.y;
                     subEntities[j].zo = subEntities[j].zOld = vec3.z;
                 }
-
                 if (getFirstPassenger() != null) {
                     setYRot(getFirstPassenger().getBukkitYaw() - 180);
                 }
-
                 Vec3 mot = getDeltaMovement();
                 if (mot.x != 0 || mot.y != 0 || mot.z != 0) {
                     mot = mot.multiply(0.98, 0.91, 0.98);
                     if (getFirstPassenger() == null) {
                         setYRot(Util.getDragonYaw(getBukkitEntity(), mot.x, mot.z));
                     }
-
                     setPos(getX() + mot.x, getY() + mot.y, getZ() + mot.z);
                     setDeltaMovement(mot);
                 }
-
                 if (npc.hasTrait(EnderDragonTrait.class) && npc.getOrAddTrait(EnderDragonTrait.class).isDestroyWalls()
                         && NMSImpl.ENDERDRAGON_CHECK_WALLS != null) {
                     for (int i = 0; i < 3; i++) {
@@ -130,11 +121,8 @@ public class EnderDragonController extends MobEntityController {
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
-
                     }
-
                 }
-
                 if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
                     try {
                         KNOCKBACK.invoke(this,
@@ -152,13 +140,10 @@ public class EnderDragonController extends MobEntityController {
                     } catch (Throwable t) {
                         t.printStackTrace();
                     }
-
                 }
-
             } else {
                 super.aiStep();
             }
-
         }
 
         @Override
@@ -173,7 +158,6 @@ public class EnderDragonController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -186,7 +170,6 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new EnderDragonNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -248,7 +231,6 @@ public class EnderDragonController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -259,7 +241,6 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -272,7 +253,6 @@ public class EnderDragonController extends MobEntityController {
             if (getPhaseManager().getCurrentPhase().getPhase() == EnderDragonPhase.HOVERING) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
 
@@ -297,7 +277,6 @@ public class EnderDragonController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
 

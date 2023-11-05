@@ -47,7 +47,6 @@ public class CustomEntityRegistry extends RegistryMaterials implements Supplier<
             if (((EntityTypes) type).c() == search)
                 return (EntityTypes) type;
         }
-
         return null;
     }
 

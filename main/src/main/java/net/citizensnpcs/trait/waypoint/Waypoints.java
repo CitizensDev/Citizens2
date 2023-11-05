@@ -133,7 +133,7 @@ public class Waypoints extends Trait {
         PROVIDERS.put(name, clazz);
     }
 
-    private static final Map<String, Class<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
+    private static Map<String, Class<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
 
     static {
         PROVIDERS.put("linear", LinearWaypointProvider.class);

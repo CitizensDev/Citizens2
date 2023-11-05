@@ -55,7 +55,6 @@ public class CitizensPlaceholders extends PlaceholderExpansion {
                                 b.getEntity().getLocation().distanceSquared(location)));
                 return closestNPC.isPresent() ? Integer.toString(closestNPC.get().getId()) : "";
         }
-
         return null;
     }
 

@@ -66,7 +66,6 @@ public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
     }
 
     private static final Field G = NMS.getField(AdvancementDataPlayer.class, "g");

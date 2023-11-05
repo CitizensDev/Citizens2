@@ -91,7 +91,7 @@ public class Metrics {
         metricsBase = new MetricsBase("bukkit", serverUUID, serviceId, enabled, this::appendPlatformData,
                 this::appendServiceData, submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
                 plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
-                (message) -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData,
+                message -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData,
                 logResponseStatusText);
     }
 
@@ -156,10 +156,9 @@ public class Metrics {
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
             Map<String, int[]> map = callable.call();
-            if (map == null || map.isEmpty()) {
+            if (map == null || map.isEmpty())
                 // Null = skip the chart
                 return null;
-            }
             boolean allSkipped = true;
             for (Map.Entry<String, int[]> entry : map.entrySet()) {
                 if (entry.getValue().length == 0) {
@@ -169,10 +168,9 @@ public class Metrics {
                 allSkipped = false;
                 valuesBuilder.appendField(entry.getKey(), entry.getValue());
             }
-            if (allSkipped) {
+            if (allSkipped)
                 // Null = skip the chart
                 return null;
-            }
             return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
         }
     }
@@ -198,10 +196,9 @@ public class Metrics {
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
             Map<String, Integer> map = callable.call();
-            if (map == null || map.isEmpty()) {
+            if (map == null || map.isEmpty())
                 // Null = skip the chart
                 return null;
-            }
             boolean allSkipped = true;
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 if (entry.getValue() == 0) {
@@ -211,10 +208,9 @@ public class Metrics {
                 allSkipped = false;
                 valuesBuilder.appendField(entry.getKey(), entry.getValue());
             }
-            if (allSkipped) {
+            if (allSkipped)
                 // Null = skip the chart
                 return null;
-            }
             return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
         }
     }
@@ -224,9 +220,8 @@ public class Metrics {
         private final String chartId;
 
         protected CustomChart(String chartId) {
-            if (chartId == null) {
+            if (chartId == null)
                 throw new IllegalArgumentException("chartId must not be null");
-            }
             this.chartId = chartId;
         }
 
@@ -238,10 +233,9 @@ public class Metrics {
             builder.appendField("chartId", chartId);
             try {
                 JsonObjectBuilder.JsonObject data = getChartData();
-                if (data == null) {
+                if (data == null)
                     // If the data is null we don't send the chart.
                     return null;
-                }
                 builder.appendField("data", data);
             } catch (Throwable t) {
                 if (logErrors) {
@@ -274,10 +268,9 @@ public class Metrics {
         public JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
             Map<String, Map<String, Integer>> map = callable.call();
-            if (map == null || map.isEmpty()) {
+            if (map == null || map.isEmpty())
                 // Null = skip the chart
                 return null;
-            }
             boolean reallyAllSkipped = true;
             for (Map.Entry<String, Map<String, Integer>> entryValues : map.entrySet()) {
                 JsonObjectBuilder valueBuilder = new JsonObjectBuilder();
@@ -291,10 +284,9 @@ public class Metrics {
                     valuesBuilder.appendField(entryValues.getKey(), valueBuilder.build());
                 }
             }
-            if (reallyAllSkipped) {
+            if (reallyAllSkipped)
                 // Null = skip the chart
                 return null;
-            }
             return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
         }
     }
@@ -339,9 +331,8 @@ public class Metrics {
          * @return A reference to this object.
          */
         public JsonObjectBuilder appendField(String key, int[] values) {
-            if (values == null) {
+            if (values == null)
                 throw new IllegalArgumentException("JSON values must not be null");
-            }
             String escapedValues = Arrays.stream(values).mapToObj(String::valueOf).collect(Collectors.joining(","));
             appendFieldUnescaped(key, "[" + escapedValues + "]");
             return this;
@@ -357,9 +348,8 @@ public class Metrics {
          * @return A reference to this object.
          */
         public JsonObjectBuilder appendField(String key, JsonObject object) {
-            if (object == null) {
+            if (object == null)
                 throw new IllegalArgumentException("JSON object must not be null");
-            }
             appendFieldUnescaped(key, object.toString());
             return this;
         }
@@ -374,9 +364,8 @@ public class Metrics {
          * @return A reference to this object.
          */
         public JsonObjectBuilder appendField(String key, JsonObject[] values) {
-            if (values == null) {
+            if (values == null)
                 throw new IllegalArgumentException("JSON values must not be null");
-            }
             String escapedValues = Arrays.stream(values).map(JsonObject::toString).collect(Collectors.joining(","));
             appendFieldUnescaped(key, "[" + escapedValues + "]");
             return this;
@@ -392,9 +381,8 @@ public class Metrics {
          * @return A reference to this object.
          */
         public JsonObjectBuilder appendField(String key, String value) {
-            if (value == null) {
+            if (value == null)
                 throw new IllegalArgumentException("JSON value must not be null");
-            }
             appendFieldUnescaped(key, "\"" + escape(value) + "\"");
             return this;
         }
@@ -409,9 +397,8 @@ public class Metrics {
          * @return A reference to this object.
          */
         public JsonObjectBuilder appendField(String key, String[] values) {
-            if (values == null) {
+            if (values == null)
                 throw new IllegalArgumentException("JSON values must not be null");
-            }
             String escapedValues = Arrays.stream(values).map(value -> "\"" + escape(value) + "\"")
                     .collect(Collectors.joining(","));
             appendFieldUnescaped(key, "[" + escapedValues + "]");
@@ -427,12 +414,10 @@ public class Metrics {
          *            The escaped value of the field.
          */
         private void appendFieldUnescaped(String key, String escapedValue) {
-            if (builder == null) {
+            if (builder == null)
                 throw new IllegalStateException("JSON has already been built");
-            }
-            if (key == null) {
+            if (key == null)
                 throw new IllegalArgumentException("JSON key must not be null");
-            }
             if (hasAtLeastOneField) {
                 builder.append(",");
             }
@@ -458,9 +443,8 @@ public class Metrics {
          * @return The built JSON string.
          */
         public JsonObject build() {
-            if (builder == null) {
+            if (builder == null)
                 throw new IllegalStateException("JSON has already been built");
-            }
             JsonObject object = new JsonObject(builder.append("}").toString());
             builder = null;
             return object;
@@ -499,7 +483,7 @@ public class Metrics {
          * @return The escaped value.
          */
         private static String escape(String value) {
-            final StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             for (int i = 0; i < value.length(); i++) {
                 char c = value.charAt(i);
                 if (c == '"') {
@@ -605,7 +589,7 @@ public class Metrics {
         }
 
         public void addCustomChart(CustomChart chart) {
-            this.customCharts.add(chart);
+            customCharts.add(chart);
         }
 
         /** Checks that the class was properly relocated. */
@@ -615,16 +599,14 @@ public class Metrics {
                     || !System.getProperty("bstats.relocatecheck").equals("false")) {
                 // Maven's Relocate is clever and changes strings, too. So we have to use this little
                 // "trick" ... :D
-                final String defaultPackage = new String(
-                        new byte[] { 'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's' });
-                final String examplePackage = new String(
+                String defaultPackage = new String(new byte[] { 'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's' });
+                String examplePackage = new String(
                         new byte[] { 'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e' });
                 // We want to make sure no one just copy & pastes the example and uses the wrong package
                 // names
                 if (MetricsBase.class.getPackage().getName().startsWith(defaultPackage)
-                        || MetricsBase.class.getPackage().getName().startsWith(examplePackage)) {
+                        || MetricsBase.class.getPackage().getName().startsWith(examplePackage))
                     throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
-                }
             }
         }
 
@@ -661,7 +643,7 @@ public class Metrics {
         }
 
         private void startSubmitting() {
-            final Runnable submitTask = () -> {
+            Runnable submitTask = () -> {
                 if (!enabled || !checkServiceEnabledSupplier.get()) {
                     // Submitting data or service is disabled
                     scheduler.shutdown();
@@ -670,7 +652,7 @@ public class Metrics {
                 if (submitTaskConsumer != null) {
                     submitTaskConsumer.accept(this::submitData);
                 } else {
-                    this.submitData();
+                    submitData();
                 }
             };
             // Many servers tend to restart at a fixed time at xx:00 which causes an uneven distribution
@@ -688,9 +670,9 @@ public class Metrics {
         }
 
         private void submitData() {
-            final JsonObjectBuilder baseJsonBuilder = new JsonObjectBuilder();
+            JsonObjectBuilder baseJsonBuilder = new JsonObjectBuilder();
             appendPlatformDataConsumer.accept(baseJsonBuilder);
-            final JsonObjectBuilder serviceJsonBuilder = new JsonObjectBuilder();
+            JsonObjectBuilder serviceJsonBuilder = new JsonObjectBuilder();
             appendServiceDataConsumer.accept(serviceJsonBuilder);
             JsonObjectBuilder.JsonObject[] chartData = customCharts.stream()
                     .map(customChart -> customChart.getRequestJsonObject(errorLogger, logErrors))
@@ -721,10 +703,9 @@ public class Metrics {
          *            The string to gzip.
          * @return The gzipped string.
          */
-        private static byte[] compress(final String str) throws IOException {
-            if (str == null) {
+        private static byte[] compress(String str) throws IOException {
+            if (str == null)
                 return null;
-            }
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             try (GZIPOutputStream gzip = new GZIPOutputStream(outputStream)) {
                 gzip.write(str.getBytes(StandardCharsets.UTF_8));
@@ -733,11 +714,11 @@ public class Metrics {
         }
 
         /** The version of the Metrics class. */
-        public static final String METRICS_VERSION = "3.0.0";
+        public static String METRICS_VERSION = "3.0.0";
 
-        private static final String REPORT_URL = "https://bStats.org/api/v2/data/%s";
+        private static String REPORT_URL = "https://bStats.org/api/v2/data/%s";
 
-        private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1,
+        private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1,
                 task -> new Thread(task, "bStats-Metrics"));
     }
 
@@ -762,10 +743,9 @@ public class Metrics {
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
             Map<String, Integer> map = callable.call();
-            if (map == null || map.isEmpty()) {
+            if (map == null || map.isEmpty())
                 // Null = skip the chart
                 return null;
-            }
             boolean allSkipped = true;
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 if (entry.getValue() == 0) {
@@ -775,10 +755,9 @@ public class Metrics {
                 allSkipped = false;
                 valuesBuilder.appendField(entry.getKey(), entry.getValue());
             }
-            if (allSkipped) {
+            if (allSkipped)
                 // Null = skip the chart
                 return null;
-            }
             return new JsonObjectBuilder().appendField("values", valuesBuilder.build()).build();
         }
     }
@@ -804,10 +783,9 @@ public class Metrics {
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             JsonObjectBuilder valuesBuilder = new JsonObjectBuilder();
             Map<String, Integer> map = callable.call();
-            if (map == null || map.isEmpty()) {
+            if (map == null || map.isEmpty())
                 // Null = skip the chart
                 return null;
-            }
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 valuesBuilder.appendField(entry.getKey(), new int[] { entry.getValue() });
             }
@@ -835,10 +813,9 @@ public class Metrics {
         @Override
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             String value = callable.call();
-            if (value == null || value.isEmpty()) {
+            if (value == null || value.isEmpty())
                 // Null = skip the chart
                 return null;
-            }
             return new JsonObjectBuilder().appendField("value", value).build();
         }
     }
@@ -863,10 +840,9 @@ public class Metrics {
         @Override
         protected JsonObjectBuilder.JsonObject getChartData() throws Exception {
             int value = callable.call();
-            if (value == 0) {
+            if (value == 0)
                 // Null = skip the chart
                 return null;
-            }
             return new JsonObjectBuilder().appendField("value", value).build();
         }
     }

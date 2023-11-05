@@ -22,7 +22,7 @@ public class MoneyAction extends NPCShopAction {
     }
 
     public MoneyAction(double cost) {
-        this.money = cost;
+        money = cost;
     }
 
     @Override
@@ -35,6 +35,7 @@ public class MoneyAction extends NPCShopAction {
     public int getMaxRepeats(Entity entity) {
         if (!(entity instanceof Player))
             return 0;
+
         Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
         return (int) Math.floor(economy.getBalance((Player) entity) / money);
     }
@@ -43,12 +44,12 @@ public class MoneyAction extends NPCShopAction {
     public Transaction grant(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
+
         Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
         Player player = (Player) entity;
         double amount = money * repeats;
-        return Transaction.create(() -> {
-            return true;
-        }, () -> {
+
+        return Transaction.create(() -> true, () -> {
             economy.depositPlayer(player, amount);
         }, () -> {
             economy.withdrawPlayer(player, amount);
@@ -59,12 +60,12 @@ public class MoneyAction extends NPCShopAction {
     public Transaction take(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
+
         Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
         Player player = (Player) entity;
         double amount = money * repeats;
-        return Transaction.create(() -> {
-            return economy.has(player, amount);
-        }, () -> {
+
+        return Transaction.create(() -> economy.has(player, amount), () -> {
             economy.withdrawPlayer(player, amount);
         }, () -> {
             economy.depositPlayer(player, amount);
@@ -76,12 +77,13 @@ public class MoneyAction extends NPCShopAction {
 
         @Override
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
-            final MoneyAction action = previous == null ? new MoneyAction() : (MoneyAction) previous;
-            return InputMenus.filteredStringSetter(() -> Double.toString(action.money), (s) -> {
+            MoneyAction action = previous == null ? new MoneyAction() : (MoneyAction) previous;
+            return InputMenus.filteredStringSetter(() -> Double.toString(action.money), s -> {
                 try {
                     double result = Double.parseDouble(s);
                     if (result < 0)
                         return false;
+
                     action.money = result;
                 } catch (NumberFormatException nfe) {
                     return false;
@@ -100,9 +102,9 @@ public class MoneyAction extends NPCShopAction {
                     supported = false;
                 }
             }
-            if (!supported) {
+            if (!supported)
                 return null;
-            }
+
             String description = null;
             if (previous != null) {
                 MoneyAction old = (MoneyAction) previous;

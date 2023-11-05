@@ -20,7 +20,7 @@ public class ExperienceAction extends NPCShopAction {
     }
 
     public ExperienceAction(int cost) {
-        this.exp = cost;
+        exp = cost;
     }
 
     @Override
@@ -32,6 +32,7 @@ public class ExperienceAction extends NPCShopAction {
     public int getMaxRepeats(Entity entity) {
         if (!(entity instanceof Player))
             return 0;
+
         return ((Player) entity).getLevel() / exp;
     }
 
@@ -39,11 +40,10 @@ public class ExperienceAction extends NPCShopAction {
     public Transaction grant(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
+
         Player player = (Player) entity;
         int amount = exp * repeats;
-        return Transaction.create(() -> {
-            return true;
-        }, () -> {
+        return Transaction.create(() -> true, () -> {
             player.setLevel(player.getLevel() + amount);
         }, () -> {
             player.setLevel(player.getLevel() - amount);
@@ -54,11 +54,10 @@ public class ExperienceAction extends NPCShopAction {
     public Transaction take(Entity entity, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
+
         Player player = (Player) entity;
         int amount = exp * repeats;
-        return Transaction.create(() -> {
-            return player.getLevel() >= amount;
-        }, () -> {
+        return Transaction.create(() -> (player.getLevel() >= amount), () -> {
             player.setLevel(player.getLevel() - amount);
         }, () -> {
             player.setLevel(player.getLevel() + amount);
@@ -68,12 +67,13 @@ public class ExperienceAction extends NPCShopAction {
     public static class ExperienceActionGUI implements GUI {
         @Override
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
-            final ExperienceAction action = previous == null ? new ExperienceAction() : (ExperienceAction) previous;
+            ExperienceAction action = previous == null ? new ExperienceAction() : (ExperienceAction) previous;
             return InputMenus.filteredStringSetter(() -> Integer.toString(action.exp), s -> {
                 try {
                     int result = Integer.parseInt(s);
                     if (result < 0)
                         return false;
+
                     action.exp = result;
                 } catch (NumberFormatException nfe) {
                     return false;

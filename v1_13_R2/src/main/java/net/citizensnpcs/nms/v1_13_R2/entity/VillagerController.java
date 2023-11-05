@@ -70,7 +70,6 @@ public class VillagerController extends MobEntityController {
                 super.a(flag);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
@@ -79,7 +78,6 @@ public class VillagerController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -96,9 +94,7 @@ public class VillagerController extends MobEntityController {
                 if (list != null) {
                     list.clear();
                 }
-
             }
-
             return super.a(entityhuman, enumhand);
         }
 
@@ -109,7 +105,6 @@ public class VillagerController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }
-
         }
 
         @Override
@@ -125,7 +120,6 @@ public class VillagerController extends MobEntityController {
                 motY = my;
                 motZ = mz;
             }
-
             return res;
         }
 
@@ -139,7 +133,6 @@ public class VillagerController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.c(f, f1);
             }
-
         }
 
         @Override
@@ -155,7 +148,6 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -184,7 +176,6 @@ public class VillagerController extends MobEntityController {
                 blockingATrade = false;
                 return true;
             }
-
             return super.dB();
         }
 
@@ -194,7 +185,6 @@ public class VillagerController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -202,7 +192,6 @@ public class VillagerController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new VillagerNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -221,7 +210,6 @@ public class VillagerController extends MobEntityController {
             if (npc == null) {
                 super.I();
             }
-
         }
 
         @Override
@@ -235,7 +223,6 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
-
         }
 
         @Override
@@ -250,7 +237,6 @@ public class VillagerController extends MobEntityController {
             if (npc == null) {
                 super.onLightningStrike(entitylightning);
             }
-
         }
 
         @Override

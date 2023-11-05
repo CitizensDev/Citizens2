@@ -67,7 +67,6 @@ public class PigController extends MobEntityController {
                 super.a(datawatcherobject);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
@@ -76,7 +75,6 @@ public class PigController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -101,7 +99,6 @@ public class PigController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -115,7 +112,6 @@ public class PigController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -126,7 +122,6 @@ public class PigController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -152,7 +147,6 @@ public class PigController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
-
         }
 
         @Override
@@ -160,7 +154,6 @@ public class PigController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new PigNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -195,7 +188,6 @@ public class PigController extends MobEntityController {
             if (vector != null) {
                 super.h(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -218,7 +210,6 @@ public class PigController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
-
         }
 
         @Override
@@ -233,7 +224,6 @@ public class PigController extends MobEntityController {
             if (npc == null) {
                 super.onLightningStrike(entitylightning);
             }
-
         }
     }
 

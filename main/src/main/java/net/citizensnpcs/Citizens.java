@@ -102,7 +102,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         @Override
         public OfflinePlayer getPlayer(BlockCommandSender sender) {
             Entity entity = NMS.getSource(sender);
-            return entity != null && entity instanceof OfflinePlayer ? (OfflinePlayer) entity : null;
+            return entity instanceof OfflinePlayer ? (OfflinePlayer) entity : null;
         }
 
         @Override
@@ -182,11 +182,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (type.equalsIgnoreCase("nbt")) {
             saves = new NBTStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
         }
-
         if (saves == null) {
             saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
         }
-
         if (!saves.load())
             return null;
 
@@ -195,8 +193,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void despawnNPCs(boolean save) {
         for (NPCRegistry registry : Iterables.concat(Arrays.asList(npcRegistry), citizensBackedRegistries)) {
-            if (registry == null)
+            if (registry == null) {
                 continue;
+            }
             if (save) {
                 if (registry == npcRegistry) {
                     storeNPCs(false);
@@ -237,33 +236,27 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public Iterable<NPCRegistry> getNPCRegistries() {
-        return new Iterable<NPCRegistry>() {
+        return () -> new Iterator<NPCRegistry>() {
+            Iterator<NPCRegistry> stored;
+
             @Override
-            public Iterator<NPCRegistry> iterator() {
-                return new Iterator<NPCRegistry>() {
-                    Iterator<NPCRegistry> stored;
+            public boolean hasNext() {
+                return stored == null ? true : stored.hasNext();
+            }
 
-                    @Override
-                    public boolean hasNext() {
-                        return stored == null ? true : stored.hasNext();
-                    }
+            @Override
+            public NPCRegistry next() {
+                if (stored == null) {
+                    stored = Iterables.concat(storedRegistries.values(), anonymousRegistries, citizensBackedRegistries)
+                            .iterator();
+                    return npcRegistry;
+                }
+                return stored.next();
+            }
 
-                    @Override
-                    public NPCRegistry next() {
-                        if (stored == null) {
-                            stored = Iterables
-                                    .concat(storedRegistries.values(), anonymousRegistries, citizensBackedRegistries)
-                                    .iterator();
-                            return npcRegistry;
-                        }
-                        return stored.next();
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                };
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
             }
         };
     }
@@ -392,7 +385,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-
         registerScriptHelpers();
 
         saves = createStorage(getDataFolder());
@@ -402,15 +394,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-
         locationLookup = new LocationLookup();
         locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
 
         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
         traitFactory = new CitizensTraitFactory(this);
-        traitFactory.registerTrait(TraitInfo.create(ShopTrait.class).withSupplier(() -> {
-            return new ShopTrait(shops);
-        }));
+        traitFactory.registerTrait(TraitInfo.create(ShopTrait.class).withSupplier(() -> new ShopTrait(shops)));
         selector = new NPCSelector(this);
 
         Bukkit.getPluginManager().registerEvents(new EventListen(), this);
@@ -426,7 +415,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (papi != null && papi.isEnabled()) {
             new CitizensPlaceholders(selector).register();
         }
-
         setupEconomy();
 
         registerCommands();
@@ -506,12 +494,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void setDefaultNPCDataStore(NPCDataStore store) {
-        if (store == null) {
+        if (store == null)
             throw new IllegalArgumentException("must be non-null");
-        }
         despawnNPCs(true);
-        this.saves = store;
-        this.npcRegistry = new CitizensNPCRegistry(saves, "citizens-global-" + UUID.randomUUID().toString());
+        saves = store;
+        npcRegistry = new CitizensNPCRegistry(saves, "citizens-global-" + UUID.randomUUID().toString());
         saves.loadInto(npcRegistry);
     }
 
@@ -614,7 +601,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     }
                 }
             }
-
             saves.loadInto(npcRegistry);
             shops.load();
 

@@ -40,15 +40,15 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         super(TargetType.LOCATION);
         List<Vector> list = Lists.newArrayList(path);
         this.params = params;
-        this.destination = list.get(list.size() - 1).toLocation(npc.getStoredLocation().getWorld());
+        destination = list.get(list.size() - 1).toLocation(npc.getStoredLocation().getWorld());
         this.npc = npc;
-        this.plan = new Path(list);
+        plan = new Path(list);
     }
 
     public AStarNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         this.params = params;
-        this.destination = dest;
+        destination = dest;
         this.npc = npc;
     }
 
@@ -91,9 +91,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 planner = null;
             }
         }
-        if (getCancelReason() != null || plan == null || plan.isComplete()) {
+        if (getCancelReason() != null || plan == null || plan.isComplete())
             return true;
-        }
         if (vector == null) {
             vector = plan.getCurrentVector();
         }
@@ -116,23 +115,20 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double xzDistance = dX * dX + dZ * dZ;
         if (Math.abs(dY) < 1 && Math.sqrt(xzDistance) <= params.distanceMargin()) {
             plan.update(npc);
-            if (plan.isComplete()) {
+            if (plan.isComplete())
                 return true;
-            }
             vector = plan.getCurrentVector();
             return false;
         }
-
         if (params.debug()) {
             npc.getEntity().getWorld().playEffect(dest, Effect.ENDER_SIGNAL, 0);
         }
-
         if (npc.getEntity() instanceof LivingEntity && !npc.getEntity().getType().name().contains("ARMOR_STAND")) {
             NMS.setDestination(npc.getEntity(), dest.getX(), dest.getY(), dest.getZ(), params.speed());
         } else {
             Vector dir = dest.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
             boolean liquidOrInLiquid = MinecraftBlockExaminer.isLiquidOrInLiquid(loc.getBlock());
-            if ((dY >= 1 && Math.sqrt(xzDistance) <= 0.4) || (dY >= 0.2 && liquidOrInLiquid)) {
+            if (dY >= 1 && Math.sqrt(xzDistance) <= 0.4 || dY >= 0.2 && liquidOrInLiquid) {
                 dir.add(new Vector(0, 0.75, 0));
             }
             npc.getEntity().setVelocity(dir);
@@ -176,18 +172,16 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
 
         public CancelReason tick(int iterationsPerTick, int maxIterations) {
-            if (this.plan != null)
+            if (plan != null)
                 return null;
             Path plan = ASTAR.run(state, iterationsPerTick);
             if (plan == null) {
-                if (state.isEmpty()) {
+                if (state.isEmpty())
                     return CancelReason.STUCK;
-                }
                 if (iterationsPerTick > 0 && maxIterations > 0) {
                     iterations += iterationsPerTick;
-                    if (iterations > maxIterations) {
+                    if (iterations > maxIterations)
                         return CancelReason.STUCK;
-                    }
                 }
             } else {
                 this.plan = plan;
@@ -200,5 +194,5 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
     }
 
-    private static final AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();
+    private static AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();
 }

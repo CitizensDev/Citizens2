@@ -78,8 +78,8 @@ public class Anchor {
     public boolean load() {
         try {
             final String[] parts = getUnloadedValue();
-            this.location = new Location(Bukkit.getWorld(parts[0]), Double.valueOf(parts[1]), Double.valueOf(parts[2]),
-                    Double.valueOf(parts[3]));
+            this.location = new Location(Bukkit.getWorld(parts[0]), Double.parseDouble(parts[1]),
+                    Double.parseDouble(parts[2]), Double.parseDouble(parts[3]));
         } catch (final Exception e) {
             // Still not able to be loaded
         }

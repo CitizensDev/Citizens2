@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -218,13 +219,11 @@ public class CommandTrait extends Trait {
         } else {
             outputList.add(0, executionMode.toString());
         }
-
         StringBuilder output = new StringBuilder();
         for (String item : outputList) {
             output.append(item);
             output.append(" ");
         }
-
         Messaging.send(sender, output.toString().trim());
     }
 
@@ -252,9 +251,9 @@ public class CommandTrait extends Trait {
         return output;
     }
 
-    public void dispatch(final Player player, Hand handIn) {
-        final Hand hand = player.isSneaking()
-                ? (handIn == CommandTrait.Hand.LEFT ? CommandTrait.Hand.SHIFT_LEFT : CommandTrait.Hand.SHIFT_RIGHT)
+    public void dispatch(Player player, Hand handIn) {
+        Hand hand = player.isSneaking()
+                ? handIn == CommandTrait.Hand.LEFT ? CommandTrait.Hand.SHIFT_LEFT : CommandTrait.Hand.SHIFT_RIGHT
                 : handIn;
         NPCCommandDispatchEvent event = new NPCCommandDispatchEvent(npc, player);
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -266,9 +265,8 @@ public class CommandTrait extends Trait {
 
             @Override
             public void run() {
-                List<NPCCommand> commandList = Lists.newArrayList(Iterables.filter(commands.values(), command -> {
-                    return command.hand == hand || command.hand == Hand.BOTH;
-                }));
+                List<NPCCommand> commandList = Lists.newArrayList(Iterables.filter(commands.values(),
+                        command -> (command.hand == hand || command.hand == Hand.BOTH)));
                 if (executionMode == ExecutionMode.RANDOM) {
                     if (commandList.size() > 0) {
                         runCommand(player, commandList.get(Util.getFastRandom().nextInt(commandList.size())));
@@ -277,7 +275,7 @@ public class CommandTrait extends Trait {
                 }
                 int max = -1;
                 if (executionMode == ExecutionMode.SEQUENTIAL) {
-                    Collections.sort(commandList, (o1, o2) -> Integer.compare(o1.id, o2.id));
+                    Collections.sort(commandList, Comparator.comparing(o1 -> o1.id));
                     max = commandList.size() > 0 ? commandList.get(commandList.size() - 1).id : -1;
                 }
                 if (executionMode == ExecutionMode.LINEAR) {
@@ -299,13 +297,13 @@ public class CommandTrait extends Trait {
                         }
                     }
                     runCommand(player, command);
-                    if (executionMode == ExecutionMode.SEQUENTIAL || (charged != null && charged == false)) {
+                    if (executionMode == ExecutionMode.SEQUENTIAL || charged != null && !charged) {
                         break;
                     }
                 }
             }
 
-            private void runCommand(final Player player, NPCCommand command) {
+            private void runCommand(Player player, NPCCommand command) {
                 Runnable runnable = () -> {
                     PlayerNPCCommand info = playerTracking.get(player.getUniqueId());
                     if (info == null && (executionMode == ExecutionMode.SEQUENTIAL
@@ -320,14 +318,12 @@ public class CommandTrait extends Trait {
                             return;
                         }
                     }
-
                     if (info != null && !info.canUse(CommandTrait.this, player, command))
                         return;
 
                     if (charged == null) {
                         charge.run();
                     }
-
                     if (temporaryPermissions.size() > 0) {
                         PermissionAttachment attachment = player.addAttachment(CitizensAPI.getPlugin());
                         if (attachment != null) {
@@ -434,9 +430,8 @@ public class CommandTrait extends Trait {
 
     private void sendErrorMessage(Player player, CommandTraitError msg, Function<String, String> transform,
             Object... objects) {
-        if (hideErrorMessages) {
+        if (hideErrorMessages)
             return;
-        }
         Set<CommandTraitError> sent = executionErrors.get(player.getUniqueId().toString());
         if (sent != null) {
             if (sent.contains(msg))
@@ -465,7 +460,7 @@ public class CommandTrait extends Trait {
     }
 
     public void setExecutionMode(ExecutionMode mode) {
-        this.executionMode = mode;
+        executionMode = mode;
     }
 
     public void setExperienceCost(int experienceCost) {
@@ -477,7 +472,7 @@ public class CommandTrait extends Trait {
     }
 
     public void setHideErrorMessages(boolean hide) {
-        this.hideErrorMessages = hide;
+        hideErrorMessages = hide;
     }
 
     public void setItemCost(List<ItemStack> itemCost, int id) {
@@ -550,7 +545,7 @@ public class CommandTrait extends Trait {
 
         @Override
         public void initialise(MenuContext ctx) {
-            this.inventory = ctx.getInventory();
+            inventory = ctx.getInventory();
             if (id == -1) {
                 for (ItemStack stack : trait.itemRequirements) {
                     inventory.addItem(stack.clone());
@@ -576,10 +571,10 @@ public class CommandTrait extends Trait {
                 }
             }
             if (id == -1) {
-                this.trait.itemRequirements.clear();
-                this.trait.itemRequirements.addAll(requirements);
+                trait.itemRequirements.clear();
+                trait.itemRequirements.addAll(requirements);
             } else {
-                this.trait.setItemCost(requirements, id);
+                trait.setItemCost(requirements, id);
             }
         }
     }
@@ -649,7 +644,7 @@ public class CommandTrait extends Trait {
         }
 
         public NPCCommandBuilder addPerm(String permission) {
-            this.perms.add(permission);
+            perms.add(permission);
             return this;
         }
 
@@ -697,7 +692,7 @@ public class CommandTrait extends Trait {
         }
 
         public NPCCommandBuilder globalCooldown(int cooldown) {
-            this.globalCooldown = cooldown;
+            globalCooldown = cooldown;
             return this;
         }
 
@@ -739,8 +734,8 @@ public class CommandTrait extends Trait {
             double cost = root.keyExists("cost") ? root.getDouble("cost") : -1;
             int exp = root.keyExists("experienceCost") ? root.getInt("experienceCost") : -1;
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
-                    Hand.valueOf(root.getString("hand")), Boolean.valueOf(root.getString("player")),
-                    Boolean.valueOf(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
+                    Hand.valueOf(root.getString("hand")), Boolean.parseBoolean(root.getString("player")),
+                    Boolean.parseBoolean(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
                     root.getInt("delay"), root.getInt("globalcooldown"), cost, exp, items);
         }
 
@@ -848,14 +843,12 @@ public class CommandTrait extends Trait {
                     }
                 }
             }
-
             Set<String> diff = Sets.newHashSet(lastUsed.keySet());
             diff.removeAll(commandKeys);
             for (String key : diff) {
                 lastUsed.remove(key);
                 nUsed.remove(key);
             }
-
             if (globalCooldowns != null) {
                 diff = Sets.newHashSet(globalCooldowns.keySet());
                 diff.removeAll(commandKeys);
@@ -867,7 +860,7 @@ public class CommandTrait extends Trait {
 
         public static boolean requiresTracking(NPCCommand command) {
             return command.globalCooldown > 0 || command.cooldown > 0 || command.n > 0
-                    || (command.perms != null && command.perms.size() > 0)
+                    || command.perms != null && command.perms.size() > 0
                     || Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds() > 0;
         }
     }

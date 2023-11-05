@@ -3,6 +3,7 @@ package net.citizensnpcs.trait.waypoint;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -76,14 +77,14 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     }
 
     @Override
-    public WaypointEditor createEditor(final CommandSender sender, CommandContext args) {
+    public WaypointEditor createEditor(CommandSender sender, CommandContext args) {
         if (!(sender instanceof Player)) {
             Messaging.sendErrorTr(sender, CommandMessages.MUST_BE_INGAME);
             return null;
         }
-        final Player player = (Player) sender;
+        Player player = (Player) sender;
         return new WaypointEditor() {
-            private final EntityMarkers<Waypoint> markers = new EntityMarkers<Waypoint>();
+            private final EntityMarkers<Waypoint> markers = new EntityMarkers<>();
             private boolean showPath = true;
 
             @Override
@@ -130,7 +131,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     return;
                 if (event.getMessage().equalsIgnoreCase("toggle path")) {
                     event.setCancelled(true);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> togglePath());
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::togglePath);
                 } else if (event.getMessage().equalsIgnoreCase("clear")) {
                     event.setCancelled(true);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
@@ -229,15 +230,17 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 : key.getRelative("destinations");
         for (DataKey root : dd.getIntegerSubKeys()) {
             Waypoint waypoint = PersistenceLoader.load(Waypoint.class, root);
-            if (waypoint == null)
+            if (waypoint == null) {
                 continue;
+            }
             destinations.add(waypoint);
         }
         DataKey gd = key.keyExists("helperwaypoints") ? key.getRelative("helperwaypoints") : key.getRelative("guides");
         for (DataKey root : gd.getIntegerSubKeys()) {
             Waypoint waypoint = PersistenceLoader.load(Waypoint.class, root);
-            if (waypoint == null)
+            if (waypoint == null) {
                 continue;
+            }
             guides.add(waypoint);
         }
         if (key.keyExists("distance")) {
@@ -340,12 +343,10 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 target.onReach(npc);
                 plan = null;
             }
-
             if (plan == null) {
                 selector.finish();
                 return;
             }
-
             if (npc.getNavigator().isNavigating())
                 return;
 
@@ -363,12 +364,11 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             if (paused || destinations.size() == 0 || !npc.isSpawned() || npc.getNavigator().isNavigating())
                 return false;
 
-            this.target = destinations.get(Util.getFastRandom().nextInt(destinations.size()));
+            target = destinations.get(Util.getFastRandom().nextInt(destinations.size()));
             if (target.getLocation().getWorld().equals(npc.getEntity().getWorld())) {
                 target = null;
                 return false;
             }
-
             plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(null, new Waypoint(npc.getStoredLocation())));
             return plan != null;
         }
@@ -421,20 +421,13 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+            if (this == obj)
                 return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass())
                 return false;
-            }
             GuidedNode other = (GuidedNode) obj;
-            if (waypoint == null) {
-                if (other.waypoint != null) {
-                    return false;
-                }
-            } else if (!waypoint.equals(other.waypoint)) {
+            if (!Objects.equals(waypoint, other.waypoint))
                 return false;
-            }
             return true;
         }
 
@@ -453,7 +446,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
         @Override
         public int hashCode() {
-            return 31 + ((waypoint == null) ? 0 : waypoint.hashCode());
+            return 31 + (waypoint == null ? 0 : waypoint.hashCode());
         }
 
         @Override
@@ -485,5 +478,5 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         }
     }
 
-    private static final AStarMachine<GuidedNode, GuidedPlan> ASTAR = AStarMachine.createWithDefaultStorage();
+    private static AStarMachine<GuidedNode, GuidedPlan> ASTAR = AStarMachine.createWithDefaultStorage();
 }

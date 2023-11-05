@@ -60,7 +60,7 @@ public interface NMSBridge {
 
     public default Iterable<Object> createBundlePacket(List<Object> packets) {
         return packets;
-    };
+    }
 
     public EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg);
 
@@ -82,7 +82,7 @@ public interface NMSBridge {
 
     public float getHeadYaw(Entity entity);
 
-    public double getHeight(Entity entity);;
+    public double getHeight(Entity entity);
 
     public float getHorizontalMovement(Entity entity);
 
@@ -148,7 +148,7 @@ public interface NMSBridge {
 
     public void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to);
 
-    public Runnable playerTicker(Player entity);;
+    public Runnable playerTicker(Player entity);
 
     public void registerEntityClass(Class<?> clazz);
 
@@ -166,18 +166,18 @@ public interface NMSBridge {
 
     public boolean sendTabListAdd(Player recipient, Player listPlayer);
 
-    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);;
+    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);
 
-    public void sendTabListRemove(Player recipient, Player listPlayer);;
+    public void sendTabListRemove(Player recipient, Player listPlayer);
 
-    public void sendTeamPacket(Player recipient, Team team, int mode);;
+    public void sendTeamPacket(Player recipient, Team team, int mode);
 
     default public void setAggressive(Entity entity, boolean aggro) {
     }
 
     public default void setAllayDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     public void setBodyYaw(Entity entity, float yaw);
 

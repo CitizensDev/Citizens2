@@ -58,7 +58,6 @@ public class PufferFishController extends MobEntityController {
             if (npc != null) {
                 this.moveController = new ControllerMove(this);
             }
-
         }
 
         @Override
@@ -71,7 +70,6 @@ public class PufferFishController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -96,11 +94,9 @@ public class PufferFishController extends MobEntityController {
                 if (!NMSImpl.moveFish(npc, this, f, f1, f2)) {
                     super.a(f, f1, f2);
                 }
-
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1, f2);
             }
-
         }
 
         @Override
@@ -116,7 +112,6 @@ public class PufferFishController extends MobEntityController {
                 motY = my;
                 motZ = mz;
             }
-
             return res;
         }
 
@@ -130,7 +125,6 @@ public class PufferFishController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.c(f, f1);
             }
-
         }
 
         @Override
@@ -146,7 +140,6 @@ public class PufferFishController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -175,7 +168,6 @@ public class PufferFishController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -183,7 +175,6 @@ public class PufferFishController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new PufferFishNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -202,7 +193,6 @@ public class PufferFishController extends MobEntityController {
             if (npc == null) {
                 super.I();
             }
-
         }
 
         @Override
@@ -218,9 +208,7 @@ public class PufferFishController extends MobEntityController {
                 if (npc.hasTrait(PufferFishTrait.class)) {
                     setPuffState(npc.getOrAddTrait(PufferFishTrait.class).getPuffState());
                 }
-
             }
-
         }
 
         @Override
@@ -229,12 +217,10 @@ public class PufferFishController extends MobEntityController {
             if (npc != null) {
                 this.C = false;
             }
-
             super.movementTick();
             if (npc != null) {
                 this.C = lastInWater;
             }
-
         }
 
         @Override

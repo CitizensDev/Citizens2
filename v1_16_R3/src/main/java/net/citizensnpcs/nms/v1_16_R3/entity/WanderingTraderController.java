@@ -79,7 +79,6 @@ public class WanderingTraderController extends MobEntityController {
                 super.a(datawatcherobject);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
@@ -88,7 +87,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -106,7 +104,6 @@ public class WanderingTraderController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -118,9 +115,7 @@ public class WanderingTraderController extends MobEntityController {
                 if (list != null) {
                     list.clear();
                 }
-
             }
-
             return super.b(entityhuman, enumhand);
         }
 
@@ -141,7 +136,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -152,7 +146,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -171,7 +164,6 @@ public class WanderingTraderController extends MobEntityController {
                 blockingATrade = false;
                 return true;
             }
-
             return super.eN();
         }
 
@@ -182,7 +174,6 @@ public class WanderingTraderController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
-
         }
 
         @Override
@@ -190,7 +181,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new WanderingTraderNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -225,7 +215,6 @@ public class WanderingTraderController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         public boolean isBlockingTrades() {
@@ -250,20 +239,16 @@ public class WanderingTraderController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
-
             super.mobTick();
             if (npc != null) {
                 try {
                     if (bq != null) {
                         bq.invoke(this, 10); // DespawnDelay
                     }
-
                 } catch (Throwable e) {
                 }
-
                 npc.update();
             }
-
         }
 
         @Override
@@ -278,7 +263,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc == null) {
                 super.onLightningStrike(server, entitylightning);
             }
-
         }
 
         public void setBlockTrades(boolean blocked) {

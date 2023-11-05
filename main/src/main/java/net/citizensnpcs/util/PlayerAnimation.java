@@ -69,13 +69,11 @@ public enum PlayerAnimation {
                 ((NPCHolder) player).getNPC().getOrAddTrait(SitTrait.class).setSitting(player.getLocation());
                 return;
             }
-
             player.setMetadata("citizens.sitting", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
             NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("PlayerAnimationImpl");
             if (registry == null) {
                 registry = CitizensAPI.createNamedNPCRegistry("PlayerAnimationImpl", new MemoryNPCDataStore());
             }
-
             final NPC holder = registry.createNPC(EntityType.ARMOR_STAND, "");
             holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
             holder.spawn(player.getLocation());
@@ -127,7 +125,6 @@ public enum PlayerAnimation {
                 Bukkit.getScheduler().cancelTask(player.getMetadata("citizens-using-item-id").get(0).asInt());
                 player.removeMetadata("citizens-using-item-id", CitizensAPI.getPlugin());
             }
-
             if (this == STOP_USE_ITEM)
                 return;
 
@@ -143,7 +140,6 @@ public enum PlayerAnimation {
                             cancel();
                             return;
                         }
-
                         NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, to);
                         NMS.playAnimation(PlayerAnimation.this, player, to);
                         if (!player.hasMetadata("citizens-using-item-id")) {
@@ -154,10 +150,8 @@ public enum PlayerAnimation {
                 }.runTaskTimer(CitizensAPI.getPlugin(), Math.max(0, remainingTicks + 1),
                         Math.max(1, remainingTicks + 1));
             }
-
             return;
         }
-
         NMS.playAnimation(this, player, to);
     }
 

@@ -27,13 +27,13 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
         this.params = params;
         this.target = target;
         this.npc = npc;
-        this.destination = params.entityTargetLocationMapper().apply(target);
+        destination = params.entityTargetLocationMapper().apply(target);
     }
 
     public StraightLineNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
         super(TargetType.LOCATION);
         this.params = params;
-        this.destination = dest;
+        destination = dest;
         this.npc = npc;
     }
 
@@ -68,7 +68,6 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
         if (target != null) {
             destination = params.entityTargetLocationMapper().apply(target);
         }
-
         Vector destVector = currLoc.toVector().add(destination.toVector().subtract(currLoc.toVector()).normalize());
         Location destLoc = destVector.toLocation(destination.getWorld());
         if (!npc.isFlyable() && destVector.getBlockY() > currLoc.getBlockY()) {
@@ -84,7 +83,6 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             destLoc = block.getLocation();
             destVector = destLoc.toVector();
         }
-
         double dX = destVector.getX() - currLoc.getX();
         double dZ = destVector.getZ() - currLoc.getZ();
         double dY = destVector.getY() - currLoc.getY();
@@ -105,11 +103,9 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             while (normalisedTargetYaw >= 180.0F) {
                 normalisedTargetYaw -= 360.0F;
             }
-
             while (normalisedTargetYaw < -180.0F) {
                 normalisedTargetYaw += 360.0F;
             }
-
             if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
                 NMS.setVerticalMovement(npc.getEntity(), 0.5);
                 NMS.setHeadYaw(npc.getEntity(), currLoc.getYaw() + normalisedTargetYaw);
@@ -121,7 +117,7 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             Vector dir = destVector.subtract(currLoc.toVector()).normalize().multiply(0.2);
             Block in = currLoc.getBlock();
             if (distance > 0 && dY >= 1 && xzDistance <= 2.75
-                    || (dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrInLiquid(in))) {
+                    || dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrInLiquid(in)) {
                 dir.add(new Vector(0, 0.75, 0));
             }
             Util.faceLocation(npc.getEntity(), destLoc);

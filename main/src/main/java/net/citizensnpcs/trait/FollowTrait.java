@@ -40,7 +40,7 @@ public class FollowTrait extends Trait {
      * Sets the {@link Entity} to follow
      */
     public void follow(Entity entity) {
-        this.followingUUID = entity == null ? null : entity.getUniqueId();
+        followingUUID = entity == null ? null : entity.getUniqueId();
         if (npc.getNavigator().isNavigating() && this.entity != null && npc.getNavigator().getEntityTarget() != null
                 && this.entity == npc.getNavigator().getEntityTarget().getTarget()) {
             npc.getNavigator().cancelNavigation();
@@ -112,13 +112,11 @@ public class FollowTrait extends Trait {
             }
             return;
         }
-
         if (!npc.getNavigator().isNavigating()) {
             npc.getNavigator().setTarget(entity, false);
             if (margin > 0) {
                 npc.getNavigator().getLocalParameters().distanceMargin(margin);
             }
-
         } else {
             flock.run();
         }

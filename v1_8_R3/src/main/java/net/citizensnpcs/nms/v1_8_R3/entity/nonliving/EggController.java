@@ -83,7 +83,6 @@ public class EggController extends AbstractEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -97,7 +96,6 @@ public class EggController extends AbstractEntityController {
             if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -105,7 +103,6 @@ public class EggController extends AbstractEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new EggNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -121,11 +118,9 @@ public class EggController extends AbstractEntityController {
                 if (!npc.isProtected()) {
                     super.t_();
                 }
-
             } else {
                 super.t_();
             }
-
         }
     }
 }

@@ -95,8 +95,7 @@ public class ShulkerTrait extends Trait {
             Messaging.sendTr(sender, Messages.SHULKER_COLOR_SET, npc.getName(), Util.prettyEnum(color));
             hasArg = true;
         }
-        if (!hasArg) {
+        if (!hasArg)
             throw new CommandUsageException();
-        }
     }
 }

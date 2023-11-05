@@ -43,9 +43,7 @@ public class PausePathfindingTrait extends Trait {
 
     @Override
     public void run() {
-        if (playerRange == -1 || !npc.isSpawned())
-            return;
-        if (unpauseTaskId == -1 && !npc.getNavigator().isNavigating())
+        if (playerRange == -1 || !npc.isSpawned() || unpauseTaskId == -1 && !npc.getNavigator().isNavigating())
             return;
         if (CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getStoredLocation(), playerRange).iterator()
                 .hasNext()) {
@@ -58,7 +56,7 @@ public class PausePathfindingTrait extends Trait {
     }
 
     public void setPlayerRangeBlocks(double range) {
-        this.playerRange = range;
+        playerRange = range;
     }
 
     public void setRightClick(boolean rightclick) {

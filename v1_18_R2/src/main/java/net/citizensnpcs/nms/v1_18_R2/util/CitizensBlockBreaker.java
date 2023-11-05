@@ -47,7 +47,6 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
             ItemStack current = getCurrentItem();
             return current != null ? current.isCorrectToolForDrops(block) : false;
         }
-
     }
 
     @Override
@@ -66,13 +65,10 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
                 if (i > 0) {
                     f += i * i + 1;
                 }
-
             }
-
             if (MobEffectUtil.hasDigSpeed(handle)) {
                 f *= 1.0F + (MobEffectUtil.getDigSpeedAmplification(handle) + 1) * 0.2F;
             }
-
             if (handle.hasEffect(MobEffects.DIG_SLOWDOWN)) {
                 float f1 = 1.0F;
                 switch (handle.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier()) {
@@ -89,20 +85,15 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
                     default:
                         f1 = 8.1E-4F;
                 }
-
                 f *= f1;
             }
-
             if (handle.isEyeInFluid(FluidTags.WATER) && !EnchantmentHelper.hasAquaAffinity(handle)) {
                 f /= 5.0F;
             }
-
         }
-
         if (!entity.isOnGround()) {
             f /= 5.0F;
         }
-
         return f;
     }
 }

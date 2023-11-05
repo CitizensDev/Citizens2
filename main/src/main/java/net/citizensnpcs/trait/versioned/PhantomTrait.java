@@ -56,16 +56,14 @@ public class PhantomTrait extends Trait {
         PhantomTrait trait = npc.getOrAddTrait(PhantomTrait.class);
         String output = "";
         if (size != null) {
-            if (size <= 0) {
+            if (size <= 0)
                 throw new CommandUsageException();
-            }
             trait.setSize(size);
             output += Messaging.tr(Messages.PHANTOM_STATE_SET, size);
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

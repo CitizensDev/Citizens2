@@ -38,7 +38,7 @@ public class AllayTrait extends Trait {
     }
 
     public void setDancing(boolean dance) {
-        this.dancing = dance;
+        dancing = dance;
     }
 
     @Command(
@@ -61,8 +61,7 @@ public class AllayTrait extends Trait {
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

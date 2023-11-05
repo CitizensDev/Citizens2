@@ -75,9 +75,8 @@ public class BeeTrait extends Trait {
         BeeTrait trait = npc.getOrAddTrait(BeeTrait.class);
         String output = "";
         if (anger != null) {
-            if (anger < 0) {
+            if (anger < 0)
                 throw new CommandException(Messages.INVALID_BEE_ANGER);
-            }
             trait.setAnger(anger);
             output += ' ' + Messaging.tr(Messages.BEE_ANGER_SET, args.getFlag("anger"));
         }
@@ -93,8 +92,7 @@ public class BeeTrait extends Trait {
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

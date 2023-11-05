@@ -59,6 +59,6 @@ public class TeleportTriggerPrompt extends RegexPrompt implements WaypointTrigge
         return "";
     }
 
-    private static final Pattern PATTERN = Pattern.compile("here|back|[\\p{L}]+?:[0-9]+?:[0-9]+?:[0-9]+?",
+    private static Pattern PATTERN = Pattern.compile("here|back|[\\p{L}]+?:[0-9]+?:[0-9]+?:[0-9]+?",
             Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 }

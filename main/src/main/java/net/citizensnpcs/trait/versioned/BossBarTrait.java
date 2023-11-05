@@ -69,7 +69,6 @@ public class BossBarTrait extends Trait {
             barCache = Bukkit.getServer().createBossBar(npc.getFullName(), color, style,
                     flags.toArray(new BarFlag[flags.size()]));
         }
-
         return barCache;
     }
 
@@ -106,7 +105,6 @@ public class BossBarTrait extends Trait {
         if (isBoss) {
             onDespawn();
         }
-
         return isBoss;
     }
 
@@ -164,35 +162,30 @@ public class BossBarTrait extends Trait {
                 bar.setProgress(Math.max(0, Math.min(1, number)));
             }
         }
-
         bar.setTitle(title);
         bar.setVisible(visible);
         if (progressProvider != null) {
             bar.setProgress(progressProvider.get());
         }
-
         if (style != null) {
             bar.setStyle(style);
         }
-
         if (color != null) {
             bar.setColor(color);
         }
-
         for (BarFlag flag : BarFlag.values()) {
             bar.removeFlag(flag);
         }
-
         for (BarFlag flag : flags) {
             bar.addFlag(flag);
         }
-
         bar.removeAll();
 
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
                 range > 0 ? range : Setting.BOSSBAR_RANGE.asInt())) {
-            if (viewPermission != null && !player.hasPermission(viewPermission))
+            if (viewPermission != null && !player.hasPermission(viewPermission)) {
                 continue;
+            }
             bar.addPlayer(player);
         }
     }
@@ -210,7 +203,7 @@ public class BossBarTrait extends Trait {
     }
 
     public void setProgressProvider(Supplier<Double> provider) {
-        this.progressProvider = provider;
+        progressProvider = provider;
     }
 
     public void setRange(int range) {
@@ -226,11 +219,11 @@ public class BossBarTrait extends Trait {
     }
 
     public void setTrackVariable(String variable) {
-        this.track = variable;
+        track = variable;
     }
 
     public void setViewPermission(String viewpermission) {
-        this.viewPermission = viewpermission;
+        viewPermission = viewpermission;
     }
 
     public void setVisible(boolean visible) {
@@ -253,31 +246,24 @@ public class BossBarTrait extends Trait {
         if (style != null) {
             trait.setStyle(style);
         }
-
         if (color != null) {
             trait.setColor(color);
         }
-
         if (track != null) {
             trait.setTrackVariable(track);
         }
-
         if (title != null) {
             trait.setTitle(Messaging.parseComponents(title));
         }
-
         if (visible != null) {
             trait.setVisible(visible);
         }
-
         if (range != null) {
             trait.setRange(range);
         }
-
         if (viewpermission != null) {
             trait.setViewPermission(viewpermission);
         }
-
         if (flags != null) {
             List<BarFlag> parsed = Lists.newArrayList();
             for (String s : Splitter.on(',').omitEmptyStrings().trimResults().split(flags)) {

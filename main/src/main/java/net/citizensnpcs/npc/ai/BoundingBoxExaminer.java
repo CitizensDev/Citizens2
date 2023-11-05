@@ -18,8 +18,8 @@ public class BoundingBoxExaminer implements BlockExaminer {
 
     public BoundingBoxExaminer(Entity entity) {
         if (entity != null) {
-            this.height = NMS.getHeight(entity);
-            this.width = NMS.getWidth(entity);
+            height = NMS.getHeight(entity);
+            width = NMS.getWidth(entity);
         }
     }
 

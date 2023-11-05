@@ -20,7 +20,7 @@ import net.citizensnpcs.util.StringHelper;
 @Requirements
 public class AdminCommands {
     private final Citizens plugin;
-    private final Map<CommandSender, Long> reloadTimeouts = new WeakHashMap<CommandSender, Long>();
+    private final Map<CommandSender, Long> reloadTimeouts = new WeakHashMap<>();
 
     public AdminCommands(Citizens plugin) {
         this.plugin = plugin;
@@ -51,7 +51,6 @@ public class AdminCommands {
                 return;
             }
         }
-
         Messaging.sendTr(sender, Messages.CITIZENS_RELOADING);
         try {
             plugin.reload();

@@ -53,7 +53,6 @@ public class FishingHookController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -67,7 +66,6 @@ public class FishingHookController extends MobEntityController {
             if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -75,7 +73,6 @@ public class FishingHookController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new FishingHookNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -91,7 +88,6 @@ public class FishingHookController extends MobEntityController {
             } else {
                 super.t_();
             }
-
         }
     }
 

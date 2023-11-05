@@ -66,7 +66,6 @@ public class TurtleController extends MobEntityController {
                 this.moveController = new ControllerMove(this);
                 this.bi = new EmptyControllerJump(this);
             }
-
         }
 
         @Override
@@ -79,7 +78,6 @@ public class TurtleController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -97,7 +95,6 @@ public class TurtleController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -118,7 +115,6 @@ public class TurtleController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -129,7 +125,6 @@ public class TurtleController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -148,11 +143,9 @@ public class TurtleController extends MobEntityController {
                 if (!NMSImpl.moveFish(npc, this, vec3d)) {
                     super.g(vec3d);
                 }
-
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
-
         }
 
         @Override
@@ -160,7 +153,6 @@ public class TurtleController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new TurtleNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -195,7 +187,6 @@ public class TurtleController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -220,15 +211,12 @@ public class TurtleController extends MobEntityController {
                     this.moveController = this.oldMoveController;
                     this.bi = this.oldJumpController;
                 }
-
                 if (!npc.useMinecraftAI() && this.moveController == this.oldMoveController) {
                     this.moveController = new EntityMoveControl(this);
                     this.bi = new EmptyControllerJump(this);
                 }
-
                 npc.update();
             }
-
         }
 
         @Override

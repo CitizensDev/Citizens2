@@ -50,11 +50,11 @@ public class GoatTrait extends Trait {
     }
 
     public void setLeftHorn(boolean horn) {
-        this.leftHorn = horn;
+        leftHorn = horn;
     }
 
     public void setRightHorn(boolean horn) {
-        this.rightHorn = horn;
+        rightHorn = horn;
     }
 
     @Command(

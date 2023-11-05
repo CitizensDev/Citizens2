@@ -21,7 +21,7 @@ import net.citizensnpcs.util.Messages;
  */
 @TraitName("anchors")
 public class Anchors extends Trait {
-    private final List<Anchor> anchors = new ArrayList<Anchor>();
+    private final List<Anchor> anchors = new ArrayList<>();
 
     public Anchors() {
         super("anchors");
@@ -61,8 +61,8 @@ public class Anchors extends Trait {
             String[] parts = sub.getString("").split(";");
             Location location;
             try {
-                location = new Location(Bukkit.getServer().getWorld(parts[1]), Double.valueOf(parts[2]),
-                        Double.valueOf(parts[3]), Double.valueOf(parts[4]));
+                location = new Location(Bukkit.getServer().getWorld(parts[1]), Double.parseDouble(parts[2]),
+                        Double.parseDouble(parts[3]), Double.parseDouble(parts[4]));
                 anchors.add(new Anchor(parts[0], location));
             } catch (NumberFormatException e) {
                 Messaging.logTr(Messages.SKIPPING_INVALID_ANCHOR, sub.name(), e.getMessage());
@@ -85,8 +85,9 @@ public class Anchors extends Trait {
     @Override
     public void save(DataKey key) {
         key.removeKey("list");
-        for (int i = 0; i < anchors.size(); i++)
+        for (int i = 0; i < anchors.size(); i++) {
             key.setString("list." + String.valueOf(i), anchors.get(i).stringValue());
+        }
     }
 
 }

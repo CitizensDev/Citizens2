@@ -15,6 +15,6 @@ import org.bukkit.conversations.Prompt;
 public interface WaypointTriggerPrompt extends Prompt {
     public WaypointTrigger createFromShortInput(ConversationContext context, String input);
 
-    static final String CREATED_TRIGGER_KEY = "created-trigger";
-    static final String RETURN_PROMPT_KEY = "return-to";
+    static String CREATED_TRIGGER_KEY = "created-trigger";
+    static String RETURN_PROMPT_KEY = "return-to";
 }

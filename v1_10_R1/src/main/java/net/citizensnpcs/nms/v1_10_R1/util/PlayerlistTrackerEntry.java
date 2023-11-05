@@ -38,7 +38,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             if (event.isCancelled())
                 return;
         }
-
         super.updatePlayer(entityplayer);
 
         if (tracker.getBukkitEntity().getType() != EntityType.PLAYER)
@@ -55,13 +54,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                         return;
                     skinnable.getSkinTracker().updateViewer(entityplayer.getBukkitEntity());
                 }
-
                 Bukkit.getPluginManager().callEvent(
                         new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), entityplayer.getBukkitEntity()));
             }
-
         }
-
     }
 
     private static int getE(EntityTrackerEntry entry) {
@@ -75,7 +71,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -87,7 +82,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -99,7 +93,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -111,7 +104,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -123,7 +115,6 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return false;
     }
 

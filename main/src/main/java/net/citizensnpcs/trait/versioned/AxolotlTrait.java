@@ -71,10 +71,9 @@ public class AxolotlTrait extends Trait {
         AxolotlTrait trait = npc.getOrAddTrait(AxolotlTrait.class);
         String output = "";
         if (args.hasValueFlag("variant")) {
-            if (variant == null) {
+            if (variant == null)
                 throw new CommandException(Messages.INVALID_AXOLOTL_VARIANT,
                         Util.listValuesPretty(Axolotl.Variant.values()));
-            }
             trait.setVariant(variant);
             output += ' ' + Messaging.tr(Messages.AXOLOTL_VARIANT_SET, args.getFlag("variant"));
         }
@@ -85,8 +84,7 @@ public class AxolotlTrait extends Trait {
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 }

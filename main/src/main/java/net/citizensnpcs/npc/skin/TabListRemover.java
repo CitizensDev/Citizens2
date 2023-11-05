@@ -26,7 +26,7 @@ import net.citizensnpcs.util.NMS;
  * </p>
  */
 public class TabListRemover {
-    private final Map<UUID, PlayerEntry> pending = new HashMap<UUID, PlayerEntry>(
+    private final Map<UUID, PlayerEntry> pending = new HashMap<>(
             Math.max(128, Math.min(1024, Bukkit.getMaxPlayers() / 2)));
 
     TabListRemover() {
@@ -70,7 +70,6 @@ public class TabListRemover {
         if (entry.toRemove.remove(skinnable)) {
             skinnable.getSkinTracker().notifyRemovePacketCancelled(player.getUniqueId());
         }
-
         if (entry.toRemove.isEmpty()) {
             pending.remove(player.getUniqueId());
         }
@@ -82,7 +81,6 @@ public class TabListRemover {
             entry = new PlayerEntry(player);
             pending.put(player.getUniqueId(), entry);
         }
-
         return entry;
     }
 
@@ -103,9 +101,9 @@ public class TabListRemover {
         entry.toRemove.add(entity);
     }
 
-    private class PlayerEntry {
+    private static class PlayerEntry {
         Player player;
-        Set<SkinnableEntity> toRemove = new HashSet<SkinnableEntity>(20);
+        Set<SkinnableEntity> toRemove = new HashSet<>(20);
 
         PlayerEntry(Player player) {
             this.player = player;
@@ -125,30 +123,27 @@ public class TabListRemover {
                 int listSize = Math.min(maxPacketEntries, entry.toRemove.size());
                 boolean sendAll = listSize == entry.toRemove.size();
 
-                List<SkinnableEntity> skinnableList = new ArrayList<SkinnableEntity>(listSize);
+                List<SkinnableEntity> skinnableList = new ArrayList<>(listSize);
 
                 int i = 0;
                 Iterator<SkinnableEntity> skinIterator = entry.toRemove.iterator();
                 while (skinIterator.hasNext()) {
-                    if (i >= maxPacketEntries)
+                    if (i >= maxPacketEntries) {
                         break;
-
+                    }
                     SkinnableEntity skinnable = skinIterator.next();
                     skinnableList.add(skinnable);
 
                     skinIterator.remove();
                     i++;
                 }
-
                 if (entry.player.isOnline()) {
                     NMS.sendTabListRemove(entry.player, skinnableList);
                 }
-
                 // notify skin trackers that a remove packet has been sent to a player
                 for (SkinnableEntity entity : skinnableList) {
                     entity.getSkinTracker().notifyRemovePacketSent(entry.player.getUniqueId());
                 }
-
                 if (sendAll) {
                     entryIterator.remove();
                 }

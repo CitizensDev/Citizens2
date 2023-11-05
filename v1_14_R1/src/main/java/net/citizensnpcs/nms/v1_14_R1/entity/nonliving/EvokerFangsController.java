@@ -75,7 +75,6 @@ public class EvokerFangsController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -87,7 +86,6 @@ public class EvokerFangsController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -101,7 +99,6 @@ public class EvokerFangsController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -109,7 +106,6 @@ public class EvokerFangsController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new EvokerFangsNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -129,7 +125,6 @@ public class EvokerFangsController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
-
         }
     }
 

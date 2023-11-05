@@ -61,7 +61,6 @@ public class ThrownPotionController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -73,7 +72,6 @@ public class ThrownPotionController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -87,7 +85,6 @@ public class ThrownPotionController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -98,9 +95,7 @@ public class ThrownPotionController extends MobEntityController {
                 } else {
                     NMSImpl.setBukkitEntity(this, new SplashThrownPotionNPC(this));
                 }
-
             }
-
             return super.getBukkitEntity();
         }
 
@@ -121,7 +116,6 @@ public class ThrownPotionController extends MobEntityController {
             } else {
                 super.tick();
             }
-
         }
     }
 

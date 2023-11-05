@@ -50,9 +50,10 @@ public class Template {
                     queue.add(new Node(fullKey, (Map<String, Object>) entry.getValue()));
                     continue;
                 }
-                boolean overwrite = memoryKey.keyExists(fullKey) | override;
-                if (!overwrite || fullKey.equals("uuid"))
+                boolean overwrite = memoryKey.keyExists(fullKey) || override;
+                if (!overwrite || fullKey.equals("uuid")) {
                     continue;
+                }
                 memoryKey.setRaw(fullKey, entry.getValue());
             }
         }

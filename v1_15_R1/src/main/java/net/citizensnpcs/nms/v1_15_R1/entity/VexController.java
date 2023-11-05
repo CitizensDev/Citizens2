@@ -53,7 +53,6 @@ public class VexController extends MobEntityController {
             if (npc != null) {
                 setNoGravity(true);
             }
-
         }
 
         @Override
@@ -76,7 +75,6 @@ public class VexController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
-
             return res;
         }
 
@@ -90,7 +88,6 @@ public class VexController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -101,7 +98,6 @@ public class VexController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -119,7 +115,6 @@ public class VexController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new VexNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -154,7 +149,6 @@ public class VexController extends MobEntityController {
             if (vector != null) {
                 super.h(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -169,7 +163,6 @@ public class VexController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
-
         }
 
         @Override

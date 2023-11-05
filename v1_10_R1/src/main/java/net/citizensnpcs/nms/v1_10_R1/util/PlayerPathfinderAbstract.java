@@ -56,7 +56,6 @@ public abstract class PlayerPathfinderAbstract extends PathfinderAbstract {
             localPathPoint = new PathPoint(paramInt1, paramInt2, paramInt3);
             this.c.a(j, localPathPoint);
         }
-
         return localPathPoint;
     }
 

@@ -56,9 +56,7 @@ public class PermissionAction extends NPCShopAction {
             return Transaction.fail();
         Player player = (Player) entity;
         Permission perm = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
-        return Transaction.create(() -> {
-            return true;
-        }, () -> {
+        return Transaction.create(() -> true, () -> {
             for (String permission : permissions) {
                 perm.playerAdd(null, player, Placeholders.replace(permission, player));
             }
@@ -77,9 +75,8 @@ public class PermissionAction extends NPCShopAction {
         Permission perm = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
         return Transaction.create(() -> {
             for (String permission : permissions) {
-                if (!perm.playerHas(player, Placeholders.replace(permission, player))) {
+                if (!perm.playerHas(player, Placeholders.replace(permission, player)))
                     return false;
-                }
             }
             return true;
         }, () -> {
@@ -109,7 +106,7 @@ public class PermissionAction extends NPCShopAction {
         @Override
         public void initialise(MenuContext ctx) {
             for (int i = 0; i < 3 * 9; i++) {
-                final int idx = i;
+                int idx = i;
                 ctx.getSlot(i).clear();
                 if (i < base.permissions.size()) {
                     ctx.getSlot(i).setItemStack(new ItemStack(Material.FEATHER), "<f>Set permission",
@@ -124,8 +121,8 @@ public class PermissionAction extends NPCShopAction {
                         }
                         return;
                     }
-                    ctx.getMenu().transition(InputMenus.stringSetter(
-                            () -> idx < base.permissions.size() ? base.permissions.get(idx) : "", (res) -> {
+                    ctx.getMenu().transition(InputMenus
+                            .stringSetter(() -> idx < base.permissions.size() ? base.permissions.get(idx) : "", res -> {
                                 if (res == null) {
                                     if (idx < base.permissions.size()) {
                                         base.permissions.remove(idx);
@@ -166,9 +163,8 @@ public class PermissionAction extends NPCShopAction {
                     supported = false;
                 }
             }
-            if (!supported) {
+            if (!supported)
                 return null;
-            }
             String description = null;
             if (previous != null) {
                 PermissionAction old = (PermissionAction) previous;

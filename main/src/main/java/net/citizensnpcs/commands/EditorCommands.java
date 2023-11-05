@@ -60,7 +60,6 @@ public class EditorCommands {
             player.acceptConversationInput(args.getJoinedStrings(1));
             return;
         }
-
         Editor.enterOrLeave(player, editor);
     }
 

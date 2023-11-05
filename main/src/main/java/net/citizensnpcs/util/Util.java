@@ -81,22 +81,20 @@ public class Util {
                 e.printStackTrace();
             }
         }
-
         try {
             return Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), callable).get();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
     public static Vector callPushEvent(NPC npc, double x, double y, double z) {
         boolean allowed = npc == null || !npc.isProtected()
-                || (npc.data().has(NPC.Metadata.COLLIDABLE) && npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE));
-        if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0) {
+                || npc.data().has(NPC.Metadata.COLLIDABLE) && npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE);
+        if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0)
             return allowed ? new Vector(x, y, z) : null;
-        }
+
         // when another entity collides, this method is called to push the NPC so we prevent it from
         // doing anything if the event is cancelled.
         Vector vector = new Vector(x, y, z);
@@ -193,7 +191,7 @@ public class Util {
         Location center = new Location(bloc.getWorld(), bloc.getBlockX() + 0.5, bloc.getBlockY(),
                 bloc.getBlockZ() + 0.5);
         BoundingBox bb = NMS.getCollisionBox(block);
-        if (bb != null && (bb.maxY - bb.minY) < 0.6D) {
+        if (bb != null && bb.maxY - bb.minY < 0.6D) {
             center.setY(center.getY() + (bb.maxY - bb.minY));
         }
         return center;
@@ -209,10 +207,10 @@ public class Util {
         double tX = x + motX;
         double tZ = z + motZ;
         if (z > tZ)
-            return (float) (-Math.toDegrees(Math.atan((x - tX) / (z - tZ))));
-        if (z < tZ) {
-            return (float) (-Math.toDegrees(Math.atan((x - tX) / (z - tZ)))) + 180.0F;
-        }
+            return (float) -Math.toDegrees(Math.atan((x - tX) / (z - tZ)));
+        if (z < tZ)
+            return (float) -Math.toDegrees(Math.atan((x - tX) / (z - tZ))) + 180.0F;
+
         return location.getYaw();
     }
 
@@ -249,9 +247,9 @@ public class Util {
     public static boolean inBlock(Entity entity) {
         // TODO: bounding box aware?
         Location loc = entity.getLocation();
-        if (!Util.isLoaded(loc)) {
+        if (!Util.isLoaded(loc))
             return false;
-        }
+
         Block in = loc.getBlock();
         Block above = in.getRelative(BlockFace.UP);
         return in.getType().isSolid() && above.getType().isSolid() && NMS.isSolid(in) && NMS.isSolid(above);
@@ -314,9 +312,7 @@ public class Util {
     }
 
     public static boolean locationWithinRange(Location current, Location target, double range) {
-        if (current == null || target == null)
-            return false;
-        if (current.getWorld() != target.getWorld())
+        if (current == null || target == null || (current.getWorld() != target.getWorld()))
             return false;
         return current.distance(target) <= range;
     }
@@ -325,15 +321,15 @@ public class Util {
         toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
         for (T check : values) {
             if (toMatch.equals(check.name().toLowerCase())
-                    || (toMatch.equals("item") && check == EntityType.DROPPED_ITEM)) {
+                    || toMatch.equals("item") && check == EntityType.DROPPED_ITEM)
                 return check; // check for an exact match first
-            }
+
         }
         for (T check : values) {
             String name = check.name().toLowerCase();
-            if (name.replace("_", "").equals(toMatch) || name.startsWith(toMatch)) {
+            if (name.replace("_", "").equals(toMatch) || name.startsWith(toMatch))
                 return check;
-            }
+
         }
         return null;
     }
@@ -352,9 +348,9 @@ public class Util {
                     matchMaterial = Material.BOOK;
                 }
             }
-            if (matchMaterial == player.getInventory().getItemInHand().getType()) {
+            if (matchMaterial == player.getInventory().getItemInHand().getType())
                 return true;
-            }
+
         }
         return false;
     }
@@ -434,12 +430,10 @@ public class Util {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
             return;
         }
-
         boolean wasOp = clicker.isOp();
         if (op) {
             clicker.setOp(true);
         }
-
         try {
             if (bungeeServer != null) {
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
@@ -453,7 +447,6 @@ public class Util {
         } catch (Throwable t) {
             t.printStackTrace();
         }
-
         if (op) {
             clicker.setOp(wasOp);
         }
@@ -511,44 +504,46 @@ public class Util {
 
         else { // Multiple recipients
             String text = Setting.CHAT_FORMAT_TO_TARGET.asString().replace("<text>", context.getMessage());
-            List<String> targetNames = new ArrayList<String>();
+            List<String> targetNames = new ArrayList<>();
             // Talk to each recipient
             for (Talkable talkable : context) {
                 talkable.talkTo(context, text);
                 targetNames.add(talkable.getName());
             }
-
             if (!Setting.CHAT_BYSTANDERS_HEAR_TARGETED_CHAT.asBoolean())
                 return;
             String targets = "";
             int max = Setting.CHAT_MAX_NUMBER_OF_TARGETS.asInt();
             String[] format = Setting.CHAT_MULTIPLE_TARGETS_FORMAT.asString().split("\\|");
-            if (format.length != 4)
+            if (format.length != 4) {
                 Messaging.severe("npc.chat.options.multiple-targets-format invalid!");
+            }
             if (max == 1) {
                 targets = format[0].replace("<target>", targetNames.get(0)) + format[3];
             } else if (max == 2 || targetNames.size() == 2) {
                 if (targetNames.size() == 2) {
                     targets = format[0].replace("<target>", targetNames.get(0))
                             + format[2].replace("<target>", targetNames.get(1));
-                } else
+                } else {
                     targets = format[0].replace("<target>", targetNames.get(0))
                             + format[1].replace("<target>", targetNames.get(1)) + format[3];
+                }
             } else if (max >= 3) {
                 targets = format[0].replace("<target>", targetNames.get(0));
 
                 int x = 1;
                 for (x = 1; x < max - 1; x++) {
-                    if (targetNames.size() - 1 == x)
+                    if (targetNames.size() - 1 == x) {
                         break;
+                    }
                     targets = targets + format[1].replace("<npc>", targetNames.get(x));
                 }
                 if (targetNames.size() == max) {
                     targets = targets + format[2].replace("<npc>", targetNames.get(x));
-                } else
+                } else {
                     targets = targets + format[3];
+                }
             }
-
             String bystanderText = Setting.CHAT_FORMAT_WITH_TARGETS_TO_BYSTANDERS.asString()
                     .replace("<targets>", targets).replace("<text>", context.getMessage());
             talkToBystanders(npc, bystanderText, context);
@@ -572,7 +567,6 @@ public class Util {
                     }
                 }
             }
-
             if (shouldTalk) {
                 new TalkableEntity(bystander).talkNear(context, text);
             }

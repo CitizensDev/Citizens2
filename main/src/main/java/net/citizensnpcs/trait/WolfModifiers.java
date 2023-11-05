@@ -54,7 +54,7 @@ public class WolfModifiers extends Trait {
     }
 
     public void setCollarColor(DyeColor color) {
-        this.collarColor = color;
+        collarColor = color;
         updateModifiers();
     }
 

@@ -83,7 +83,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
-
         }
 
         @Override
@@ -91,7 +90,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
-
         }
 
         @Override
@@ -99,13 +97,11 @@ public class WanderingTraderController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
-
             super.customServerAiStep();
             if (npc != null) {
                 setDespawnDelay(10);
                 npc.update();
             }
-
         }
 
         @Override
@@ -118,7 +114,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new WanderingTraderNPC(this));
             }
-
             return super.getBukkitEntity();
         }
 
@@ -173,7 +168,6 @@ public class WanderingTraderController extends MobEntityController {
                 blockingATrade = false;
                 return true;
             }
-
             return super.isTrading();
         }
 
@@ -196,9 +190,7 @@ public class WanderingTraderController extends MobEntityController {
                 if (list != null) {
                     list.clear();
                 }
-
             }
-
             return super.mobInteract(entityhuman, enumhand);
         }
 
@@ -216,7 +208,6 @@ public class WanderingTraderController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -226,7 +217,6 @@ public class WanderingTraderController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -237,7 +227,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -254,7 +243,6 @@ public class WanderingTraderController extends MobEntityController {
             if (npc == null) {
                 super.thunderHit(worldserver, entitylightning);
             }
-
         }
 
         @Override
@@ -264,7 +252,6 @@ public class WanderingTraderController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
-
         }
 
         @Override
@@ -276,7 +263,6 @@ public class WanderingTraderController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
-
             return res;
         }
     }

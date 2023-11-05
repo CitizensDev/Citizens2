@@ -191,26 +191,21 @@ public class EntityNavigation extends PathNavigation {
             while (var2.getY() > this.level.getMinBuildHeight() && this.level.getBlockState(var2).isAir()) {
                 var2 = var2.below();
             }
-
             if (var2.getY() > this.level.getMinBuildHeight())
                 return supercreatePath(var2.above(), var1);
             while (var2.getY() < this.level.getMaxBuildHeight() && this.level.getBlockState(var2).isAir()) {
                 var2 = var2.above();
             }
-
             var0 = var2;
         }
-
         if (this.level.getBlockState(var0).getMaterial().isSolid()) {
             BlockPos var2 = var0.above();
             while (var2.getY() < this.level.getMaxBuildHeight()
                     && this.level.getBlockState(var2).getMaterial().isSolid()) {
                 var2 = var2.above();
             }
-
             return supercreatePath(var2, var1);
         }
-
         return supercreatePath(var0, var1);
     }
 
@@ -252,7 +247,6 @@ public class EntityNavigation extends PathNavigation {
             this.reachRange = var3;
             resetStuckTimeout();
         }
-
         return var8;
     }
 
@@ -275,11 +269,9 @@ public class EntityNavigation extends PathNavigation {
             } else {
                 this.isStuck = false;
             }
-
             this.lastStuckCheck = this.tick;
             this.lastStuckCheckPos = var0;
         }
-
         if (this.path != null && !this.path.isDone()) {
             BlockPos blockPos = this.path.getNextNodePos();
             if (blockPos.equals(this.timeoutCachedNode)) {
@@ -289,14 +281,11 @@ public class EntityNavigation extends PathNavigation {
                 double var2 = var0.distanceTo(Vec3.atBottomCenterOf(this.timeoutCachedNode));
                 this.timeoutLimit = this.mob.getSpeed() > 0.0F ? var2 / this.mob.getSpeed() * 1000.0D : 0.0D;
             }
-
             if (this.timeoutLimit > 0.0D && this.timeoutTimer > this.timeoutLimit * 3.0D) {
                 timeoutPath();
             }
-
             this.lastTimeoutCheck = System.currentTimeMillis();
         }
-
     }
 
     @Override
@@ -312,7 +301,6 @@ public class EntityNavigation extends PathNavigation {
         if (var8 || canCutCorner(this.path.getNextNode().type) && shouldTargetNextNodeInDirection(var0)) {
             this.path.advance();
         }
-
         doStuckDetection(var0);
     }
 
@@ -347,7 +335,6 @@ public class EntityNavigation extends PathNavigation {
             if (++var2 > 16)
                 return this.mob.getBlockY();
         }
-
         return var0;
     }
 
@@ -410,11 +397,9 @@ public class EntityNavigation extends PathNavigation {
             this.path = null;
             return false;
         }
-
         if (!var0.sameAs(this.path)) {
             this.path = var0;
         }
-
         if (isDone())
             return false;
         trimPath();
@@ -436,11 +421,9 @@ public class EntityNavigation extends PathNavigation {
                 this.timeLastRecompute = this.level.getGameTime();
                 this.hasDelayedRecomputation = false;
             }
-
         } else {
             this.hasDelayedRecomputation = true;
         }
-
     }
 
     @Override
@@ -497,7 +480,6 @@ public class EntityNavigation extends PathNavigation {
                     (var1.z + this.mob.getZ()) / 2.0D);
             return var0.closerToCenterThan(var2, this.path.getNodeCount() - this.path.getNextNodeIndex());
         }
-
     }
 
     private boolean shouldTargetNextNodeInDirection(Vec3 var0) {
@@ -533,11 +515,8 @@ public class EntityNavigation extends PathNavigation {
                 if (var2 != null && var1.y >= var2.y) {
                     this.path.replaceNode(var0 + 1, var1.cloneAndMove(var2.x, var1.y + 1, var2.z));
                 }
-
             }
-
         }
-
     }
 
     @Override
@@ -546,7 +525,6 @@ public class EntityNavigation extends PathNavigation {
         if (this.hasDelayedRecomputation) {
             recomputePath();
         }
-
         if (isDone())
             return;
         if (canUpdatePath()) {
@@ -558,9 +536,7 @@ public class EntityNavigation extends PathNavigation {
                     && Mth.floor(vec31.z) == Mth.floor(vec32.z)) {
                 this.path.advance();
             }
-
         }
-
         if (isDone())
             return;
         Vec3 var0 = this.path.getNextEntityPos(this.mob);
@@ -586,11 +562,8 @@ public class EntityNavigation extends PathNavigation {
                     this.path.truncateNodes(var0);
                     return;
                 }
-
             }
-
         }
-
     }
 
     private static Mob getDummyInsentient(EntityHumanNPC from, Level world) {

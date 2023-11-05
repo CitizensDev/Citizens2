@@ -1,6 +1,7 @@
 package net.citizensnpcs.util;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -64,26 +65,23 @@ public interface EntityPacketTracker extends Runnable {
 
             @Override
             public boolean equals(Object obj) {
-                if (this == obj) {
+                if (this == obj)
                     return true;
-                }
-                if (obj == null || getClass() != obj.getClass()) {
+
+                if (obj == null || getClass() != obj.getClass())
                     return false;
-                }
+
                 PlayerConnection other = (PlayerConnection) obj;
-                if (uuid == null) {
-                    if (other.uuid != null) {
-                        return false;
-                    }
-                } else if (!uuid.equals(other.uuid)) {
+                if (!Objects.equals(uuid, other.uuid)) {
                     return false;
+
                 }
                 return true;
             }
 
             @Override
             public int hashCode() {
-                return 31 + ((uuid == null) ? 0 : uuid.hashCode());
+                return 31 + (uuid == null ? 0 : uuid.hashCode());
             }
         }
     }

@@ -88,11 +88,11 @@ public class PandaTrait extends Trait {
     }
 
     public void setHiddenGene(Panda.Gene gene) {
-        this.hiddenGene = gene;
+        hiddenGene = gene;
     }
 
     public void setMainGene(Panda.Gene gene) {
-        this.mainGene = gene;
+        mainGene = gene;
     }
 
     public void setRolling(boolean rolling) {
@@ -138,18 +138,16 @@ public class PandaTrait extends Trait {
         PandaTrait trait = npc.getOrAddTrait(PandaTrait.class);
         String output = "";
         if (args.hasValueFlag("gene")) {
-            if (gene == null) {
+            if (gene == null)
                 throw new CommandUsageException(Messages.INVALID_PANDA_GENE,
                         Util.listValuesPretty(Panda.Gene.values()));
-            }
             trait.setMainGene(gene);
             output += ' ' + Messaging.tr(Messages.PANDA_MAIN_GENE_SET, args.getFlag("gene"));
         }
         if (args.hasValueFlag("hiddengene")) {
-            if (hiddengene == null) {
+            if (hiddengene == null)
                 throw new CommandUsageException(Messages.INVALID_PANDA_GENE,
                         Util.listValuesPretty(Panda.Gene.values()));
-            }
             trait.setHiddenGene(hiddengene);
             output += ' ' + Messaging.tr(Messages.PANDA_HIDDEN_GENE_SET, hiddengene);
         }
@@ -175,9 +173,8 @@ public class PandaTrait extends Trait {
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
-        } else {
+        } else
             throw new CommandUsageException();
-        }
     }
 
     private static boolean SUPPORT_ROLLING_SNEEZING = true;

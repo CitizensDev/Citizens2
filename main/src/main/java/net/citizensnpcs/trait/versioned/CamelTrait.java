@@ -64,7 +64,6 @@ public class CamelTrait extends Trait {
             trait.setPose(pose);
             output += Messaging.tr(Messages.CAMEL_POSE_SET, pose);
         }
-
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
         }

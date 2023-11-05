@@ -84,7 +84,6 @@ public class ParrotController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -108,7 +107,6 @@ public class ParrotController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -121,7 +119,6 @@ public class ParrotController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new ParrotNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -145,7 +142,6 @@ public class ParrotController extends MobEntityController {
             if (npc == null) {
                 super.L();
             }
-
         }
 
         @Override
@@ -156,7 +152,6 @@ public class ParrotController extends MobEntityController {
                 NMSImpl.updateAI(this);
                 npc.update();
             }
-
         }
     }
 

@@ -39,7 +39,7 @@ public class SneakTrait extends Trait {
     }
 
     public void setSneaking(boolean sneak) {
-        this.sneaking = sneak;
+        sneaking = sneak;
         apply();
     }
 }

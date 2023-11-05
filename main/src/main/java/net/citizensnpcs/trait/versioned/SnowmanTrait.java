@@ -41,7 +41,7 @@ public class SnowmanTrait extends Trait {
     }
 
     public boolean toggleDerp() {
-        return this.derp = !this.derp;
+        return derp = !derp;
     }
 
     @Command(
@@ -62,8 +62,7 @@ public class SnowmanTrait extends Trait {
             Messaging.sendTr(sender, isDerp ? Messages.SNOWMAN_DERP_SET : Messages.SNOWMAN_DERP_STOPPED, npc.getName());
             hasArg = true;
         }
-        if (!hasArg) {
+        if (!hasArg)
             throw new CommandUsageException();
-        }
     }
 }

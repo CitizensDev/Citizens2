@@ -11,7 +11,7 @@ public class NPCNeedsRespawnEvent extends NPCEvent {
 
     public NPCNeedsRespawnEvent(NPC npc, Location at) {
         super(npc);
-        this.spawn = at;
+        spawn = at;
     }
 
     @Override
@@ -27,5 +27,5 @@ public class NPCNeedsRespawnEvent extends NPCEvent {
         return handlers;
     }
 
-    private static final HandlerList handlers = new HandlerList();
+    private static HandlerList handlers = new HandlerList();
 }

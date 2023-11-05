@@ -62,7 +62,6 @@ public class HorseZombieController extends MobEntityController {
                         .setDomestication(((AbstractHorse) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
-
         }
 
         @Override
@@ -76,7 +75,6 @@ public class HorseZombieController extends MobEntityController {
                 super.a(flag);
                 return;
             }
-
             NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
@@ -85,7 +83,6 @@ public class HorseZombieController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
-
         }
 
         @Override
@@ -122,7 +119,6 @@ public class HorseZombieController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
-
         }
 
         @Override
@@ -135,7 +131,6 @@ public class HorseZombieController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
             }
-
         }
 
         @Override
@@ -144,7 +139,6 @@ public class HorseZombieController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
-
         }
 
         @Override
@@ -154,7 +148,6 @@ public class HorseZombieController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1);
             }
-
         }
 
         @Override
@@ -167,7 +160,6 @@ public class HorseZombieController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new HorseZombieNPC(this);
             }
-
             return super.getBukkitEntity();
         }
 
@@ -186,7 +178,6 @@ public class HorseZombieController extends MobEntityController {
             if (npc == null) {
                 super.L();
             }
-
         }
 
         @Override
@@ -200,15 +191,12 @@ public class HorseZombieController extends MobEntityController {
                 } else {
                     riding = false;
                 }
-
                 if (riding) {
                     c(4, true);
                 }
-
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
-
         }
 
         @Override
