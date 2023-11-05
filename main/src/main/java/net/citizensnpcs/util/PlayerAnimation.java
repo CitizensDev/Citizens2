@@ -1,11 +1,15 @@
 package net.citizensnpcs.util;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -127,7 +131,10 @@ public enum PlayerAnimation {
             if (this == STOP_USE_ITEM)
                 return;
 
-            if (player.hasMetadata("citizens-using-item-remaining-ticks")) {
+            ItemStack using = this == START_USE_MAINHAND_ITEM ? player.getItemInHand()
+                    : player.getInventory().getItemInOffHand();
+            if (using != null && BAD_ITEMS_TO_USE.contains(using.getType())
+                    && player.hasMetadata("citizens-using-item-remaining-ticks")) {
                 int remainingTicks = player.getMetadata("citizens-using-item-remaining-ticks").get(0).asInt();
                 new BukkitRunnable() {
                     @Override
@@ -156,5 +163,13 @@ public enum PlayerAnimation {
 
     public void play(Player player, Player to) {
         play(player, ImmutableList.of(to));
+    }
+
+    private static final Set<Material> BAD_ITEMS_TO_USE = EnumSet.noneOf(Material.class);
+    static {
+        try {
+            BAD_ITEMS_TO_USE.add(Material.SPYGLASS);
+        } catch (IllegalArgumentException e) {
+        }
     }
 }
