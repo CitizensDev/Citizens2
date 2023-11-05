@@ -76,6 +76,7 @@ public class PigController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -83,6 +84,7 @@ public class PigController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
+
         }
 
         @Override
@@ -92,6 +94,7 @@ public class PigController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
+
         }
 
         @Override
@@ -104,6 +107,7 @@ public class PigController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new PigNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -179,6 +183,7 @@ public class PigController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -188,6 +193,7 @@ public class PigController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -198,6 +204,7 @@ public class PigController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -217,6 +224,7 @@ public class PigController extends MobEntityController {
             if (npc == null) {
                 super.thunderHit(worldserver, entitylightning);
             }
+
         }
 
         @Override
@@ -226,6 +234,7 @@ public class PigController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -237,6 +246,7 @@ public class PigController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

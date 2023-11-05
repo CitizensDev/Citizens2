@@ -52,6 +52,7 @@ public class LargeFireballController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new LargeFireballNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -82,6 +83,7 @@ public class LargeFireballController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -92,6 +94,7 @@ public class LargeFireballController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -101,6 +104,7 @@ public class LargeFireballController extends MobEntityController {
             } else {
                 NMSImpl.setSize(this, firstTick);
             }
+
         }
 
         @Override
@@ -115,9 +119,11 @@ public class LargeFireballController extends MobEntityController {
                 if (!npc.isProtected()) {
                     super.tick();
                 }
+
             } else {
                 super.tick();
             }
+
         }
 
         @Override
@@ -129,6 +135,7 @@ public class LargeFireballController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

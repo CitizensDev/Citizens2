@@ -77,6 +77,7 @@ public class WolfController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -84,6 +85,7 @@ public class WolfController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
+
         }
 
         @Override
@@ -93,6 +95,7 @@ public class WolfController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
+
         }
 
         @Override
@@ -105,6 +108,7 @@ public class WolfController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new WolfNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -174,6 +178,7 @@ public class WolfController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -183,6 +188,7 @@ public class WolfController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -193,6 +199,7 @@ public class WolfController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -219,6 +226,7 @@ public class WolfController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -230,6 +238,7 @@ public class WolfController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

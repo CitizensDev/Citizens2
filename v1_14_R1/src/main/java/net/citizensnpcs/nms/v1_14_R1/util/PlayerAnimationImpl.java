@@ -20,6 +20,7 @@ public class PlayerAnimationImpl {
             playDefaultAnimation(player, to, DEFAULTS.get(animation));
             return;
         }
+
         switch (animation) {
             case SNEAK:
                 player.getBukkitEntity().setSneaking(true);
@@ -50,6 +51,7 @@ public class PlayerAnimationImpl {
             default:
                 throw new UnsupportedOperationException();
         }
+
     }
 
     protected static void playDefaultAnimation(EntityPlayer player, Iterable<Player> to, int code) {
@@ -61,6 +63,7 @@ public class PlayerAnimationImpl {
         for (Player player : to) {
             NMSImpl.sendPacket(player, packet);
         }
+
     }
 
     private static EnumMap<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);

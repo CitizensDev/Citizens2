@@ -69,6 +69,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new FallingBlockNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -99,6 +100,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -109,6 +111,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -118,6 +121,7 @@ public class FallingBlockController extends AbstractEntityController {
             } else {
                 NMSImpl.setSize(this, firstTick);
             }
+
         }
 
         @Override
@@ -142,9 +146,11 @@ public class FallingBlockController extends AbstractEntityController {
                     setDeltaMovement(mot);
                     move(MoverType.SELF, mot);
                 }
+
             } else {
                 super.tick();
             }
+
         }
 
         @Override
@@ -156,6 +162,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
 

@@ -71,6 +71,7 @@ public class HorseSkeletonController extends MobEntityController {
                         .setDomestication(((org.bukkit.entity.SkeletonHorse) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED).getValue();
             }
+
         }
 
         @Override
@@ -92,6 +93,7 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -99,6 +101,7 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
+
         }
 
         @Override
@@ -113,16 +116,20 @@ public class HorseSkeletonController extends MobEntityController {
                 } else {
                     riding = false;
                 }
+
                 if (riding) {
                     if (npc.getNavigator().isNavigating()) {
                         org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
                         NMS.look(basePassenger, getYRot(), getXRot());
                     }
+
                     setFlag(4, true); // datawatcher method
                 }
+
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
+
         }
 
         @Override
@@ -135,6 +142,7 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new HorseSkeletonNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -216,6 +224,7 @@ public class HorseSkeletonController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -225,6 +234,7 @@ public class HorseSkeletonController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -235,6 +245,7 @@ public class HorseSkeletonController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -256,6 +267,7 @@ public class HorseSkeletonController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -267,6 +279,7 @@ public class HorseSkeletonController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

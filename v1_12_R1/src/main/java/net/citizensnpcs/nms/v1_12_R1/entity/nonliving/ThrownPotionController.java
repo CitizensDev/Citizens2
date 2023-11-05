@@ -54,6 +54,7 @@ public class ThrownPotionController extends MobEntityController {
             } else {
                 super.B_();
             }
+
         }
 
         @Override
@@ -64,6 +65,7 @@ public class ThrownPotionController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -77,6 +79,7 @@ public class ThrownPotionController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -87,7 +90,9 @@ public class ThrownPotionController extends MobEntityController {
                 } else {
                     bukkitEntity = new SplashThrownPotionNPC(this);
                 }
+
             }
+
             return super.getBukkitEntity();
         }
 

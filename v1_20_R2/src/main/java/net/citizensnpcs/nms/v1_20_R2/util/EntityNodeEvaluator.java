@@ -127,7 +127,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         if (this.hasCollisions(var20)) {
                             var8 = null;
                         }
+
                     }
+
                 }
 
                 if (!this.isAmphibious() && var12 == BlockPathTypes.WATER && !this.canFloat()) {
@@ -143,6 +145,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         var8 = this.getNodeAndUpdateCostToMax(var0, var1, var2, var12,
                                 this.mvmt.getPathfindingMalus(var12));
                     }
+
                 }
 
                 if (var12 == BlockPathTypes.OPEN) {
@@ -167,6 +170,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         if (var13 < 0.0F)
                             return this.getBlockedNode(var0, var1, var2);
                     }
+
                 }
 
                 if (doesBlockHavePartialCollision(var12) && var8 == null) {
@@ -175,9 +179,12 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                     var8.type = var12;
                     var8.costMalus = var12.getMalus();
                 }
+
             }
+
             return var8;
         }
+
     }
 
     private Node getBlockedNode(int var0, int var1, int var2) {
@@ -212,6 +219,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 if (mvmt.getPathfindingMalus(varr9) >= mvmt.getPathfindingMalus(var7)) {
                     var7 = varr9;
                 }
+
             }
 
             if (var6 == BlockPathTypes.OPEN && mvmt.getPathfindingMalus(var7) == 0.0F && this.entityWidth <= 1)
@@ -242,6 +250,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 if (mvmt.getPathfindingMalus(varr9) >= mvmt.getPathfindingMalus(var7)) {
                     var7 = varr9;
                 }
+
             }
 
             if (var6 == BlockPathTypes.OPEN && mvmt.getPathfindingMalus(var7) == 0.0F && this.entityWidth <= 1)
@@ -271,7 +280,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
                     var4.add(var13);
                 }
+
             }
+
         }
 
         return var5;
@@ -375,6 +386,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                     ++var0;
                     var2 = this.level.getBlockState(var1.set(this.mob.getX(), var0, this.mob.getZ()));
                 }
+
             } else if (this.mob.onGround()) {
                 var0 = Mth.floor(this.mob.getY() + 0.5);
             } else {
@@ -385,6 +397,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
                 var0 = var3.above().getY();
             }
+
         } else {
             while (true) {
                 if (!this.mob.canStandOnFluid(var2.getFluidState())) {
@@ -395,6 +408,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 ++var0;
                 var2 = this.level.getBlockState(var1.set(this.mob.getX(), var0, this.mob.getZ()));
             }
+
         }
 
         var3 = this.mob.blockPosition();
@@ -437,6 +451,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         && (var1.y < var0.y || var1.costMalus >= 0.0F || var4);
             } else
                 return false;
+
         } else
             return false;
     }
@@ -481,8 +496,11 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         if (var9.is(Blocks.WITHER_ROSE) || var9.is(Blocks.POINTED_DRIPSTONE))
                             return BlockPathTypes.DAMAGE_CAUTIOUS;
                     }
+
                 }
+
             }
+
         }
 
         return var2;
@@ -566,6 +584,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             if (var6 == BlockPathTypes.DAMAGE_CAUTIOUS) {
                 var5 = BlockPathTypes.DAMAGE_CAUTIOUS;
             }
+
         }
 
         if (var5 == BlockPathTypes.WALKABLE) {

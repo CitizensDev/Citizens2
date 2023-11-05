@@ -67,9 +67,11 @@ public class EmptyAdvancementDataPlayer extends PlayerAdvancements {
             for (MethodHandle handle : SETS) {
                 ((Set<?>) handle.invoke(data)).clear();
             }
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
     }
 
     private static final MethodHandle PROGRESS = NMS.getFirstGetter(PlayerAdvancements.class, Map.class);

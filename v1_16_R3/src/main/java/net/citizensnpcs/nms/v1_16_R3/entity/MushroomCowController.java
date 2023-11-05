@@ -69,6 +69,7 @@ public class MushroomCowController extends MobEntityController {
                 super.a(datawatcherobject);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
@@ -77,6 +78,7 @@ public class MushroomCowController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+
         }
 
         @Override
@@ -94,6 +96,7 @@ public class MushroomCowController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -121,6 +124,7 @@ public class MushroomCowController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -131,6 +135,7 @@ public class MushroomCowController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -150,6 +155,7 @@ public class MushroomCowController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -157,6 +163,7 @@ public class MushroomCowController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new MushroomCowNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -191,6 +198,7 @@ public class MushroomCowController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -213,6 +221,7 @@ public class MushroomCowController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
+
         }
 
         @Override

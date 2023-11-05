@@ -73,6 +73,7 @@ public class ItemController extends AbstractEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -84,6 +85,7 @@ public class ItemController extends AbstractEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -97,6 +99,7 @@ public class ItemController extends AbstractEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -104,6 +107,7 @@ public class ItemController extends AbstractEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new ItemNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -122,6 +126,7 @@ public class ItemController extends AbstractEntityController {
             if (npc == null) {
                 super.pickup(entityhuman);
             }
+
         }
 
         @Override
@@ -131,6 +136,7 @@ public class ItemController extends AbstractEntityController {
             } else {
                 super.tick();
             }
+
         }
     }
 

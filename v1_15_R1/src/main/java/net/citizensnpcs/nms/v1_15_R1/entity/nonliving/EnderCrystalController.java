@@ -67,6 +67,7 @@ public class EnderCrystalController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -78,6 +79,7 @@ public class EnderCrystalController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -90,6 +92,7 @@ public class EnderCrystalController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new EnderCrystalNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -109,6 +112,7 @@ public class EnderCrystalController extends MobEntityController {
             if (vector != null) {
                 super.h(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -118,6 +122,7 @@ public class EnderCrystalController extends MobEntityController {
             } else {
                 super.tick();
             }
+
         }
     }
 }

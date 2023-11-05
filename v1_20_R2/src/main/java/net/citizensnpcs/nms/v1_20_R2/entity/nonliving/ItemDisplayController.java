@@ -41,6 +41,7 @@ public class ItemDisplayController extends MobEntityController {
         if (npc != null) {
             handle.setItemStack(CraftItemStack.asNMSCopy(npc.getItemProvider().get()));
         }
+
         return handle.getBukkitEntity();
     }
 
@@ -66,6 +67,7 @@ public class ItemDisplayController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new ItemDisplayNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -96,6 +98,7 @@ public class ItemDisplayController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -106,6 +109,7 @@ public class ItemDisplayController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -126,6 +130,7 @@ public class ItemDisplayController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
+
         }
 
         @Override
@@ -137,6 +142,7 @@ public class ItemDisplayController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

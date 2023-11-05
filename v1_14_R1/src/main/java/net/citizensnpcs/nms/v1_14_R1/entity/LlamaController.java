@@ -70,6 +70,7 @@ public class LlamaController extends MobEntityController {
                 ((Llama) getBukkitEntity()).setDomestication(((Llama) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
             }
+
         }
 
         @Override
@@ -83,6 +84,7 @@ public class LlamaController extends MobEntityController {
                 super.a(datawatcherobject);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
@@ -91,6 +93,7 @@ public class LlamaController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+
         }
 
         @Override
@@ -104,6 +107,7 @@ public class LlamaController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
             }
+
         }
 
         @Override
@@ -115,6 +119,7 @@ public class LlamaController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -135,6 +140,7 @@ public class LlamaController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -145,6 +151,7 @@ public class LlamaController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -169,6 +176,7 @@ public class LlamaController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -177,6 +185,7 @@ public class LlamaController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -184,6 +193,7 @@ public class LlamaController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new LlamaNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -236,16 +246,20 @@ public class LlamaController extends MobEntityController {
                 } else {
                     riding = false;
                 }
+
                 if (riding) {
                     if (npc.getNavigator().isNavigating()) {
                         org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
                         NMS.look(basePassenger, yaw, pitch);
                     }
+
                     d(4, true); // datawatcher method
                 }
+
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
+
         }
 
         @Override

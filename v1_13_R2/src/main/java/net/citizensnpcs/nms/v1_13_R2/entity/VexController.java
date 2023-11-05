@@ -50,6 +50,7 @@ public class VexController extends MobEntityController {
             if (npc != null) {
                 setNoGravity(true);
             }
+
         }
 
         @Override
@@ -76,6 +77,7 @@ public class VexController extends MobEntityController {
                 motY = my;
                 motZ = mz;
             }
+
             return res;
         }
 
@@ -97,6 +99,7 @@ public class VexController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -125,6 +128,7 @@ public class VexController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -132,6 +136,7 @@ public class VexController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new VexNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 
@@ -150,6 +155,7 @@ public class VexController extends MobEntityController {
             if (npc == null) {
                 super.I();
             }
+
         }
 
         @Override
@@ -163,6 +169,7 @@ public class VexController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
+
         }
 
         @Override

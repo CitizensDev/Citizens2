@@ -35,9 +35,11 @@ public class HumanController extends AbstractEntityController {
         if (npc.requiresNameHologram()) {
             name = teamName;
         }
+
         if (Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             npc.getOrAddTrait(ScoreboardTrait.class).createTeam(name);
         }
+
         final GameProfile profile = new GameProfile(uuid, name);
         final EntityHumanNPC handle = new EntityHumanNPC(nmsWorld.getServer().getServer(), nmsWorld, profile,
                 new PlayerInteractManager(nmsWorld), npc);
@@ -45,6 +47,7 @@ public class HumanController extends AbstractEntityController {
         if (skin != null) {
             skin.apply(handle);
         }
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             if (getBukkitEntity() == null || !getBukkitEntity().isValid()
                     || getBukkitEntity() != handle.getBukkitEntity())

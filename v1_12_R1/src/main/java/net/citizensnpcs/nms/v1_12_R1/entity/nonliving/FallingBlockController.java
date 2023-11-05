@@ -79,9 +79,11 @@ public class FallingBlockController extends AbstractEntityController {
                     motZ *= 0.98;
                     move(EnumMoveType.SELF, motX, motY, motZ);
                 }
+
             } else {
                 super.B_();
             }
+
         }
 
         @Override
@@ -92,6 +94,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -105,6 +108,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -112,6 +116,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new FallingBlockNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 
@@ -132,6 +137,7 @@ public class FallingBlockController extends AbstractEntityController {
             } else {
                 NMSImpl.setSize(this, f, f1, justCreated);
             }
+
         }
 
         private static final double EPSILON = 0.001;

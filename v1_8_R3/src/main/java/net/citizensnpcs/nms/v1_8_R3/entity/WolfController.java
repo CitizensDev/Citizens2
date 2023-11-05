@@ -57,6 +57,7 @@ public class WolfController extends MobEntityController {
                 super.a(flag);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
@@ -65,6 +66,7 @@ public class WolfController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+
         }
 
         @Override
@@ -106,6 +108,7 @@ public class WolfController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -118,6 +121,7 @@ public class WolfController extends MobEntityController {
             if (npc == null) {
                 super.D();
             }
+
         }
 
         @Override
@@ -125,6 +129,7 @@ public class WolfController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
             }
+
         }
 
         @Override
@@ -133,6 +138,7 @@ public class WolfController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
+
         }
 
         @Override
@@ -141,6 +147,7 @@ public class WolfController extends MobEntityController {
             if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -150,6 +157,7 @@ public class WolfController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1);
             }
+
         }
 
         @Override
@@ -157,6 +165,7 @@ public class WolfController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new WolfNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 
@@ -178,6 +187,7 @@ public class WolfController extends MobEntityController {
             if (npc == null || this.equals(entityliving)) {
                 super.setGoalTarget(entityliving, reason, fire);
             }
+
         }
 
         @Override

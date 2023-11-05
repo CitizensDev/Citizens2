@@ -92,13 +92,17 @@ public class EntityPathfinder extends PathFinder {
                     target.setReached();
                     var9.add(target);
                 }
+
             }
+
             if (!var9.isEmpty()) {
                 break;
             }
+
             if (node.distanceTo(var1) >= var3) {
                 continue;
             }
+
             int i = this.nodeEvaluator.getNeighbors(this.neighbors, node);
             for (int var13 = 0; var13 < i; var13++) {
                 Node var14 = this.neighbors[var13];
@@ -115,9 +119,13 @@ public class EntityPathfinder extends PathFinder {
                         var14.f = var14.g + var14.h;
                         this.openSet.insert(var14);
                     }
+
                 }
+
             }
+
         }
+
         Optional<Path> var11 = !var9.isEmpty()
                 ? var9.stream().map(p -> reconstructPath(p.getBestNode(), var2.get(p), true)).min(
                         Comparator.comparingInt(Path::getNodeCount))
@@ -136,13 +144,15 @@ public class EntityPathfinder extends PathFinder {
             var4.updateBest(var5, var0);
             var2 = Math.min(var5, var2);
         }
+
         return var2;
     }
 
     public Stream<Path> getFallbackDestinations(Map<Target, BlockPos> var1, Set<Target> var5) {
         if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean())
             return Stream.empty();
-        return var5.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false)).sorted(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
+        return var5.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false))
+                .sorted(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
     }
 
     private Path reconstructPath(Node var0, BlockPos var1, boolean var2) {
@@ -153,6 +163,7 @@ public class EntityPathfinder extends PathFinder {
             var4 = var4.cameFrom;
             var3.add(0, var4);
         }
+
         return new Path(var3, var1, var2);
     }
 }

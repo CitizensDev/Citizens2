@@ -90,20 +90,25 @@ public class EntityNavigation extends NavigationAbstract {
             while (var2.getY() > 0 && this.b.getType(var2).isAir()) {
                 var2 = var2.down();
             }
+
             if (var2.getY() > 0)
                 return supera(var2.up(), var1);
             while (var2.getY() < this.b.getBuildHeight() && this.b.getType(var2).isAir()) {
                 var2 = var2.up();
             }
+
             var0 = var2;
         }
+
         if (this.b.getType(var0).getMaterial().isBuildable()) {
             BlockPosition var2 = var0.up();
             while (var2.getY() < this.b.getBuildHeight() && this.b.getType(var2).getMaterial().isBuildable()) {
                 var2 = var2.up();
             }
+
             return supera(var2, var1);
         }
+
         return supera(var0, var1);
     }
 
@@ -164,8 +169,11 @@ public class EntityNavigation extends NavigationAbstract {
                             || var19 == PathType.DAMAGE_OTHER)
                         return false;
                 }
+
             }
+
         }
+
         return true;
     }
 
@@ -175,9 +183,11 @@ public class EntityNavigation extends NavigationAbstract {
             this.c = null;
             return false;
         }
+
         if (!var0.a(this.c)) {
             this.c = var0;
         }
+
         if (m())
             return false;
         D_();
@@ -219,6 +229,7 @@ public class EntityNavigation extends NavigationAbstract {
             this.q = var3;
             e();
         }
+
         return var8;
     }
 
@@ -236,9 +247,11 @@ public class EntityNavigation extends NavigationAbstract {
             } else {
                 this.t = false;
             }
+
             this.f = this.e;
             this.g = var0;
         }
+
         if (this.c != null && !this.c.c()) {
             BaseBlockPosition var1 = this.c.g();
             if (var1.equals(this.h)) {
@@ -248,12 +261,15 @@ public class EntityNavigation extends NavigationAbstract {
                 double var2 = var0.f(Vec3D.c(this.h));
                 this.k = this.a.dN() > 0.0F ? var2 / this.a.dN() * 1000.0D : 0.0D;
             }
+
             if (this.k > 0.0D && this.i > this.k * 3.0D) {
                 e();
                 o();
             }
+
             this.j = SystemUtils.getMonotonicMillis();
         }
+
     }
 
     @Override
@@ -281,9 +297,11 @@ public class EntityNavigation extends NavigationAbstract {
         if (var7 >= 0.0D) {
             var19++;
         }
+
         if (var9 >= 0.0D) {
             var21++;
         }
+
         var19 /= var7;
         var21 /= var9;
         int var23 = var7 < 0.0D ? -1 : 1;
@@ -302,9 +320,11 @@ public class EntityNavigation extends NavigationAbstract {
                 var6 += var24;
                 var28 = var26 - var6;
             }
+
             if (!a(var5, MathHelper.floor(var0.y), var6, var2, var3, var4, var0, var7, var9))
                 return false;
         }
+
         return true;
     }
 
@@ -323,6 +343,7 @@ public class EntityNavigation extends NavigationAbstract {
         if (var0.a(var2, this.c.e() - this.c.f())) {
             j();
         }
+
     }
 
     private boolean b(int var0, int var1, int var2, int var3, int var4, int var5, Vec3D var6, double var7,
@@ -334,9 +355,11 @@ public class EntityNavigation extends NavigationAbstract {
             if (var13 * var7 + var15 * var9 < 0.0D) {
                 continue;
             }
+
             if (!this.b.getType(var12).a(this.b, var12, PathMode.LAND))
                 return false;
         }
+
         return true;
     }
 
@@ -363,6 +386,7 @@ public class EntityNavigation extends NavigationAbstract {
         if (this.m) {
             j();
         }
+
         if (m())
             return;
         if (a()) {
@@ -374,7 +398,9 @@ public class EntityNavigation extends NavigationAbstract {
                     && MathHelper.floor(vec3D1.z) == MathHelper.floor(vec3D2.z)) {
                 this.c.a();
             }
+
         }
+
         if (m())
             return;
         Vec3D var0 = this.c.a(this.a);
@@ -404,8 +430,11 @@ public class EntityNavigation extends NavigationAbstract {
                     this.c.b(var0);
                     return;
                 }
+
             }
+
         }
+
     }
 
     private void e() {
@@ -443,9 +472,11 @@ public class EntityNavigation extends NavigationAbstract {
                 this.n = this.b.getTime();
                 this.m = false;
             }
+
         } else {
             this.m = true;
         }
+
     }
 
     @Override
@@ -468,6 +499,7 @@ public class EntityNavigation extends NavigationAbstract {
         if (var8 || b2 || b(this.c.h().l) && b(var0)) {
             this.c.a();
         }
+
         a(var0);
     }
 
@@ -521,8 +553,11 @@ public class EntityNavigation extends NavigationAbstract {
                 if (var2 != null && var1.b >= var2.b) {
                     this.c.a(var0 + 1, var1.a(var2.a, var1.b + 1, var2.c));
                 }
+
             }
+
         }
+
     }
 
     @Override
@@ -542,6 +577,7 @@ public class EntityNavigation extends NavigationAbstract {
             if (++var2 > 16)
                 return MathHelper.floor(this.a.locY());
         }
+
         return var0;
     }
 

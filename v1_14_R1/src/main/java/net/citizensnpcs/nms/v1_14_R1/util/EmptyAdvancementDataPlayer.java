@@ -64,6 +64,7 @@ public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
     }
 
     private static final MethodHandle G = NMS.getGetter(AdvancementDataPlayer.class, "g");

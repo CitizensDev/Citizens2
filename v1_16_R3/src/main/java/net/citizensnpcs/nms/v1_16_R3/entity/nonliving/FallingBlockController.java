@@ -82,6 +82,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -93,6 +94,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -105,6 +107,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new FallingBlockNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -124,6 +127,7 @@ public class FallingBlockController extends AbstractEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -137,9 +141,11 @@ public class FallingBlockController extends AbstractEntityController {
                     setMot(mot);
                     move(EnumMoveType.SELF, mot);
                 }
+
             } else {
                 super.tick();
             }
+
         }
 
         @Override
@@ -149,6 +155,7 @@ public class FallingBlockController extends AbstractEntityController {
             } else {
                 NMSImpl.setSize(this, justCreated);
             }
+
         }
 
         private static final double EPSILON = 0.001;

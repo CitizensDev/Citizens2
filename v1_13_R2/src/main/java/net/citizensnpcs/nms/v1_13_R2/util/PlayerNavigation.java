@@ -123,8 +123,11 @@ public class PlayerNavigation extends NavigationAbstract {
                             || localPathType == PathType.DAMAGE_OTHER)
                         return false;
                 }
+
             }
+
         }
+
         return true;
     }
 
@@ -134,9 +137,11 @@ public class PlayerNavigation extends NavigationAbstract {
             this.c = null;
             return false;
         }
+
         if (!paramPathEntity.a(this.c)) {
             this.c = paramPathEntity;
         }
+
         E_();
         if (this.c.d() <= 0)
             return false;
@@ -153,9 +158,11 @@ public class PlayerNavigation extends NavigationAbstract {
             if (paramVec3D.distanceSquared(this.g) < 2.25D) {
                 q();
             }
+
             this.f = this.e;
             this.g = paramVec3D;
         }
+
         if (this.c != null && !this.c.b()) {
             Vec3D localVec3D = this.c.f();
             if (localVec3D.equals(this.h)) {
@@ -165,14 +172,17 @@ public class PlayerNavigation extends NavigationAbstract {
                 double d1 = paramVec3D.f(this.h);
                 this.k = this.a.cK() > 0.0F ? d1 / this.a.cK() * 1000.0D : 0.0D;
             }
+
             if (this.k > 0.0D && this.i > this.k * 3.0D) {
                 this.h = Vec3D.a;
                 this.i = 0L;
                 this.k = 0.0D;
                 q();
             }
+
             this.j = getMonotonicMillis();
         }
+
     }
 
     @Override
@@ -200,9 +210,11 @@ public class PlayerNavigation extends NavigationAbstract {
         if (d1 >= 0.0D) {
             d7 += 1.0D;
         }
+
         if (d2 >= 0.0D) {
             d8 += 1.0D;
         }
+
         d7 /= d1;
         d8 /= d2;
         int k = d1 < 0.0D ? -1 : 1;
@@ -221,9 +233,11 @@ public class PlayerNavigation extends NavigationAbstract {
                 j += m;
                 i3 = i1 - j;
             }
+
             if (!a(i, (int) paramVec3D1.y, j, paramInt1, paramInt2, paramInt3, paramVec3D1, d1, d2))
                 return false;
         }
+
         return true;
     }
 
@@ -240,21 +254,26 @@ public class PlayerNavigation extends NavigationAbstract {
             while (localBlockPosition.getY() > 0 && this.b.getType(localBlockPosition).isAir()) {
                 localBlockPosition = localBlockPosition.down();
             }
+
             if (localBlockPosition.getY() > 0)
                 return superb(localBlockPosition.up());
             while (localBlockPosition.getY() < this.b.getHeight() && this.b.getType(localBlockPosition).isAir()) {
                 localBlockPosition = localBlockPosition.up();
             }
+
             paramBlockPosition = localBlockPosition;
         }
+
         if (this.b.getType(paramBlockPosition).getMaterial().isBuildable()) {
             localBlockPosition = paramBlockPosition.up();
             while (localBlockPosition.getY() < this.b.getHeight()
                     && this.b.getType(localBlockPosition).getMaterial().isBuildable()) {
                 localBlockPosition = localBlockPosition.up();
             }
+
             return superb(localBlockPosition);
         }
+
         return superb(paramBlockPosition);
     }
 
@@ -272,7 +291,9 @@ public class PlayerNavigation extends NavigationAbstract {
                 if (!this.b.getType(localBlockPosition).a(this.b, localBlockPosition, PathMode.LAND))
                     return false;
             }
+
         }
+
         return true;
     }
 
@@ -291,6 +312,7 @@ public class PlayerNavigation extends NavigationAbstract {
         if (this.m) {
             l();
         }
+
         if (p())
             return;
         if (b()) {
@@ -303,7 +325,9 @@ public class PlayerNavigation extends NavigationAbstract {
                     && MathHelper.floor(localVec3D.z) == MathHelper.floor(localObject.z)) {
                 this.c.c(this.c.e() + 1);
             }
+
         }
+
         n();
         if (p())
             return;
@@ -334,8 +358,11 @@ public class PlayerNavigation extends NavigationAbstract {
                     this.c.b(i - 1);
                     return;
                 }
+
             }
+
         }
+
     }
 
     public boolean g() {
@@ -366,9 +393,11 @@ public class PlayerNavigation extends NavigationAbstract {
                 this.n = this.b.getTime();
                 this.m = false;
             }
+
         } else {
             this.m = true;
         }
+
     }
 
     @Override
@@ -389,7 +418,9 @@ public class PlayerNavigation extends NavigationAbstract {
                 i1 = i2;
                 break;
             }
+
         }
+
         this.l = this.a.width > 0.75F ? this.a.width / 2.0F : 0.75F - this.a.width / 2.0F;
         Vec3D localVec3D2 = this.c.f();
         if (MathHelper.e((float) (this.a.locX - (localVec3D2.x + 0.5D))) < this.l
@@ -397,6 +428,7 @@ public class PlayerNavigation extends NavigationAbstract {
                 && Math.abs(this.a.locY - localVec3D2.y) < 1.0D) {
             this.c.c(this.c.e() + 1);
         }
+
         int i3 = MathHelper.f(this.a.width);
         int i4 = MathHelper.f(this.a.length);
         int i5 = i3;
@@ -405,7 +437,9 @@ public class PlayerNavigation extends NavigationAbstract {
                 this.c.c(i6);
                 break;
             }
+
         }
+
         a(localVec3D1);
     }
 
@@ -448,7 +482,9 @@ public class PlayerNavigation extends NavigationAbstract {
             } catch (Throwable ex2) {
                 ex2.printStackTrace();
             }
+
         }
+
         BlockPosition localBlockPosition = new BlockPosition(this.a);
         int i1 = (int) (f1 + 8.0F);
         ChunkCache localChunkCache = new ChunkCache(this.b, localBlockPosition.a(-i1, -i1, -i1),
@@ -462,7 +498,9 @@ public class PlayerNavigation extends NavigationAbstract {
             } catch (Throwable ex2) {
                 ex2.printStackTrace();
             }
+
         }
+
         return localPathEntity;
     }
 
@@ -481,8 +519,11 @@ public class PlayerNavigation extends NavigationAbstract {
                     this.c.a(i1 + 1, ((PathPoint) localObject).a(((PathPoint) localObject).a, localPathPoint.b + 1,
                             ((PathPoint) localObject).c));
                 }
+
             }
+
         }
+
     }
 
     @Override
@@ -507,6 +548,7 @@ public class PlayerNavigation extends NavigationAbstract {
             if (j > 16)
                 return (int) bb.minY;
         }
+
         return i;
     }
 
@@ -525,7 +567,9 @@ public class PlayerNavigation extends NavigationAbstract {
                 ex2.printStackTrace();
                 return 0;
             }
+
         }
+
     }
 
     private static final Method GET_MONOTONIC_MILLIS = NMS.getMethod(SystemUtils.class, "b", false);

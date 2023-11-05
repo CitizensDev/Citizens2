@@ -17,6 +17,7 @@ public interface ForwardingNPCHolder extends NPCHolder, Entity {
                     () -> Joiner.on(' ').join("ForwardingNPCHolder with an improper bukkit entity", this, handle));
             return null;
         }
+
         return ((NPCHolder) handle).getNPC();
     }
 }

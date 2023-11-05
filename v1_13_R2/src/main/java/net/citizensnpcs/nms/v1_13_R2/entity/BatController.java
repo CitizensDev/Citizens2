@@ -64,6 +64,7 @@ public class BatController extends MobEntityController {
             if (npc != null) {
                 setAsleep(false);
             }
+
         }
 
         @Override
@@ -90,6 +91,7 @@ public class BatController extends MobEntityController {
                 motY = my;
                 motZ = mz;
             }
+
             return res;
         }
 
@@ -111,6 +113,7 @@ public class BatController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -139,6 +142,7 @@ public class BatController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -146,6 +150,7 @@ public class BatController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new BatNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 
@@ -164,6 +169,7 @@ public class BatController extends MobEntityController {
             if (npc == null) {
                 super.I();
             }
+
         }
 
         @Override
@@ -179,6 +185,7 @@ public class BatController extends MobEntityController {
                 NMSImpl.updateAI(this);
                 npc.update();
             }
+
         }
 
         @Override

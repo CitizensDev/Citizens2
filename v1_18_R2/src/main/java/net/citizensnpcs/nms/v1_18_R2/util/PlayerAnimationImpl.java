@@ -23,6 +23,7 @@ public class PlayerAnimationImpl {
             playDefaultAnimation(player, to, DEFAULTS.get(animation));
             return;
         }
+
         switch (animation) {
             case SNEAK:
                 player.setPose(Pose.CROUCHING);
@@ -57,6 +58,7 @@ public class PlayerAnimationImpl {
             default:
                 throw new UnsupportedOperationException();
         }
+
     }
 
     protected static void playDefaultAnimation(ServerPlayer player, Iterable<Player> to, int code) {
@@ -68,6 +70,7 @@ public class PlayerAnimationImpl {
         for (Player player : to) {
             NMSImpl.sendPacket(player, packet);
         }
+
     }
 
     private static Map<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);

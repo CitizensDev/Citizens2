@@ -49,5 +49,6 @@ public class EmptyConnection extends Connection {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
     }
 }

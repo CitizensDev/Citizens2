@@ -42,6 +42,7 @@ public class BlockDisplayController extends MobEntityController {
             ((org.bukkit.entity.BlockDisplay) handle.getBukkitEntity())
                     .setBlock(npc.getItemProvider().get().getType().createBlockData());
         }
+
         return handle.getBukkitEntity();
     }
 
@@ -73,6 +74,7 @@ public class BlockDisplayController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new BlockDisplayNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -103,6 +105,7 @@ public class BlockDisplayController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -113,6 +116,7 @@ public class BlockDisplayController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -133,6 +137,7 @@ public class BlockDisplayController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
+
         }
 
         @Override
@@ -144,6 +149,7 @@ public class BlockDisplayController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

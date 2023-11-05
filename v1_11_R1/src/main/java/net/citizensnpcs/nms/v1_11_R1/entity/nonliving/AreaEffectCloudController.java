@@ -66,6 +66,7 @@ public class AreaEffectCloudController extends MobEntityController {
             } else {
                 super.A_();
             }
+
         }
 
         @Override
@@ -76,6 +77,7 @@ public class AreaEffectCloudController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -89,6 +91,7 @@ public class AreaEffectCloudController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -96,6 +99,7 @@ public class AreaEffectCloudController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new AreaEffectCloudNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 

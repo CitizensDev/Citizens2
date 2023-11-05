@@ -36,6 +36,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
                     new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), lastUpdatedPlayer.getBukkitEntity()));
             lastUpdatedPlayer = null;
         }
+
     }
 
     @Override
@@ -48,6 +49,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
             if (REQUIRES_SYNC == null) {
                 REQUIRES_SYNC = !Bukkit.isPrimaryThread();
             }
+
             boolean cancelled = Util.callPossiblySync(() -> {
                 NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
                 try {
@@ -56,6 +58,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
                     REQUIRES_SYNC = true;
                     throw e;
                 }
+
                 if (event.isCancelled())
                     return true;
                 Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
@@ -67,7 +70,9 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
+
                 }
+
                 return false;
             }, REQUIRES_SYNC);
 
@@ -85,6 +90,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
         return 0;
     }
 
@@ -94,6 +100,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
@@ -103,6 +110,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -112,6 +120,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
         return 0;
     }
 

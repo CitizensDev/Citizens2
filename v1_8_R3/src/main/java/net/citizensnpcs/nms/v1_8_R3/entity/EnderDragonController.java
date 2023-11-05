@@ -105,6 +105,7 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -117,6 +118,7 @@ public class EnderDragonController extends MobEntityController {
             if (npc == null) {
                 super.D();
             }
+
         }
 
         @Override
@@ -139,6 +141,7 @@ public class EnderDragonController extends MobEntityController {
             if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -146,6 +149,7 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new EnderDragonNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 
@@ -164,6 +168,7 @@ public class EnderDragonController extends MobEntityController {
                         this.bk[i][0] = this.yaw;
                         this.bk[i][1] = this.locY;
                     }
+
                 }
 
                 if (++this.bl == this.bk.length) {
@@ -186,6 +191,7 @@ public class EnderDragonController extends MobEntityController {
                 if (getBukkitEntity().getPassenger() != null) {
                     yaw = getBukkitEntity().getPassenger().getLocation().getYaw() - 180;
                 }
+
                 if (motX != 0 || motY != 0 || motZ != 0) {
                     motX *= 0.98;
                     motY *= 0.98;
@@ -193,6 +199,7 @@ public class EnderDragonController extends MobEntityController {
                     if (getBukkitEntity().getPassenger() == null) {
                         yaw = Util.getDragonYaw(getBukkitEntity(), motX, motZ);
                     }
+
                     setPosition(locX + motX, locY + motY, locZ + motZ);
                 }
 
@@ -205,8 +212,11 @@ public class EnderDragonController extends MobEntityController {
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
+
                     }
+
                 }
+
                 if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
                     try {
                         KNOCKBACK.invoke(this, this.world.getEntities(this,
@@ -218,10 +228,13 @@ public class EnderDragonController extends MobEntityController {
                     } catch (Throwable t) {
                         t.printStackTrace();
                     }
+
                 }
+
             } else {
                 super.m();
             }
+
         }
 
         @Override

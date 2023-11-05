@@ -41,6 +41,7 @@ public interface MobAI {
         if (!NMSImpl.isNavigationFinished(navigation)) {
             NMSImpl.updateNavigation(navigation);
         }
+
     }
 
     default void updatePathfindingRange(float range) {
@@ -171,6 +172,7 @@ public interface MobAI {
             };
         } else if (handle instanceof MobAI)
             return (MobAI) handle;
+
         return null;
     }
 }

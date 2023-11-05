@@ -97,10 +97,9 @@ public class ShopTrait extends Trait {
     }
 
     public void onRightClick(Player player) {
-        if (rightClickShop == null || rightClickShop.isEmpty())
-            return;
-        if (!Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
-                && !player.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString()))
+        if (rightClickShop == null || rightClickShop.isEmpty()
+                || !Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
+                        && !player.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString()))
             return;
 
         NPCShop shop = shops.globalShops.getOrDefault(rightClickShop, getDefaultShop());
@@ -133,18 +132,15 @@ public class ShopTrait extends Trait {
         }
 
         public void display(Player sender) {
-            if (viewPermission != null && !sender.hasPermission(viewPermission))
-                return;
-
-            if (!Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
-                    && !sender.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString()))
+            if (viewPermission != null && !sender.hasPermission(viewPermission)
+                    || !Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
+                            && !sender.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString()))
                 return;
 
             if (pages.size() == 0) {
                 Messaging.sendError(sender, "Empty shop");
                 return;
             }
-
             InventoryMenu.createSelfRegistered(new NPCShopViewer(this, sender)).present(sender);
         }
 
@@ -179,7 +175,7 @@ public class ShopTrait extends Trait {
         }
 
         public void setPermission(String permission) {
-            this.viewPermission = permission;
+            viewPermission = permission;
             if (viewPermission != null && viewPermission.isEmpty()) {
                 viewPermission = null;
             }
@@ -198,8 +194,8 @@ public class ShopTrait extends Trait {
         }
 
         public void changePage(int newPage) {
-            this.page = newPage;
-            ctx.setTitle("NPC Shop Contents Editor Page " + newPage);
+            page = newPage;
+            ctx.setTitle("NPC Shop Contents Editor (" + (newPage + 1) + "/" + (shop.pages.size() + 1) + ")");
             NPCShopPage shopPage = shop.getOrCreatePage(page);
             for (int i = 0; i < ctx.getInventory().getSize(); i++) {
                 InventoryMenuSlot slot = ctx.getSlot(i);
@@ -208,8 +204,7 @@ public class ShopTrait extends Trait {
                 if (shopPage.getItem(i) != null) {
                     slot.setItemStack(shopPage.getItem(i).getDisplayItem(null));
                 }
-
-                final int idx = i;
+                int idx = i;
                 slot.setClickHandler(evt -> {
                     NPCShopItem display = shopPage.getItem(idx);
                     if (display != null && evt.isShiftClick() && evt.getCursorNonNull().getType() == Material.AIR
@@ -219,7 +214,6 @@ public class ShopTrait extends Trait {
                         evt.setCancelled(true);
                         return;
                     }
-
                     if (display == null) {
                         if (copying != null && evt.getCursorNonNull().getType() != Material.AIR
                                 && evt.getCursorNonNull().equals(copying.getDisplayItem(null))) {
@@ -227,13 +221,11 @@ public class ShopTrait extends Trait {
                             copying = null;
                             return;
                         }
-
                         display = new NPCShopItem();
                         if (evt.getCursor() != null) {
                             display.display = evt.getCursor().clone();
                         }
                     }
-
                     ctx.clearSlots();
                     ctx.getMenu().transition(new NPCShopItemEditor(display, modified -> {
                         if (modified == null) {
@@ -244,12 +236,11 @@ public class ShopTrait extends Trait {
                     }));
                 });
             }
-
             InventoryMenuSlot prev = ctx.getSlot(4 * 9 + 3);
             InventoryMenuSlot edit = ctx.getSlot(4 * 9 + 4);
             InventoryMenuSlot next = ctx.getSlot(4 * 9 + 5);
             if (page > 0) {
-                prev.setItemStack(new ItemStack(Material.FEATHER, 1), "Previous page (" + (page) + ")");
+                prev.setItemStack(shopPage.getNextPageItem(null, 4 * 9 + 3), "Previous page (" + newPage + ")");
                 Consumer<CitizensInventoryClickEvent> prevItemEditor = prev.getClickHandlers().get(0);
                 prev.setClickHandler(evt -> {
                     if (evt.isShiftClick()) {
@@ -260,9 +251,8 @@ public class ShopTrait extends Trait {
                     changePage(page - 1);
                 });
             }
-
-            next.setItemStack(new ItemStack(Material.FEATHER, 1),
-                    page + 1 >= shop.pages.size() ? "New page" : "Next page (" + (page + 1) + ")");
+            next.setItemStack(shopPage.getNextPageItem(null, 4 * 9 + 5),
+                    page + 1 >= shop.pages.size() ? "New page" : "Next page (" + (newPage + 1) + ")");
             Consumer<CitizensInventoryClickEvent> nextItemEditor = next.getClickHandlers().get(0);
             next.setClickHandler(evt -> {
                 if (evt.isShiftClick()) {
@@ -323,7 +313,7 @@ public class ShopTrait extends Trait {
             for (NPCShopAction action : actions) {
                 Transaction take = func.apply(action);
                 if (!take.isPossible()) {
-                    pending.forEach(a -> a.rollback());
+                    pending.forEach(Transaction::rollback);
                     return null;
                 } else {
                     take.run();
@@ -383,6 +373,7 @@ public class ShopTrait extends Trait {
                         lore.add(r.describe());
                     }
                 });
+
                 if (timesPurchasable > 0) {
                     lore.add("Times purchasable: " + timesPurchasable);
                 }
@@ -431,7 +422,7 @@ public class ShopTrait extends Trait {
                 if (max == 0)
                     return;
             }
-            final int repeats = max == Integer.MAX_VALUE ? 1 : max;
+            int repeats = max == Integer.MAX_VALUE ? 1 : max;
             List<Transaction> take = apply(cost, action -> action.take(event.getWhoClicked(), repeats));
             if (take == null) {
                 if (costMessage != null) {
@@ -440,7 +431,7 @@ public class ShopTrait extends Trait {
                 return;
             }
             if (apply(result, action -> action.grant(event.getWhoClicked(), repeats)) == null) {
-                take.forEach(a -> a.rollback());
+                take.forEach(Transaction::rollback);
                 return;
             }
             if (resultMessage != null) {
@@ -469,7 +460,7 @@ public class ShopTrait extends Trait {
         public void save(DataKey key) {
         }
 
-        private static final Pattern PLACEHOLDER_REGEX = Pattern.compile("<(cost|result)>", Pattern.CASE_INSENSITIVE);
+        private static Pattern PLACEHOLDER_REGEX = Pattern.compile("<(cost|result)>", Pattern.CASE_INSENSITIVE);
     }
 
     @Menu(title = "NPC Shop Item Editor", type = InventoryType.CHEST, dimensions = { 6, 9 })
@@ -490,9 +481,9 @@ public class ShopTrait extends Trait {
         private final NPCShopItem modified;
 
         public NPCShopItemEditor(NPCShopItem item, Consumer<NPCShopItem> consumer) {
-            this.base = item;
-            this.modified = base.clone();
-            this.callback = consumer;
+            base = item;
+            modified = base.clone();
+            callback = consumer;
         }
 
         @Override
@@ -520,7 +511,8 @@ public class ShopTrait extends Trait {
                         ctx.getSlot(9 * 4 + 2).setDescription(modified.alreadyPurchasedMessage);
                     })));
 
-            ctx.getSlot(9 * 3 + 3).setItemStack(new ItemStack(Util.getFallbackMaterial("EMERALD", "OAK_SIGN", "SIGN")),
+            ctx.getSlot(9 * 3 + 3).setItemStack(
+                    new ItemStack(Util.getFallbackMaterial("GREEN_WOOL", "EMERALD", "OAK_SIGN", "SIGN")),
                     "Set successful click message, currently:\n",
                     modified.resultMessage == null ? "Unset" : modified.resultMessage);
             ctx.getSlot(9 * 3 + 3).setClickHandler(
@@ -529,7 +521,7 @@ public class ShopTrait extends Trait {
                         ctx.getSlot(9 * 3 + 3).setDescription(modified.resultMessage);
                     })));
 
-            ctx.getSlot(9 * 3 + 6).setItemStack(new ItemStack(Util.getFallbackMaterial("BARRIER", "FIRE")),
+            ctx.getSlot(9 * 3 + 6).setItemStack(new ItemStack(Util.getFallbackMaterial("RED_WOOL", "OAK_SIGN", "SIGN")),
                     "Set unsuccessful click message, currently:\n",
                     modified.costMessage == null ? "Unset" : modified.costMessage);
             ctx.getSlot(9 * 3 + 6).setClickHandler(
@@ -538,7 +530,7 @@ public class ShopTrait extends Trait {
                         ctx.getSlot(9 * 3 + 6).setDescription(modified.costMessage);
                     })));
 
-            ctx.getSlot(9 * 3 + 5).setItemStack(new ItemStack(Util.getFallbackMaterial("FEATHER", "SIGN")),
+            ctx.getSlot(9 * 3 + 5).setItemStack(new ItemStack(Util.getFallbackMaterial("FEATHER", "OAK_SIGN", "SIGN")),
                     "Set click to confirm message.",
                     "For example, 'click again to buy this item'\nYou can use <cost> or <result> placeholders.\nCurrently:\n"
                             + (modified.clickToConfirmMessage == null ? "Unset" : modified.clickToConfirmMessage));
@@ -553,10 +545,11 @@ public class ShopTrait extends Trait {
             ctx.getSlot(9 * 3 + 4).setClickHandler(
                     InputMenus.toggler(res -> modified.maxRepeatsOnShiftClick = res, modified.maxRepeatsOnShiftClick));
             int pos = 0;
-            for (GUI template : NPCShopAction.getGUIs()) {
-                if (template.createMenuItem(null) == null)
-                    continue;
 
+            for (GUI template : NPCShopAction.getGUIs()) {
+                if (template.createMenuItem(null) == null) {
+                    continue;
+                }
                 NPCShopAction oldCost = modified.cost.stream().filter(template::manages).findFirst().orElse(null);
                 costItems.getSlots().get(pos)
                         .setItemStack(Util.editTitle(template.createMenuItem(oldCost), title -> title + " Cost"));
@@ -591,6 +584,7 @@ public class ShopTrait extends Trait {
             event.setCancelled(true);
             if (modified.display == null)
                 return;
+
             ctx.getMenu()
                     .transition(InputMenus.stringSetter(() -> modified.display.getItemMeta().hasLore()
                             ? Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore())
@@ -607,6 +601,7 @@ public class ShopTrait extends Trait {
             event.setCancelled(true);
             if (modified.display == null)
                 return;
+
             ctx.getMenu().transition(InputMenus.stringSetter(modified.display.getItemMeta()::getDisplayName, name -> {
                 ItemMeta meta = modified.display.getItemMeta();
                 meta.setDisplayName(ChatColor.RESET + Messaging.parseComponents(name));
@@ -651,11 +646,19 @@ public class ShopTrait extends Trait {
         }
 
         public NPCShopPage(int page) {
-            this.index = page;
+            index = page;
         }
 
         public NPCShopItem getItem(int idx) {
             return items.get(idx);
+        }
+
+        public ItemStack getNextPageItem(Player player, int idx) {
+            return items.containsKey(idx) ? items.get(idx).getDisplayItem(player) : new ItemStack(Material.FEATHER, 1);
+        }
+
+        public ItemStack getPreviousPageItem(Player player, int idx) {
+            return items.containsKey(idx) ? items.get(idx).getDisplayItem(player) : new ItemStack(Material.FEATHER, 1);
         }
 
         public void removeItem(int idx) {
@@ -748,13 +751,14 @@ public class ShopTrait extends Trait {
             event.setCancelled(true);
             if (trait == null)
                 return;
+
             if (shop.getName().equals(trait.rightClickShop)) {
                 trait.rightClickShop = null;
             } else {
                 trait.rightClickShop = shop.name;
             }
             ctx.getSlot(8)
-                    .setDescription("<f>Show shop on right click<br>" + (shop.getName().equals(trait.rightClickShop)));
+                    .setDescription("<f>Show shop on right click<br>" + shop.getName().equals(trait.rightClickShop));
         }
     }
 
@@ -772,7 +776,7 @@ public class ShopTrait extends Trait {
         }
 
         public void changePage(int newPage) {
-            this.currentPage = newPage;
+            currentPage = newPage;
             NPCShopPage page = shop.pages.get(currentPage);
             if (page.title != null && !page.title.isEmpty()) {
                 Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
@@ -792,21 +796,19 @@ public class ShopTrait extends Trait {
                     lastClickedItem = item;
                 });
             }
-
             InventoryMenuSlot prev = ctx.getSlot(4 * 9 + 3);
             InventoryMenuSlot next = ctx.getSlot(4 * 9 + 5);
             if (currentPage > 0) {
                 prev.clear();
-                prev.setItemStack(new ItemStack(Material.FEATHER, 1), "Previous page (" + (currentPage) + ")");
+                prev.setItemStack(page.getPreviousPageItem(player, 4 * 9 + 3), "Previous page (" + newPage + ")");
                 prev.setClickHandler(evt -> {
                     evt.setCancelled(true);
                     changePage(currentPage - 1);
                 });
             }
-
             if (currentPage + 1 < shop.pages.size()) {
                 next.clear();
-                next.setItemStack(new ItemStack(Material.FEATHER, 1), "Next page (" + (currentPage + 1) + ")");
+                next.setItemStack(page.getNextPageItem(player, 4 * 9 + 5), "Next page (" + (newPage + 1) + ")");
                 next.setClickHandler(evt -> {
                     evt.setCancelled(true);
                     changePage(currentPage + 1);

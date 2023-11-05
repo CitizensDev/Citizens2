@@ -14,8 +14,10 @@ public interface ForwardingNPCHolder extends NPCHolder, Entity {
             if (Messaging.isDebugging()) {
                 Messaging.debug("ForwardingNPCHolder with an improper bukkit entity", this, handle);
             }
+
             return null;
         }
+
         return ((NPCHolder) handle).getNPC();
     }
 }

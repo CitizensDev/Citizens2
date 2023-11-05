@@ -72,6 +72,7 @@ public class ZoglinController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -79,6 +80,7 @@ public class ZoglinController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
+
         }
 
         @Override
@@ -86,10 +88,12 @@ public class ZoglinController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
+
             super.customServerAiStep();
             if (npc != null) {
                 npc.update();
             }
+
         }
 
         @Override
@@ -102,6 +106,7 @@ public class ZoglinController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new ZoglinNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -171,6 +176,7 @@ public class ZoglinController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -181,6 +187,7 @@ public class ZoglinController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -195,6 +202,7 @@ public class ZoglinController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -206,6 +214,7 @@ public class ZoglinController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

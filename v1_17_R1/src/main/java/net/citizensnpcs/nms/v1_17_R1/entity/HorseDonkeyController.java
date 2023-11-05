@@ -71,6 +71,7 @@ public class HorseDonkeyController extends MobEntityController {
                         .setDomestication(((org.bukkit.entity.Donkey) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED).getValue();
             }
+
         }
 
         @Override
@@ -97,6 +98,7 @@ public class HorseDonkeyController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -104,6 +106,7 @@ public class HorseDonkeyController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
+
         }
 
         @Override
@@ -118,16 +121,20 @@ public class HorseDonkeyController extends MobEntityController {
                 } else {
                     riding = false;
                 }
+
                 if (riding) {
                     if (npc.getNavigator().isNavigating()) {
                         org.bukkit.entity.Entity basePassenger = passengers.get(0).getBukkitEntity();
                         NMS.look(basePassenger, getYRot(), getXRot());
                     }
+
                     setFlag(4, true); // datawatcher method
                 }
+
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
+
         }
 
         @Override
@@ -140,6 +147,7 @@ public class HorseDonkeyController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new HorseDonkeyNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -216,6 +224,7 @@ public class HorseDonkeyController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -225,6 +234,7 @@ public class HorseDonkeyController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -235,6 +245,7 @@ public class HorseDonkeyController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -249,6 +260,7 @@ public class HorseDonkeyController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -260,6 +272,7 @@ public class HorseDonkeyController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

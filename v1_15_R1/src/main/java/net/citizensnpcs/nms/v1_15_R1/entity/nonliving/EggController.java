@@ -83,6 +83,7 @@ public class EggController extends AbstractEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -94,6 +95,7 @@ public class EggController extends AbstractEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -106,6 +108,7 @@ public class EggController extends AbstractEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new EggNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -125,6 +128,7 @@ public class EggController extends AbstractEntityController {
             if (vector != null) {
                 super.h(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -134,9 +138,11 @@ public class EggController extends AbstractEntityController {
                 if (!npc.isProtected()) {
                     super.tick();
                 }
+
             } else {
                 super.tick();
             }
+
         }
     }
 }

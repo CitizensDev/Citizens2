@@ -68,16 +68,19 @@ public class EnderDragonController extends MobEntityController {
                 npc.update();
 
             }
+
             if (npc != null && !npc.useMinecraftAI()) {
                 if (isDeadOrDying()) {
                     setHealth(0F);
                     return;
                 }
+
                 if (this.posPointer < 0) {
                     for (int i = 0; i < this.positions.length; ++i) {
                         this.positions[i][0] = this.getYRot();
                         this.positions[i][1] = this.getY();
                     }
+
                 }
 
                 if (++this.posPointer == this.positions.length) {
@@ -109,6 +112,7 @@ public class EnderDragonController extends MobEntityController {
                     if (getFirstPassenger() == null) {
                         setYRot(Util.getDragonYaw(getBukkitEntity(), mot.x, mot.z));
                     }
+
                     setPos(getX() + mot.x, getY() + mot.y, getZ() + mot.z);
                     setDeltaMovement(mot);
                 }
@@ -122,8 +126,11 @@ public class EnderDragonController extends MobEntityController {
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
+
                     }
+
                 }
+
                 if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
                     try {
                         NMSImpl.ENDERDRAGON_KNOCKBACK.invoke(this,
@@ -141,10 +148,13 @@ public class EnderDragonController extends MobEntityController {
                     } catch (Throwable t) {
                         t.printStackTrace();
                     }
+
                 }
+
             } else {
                 super.aiStep();
             }
+
         }
 
         @Override
@@ -159,6 +169,7 @@ public class EnderDragonController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -171,6 +182,7 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new EnderDragonNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -232,6 +244,7 @@ public class EnderDragonController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -242,6 +255,7 @@ public class EnderDragonController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -254,6 +268,7 @@ public class EnderDragonController extends MobEntityController {
             if (getPhaseManager().getCurrentPhase().getPhase() == EnderDragonPhase.HOVERING) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
 
@@ -278,6 +293,7 @@ public class EnderDragonController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

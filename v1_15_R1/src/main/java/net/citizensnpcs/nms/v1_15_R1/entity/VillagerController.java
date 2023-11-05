@@ -65,6 +65,7 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.3);
             }
+
         }
 
         @Override
@@ -78,6 +79,7 @@ public class VillagerController extends MobEntityController {
                 super.a(datawatcherobject);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
         }
 
@@ -86,6 +88,7 @@ public class VillagerController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+
         }
 
         @Override
@@ -102,7 +105,9 @@ public class VillagerController extends MobEntityController {
                 if (list != null) {
                     list.clear();
                 }
+
             }
+
             return super.a(entityhuman, enumhand);
         }
 
@@ -122,6 +127,7 @@ public class VillagerController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -135,6 +141,7 @@ public class VillagerController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -145,6 +152,7 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -164,6 +172,7 @@ public class VillagerController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -172,6 +181,7 @@ public class VillagerController extends MobEntityController {
                 blockingATrade = false;
                 return true;
             }
+
             return super.et();
         }
 
@@ -180,6 +190,7 @@ public class VillagerController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new VillagerNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -214,6 +225,7 @@ public class VillagerController extends MobEntityController {
             if (vector != null) {
                 super.h(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -234,10 +246,12 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
             }
+
             super.mobTick();
             if (npc != null) {
                 npc.update();
             }
+
         }
 
         @Override
@@ -252,6 +266,7 @@ public class VillagerController extends MobEntityController {
             if (npc == null) {
                 super.onLightningStrike(entitylightning);
             }
+
         }
     }
 

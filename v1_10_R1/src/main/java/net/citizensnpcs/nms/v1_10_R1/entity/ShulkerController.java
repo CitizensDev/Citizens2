@@ -56,6 +56,7 @@ public class ShulkerController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+
         }
 
         @Override
@@ -92,6 +93,7 @@ public class ShulkerController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -104,6 +106,7 @@ public class ShulkerController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.e(f, f1);
             }
+
         }
 
         @Override
@@ -112,6 +115,7 @@ public class ShulkerController extends MobEntityController {
             if (vector != null) {
                 super.g(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -121,6 +125,7 @@ public class ShulkerController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, f, f1);
             }
+
         }
 
         @Override
@@ -133,6 +138,7 @@ public class ShulkerController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new ShulkerNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 
@@ -151,6 +157,7 @@ public class ShulkerController extends MobEntityController {
             if (npc == null) {
                 super.L();
             }
+
         }
 
         @Override
@@ -160,6 +167,7 @@ public class ShulkerController extends MobEntityController {
             } else {
                 super.m();
             }
+
         }
 
         @Override
@@ -175,6 +183,7 @@ public class ShulkerController extends MobEntityController {
             if (npc == null) {
                 super.n();
             }
+
         }
 
         @Override
@@ -189,6 +198,7 @@ public class ShulkerController extends MobEntityController {
             } else {
                 NMSImpl.setSize(this, f, f1, justCreated);
             }
+
         }
     }
 

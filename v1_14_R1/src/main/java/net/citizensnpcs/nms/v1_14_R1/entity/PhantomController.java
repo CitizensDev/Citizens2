@@ -59,6 +59,7 @@ public class PhantomController extends MobEntityController {
                 this.lookController = new ControllerLook(this);
                 // TODO: phantom pitch reversed
             }
+
         }
 
         @Override
@@ -71,6 +72,7 @@ public class PhantomController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+
         }
 
         @Override
@@ -84,6 +86,7 @@ public class PhantomController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.b(f, f1);
             }
+
         }
 
         @Override
@@ -95,6 +98,7 @@ public class PhantomController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -108,6 +112,7 @@ public class PhantomController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -118,6 +123,7 @@ public class PhantomController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -144,6 +150,7 @@ public class PhantomController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -152,6 +159,7 @@ public class PhantomController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -159,6 +167,7 @@ public class PhantomController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new PhantomNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -207,8 +216,10 @@ public class PhantomController extends MobEntityController {
                 if (npc.isProtected()) {
                     this.setOnFire(0);
                 }
+
                 npc.update();
             }
+
         }
 
         @Override
@@ -225,10 +236,12 @@ public class PhantomController extends MobEntityController {
             if (npc != null && resetDifficulty) {
                 this.world.getWorldData().setDifficulty(EnumDifficulty.NORMAL);
             }
+
             super.tick();
             if (npc != null && resetDifficulty) {
                 this.world.getWorldData().setDifficulty(EnumDifficulty.PEACEFUL);
             }
+
         }
     }
 

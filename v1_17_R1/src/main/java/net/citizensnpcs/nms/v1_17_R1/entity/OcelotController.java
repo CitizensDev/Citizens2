@@ -74,6 +74,7 @@ public class OcelotController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -81,6 +82,7 @@ public class OcelotController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
+
         }
 
         @Override
@@ -91,10 +93,12 @@ public class OcelotController extends MobEntityController {
             if (restorePose) {
                 this.setPose(old);
             }
+
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
+
         }
 
         @Override
@@ -107,6 +111,7 @@ public class OcelotController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new OcelotNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -176,6 +181,7 @@ public class OcelotController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -185,6 +191,7 @@ public class OcelotController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -195,6 +202,7 @@ public class OcelotController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -209,6 +217,7 @@ public class OcelotController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -220,6 +229,7 @@ public class OcelotController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

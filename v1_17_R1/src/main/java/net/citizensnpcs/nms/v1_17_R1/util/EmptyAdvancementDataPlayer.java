@@ -68,6 +68,7 @@ public class EmptyAdvancementDataPlayer extends PlayerAdvancements {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
     }
 
     private static final MethodHandle I = NMS.getGetter(PlayerAdvancements.class, "i");

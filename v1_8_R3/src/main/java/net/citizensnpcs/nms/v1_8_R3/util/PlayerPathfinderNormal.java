@@ -44,10 +44,12 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 localMutableBlockPosition.c(MathHelper.floor(paramEntity.locX), k, MathHelper.floor(paramEntity.locZ));
                 localBlock = this.a.getType(localMutableBlockPosition).getBlock();
             }
+
             this.h = false;
         } else {
             k = MathHelper.floor(paramEntity.getBoundingBox().b + 0.5D);
         }
+
         return a(MathHelper.floor(paramEntity.getBoundingBox().a), k, MathHelper.floor(paramEntity.getBoundingBox().c));
     }
 
@@ -69,11 +71,13 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         if (k == 1) {
             localPathPoint = a(paramInt1, paramInt2, paramInt3);
         }
+
         if (localPathPoint == null && paramInt4 > 0 && k != -3 && k != -4
                 && a(paramEntity, paramInt1, paramInt2 + paramInt4, paramInt3) == 1) {
             localPathPoint = a(paramInt1, paramInt2 + paramInt4, paramInt3);
             paramInt2 += paramInt4;
         }
+
         if (localPathPoint != null) {
             int m = 0;
             int n = 0;
@@ -89,13 +93,17 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                         localPathPoint = a(paramInt1, paramInt2, paramInt3);
                     } else
                         return null;
+
                 } else {
                     break;
                 }
+
             }
+
             if (n == -2)
                 return null;
         }
+
         return localPathPoint;
     }
 
@@ -113,6 +121,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         if (a(paramEntity, paramPathPoint1.a, paramPathPoint1.b + 1, paramPathPoint1.c) == 1) {
             m = 1;
         }
+
         PathPoint localPathPoint1 = a(paramEntity, paramPathPoint1.a, paramPathPoint1.b, paramPathPoint1.c + 1, m);
         PathPoint localPathPoint2 = a(paramEntity, paramPathPoint1.a - 1, paramPathPoint1.b, paramPathPoint1.c, m);
         PathPoint localPathPoint3 = a(paramEntity, paramPathPoint1.a + 1, paramPathPoint1.b, paramPathPoint1.c, m);
@@ -120,15 +129,19 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
         if (localPathPoint1 != null && !localPathPoint1.i && localPathPoint1.a(paramPathPoint2) < paramFloat) {
             paramArrayOfPathPoint[k++] = localPathPoint1;
         }
+
         if (localPathPoint2 != null && !localPathPoint2.i && localPathPoint2.a(paramPathPoint2) < paramFloat) {
             paramArrayOfPathPoint[k++] = localPathPoint2;
         }
+
         if (localPathPoint3 != null && !localPathPoint3.i && localPathPoint3.a(paramPathPoint2) < paramFloat) {
             paramArrayOfPathPoint[k++] = localPathPoint3;
         }
+
         if (localPathPoint4 != null && !localPathPoint4.i && localPathPoint4.a(paramPathPoint2) < paramFloat) {
             paramArrayOfPathPoint[k++] = localPathPoint4;
         }
+
         return k;
     }
 
@@ -177,6 +190,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                         } else if (!paramBoolean3 && localBlock instanceof BlockDoor
                                 && localBlock.getMaterial() == Material.WOOD)
                             return 0;
+
                         if (paramEntity.world.getType(localMutableBlockPosition)
                                 .getBlock() instanceof BlockMinecartTrackAbstract) {
                             if (!(paramEntity.world.getType(localBlockPosition)
@@ -198,12 +212,19 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                                         return -2;
                                 } else
                                     return 0;
+
                             }
+
                         }
+
                     }
+
                 }
+
             }
+
         }
+
         return k != 0 ? 2 : 1;
     }
 }

@@ -37,6 +37,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                         Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(),
                                 conn.getPlayer().getBukkitEntity()));
                     }
+
                     return res;
                 }
 
@@ -48,6 +49,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
     }
 
     public CitizensEntityTracker(ChunkMap map, TrackedEntity entry) {
@@ -86,7 +88,9 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
+
                 }
+
                 return false;
             }, REQUIRES_SYNC);
 
@@ -103,6 +107,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
@@ -112,6 +117,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -121,6 +127,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
         return 0;
     }
 
@@ -130,6 +137,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
         return 0;
     }
 

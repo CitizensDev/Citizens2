@@ -64,6 +64,7 @@ public class TraderLlamaController extends MobEntityController {
                 ((org.bukkit.entity.TraderLlama) getBukkitEntity())
                         .setDomestication(((org.bukkit.entity.TraderLlama) getBukkitEntity()).getMaxDomestication());
             }
+
         }
 
         @Override
@@ -85,6 +86,7 @@ public class TraderLlamaController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -92,6 +94,7 @@ public class TraderLlamaController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.checkFallDamage(d0, flag, iblockdata, blockposition);
             }
+
         }
 
         @Override
@@ -103,10 +106,12 @@ public class TraderLlamaController extends MobEntityController {
                 if (npc.useMinecraftAI()) {
                     super.customServerAiStep();
                 }
+
                 setDespawnDelay(10);
                 NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
+
         }
 
         @Override
@@ -119,6 +124,7 @@ public class TraderLlamaController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new TraderLlamaNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -188,6 +194,7 @@ public class TraderLlamaController extends MobEntityController {
                 super.onSyncedDataUpdated(datawatcherobject);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
         }
 
@@ -197,6 +204,7 @@ public class TraderLlamaController extends MobEntityController {
             if (vector != null) {
                 super.push(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -207,6 +215,7 @@ public class TraderLlamaController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -221,6 +230,7 @@ public class TraderLlamaController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -232,6 +242,7 @@ public class TraderLlamaController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setDeltaMovement(old);
             }
+
             return res;
         }
     }

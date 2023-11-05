@@ -41,6 +41,7 @@ public interface MobAI {
         if (!nav.isDone()) {
             nav.tick();
         }
+
     }
 
     default void updatePathfindingRange(float range) {
@@ -170,6 +171,7 @@ public interface MobAI {
             };
         } else if (handle instanceof MobAI)
             return (MobAI) handle;
+
         return null;
     }
 }

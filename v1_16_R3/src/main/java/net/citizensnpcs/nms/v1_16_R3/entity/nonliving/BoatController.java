@@ -80,6 +80,7 @@ public class BoatController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -91,6 +92,7 @@ public class BoatController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -103,6 +105,7 @@ public class BoatController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new BoatNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -122,6 +125,7 @@ public class BoatController extends MobEntityController {
                 this.aC = getBoundingBox().maxY;
                 return entityboat_enumstatus;
             }
+
             if (t())
                 return EnumStatus.IN_WATER;
             float f = k();
@@ -129,6 +133,7 @@ public class BoatController extends MobEntityController {
                 this.aD = f;
                 return EnumStatus.ON_LAND;
             }
+
             return EnumStatus.IN_AIR;
         }
 
@@ -138,6 +143,7 @@ public class BoatController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         private boolean t() {
@@ -162,9 +168,13 @@ public class BoatController extends MobEntityController {
                             this.aC = Math.max(f, this.aC);
                             m = flag | (axisalignedbb.minY < f ? true : false);
                         }
+
                     }
+
                 }
+
             }
+
             return m;
         }
 
@@ -199,7 +209,9 @@ public class BoatController extends MobEntityController {
                         if (getRidingPassenger() instanceof EntityHuman) {
                             this.aD /= 2.0F;
                         }
+
                     }
+
                     Vec3D vec3d = getMot();
                     setMot(vec3d.x * this.ap, vec3d.y + d1, vec3d.z * this.ap);
                     this.ar *= this.ap;
@@ -207,14 +219,18 @@ public class BoatController extends MobEntityController {
                         Vec3D vec3d1 = getMot();
                         setMot(vec3d1.x, vec3d1.y + d2 * 0.0615D, vec3d1.z);
                     }
+
                 }
+
                 move(EnumMoveType.SELF, getMot());
                 if (isVehicle()) {
                     this.yaw += this.ar;
                 }
+
             } else {
                 super.tick();
             }
+
         }
 
         private EnumStatus u() {
@@ -239,9 +255,13 @@ public class BoatController extends MobEntityController {
                                 return EnumStatus.UNDER_FLOWING_WATER;
                             flag = true;
                         }
+
                     }
+
                 }
+
             }
+
             return flag ? EnumStatus.UNDER_WATER : null;
         }
 
@@ -252,6 +272,7 @@ public class BoatController extends MobEntityController {
             } else {
                 NMSImpl.setSize(this, justCreated);
             }
+
         }
     }
 }

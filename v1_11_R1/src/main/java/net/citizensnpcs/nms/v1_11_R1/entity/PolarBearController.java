@@ -54,6 +54,7 @@ public class PolarBearController extends MobEntityController {
                 super.a(flag);
                 return;
             }
+
             NMSImpl.checkAndUpdateHeight(this, flag, super::a);
         }
 
@@ -91,6 +92,7 @@ public class PolarBearController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -104,6 +106,7 @@ public class PolarBearController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -116,6 +119,7 @@ public class PolarBearController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new PolarBearNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 
@@ -134,6 +138,7 @@ public class PolarBearController extends MobEntityController {
             if (npc == null) {
                 super.L();
             }
+
         }
 
         @Override
@@ -142,6 +147,7 @@ public class PolarBearController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
+
         }
     }
 

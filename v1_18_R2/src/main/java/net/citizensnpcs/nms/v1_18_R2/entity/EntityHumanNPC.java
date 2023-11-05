@@ -75,10 +75,12 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             } catch (Throwable e) {
                 e.printStackTrace();
             }
+
             initialise(minecraftServer);
         } else {
             skinTracker = null;
         }
+
     }
 
     @Override
@@ -100,6 +102,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (npc == null || !npc.isFlyable()) {
             super.checkFallDamage(d0, flag, iblockdata, blockposition);
         }
+
     }
 
     @Override
@@ -121,6 +124,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             super.doTick();
             return;
         }
+
         super.baseTick();
         boolean navigating = npc.getNavigator().isNavigating() || ai.getMoveControl().hasWanted();
         if (!navigating && getBukkitEntity() != null
@@ -129,16 +133,20 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 && (!npc.isProtected() || SpigotUtil.checkYSafe(getY(), getBukkitEntity().getWorld()))) {
             moveWithFallDamage(Vec3.ZERO);
         }
+
         Vec3 mot = getDeltaMovement();
         if (Math.abs(mot.x) < EPSILON && Math.abs(mot.y) < EPSILON && Math.abs(mot.z) < EPSILON) {
             setDeltaMovement(Vec3.ZERO);
         }
+
         if (navigating) {
             if (!ai.getNavigation().isDone()) {
                 ai.getNavigation().tick();
             }
+
             moveOnCurrentHeading();
         }
+
         ai.getJumpControl().tick();
         ai.getMoveControl().tick();
         detectEquipmentUpdates();
@@ -146,6 +154,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (isSpectator()) {
             this.onGround = false;
         }
+
         pushEntities();
 
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
@@ -155,10 +164,13 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             } else {
                 axisalignedbb = this.getBoundingBox().inflate(1.0, 0.5, 1.0);
             }
+
             for (Entity entity : this.level.getEntities(this, axisalignedbb)) {
                 entity.playerTouch(this);
             }
+
         }
+
     }
 
     @Override
@@ -166,6 +178,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (playerlistTracker != null) {
             playerlistTracker.updateLastPlayer();
         }
+
         return super.getAddEntityPacket();
     }
 
@@ -179,6 +192,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
             NMSImpl.setBukkitEntity(this, new PlayerNPC(this));
         }
+
         return super.getBukkitEntity();
     }
 
@@ -208,6 +222,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (skinName == null) {
             skinName = npc.getName();
         }
+
         return skinName.toLowerCase();
     }
 
@@ -236,8 +251,10 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         boolean damaged = super.hurt(damagesource, f);
         if (damaged && hurtMarked) {
             hurtMarked = false;
-            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), (Runnable) () -> EntityHumanNPC.this.hurtMarked = true);
+            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
+                    (Runnable) () -> EntityHumanNPC.this.hurtMarked = true);
         }
+
         return damaged;
     }
 
@@ -248,6 +265,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             conn.setListener(connection);
         } catch (IOException e) {
         }
+
         this.invulnerableTime = 0;
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
@@ -275,9 +293,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 jumpFromGround();
                 jumpTicks = 10;
             }
+
         } else {
             jumpTicks = 0;
         }
+
         xxa *= 0.98F;
         zza *= 0.98F;
         moveWithFallDamage(new Vec3(this.xxa, this.yya, this.zza));
@@ -285,6 +305,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (jumpTicks > 0) {
             jumpTicks--;
         }
+
     }
 
     private void moveWithFallDamage(Vec3 vec) {
@@ -293,6 +314,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (!npc.isProtected()) {
             doCheckFallDamage(getY() - y, onGround);
         }
+
     }
 
     @Override
@@ -309,6 +331,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (vector != null) {
             super.push(vector.getX(), vector.getY(), vector.getZ());
         }
+
     }
 
     @Override
@@ -319,6 +342,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (npc != null) {
             Util.callCollisionEvent(npc, entity.getBukkitEntity());
         }
+
     }
 
     @Override
@@ -368,6 +392,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         } else {
             NMSImpl.flyingMoveLogic(this, vec3d);
         }
+
     }
 
     private void updatePackets(boolean navigating) {

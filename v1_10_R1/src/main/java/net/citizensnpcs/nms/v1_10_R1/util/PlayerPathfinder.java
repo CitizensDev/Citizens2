@@ -51,6 +51,7 @@ public class PlayerPathfinder {
             i++;
             localPathPoint = localPathPoint.h;
         }
+
         PathPoint[] arrayOfPathPoint = new PathPoint[i];
         localPathPoint = paramPathPoint2;
         arrayOfPathPoint[--i] = localPathPoint;
@@ -58,6 +59,7 @@ public class PlayerPathfinder {
             localPathPoint = localPathPoint.h;
             arrayOfPathPoint[--i] = localPathPoint;
         }
+
         return new PathEntity(arrayOfPathPoint);
     }
 
@@ -75,14 +77,17 @@ public class PlayerPathfinder {
             if (i >= 2000) {
                 break;
             }
+
             PathPoint localObject2 = this.a.c();
             if (localObject2.equals(paramPathPoint2)) {
                 localObject1 = paramPathPoint2;
                 break;
             }
+
             if (localObject2.c(paramPathPoint2) < ((PathPoint) localObject1).c(paramPathPoint2)) {
                 localObject1 = localObject2;
             }
+
             localObject2.i = true;
             int j = this.d.a(this.c, localObject2, paramPathPoint2, paramFloat);
             for (int k = 0; k < j; k++) {
@@ -101,9 +106,13 @@ public class PlayerPathfinder {
                         localPathPoint.g = localPathPoint.e + localPathPoint.f;
                         this.a.a(localPathPoint);
                     }
+
                 }
+
             }
+
         }
+
         if (localObject1 == paramPathPoint1)
             return null;
         Object localObject2 = a(paramPathPoint1, (PathPoint) localObject1);

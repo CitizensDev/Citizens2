@@ -62,6 +62,7 @@ public class MagmaCubeController extends MobEntityController {
                 this.oldMoveController = this.moveController;
                 this.moveController = new EntityMoveControl(this);
             }
+
         }
 
         @Override
@@ -74,6 +75,7 @@ public class MagmaCubeController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+
         }
 
         @Override
@@ -91,6 +93,7 @@ public class MagmaCubeController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -111,6 +114,7 @@ public class MagmaCubeController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -121,6 +125,7 @@ public class MagmaCubeController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -140,6 +145,7 @@ public class MagmaCubeController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -147,6 +153,7 @@ public class MagmaCubeController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new MagmaCubeNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -181,6 +188,7 @@ public class MagmaCubeController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -208,6 +216,7 @@ public class MagmaCubeController extends MobEntityController {
             if (npc == null) {
                 super.pickup(human);
             }
+
         }
 
         @Override
@@ -218,11 +227,14 @@ public class MagmaCubeController extends MobEntityController {
                 if (npc.useMinecraftAI() && this.moveController != this.oldMoveController) {
                     this.moveController = this.oldMoveController;
                 }
+
                 if (!npc.useMinecraftAI() && this.moveController == this.oldMoveController) {
                     this.moveController = new EntityMoveControl(this);
                 }
+
                 npc.update();
             }
+
         }
 
         @Override
@@ -232,6 +244,7 @@ public class MagmaCubeController extends MobEntityController {
             } else {
                 NMSImpl.setSize(this, justCreated);
             }
+
         }
     }
 

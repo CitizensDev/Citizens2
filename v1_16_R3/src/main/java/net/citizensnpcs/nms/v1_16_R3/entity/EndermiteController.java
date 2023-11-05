@@ -70,6 +70,7 @@ public class EndermiteController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+
         }
 
         @Override
@@ -87,6 +88,7 @@ public class EndermiteController extends MobEntityController {
             if (!npc.isPushableByFluids()) {
                 setMot(old);
             }
+
             return res;
         }
 
@@ -107,6 +109,7 @@ public class EndermiteController extends MobEntityController {
             if (npc == null) {
                 super.checkDespawn();
             }
+
         }
 
         @Override
@@ -117,6 +120,7 @@ public class EndermiteController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -136,6 +140,7 @@ public class EndermiteController extends MobEntityController {
             } else {
                 NMSImpl.flyingMoveLogic(this, vec3d);
             }
+
         }
 
         @Override
@@ -143,6 +148,7 @@ public class EndermiteController extends MobEntityController {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new EndermiteNPC(this));
             }
+
             return super.getBukkitEntity();
         }
 
@@ -177,6 +183,7 @@ public class EndermiteController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -199,6 +206,7 @@ public class EndermiteController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
+
         }
 
         @Override
@@ -215,6 +223,7 @@ public class EndermiteController extends MobEntityController {
             } else {
                 NMSImpl.setSize(this, justCreated);
             }
+
         }
     }
 }

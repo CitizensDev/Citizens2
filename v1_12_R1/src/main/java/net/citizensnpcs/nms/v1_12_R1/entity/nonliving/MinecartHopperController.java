@@ -50,6 +50,7 @@ public class MinecartHopperController extends MobEntityController {
                 npc.update();
                 NMSImpl.minecartItemLogic(this);
             }
+
         }
 
         @Override
@@ -60,6 +61,7 @@ public class MinecartHopperController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -73,6 +75,7 @@ public class MinecartHopperController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override

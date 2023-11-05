@@ -71,9 +71,11 @@ public class LlamaSpitController extends AbstractEntityController {
                 if (!npc.isProtected()) {
                     super.B_();
                 }
+
             } else {
                 super.B_();
             }
+
         }
 
         @Override
@@ -84,6 +86,7 @@ public class LlamaSpitController extends AbstractEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -97,6 +100,7 @@ public class LlamaSpitController extends AbstractEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -104,6 +108,7 @@ public class LlamaSpitController extends AbstractEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new LlamaSpitNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 

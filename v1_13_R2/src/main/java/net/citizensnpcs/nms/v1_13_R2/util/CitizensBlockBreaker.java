@@ -47,6 +47,7 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
             ItemStack current = getCurrentItem();
             return current != null ? current.b(block) : false;
         }
+
     }
 
     @Override
@@ -64,10 +65,13 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
                 if (i > 0) {
                     f += i * i + 1;
                 }
+
             }
+
             if (handle.hasEffect(MobEffects.FASTER_DIG)) {
                 f *= 1.0F + (handle.getEffect(MobEffects.FASTER_DIG).getAmplifier() + 1) * 0.2F;
             }
+
             if (handle.hasEffect(MobEffects.SLOWER_DIG)) {
                 float f1 = 1.0F;
                 switch (handle.getEffect(MobEffects.SLOWER_DIG).getAmplifier()) {
@@ -84,15 +88,20 @@ public class CitizensBlockBreaker extends AbstractBlockBreaker {
                     default:
                         f1 = 8.1E-4F;
                 }
+
                 f *= f1;
             }
+
             if (handle.a(TagsFluid.WATER) && !EnchantmentManager.h(handle)) {
                 f /= 5.0F;
             }
+
         }
+
         if (!getHandle().onGround) {
             f /= 5.0F;
         }
+
         return f;
     }
 }

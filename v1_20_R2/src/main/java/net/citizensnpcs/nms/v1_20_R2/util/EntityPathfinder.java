@@ -92,6 +92,7 @@ public class EntityPathfinder extends PathFinder {
                     var13.setReached();
                     var9.add(var13);
                 }
+
             }
 
             if (!var9.isEmpty()) {
@@ -116,12 +117,19 @@ public class EntityPathfinder extends PathFinder {
                             var14.h += var14.f;
                             this.openSet.insert(var14);
                         }
+
                     }
+
                 }
+
             }
+
         }
 
-        Optional<Path> var11 = !var9.isEmpty() ? var9.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var2.get(var1x), true)).min(Comparator.comparingInt(Path::getNodeCount)) : getFallbackDestinations(var2, var6).findFirst();
+        Optional<Path> var11 = !var9.isEmpty()
+                ? var9.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var2.get(var1x), true)).min(
+                        Comparator.comparingInt(Path::getNodeCount))
+                : getFallbackDestinations(var2, var6).findFirst();
         /*var6.stream().map((var1x) -> {
            return this.reconstructPath(var1x.getBestNode(), (BlockPos)var2.get(var1x), false);
         }).min(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount))*/
@@ -131,6 +139,7 @@ public class EntityPathfinder extends PathFinder {
             Path var12 = var11.get();
             return var12;
         }
+
     }
 
     private float getBestH(Node var0, Set<Target> var1) {
@@ -140,13 +149,15 @@ public class EntityPathfinder extends PathFinder {
             var4.updateBest(var5, var0);
             var2 = Math.min(var5, var2);
         }
+
         return var2;
     }
 
     public Stream<Path> getFallbackDestinations(Map<Target, BlockPos> var1, Set<Target> var5) {
         if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean())
             return Stream.empty();
-        return var5.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false)).sorted(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
+        return var5.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false))
+                .sorted(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
     }
 
     private Path reconstructPath(Node var0, BlockPos var1, boolean var2) {

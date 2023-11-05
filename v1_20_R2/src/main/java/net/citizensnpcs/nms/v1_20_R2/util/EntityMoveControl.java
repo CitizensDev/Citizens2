@@ -60,15 +60,18 @@ public class EntityMoveControl extends MoveControl {
         if (f3 > f2) {
             f3 = f2;
         }
+
         if (f3 < -f2) {
             f3 = -f2;
         }
+
         float f4 = f + f3;
         if (f4 < 0.0F) {
             f4 += 360.0F;
         } else if (f4 > 360.0F) {
             f4 -= 360.0F;
         }
+
         return f4;
     }
 
@@ -110,12 +113,15 @@ public class EntityMoveControl extends MoveControl {
             if (((Slime) entity).isAggressive()) {
                 this.jumpTicks /= 3;
             }
+
             ((Slime) entity).getJumpControl().jump();
         } else if (dY >= NMS.getStepHeight(entity.getBukkitEntity()) && dXZ < 0.4D) {
             if (entity instanceof Mob) {
                 ((Mob) entity).getJumpControl().jump();
             }
+
             entity.setJumping(true);
         }
+
     }
 }

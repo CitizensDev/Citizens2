@@ -88,6 +88,7 @@ public class BlazeController extends MobEntityController {
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
             }
+
         }
 
         @Override
@@ -111,6 +112,7 @@ public class BlazeController extends MobEntityController {
             if (vector != null) {
                 super.f(vector.getX(), vector.getY(), vector.getZ());
             }
+
         }
 
         @Override
@@ -123,6 +125,7 @@ public class BlazeController extends MobEntityController {
             if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
                 bukkitEntity = new BlazeNPC(this);
             }
+
             return super.getBukkitEntity();
         }
 
@@ -146,6 +149,7 @@ public class BlazeController extends MobEntityController {
             if (npc == null) {
                 super.L();
             }
+
         }
 
         @Override
@@ -153,6 +157,7 @@ public class BlazeController extends MobEntityController {
             if (npc != null) {
                 npc.update();
             }
+
         }
     }
 }

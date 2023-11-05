@@ -45,6 +45,7 @@ public class PlayerControllerMove extends ControllerMove {
                 this.a.bb = 0.0F;
                 return;
             }
+
             float f = (float) Math.toDegrees(Math.atan2(d1, d0)) - 90.0F;
             this.a.yaw = a(this.a.yaw, f, 90.0F);
             NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
@@ -62,8 +63,11 @@ public class PlayerControllerMove extends ControllerMove {
                 } else {
                     ((EntityInsentient) this.a).getControllerJump().jump();
                 }
+
             }
+
         }
+
     }
 
     @Override
@@ -81,15 +85,18 @@ public class PlayerControllerMove extends ControllerMove {
         if (f3 > f2) {
             f3 = f2;
         }
+
         if (f3 < -f2) {
             f3 = -f2;
         }
+
         float f4 = f + f3;
         if (f4 < 0.0F) {
             f4 += 360.0F;
         } else if (f4 > 360.0F) {
             f4 -= 360.0F;
         }
+
         return f4;
     }
 

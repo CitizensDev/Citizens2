@@ -64,22 +64,27 @@ public class PlayerNavigation extends NavigationAbstract {
             while (localBlockPosition.getY() > 0 && this.b.getType(localBlockPosition).getMaterial() == Material.AIR) {
                 localBlockPosition = localBlockPosition.down();
             }
+
             if (localBlockPosition.getY() > 0)
                 return supera(localBlockPosition.up());
             while (localBlockPosition.getY() < this.b.getHeight()
                     && this.b.getType(localBlockPosition).getMaterial() == Material.AIR) {
                 localBlockPosition = localBlockPosition.up();
             }
+
             paramBlockPosition = localBlockPosition;
         }
+
         if (this.b.getType(paramBlockPosition).getMaterial().isBuildable()) {
             localBlockPosition = paramBlockPosition.up();
             while (localBlockPosition.getY() < this.b.getHeight()
                     && this.b.getType(localBlockPosition).getMaterial().isBuildable()) {
                 localBlockPosition = localBlockPosition.up();
             }
+
             return a2(localBlockPosition);
         }
+
         return a2(paramBlockPosition);
     }
 
@@ -138,8 +143,11 @@ public class PlayerNavigation extends NavigationAbstract {
                             || localPathType == PathType.DAMAGE_OTHER)
                         return false;
                 }
+
             }
+
         }
+
         return true;
     }
 
@@ -149,9 +157,11 @@ public class PlayerNavigation extends NavigationAbstract {
             this.c = null;
             return false;
         }
+
         if (!paramPathEntity.a(this.c)) {
             this.c = paramPathEntity;
         }
+
         d();
         if (this.c.d() == 0)
             return false;
@@ -168,9 +178,11 @@ public class PlayerNavigation extends NavigationAbstract {
             if (paramVec3D.distanceSquared(this.j) < 2.25D) {
                 o();
             }
+
             this.i = this.h;
             this.j = paramVec3D;
         }
+
         if (this.c != null && !this.c.b()) {
             Vec3D localVec3D = this.c.f();
             if (!localVec3D.equals(this.k)) {
@@ -180,14 +192,17 @@ public class PlayerNavigation extends NavigationAbstract {
             } else {
                 this.l += System.currentTimeMillis() - this.m;
             }
+
             if (this.n > 0.0D && this.l > this.n * 3.0D) {
                 this.k = Vec3D.a;
                 this.l = 0L;
                 this.n = 0.0D;
                 o();
             }
+
             this.m = System.currentTimeMillis();
         }
+
     }
 
     @Override
@@ -215,9 +230,11 @@ public class PlayerNavigation extends NavigationAbstract {
         if (d1 >= 0.0D) {
             d7 += 1.0D;
         }
+
         if (d2 >= 0.0D) {
             d8 += 1.0D;
         }
+
         d7 /= d1;
         d8 /= d2;
         int k = d1 < 0.0D ? -1 : 1;
@@ -236,9 +253,11 @@ public class PlayerNavigation extends NavigationAbstract {
                 j += m;
                 i3 = i1 - j;
             }
+
             if (!a(i, (int) paramVec3D1.y, j, paramInt1, paramInt2, paramInt3, paramVec3D1, d1, d2))
                 return false;
         }
+
         return true;
     }
 
@@ -284,7 +303,9 @@ public class PlayerNavigation extends NavigationAbstract {
                 if (!localBlock.b(this.b, localBlockPosition))
                     return false;
             }
+
         }
+
         return true;
     }
 
@@ -313,8 +334,11 @@ public class PlayerNavigation extends NavigationAbstract {
                     this.c.a(i + 1, ((PathPoint) localObject).a(((PathPoint) localObject).a, localPathPoint.b + 1,
                             ((PathPoint) localObject).c));
                 }
+
             }
+
         }
+
         if (this.f2) {
             if (this.b.h(new BlockPosition(MathHelper.floor(this.a.locX), (int) (this.a.getBoundingBox().b + 0.5D),
                     MathHelper.floor(this.a.locZ))))
@@ -325,8 +349,11 @@ public class PlayerNavigation extends NavigationAbstract {
                     this.c.b(i - 1);
                     return;
                 }
+
             }
+
         }
+
     }
 
     public boolean f() {
@@ -356,9 +383,11 @@ public class PlayerNavigation extends NavigationAbstract {
                 this.q = this.b.getTime();
                 this.p = false;
             }
+
         } else {
             this.p = true;
         }
+
     }
 
     @Override
@@ -372,6 +401,7 @@ public class PlayerNavigation extends NavigationAbstract {
         if (this.p) {
             j();
         }
+
         if (n())
             return;
         if (b()) {
@@ -384,7 +414,9 @@ public class PlayerNavigation extends NavigationAbstract {
                     && MathHelper.floor(localVec3D.z) == MathHelper.floor(localObject.z)) {
                 this.c.c(this.c.e() + 1);
             }
+
         }
+
         if (n())
             return;
         Vec3D localVec3D = this.c.a(this.a);
@@ -406,13 +438,16 @@ public class PlayerNavigation extends NavigationAbstract {
                 i1 = i2;
                 break;
             }
+
         }
+
         this.o = this.a.width > 0.75F ? this.a.width / 2.0F : 0.75F - this.a.width / 2.0F;
         Vec3D localVec3D2 = this.c.f();
         if (MathHelper.e((float) (this.a.locX - (localVec3D2.x + 0.5D))) < this.o
                 && MathHelper.e((float) (this.a.locZ - (localVec3D2.z + 0.5D))) < this.o) {
             this.c.c(this.c.e() + 1);
         }
+
         int i3 = MathHelper.f(this.a.width);
         int i4 = (int) this.a.length + 1;
         int i5 = i3;
@@ -421,7 +456,9 @@ public class PlayerNavigation extends NavigationAbstract {
                 this.c.c(i6);
                 break;
             }
+
         }
+
         a(localVec3D1);
     }
 
@@ -456,6 +493,7 @@ public class PlayerNavigation extends NavigationAbstract {
             if (j > 16)
                 return (int) this.a.getBoundingBox().b;
         }
+
         return i;
     }
 
