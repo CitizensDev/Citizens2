@@ -358,11 +358,17 @@ public class NMSImpl implements NMSBridge {
         EntityPlayer handle = (EntityPlayer) getHandle(entity);
         if (handle.world == null)
             return;
-        if (remove) {
-            handle.world.getPlayers().remove(handle);
-        } else if (!handle.world.getPlayers().contains(handle)) {
-            ((List) handle.world.getPlayers()).add(handle);
+        List<? extends EntityHuman> players = handle.world.getPlayers();
+        boolean changed = false;
+        if (remove && players.contains(handle)) {
+            players.remove(handle);
+            changed = true;
+        } else if (!remove && !players.contains(handle)) {
+            ((List) players).add(handle);
+            changed = true;
         }
+        if (!changed)
+            return;
         try {
             CHUNKMAP_UPDATE_PLAYER_STATUS.invoke(((WorldServer) handle.world).getChunkProvider().playerChunkMap, handle,
                     !remove);

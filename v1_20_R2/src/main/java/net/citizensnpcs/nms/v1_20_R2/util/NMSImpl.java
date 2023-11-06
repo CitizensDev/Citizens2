@@ -401,11 +401,19 @@ public class NMSImpl implements NMSBridge {
         ServerPlayer handle = (ServerPlayer) getHandle(entity);
         if (handle.level() == null)
             return;
-        if (remove) {
-            handle.level().players().remove(handle);
-        } else if (!handle.level().players().contains(handle)) {
-            ((List) handle.level().players()).add(handle);
+
+        List<? extends net.minecraft.world.entity.player.Player> players = handle.level().players();
+        boolean changed = false;
+        if (remove && players.contains(handle)) {
+            players.remove(handle);
+            changed = true;
+        } else if (!remove && !players.contains(handle)) {
+            ((List) players).add(handle);
+            changed = true;
         }
+        if (!changed)
+            return;
+
         try {
             CHUNKMAP_UPDATE_PLAYER_STATUS.invoke(((ServerLevel) handle.level()).getChunkSource().chunkMap, handle,
                     !remove);
