@@ -145,14 +145,14 @@ public class NMS {
         BRIDGE.cancelMoveDestination(entity);
     }
 
+    public static Iterable<Object> createBundlePacket(List<Object> packets) {
+        return BRIDGE.createBundlePacket(packets);
+    }
+
     /*
      * Yggdrasil's default implementation of this method silently fails instead of throwing
      * an Exception like it should.
      */
-
-    public static Iterable<Object> createBundlePacket(List<Object> packets) {
-        return BRIDGE.createBundlePacket(packets);
-    }
 
     public static EntityPacketTracker createPacketTracker(Entity entity) {
         return createPacketTracker(entity, new PacketAggregator());
@@ -599,6 +599,10 @@ public class NMS {
 
     public static float getVerticalMovement(org.bukkit.entity.Entity bukkitEntity) {
         return BRIDGE.getVerticalMovement(bukkitEntity);
+    }
+
+    public static Collection<Player> getViewingPlayers(org.bukkit.entity.Entity entity) {
+        return BRIDGE.getViewingPlayers(entity);
     }
 
     public static double getWidth(Entity entity) {

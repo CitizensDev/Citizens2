@@ -28,6 +28,7 @@ public class TextBasePrompt extends StringPrompt {
         String input = parts[0];
 
         CommandSender sender = (CommandSender) context.getForWhom();
+        Messaging.send(sender, getPromptText(context));
         if (input.equalsIgnoreCase("add")) {
             text.add(Joiner.on(' ').join(Arrays.copyOfRange(parts, 1, parts.length)));
             return this;
@@ -59,10 +60,7 @@ public class TextBasePrompt extends StringPrompt {
             } catch (NumberFormatException e) {
                 Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_PAGE);
             }
-        }
-        Messaging.send(sender, getPromptText(context));
-
-        if (input.equalsIgnoreCase("delay")) {
+        } else if (input.equalsIgnoreCase("delay")) {
             try {
                 int delay = Integer.parseInt(parts[1]);
                 text.setDelay(delay);

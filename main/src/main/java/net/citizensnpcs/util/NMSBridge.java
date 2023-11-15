@@ -116,6 +116,10 @@ public interface NMSBridge {
 
     public float getVerticalMovement(Entity entity);
 
+    public default Collection<Player> getViewingPlayers(Entity entity) {
+        return ((Player) entity).getTrackedBy();
+    }
+
     public double getWidth(Entity entity);
 
     public float getYaw(Entity entity);

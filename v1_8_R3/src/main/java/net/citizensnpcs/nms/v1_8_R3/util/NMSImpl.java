@@ -647,6 +647,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public Collection<org.bukkit.entity.Player> getViewingPlayers(org.bukkit.entity.Entity entity) {
+        WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
+        EntityTrackerEntry entry = server.getTracker().trackedEntities.get(entity.getEntityId());
+        return PlayerlistTrackerEntry.getSeenBy(entry);
+    }
+
+    @Override
     public double getWidth(org.bukkit.entity.Entity entity) {
         return getHandle(entity).width;
     }
@@ -1787,9 +1794,7 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.SILVERFISH, EntityType.ENDERMITE,
             EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
             EntityType.GHAST);
-
     private static final float DEFAULT_SPEED = 1F;
-
     public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EntityEnderDragon.class,
             true, boolean.class, AxisAlignedBB.class);
     private static Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class, Entity.class);

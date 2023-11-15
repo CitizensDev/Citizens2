@@ -43,6 +43,7 @@ public class PlayerUpdateTask extends BukkitRunnable {
                 PLAYERS.put(entity.getUniqueId(), new PlayerTick((Player) entity));
             }
         }
+        // convert to sorted list with binary search
         PLAYERS_PENDING_ADD.clear();
         PLAYERS_PENDING_REMOVE.clear();
 

@@ -40,7 +40,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -158,14 +157,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 entity.playerTouch(this);
             }
         }
-    }
-
-    @Override
-    public Packet<?> getAddEntityPacket() {
-        if (playerlistTracker != null) {
-            playerlistTracker.updateLastPlayer();
-        }
-        return super.getAddEntityPacket();
     }
 
     @Override

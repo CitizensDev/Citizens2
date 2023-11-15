@@ -110,10 +110,10 @@ public class HologramTrait extends Trait {
             hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, line);
             hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
         }
+        hologramNPC.data().set(NPC.Metadata.HOLOGRAM_FOR, npc.getUniqueId().toString());
         if (Setting.PACKET_HOLOGRAMS.asBoolean()) {
             hologramNPC.addTrait(PacketNPC.class);
         }
-        hologramNPC.data().set(NPC.Metadata.HOLOGRAM_FOR, npc.getUniqueId().toString());
         if (viewRange != -1) {
             hologramNPC.data().set(NPC.Metadata.TRACKING_RANGE, viewRange);
         }

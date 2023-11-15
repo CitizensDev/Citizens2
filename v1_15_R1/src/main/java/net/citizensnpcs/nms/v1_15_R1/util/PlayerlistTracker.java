@@ -3,6 +3,7 @@ package net.citizensnpcs.nms.v1_15_R1.util;
 import java.lang.invoke.MethodHandle;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 
@@ -11,6 +12,7 @@ import com.google.common.collect.ForwardingSet;
 
 import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
+import net.citizensnpcs.api.event.NPCUnlinkFromPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_15_R1.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -46,6 +48,16 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                         }
                         return res;
                     }
+
+                    @Override
+                    public Boolean remove(Object conn) {
+                        Boolean removed = super.remove(conn);
+                        if (removed == true) {
+                            Bukkit.getPluginManager().callEvent(new NPCUnlinkFromPlayerEvent(
+                                    ((NPCHolder) tracker).getNPC(), ((EntityPlayer) conn).getBukkitEntity()));
+                        }
+                        return removed;
+                    }
                 });
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -66,6 +78,16 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                     @Override
                     protected Set<EntityPlayer> delegate() {
                         return delegate;
+                    }
+
+                    @Override
+                    public boolean remove(Object conn) {
+                        boolean removed = super.remove(conn);
+                        if (removed) {
+                            Bukkit.getPluginManager().callEvent(new NPCUnlinkFromPlayerEvent(
+                                    ((NPCHolder) tracker).getNPC(), ((EntityPlayer) conn).getBukkitEntity()));
+                        }
+                        return removed;
                     }
                 });
             } catch (Throwable e) {
@@ -131,6 +153,20 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static Set<org.bukkit.entity.Player> getSeenBy(EntityTracker tracker) {
+        if (TRACKING_MAP_GETTER != null) {
+            Map<EntityPlayer, Boolean> delegate;
+            try {
+                delegate = (Map<EntityPlayer, Boolean>) TRACKING_MAP_GETTER.invoke(tracker);
+            } catch (Throwable e) {
+                return null;
+            }
+            return delegate.keySet().stream().map(p -> p.getBukkitEntity()).collect(Collectors.toSet());
+        } else {
+            return tracker.trackedPlayers.stream().map(p -> p.getBukkitEntity()).collect(Collectors.toSet());
+        }
     }
 
     private static Entity getTracker(EntityTracker entry) {

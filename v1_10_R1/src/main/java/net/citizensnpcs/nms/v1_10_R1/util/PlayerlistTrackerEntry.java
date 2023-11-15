@@ -1,6 +1,8 @@
 package net.citizensnpcs.nms.v1_10_R1.util;
 
 import java.lang.reflect.Field;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
@@ -94,6 +96,10 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static Set<org.bukkit.entity.Player> getSeenBy(EntityTrackerEntry tracker) {
+        return tracker.trackedPlayers.stream().map(p -> p.getBukkitEntity()).collect(Collectors.toSet());
     }
 
     private static Entity getTracker(EntityTrackerEntry entry) {

@@ -745,6 +745,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public Collection<org.bukkit.entity.Player> getViewingPlayers(org.bukkit.entity.Entity entity) {
+        WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
+        EntityTrackerEntry entry = server.getTracker().trackedEntities.get(entity.getEntityId());
+        return PlayerlistTrackerEntry.getSeenBy(entry);
+    }
+
+    @Override
     public double getWidth(org.bukkit.entity.Entity entity) {
         return entity.getWidth();
     }

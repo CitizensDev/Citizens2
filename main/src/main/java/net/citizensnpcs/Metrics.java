@@ -40,7 +40,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * <p>
  * Check out https://bStats.org/ to learn more about bStats!
  */
-@SuppressWarnings({ "WeakerAccess", "unused" })
 
 public class Metrics {
 

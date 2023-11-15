@@ -4,6 +4,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 
@@ -12,6 +13,7 @@ import com.google.common.collect.ForwardingSet;
 
 import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
+import net.citizensnpcs.api.event.NPCUnlinkFromPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -43,6 +45,16 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                         }
                         return res;
                     }
+
+                    @Override
+                    public Boolean remove(Object conn) {
+                        Boolean removed = super.remove(conn);
+                        if (removed == true) {
+                            Bukkit.getPluginManager().callEvent(new NPCUnlinkFromPlayerEvent(
+                                    ((NPCHolder) tracker).getNPC(), ((EntityPlayer) conn).getBukkitEntity()));
+                        }
+                        return removed;
+                    }
                 });
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -63,6 +75,16 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                     @Override
                     protected Set<EntityPlayer> delegate() {
                         return delegate;
+                    }
+
+                    @Override
+                    public boolean remove(Object conn) {
+                        boolean removed = super.remove(conn);
+                        if (removed) {
+                            Bukkit.getPluginManager().callEvent(new NPCUnlinkFromPlayerEvent(
+                                    ((NPCHolder) tracker).getNPC(), ((EntityPlayer) conn).getBukkitEntity()));
+                        }
+                        return removed;
                     }
                 });
             } catch (Throwable e) {
@@ -124,6 +146,20 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static Set<org.bukkit.entity.Player> getSeenBy(EntityTrackerEntry tracker) {
+        if (TRACKING_MAP_GETTER != null) {
+            Map<EntityPlayer, Boolean> delegate;
+            try {
+                delegate = (Map<EntityPlayer, Boolean>) TRACKING_MAP_GETTER.invoke(tracker);
+            } catch (Throwable e) {
+                return null;
+            }
+            return delegate.keySet().stream().map(p -> p.getBukkitEntity()).collect(Collectors.toSet());
+        } else {
+            return tracker.trackedPlayers.stream().map(p -> p.getBukkitEntity()).collect(Collectors.toSet());
+        }
     }
 
     private static boolean getU(EntityTrackerEntry entry) {

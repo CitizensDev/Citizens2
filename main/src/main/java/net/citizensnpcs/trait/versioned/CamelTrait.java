@@ -26,6 +26,10 @@ public class CamelTrait extends Trait {
         super("cameltrait");
     }
 
+    public CamelPose getPose() {
+        return pose;
+    }
+
     @Override
     public void run() {
         if (npc.isSpawned() && npc.getEntity() instanceof Camel) {

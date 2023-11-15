@@ -2519,7 +2519,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "rotate (--body [yaw]) (--head [yaw]) (--pitch [pitch]) (-s(mooth))",
+            usage = "rotate (--towards [x,y,z]) (--body [yaw]) (--head [yaw]) (--pitch [pitch]) (-s(mooth))",
             desc = "Rotate NPC",
             flags = "s",
             modifiers = { "rotate" },
@@ -2527,7 +2527,7 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.rotate")
     public void rotate(CommandContext args, CommandSender sender, NPC npc, @Flag("body") Float yaw,
-            @Flag("head") Float head, @Flag("pitch") Float pitch) {
+            @Flag("head") Float head, @Flag("pitch") Float pitch, @Flag("towards") Location towards) {
         if (args.hasFlag('s')) {
             if (pitch == null) {
                 pitch = npc.getStoredLocation().getPitch();
@@ -2540,6 +2540,10 @@ public class NPCCommands {
                 }
             }
             npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToHave(yaw, pitch);
+            return;
+        }
+        if (towards != null) {
+            npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(towards);
             return;
         }
         if (yaw != null) {

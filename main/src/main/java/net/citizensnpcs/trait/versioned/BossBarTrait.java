@@ -38,7 +38,7 @@ import net.citizensnpcs.util.Util;
 
 @TraitName("bossbar")
 public class BossBarTrait extends Trait {
-    private BossBar barCache;
+    private BossBar activeBar;
     @Persist
     private BarColor color = BarColor.PURPLE;
     @Persist
@@ -65,11 +65,11 @@ public class BossBarTrait extends Trait {
         if (npc.isSpawned() && isBoss(npc.getEntity()) && NMS.getBossBar(npc.getEntity()) != null)
             return (BossBar) NMS.getBossBar(npc.getEntity());
 
-        if (barCache == null) {
-            barCache = Bukkit.getServer().createBossBar(npc.getFullName(), color, style,
+        if (activeBar == null) {
+            activeBar = Bukkit.getServer().createBossBar(npc.getFullName(), color, style,
                     flags.toArray(new BarFlag[flags.size()]));
         }
-        return barCache;
+        return activeBar;
     }
 
     public BarColor getColor() {
@@ -114,12 +114,12 @@ public class BossBarTrait extends Trait {
 
     @Override
     public void onDespawn() {
-        if (barCache == null)
+        if (activeBar == null)
             return;
 
-        barCache.removeAll();
-        barCache.hide();
-        barCache = null;
+        activeBar.removeAll();
+        activeBar.hide();
+        activeBar = null;
     }
 
     @Override
