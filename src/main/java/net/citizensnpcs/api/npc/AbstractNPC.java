@@ -384,11 +384,10 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public boolean requiresNameHologram() {
-        return getEntityType() != EntityType.ARMOR_STAND && !getEntityType().name().equals("TEXT_DISPLAY")
-                && (name.length() > 16 && getEntityType() == EntityType.PLAYER
-                        || data().get(NPC.Metadata.ALWAYS_USE_NAME_HOLOGRAM, false)
-                        || coloredNameStringCache != null && coloredNameStringCache.contains("§x")
-                        || !Placeholders.replaceName(name, null, this).equals(name));
+        return !data().has(NPC.Metadata.HOLOGRAM_FOR) && ((name.length() > 16 && getEntityType() == EntityType.PLAYER)
+                || data().get(NPC.Metadata.ALWAYS_USE_NAME_HOLOGRAM, false)
+                || coloredNameStringCache != null && coloredNameStringCache.contains("§x")
+                || !Placeholders.replaceName(name, null, this).equals(name));
     }
 
     @Override
