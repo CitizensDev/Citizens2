@@ -1,14 +1,17 @@
 package net.citizensnpcs.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
@@ -17,42 +20,55 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.PacketNPC;
 
 public class PlayerUpdateTask extends BukkitRunnable {
-    private PlayerTick[] players = new PlayerTick[0];
+    private final List<PlayerTick> players = Lists.newArrayList();
+    private final Set<UUID> uuids = Sets.newHashSet();
 
     @Override
     public void cancel() {
         super.cancel();
-        PLAYERS.clear();
+        uuids.clear();
+        players.clear();
     }
 
     @Override
     public void run() {
-        for (Entity entity : PLAYERS_PENDING_REMOVE) {
-            PLAYERS.remove(entity.getUniqueId());
+        if (PLAYERS_PENDING_REMOVE.size() > 0) {
+            players.removeIf(pt -> PLAYERS_PENDING_REMOVE.contains(pt.entity));
+            for (Entity entity : PLAYERS_PENDING_REMOVE) {
+                uuids.remove(entity.getUniqueId());
+            }
         }
         for (Entity entity : PLAYERS_PENDING_ADD) {
-            PlayerTick rm = PLAYERS.remove(entity.getUniqueId());
             NPC next = ((NPCHolder) entity).getNPC();
-            if (rm != null) {
+            if (uuids.contains(entity.getUniqueId())) {
+                // XXX: how often does this case get hit? can simplify implementation
+                PlayerTick rm = null;
+                for (Iterator<PlayerTick> itr = players.iterator(); itr.hasNext();) {
+                    PlayerTick pt = itr.next();
+                    if (pt.entity.getUniqueId().equals(entity.getUniqueId())) {
+                        rm = pt;
+                        itr.remove();
+                        uuids.remove(pt.entity.getUniqueId());
+                        break;
+                    }
+                }
                 NPC old = ((NPCHolder) rm.entity).getNPC();
                 Messaging.severe(old == next ? "Player registered twice"
                         : "Player registered twice with different NPC instances", rm.entity.getUniqueId());
                 rm.entity.remove();
             }
             if (next.hasTrait(PacketNPC.class)) {
-                PLAYERS.put(entity.getUniqueId(), new PlayerTick(entity, () -> ((CitizensNPC) next).update()));
+                players.add(new PlayerTick(entity, () -> ((CitizensNPC) next).update()));
             } else {
-                PLAYERS.put(entity.getUniqueId(), new PlayerTick((Player) entity));
+                players.add(new PlayerTick(entity, NMS.playerTicker((Player) entity)));
             }
-        }
-        if (PLAYERS_PENDING_ADD.size() + PLAYERS_PENDING_REMOVE.size() > 0) {
-            players = PLAYERS.values().toArray(new PlayerTick[PLAYERS.values().size()]);
+            uuids.add(entity.getUniqueId());
         }
         PLAYERS_PENDING_ADD.clear();
         PLAYERS_PENDING_REMOVE.clear();
 
-        for (int i = 0; i < players.length; i++) {
-            players[i].run();
+        for (PlayerTick player : players) {
+            player.run();
         }
     }
 
@@ -63,10 +79,6 @@ public class PlayerUpdateTask extends BukkitRunnable {
         public PlayerTick(Entity entity, Runnable tick) {
             this.entity = entity;
             this.tick = tick;
-        }
-
-        public PlayerTick(Player player) {
-            this(player, NMS.playerTicker(player));
         }
 
         @Override
@@ -85,7 +97,6 @@ public class PlayerUpdateTask extends BukkitRunnable {
         PLAYERS_PENDING_ADD.add(entity);
     }
 
-    private static Map<UUID, PlayerTick> PLAYERS = new HashMap<>();
     private static List<Entity> PLAYERS_PENDING_ADD = new ArrayList<>();
     private static List<Entity> PLAYERS_PENDING_REMOVE = new ArrayList<>();
 }
