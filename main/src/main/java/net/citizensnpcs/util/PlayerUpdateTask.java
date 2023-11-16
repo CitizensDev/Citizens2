@@ -17,6 +17,8 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.PacketNPC;
 
 public class PlayerUpdateTask extends BukkitRunnable {
+    private PlayerTick[] players = new PlayerTick[0];
+
     @Override
     public void cancel() {
         super.cancel();
@@ -43,11 +45,15 @@ public class PlayerUpdateTask extends BukkitRunnable {
                 PLAYERS.put(entity.getUniqueId(), new PlayerTick((Player) entity));
             }
         }
-        // convert to sorted list with binary search
+        if (PLAYERS_PENDING_ADD.size() + PLAYERS_PENDING_REMOVE.size() > 0) {
+            players = PLAYERS.values().toArray(new PlayerTick[PLAYERS.values().size()]);
+        }
         PLAYERS_PENDING_ADD.clear();
         PLAYERS_PENDING_REMOVE.clear();
 
-        PLAYERS.values().forEach(Runnable::run);
+        for (int i = 0; i < players.length; i++) {
+            players[i].run();
+        }
     }
 
     private static class PlayerTick implements Runnable {
