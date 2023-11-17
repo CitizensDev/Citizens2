@@ -291,7 +291,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         lib.addMavenCentral();
         lib.setLogLevel(LogLevel.WARN);
         // Unfortunately, transitive dependency management is not supported in this library.
-        lib.loadLibrary(Library.builder().groupId("ch{}ethz{}globis{}phtree").artifactId("phtree").version("2.6.2")
+        lib.loadLibrary(Library.builder().groupId("ch{}ethz{}globis{}phtree").artifactId("phtree").version("2.8.0")
                 .relocate("ch{}ethz{}globis{}phtree", "clib{}phtree").build());
         lib.loadLibrary(Library.builder().groupId("net{}sf{}trove4j").artifactId("trove4j").version("3.0.3")
                 .relocate("gnu{}trove", "clib{}trove").build());
