@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -26,9 +25,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.FieldAccessException;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
@@ -57,7 +53,6 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.SkinProperty;
 
 public class ProtocolLibListener implements Listener {
-    private Class<?> flagsClass;
     private ProtocolManager manager;
     private final Map<UUID, MirrorTrait> mirrorTraits = Maps.newConcurrentMap();
     private Citizens plugin;
@@ -66,9 +61,6 @@ public class ProtocolLibListener implements Listener {
     public ProtocolLibListener(Citizens plugin) {
         this.plugin = plugin;
         manager = ProtocolLibrary.getProtocolManager();
-        flagsClass = MinecraftReflection.getMinecraftClass("RelativeMovement", "world.entity.RelativeMovement",
-                "EnumPlayerTeleportFlags", "PacketPlayOutPosition$EnumPlayerTeleportFlags",
-                "network.protocol.game.PacketPlayOutPosition$EnumPlayerTeleportFlags");
         Bukkit.getPluginManager().registerEvents(this, plugin);
         manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Server.ENTITY_METADATA) {
             @Override
@@ -189,7 +181,7 @@ public class ProtocolLibListener implements Listener {
         });
         manager.addPacketListener(new PacketAdapter(
                 plugin, ListenerPriority.HIGHEST, Arrays.asList(Server.ENTITY_HEAD_ROTATION, Server.ENTITY_LOOK,
-                        Server.REL_ENTITY_MOVE_LOOK, Server.ENTITY_MOVE_LOOK, Server.POSITION, Server.ENTITY_TELEPORT),
+                        Server.REL_ENTITY_MOVE_LOOK, Server.ENTITY_MOVE_LOOK, Server.ENTITY_TELEPORT),
                 ListenerOptions.ASYNC) {
             @Override
             public void onPacketSending(PacketEvent event) {
@@ -219,24 +211,16 @@ public class ProtocolLibListener implements Listener {
 
                 PacketContainer packet = event.getPacket();
                 PacketType type = event.getPacketType();
+                Messaging.debug(session.getBodyYaw(), session.getHeadYaw(),
+                        "OVERWRITTEN " + type + " " + packet.getHandle());
                 if (type == Server.ENTITY_HEAD_ROTATION) {
                     packet.getBytes().write(0, degToByte(session.getHeadYaw()));
                 } else if (type == Server.ENTITY_LOOK || type == Server.ENTITY_MOVE_LOOK
-                        || type == Server.REL_ENTITY_MOVE_LOOK) {
+                        || type == Server.REL_ENTITY_MOVE_LOOK || type == Server.ENTITY_TELEPORT) {
                     packet.getBytes().write(0, degToByte(session.getBodyYaw()));
                     packet.getBytes().write(1, degToByte(session.getPitch()));
-                } else if (type == Server.POSITION) {
-                    StructureModifier<Set<PlayerTeleportFlag>> flagsModifier = packet
-                            .getSets(EnumWrappers.getGenericConverter(flagsClass, PlayerTeleportFlag.class));
-                    Set<PlayerTeleportFlag> rel = flagsModifier.read(0);
-                    rel.remove(PlayerTeleportFlag.ZYAW);
-                    rel.remove(PlayerTeleportFlag.ZPITCH);
-                    flagsModifier.write(0, rel);
-                    packet.getFloat().write(0, session.getBodyYaw());
-                    packet.getFloat().write(1, session.getPitch());
                 }
                 session.onPacketOverwritten();
-                Messaging.debug("OVERWRITTEN " + type + " " + packet.getHandle());
             }
         });
     }
@@ -292,14 +276,6 @@ public class ProtocolLibListener implements Listener {
         if (!event.getNPC().isSpawned())
             return;
         onSpawn(event);
-    }
-
-    public enum PlayerTeleportFlag {
-        X,
-        Y,
-        Z,
-        ZPITCH,
-        ZYAW,
     }
 
     private static byte degToByte(float in) {
