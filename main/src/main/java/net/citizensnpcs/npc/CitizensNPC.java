@@ -196,7 +196,8 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean requiresNameHologram() {
-        return super.requiresNameHologram() || Setting.ALWAYS_USE_NAME_HOLOGRAM.asBoolean();
+        return !data().has(NPC.Metadata.HOLOGRAM_FOR)
+                && (super.requiresNameHologram() || Setting.ALWAYS_USE_NAME_HOLOGRAM.asBoolean());
     }
 
     private void resetCachedCoord() {
