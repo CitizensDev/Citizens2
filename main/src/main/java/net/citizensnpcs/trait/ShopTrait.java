@@ -712,7 +712,8 @@ public class ShopTrait extends Trait {
         @Override
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
-            ctx.getSlot(2).setDescription("<f>Edit shop view permission<br>" + shop.getRequiredPermission());
+            ctx.getSlot(2)
+                    .setDescription("<f>Edit permission required to view shop<br>" + shop.getRequiredPermission());
             ctx.getSlot(6).setDescription("<f>Edit shop title<br>" + shop.title);
             if (trait != null) {
                 ctx.getSlot(8).setDescription(
@@ -818,8 +819,8 @@ public class ShopTrait extends Trait {
 
         @Override
         public Inventory createInventory(String title) {
-            return Bukkit.createInventory(null, 45,
-                    shop.title == null || shop.title.isEmpty() ? "Shop" : Placeholders.replace(shop.title, player));
+            return Bukkit.createInventory(null, 45, shop.title == null || shop.title.isEmpty() ? "Shop"
+                    : Messaging.parseComponents(Placeholders.replace(shop.title, player)));
         }
 
         @Override
