@@ -362,10 +362,13 @@ public class InventoryMenu implements Listener, Runnable {
     }
 
     private InventoryView openInventory(HumanEntity player, Inventory inventory, String title) {
-        if (inventory.getType() == InventoryType.ANVIL)
-            return CitizensAPI.getNMSHelper().openAnvilInventory((Player) player, inventory, title);
-        else
-            return player.openInventory(inventory);
+        InventoryView view;
+        if (inventory.getType() == InventoryType.ANVIL) {
+            view = CitizensAPI.getNMSHelper().openAnvilInventory((Player) player, inventory, title);
+        } else {
+            view = player.openInventory(inventory);
+        }
+        return view;
     }
 
     private InventoryMenuPattern parsePattern(int[] dim, List<InventoryMenuTransition> transitions,
@@ -587,9 +590,9 @@ public class InventoryMenu implements Listener, Runnable {
             views = Lists.newArrayListWithExpectedSize(old.size());
             for (InventoryView view : old) {
                 view.close();
-                if (!view.getPlayer().isValid() || inventory == null) {
+                if (!view.getPlayer().isValid() || inventory == null)
                     continue;
-                }
+
                 views.add(openInventory(view.getPlayer(), inventory, page.ctx.getTitle()));
             }
             transitioning = false;

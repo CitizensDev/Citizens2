@@ -7,6 +7,8 @@ import org.bukkit.inventory.Inventory;
 
 import com.google.common.collect.Maps;
 
+import net.citizensnpcs.api.util.Messaging;
+
 /**
  * A context class passed into the constructor of a {@link Menu} instance.
  */
@@ -64,7 +66,7 @@ public class MenuContext implements SlotSource {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = Messaging.parseComponents(title);
         this.menu.updateTitle(title);
     }
 }
