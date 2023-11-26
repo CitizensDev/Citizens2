@@ -66,7 +66,7 @@ public class EntityPathfinder extends PathFinder {
     private Path findPath(ProfilerFiller var0, Node var1, Map<Target, BlockPos> var2, float range, int reachRange,
             float var5) {
         Set<Target> var6 = var2.keySet();
-        var1.f = 0.0F;
+        var1.g = 0.0F;
         var1.h = this.getBestH(var1, var6);
         var1.f = var1.h;
         this.openSet.clear();
@@ -95,22 +95,22 @@ public class EntityPathfinder extends PathFinder {
             if (!var9.isEmpty()) {
                 break;
             }
-            if ((var11.distanceTo(var1) < range)) {
+            if (!(var11.distanceTo(var1) >= range)) {
                 int var12 = this.nodeEvaluator.getNeighbors(this.neighbors, var11);
 
                 for (int var13 = 0; var13 < var12; ++var13) {
                     Node var14 = this.neighbors[var13];
                     float var15 = this.distance(var11, var14);
                     var14.walkedDistance = var11.walkedDistance + var15;
-                    float var16 = var11.f + var15 + var14.costMalus;
-                    if (var14.walkedDistance < range && (!var14.inOpenSet() || var16 < var14.f)) {
+                    float var16 = var11.g + var15 + var14.costMalus;
+                    if (var14.walkedDistance < range && (!var14.inOpenSet() || var16 < var14.g)) {
                         var14.cameFrom = var11;
-                        var14.f = var16;
+                        var14.g = var16;
                         var14.h = this.getBestH(var14, var6) * 1.5F;
                         if (var14.inOpenSet()) {
-                            this.openSet.changeCost(var14, var14.f + var14.h);
+                            this.openSet.changeCost(var14, var14.g + var14.h);
                         } else {
-                            var14.h += var14.f;
+                            var14.f = var14.g + var14.h;
                             this.openSet.insert(var14);
                         }
                     }
@@ -126,10 +126,8 @@ public class EntityPathfinder extends PathFinder {
         }).min(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount))*/
         if (var11.isEmpty())
             return null;
-        else {
-            Path var12 = var11.get();
-            return var12;
-        }
+        Path var12 = var11.get();
+        return var12;
     }
 
     private float getBestH(Node var0, Set<Target> var1) {
