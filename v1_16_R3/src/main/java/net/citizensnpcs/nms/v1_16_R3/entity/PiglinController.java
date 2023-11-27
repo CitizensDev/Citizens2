@@ -20,12 +20,17 @@ import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityBoat;
+import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R3.EntityPiglin;
 import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.EnumHand;
+import net.minecraft.server.v1_16_R3.EnumInteractionResult;
 import net.minecraft.server.v1_16_R3.EnumPistonReaction;
 import net.minecraft.server.v1_16_R3.FluidType;
 import net.minecraft.server.v1_16_R3.IBlockData;
+import net.minecraft.server.v1_16_R3.ItemStack;
+import net.minecraft.server.v1_16_R3.Items;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.SoundEffect;
 import net.minecraft.server.v1_16_R3.Tag;
@@ -82,6 +87,16 @@ public class PiglinController extends MobEntityController {
                 setMot(old);
             }
             return res;
+        }
+
+        @Override
+        public EnumInteractionResult b(EntityHuman entityhuman, EnumHand enumhand) {
+            if (npc == null || !npc.isProtected())
+                return super.b(entityhuman, enumhand);
+            ItemStack itemstack = entityhuman.b(enumhand);
+            if (itemstack.getItem() == Items.GOLD_INGOT)
+                return EnumInteractionResult.FAIL;
+            return super.b(entityhuman, enumhand);
         }
 
         @Override
