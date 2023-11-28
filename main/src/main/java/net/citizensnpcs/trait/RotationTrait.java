@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -33,7 +35,7 @@ public class RotationTrait extends Trait {
     @Persist(reify = true)
     private final RotationParams globalParameters = new RotationParams();
     private final RotationSession globalSession = new RotationSession(globalParameters);
-    private final List<PacketRotationSession> packetSessions = Lists.newCopyOnWriteArrayList();
+    private List<PacketRotationSession> packetSessions = Lists.newCopyOnWriteArrayList();
     private final Map<UUID, PacketRotationSession> packetSessionsByUUID = Maps.newConcurrentMap();
 
     public RotationTrait() {
@@ -103,15 +105,15 @@ public class RotationTrait extends Trait {
         for (Iterator<PacketRotationSession> itr = Iterables.concat(packetSessions, packetSessionsByUUID.values())
                 .iterator(); itr.hasNext();) {
             PacketRotationSession session = itr.next();
-            if (ran.contains(session)) {
+            if (ran.contains(session))
                 continue;
-            }
+
             ran.add(session);
             session.run(npc.getEntity());
-            if (!session.isActive()) {
-                itr.remove();
-            }
         }
+        packetSessions = Lists.newCopyOnWriteArrayList(packetSessions.stream().filter(s -> s.isActive())
+                .collect(Collectors.toCollection(CopyOnWriteArrayList::new)));
+        packetSessionsByUUID.values().removeIf(s -> !s.isActive());
         if (npc.getNavigator().isNavigating())
             // npc.yHeadRot = rotateIfNecessary(npc.yHeadRot, npc.yBodyRot, 75);
             return;
