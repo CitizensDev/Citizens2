@@ -9,7 +9,7 @@ import net.citizensnpcs.util.NMS;
 @TraitName("sneak")
 public class SneakTrait extends Trait {
     @Persist
-    private boolean sneaking = false;
+    private boolean sneaking = true;
 
     public SneakTrait() {
         super("sneak");
