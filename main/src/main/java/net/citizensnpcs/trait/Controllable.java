@@ -24,6 +24,7 @@ import net.citizensnpcs.api.command.CommandConfigurable;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -294,10 +295,11 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
         handle.setVelocity(vel);
 
-        if (newSpeed > oldSpeed && speed < maxSpeed)
+        if (newSpeed > oldSpeed && speed < maxSpeed) {
             return (float) Math.min(maxSpeed, speed + (maxSpeed - speed) / 50.0D);
-        else
+        } else {
             return (float) Math.max(0, speed - speed / 50.0D);
+        }
     }
 
     public class GroundController implements MovementController {
@@ -320,23 +322,17 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         @Override
         public void run(Player rider) {
             boolean onGround = NMS.isOnGround(npc.getEntity());
-            float speedMod = npc.getNavigator().getDefaultParameters()
+            float impulse = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed(onGround ? GROUND_SPEED : AIR_SPEED);
             if (!Util.isHorse(npc.getEntity().getType())) {
-                // use minecraft horse physics
-                speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, speedMod,
+                speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, impulse,
                         Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble());
             }
-            boolean shouldJump = NMS.shouldJump(rider);
-            if (shouldJump) {
-                if (onGround && jumpTicks == 0) {
-                    npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(JUMP_VELOCITY));
-                    jumpTicks = 10;
-                }
-            } else {
-                jumpTicks = 0;
+            if (onGround && jumpTicks <= 0 && NMS.shouldJump(rider)) {
+                npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(JUMP_VELOCITY));
+                jumpTicks = 10;
             }
-            jumpTicks = Math.max(0, jumpTicks - 1);
+            jumpTicks--;
             setMountedYaw(npc.getEntity());
         }
 
@@ -454,18 +450,10 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             .newEnumMap(EntityType.class);
 
     static {
-        registerControllerType(EntityType.BAT, PlayerInputAirController.class);
-        registerControllerType(EntityType.BLAZE, PlayerInputAirController.class);
-        registerControllerType(EntityType.ENDER_DRAGON, PlayerInputAirController.class);
-        registerControllerType(EntityType.GHAST, PlayerInputAirController.class);
-        registerControllerType(EntityType.WITHER, PlayerInputAirController.class);
-        try {
-            registerControllerType(EntityType.valueOf("PARROT"), PlayerInputAirController.class);
-        } catch (IllegalArgumentException ex) {
-        }
-        try {
-            registerControllerType(EntityType.valueOf("PHANTOM"), PlayerInputAirController.class);
-        } catch (IllegalArgumentException ex) {
+        for (EntityType type : EntityType.values()) {
+            if (Util.isAlwaysFlyable(type)) {
+                registerControllerType(type, PlayerInputAirController.class);
+            }
         }
         registerControllerType(EntityType.UNKNOWN, LookAirController.class);
     }

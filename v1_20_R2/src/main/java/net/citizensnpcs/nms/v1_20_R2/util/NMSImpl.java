@@ -636,11 +636,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public double getHeight(org.bukkit.entity.Entity entity) {
-        return entity.getHeight();
-    }
-
-    @Override
     public float getHorizontalMovement(org.bukkit.entity.Entity entity) {
         if (!entity.getType().isAlive())
             return Float.NaN;

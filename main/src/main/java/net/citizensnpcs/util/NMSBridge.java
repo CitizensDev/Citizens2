@@ -82,7 +82,9 @@ public interface NMSBridge {
 
     public float getHeadYaw(Entity entity);
 
-    public double getHeight(Entity entity);
+    public default double getBoundingBoxHeight(Entity entity) {
+        return entity.getHeight();
+    }
 
     public float getHorizontalMovement(Entity entity);
 

@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 
 import net.citizensnpcs.Settings.Setting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -22,11 +23,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathFinder;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityNavigation extends PathNavigation {
@@ -61,7 +64,6 @@ public class EntityNavigation extends PathNavigation {
         this.nodeEvaluator = new EntityNodeEvaluator();
         this.nodeEvaluator.setCanPassDoors(true);
         this.pathFinder = new EntityPathfinder(this.nodeEvaluator, Setting.MAXIMUM_VISITED_NODES.asInt());
-        this.setRange(24);
     }
 
     @Override
@@ -142,26 +144,32 @@ public class EntityNavigation extends PathNavigation {
 
     @Override
     public Path createPath(BlockPos var0, int var1) {
-        BlockPos var2;
-        if (this.level.getBlockState(var0).isAir()) {
-            for (var2 = var0.below(); var2.getY() > this.level.getMinBuildHeight()
-                    && this.level.getBlockState(var2).isAir(); var2 = var2.below()) {
+        LevelChunk var2 = this.level.getChunkSource().getChunkNow(SectionPos.blockToSectionCoord(var0.getX()),
+                SectionPos.blockToSectionCoord(var0.getZ()));
+        if (var2 == null) {
+            return null;
+        } else {
+            BlockPos var3;
+            if (var2.getBlockState(var0).isAir()) {
+                for (var3 = var0.below(); var3.getY() > this.level.getMinBuildHeight()
+                        && var2.getBlockState(var3).isAir(); var3 = var3.below()) {
+                }
+                if (var3.getY() > this.level.getMinBuildHeight()) {
+                    return supercreatePath(var3.above(), var1);
+                }
+                while (var3.getY() < this.level.getMaxBuildHeight() && var2.getBlockState(var3).isAir()) {
+                    var3 = var3.above();
+                }
+                var0 = var3;
             }
-            if (var2.getY() > this.level.getMinBuildHeight())
-                return supercreatePath(var2.above(), var1);
-
-            while (var2.getY() < this.level.getMaxBuildHeight() && this.level.getBlockState(var2).isAir()) {
-                var2 = var2.above();
+            if (!var2.getBlockState(var0).isSolid()) {
+                return supercreatePath(var0, var1);
+            } else {
+                for (var3 = var0.above(); var3.getY() < this.level.getMaxBuildHeight()
+                        && var2.getBlockState(var3).isSolid(); var3 = var3.above()) {
+                }
+                return supercreatePath(var3, var1);
             }
-            var0 = var2;
-        }
-        if (!this.level.getBlockState(var0).isSolid())
-            return supercreatePath(var0, var1);
-        else {
-            for (var2 = var0.above(); var2.getY() < this.level.getMaxBuildHeight()
-                    && this.level.getBlockState(var2).isSolid(); var2 = var2.above()) {
-            }
-            return supercreatePath(var2, var1);
         }
     }
 
@@ -218,9 +226,11 @@ public class EntityNavigation extends PathNavigation {
     @Override
     protected void doStuckDetection(Vec3 var0) {
         if (this.tick - this.lastStuckCheck > 100) {
-            if (var0.distanceToSqr(this.lastStuckCheckPos) < 2.25D) {
+            float var1 = this.mob.getSpeed() >= 1.0F ? this.mob.getSpeed() : this.mob.getSpeed() * this.mob.getSpeed();
+            float var2 = var1 * 100.0F * 0.25F;
+            if (var0.distanceToSqr(this.lastStuckCheckPos) < var2 * var2) {
                 this.isStuck = true;
-                stop();
+                this.stop();
             } else {
                 this.isStuck = false;
             }
@@ -228,35 +238,43 @@ public class EntityNavigation extends PathNavigation {
             this.lastStuckCheckPos = var0;
         }
         if (this.path != null && !this.path.isDone()) {
-            BlockPos blockPos = this.path.getNextNodePos();
-            if (blockPos.equals(this.timeoutCachedNode)) {
-                this.timeoutTimer += System.currentTimeMillis() - this.lastTimeoutCheck;
+            Vec3i var1 = this.path.getNextNodePos();
+            long var2 = this.level.getGameTime();
+            if (var1.equals(this.timeoutCachedNode)) {
+                this.timeoutTimer += var2 - this.lastTimeoutCheck;
             } else {
-                this.timeoutCachedNode = blockPos;
-                double var2 = var0.distanceTo(Vec3.atBottomCenterOf(this.timeoutCachedNode));
-                this.timeoutLimit = this.mob.getSpeed() > 0.0F ? var2 / this.mob.getSpeed() * 1000.0D : 0.0D;
+                this.timeoutCachedNode = var1;
+                double var4 = var0.distanceTo(Vec3.atBottomCenterOf(this.timeoutCachedNode));
+                this.timeoutLimit = this.mob.getSpeed() > 0.0F ? var4 / this.mob.getSpeed() * 20.0 : 0.0;
             }
-            if (this.timeoutLimit > 0.0D && this.timeoutTimer > this.timeoutLimit * 3.0D) {
-                timeoutPath();
+            if (this.timeoutLimit > 0.0 && this.timeoutTimer > this.timeoutLimit * 3.0) {
+                this.timeoutPath();
             }
-            this.lastTimeoutCheck = System.currentTimeMillis();
+            this.lastTimeoutCheck = var2;
         }
     }
 
     @Override
     protected void followThePath() {
-        Vec3 var0 = getTempMobPos();
+        Vec3 var0 = this.getTempMobPos();
         this.maxDistanceToWaypoint = this.mob.getBbWidth() > 0.75F ? this.mob.getBbWidth() / 2.0F
                 : 0.75F - this.mob.getBbWidth() / 2.0F;
-        BlockPos blockPos = this.path.getNextNodePos();
-        double var2 = Math.abs(this.mob.getX() - (blockPos.getX() + 0.5D));
-        double var4 = Math.abs(this.mob.getY() - blockPos.getY());
-        double var6 = Math.abs(this.mob.getZ() - (blockPos.getZ() + 0.5D));
-        boolean var8 = var2 < this.maxDistanceToWaypoint && var6 < this.maxDistanceToWaypoint && var4 < 1.0D;
-        if (var8 || canCutCorner(this.path.getNextNode().type) && shouldTargetNextNodeInDirection(var0)) {
+        Vec3i var1 = this.path.getNextNodePos();
+        double var2 = Math.abs(this.mob.getX() - (var1.getX() + 0.5));
+        double var4 = Math.abs(this.mob.getY() - var1.getY());
+        double var6 = Math.abs(this.mob.getZ() - (var1.getZ() + 0.5));
+        boolean var8 = var2 < this.maxDistanceToWaypoint && var6 < this.maxDistanceToWaypoint && var4 < 1.0;
+        if (var8 || this.canCutCorner(this.path.getNextNode().type) && this.shouldTargetNextNodeInDirection(var0)) {
             this.path.advance();
         }
-        doStuckDetection(var0);
+        this.doStuckDetection(var0);
+    }
+
+    @Override
+    protected double getGroundY(Vec3 var0) {
+        BlockPos var1 = BlockPos.containing(var0);
+        return this.level.getBlockState(var1.below()).isAir() ? var0.y
+                : WalkNodeEvaluator.getFloorLevel(this.level, var1);
     }
 
     @Override
@@ -308,10 +326,13 @@ public class EntityNavigation extends PathNavigation {
     }
 
     protected boolean hasValidPathType(BlockPathTypes var0) {
-        if ((var0 == BlockPathTypes.WATER) || (var0 == BlockPathTypes.LAVA))
+        if (var0 == BlockPathTypes.WATER) {
             return false;
-        else
+        } else if (var0 == BlockPathTypes.LAVA) {
+            return false;
+        } else {
             return var0 != BlockPathTypes.OPEN;
+        }
     }
 
     @Override
@@ -415,10 +436,6 @@ public class EntityNavigation extends PathNavigation {
         this.maxVisitedNodesMultiplier = var0;
     }
 
-    public void setRange(float pathfindingRange) {
-        this.followRange.setBaseValue(pathfindingRange);
-    }
-
     @Override
     public void setSpeedModifier(double var0) {
         this.speedModifier = var0;
@@ -441,12 +458,26 @@ public class EntityNavigation extends PathNavigation {
         if (this.path.getNextNodeIndex() + 1 >= this.path.getNodeCount())
             return false;
         Vec3 var1 = Vec3.atBottomCenterOf(this.path.getNextNodePos());
-        if (!var0.closerThan(var1, 2.0D))
+        if (!var0.closerThan(var1, 2.0)) {
             return false;
-        Vec3 var2 = Vec3.atBottomCenterOf(this.path.getNodePos(this.path.getNextNodeIndex() + 1));
-        Vec3 var3 = var2.subtract(var1);
-        Vec3 var4 = var0.subtract(var1);
-        return var3.dot(var4) > 0.0D;
+        } else if (this.canMoveDirectly(var0, this.path.getNextEntityPos(this.mob))) {
+            return true;
+        } else {
+            Vec3 var2 = Vec3.atBottomCenterOf(this.path.getNodePos(this.path.getNextNodeIndex() + 1));
+            Vec3 var3 = var1.subtract(var0);
+            Vec3 var4 = var2.subtract(var0);
+            double var5 = var3.lengthSqr();
+            double var7 = var4.lengthSqr();
+            boolean var9 = var7 < var5;
+            boolean var10 = var5 < 0.5;
+            if (!var9 && !var10) {
+                return false;
+            } else {
+                Vec3 var11 = var3.normalize();
+                Vec3 var12 = var4.normalize();
+                return var12.dot(var11) < 0.0;
+            }
+        }
     }
 
     @Override
@@ -476,26 +507,27 @@ public class EntityNavigation extends PathNavigation {
 
     @Override
     public void tick() {
-        this.tick++;
+        ++this.tick;
         if (this.hasDelayedRecomputation) {
-            recomputePath();
+            this.recomputePath();
         }
-        if (isDone())
-            return;
-        if (canUpdatePath()) {
-            followThePath();
-        } else if (this.path != null && !this.path.isDone()) {
-            Vec3 vec31 = getTempMobPos();
-            Vec3 vec32 = this.path.getNextEntityPos(this.mob);
-            if (vec31.y > vec32.y && !this.mob.onGround() && Mth.floor(vec31.x) == Mth.floor(vec32.x)
-                    && Mth.floor(vec31.z) == Mth.floor(vec32.z)) {
-                this.path.advance();
+        if (!this.isDone()) {
+            Vec3 var0;
+            if (this.canUpdatePath()) {
+                this.followThePath();
+            } else if (this.path != null && !this.path.isDone()) {
+                var0 = this.getTempMobPos();
+                Vec3 var1 = this.path.getNextEntityPos(this.mob);
+                if (var0.y > var1.y && !this.mob.onGround() && Mth.floor(var0.x) == Mth.floor(var1.x)
+                        && Mth.floor(var0.z) == Mth.floor(var1.z)) {
+                    this.path.advance();
+                }
+            }
+            if (!this.isDone()) {
+                var0 = this.path.getNextEntityPos(this.mob);
+                this.mvmt.getMoveControl().setWantedPosition(var0.x, this.getGroundY(var0), var0.z, this.speedModifier);
             }
         }
-        if (isDone())
-            return;
-        Vec3 var0 = this.path.getNextEntityPos(this.mob);
-        mvmt.getMoveControl().setWantedPosition(var0.x, this.getGroundY(var0), var0.z, this.speedModifier);
     }
 
     private void timeoutPath() {

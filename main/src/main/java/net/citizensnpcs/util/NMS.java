@@ -54,9 +54,9 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
-import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.PacketNPC;
@@ -462,8 +462,8 @@ public class NMS {
         return BRIDGE.getHeadYaw(entity);
     }
 
-    public static double getHeight(Entity entity) {
-        return BRIDGE.getHeight(entity);
+    public static double getBoundingBoxHeight(Entity entity) {
+        return BRIDGE.getBoundingBoxHeight(entity);
     }
 
     public static float getHorizontalMovement(org.bukkit.entity.Entity bukkitEntity) {

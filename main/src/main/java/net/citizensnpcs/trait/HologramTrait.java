@@ -49,7 +49,7 @@ import net.citizensnpcs.util.Util;
 public class HologramTrait extends Trait {
     private Location currentLoc;
     private BiFunction<String, Player, String> customHologramSupplier;
-    private double lastEntityHeight = 0;
+    private double lastEntityBbHeight = 0;
     private boolean lastNameplateVisible;
     @Persist
     private double lineHeight = -1;
@@ -117,7 +117,7 @@ public class HologramTrait extends Trait {
         if (viewRange != -1) {
             hologramNPC.data().set(NPC.Metadata.TRACKING_RANGE, viewRange);
         }
-        hologramNPC.spawn(currentLoc.clone().add(0, getEntityHeight() + heightOffset, 0));
+        hologramNPC.spawn(currentLoc.clone().add(0, getEntityBbHeight() + heightOffset, 0));
 
         Matcher itemMatcher = ITEM_MATCHER.matcher(line);
         if (itemMatcher.matches()) {
@@ -144,12 +144,12 @@ public class HologramTrait extends Trait {
                 }
             });
         }
-        lastEntityHeight = getEntityHeight();
+        lastEntityBbHeight = getEntityBbHeight();
         return hologramNPC;
     }
 
-    private double getEntityHeight() {
-        return NMS.getHeight(npc.getEntity());
+    private double getEntityBbHeight() {
+        return NMS.getBoundingBoxHeight(npc.getEntity());
     }
 
     private double getHeight(int lineNumber) {
@@ -275,7 +275,13 @@ public class HologramTrait extends Trait {
         }
         if (!npc.isSpawned())
             return;
-
+        if (npc.requiresNameHologram() && lastNameplateVisible) {
+            if (nameLine != null) {
+                nameLine.removeNPC();
+            }
+            nameLine = new HologramLine(npc.getRawName(), false);
+            nameLine.spawnNPC(0);
+        }
         for (int i = 0; i < lines.size(); i++) {
             lines.get(i).spawnNPC(getHeight(i));
         }
@@ -318,7 +324,8 @@ public class HologramTrait extends Trait {
         Location npcLoc = npc.getStoredLocation();
         boolean updatePosition = Setting.HOLOGRAM_ALWAYS_UPDATE_POSITION.asBoolean()
                 || currentLoc.getWorld() != npcLoc.getWorld() || currentLoc.distance(npcLoc) >= 0.001
-                || lastNameplateVisible != nameplateVisible || Math.abs(lastEntityHeight - getEntityHeight()) >= 0.05;
+                || lastNameplateVisible != nameplateVisible
+                || Math.abs(lastEntityBbHeight - getEntityBbHeight()) >= 0.05;
         boolean updateName = false;
 
         if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
@@ -329,11 +336,12 @@ public class HologramTrait extends Trait {
 
         if (updatePosition) {
             currentLoc = npcLoc.clone();
-            lastEntityHeight = getEntityHeight();
+            lastEntityBbHeight = getEntityBbHeight();
         }
         if (nameLine != null && nameLine.hologram.isSpawned()) {
             if (updatePosition && !useDisplayEntities) {
-                nameLine.hologram.teleport(npcLoc.clone().add(0, getEntityHeight(), 0), TeleportCause.PLUGIN);
+                nameLine.hologram.teleport(npcLoc.clone().add(0, getEntityBbHeight(), 0),
+                        TeleportCause.PLUGIN);
             }
             if (updateName) {
                 nameLine.setText(npc.getRawName());
@@ -355,7 +363,7 @@ public class HologramTrait extends Trait {
                 continue;
             }
             if (updatePosition && !useDisplayEntities) {
-                Location tp = npcLoc.clone().add(0, lastEntityHeight + getHeight(i), 0);
+                Location tp = npcLoc.clone().add(0, lastEntityBbHeight + getHeight(i), 0);
                 hologramNPC.teleport(tp, TeleportCause.PLUGIN);
             }
             if (useDisplayEntities && hologramNPC.getEntity().getVehicle() == null) {

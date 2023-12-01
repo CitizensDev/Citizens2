@@ -110,18 +110,17 @@ public abstract class AbstractBlockBreaker extends BlockBreaker {
         }
         if (entity.getWorld().getBlockAt(x, y, z).isEmpty())
             return BehaviorStatus.SUCCESS;
-        else {
-            int tickDifference = currentTick - startDigTick;
-            float damage = getDamage(tickDifference);
-            if (damage >= 1F) {
-                configuration.blockBreaker().accept(entity.getWorld().getBlockAt(x, y, z), getItemStack());
-                return BehaviorStatus.SUCCESS;
-            }
-            int modifiedDamage = (int) (damage * 10.0F);
-            if (modifiedDamage != currentDamage) {
-                setBlockDamage(modifiedDamage);
-                currentDamage = modifiedDamage;
-            }
+
+        int tickDifference = currentTick - startDigTick;
+        float damage = getDamage(tickDifference);
+        if (damage >= 1F) {
+            configuration.blockBreaker().accept(entity.getWorld().getBlockAt(x, y, z), getItemStack());
+            return BehaviorStatus.SUCCESS;
+        }
+        int modifiedDamage = (int) (damage * 10.0F);
+        if (modifiedDamage != currentDamage) {
+            setBlockDamage(modifiedDamage);
+            currentDamage = modifiedDamage;
         }
         return BehaviorStatus.RUNNING;
     }

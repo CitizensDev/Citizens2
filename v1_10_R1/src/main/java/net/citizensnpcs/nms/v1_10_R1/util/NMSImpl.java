@@ -167,9 +167,9 @@ import net.citizensnpcs.nms.v1_10_R1.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.nms.v1_10_R1.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.nms.v1_10_R1.entity.nonliving.WitherSkullController;
 import net.citizensnpcs.npc.EntityControllers;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
-import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
@@ -480,7 +480,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public double getHeight(org.bukkit.entity.Entity entity) {
+    public double getBoundingBoxHeight(org.bukkit.entity.Entity entity) {
         return getHandle(entity).length;
     }
 
