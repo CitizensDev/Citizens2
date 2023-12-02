@@ -152,7 +152,7 @@ public class Template {
 
     public static Iterable<Template> getTemplates() {
         return Arrays.asList(getDirectory().list()).stream().map(f -> new File(getDirectory(), f))
-                .filter(f -> !f.isDirectory() && Files.getFileExtension(f.getName()).equals(".yml"))
+                .filter(f -> !f.isDirectory() && Files.getFileExtension(f.getName()).equals("yml"))
                 .map(f -> byName(Files.getNameWithoutExtension(f.getName()))).collect(Collectors.toList());
     }
 
