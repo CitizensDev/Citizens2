@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -216,6 +217,23 @@ public class Util {
 
     public static Scoreboard getDummyScoreboard() {
         return DUMMY_SCOREBOARD;
+    }
+
+    public static Entity getEntity(UUID uuid) {
+        if (SUPPORTS_BUKKIT_GETENTITY) {
+            try {
+                return Bukkit.getEntity(uuid);
+            } catch (Throwable t) {
+                SUPPORTS_BUKKIT_GETENTITY = false;
+            }
+        }
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
+                if (entity.getUniqueId().equals(uuid))
+                    return entity;
+            }
+        }
+        return null;
     }
 
     public static Location getEyeLocation(Entity entity) {
@@ -579,6 +597,7 @@ public class Util {
     }
 
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
+    private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {

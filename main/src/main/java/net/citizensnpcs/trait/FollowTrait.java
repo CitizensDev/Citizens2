@@ -17,6 +17,7 @@ import net.citizensnpcs.api.ai.flocking.SeparationBehavior;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.util.Util;
 
 /**
  * Persists a {@link Player} to follow while spawned. Optionally allows protecting of the player as well.
@@ -98,7 +99,7 @@ public class FollowTrait extends Trait {
                 return;
             entity = Bukkit.getPlayer(followingUUID);
             if (entity == null) {
-                entity = Bukkit.getEntity(followingUUID);
+                entity = Util.getEntity(followingUUID);
             }
             if (entity == null)
                 return;
