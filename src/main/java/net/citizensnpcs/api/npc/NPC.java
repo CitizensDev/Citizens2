@@ -558,6 +558,7 @@ public interface NPC extends Agent, Cloneable {
         /**
          * Whether to sneak.
          */
+        @Deprecated
         SNEAKING("citizens-sneaking", Boolean.class),
         /**
          * The initial no damage ticks on spawn, defaults to 20. Integer
