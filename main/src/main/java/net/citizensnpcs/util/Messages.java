@@ -380,6 +380,8 @@ public class Messages {
     public static final String SNIFFER_STATE_SET = "citizens.commands.npc.sniffer.state-set";
     public static final String SNOWMAN_DERP_SET = "citizens.commands.npc.snowman.derp-set";
     public static final String SNOWMAN_DERP_STOPPED = "citizens.commands.npc.snowman.derp-stopped";
+    public static final String SNOWMAN_FORM_SNOW_SET = "citizens.commands.npc.snowman.form-snow-set";
+    public static final String SNOWMAN_FORM_SNOW_STOPPED = "citizens.commands.npc.snowman.form-snow-stopped";
     public static final String SOUND_INFO = "citizens.commands.npc.sound.info";
     public static final String SOUND_SET = "citizens.commands.npc.sound.set";
     public static final String SPEED_MODIFIER_SET = "citizens.commands.npc.speed.set";
