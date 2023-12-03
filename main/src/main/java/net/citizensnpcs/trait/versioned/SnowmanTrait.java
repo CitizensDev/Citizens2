@@ -20,6 +20,8 @@ import net.citizensnpcs.util.Messages;
 public class SnowmanTrait extends Trait {
     @Persist("derp")
     private boolean derp;
+    @Persist
+    private boolean formSnow;
 
     public SnowmanTrait() {
         super("snowmantrait");
@@ -40,18 +42,26 @@ public class SnowmanTrait extends Trait {
         this.derp = derp;
     }
 
+    public void setFormSnow(boolean snow) {
+        formSnow = snow;
+    }
+
+    public boolean shouldFormSnow() {
+        return formSnow;
+    }
+
     public boolean toggleDerp() {
         return derp = !derp;
     }
 
     @Command(
             aliases = { "npc" },
-            usage = "snowman (-d[erp])",
+            usage = "snowman (-d[erp]) (-f[orm snow])",
             desc = "Sets snowman modifiers.",
             modifiers = { "snowman" },
             min = 1,
             max = 1,
-            flags = "d",
+            flags = "df",
             permission = "citizens.npc.snowman")
     @Requirements(selected = true, ownership = true, types = { EntityType.SNOWMAN })
     public static void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
@@ -60,6 +70,13 @@ public class SnowmanTrait extends Trait {
         if (args.hasFlag('d')) {
             boolean isDerp = trait.toggleDerp();
             Messaging.sendTr(sender, isDerp ? Messages.SNOWMAN_DERP_SET : Messages.SNOWMAN_DERP_STOPPED, npc.getName());
+            hasArg = true;
+        }
+        if (args.hasFlag('f')) {
+            trait.setFormSnow(!trait.shouldFormSnow());
+            Messaging.sendTr(sender,
+                    trait.shouldFormSnow() ? Messages.SNOWMAN_FORM_SNOW_SET : Messages.SNOWMAN_FORM_SNOW_STOPPED,
+                    npc.getName());
             hasArg = true;
         }
         if (!hasArg)

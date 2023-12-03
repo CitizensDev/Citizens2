@@ -112,6 +112,7 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.ShopTrait;
+import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -250,7 +251,10 @@ public class EventListen implements Listener {
         if (npc == null)
             return;
         if (npc.getEntity() instanceof Snowman) {
-            event.setCancelled(true);
+            boolean formSnow = npc.hasTrait(SnowmanTrait.class)
+                    ? npc.getTraitNullable(SnowmanTrait.class).shouldFormSnow()
+                    : npc.useMinecraftAI();
+            event.setCancelled(!formSnow);
         }
     }
 

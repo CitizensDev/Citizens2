@@ -296,6 +296,8 @@
   "citizens.commands.npc.sniffer.state-set" : "[[{0}]]''s state set to [[{1}]].",
   "citizens.commands.npc.snowman.derp-set" : "[[{0}]] is now in derp mode.",
   "citizens.commands.npc.snowman.derp-stopped" : "[[{0}]] is no longer in derp mode.",
+  "citizens.commands.npc.snowman.form-snow-set": "[[{0}]] will now form snow when walking.",
+  "citizens.commands.npc.snowman.form-snow-stopped": "[[{0}]] will no longer form snow when walking.",
   "citizens.commands.npc.sound.info" : "[[{0}]]''s sounds are: ambient - [[{1}]] hurt - [[{2}]] and death - [[{3}]].<br><br>Valid sounds are {4}.",
   "citizens.commands.npc.sound.invalid-sound" : "Invalid sound.",
   "citizens.commands.npc.sound.set" : "[[{0}]]''s sounds are now: ambient - [[{1}]] hurt - [[{2}]] and death - [[{3}]].",
