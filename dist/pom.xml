@@ -93,7 +93,7 @@
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>citizens-v1_20_R2</artifactId>
+                    <artifactId>citizens-v1_20_R3</artifactId>
                     <version>${project.version}</version>
                     <type>jar</type>
                     <scope>compile</scope>
@@ -189,7 +189,7 @@
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>citizens-v1_20_R2</artifactId>
+                    <artifactId>citizens-v1_20_R3</artifactId>
                     <version>${project.version}</version>
                     <type>jar</type>
                     <scope>compile</scope>
@@ -208,7 +208,7 @@
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
-                    <artifactId>citizens-v1_20_R2</artifactId>
+                    <artifactId>citizens-v1_20_R3</artifactId>
                     <version>${project.version}</version>
                     <type>jar</type>
                     <scope>compile</scope>
