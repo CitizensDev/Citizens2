@@ -54,9 +54,9 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.PacketNPC;
@@ -196,6 +196,10 @@ public class NMS {
 
     public static BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
         return BRIDGE.getBoundingBox(handle);
+    }
+
+    public static double getBoundingBoxHeight(Entity entity) {
+        return BRIDGE.getBoundingBoxHeight(entity);
     }
 
     public static BoundingBox getCollisionBox(Block block) {
@@ -460,10 +464,6 @@ public class NMS {
 
     public static float getHeadYaw(org.bukkit.entity.Entity entity) {
         return BRIDGE.getHeadYaw(entity);
-    }
-
-    public static double getBoundingBoxHeight(Entity entity) {
-        return BRIDGE.getBoundingBoxHeight(entity);
     }
 
     public static float getHorizontalMovement(org.bukkit.entity.Entity bukkitEntity) {
@@ -788,6 +788,10 @@ public class NMS {
 
     public static void setEndermanAngry(Enderman enderman, boolean angry) {
         BRIDGE.setEndermanAngry(enderman, angry);
+    }
+
+    public static void setHeadAndBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
+        BRIDGE.setHeadAndBodyYaw(entity, yaw);
     }
 
     public static void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {

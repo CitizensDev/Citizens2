@@ -1498,7 +1498,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
+    public void setHeadAndBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         if (!(entity instanceof org.bukkit.entity.LivingEntity))
             return;
         LivingEntity handle = (LivingEntity) getHandle(entity);
@@ -1507,7 +1507,14 @@ public class NMSImpl implements NMSBridge {
         if (!(handle instanceof net.minecraft.world.entity.player.Player)) {
             handle.setYBodyRot(yaw);
         }
-        handle.setYHeadRot(yaw);
+        setHeadYaw(entity, yaw);
+    }
+
+    @Override
+    public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
+        if (!(entity instanceof org.bukkit.entity.LivingEntity))
+            return;
+        ((LivingEntity) getHandle(entity)).setYHeadRot(Util.clamp(yaw));
     }
 
     @Override
@@ -2552,11 +2559,11 @@ public class NMSImpl implements NMSBridge {
             Map.class);
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
             AttributeSupplier.class);
+    private static final MethodHandle AVAILABLE_BEHAVIORS_BY_PRIORITY = NMS.getGetter(Brain.class, "f");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
-    private static final MethodHandle AVAILABLE_BEHAVIORS_BY_PRIORITY = NMS.getGetter(Brain.class, "f");
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);

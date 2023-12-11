@@ -52,9 +52,7 @@ public class DolphinController extends MobEntityController {
 
     public static class EntityDolphinNPC extends Dolphin implements NPCHolder {
         private boolean inProtectedTick;
-
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
 
         public EntityDolphinNPC(EntityType<? extends Dolphin> types, Level level) {

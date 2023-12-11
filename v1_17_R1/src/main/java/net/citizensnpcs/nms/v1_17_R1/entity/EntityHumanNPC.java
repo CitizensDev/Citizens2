@@ -275,7 +275,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         xxa *= 0.98F;
         zza *= 0.98F;
         moveWithFallDamage(new Vec3(this.xxa, this.yya, this.zza));
-        NMS.setHeadYaw(getBukkitEntity(), getYRot());
+        NMS.setHeadAndBodyYaw(getBukkitEntity(), getYRot());
         if (jumpTicks > 0) {
             jumpTicks--;
         }

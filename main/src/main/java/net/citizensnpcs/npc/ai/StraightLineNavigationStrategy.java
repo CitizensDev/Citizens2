@@ -108,7 +108,7 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             }
             if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
                 NMS.setVerticalMovement(npc.getEntity(), 0.5);
-                NMS.setHeadYaw(npc.getEntity(), currLoc.getYaw() + normalisedTargetYaw);
+                NMS.setHeadAndBodyYaw(npc.getEntity(), currLoc.getYaw() + normalisedTargetYaw);
             }
         } else if (npc.getEntity() instanceof LivingEntity) {
             NMS.setDestination(npc.getEntity(), destVector.getX(), destVector.getY(), destVector.getZ(),

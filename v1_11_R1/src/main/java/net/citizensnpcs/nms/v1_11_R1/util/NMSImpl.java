@@ -182,9 +182,9 @@ import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ThrownPotionController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.TippedArrowController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.WitherSkullController;
 import net.citizensnpcs.npc.EntityControllers;
-import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
@@ -467,6 +467,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public double getBoundingBoxHeight(org.bukkit.entity.Entity entity) {
+        return getHandle(entity).length;
+    }
+
+    @Override
     public BoundingBox getCollisionBox(org.bukkit.block.Block block) {
         WorldServer world = ((CraftWorld) block.getWorld()).getHandle();
         BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ());
@@ -497,11 +502,6 @@ public class NMSImpl implements NMSBridge {
         if (!(entity instanceof LivingEntity))
             return entity.getLocation().getYaw();
         return getHandle((LivingEntity) entity).aP;
-    }
-
-    @Override
-    public double getBoundingBoxHeight(org.bukkit.entity.Entity entity) {
-        return getHandle(entity).length;
     }
 
     @Override
@@ -1254,16 +1254,23 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
+    public void setHeadAndBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         if (!(entity instanceof LivingEntity))
             return;
         EntityLiving handle = (EntityLiving) getHandle(entity);
         yaw = Util.clamp(yaw);
         handle.aO = yaw;
         if (!(handle instanceof EntityHuman)) {
-            handle.aN = yaw;
+            handle.aN = yaw; // TODO: why this
         }
-        handle.aP = yaw;
+        setHeadYaw(entity, yaw);
+    }
+
+    @Override
+    public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
+        if (!(entity instanceof org.bukkit.entity.LivingEntity))
+            return;
+        ((EntityLiving) getHandle(entity)).aP = Util.clamp(yaw);
     }
 
     @Override

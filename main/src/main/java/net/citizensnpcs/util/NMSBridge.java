@@ -74,6 +74,10 @@ public interface NMSBridge {
 
     public BoundingBox getBoundingBox(Entity handle);
 
+    public default double getBoundingBoxHeight(Entity entity) {
+        return entity.getHeight();
+    }
+
     public BoundingBox getCollisionBox(Block block);
 
     public Location getDestination(Entity entity);
@@ -81,10 +85,6 @@ public interface NMSBridge {
     public GameProfileRepository getGameProfileRepository();
 
     public float getHeadYaw(Entity entity);
-
-    public default double getBoundingBoxHeight(Entity entity) {
-        return entity.getHeight();
-    }
 
     public float getHorizontalMovement(Entity entity);
 
@@ -200,6 +200,8 @@ public interface NMSBridge {
     public void setDimensions(Entity entity, EntityDim desired);
 
     public void setEndermanAngry(Enderman enderman, boolean angry);
+
+    public void setHeadAndBodyYaw(Entity entity, float yaw);
 
     public void setHeadYaw(Entity entity, float yaw);
 

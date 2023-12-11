@@ -1035,7 +1035,7 @@ public class NMSImpl implements NMSBridge {
             return;
         yaw = Util.clamp(yaw);
         handle.setYRot(yaw);
-        setHeadYaw(entity, yaw);
+        setHeadAndBodyYaw(entity, yaw);
         handle.setXRot(pitch);
     }
 
@@ -1063,7 +1063,7 @@ public class NMSImpl implements NMSBridge {
                 yaw = yaw - 90;
             }
             if (headOnly) {
-                setHeadYaw(entity, (float) yaw);
+                setHeadAndBodyYaw(entity, (float) yaw);
             } else {
                 look(entity, (float) yaw, (float) pitch);
             }
@@ -1378,7 +1378,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
+    public void setHeadAndBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         if (!(entity instanceof org.bukkit.entity.LivingEntity))
             return;
         LivingEntity handle = (LivingEntity) getHandle(entity);
@@ -1387,7 +1387,14 @@ public class NMSImpl implements NMSBridge {
         if (!(handle instanceof net.minecraft.world.entity.player.Player)) {
             handle.setYBodyRot(yaw);
         }
-        handle.setYHeadRot(yaw);
+        setHeadYaw(entity, yaw);
+    }
+
+    @Override
+    public void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
+        if (!(entity instanceof org.bukkit.entity.LivingEntity))
+            return;
+        ((LivingEntity) getHandle(entity)).setYHeadRot(Util.clamp(yaw));
     }
 
     @Override

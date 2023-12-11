@@ -298,7 +298,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         bd *= 0.98F;
         be *= 0.9F;
         moveWithFallDamage(new Vec3D(this.bb, this.bc, this.bd)); // movement method
-        NMS.setHeadYaw(getBukkitEntity(), yaw);
+        NMS.setHeadAndBodyYaw(getBukkitEntity(), yaw);
         if (jumpTicks > 0) {
             jumpTicks--;
         }
