@@ -89,10 +89,10 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
 
             @Override
             public void begin() {
+                Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_BEGIN);
                 if (showPath) {
                     createWaypointMarkers();
                 }
-                Messaging.sendTr(player, Messages.GUIDED_WAYPOINT_EDITOR_BEGIN);
             }
 
             private void createDestinationMarker(Waypoint element) {
@@ -365,7 +365,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 return false;
 
             target = destinations.get(Util.getFastRandom().nextInt(destinations.size()));
-            if (target.getLocation().getWorld().equals(npc.getEntity().getWorld())) {
+            if (!target.getLocation().getWorld().equals(npc.getEntity().getWorld())) {
                 target = null;
                 return false;
             }
