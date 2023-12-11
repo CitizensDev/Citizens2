@@ -72,13 +72,13 @@ public class Messaging {
         }
         if (CitizensAPI.getPlugin() != null) {
             try {
-                AUDIENCES = BukkitAudiences.create(CitizensAPI.getPlugin());
-            } catch (Exception e) {
-                if (Messaging.isDebugging()) {
-                    e.printStackTrace();
+                if (MinecraftComponentSerializer.isSupported()) {
+                    AUDIENCES = BukkitAudiences.create(CitizensAPI.getPlugin());
                 } else {
                     Messaging.log("Unable to load Adventure, chat components will not work");
                 }
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
         }
         if (debugFile != null) {
@@ -155,6 +155,7 @@ public class Messaging {
     public static Object minecraftComponentFromRawMessage(String raw) {
         if (AUDIENCES != null && MINIMESSAGE != null)
             return MinecraftComponentSerializer.get().serialize(MINIMESSAGE.deserialize(convertLegacyCodes(raw)));
+
         return null;
     }
 

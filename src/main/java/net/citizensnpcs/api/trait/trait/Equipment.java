@@ -51,11 +51,11 @@ public class Equipment extends Trait {
      * @return ItemStack from the given armor slot
      */
     public ItemStack get(int slot) {
-        if (npc.getEntity() instanceof Enderman && slot != 0)
+        if (npc.getEntity() instanceof Enderman && slot != 0) {
             throw new IllegalArgumentException("Slot must be 0 for enderman");
-        else if (slot < 0 || slot > 5)
+        } else if (slot < 0 || slot > 5) {
             throw new IllegalArgumentException("Slot must be between 0 and 5");
-
+        }
         return equipment[slot];
     }
 
