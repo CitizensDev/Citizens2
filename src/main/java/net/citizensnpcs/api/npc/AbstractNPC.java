@@ -311,7 +311,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public boolean isPushableByFluids() {
-        return data().get(NPC.Metadata.FLUID_PUSHABLE, isProtected());
+        return data().get(NPC.Metadata.FLUID_PUSHABLE, !isProtected());
     }
 
     @Override
