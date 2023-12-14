@@ -14,6 +14,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
@@ -249,8 +250,15 @@ public class ProtocolLibListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    public void onEntityDeath(EntityDeathEvent event) {
+        rotationTraits.remove(event.getEntity().getEntityId());
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onNPCDespawn(NPCDespawnEvent event) {
-        rotationTraits.remove(event.getNPC().getEntity().getEntityId());
+        if (event.getNPC().getEntity() != null) {
+            rotationTraits.remove(event.getNPC().getEntity().getEntityId());
+        }
         mirrorTraits.remove(event.getNPC().getEntity().getUniqueId());
     }
 
