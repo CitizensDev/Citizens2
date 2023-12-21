@@ -2,10 +2,7 @@ package net.citizensnpcs.trait;
 
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Sheep;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerShearEntityEvent;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -30,13 +27,6 @@ public class SheepTrait extends Trait {
 
     public boolean isSheared() {
         return sheared;
-    }
-
-    @EventHandler
-    private void onPlayerShearEntityEvent(PlayerShearEntityEvent event) {
-        if (npc != null && npc.isProtected() && npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity()))) {
-            event.setCancelled(true);
-        }
     }
 
     @Override
