@@ -275,6 +275,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return getClassLoader();
     }
 
+    public ProtocolLibListener getProtocolLibListener() {
+        return protocolListener;
+    }
+
     public StoredShops getShops() {
         return shops;
     }
@@ -296,21 +300,21 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         lib.loadLibrary(Library.builder().groupId("net{}sf{}trove4j").artifactId("trove4j").version("3.0.3")
                 .relocate("gnu{}trove", "clib{}trove").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-minimessage")
-                .version("4.14.0").relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-api").version("4.14.0")
+                .version("4.15.0").relocate("net{}kyori", "clib{}net{}kyori").build());
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-api").version("4.15.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-key").version("4.14.0")
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-key").version("4.15.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("examination-api").version("1.3.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("examination-string").version("1.3.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-bukkit").version("4.3.1")
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-bukkit").version("4.3.2")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-api").version("4.3.1")
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-api").version("4.3.2")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-bungeecord")
-                .version("4.3.1").relocate("net{}kyori", "clib{}net{}kyori").build());
+                .version("4.3.2").relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-legacy")
                 .version("4.13.1").relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-nbt").version("4.13.1")
@@ -319,10 +323,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 .version("4.13.1").relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-gson-legacy-impl")
                 .version("4.13.1").relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-facet").version("4.3.1")
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-facet").version("4.3.2")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-viaversion")
-                .version("4.3.1").relocate("net{}kyori", "clib{}net{}kyori").build());
+                .version("4.3.2").relocate("net{}kyori", "clib{}net{}kyori").build());
         try {
             Class.forName("org.joml.Vector3f");
         } catch (Throwable t) {

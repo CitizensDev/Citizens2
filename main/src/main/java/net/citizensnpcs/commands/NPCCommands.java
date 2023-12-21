@@ -55,6 +55,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.Citizens;
+import net.citizensnpcs.ProtocolLibListener;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.StoredShops;
 import net.citizensnpcs.api.CitizensAPI;
@@ -162,6 +163,7 @@ import net.citizensnpcs.util.Util;
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final CommandHistory history;
+    private final ProtocolLibListener protocolListener;
     private final NPCSelector selector;
     private final StoredShops shops;
     private final NPCRegistry temporaryRegistry;
@@ -171,6 +173,7 @@ public class NPCCommands {
         shops = plugin.getShops();
         temporaryRegistry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
         history = new CommandHistory(selector);
+        protocolListener = plugin.getProtocolLibListener();
     }
 
     @Command(
@@ -1703,7 +1706,11 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.mirror")
     @Requirements(selected = true, ownership = true)
-    public void mirror(CommandContext args, CommandSender sender, NPC npc, @Flag("name") Boolean name) {
+    public void mirror(CommandContext args, CommandSender sender, NPC npc, @Flag("name") Boolean name)
+            throws CommandException {
+        if (protocolListener == null)
+            throw new CommandException("ProtocolLib must be enabled to use this feature");
+
         MirrorTrait trait = npc.getOrAddTrait(MirrorTrait.class);
         if (name != null) {
             trait.setEnabled(true);
