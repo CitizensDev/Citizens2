@@ -1164,6 +1164,13 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         getHandle(entity).yaw = yaw;
+        if (entity instanceof EntityLiving) {
+            EntityLiving handle = (EntityLiving) getHandle(entity);
+            handle.aP = yaw;
+            if (!(handle instanceof EntityHuman)) {
+                handle.aO = yaw; // TODO: why this
+            }
+        }
     }
 
     @Override
@@ -1202,14 +1209,8 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setHeadAndBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
-        if (!(entity instanceof LivingEntity))
-            return;
-        EntityLiving handle = (EntityLiving) getHandle(entity);
         yaw = Util.clamp(yaw);
-        handle.aP = yaw;
-        if (!(handle instanceof EntityHuman)) {
-            handle.aO = yaw; // TODO: why this
-        }
+        setBodyYaw(entity, yaw);
         setHeadYaw(entity, yaw);
     }
 
