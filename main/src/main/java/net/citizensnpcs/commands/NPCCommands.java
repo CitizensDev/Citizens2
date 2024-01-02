@@ -1708,7 +1708,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true)
     public void mirror(CommandContext args, CommandSender sender, NPC npc, @Flag("name") Boolean name)
             throws CommandException {
-        if (protocolListener == null)
+        if (((Citizens) CitizensAPI.getPlugin()).getProtocolLibListener() == null)
             throw new CommandException("ProtocolLib must be enabled to use this feature");
 
         MirrorTrait trait = npc.getOrAddTrait(MirrorTrait.class);
