@@ -319,7 +319,7 @@ public abstract class AbstractNPC implements NPC {
         setNameInternal(root.getString("name"));
         if (root.keyExists("itemprovider")) {
             ItemStack item = ItemStorage.loadItemStack(root.getRelative("itemprovider"));
-            itemProvider = () -> item;
+            setItemProvider(() -> item);
         }
         metadata.loadFrom(root.getRelative("metadata"));
 
@@ -333,9 +333,9 @@ public abstract class AbstractNPC implements NPC {
             keys.remove(locationKey);
         }
         for (DataKey key : keys) {
-            if (key.name().equals("speech")) {
+            if (key.name().equals("speech"))
                 continue;
-            }
+
             loadTraitFromKey(key);
         }
     }
