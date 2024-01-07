@@ -54,6 +54,7 @@
   "citizens.commands.npc.collidable.unset" : "[[{0}]] will no longer collide with entities.",
   "citizens.commands.npc.command.command-added" : "Command [[{0}]] added with id [[{1}]].",
   "citizens.commands.npc.command.command-removed" : "Command [[{0}]] removed.",
+  "citizens.commands.npc.command.cleared" : "[[{0}]]''s commands cleared.",
   "citizens.commands.npc.command.cost-missing" : "Missing cost to set.",
   "citizens.commands.npc.command.cost-set" : "Set cost per click to [[{0}]].",
   "citizens.commands.npc.command.describe-format" : "<br>    - {0} [{1}s] [cost:{2}] [exp:{3}] [<click:run_command:/npc cmd remove {4}><hover:show_text:Remove this command><red><u>-</hover></click>]",

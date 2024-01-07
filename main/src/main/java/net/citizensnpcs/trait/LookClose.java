@@ -3,7 +3,6 @@ package net.citizensnpcs.trait;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -110,18 +109,18 @@ public class LookClose extends Trait implements Toggleable {
                 session.getSession().rotateToFace(player);
                 seen.add(player.getUniqueId());
             }
-            for (Iterator<Entry<UUID, PacketRotationSession>> iterator = sessions.entrySet().iterator(); iterator
-                    .hasNext();) {
-                Entry<UUID, PacketRotationSession> entry = iterator.next();
-                if (!seen.contains(entry.getKey())) {
-                    entry.getValue().end();
+            for (Iterator<UUID> iterator = sessions.keySet().iterator(); iterator.hasNext();) {
+                UUID uuid = iterator.next();
+                if (!seen.contains(uuid)) {
+                    rotationTrait.resetPlayerToPhysicalSession(uuid);
                     iterator.remove();
                 }
             }
             return;
         } else if (sessions.size() > 0) {
-            for (PacketRotationSession session : sessions.values()) {
-                session.end();
+            RotationTrait rotationTrait = npc.getOrAddTrait(RotationTrait.class);
+            for (UUID uuid : sessions.keySet()) {
+                rotationTrait.resetPlayerToPhysicalSession(uuid);
             }
             sessions.clear();
         }

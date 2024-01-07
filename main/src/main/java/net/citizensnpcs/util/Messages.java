@@ -78,6 +78,7 @@ public class Messages {
     public static final String COMMAND_TRIGGER_ADDED = "citizens.editors.waypoints.triggers.command.added";
     public static final String COMMAND_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.command.prompt";
     public static final String COMMAND_UNKNOWN_COMMAND_ID = "citizens.commands.npc.command.unknown-id";
+    public static final String COMMANDS_CLEARED = "citizens.commands.npc.command.cleared";
     public static final String COMMANDS_PERSIST_SEQUENCE_SET = "citizens.commands.npc.command.persist-sequence-set";
     public static final String COMMANDS_PERSIST_SEQUENCE_UNSET = "citizens.commands.npc.command.persist-sequence-unset";
     public static final String COMMANDS_RANDOM_SET = "citizens.commands.npc.commands.random-set";

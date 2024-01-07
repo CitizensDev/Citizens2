@@ -11,11 +11,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -91,6 +93,16 @@ public class RotationTrait extends Trait {
 
     public RotationSession getPhysicalSession() {
         return globalSession;
+    }
+
+    public void resetPlayerToPhysicalSession(UUID uuid) {
+        PacketRotationSession prs = packetSessionsByUUID.remove(uuid);
+        if (prs == null || !npc.isSpawned())
+            return;
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null)
+            return;
+        NMS.sendPositionUpdate(npc.getEntity(), ImmutableList.of(player), false);
     }
 
     @Override
@@ -205,7 +217,7 @@ public class RotationTrait extends Trait {
         @Override
         public void apply() {
             if (Math.abs(lastBodyYaw - bodyYaw) + Math.abs(lastHeadYaw - headYaw) + Math.abs(pitch - lastPitch) > 1) {
-                NMS.sendPositionUpdate(entity, false, bodyYaw, pitch, headYaw);
+                NMS.sendPositionUpdateNearby(entity, false, bodyYaw, pitch, headYaw);
             }
         }
 

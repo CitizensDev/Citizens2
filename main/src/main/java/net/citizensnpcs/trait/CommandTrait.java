@@ -142,6 +142,10 @@ public class CommandTrait extends Trait {
         return action == null ? Transaction.success() : action.take(player, 1);
     }
 
+    public void clear() {
+        commands.clear();
+    }
+
     public void clearHistory(CommandTraitError which, String raw) {
         if (which == CommandTraitError.ON_GLOBAL_COOLDOWN && raw != null) {
             globalCooldowns.remove(BaseEncoding.base64().encode(raw.getBytes()));

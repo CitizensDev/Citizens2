@@ -451,7 +451,7 @@ public class EventListen implements Listener {
             if (!tracker.isValid() || !event.getPlayer().isValid())
                 return;
 
-            NMS.sendPositionUpdate(tracker, false, null, null, NMS.getHeadYaw(tracker));
+            NMS.sendPositionUpdateNearby(tracker, false, null, null, NMS.getHeadYaw(tracker));
         }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks() + 1);
 
         boolean resetYaw = event.getNPC().data().get(NPC.Metadata.RESET_YAW_ON_SPAWN,

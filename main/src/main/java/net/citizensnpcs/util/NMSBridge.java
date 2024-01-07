@@ -168,7 +168,8 @@ public interface NMSBridge {
 
     public void replaceTrackerEntry(Entity entity);
 
-    public void sendPositionUpdate(Entity from, boolean position, Float bodyYaw, Float pitch, Float headYaw);
+    public void sendPositionUpdate(Entity from, Collection<Player> to, boolean position, Float bodyYaw, Float pitch,
+            Float headYaw);
 
     public boolean sendTabListAdd(Player recipient, Player listPlayer);
 

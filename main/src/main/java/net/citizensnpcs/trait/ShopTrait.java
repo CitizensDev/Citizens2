@@ -547,9 +547,9 @@ public class ShopTrait extends Trait {
             int pos = 0;
 
             for (GUI template : NPCShopAction.getGUIs()) {
-                if (template.createMenuItem(null) == null) {
+                if (template.createMenuItem(null) == null)
                     continue;
-                }
+
                 NPCShopAction oldCost = modified.cost.stream().filter(template::manages).findFirst().orElse(null);
                 costItems.getSlots().get(pos)
                         .setItemStack(Util.editTitle(template.createMenuItem(oldCost), title -> title + " Cost"));

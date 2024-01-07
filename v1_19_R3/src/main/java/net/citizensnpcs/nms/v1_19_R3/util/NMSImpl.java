@@ -4,7 +4,6 @@ package net.citizensnpcs.nms.v1_19_R3.util;
 import java.lang.invoke.MethodHandle;
 import java.net.SocketAddress;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -1375,10 +1374,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendPositionUpdate(org.bukkit.entity.Entity from, boolean position, Float bodyYaw, Float pitch,
-            Float headYaw) {
+    public void sendPositionUpdate(org.bukkit.entity.Entity from, Collection<Player> to, boolean position,
+            Float bodyYaw, Float pitch, Float headYaw) {
         List<Packet<?>> toSend = getPositionUpdate(from, position, bodyYaw, pitch, headYaw);
-        sendPacketsNearby(null, from.getLocation(), toSend, 64);
+        for (Player dest : to) {
+            sendPackets(dest, toSend);
+        }
     }
 
     @Override
@@ -2396,32 +2397,12 @@ public class NMSImpl implements NMSBridge {
         ((ServerPlayer) getHandle(player)).connection.send(packet);
     }
 
-    public static void sendPacketNearby(Player from, Location location, Packet<?> packet) {
-        sendPacketNearby(from, location, packet, 64);
-    }
-
-    public static void sendPacketNearby(Player from, Location location, Packet<?> packet, double radius) {
-        List<Packet<?>> list = new ArrayList<>();
-        list.add(packet);
-        sendPacketsNearby(from, location, list, radius);
-    }
-
-    public static void sendPacketsNearby(Player from, Location location, Collection<Packet<?>> packets, double radius) {
-        radius *= radius;
-        final org.bukkit.World world = location.getWorld();
-        for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
-            if (world != player.getWorld() || from != null && !player.canSee(from)
-                    || location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius) {
-                continue;
-            }
-            for (Packet<?> packet : packets) {
-                sendPacket(player, packet);
-            }
+    public static void sendPackets(Player player, Iterable<Packet<?>> packets) {
+        if (packets == null)
+            return;
+        for (Packet<?> packet : packets) {
+            ((ServerPlayer) getHandle(player)).connection.send(packet);
         }
-    }
-
-    public static void sendPacketsNearby(Player from, Location location, Packet<?>... packets) {
-        sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
     public static void setAdvancement(Player entity, PlayerAdvancements instance) {

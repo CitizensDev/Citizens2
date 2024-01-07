@@ -1133,8 +1133,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendPositionUpdate(org.bukkit.entity.Entity from, boolean position, Float bodyYaw, Float pitch,
-            Float headYaw) {
+    public void sendPositionUpdate(org.bukkit.entity.Entity from, Collection<Player> to, boolean position,
+            Float bodyYaw, Float pitch, Float headYaw) {
         Entity handle = getHandle(from);
         if (bodyYaw == null) {
             bodyYaw = handle.yaw;
@@ -1163,7 +1163,9 @@ public class NMSImpl implements NMSBridge {
         if (headYaw != null) {
             toSend.add(new PacketPlayOutEntityHeadRotation(handle, (byte) (headYaw * 256.0F / 360.0F)));
         }
-        sendPacketsNearby(null, from.getLocation(), toSend, 64);
+        for (Player player : to) {
+            sendPackets(player, toSend);
+        }
     }
 
     @Override
@@ -1938,6 +1940,14 @@ public class NMSImpl implements NMSBridge {
         List<Packet<?>> list = new ArrayList<>();
         list.add(packet);
         sendPacketsNearby(from, location, list, radius);
+    }
+
+    public static void sendPackets(Player player, Iterable<Packet<?>> packets) {
+        if (packets == null)
+            return;
+        for (Packet<?> packet : packets) {
+            ((EntityPlayer) getHandle(player)).playerConnection.sendPacket(packet);
+        }
     }
 
     public static void sendPacketsNearby(Player from, Location location, Collection<Packet<?>> packets, double radius) {

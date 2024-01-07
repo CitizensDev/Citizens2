@@ -1,7 +1,6 @@
 package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
@@ -306,8 +305,7 @@ public class CitizensNPC extends AbstractNPC {
         if (getEntity() instanceof SkinnableEntity && !hasTrait(SkinLayers.class)) {
             ((SkinnableEntity) getEntity()).setSkinFlags(EnumSet.allOf(SkinLayers.Layer.class));
         }
-        Collection<Trait> onPreSpawn = traits.values();
-        for (Trait trait : onPreSpawn.toArray(new Trait[onPreSpawn.size()])) {
+        for (Trait trait : traits.values().toArray(new Trait[traits.values().size()])) {
             try {
                 trait.onPreSpawn();
             } catch (Throwable ex) {
@@ -315,12 +313,12 @@ public class CitizensNPC extends AbstractNPC {
                 ex.printStackTrace();
             }
         }
-        boolean loaded = Messaging.isDebugging() ? false : Util.isLoaded(at);
+        boolean wasLoaded = Messaging.isDebugging() ? Util.isLoaded(at) : false;
         boolean couldSpawn = entityController.spawn(at);
 
         if (!couldSpawn) {
             if (Messaging.isDebugging()) {
-                Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded", loaded,
+                Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded", wasLoaded,
                         "is loaded", Util.isLoaded(at));
             }
             // we need to wait before trying to spawn

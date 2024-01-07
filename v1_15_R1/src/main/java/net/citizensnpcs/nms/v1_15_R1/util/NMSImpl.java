@@ -4,7 +4,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
 import java.net.SocketAddress;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -1213,8 +1212,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendPositionUpdate(org.bukkit.entity.Entity from, boolean position, Float bodyYaw, Float pitch,
-            Float headYaw) {
+    public void sendPositionUpdate(org.bukkit.entity.Entity from, Collection<Player> to, boolean position,
+            Float bodyYaw, Float pitch, Float headYaw) {
         Entity handle = getHandle(from);
         if (bodyYaw == null) {
             bodyYaw = handle.yaw;
@@ -1243,7 +1242,9 @@ public class NMSImpl implements NMSBridge {
         if (headYaw != null) {
             toSend.add(new PacketPlayOutEntityHeadRotation(handle, (byte) (headYaw * 256.0F / 360.0F)));
         }
-        sendPacketsNearby(null, from.getLocation(), toSend, 64);
+        for (Player player : to) {
+            sendPackets(player, toSend);
+        }
     }
 
     @Override
@@ -2166,14 +2167,12 @@ public class NMSImpl implements NMSBridge {
         ((EntityPlayer) NMSImpl.getHandle(player)).playerConnection.sendPacket(packet);
     }
 
-    public static void sendPacketNearby(Player from, Location location, Packet<?> packet) {
-        sendPacketNearby(from, location, packet, 64);
-    }
-
-    public static void sendPacketNearby(Player from, Location location, Packet<?> packet, double radius) {
-        List<Packet<?>> list = new ArrayList<>();
-        list.add(packet);
-        sendPacketsNearby(from, location, list, radius);
+    public static void sendPackets(Player player, Iterable<Packet<?>> packets) {
+        if (packets == null)
+            return;
+        for (Packet<?> packet : packets) {
+            ((EntityPlayer) getHandle(player)).playerConnection.sendPacket(packet);
+        }
     }
 
     public static void sendPacketsNearby(Player from, Location location, Collection<Packet<?>> packets, double radius) {

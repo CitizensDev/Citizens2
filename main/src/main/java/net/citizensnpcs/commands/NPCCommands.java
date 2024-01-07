@@ -55,7 +55,6 @@ import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.Citizens;
-import net.citizensnpcs.ProtocolLibListener;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.StoredShops;
 import net.citizensnpcs.api.CitizensAPI;
@@ -163,7 +162,6 @@ import net.citizensnpcs.util.Util;
 @Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final CommandHistory history;
-    private final ProtocolLibListener protocolListener;
     private final NPCSelector selector;
     private final StoredShops shops;
     private final NPCRegistry temporaryRegistry;
@@ -173,7 +171,6 @@ public class NPCCommands {
         shops = plugin.getShops();
         temporaryRegistry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
         history = new CommandHistory(selector);
-        protocolListener = plugin.getProtocolLibListener();
     }
 
     @Command(
@@ -458,7 +455,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id] | permissions [permissions] | sequential | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id|all] | permissions [permissions] | sequential | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "Controls commands which will be run when clicking on an NPC",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
@@ -535,11 +532,16 @@ public class NPCCommands {
         } else if (action.equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
                 throw new CommandUsageException();
-            int id = args.getInteger(2, -1);
-            if (!commands.hasCommandId(id))
-                throw new CommandException(Messages.COMMAND_UNKNOWN_COMMAND_ID, id);
-            commands.removeCommandById(id);
-            Messaging.sendTr(sender, Messages.COMMAND_REMOVED, id);
+            if (args.getString(2).equalsIgnoreCase("all")) {
+                commands.clear();
+                Messaging.sendTr(sender, Messages.COMMANDS_CLEARED, npc.getName());
+            } else {
+                int id = args.getInteger(2, -1);
+                if (!commands.hasCommandId(id))
+                    throw new CommandException(Messages.COMMAND_UNKNOWN_COMMAND_ID, id);
+                commands.removeCommandById(id);
+                Messaging.sendTr(sender, Messages.COMMAND_REMOVED, id);
+            }
         } else if (action.equalsIgnoreCase("permissions") || action.equalsIgnoreCase("perms")) {
             if (!sender.hasPermission("citizens.admin"))
                 throw new NoPermissionsException();
@@ -2556,7 +2558,8 @@ public class NPCCommands {
         if (yaw != null) {
             NMS.setBodyYaw(npc.getEntity(), yaw);
             if (npc.getEntity().getType() == EntityType.PLAYER) {
-                NMS.sendPositionUpdate(npc.getEntity(), true, yaw, npc.getStoredLocation().getPitch(), null);
+                NMS.sendPositionUpdateNearby(npc.getEntity(), true, yaw, npc.getEntity().getLocation().getPitch(),
+                        null);
                 PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
             }
         }

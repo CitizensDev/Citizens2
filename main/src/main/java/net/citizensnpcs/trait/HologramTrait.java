@@ -340,8 +340,7 @@ public class HologramTrait extends Trait {
         }
         if (nameLine != null && nameLine.hologram.isSpawned()) {
             if (updatePosition && !useDisplayEntities) {
-                nameLine.hologram.teleport(npcLoc.clone().add(0, getEntityBbHeight(), 0),
-                        TeleportCause.PLUGIN);
+                nameLine.hologram.teleport(npcLoc.clone().add(0, getEntityBbHeight(), 0), TeleportCause.PLUGIN);
             }
             if (updateName) {
                 nameLine.setText(npc.getRawName());
