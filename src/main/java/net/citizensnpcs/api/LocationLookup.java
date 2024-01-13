@@ -3,8 +3,12 @@ package net.citizensnpcs.api;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 
 import org.bukkit.Bukkit;
@@ -17,16 +21,19 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import ch.ethz.globis.phtree.PhTreeF;
 import net.citizensnpcs.api.npc.NPC;
 
 public class LocationLookup extends BukkitRunnable {
+    private final ExecutorService async = Executors.newSingleThreadExecutor();
     private final Map<String, PerPlayerMetadata<?>> metadata = Maps.newHashMap();
-    private final Map<UUID, PhTreeF<NPC>> npcWorlds = Maps.newHashMap();
-    private final Map<UUID, PhTreeF<Player>> worlds = Maps.newHashMap();
+    private Future<Map<UUID, PhTreeF<NPC>>> npcFuture = null;
+    private Map<UUID, PhTreeF<NPC>> npcWorlds = Maps.newHashMap();
+    private Future<Map<UUID, PhTreeF<Player>>> playerFuture = null;
+    private Map<UUID, PhTreeF<Player>> worlds = Maps.newHashMap();
 
     public PerPlayerMetadata<?> getMetadata(String key) {
         return metadata.get(key);
@@ -97,30 +104,52 @@ public class LocationLookup extends BukkitRunnable {
 
     @Override
     public void run() {
-        for (PhTreeF<NPC> old : npcWorlds.values()) {
-            old.clear();
+        if (npcFuture != null && npcFuture.isDone()) {
+            try {
+                npcWorlds = npcFuture.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            npcFuture = null;
         }
-        Location loc = new Location(null, 0, 0, 0);
-        Set<UUID> seen = Sets.newHashSet();
-        for (NPC npc : CitizensAPI.getNPCRegistry()) {
-            if (!npc.isSpawned())
-                continue;
-            PhTreeF<NPC> npcs = npcWorlds.computeIfAbsent(npc.getEntity().getWorld().getUID(),
-                    uid -> PhTreeF.create(3));
-            npc.getEntity().getLocation(loc);
-            npcs.put(new double[] { loc.getX(), loc.getY(), loc.getZ() }, npc);
-            seen.add(loc.getWorld().getUID());
+        if (npcFuture == null) {
+            Map<UUID, Collection<TreeFactory.Node<NPC>>> map = Maps.newHashMap();
+            Location loc = new Location(null, 0, 0, 0);
+            for (NPC npc : CitizensAPI.getNPCRegistry()) {
+                if (!npc.isSpawned())
+                    continue;
+                npc.getEntity().getLocation(loc);
+                Collection<TreeFactory.Node<NPC>> nodes = map.computeIfAbsent(npc.getEntity().getWorld().getUID(),
+                        uid -> Lists.newArrayList());
+                nodes.add(new TreeFactory.Node<>(new double[] { loc.getX(), loc.getY(), loc.getZ() }, npc));
+            }
+            npcFuture = async.submit(new TreeFactory<>(map));
         }
-        npcWorlds.keySet().removeIf(k -> !seen.contains(k));
-
-        seen.clear();
-        for (World world : Bukkit.getServer().getWorlds()) {
-            seen.add(world.getUID());
-            updateWorld(world);
+        if (playerFuture != null && playerFuture.isDone()) {
+            try {
+                worlds = playerFuture.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            playerFuture = null;
         }
-        worlds.keySet().removeIf(k -> !seen.contains(k));
+        if (playerFuture == null) {
+            Map<UUID, Collection<TreeFactory.Node<Player>>> map = Maps.newHashMap();
+            Location loc = new Location(null, 0, 0, 0);
+            for (World world : Bukkit.getServer().getWorlds()) {
+                Collection<Player> players = Collections2.filter(world.getPlayers(), p -> !p.hasMetadata("NPC"));
+                if (players.isEmpty())
+                    continue;
+                map.put(world.getUID(), Collections2.transform(players, p -> {
+                    p.getLocation(loc);
+                    return new TreeFactory.Node<>(new double[] { loc.getX(), loc.getY(), loc.getZ() }, p);
+                }));
+            }
+            playerFuture = async.submit(new TreeFactory<>(map));
+        }
     }
 
+    // TODO: remove?
     private void updateWorld(World world) {
         Collection<Player> players = Collections2.filter(world.getPlayers(), p -> !p.hasMetadata("NPC"));
         if (players.isEmpty()) {
@@ -166,6 +195,37 @@ public class LocationLookup extends BukkitRunnable {
             if (marker instanceof Location || marker instanceof World)
                 throw new IllegalArgumentException("Invalid marker");
             sent.computeIfAbsent(key, k -> Maps.newHashMap()).put(value, marker);
+        }
+    }
+
+    private static final class TreeFactory<T> implements Callable<Map<UUID, PhTreeF<T>>> {
+        private final Map<UUID, Collection<Node<T>>> source;
+
+        public TreeFactory(Map<UUID, Collection<Node<T>>> source) {
+            this.source = source;
+        }
+
+        @Override
+        public Map<UUID, PhTreeF<T>> call() throws Exception {
+            Map<UUID, PhTreeF<T>> result = Maps.newHashMap();
+            for (UUID uuid : source.keySet()) {
+                PhTreeF<T> tree = PhTreeF.create(3);
+                for (Node<T> entry : source.get(uuid)) {
+                    tree.put(entry.loc, entry.t);
+                }
+                result.put(uuid, tree);
+            }
+            return result;
+        }
+
+        public static class Node<T> {
+            public double[] loc;
+            public T t;
+
+            public Node(double[] loc, T t) {
+                this.loc = loc;
+                this.t = t;
+            }
         }
     }
 }
