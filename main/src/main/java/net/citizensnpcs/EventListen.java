@@ -1,7 +1,6 @@
 package net.citizensnpcs;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -137,7 +136,24 @@ public class EventListen implements Listener {
 
                 @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
                 public void onEntitiesUnload(EntitiesUnloadEvent event) {
-                    unloadNPCs(event, event.getEntities());
+                    List<NPC> toDespawn = Lists
+                            .newArrayList(CitizensAPI.getLocationLookup().getNearbyNPCs(event.getWorld(),
+                                    new double[] { (event.getChunk().getX() << 4) - 0.5, 0,
+                                            (event.getChunk().getZ() << 4) - 0.5 },
+                                    new double[] { (event.getChunk().getX() + 1 << 4) + 0.5, 256,
+                                            (event.getChunk().getZ() + 1 << 4) + 0.5 }));
+                    for (Entity entity : event.getEntities()) {
+                        NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
+                        // XXX npc#isSpawned() checks valid status which is now inconsistent on chunk unload
+                        // between different server software so check for npc.getEntity() == null instead.
+                        if (npc == null || npc.getEntity() == null || toDespawn.contains(npc))
+                            continue;
+
+                        toDespawn.add(npc);
+                    }
+                    if (toDespawn.isEmpty())
+                        return;
+                    unloadNPCs(event, toDespawn);
                 }
             }, CitizensAPI.getPlugin());
         } catch (Throwable ex) {
@@ -231,8 +247,22 @@ public class EventListen implements Listener {
     public void onChunkUnload(ChunkUnloadEvent event) {
         if (chunkEventListener != null)
             return;
+        List<NPC> toDespawn = Lists.newArrayList(CitizensAPI.getLocationLookup().getNearbyNPCs(event.getWorld(),
+                new double[] { (event.getChunk().getX() << 4) - 0.5, 0, (event.getChunk().getZ() << 4) - 0.5 },
+                new double[] { (event.getChunk().getX() + 1 << 4) + 0.5, 256,
+                        (event.getChunk().getZ() + 1 << 4) + 0.5 }));
+        for (Entity entity : event.getChunk().getEntities()) {
+            NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
+            // XXX npc#isSpawned() checks valid status which is now inconsistent on chunk unload
+            // between different server software so check for npc.getEntity() == null instead.
+            if (npc == null || npc.getEntity() == null || toDespawn.contains(npc))
+                continue;
 
-        unloadNPCs(event, Arrays.asList(event.getChunk().getEntities()));
+            toDespawn.add(npc);
+        }
+        if (toDespawn.isEmpty())
+            return;
+        unloadNPCs(event, toDespawn);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -853,7 +883,7 @@ public class EventListen implements Listener {
     private void respawnAllFromCoord(ChunkCoord coord, Event event) {
         List<NPC> ids = Lists.newArrayList(toRespawn.get(coord));
         if (ids.size() > 0) {
-            Messaging.debug("Respawning all NPCs at", coord, "due to", event);
+            Messaging.idebug(() -> Joiner.on(' ').join("Respawning all NPCs at", coord, "due to", event, "at", coord));
         }
         for (int i = 0; i < ids.size(); i++) {
             NPC npc = ids.get(i);
@@ -881,29 +911,18 @@ public class EventListen implements Listener {
     private boolean spawn(NPC npc) {
         Location spawn = npc.getOrAddTrait(CurrentLocation.class).getLocation();
         if (spawn == null) {
-            Messaging.idebug(() -> Joiner.on(' ').join("Couldn't find a spawn location for despawned NPC", npc));
+            Messaging.idebug(() -> "Couldn't find a spawn location for despawned NPC " + npc);
             return false;
         }
         return npc.spawn(spawn, SpawnReason.CHUNK_LOAD);
     }
 
-    void unloadNPCs(ChunkEvent event, List<Entity> entities) {
-        List<NPC> toDespawn = Lists.newArrayList();
-        for (Entity entity : entities) {
-            NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
-            // XXX : npc#isSpawned() checks entity valid status which is now inconsistent on chunk unload between
-            // different server software (e.g. Paper and Spigot), so check for npc.getEntity() == null instead.
-            if (npc == null || npc.getEntity() == null) {
-                continue;
-            }
-            toDespawn.add(npc);
-        }
-        if (toDespawn.isEmpty())
-            return;
-
+    private void unloadNPCs(ChunkEvent event, List<NPC> toDespawn) {
         ChunkCoord coord = new ChunkCoord(event.getChunk());
         boolean loadChunk = false;
         for (NPC npc : toDespawn) {
+            if (toRespawn.containsValue(npc))
+                continue;
             if (!npc.despawn(DespawnReason.CHUNK_UNLOAD)) {
                 if (!(event instanceof Cancellable)) {
                     Messaging.idebug(() -> Joiner.on(' ').join("Reloading chunk because", npc, "couldn't despawn"));
@@ -912,7 +931,7 @@ public class EventListen implements Listener {
                     continue;
                 }
                 ((Cancellable) event).setCancelled(true);
-                Messaging.debug("Cancelled chunk unload at", coord);
+                Messaging.idebug(() -> "Cancelled chunk unload at " + coord);
                 respawnAllFromCoord(coord, event);
                 return;
             }
