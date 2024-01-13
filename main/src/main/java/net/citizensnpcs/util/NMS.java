@@ -518,14 +518,14 @@ public class NMS {
         return BRIDGE.getNBT(item);
     }
 
-    private static Collection<Player> getNearbyPlayers(Player from) {
+    private static Collection<Player> getNearbyPlayers(Entity from) {
         return getNearbyPlayers(from, from.getLocation(), 64);
     }
 
-    private static Collection<Player> getNearbyPlayers(Player from, Location location, double radius) {
+    private static Collection<Player> getNearbyPlayers(Entity from, Location location, double radius) {
         List<Player> players = Lists.newArrayList();
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
-            if (location.getWorld() != player.getWorld() || from != null && !player.canSee(from)
+            if (location.getWorld() != player.getWorld() || from != null && Util.canSee(player, from)
                     || location.distance(player.getLocation()) > radius)
                 continue;
 
@@ -760,12 +760,12 @@ public class NMS {
         BRIDGE.sendPositionUpdate(from, to, position, bodyYaw, pitch, headYaw);
     }
 
-    public static void sendPositionUpdateNearby(Player from, boolean position) {
+    public static void sendPositionUpdateNearby(Entity from, boolean position) {
         sendPositionUpdate(from, getNearbyPlayers(from), position, NMS.getYaw(from), from.getLocation().getPitch(),
                 NMS.getHeadYaw(from));
     }
 
-    public static void sendPositionUpdateNearby(Player from, boolean position, Float bodyYaw, Float pitch,
+    public static void sendPositionUpdateNearby(Entity from, boolean position, Float bodyYaw, Float pitch,
             Float headYaw) {
         sendPositionUpdate(from, getNearbyPlayers(from), position, bodyYaw, pitch, headYaw);
     }

@@ -105,6 +105,20 @@ public class Util {
         return !event.isCancelled() ? event.getCollisionVector() : null;
     }
 
+    public static boolean canSee(Player player, Entity from) {
+        if (from instanceof Player) {
+            return player.canSee((Player) from);
+        }
+        if (SUPPORTS_ENTITY_CANSEE) {
+            try {
+                return player.canSee(from);
+            } catch (NoSuchMethodError t) {
+                SUPPORTS_ENTITY_CANSEE = false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Clamps the rotation angle to [-180, 180]
      */
@@ -598,6 +612,7 @@ public class Util {
 
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
+    private static boolean SUPPORTS_ENTITY_CANSEE = true;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {
