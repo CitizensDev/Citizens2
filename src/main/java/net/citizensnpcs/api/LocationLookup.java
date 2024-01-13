@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 
@@ -28,7 +27,6 @@ import ch.ethz.globis.phtree.PhTreeF;
 import net.citizensnpcs.api.npc.NPC;
 
 public class LocationLookup extends BukkitRunnable {
-    private final ExecutorService async = Executors.newSingleThreadExecutor();
     private final Map<String, PerPlayerMetadata<?>> metadata = Maps.newHashMap();
     private Future<Map<UUID, PhTreeF<NPC>>> npcFuture = null;
     private Map<UUID, PhTreeF<NPC>> npcWorlds = Maps.newHashMap();
@@ -123,7 +121,7 @@ public class LocationLookup extends BukkitRunnable {
                         uid -> Lists.newArrayList());
                 nodes.add(new TreeFactory.Node<>(new double[] { loc.getX(), loc.getY(), loc.getZ() }, npc));
             }
-            npcFuture = async.submit(new TreeFactory<>(map));
+            npcFuture = ForkJoinPool.commonPool().submit(new TreeFactory<>(map));
         }
         if (playerFuture != null && playerFuture.isDone()) {
             try {
@@ -145,7 +143,7 @@ public class LocationLookup extends BukkitRunnable {
                     return new TreeFactory.Node<>(new double[] { loc.getX(), loc.getY(), loc.getZ() }, p);
                 }));
             }
-            playerFuture = async.submit(new TreeFactory<>(map));
+            playerFuture = ForkJoinPool.commonPool().submit(new TreeFactory<>(map));
         }
     }
 
