@@ -25,10 +25,29 @@ import net.citizensnpcs.api.npc.NPC;
 
 public class LocationLookup extends BukkitRunnable {
     private final Map<String, PerPlayerMetadata<?>> metadata = Maps.newHashMap();
+    private final Map<UUID, PhTreeF<NPC>> npcWorlds = Maps.newHashMap();
     private final Map<UUID, PhTreeF<Player>> worlds = Maps.newHashMap();
 
     public PerPlayerMetadata<?> getMetadata(String key) {
         return metadata.get(key);
+    }
+
+    public Iterable<NPC> getNearbyNPCs(Location base, double dist) {
+        PhTreeF<NPC> tree = npcWorlds.get(base.getWorld().getUID());
+        if (tree == null)
+            return Collections.emptyList();
+        return () -> tree.rangeQuery(dist, base.getX(), base.getY(), base.getZ());
+    }
+
+    public Iterable<NPC> getNearbyNPCs(NPC npc) {
+        return getNearbyNPCs(npc.getStoredLocation(), npc.data().get(NPC.Metadata.TRACKING_RANGE, 64));
+    }
+
+    public Iterable<NPC> getNearbyNPCs(World world, double[] min, double[] max) {
+        PhTreeF<NPC> tree = npcWorlds.get(world.getUID());
+        if (tree == null)
+            return Collections.emptyList();
+        return () -> tree.query(min, max);
     }
 
     public Iterable<Player> getNearbyPlayers(Location base, double dist) {
@@ -78,7 +97,23 @@ public class LocationLookup extends BukkitRunnable {
 
     @Override
     public void run() {
+        for (PhTreeF<NPC> old : npcWorlds.values()) {
+            old.clear();
+        }
+        Location loc = new Location(null, 0, 0, 0);
         Set<UUID> seen = Sets.newHashSet();
+        for (NPC npc : CitizensAPI.getNPCRegistry()) {
+            if (!npc.isSpawned())
+                continue;
+            PhTreeF<NPC> npcs = npcWorlds.computeIfAbsent(npc.getEntity().getWorld().getUID(),
+                    uid -> PhTreeF.create(3));
+            npc.getEntity().getLocation(loc);
+            npcs.put(new double[] { loc.getX(), loc.getY(), loc.getZ() }, npc);
+            seen.add(loc.getWorld().getUID());
+        }
+        npcWorlds.keySet().removeIf(k -> !seen.contains(k));
+
+        seen.clear();
         for (World world : Bukkit.getServer().getWorlds()) {
             seen.add(world.getUID());
             updateWorld(world);

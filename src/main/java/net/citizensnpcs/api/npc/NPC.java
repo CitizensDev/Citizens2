@@ -88,7 +88,7 @@ public interface NPC extends Agent, Cloneable {
      *            The reason for despawning, for use in {@link NPCDespawnEvent}
      * @return Whether this NPC was able to despawn
      */
-    boolean despawn(DespawnReason reason);
+    public boolean despawn(DespawnReason reason);
 
     /**
      * Permanently removes this NPC and all data about it from the registry it's attached to.
