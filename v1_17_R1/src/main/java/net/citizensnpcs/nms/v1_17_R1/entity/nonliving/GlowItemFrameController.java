@@ -9,7 +9,6 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_17_R1.entity.MobEntityController;
-import net.citizensnpcs.nms.v1_17_R1.entity.nonliving.ItemFrameController.EntityItemFrameNPC;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_17_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
@@ -30,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class GlowItemFrameController extends MobEntityController {
     public GlowItemFrameController() {
-        super(EntityItemFrameNPC.class);
+        super(EntityGlowItemFrameNPC.class);
     }
 
     @Override
