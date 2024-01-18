@@ -503,10 +503,10 @@ public class HologramTrait extends Trait {
             if (hologram != null) {
                 String name = Placeholders.replace(text, null, npc);
                 hologram.setName(name);
-                hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, ChatColor.stripColor(name).length() > 0);
                 if (Placeholders.containsPlaceholders(text)) {
                     hologram.data().set(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER, this);
                 } else {
+                    hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, ChatColor.stripColor(name).length() > 0);
                     hologram.data().remove(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER);
                 }
             }

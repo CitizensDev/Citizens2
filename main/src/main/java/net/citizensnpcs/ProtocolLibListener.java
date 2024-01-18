@@ -109,7 +109,7 @@ public class ProtocolLibListener implements Listener {
 
                         for (WrappedDataValue wdv : wdvs) {
                             if (fakeName != null && wdv.getIndex() == 2) {
-                                wdv.setValue(fakeName);
+                                wdv.setRawValue(fakeName);
                                 delta = true;
                             } else if (sneaking && wdv.getIndex() == 0) {
                                 byte b = (byte) (((Number) wdv.getValue()).byteValue() | 0x02);
