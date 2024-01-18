@@ -42,7 +42,13 @@ public class Placeholders implements Listener {
         }
     }
 
-    public static boolean containsPlayerPlaceholder(String text) {
+    public static boolean containsPlaceholders(String text) {
+        try {
+            if (PLACEHOLDERAPI_ENABLED && PlaceholderAPI.containsPlaceholders(text))
+                return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return PLAYER_PLACEHOLDER_MATCHER.matcher(text).find();
     }
 
