@@ -116,6 +116,8 @@ public class HologramTrait extends Trait {
         }
         if (viewRange != -1) {
             hologramNPC.data().set(NPC.Metadata.TRACKING_RANGE, viewRange);
+        } else if (npc.data().has(NPC.Metadata.TRACKING_RANGE)) {
+            hologramNPC.data().set(NPC.Metadata.TRACKING_RANGE, npc.data().get(NPC.Metadata.TRACKING_RANGE));
         }
         hologramNPC.spawn(currentLoc.clone().add(0, getEntityBbHeight() + heightOffset, 0));
 
