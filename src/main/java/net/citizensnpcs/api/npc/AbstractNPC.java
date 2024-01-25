@@ -28,8 +28,8 @@ import com.google.common.collect.Sets;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.GoalController;
 import net.citizensnpcs.api.ai.SimpleGoalController;
-import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
 import net.citizensnpcs.api.ai.speech.SpeechController;
+import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCAddTraitEvent;
 import net.citizensnpcs.api.event.NPCCloneEvent;
@@ -72,7 +72,14 @@ public abstract class AbstractNPC implements NPC {
     private final NPCRegistry registry;
     private final List<String> removedTraits = Lists.newArrayList();
     private final List<Runnable> runnables = Lists.newArrayList();
-    private final SpeechController speechController = new SimpleSpeechController(this);
+    private final SpeechController speechController = context -> {
+        context.setTalker(getEntity());
+        NPCSpeechEvent event = new NPCSpeechEvent(context);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return;
+        CitizensAPI.talk(context);
+    };
     protected final Map<Class<? extends Trait>, Trait> traits = Maps.newHashMap();
     private final UUID uuid;
 

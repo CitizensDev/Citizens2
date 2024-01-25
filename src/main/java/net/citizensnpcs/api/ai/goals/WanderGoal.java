@@ -21,7 +21,7 @@ import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.npc.NPC;
 
 /**
- * A sample {@link Goal}/{@link Behavior} that will wander within a certain radius or {@link QuadTree}.
+ * A sample {@link Goal}/{@link Behavior} that will wander within a certain block region.
  */
 public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private int delay;

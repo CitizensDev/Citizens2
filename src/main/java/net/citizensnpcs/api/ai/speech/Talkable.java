@@ -22,8 +22,7 @@ public interface Talkable extends Comparable<Object> {
     public String getName();
 
     /**
-     * Called by a {@link VocalChord} when talking near this Talkable Entity to provide a universal method to getting an
-     * event/output.
+     * Called when talking near this Talkable Entity to provide a universal method to getting an event/output.
      *
      * @param context
      *            the Speech context
@@ -36,8 +35,7 @@ public interface Talkable extends Comparable<Object> {
     public void talkNear(SpeechContext context, String message);
 
     /**
-     * Called by a {@link VocalChord} when talking to this Talkable Entity to provide a universal method to getting an
-     * event/output.
+     * Called when talking to this Talkable Entity to provide a universal method to getting an event/output.
      *
      * @param context
      *            the Speech context

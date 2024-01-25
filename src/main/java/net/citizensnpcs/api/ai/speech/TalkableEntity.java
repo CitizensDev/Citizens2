@@ -22,7 +22,7 @@ public class TalkableEntity implements Talkable {
     }
 
     /**
-     * Used to compare a LivingEntity to this TalkableEntity
+     * Used to compare an Entity to this TalkableEntity
      *
      * @return 0 if the Entities are the same, 1 if they are not, -1 if the object compared is not a valid LivingEntity
      */
