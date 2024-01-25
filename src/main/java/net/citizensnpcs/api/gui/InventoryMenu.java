@@ -368,6 +368,8 @@ public class InventoryMenu implements Listener, Runnable {
         } else {
             view = player.openInventory(inventory);
         }
+        if (view == null)
+            throw new RuntimeException("null inventory opened " + player + " " + inventory + " " + title);
         return view;
     }
 
