@@ -75,6 +75,6 @@ public interface PathPoint {
          * @param index
          *            The current path index
          */
-        void run(NPC npc, Block current, List<Block> path, int index);
+        void run(NPC npc, Block point, List<Block> path, int index);
     }
 }

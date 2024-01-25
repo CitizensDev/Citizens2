@@ -28,8 +28,6 @@ public interface Talkable extends Comparable<Object> {
      *            the Speech context
      * @param message
      *            The message to send
-     * @param vocalChord
-     *            The chord to use
      *
      */
     public void talkNear(SpeechContext context, String message);
@@ -41,8 +39,6 @@ public interface Talkable extends Comparable<Object> {
      *            the Speech context
      * @param message
      *            The message to send
-     * @param vocalChord
-     *            The chord to use
      */
     public void talkTo(SpeechContext context, String message);
 

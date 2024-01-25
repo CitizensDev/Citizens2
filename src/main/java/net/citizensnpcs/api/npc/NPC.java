@@ -149,7 +149,7 @@ public interface NPC extends Agent, Cloneable {
     public int getId();
 
     /**
-     * @see #setItemProvider()
+     * @see #setItemProvider(Supplier)
      */
     public Supplier<ItemStack> getItemProvider();
 
@@ -365,9 +365,8 @@ public interface NPC extends Agent, Cloneable {
     public void setName(String name);
 
     /**
-     * A helper method for using {@link #DEFAULT_PROTECTED_METADATA} to set the NPC as protected or not protected from
-     * damage/entity target events. Equivalent to
-     * <code>npc.data().set(NPC.DEFAULT_PROTECTED_METADATA, isProtected);</code>
+     * A helper method to set the NPC as protected or not protected from damage/entity target events. Equivalent to
+     * <code>npc.data().set(NPC.Metadata#DEFAULT_PROTECTED_METADATA, isProtected);</code>
      *
      * @param isProtected
      *            Whether the NPC should be protected

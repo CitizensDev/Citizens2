@@ -91,8 +91,8 @@ public interface MetadataStore {
      * @param key
      *            The metadata key
      */
-    default void remove(Metadata distance) {
-        remove(distance.getKey());
+    default void remove(Metadata key) {
+        remove(key.getKey());
     }
 
     /**

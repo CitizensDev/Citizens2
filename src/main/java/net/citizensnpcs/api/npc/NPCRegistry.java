@@ -80,7 +80,7 @@ public interface NPCRegistry extends Iterable<NPC> {
     /**
      * Despawn all NPCs within the registry.
      *
-     * @param reload
+     * @param reason
      *            The reason to despawn
      */
     public void despawnNPCs(DespawnReason reason);
