@@ -300,8 +300,9 @@ public class CommandTrait extends Trait {
                         }
                     }
                     runCommand(player, command);
-                    if (executionMode == ExecutionMode.SEQUENTIAL) {
-                        playerTracking.get(player.getUniqueId()).lastUsedHand = hand;
+                    if (executionMode == ExecutionMode.SEQUENTIAL
+                            && (info = playerTracking.get(player.getUniqueId())) != null) {
+                        info.lastUsedHand = hand;
                     }
                     if (executionMode == ExecutionMode.SEQUENTIAL || (charged != null && !charged))
                         break;
