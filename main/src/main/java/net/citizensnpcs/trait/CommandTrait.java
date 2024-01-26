@@ -273,7 +273,7 @@ public class CommandTrait extends Trait {
                         command -> (command.hand == hand || command.hand == Hand.BOTH)));
                 if (executionMode == ExecutionMode.RANDOM) {
                     if (commandList.size() > 0) {
-                        runCommand(player, commandList.get(Util.getFastRandom().nextInt(commandList.size())));
+                        runCommand(player, hand, commandList.get(Util.getFastRandom().nextInt(commandList.size())));
                     }
                     return;
                 }
@@ -299,17 +299,13 @@ public class CommandTrait extends Trait {
                             info.lastUsedId = -1;
                         }
                     }
-                    runCommand(player, command);
-                    if (executionMode == ExecutionMode.SEQUENTIAL
-                            && (info = playerTracking.get(player.getUniqueId())) != null) {
-                        info.lastUsedHand = hand;
-                    }
+                    runCommand(player, hand, command);
                     if (executionMode == ExecutionMode.SEQUENTIAL || (charged != null && !charged))
                         break;
                 }
             }
 
-            private void runCommand(Player player, NPCCommand command) {
+            private void runCommand(Player player, Hand hand, NPCCommand command) {
                 Runnable runnable = () -> {
                     PlayerNPCCommand info = playerTracking.get(player.getUniqueId());
                     if (info == null && (executionMode == ExecutionMode.SEQUENTIAL
@@ -324,7 +320,7 @@ public class CommandTrait extends Trait {
                             return;
                         }
                     }
-                    if (info != null && !info.canUse(CommandTrait.this, player, command))
+                    if (info != null && !info.canUse(CommandTrait.this, player, hand, command))
                         return;
 
                     if (charged == null) {
@@ -779,7 +775,7 @@ public class CommandTrait extends Trait {
         public PlayerNPCCommand() {
         }
 
-        public boolean canUse(CommandTrait trait, Player player, NPCCommand command) {
+        public boolean canUse(CommandTrait trait, Player player, Hand hand, NPCCommand command) {
             for (String perm : command.perms) {
                 if (!player.hasPermission(perm)) {
                     trait.sendErrorMessage(player, CommandTraitError.NO_PERMISSION, null);
@@ -828,6 +824,7 @@ public class CommandTrait extends Trait {
                 nUsed.put(commandKey, timesUsed + 1);
             }
             lastUsedId = command.id;
+            lastUsedHand = hand;
             return true;
         }
 
