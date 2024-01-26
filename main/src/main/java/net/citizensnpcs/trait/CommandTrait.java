@@ -286,24 +286,25 @@ public class CommandTrait extends Trait {
                     executionErrors.put(player.getUniqueId().toString(), EnumSet.noneOf(CommandTraitError.class));
                 }
                 for (NPCCommand command : commandList) {
-                    if (executionMode == ExecutionMode.SEQUENTIAL) {
-                        PlayerNPCCommand info = playerTracking.get(player.getUniqueId());
-                        if (info != null && info.lastUsedHand != hand) {
+                    PlayerNPCCommand info = null;
+                    if (executionMode == ExecutionMode.SEQUENTIAL
+                            && (info = playerTracking.get(player.getUniqueId())) != null) {
+                        if (info.lastUsedHand != hand) {
                             info.lastUsedHand = hand;
                             info.lastUsedId = -1;
                         }
-                        if (info != null && command.id <= info.lastUsedId) {
-                            if (info.lastUsedId == max) {
-                                info.lastUsedId = -1;
-                            } else {
+                        if (command.id <= info.lastUsedId) {
+                            if (info.lastUsedId != max)
                                 continue;
-                            }
+                            info.lastUsedId = -1;
                         }
                     }
                     runCommand(player, command);
-                    if (executionMode == ExecutionMode.SEQUENTIAL || charged != null && !charged) {
-                        break;
+                    if (executionMode == ExecutionMode.SEQUENTIAL) {
+                        playerTracking.get(player.getUniqueId()).lastUsedHand = hand;
                     }
+                    if (executionMode == ExecutionMode.SEQUENTIAL || (charged != null && !charged))
+                        break;
                 }
             }
 
