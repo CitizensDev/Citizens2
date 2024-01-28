@@ -12,12 +12,14 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 
 @TraitName("sittrait")
 public class SitTrait extends Trait {
     private NPC chair;
+    private int delay;
     @Persist
     private Location sittingAt;
 
@@ -61,7 +63,7 @@ public class SitTrait extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || !isSitting())
+        if (!npc.isSpawned() || !isSitting() || delay-- > 0)
             return;
 
         if (SUPPORT_SITTABLE && npc.getEntity() instanceof Sittable) {
@@ -80,6 +82,8 @@ public class SitTrait extends Trait {
             chair.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntity(npc);
             if (!chair.spawn(sittingAt.clone())) {
                 chair = null;
+                delay = 20;
+                Messaging.debug("Unable to spawn chair NPC");
                 return;
             }
         }
