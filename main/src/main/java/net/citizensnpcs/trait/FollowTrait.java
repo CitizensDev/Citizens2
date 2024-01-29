@@ -37,15 +37,19 @@ public class FollowTrait extends Trait {
         super("followtrait");
     }
 
+    private void cancelNavigationIfActive() {
+        if (npc.getNavigator().isNavigating() && this.entity != null && npc.getNavigator().getEntityTarget() != null
+                && this.entity == npc.getNavigator().getEntityTarget().getTarget()) {
+            npc.getNavigator().cancelNavigation();
+        }
+    }
+
     /**
      * Sets the {@link Entity} to follow
      */
     public void follow(Entity entity) {
         followingUUID = entity == null ? null : entity.getUniqueId();
-        if (npc.getNavigator().isNavigating() && this.entity != null && npc.getNavigator().getEntityTarget() != null
-                && this.entity == npc.getNavigator().getEntityTarget().getTarget()) {
-            npc.getNavigator().cancelNavigation();
-        }
+        cancelNavigationIfActive();
         this.entity = null;
     }
 
@@ -89,7 +93,7 @@ public class FollowTrait extends Trait {
 
     @Override
     public void onSpawn() {
-        flock = new Flocker(npc, new RadiusNPCFlock(4, 0), new SeparationBehavior(1));
+        flock = new Flocker(npc, new RadiusNPCFlock(4, 4), new SeparationBehavior(1));
     }
 
     @Override
@@ -125,6 +129,7 @@ public class FollowTrait extends Trait {
 
     public void setFollowingMargin(double margin) {
         this.margin = margin;
+        cancelNavigationIfActive();
     }
 
     /**
@@ -132,5 +137,6 @@ public class FollowTrait extends Trait {
      */
     public void setProtect(boolean protect) {
         this.protect = protect;
+        cancelNavigationIfActive();
     }
 }
