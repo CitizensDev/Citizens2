@@ -236,6 +236,7 @@ import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.NMS.MinecraftNavigationType;
 import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
@@ -288,7 +289,9 @@ import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.AbstractSchoolingFish;
 import net.minecraft.world.entity.animal.Cat;
@@ -1419,6 +1422,32 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setNavigationType(org.bukkit.entity.Entity entity, MinecraftNavigationType type) {
+        Entity handle = getHandle(entity);
+        if (!(handle instanceof Mob))
+            return;
+        Mob ei = (Mob) handle;
+        switch (type) {
+            case GROUND:
+                try {
+                    ENTITY_NAVIGATION.invoke(ei, new GroundPathNavigation(ei, ei.level));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                break;
+            case WALL_CLIMB:
+                try {
+                    ENTITY_NAVIGATION.invoke(ei, new WallClimberNavigation(ei, ei.level));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
     public void setNoGravity(org.bukkit.entity.Entity entity, boolean enabled) {
         Entity handle = getHandle(entity);
         handle.setNoGravity(enabled);
@@ -2305,6 +2334,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cr");
 
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeSupplier.class, "a");
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
             AttributeSupplier.class);
@@ -2326,6 +2356,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle ENTITY_FISH_NUM_IN_SCHOOL = NMS.getSetter(AbstractSchoolingFish.class, "c");
     private static final MethodHandle ENTITY_GET_SOUND_FALL = NMS.getMethodHandle(LivingEntity.class, "getSoundFall",
             true, int.class);
+    private static MethodHandle ENTITY_NAVIGATION = NMS.getFirstSetter(Mob.class, PathNavigation.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static MethodHandle ENTITY_REGISTRY_SETTER;
     private static final MethodHandle FISHING_HOOK_LIFE = NMS.getSetter(FishingHook.class, "ap");

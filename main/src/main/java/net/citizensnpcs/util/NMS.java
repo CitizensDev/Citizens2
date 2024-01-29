@@ -70,6 +70,11 @@ public class NMS {
         // util class
     }
 
+    public enum MinecraftNavigationType {
+        GROUND,
+        WALL_CLIMB;
+    }
+
     public static void activate(Entity entity) {
         BRIDGE.activate(entity);
     }
@@ -150,14 +155,14 @@ public class NMS {
         return BRIDGE.createBundlePacket(packets);
     }
 
+    public static EntityPacketTracker createPacketTracker(Entity entity) {
+        return createPacketTracker(entity, new PacketAggregator());
+    }
+
     /*
      * Yggdrasil's default implementation of this method silently fails instead of throwing
      * an Exception like it should.
      */
-
-    public static EntityPacketTracker createPacketTracker(Entity entity) {
-        return createPacketTracker(entity, new PacketAggregator());
-    }
 
     public static EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg) {
         return BRIDGE.createPacketTracker(entity, agg);
@@ -845,6 +850,10 @@ public class NMS {
     public static void setNavigationTarget(org.bukkit.entity.Entity handle, org.bukkit.entity.Entity target,
             float speed) {
         BRIDGE.setNavigationTarget(handle, target, speed);
+    }
+
+    public static void setNavigationType(Entity entity, MinecraftNavigationType type) {
+        BRIDGE.setNavigationType(entity, type);
     }
 
     public static void setNoGravity(Entity entity, boolean nogravity) {

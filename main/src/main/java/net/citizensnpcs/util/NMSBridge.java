@@ -45,6 +45,7 @@ import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
 import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
+import net.citizensnpcs.util.NMS.MinecraftNavigationType;
 
 public interface NMSBridge {
     default void activate(Entity entity) {
@@ -215,6 +216,8 @@ public interface NMSBridge {
     }
 
     public void setNavigationTarget(Entity handle, Entity target, float speed);
+
+    public void setNavigationType(Entity entity, MinecraftNavigationType type);
 
     public void setNoGravity(Entity entity, boolean nogravity);
 

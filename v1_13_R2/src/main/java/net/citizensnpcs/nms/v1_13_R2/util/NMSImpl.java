@@ -215,6 +215,7 @@ import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.NMS.MinecraftNavigationType;
 import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
@@ -270,7 +271,9 @@ import net.minecraft.server.v1_13_R2.ItemStack;
 import net.minecraft.server.v1_13_R2.MathHelper;
 import net.minecraft.server.v1_13_R2.MinecraftKey;
 import net.minecraft.server.v1_13_R2.MobEffects;
+import net.minecraft.server.v1_13_R2.Navigation;
 import net.minecraft.server.v1_13_R2.NavigationAbstract;
+import net.minecraft.server.v1_13_R2.NavigationSpider;
 import net.minecraft.server.v1_13_R2.NetworkManager;
 import net.minecraft.server.v1_13_R2.Packet;
 import net.minecraft.server.v1_13_R2.PacketPlayOutAnimation;
@@ -1338,6 +1341,32 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setNavigationType(org.bukkit.entity.Entity entity, MinecraftNavigationType type) {
+        Entity handle = getHandle(entity);
+        if (!(handle instanceof EntityInsentient))
+            return;
+        EntityInsentient ei = (EntityInsentient) handle;
+        switch (type) {
+            case GROUND:
+                try {
+                    ENTITY_NAVIGATION.invoke(ei, new Navigation(ei, ei.world));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                break;
+            case WALL_CLIMB:
+                try {
+                    ENTITY_NAVIGATION.invoke(ei, new NavigationSpider(ei, ei.world));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
     public void setNoGravity(org.bukkit.entity.Entity entity, boolean enabled) {
         getHandle(entity).setNoGravity(enabled);
     }
@@ -1442,7 +1471,7 @@ public class NMSImpl implements NMSBridge {
             return;
         MethodHandle field = NMS.getFinalSetter(EntityTypes.class, "REGISTRY", false);
         if (field == null) {
-            field = NMS.getFinalSetter(IRegistry.class, "ENTITY_TYPE", false);
+            field = NMS.getFinalSetter(IRegistry.class, "ENTITY_TYPE");
         }
         try {
             field.invoke(ENTITY_REGISTRY.get());
@@ -2157,6 +2186,7 @@ public class NMSImpl implements NMSBridge {
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
 
     private static final float DEFAULT_SPEED = 1F;
+
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bR");
     public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EntityEnderDragon.class,
@@ -2164,6 +2194,7 @@ public class NMSImpl implements NMSBridge {
     private static DataWatcherObject<Boolean> ENDERMAN_ANGRY;
     private static Method ENTITY_FISH_METHOD = NMS.getMethod(EntityFish.class, "t", false, boolean.class);
     private static Field ENTITY_FISH_NUM_IN_SCHOOL;
+    private static MethodHandle ENTITY_NAVIGATION = NMS.getFirstSetter(EntityInsentient.class, Navigation.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static final MethodHandle ENTITY_TRACKER_ENTRY_X = NMS.getGetter(EntityTrackerEntry.class, "xLoc");
     private static final MethodHandle ENTITY_TRACKER_ENTRY_Y = NMS.getGetter(EntityTrackerEntry.class, "yLoc");
@@ -2197,7 +2228,7 @@ public class NMSImpl implements NMSBridge {
         try {
             MethodHandle setter = NMS.getFinalSetter(EntityTypes.class, "REGISTRY", false);
             if (setter == null) {
-                setter = NMS.getFinalSetter(IRegistry.class, "ENTITY_TYPE", false);
+                setter = NMS.getFinalSetter(IRegistry.class, "ENTITY_TYPE");
             }
             Field field = NMS.getField(EntityTypes.class, "REGISTRY", false);
             if (field == null) {
