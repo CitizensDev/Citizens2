@@ -176,7 +176,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "activationrange [range]",
-            desc = "Sets the activation range",
+            desc = "设置激活范围",
             modifiers = { "activationrange" },
             min = 1,
             max = 2,
@@ -193,7 +193,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "age [age] (-l(ock))",
-            desc = "Set the age of a NPC",
+            desc = "设置NPC的年龄",
             help = Messages.COMMAND_AGE_HELP,
             flags = "l",
             modifiers = { "age" },
@@ -238,7 +238,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "aggressive [true|false]",
-            desc = "Sets the aggressive status of the entity",
+            desc = "设置实体的攻击性状态",
             modifiers = { "aggressive" },
             min = 1,
             max = 2,
@@ -252,7 +252,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "ai (true|false)",
-            desc = "Sets whether the NPC should use vanilla AI",
+            desc = "设置 NPC 是否应该使用原版 AI",
             modifiers = { "ai" },
             min = 1,
             max = 2,
@@ -267,7 +267,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "anchor (--save [name]|--assume [name]|--remove [name]) (-a) (-c)",
-            desc = "Changes/Saves/Lists NPC's location anchor(s)",
+            desc = "更改/保存/列出 NPC 的位置锚点",
             flags = "ac",
             modifiers = { "anchor" },
             min = 1,
@@ -340,7 +340,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "armorstand --visible [visible] --small [small] --gravity [gravity] --arms [arms] --baseplate [baseplate] --(body|leftarm|leftleg|rightarm|rightleg)pose [angle x,y,z]",
-            desc = "Edit armorstand properties",
+            desc = "编辑盔甲架属性",
             modifiers = { "armorstand" },
             min = 1,
             max = 1,
@@ -387,7 +387,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "breakblock --location [x,y,z] --radius [radius]",
-            desc = "Mine a block at the given location or cursor if not specified",
+            desc = "如果未指定，则在给定位置或光标处挖掘块",
             modifiers = { "breakblock" },
             min = 1,
             max = 1,
@@ -420,7 +420,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "chunkload (-t(emporary))",
-            desc = "Toggle the NPC forcing chunks to stay loaded",
+            desc = "切换 NPC 强制区块保持加载状态",
             modifiers = { "chunkload", "cload" },
             min = 1,
             max = 1,
@@ -440,7 +440,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "collidable",
-            desc = "Toggles an NPC's collidability",
+            desc = "切换 NPC 的碰撞能力",
             modifiers = { "collidable", "pushable" },
             min = 1,
             max = 1,
@@ -456,7 +456,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "command|cmd (add [command] | remove [id|all] | permissions [permissions] | sequential | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
-            desc = "Controls commands which will be run when clicking on an NPC",
+            desc = "控制单击NPC时将运行的命令",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
             min = 1,
@@ -493,7 +493,7 @@ public class NPCCommands {
                 perms.addAll(Arrays.asList(permissions.split(",")));
             }
             if (command.toLowerCase().startsWith("npc select"))
-                throw new CommandException("npc select not currently supported within commands. Use --id <id> instead");
+                throw new CommandException("npc select 在命令中当前不受支持。<id> 请改用 --id");
 
             try {
                 int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
@@ -602,7 +602,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "configgui",
-            desc = "Display NPC configuration GUI",
+            desc = "显示 NPC 配置界面",
             modifiers = { "configgui" },
             min = 1,
             max = 1,
@@ -614,7 +614,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "controllable|control (-m(ount),-y,-n,-o(wner required))",
-            desc = "Toggles whether the NPC can be ridden and controlled",
+            desc = "切换 NPC 是否可以骑乘和控制",
             modifiers = { "controllable", "control" },
             min = 1,
             max = 1,
@@ -646,7 +646,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "copy (--name newname)",
-            desc = "Copies an NPC",
+            desc = "复制 NPC",
             modifiers = { "copy" },
             min = 1,
             max = 1,
@@ -672,9 +672,9 @@ public class NPCCommands {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
-            String reason = "Couldn't create NPC.";
+            String reason = "无法创建 NPC。";
             if (!event.getCancelReason().isEmpty()) {
-                reason += " Reason: " + event.getCancelReason();
+                reason += " 原因: " + event.getCancelReason();
             }
             throw new CommandException(reason);
         }
@@ -686,7 +686,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x,y,z,world] --type [type] --item (item) --trait ['trait1, trait2...'] --model [model name] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
-            desc = "Create a new NPC",
+            desc = "创建一个新的NPC",
             flags = "bustpc",
             modifiers = { "create" },
             min = 2,
@@ -725,7 +725,7 @@ public class NPCCommands {
             registry = CitizensAPI.getNamedNPCRegistry(registryName);
             if (registry == null) {
                 registry = CitizensAPI.createNamedNPCRegistry(registryName, new MemoryNPCDataStore());
-                Messaging.send(sender, "An in-memory registry has been created named [[" + registryName + "]].");
+                Messaging.send(sender, "已创建名为 [[" + registryName + "]] 的NPC.");
             }
         }
         if (args.hasFlag('t') || temporaryTicks != null) {
@@ -773,9 +773,9 @@ public class NPCCommands {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             npc.destroy();
-            String reason = "Couldn't create NPC.";
+            String reason = "无法创建NPC.";
             if (!event.getCancelReason().isEmpty()) {
-                reason += " Reason: " + event.getCancelReason();
+                reason += " 原因: " + event.getCancelReason();
             }
             throw new CommandException(reason);
         }
@@ -823,7 +823,7 @@ public class NPCCommands {
             if (builder.length() > 0) {
                 builder.delete(builder.length() - 2, builder.length());
             }
-            msg += " with templates " + builder.toString();
+            msg += " 使用模板 " + builder.toString();
         }
         selector.select(sender, npc);
         history.add(sender, new CreateNPCHistoryItem(npc));
@@ -833,7 +833,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "debug -p(aths) -n(avigation)",
-            desc = "Display debugging information",
+            desc = "显示调试信息",
             modifiers = { "debug" },
             min = 1,
             max = 1,
