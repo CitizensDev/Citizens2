@@ -833,7 +833,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "debug -p(aths) -n(avigation)",
-            desc = "显示调试信息",
+            desc = "显示调试信息（此部分没有汉化）",
             modifiers = { "debug" },
             min = 1,
             max = 1,
@@ -860,7 +860,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "deselect",
-            desc = "Deselect currently selected NPC",
+            desc = "取消选择当前选定的 NPC",
             modifiers = { "deselect", "desel" },
             min = 1,
             max = 1,
@@ -874,7 +874,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "despawn (id)",
-            desc = "Despawn a NPC",
+            desc = "删除选定的NPC",
             modifiers = { "despawn" },
             min = 1,
             max = 2,
@@ -901,7 +901,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "drops",
-            desc = "Edit an NPC's drops",
+            desc = "编辑 NPC 掉落",
             modifiers = { "drops" },
             min = 1,
             max = 1,
@@ -915,7 +915,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "endercrystal -b(ottom)",
-            desc = "Edit endercrystal modifiers",
+            desc = "编辑末影水晶修改器",
             modifiers = { "endercrystal" },
             min = 1,
             max = 1,
@@ -938,7 +938,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "enderman -a(ngry)",
-            desc = "Set enderman modifiers",
+            desc = "设置末影人修饰符",
             flags = "a",
             modifiers = { "enderman" },
             min = 1,
@@ -956,7 +956,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "flyable (true|false)",
-            desc = "Toggles or sets an NPC's flyable status",
+            desc = "切换或设置 NPC 的可飞行状态",
             modifiers = { "flyable" },
             min = 1,
             max = 2,
@@ -977,7 +977,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "follow (player name|NPC id) (-p[rotect]) (--margin [margin]) (--enable [boolean])",
-            desc = "Toggles NPC following you",
+            desc = "切换跟随您的 NPC",
             flags = "p",
             modifiers = { "follow" },
             min = 1,
@@ -1023,7 +1023,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "gamemode [gamemode]",
-            desc = "Changes the gamemode",
+            desc = "更改游戏模式",
             modifiers = { "gamemode" },
             min = 1,
             max = 2,
@@ -1047,7 +1047,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "glowing --color [minecraft chat color]",
-            desc = "Toggles an NPC's glowing status",
+            desc = "切换 NPC 的发光状态",
             modifiers = { "glowing" },
             min = 1,
             max = 1,
@@ -1071,7 +1071,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "gravity",
-            desc = "Toggles gravity",
+            desc = "切换重力",
             modifiers = { "gravity" },
             min = 1,
             max = 1,
@@ -1085,7 +1085,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "hitbox --scale [scale] --width/height [value]",
-            desc = "Sets the NPC hitbox",
+            desc = "设置 NPC 命中框",
             modifiers = { "hitbox" },
             min = 1,
             max = 1,
@@ -1108,7 +1108,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "hologram add [text] | set [line #] [text] | remove [line #] | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
-            desc = "Controls NPC hologram text",
+            desc = "控制 NPC 全息影像文本",
             modifiers = { "hologram" },
             min = 1,
             max = -1,
@@ -1207,7 +1207,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "homeloc --location [loc] --delay [delay] --distance [distance] -h(ere) -p(athfind) -t(eleport)",
-            desc = "Controls home location",
+            desc = "控制家位置",
             modifiers = { "home" },
             min = 1,
             max = 1,
@@ -1253,8 +1253,8 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "horse|donkey|mule (--color color) (--type type) (--style style) (-cb)",
-            desc = "Sets horse and horse-like entity modifiers",
-            help = "Use the -c flag to make the NPC have a chest, or the -b flag to stop them from having a chest.",
+            desc = "设置马和类似马的实体修改器",
+            help = "使用 -c 标志让 NPC 有一个箱子，或者使用 -b 标志阻止他们有一个箱子。",
             modifiers = { "horse", "donkey", "mule" },
             min = 1,
             max = 1,
@@ -1303,7 +1303,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "hurt [damage]",
-            desc = "Damages the NPC",
+            desc = "伤害NPC",
             modifiers = { "hurt" },
             min = 2,
             max = 2,
@@ -1324,7 +1324,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "id",
-            desc = "Sends the selected NPC's ID to the sender",
+            desc = "将所选 NPC 的 ID 发送给执行命令的人",
             modifiers = { "id" },
             min = 1,
             max = 1,
@@ -1336,7 +1336,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "inventory",
-            desc = "Show's an NPC's inventory",
+            desc = "显示 NPC 的物品栏",
             modifiers = { "inventory" },
             min = 1,
             max = 1,
@@ -1348,7 +1348,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "item (item) (metadata) (-h(and))",
-            desc = "Sets the NPC's item",
+            desc = "设置 NPC 的物品",
             modifiers = { "item", },
             min = 1,
             max = 3,
@@ -1381,7 +1381,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "jump",
-            desc = "Makes the NPC jump",
+            desc = "让NPC跳跃",
             modifiers = { "jump" },
             min = 1,
             max = 1,
@@ -1393,7 +1393,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "knockback (--explicit true|false)",
-            desc = "Toggle NPC knockback",
+            desc = "切换 NPC 击退",
             modifiers = { "knockback" },
             min = 1,
             max = 1,
@@ -1410,7 +1410,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "leashable",
-            desc = "Toggles leashability",
+            desc = "切换可牵引性",
             modifiers = { "leashable" },
             min = 1,
             max = 1,
@@ -1431,7 +1431,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "list (page) ((-a) --owner (owner) --type (type) --char (char) --registry (name))",
-            desc = "List NPCs",
+            desc = "列出 NPC",
             flags = "a",
             modifiers = { "list" },
             min = 1,
@@ -1480,10 +1480,10 @@ public class NPCCommands {
             String id = npcs.get(i).getUniqueId().toString();
             String line = StringHelper.wrap(npcs.get(i).getId()) + " " + npcs.get(i).getName()
                     + " (<click:run_command:/npc tp --uuid " + id
-                    + "><hover:show_text:Teleport to this NPC>[[tp]]</hover></click>) (<click:run_command:/npc tph --uuid "
+                    + "><hover:show_text:传送到此 NPC>[[tp]]</hover></click>) (<click:run_command:/npc tph --uuid "
                     + id
-                    + "><hover:show_text:Teleport NPC to me>[[summon]]</hover></click>) (<click:run_command:/npc remove "
-                    + id + "><hover:show_text:Remove this NPC><red>-</red></hover></click>)";
+                    + "><hover:show_text:传送NPC到我所在的位置>[[summon]]</hover></click>) (<click:run_command:/npc remove "
+                    + id + "><hover:show_text:删除这个NPC><red>-</red></hover></click>)";
             paginator.addLine(line);
         }
         int op = page == null ? args.getInteger(1, 1) : page;
@@ -1494,7 +1494,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --perplayer [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false] --targetnpcs [true|false]",
-            desc = "Toggle whether a NPC will look when a player is near",
+            desc = "切换 NPC 在玩家靠近时是否显示",
             modifiers = { "lookclose", "look" },
             min = 1,
             max = 1,
@@ -1601,7 +1601,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "metadata set|get|remove [key] (value) (-t(emporary))",
-            desc = "Manages NPC metadata",
+            desc = "切换 NPC 在玩家靠近时是否显示 ...",
             modifiers = { "metadata" },
             flags = "t",
             min = 3,
@@ -1665,7 +1665,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "minecart (--item item_name(:data)) (--offset offset)",
-            desc = "Sets minecart item",
+            desc = "设置MC项目",
             modifiers = { "minecart" },
             min = 1,
             max = 1,
@@ -1703,7 +1703,7 @@ public class NPCCommands {
             aliases = { "npc" },
             modifiers = { "mirror" },
             usage = "mirror --name [true|false]",
-            desc = "Controls mirroring of NPC skins and more",
+            desc = "控制 NPC 皮肤的镜像",
             min = 1,
             max = 1,
             permission = "citizens.npc.mirror")
@@ -1728,7 +1728,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "mount (--onnpc <npc id|uuid>) (-c(ancel))",
-            desc = "Mounts a controllable NPC",
+            desc = "安装可控 NPC",
             modifiers = { "mount" },
             min = 1,
             max = 1,
@@ -1776,7 +1776,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "moveto x:y:z:world | x y z world",
-            desc = "Teleports a NPC to a given location",
+            desc = "将 NPC 传送到给定位置",
             modifiers = "moveto",
             min = 1,
             valueFlags = { "x", "y", "z", "yaw", "pitch", "world" },
@@ -1833,7 +1833,7 @@ public class NPCCommands {
             aliases = { "npc" },
             modifiers = { "name", "hidename" },
             usage = "name (-h(over))",
-            desc = "Toggle nameplate visibility, or only show names on hover",
+            desc = "切换铭牌可见性，或仅在悬停时显示名称",
             min = 1,
             max = 1,
             flags = "h",
@@ -1851,22 +1851,22 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_SET, old);
     }
 
-    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "citizens.npc.info")
+    @Command(aliases = { "npc" }, desc = "显示基本 NPC 信息", max = 0, permission = "citizens.npc.info")
     public void npc(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    ID: [[" + npc.getId());
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
         Messaging.send(sender, "    UUID: [[" + npc.getUniqueId());
-        Messaging.send(sender, "    Type: [[" + type);
+        Messaging.send(sender, "    类型: [[" + type);
         if (npc.isSpawned()) {
             Location loc = npc.getEntity().getLocation();
-            String format = "    Spawned at [[%d, %d, %d, %.2f, %.2f (head %.2f)]] [[%s";
+            String format = "    生成在 [[%d, %d, %d, %.2f, %.2f (head %.2f)]] [[%s";
             Messaging.send(sender,
                     String.format(format, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(),
                             NMS.getYaw(npc.getEntity()), loc.getPitch(), NMS.getHeadYaw(npc.getEntity()),
                             loc.getWorld().getName()));
         }
-        Messaging.send(sender, "    Traits");
+        Messaging.send(sender, "    特征");
         for (Trait trait : npc.getTraits()) {
             String message = "     - [[" + trait.getName();
             Messaging.send(sender, message);
@@ -1876,7 +1876,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "ocelot (--type type) (-s(itting), -n(ot sitting))",
-            desc = "Set the ocelot type of an NPC and whether it is sitting",
+            desc = "设置 NPC 的豹猫类型和是否坐着",
             modifiers = { "ocelot" },
             min = 1,
             max = 1,
@@ -1907,7 +1907,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "owner [uuid|SERVER]",
-            desc = "Set the owner of an NPC",
+            desc = "设置 NPC 的所有者",
             modifiers = { "owner" },
             min = 1,
             max = 2,
@@ -1938,7 +1938,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "packet --enabled [true|false]",
-            desc = "Controls packet NPC settings",
+            desc = "控制数据包 NPC 设置",
             modifiers = { "packet" },
             min = 1,
             max = 1,
@@ -1961,7 +1961,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "painting (--art art)",
-            desc = "Set painting modifiers",
+            desc = "设置绘画修改器",
             modifiers = { "painting" },
             min = 1,
             max = 1,
@@ -1981,7 +1981,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "passive (--set [true|false])",
-            desc = "Sets whether an NPC damages other entities or not",
+            desc = "设置 NPC 是否伤害其他实体",
             modifiers = { "passive" },
             min = 1,
             max = 1,
@@ -1996,7 +1996,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --use-new-finder [true|false] --falling-distance [distance]",
-            desc = "Sets an NPC's pathfinding options",
+            desc = "设置 NPC 的寻路选项",
             modifiers = { "pathopt", "po", "patho" },
             min = 1,
             max = 1,
@@ -2079,7 +2079,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "pathto me | here | cursor | [x] [y] [z] (--margin [distance margin])",
-            desc = "Starts pathfinding to a certain location",
+            desc = "开始寻路到某个位置",
             modifiers = { "pathto" },
             min = 2,
             max = 4,
@@ -2109,7 +2109,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "pausepathfinding --onrightclick [true|false] --when-player-within [range in blocks] --pauseticks [ticks]",
-            desc = "Sets pathfinding pause",
+            desc = "设置寻路暂停",
             modifiers = { "pausepathfinding" },
             min = 1,
             max = 1,
@@ -2139,7 +2139,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "pickupitems (--set [true|false])",
-            desc = "Allow NPC to pick up items",
+            desc = "允许NPC捡起物品",
             modifiers = { "pickupitems" },
             min = 1,
             max = 1,
@@ -2154,7 +2154,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "panimate [animation]",
-            desc = "Plays a player animation",
+            desc = "播放播放器动画",
             modifiers = { "panimate" },
             min = 2,
             max = 2,
@@ -2173,7 +2173,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "playerfilter -a(llowlist) -e(mpty) -d(enylist) --add [uuid] --remove [uuid] --addgroup [group] --removegroup [group] -c(lear) --applywithin [blocks range]",
-            desc = "Sets the NPC filter",
+            desc = "设置 NPC 过滤器",
             modifiers = { "playerfilter" },
             min = 1,
             max = 1,
@@ -2224,7 +2224,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "playerlist (-a(dd),r(emove))",
-            desc = "Sets whether the NPC is put in the playerlist",
+            desc = "设置是否将 NPC 放入玩家列表中",
             modifiers = { "playerlist" },
             min = 1,
             max = 1,
@@ -2252,7 +2252,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "playsound [sound] (volume) (pitch) (--at x:y:z:world)",
-            desc = "Plays a sound at the NPC's location",
+            desc = "在NPC所在位置播放声音",
             modifiers = { "playsound" },
             min = 2,
             max = 4,
@@ -2268,7 +2268,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "pose (--save [name] (-d) | --mirror [name] (-d) | --assume [name] | --remove [name] | --default [name]) (--yaw yaw) (--pitch pitch) (-a)",
-            desc = "Manage NPC poses",
+            desc = "管理 NPC 姿势",
             flags = "ad",
             modifiers = { "pose" },
             min = 1,
@@ -2339,7 +2339,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "power",
-            desc = "Toggle a creeper NPC as powered",
+            desc = "将爬行者 NPC 切换为通电",
             modifiers = { "power" },
             min = 1,
             max = 1,
@@ -2353,7 +2353,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "profession|prof [profession]",
-            desc = "Set a NPC's profession",
+            desc = "设置NPC的职业",
             modifiers = { "profession", "prof" },
             min = 2,
             max = 2,
@@ -2376,7 +2376,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "rabbittype [type]",
-            desc = "Set the Type of a Rabbit NPC",
+            desc = "设置兔子NPC的类型",
             modifiers = { "rabbittype", "rbtype" },
             min = 2,
             permission = "citizens.npc.rabbittype")
@@ -2393,7 +2393,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "remove|rem (all|id|name| --owner [owner] | --eid [entity uuid] | --world [world])",
-            desc = "Remove a NPC",
+            desc = "删除 NPC",
             modifiers = { "remove", "rem" },
             min = 1,
             max = 2)
@@ -2492,7 +2492,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "rename [name]",
-            desc = "Rename a NPC",
+            desc = "重命名NPC",
             modifiers = { "rename" },
             min = 2,
             permission = "citizens.npc.rename")
@@ -2512,7 +2512,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "respawn [delay]",
-            desc = "Sets an NPC's respawn delay",
+            desc = "设置 NPC 的重生延迟",
             modifiers = { "respawn" },
             min = 1,
             max = 2,
@@ -2529,7 +2529,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "rotate (--towards [x,y,z]) (--body [yaw]) (--head [yaw]) (--pitch [pitch]) (-s(mooth))",
-            desc = "Rotate NPC",
+            desc = "旋转NPC",
             flags = "s",
             modifiers = { "rotate" },
             min = 1,
@@ -2574,7 +2574,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "select|sel [id|name] (--range range) (--registry [name])",
-            desc = "Select a NPC with the given ID or name",
+            desc = "选择具有给定 ID 或名称的 NPC",
             modifiers = { "select", "sel" },
             min = 1,
             max = 2,
@@ -2620,7 +2620,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "setequipment [slot] [item]",
-            desc = "Sets equipment via commands",
+            desc = "通过命令设置设备",
             modifiers = { "setequipment" },
             min = 2,
             max = 3,
@@ -2642,7 +2642,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "sheep (--color [color]) (--sheared [sheared])",
-            desc = "Sets sheep modifiers",
+            desc = "设置绵羊修饰符",
             modifiers = { "sheep" },
             min = 1,
             max = 1,
@@ -2672,7 +2672,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "shop (edit|show|delete) (name)",
-            desc = "NPC shop edit/show",
+            desc = "NPC商店编辑/显示",
             modifiers = { "shop" },
             min = 1,
             max = 3,
@@ -2712,7 +2712,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "sitting (--explicit [true|false]) (--at [at])",
-            desc = "Sets the NPC sitting",
+            desc = "设置 NPC 坐姿",
             modifiers = { "sitting" },
             min = 1,
             max = 2,
@@ -2737,7 +2737,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "skin (-e(xport) -c(lear) -l(atest) -s(kull)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
-            desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
+            desc = "设置 NPC 的皮肤名称。使用 -l 将外观设置为始终更新到最新版本",
             modifiers = { "skin" },
             min = 1,
             max = 4,
@@ -2856,7 +2856,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "skinlayers (--cape [true|false]) (--hat [true|false]) (--jacket [true|false]) (--sleeves [true|false]) (--pants [true|false])",
-            desc = "Sets an NPC's skin layers visibility.",
+            desc = "设置 NPC 的皮肤图层可见性。",
             modifiers = { "skinlayers" },
             min = 1,
             max = 5,
@@ -2892,7 +2892,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "size [size]",
-            desc = "Sets the NPC's size",
+            desc = "设置 NPC 的大小。",
             modifiers = { "size" },
             min = 1,
             max = 2,
@@ -2912,7 +2912,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "sound (--death [death sound|d]) (--ambient [ambient sound|d]) (--hurt [hurt sound|d]) (-n(one)/-s(ilent)) (-d(efault))",
-            desc = "Sets an NPC's played sounds",
+            desc = "设置 NPC 播放的声音",
             modifiers = { "sound" },
             flags = "dns",
             min = 1,
@@ -2990,7 +2990,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "spawn (id|name) -l(oad chunks)",
-            desc = "Spawn an existing NPC",
+            desc = "生成一个现有的 NPC",
             modifiers = { "spawn" },
             min = 1,
             max = 2,
@@ -3034,7 +3034,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "speak [message] --bubble [duration] --target [npcid|player name] --range (range to look for entities to speak to in blocks)",
-            desc = "Says a message from the NPC",
+            desc = "说一段来自 NPC 的信息",
             modifiers = { "speak" },
             min = 2,
             permission = "citizens.npc.speak")
@@ -3078,7 +3078,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "speed [speed]",
-            desc = "Sets the movement speed of an NPC as a percentage",
+            desc = "将 NPC 的移动速度设置为百分比",
             modifiers = { "speed" },
             min = 2,
             max = 2,
@@ -3093,7 +3093,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "swim (--set [true|false])",
-            desc = "Sets an NPC to swim or not",
+            desc = "设置NPC游泳与否",
             modifiers = { "swim" },
             min = 1,
             max = 1,
@@ -3108,7 +3108,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "target [name|UUID] (-a[ggressive]) (-c[ancel])",
-            desc = "Target a given entity",
+            desc = "以给定实体为目标",
             modifiers = { "target" },
             flags = "ac",
             min = 1,
@@ -3131,7 +3131,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "targetable (-t(emporary))",
-            desc = "Toggles an NPC's targetability",
+            desc = "切换 NPC 的目标能力",
             modifiers = { "targetable" },
             min = 1,
             max = 1,
@@ -3150,7 +3150,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "tp (-e(xact))",
-            desc = "Teleport in front of an NPC",
+            desc = "传送到NPC面前",
             modifiers = { "tp", "teleport" },
             min = 1,
             max = 1,
@@ -3173,7 +3173,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "tphere (cursor) -c(enter) -f(ront)",
-            desc = "Teleport a NPC to your location",
+            desc = "将 NPC 传送到您的位置",
             flags = "cf",
             modifiers = { "tphere", "tph", "move" },
             min = 1,
@@ -3219,7 +3219,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "tpto [player name|npc id] [player name|npc id]",
-            desc = "Teleport an NPC or player to another NPC or player",
+            desc = "将一个 NPC 或玩家传送到另一个 NPC 或玩家",
             modifiers = { "tpto" },
             min = 2,
             max = 3,
@@ -3273,7 +3273,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "trackingrange [range]",
-            desc = "Sets the tracking range",
+            desc = "设置跟踪范围",
             modifiers = { "trackingrange" },
             min = 1,
             max = 2,
@@ -3290,7 +3290,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "type [type]",
-            desc = "Sets an NPC's entity type",
+            desc = "设置 NPC 的实体类型",
             modifiers = { "type" },
             min = 2,
             max = 2,
@@ -3306,7 +3306,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "undo (all)",
-            desc = "Undoes the last action (currently only create/remove supported)",
+            desc = "撤消上一个操作（目前仅支持创建/删除）",
             modifiers = { "undo" },
             min = 1,
             max = 2,
@@ -3327,7 +3327,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "useitem (-o(ffhand))",
-            desc = "Sets an NPC to  be using their held items",
+            desc = "将 NPC 设置为使用其持有的物品",
             modifiers = { "useitem" },
             min = 1,
             max = 1,
@@ -3351,7 +3351,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "vulnerable (-t(emporary))",
-            desc = "Toggles an NPC's vulnerability",
+            desc = "切换 NPC 的漏洞",
             modifiers = { "vulnerable" },
             min = 1,
             max = 1,
@@ -3371,7 +3371,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "wander",
-            desc = "Sets the NPC to wander around",
+            desc = "设置NPC四处游荡",
             modifiers = { "wander" },
             min = 1,
             max = 1,
@@ -3388,7 +3388,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "wither (--invulnerable [true|false]) (--arrow-shield [true|false])",
-            desc = "Sets wither modifiers",
+            desc = "设置凋零修饰符",
             modifiers = { "wither" },
             min = 1,
             requiresFlags = true,
@@ -3409,7 +3409,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "wolf (-s(itting) a(ngry) t(amed) i(nfo)) --collar [hex rgb color|name]",
-            desc = "Sets wolf modifiers",
+            desc = "设置狼修饰符",
             modifiers = { "wolf" },
             min = 1,
             max = 1,
