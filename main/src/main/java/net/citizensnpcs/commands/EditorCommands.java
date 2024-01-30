@@ -18,7 +18,7 @@ public class EditorCommands {
     @Command(
             aliases = { "npc" },
             usage = "copier",
-            desc = "Toggle the NPC copier",
+            desc = "切换 NPC 复印机",
             modifiers = { "copier" },
             min = 1,
             max = 1,
@@ -30,14 +30,14 @@ public class EditorCommands {
     @Command(
             aliases = { "npc" },
             usage = "equip",
-            desc = "Toggle the equipment editor",
+            desc = "切换设备编辑器",
             modifiers = { "equip" },
             min = 1,
             max = 1,
             permission = "citizens.npc.edit.equip")
     public void equip(CommandContext args, Player player, NPC npc) throws CommandException {
         if (!npc.isSpawned())
-            throw new CommandException("NPC must be spawned");
+            throw new CommandException("NPC必须生成");
 
         Editor.enterOrLeave(player, new EquipmentEditor(player, npc));
     }
@@ -45,7 +45,7 @@ public class EditorCommands {
     @Command(
             aliases = { "npc" },
             usage = "path",
-            desc = "Toggle the waypoint editor",
+            desc = "切换航点编辑器",
             modifiers = { "path" },
             min = 1,
             flags = "*",
@@ -66,7 +66,7 @@ public class EditorCommands {
     @Command(
             aliases = { "npc" },
             usage = "text",
-            desc = "Toggle the text editor",
+            desc = "切换文本编辑器",
             modifiers = { "text" },
             min = 1,
             permission = "citizens.npc.edit.text")
