@@ -172,7 +172,7 @@ public class Template {
                 try {
                     new Template(name, replacements, override).save();
                 } catch (IOException e) {
-                    Messaging.severe("Unable to migrate template", name, "due to invalid filename");
+                    Messaging.severe("无法合并模板", name, "由于文件名无效");
                 }
             }
             try {
