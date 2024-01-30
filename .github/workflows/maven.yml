@@ -16,8 +16,9 @@ on:
 
 jobs:
   build:
-    permissions: write-all
+
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 17
@@ -25,28 +26,12 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        server-id: phoenixdevt-releases
-    - name: Install depends
-      run: mvn install
+        cache: maven
     - name: Build with Maven
-      run: mvn package
+      run: mvn compile & mvn package
+
+    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+    - name: Update dependency graph
+      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
     - run: mkdir staging && cp target/*.jar staging
-#     - name: Set Release version env variable
-#       run: |
-#         echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-#     - name: "Build & test"
-#       run: |
-#         echo "done!"
-#     - uses: "marvinpinto/action-automatic-releases@latest"
-#       with:
-#         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-#         automatic_release_tag: "${{ env.RELEASE_VERSION }}"
-#         prerelease: false
-#         title: "Release ${{ env.RELEASE_VERSION }}"
-#         files: |
-#           staging/*.jar
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: Citizens
-        path: staging/*.jar
+    - uses: actions/upload-artifact@v3
