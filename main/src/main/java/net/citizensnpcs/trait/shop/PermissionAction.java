@@ -90,7 +90,7 @@ public class PermissionAction extends NPCShopAction {
         });
     }
 
-    @Menu(title = "Permissions editor", dimensions = { 3, 9 })
+    @Menu(title = "权限编辑器", dimensions = { 3, 9 })
     public static class PermissionActionEditor extends InventoryMenuPage {
         private PermissionAction base;
         private Consumer<NPCShopAction> callback;
@@ -109,8 +109,8 @@ public class PermissionAction extends NPCShopAction {
                 int idx = i;
                 ctx.getSlot(i).clear();
                 if (i < base.permissions.size()) {
-                    ctx.getSlot(i).setItemStack(new ItemStack(Material.FEATHER), "<f>Set permission",
-                            "Right click to remove\nCurrently: " + base.permissions.get(i));
+                    ctx.getSlot(i).setItemStack(new ItemStack(Material.FEATHER), "<f>设置权限",
+                            "右键删除\n当前: " + base.permissions.get(i));
                 }
                 ctx.getSlot(i).setClickHandler(event -> {
                     if (event.isRightClick()) {
