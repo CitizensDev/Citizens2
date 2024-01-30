@@ -30,7 +30,7 @@ public class TemplateCommands {
     @Command(
             aliases = { "template", "tpl" },
             usage = "apply [template name] (id id2...)",
-            desc = "Applies a template to the selected NPC",
+            desc = "将模板应用于选定的 NPC",
             modifiers = { "apply" },
             min = 2,
             permission = "citizens.templates.apply")
@@ -63,7 +63,7 @@ public class TemplateCommands {
     @Command(
             aliases = { "template", "tpl" },
             usage = "create [template name] (-k)",
-            desc = "Creates a template from the selected NPC",
+            desc = "从选定的 NPC 创建模板",
             modifiers = { "create" },
             min = 2,
             max = 2,
@@ -85,7 +85,7 @@ public class TemplateCommands {
     @Command(
             aliases = { "template", "tpl" },
             usage = "delete [template name]",
-            desc = "Deletes a template",
+            desc = "删除模板",
             modifiers = { "delete" },
             min = 2,
             max = 2,
@@ -101,7 +101,7 @@ public class TemplateCommands {
     @Command(
             aliases = { "template", "tpl" },
             usage = "list",
-            desc = "Lists available templates",
+            desc = "列出可用的模板",
             modifiers = { "list" },
             min = 1,
             max = 1,
