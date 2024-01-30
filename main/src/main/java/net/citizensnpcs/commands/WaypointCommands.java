@@ -34,7 +34,7 @@ public class WaypointCommands {
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "add [x] [y] [z] (world) (--index idx)",
-            desc = "Adds a waypoint at a point",
+            desc = "在某个点添加航点",
             modifiers = { "add" },
             min = 4,
             max = 5,
@@ -61,7 +61,7 @@ public class WaypointCommands {
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "disableteleport",
-            desc = "Disables teleportation when stuck",
+            desc = "卡住时禁用传送",
             modifiers = { "disableteleport", "dt" },
             min = 1,
             max = 1,
@@ -83,7 +83,7 @@ public class WaypointCommands {
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "hpa",
-            desc = "Debugging command",
+            desc = "调试命令",
             modifiers = { "hpa" },
             min = 1,
             max = 1,
@@ -102,7 +102,7 @@ public class WaypointCommands {
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "opendoors",
-            desc = "Enables opening doors when pathfinding",
+            desc = "在寻路时打开门",
             modifiers = { "opendoors", "od" },
             min = 1,
             max = 1,
@@ -118,7 +118,7 @@ public class WaypointCommands {
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "provider [provider name]",
-            desc = "Sets the current waypoint provider",
+            desc = "设置当前航点提供程序",
             modifiers = { "provider" },
             min = 1,
             max = 2,
@@ -135,14 +135,14 @@ public class WaypointCommands {
         }
         boolean success = waypoints.setWaypointProvider(args.getString(1));
         if (!success)
-            throw new CommandException("Provider not found.");
+            throw new CommandException("未找到提供程序.");
         Messaging.sendTr(sender, Messages.WAYPOINT_PROVIDER_SET, args.getString(1));
     }
 
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "remove (x y z world) (--index idx)",
-            desc = "Adds a waypoint at a point",
+            desc = "在某个点添加航点",
             modifiers = { "remove" },
             min = 1,
             max = 5,
