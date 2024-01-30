@@ -289,7 +289,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void loadMavenLibraries() {
-        getLogger().info("Loading external libraries");
+        getLogger().info("加载外置库");
 
         LibraryManager lib = new BukkitLibraryManager(this);
         lib.addMavenCentral();
