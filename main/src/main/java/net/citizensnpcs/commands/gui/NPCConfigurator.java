@@ -18,7 +18,7 @@ import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.Util;
 
-@Menu(title = "Configure NPC", type = InventoryType.CHEST, dimensions = { 5, 9 })
+@Menu(title = "配置NPC", type = InventoryType.CHEST, dimensions = { 5, 9 })
 public class NPCConfigurator extends InventoryMenuPage {
     private NPC npc;
 
@@ -68,7 +68,7 @@ public class NPCConfigurator extends InventoryMenuPage {
     private static final Map<Integer, ConfiguratorInfo> SLOT_MAP = Maps.newHashMap();
     static {
         SLOT_MAP.put(0, new ConfiguratorInfo(Util.getFallbackMaterial("OAK_SIGN", "SIGN"), evt -> {
-            evt.slot.setDescription("Edit NPC name\n" + evt.npc.getName());
+            evt.slot.setDescription("编辑NPC名称\n" + evt.npc.getName());
             if (evt.event != null) {
                 evt.ctx.getMenu()
                         .transition(InputMenus.stringSetter(() -> evt.npc.getName(), input -> evt.npc.setName(input)));
