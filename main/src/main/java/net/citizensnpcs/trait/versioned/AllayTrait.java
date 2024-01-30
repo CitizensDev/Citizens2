@@ -44,7 +44,7 @@ public class AllayTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "allay (-d(ancing))",
-            desc = "Sets allay modifiers",
+            desc = "设置悦灵特征",
             modifiers = { "allay" },
             min = 1,
             max = 1,
