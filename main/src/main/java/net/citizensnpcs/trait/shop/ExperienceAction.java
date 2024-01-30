@@ -25,7 +25,7 @@ public class ExperienceAction extends NPCShopAction {
 
     @Override
     public String describe() {
-        return exp == 1 ? exp + " level" : exp + " levels";
+        return exp == 1 ? exp + " 等级" : exp + " 等级";
     }
 
     @Override
