@@ -21,11 +21,11 @@ import net.citizensnpcs.api.gui.MenuSlot;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.SpigotUtil;
 
-@Menu(title = "NPC Equipment", type = InventoryType.HOPPER, dimensions = { 0, 5 })
-@MenuSlot(slot = { 0, 0 }, material = Material.ENDER_PEARL, amount = 1, lore = "Place a block to hold here ->")
+@Menu(title = "NPC 装备", type = InventoryType.HOPPER, dimensions = { 0, 5 })
+@MenuSlot(slot = { 0, 0 }, material = Material.ENDER_PEARL, amount = 1, lore = "在此处放置一个固定块 ->")
 @MenuPattern(
         offset = { 0, 2 },
-        slots = { @MenuSlot(pat = 'x', compatMaterial = { "BARRIER", "FIRE" }, title = "<4>Unused") },
+        slots = { @MenuSlot(pat = 'x', compatMaterial = { "BARRIER", "FIRE" }, title = "<4>未使用") },
         value = "xxx")
 public class EndermanEquipperGUI extends InventoryMenuPage {
     @MenuSlot(slot = { 0, 1 })
