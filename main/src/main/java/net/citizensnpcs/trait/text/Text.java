@@ -44,7 +44,7 @@ public class Text extends Trait implements Runnable, Listener {
     @Persist
     private int delay = -1;
     @Persist(value = "talkitem")
-    private String itemInHandPattern = "default";
+    private String itemInHandPattern = "默认";
     private final Plugin plugin;
     @Persist(value = "random-talker")
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
@@ -196,7 +196,7 @@ public class Text extends Trait implements Runnable, Listener {
         Paginator paginator = new Paginator().header("Current Texts").enablePageSwitcher("/npc text page $page");
         for (int i = 0; i < text.size(); i++) {
             paginator.addLine(text.get(i) + " <green>(<click:suggest_command:edit " + i
-                    + " ><yellow>edit</click>) (<hover:show_text:Remove this text><click:run_command:/npc text remove "
+                    + " ><yellow>编辑</click>) (<hover:show_text:删除此文本><click:run_command:/npc text remove "
                     + i + "><red>-</click></hover>)");
         }
         return paginator.sendPage(player, page);
