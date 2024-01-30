@@ -20,20 +20,20 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 
-@Menu(title = "NPC Equipment", type = InventoryType.CHEST, dimensions = { 2, 5 })
+@Menu(title = "NPC 装备", type = InventoryType.CHEST, dimensions = { 2, 5 })
 @MenuSlot(
         slot = { 0, 1 },
         compatMaterial = { "SHIELD", "BARRIER", "FIRE" },
-        lore = "Place offhand item below",
+        lore = "将手边物品放在下面",
         amount = 1)
-@MenuSlot(slot = { 0, 0 }, material = Material.DIAMOND_SWORD, lore = "Place in hand item below", amount = 1)
-@MenuSlot(slot = { 0, 2 }, material = Material.DIAMOND_HELMET, lore = "Place helmet below", amount = 1)
-@MenuSlot(slot = { 0, 3 }, material = Material.DIAMOND_CHESTPLATE, lore = "Place chestplate below", amount = 1)
-@MenuSlot(slot = { 0, 4 }, material = Material.DIAMOND_LEGGINGS, lore = "Place leggings below", amount = 1)
-@MenuSlot(slot = { 0, 5 }, material = Material.DIAMOND_BOOTS, lore = "Place boots below", amount = 1)
+@MenuSlot(slot = { 0, 0 }, material = Material.DIAMOND_SWORD, lore = "将手边的物品放在下面", amount = 1)
+@MenuSlot(slot = { 0, 2 }, material = Material.DIAMOND_HELMET, lore = "将头盔放在下面", amount = 1)
+@MenuSlot(slot = { 0, 3 }, material = Material.DIAMOND_CHESTPLATE, lore = "将胸甲放在下面", amount = 1)
+@MenuSlot(slot = { 0, 4 }, material = Material.DIAMOND_LEGGINGS, lore = "将护腿放在下面", amount = 1)
+@MenuSlot(slot = { 0, 5 }, material = Material.DIAMOND_BOOTS, lore = "将靴子放在下面", amount = 1)
 @MenuPattern(
         offset = { 0, 6 },
-        slots = { @MenuSlot(pat = 'x', compatMaterial = { "BARRIER", "FIRE" }, title = "<4>Unused") },
+        slots = { @MenuSlot(pat = 'x', compatMaterial = { "BARRIER", "FIRE" }, title = "<4>未使用") },
         value = "xxx\nxxx")
 public class GenericEquipperGUI extends InventoryMenuPage {
     @MenuSlot(slot = { 1, 5 })
