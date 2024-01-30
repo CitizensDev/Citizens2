@@ -28,6 +28,10 @@
             <id>citizens-repo</id>
             <url>https://maven.citizensnpcs.co/repo</url>
         </repository>
+        <repository>
+            <id>nms-repo</id>
+            <url>https://repo.codemc.io/repository/nms/</url>
+        </repository>
     </repositories>
     <build>
         <defaultGoal>clean package install</defaultGoal>
