@@ -1,6 +1,8 @@
 Citizens2 README
 ================
 
+Citizens 中文汉化仓库
+
 Citizens is an NPC plugin for the Bukkit API. It was first released on March 5, 2011, and has since seen numerous updates. Citizens provides an API which developers can use to create their own NPC characters. More information on the API can be found on the API page of the Citizens Wiki (https://wiki.citizensnpcs.co/API).
 
 Compatible with:
