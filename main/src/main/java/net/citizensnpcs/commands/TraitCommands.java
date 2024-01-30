@@ -29,7 +29,7 @@ public class TraitCommands {
     @Command(
             aliases = { "trait" },
             usage = "add [trait name]...",
-            desc = "Adds traits to the NPC",
+            desc = "为NPC添加特征",
             modifiers = { "add", "a" },
             min = 2,
             permission = "citizens.npc.trait")
@@ -39,16 +39,16 @@ public class TraitCommands {
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(1))) {
             if (!sender.hasPermission("citizens.npc.trait." + traitName)
                     && !sender.hasPermission("citizens.npc.trait.*")) {
-                failed.add(String.format("%s: No permission", traitName));
+                failed.add(String.format("%s: 没权限", traitName));
                 continue;
             }
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
-                failed.add(String.format("%s: Trait not found", traitName));
+                failed.add(String.format("%s: 特征没找到", traitName));
                 continue;
             }
             if (npc.hasTrait(clazz)) {
-                failed.add(String.format("%s: Already added", traitName));
+                failed.add(String.format("%s: 已添加", traitName));
                 continue;
             }
             addTrait(npc, clazz, sender);
@@ -70,7 +70,7 @@ public class TraitCommands {
     @Command(
             aliases = { "traitc", "trc" },
             usage = "[trait name] (flags)",
-            desc = "Configures a trait",
+            desc = "配置特征",
             modifiers = { "*" },
             min = 1,
             flags = "*",
@@ -94,7 +94,7 @@ public class TraitCommands {
     @Command(
             aliases = { "trait" },
             usage = "remove [trait names]...",
-            desc = "Removes traits on the NPC",
+            desc = "移除NPC的特征",
             modifiers = { "remove", "rem", "r" },
             min = 2,
             permission = "citizens.npc.trait")
@@ -104,17 +104,17 @@ public class TraitCommands {
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(1))) {
             if (!sender.hasPermission("citizens.npc.trait." + traitName)
                     && !sender.hasPermission("citizens.npc.trait.*")) {
-                failed.add(String.format("%s: No permission", traitName));
+                failed.add(String.format("%s: 没权限", traitName));
                 continue;
             }
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
-                failed.add(String.format("%s: Trait not found", traitName));
+                failed.add(String.format("%s: 特征没找到", traitName));
                 continue;
             }
             boolean hasTrait = npc.hasTrait(clazz);
             if (!hasTrait) {
-                failed.add(String.format("%s: Trait not attached", traitName));
+                failed.add(String.format("%s: 特征未添加", traitName));
                 continue;
             }
             removeTrait(npc, clazz, sender);
@@ -136,7 +136,7 @@ public class TraitCommands {
     @Command(
             aliases = { "trait" },
             usage = "[trait name], [trait name]...",
-            desc = "Toggles traits on the NPC",
+            desc = "切换 NPC 的特征",
             modifiers = { "*" },
             min = 1,
             permission = "citizens.npc.trait")
@@ -147,12 +147,12 @@ public class TraitCommands {
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
             if (!sender.hasPermission("citizens.npc.trait." + traitName)
                     && !sender.hasPermission("citizens.npc.trait.*")) {
-                failed.add(String.format("%s: No permission", traitName));
+                failed.add(String.format("%s: 没权限", traitName));
                 continue;
             }
             Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
             if (clazz == null) {
-                failed.add(String.format("%s: Trait not found", traitName));
+                failed.add(String.format("%s: 特征没找到", traitName));
                 continue;
             }
             boolean remove = npc.hasTrait(clazz);
