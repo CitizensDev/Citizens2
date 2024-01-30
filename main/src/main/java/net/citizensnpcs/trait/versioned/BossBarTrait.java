@@ -233,7 +233,7 @@ public class BossBarTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "bossbar --style [style] --color [color] --title [title] --visible [visible] --viewpermission [permission] --flags [flags] --track [health | placeholder] --range [range]",
-            desc = "Edit bossbar properties",
+            desc = "编辑boos栏属性",
             modifiers = { "bossbar" },
             min = 1,
             max = 1)
