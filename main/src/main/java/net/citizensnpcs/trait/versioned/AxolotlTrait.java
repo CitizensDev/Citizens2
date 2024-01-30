@@ -59,7 +59,7 @@ public class AxolotlTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "axolotl (-d) (--variant variant)",
-            desc = "Sets axolotl modifiers",
+            desc = "设置美西螈特征",
             modifiers = { "axolotl" },
             min = 1,
             max = 1,
