@@ -26,18 +26,18 @@ public class AdminCommands {
         this.plugin = plugin;
     }
 
-    @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "citizens.admin")
+    @Command(aliases = { "citizens" }, desc = "显示基本插件信息", max = 0, permission = "citizens.admin")
     public void citizens(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.send(sender, StringHelper.wrapHeader("<green>Citizens v" + plugin.getDescription().getVersion()));
-        Messaging.send(sender, "     <yellow>-- <green>Author: fullwall");
+        Messaging.send(sender, "     <yellow>-- <green>作者: fullwall 汉化作者:lilingfengdev");
         Messaging.send(sender, "     <yellow>-- <green><click:open_url:" + plugin.getDescription().getWebsite()
-                + "><hover:show_text:Citizens website including wiki><u>Website</hover></click> <click:open_url:https://discord.gg/Q6pZGSR><hover:show_text:Citizens Support Discord><u>Support</hover></click>");
+                + "><hover:show_text:Citizens 网站包含wiki><u>网站</hover></click> <click:open_url:https://discord.gg/Q6pZGSR><hover:show_text:Citizens Discord 支持><u>支持</hover></click>");
     }
 
     @Command(
             aliases = { "citizens" },
             usage = "reload",
-            desc = "Load Citizens fresh from disk, without saving first",
+            desc = "从磁盘中加载 Citizens ，无需先保存",
             modifiers = { "reload", "load" },
             min = 1,
             max = 1,
@@ -64,7 +64,7 @@ public class AdminCommands {
     @Command(
             aliases = { "citizens" },
             usage = "save (-a)",
-            desc = "Save NPCs",
+            desc = "保存NPC配置文件",
             help = Messages.COMMAND_SAVE_HELP,
             modifiers = { "save" },
             min = 1,
