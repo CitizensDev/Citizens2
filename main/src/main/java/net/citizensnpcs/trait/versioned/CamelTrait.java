@@ -53,7 +53,7 @@ public class CamelTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "camel (--pose pose)",
-            desc = "Sets camel modifiers",
+            desc = "设置骆驼特征",
             modifiers = { "camel" },
             min = 1,
             max = 1,
