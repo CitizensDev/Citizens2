@@ -179,7 +179,7 @@ public class ShulkerController extends MobEntityController {
 
         @Override
         protected EntityAIBodyControl s() {
-            return new EntityAIBodyControl(this);
+            return npc == null ? super.s() : new EntityAIBodyControl(this);
         }
 
         @Override
