@@ -98,7 +98,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location loc = npc.getEntity().getLocation();
         /* Proper door movement - gets stuck on corners at times
-        
+
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
@@ -112,8 +112,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         double dX = dest.getX() - loc.getX();
         double dZ = dest.getZ() - loc.getZ();
         double dY = dest.getY() - loc.getY();
-        double xzDistance = dX * dX + dZ * dZ;
-        if (Math.abs(dY) < 1 && Math.sqrt(xzDistance) <= params.distanceMargin()) {
+        double xzDistance = Math.sqrt(dX * dX + dZ * dZ);
+        if (Math.abs(dY) < 1 && xzDistance <= params.distanceMargin()) {
             plan.update(npc);
             if (plan.isComplete())
                 return true;
@@ -128,7 +128,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         } else {
             Vector dir = dest.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize().multiply(0.2);
             boolean liquidOrInLiquid = MinecraftBlockExaminer.isLiquidOrInLiquid(loc.getBlock());
-            if (dY >= 1 && Math.sqrt(xzDistance) <= 0.4 || dY >= 0.2 && liquidOrInLiquid) {
+            if (dY >= 1 && xzDistance <= 0.4 || dY >= 0.2 && liquidOrInLiquid) {
                 dir.add(new Vector(0, 0.75, 0));
             }
             npc.getEntity().setVelocity(dir);

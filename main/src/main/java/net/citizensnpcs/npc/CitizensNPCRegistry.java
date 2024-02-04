@@ -191,9 +191,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public NPC getNPC(Entity entity) {
         if (entity == null)
             return null;
-        if (entity instanceof NPCHolder)
-            return ((NPCHolder) entity).getNPC();
-        return NMS.getNPC(entity);
+        return entity instanceof NPCHolder ? ((NPCHolder) entity).getNPC() : NMS.getNPC(entity);
     }
 
     @Override

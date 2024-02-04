@@ -271,14 +271,15 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         tree.clear();
         treePlusDestinations.clear();
         for (Waypoint waypoint : guides) {
-            tree.put(new long[] { waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
-                    waypoint.getLocation().getBlockZ() }, waypoint);
-            treePlusDestinations.put(new long[] { waypoint.getLocation().getBlockX(),
-                    waypoint.getLocation().getBlockY(), waypoint.getLocation().getBlockZ() }, waypoint);
+            Location location = waypoint.getLocation();
+            tree.put(new long[] { location.getBlockX(), location.getBlockY(), location.getBlockZ() }, waypoint);
+            treePlusDestinations.put(new long[] { location.getBlockX(), location.getBlockY(), location.getBlockZ() },
+                    waypoint);
         }
         for (Waypoint waypoint : destinations) {
-            treePlusDestinations.put(new long[] { waypoint.getLocation().getBlockX(),
-                    waypoint.getLocation().getBlockY(), waypoint.getLocation().getBlockZ() }, waypoint);
+            Location location = waypoint.getLocation();
+            treePlusDestinations.put(new long[] { location.getBlockX(), location.getBlockY(), location.getBlockZ() },
+                    waypoint);
         }
         if (currentGoal != null) {
             currentGoal.onProviderChanged();

@@ -31,7 +31,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
 import net.citizensnpcs.api.gui.ClickHandler;
 import net.citizensnpcs.api.gui.InputMenus;
-import net.citizensnpcs.api.gui.InputMenus.Choice;
 import net.citizensnpcs.api.gui.InventoryMenu;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.gui.InventoryMenuPattern;
@@ -113,8 +112,6 @@ public class ShopTrait extends Trait {
         private final List<NPCShopPage> pages = Lists.newArrayList();
         @Persist
         private String title;
-        @Persist
-        private ShopType type = ShopType.COMMAND;
         @Persist
         private String viewPermission;
 
@@ -712,42 +709,31 @@ public class ShopTrait extends Trait {
         @Override
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
-            ctx.getSlot(2)
+            ctx.getSlot(0)
                     .setDescription("<f>Edit permission required to view shop<br>" + shop.getRequiredPermission());
-            ctx.getSlot(6).setDescription("<f>Edit shop title<br>" + shop.title);
+            ctx.getSlot(4).setDescription("<f>Edit shop title<br>" + shop.title);
             if (trait != null) {
-                ctx.getSlot(8).setDescription(
+                ctx.getSlot(6).setDescription(
                         "<f>Show shop on right click<br>" + shop.getName().equals(trait.rightClickShop));
             }
         }
 
-        @MenuSlot(slot = { 0, 4 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
+        @MenuSlot(slot = { 0, 2 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
         public void onEditItems(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             ctx.getMenu().transition(new NPCShopContentsEditor(shop));
         }
 
-        @MenuSlot(slot = { 0, 2 }, compatMaterial = { "OAK_SIGN", "SIGN" }, amount = 1)
+        @MenuSlot(slot = { 0, 0 }, compatMaterial = { "OAK_SIGN", "SIGN" }, amount = 1)
         public void onPermissionChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             ctx.getMenu().transition(InputMenus.stringSetter(shop::getRequiredPermission, shop::setPermission));
         }
 
-        @MenuSlot(slot = { 0, 6 }, material = Material.NAME_TAG, amount = 1)
+        @MenuSlot(slot = { 0, 4 }, material = Material.NAME_TAG, amount = 1)
         public void onSetTitle(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             ctx.getMenu().transition(InputMenus.stringSetter(() -> shop.title, newTitle -> shop.title = newTitle));
         }
 
-        @MenuSlot(slot = { 0, 0 }, material = Material.BOOK, amount = 1, title = "<f>Edit shop type")
-        public void onShopTypeChange(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            ctx.getMenu().transition(InputMenus.<ShopType> picker("Edit shop type",
-                    chosen -> shop.type = chosen.getValue(),
-                    Choice.<ShopType> of(ShopType.BUY, Material.DIAMOND, "Players buy items",
-                            shop.type == ShopType.BUY),
-                    Choice.of(ShopType.SELL, Material.EMERALD, "Players sell items", shop.type == ShopType.SELL),
-                    Choice.of(ShopType.COMMAND, Util.getFallbackMaterial("ENDER_EYE", "ENDER_PEARL"),
-                            "Clicks trigger commands only", shop.type == ShopType.COMMAND)));
-        }
-
-        @MenuSlot(slot = { 0, 8 }, compatMaterial = { "COMMAND_BLOCK", "COMMAND" }, amount = 1)
+        @MenuSlot(slot = { 0, 6 }, compatMaterial = { "COMMAND_BLOCK", "COMMAND" }, amount = 1)
         public void onToggleRightClick(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
             event.setCancelled(true);
             if (trait == null)
@@ -758,7 +744,7 @@ public class ShopTrait extends Trait {
             } else {
                 trait.rightClickShop = shop.name;
             }
-            ctx.getSlot(8)
+            ctx.getSlot(6)
                     .setDescription("<f>Show shop on right click<br>" + shop.getName().equals(trait.rightClickShop));
         }
     }
@@ -828,12 +814,6 @@ public class ShopTrait extends Trait {
             this.ctx = ctx;
             changePage(currentPage);
         }
-    }
-
-    public enum ShopType {
-        BUY,
-        COMMAND,
-        SELL;
     }
 
     static {
