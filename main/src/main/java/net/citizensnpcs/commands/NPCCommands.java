@@ -339,7 +339,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "armorstand --visible [visible] --small [small] --gravity [gravity] --arms [arms] --baseplate [baseplate] --(body|leftarm|leftleg|rightarm|rightleg)pose [angle x,y,z]",
+            usage = "armorstand --visible [visible] --small [small] --marker [marker] --gravity [gravity] --arms [arms] --baseplate [baseplate] --(body|leftarm|leftleg|rightarm|rightleg)pose [angle x,y,z]",
             desc = "Edit armorstand properties",
             modifiers = { "armorstand" },
             min = 1,
@@ -349,7 +349,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = EntityType.ARMOR_STAND)
     public void armorstand(CommandContext args, CommandSender sender, NPC npc, @Flag("visible") Boolean visible,
             @Flag("small") Boolean small, @Flag("gravity") Boolean gravity, @Flag("arms") Boolean arms,
-            @Flag("baseplate") Boolean baseplate) throws CommandException {
+            @Flag("marker") Boolean marker, @Flag("baseplate") Boolean baseplate) throws CommandException {
         ArmorStandTrait trait = npc.getOrAddTrait(ArmorStandTrait.class);
         if (visible != null) {
             trait.setVisible(visible);
@@ -359,6 +359,9 @@ public class NPCCommands {
         }
         if (gravity != null) {
             trait.setGravity(gravity);
+        }
+        if (marker != null) {
+            trait.setMarker(marker);
         }
         if (arms != null) {
             trait.setHasArms(arms);

@@ -276,6 +276,11 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public void setSneaking(boolean sneaking) {
+        getOrAddTrait(SneakTrait.class).setSneaking(sneaking);
+    }
+
+    @Override
     public boolean spawn(Location at) {
         return spawn(at, SpawnReason.PLUGIN);
     }
@@ -532,9 +537,6 @@ public class CitizensNPC extends AbstractNPC {
                 }
                 if (getEntity() instanceof Player) {
                     updateUsingItemState((Player) getEntity());
-                    if (data().has(NPC.Metadata.SNEAKING) && !hasTrait(SneakTrait.class)) {
-                        addTrait(SneakTrait.class);
-                    }
                 }
             }
             navigator.run();
