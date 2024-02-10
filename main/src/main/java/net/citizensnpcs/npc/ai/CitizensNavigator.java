@@ -154,6 +154,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (root.keyExists("pathfindingrange")) {
             defaultParams.range((float) root.getDouble("pathfindingrange"));
         }
+        if (root.keyExists("usenewpathfinder")) {
+            defaultParams.useNewPathfinder(root.getBoolean("usenewpathfinder"));
+        }
         if (root.keyExists("stationaryticks")) {
             defaultParams.stationaryTicks(root.getInt("stationaryticks"));
         }
