@@ -373,6 +373,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public void setProtected(boolean isProtected);
 
+    public void setSneaking(boolean sneaking);
+
     /**
      * Set the NPC to use Minecraft AI where possible. Note that the NPC may not always behave exactly like a Minecraft
      * mob would because of additional Citizens APIs.
@@ -554,11 +556,6 @@ public interface NPC extends Agent, Cloneable {
          * Whether to suppress sounds.
          */
         SILENT("silent-sounds", Boolean.class),
-        /**
-         * Whether to sneak.
-         */
-        @Deprecated
-        SNEAKING("citizens-sneaking", Boolean.class),
         /**
          * The initial no damage ticks on spawn, defaults to 20. Integer
          */

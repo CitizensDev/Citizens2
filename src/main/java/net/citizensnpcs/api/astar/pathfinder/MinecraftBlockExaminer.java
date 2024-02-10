@@ -33,7 +33,7 @@ public class MinecraftBlockExaminer implements BlockExaminer {
             return 2F;
         if (isLiquidOrInLiquid(source.getWorld().getBlockAt(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))) {
             if (in == Material.LAVA)
-                return 3F;
+                return 4F;
             return 2F;
         }
         return 0F; // TODO: add light level-specific costs?
@@ -102,23 +102,23 @@ public class MinecraftBlockExaminer implements BlockExaminer {
                         if (next.getY() > prev.getY()) {
                             npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.3));
                             if (sneakingForScaffolding) {
-                                npc.data().set(NPC.Metadata.SNEAKING, sneakingForScaffolding = false);
+                                npc.setSneaking(sneakingForScaffolding = false);
                             }
                         } else if (isScaffolding(in) || isScaffolding(next.getType())) {
                             if (loc.distance(next.getLocation().add(0.5, 1, 0.5)) < 0.4) {
-                                npc.data().set(NPC.Metadata.SNEAKING, sneakingForScaffolding = true);
+                                npc.setSneaking(sneakingForScaffolding = true);
                             }
                         } else if (next.getY() < prev.getY()) {
                             npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(-0.2));
                         }
                     } else if (sneakingForScaffolding) {
-                        npc.data().set(NPC.Metadata.SNEAKING, sneakingForScaffolding = false);
+                        npc.setSneaking(sneakingForScaffolding = false);
                     }
                 }
             });
             npc.getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
                 npc.data().set("running-ladder", false);
-                npc.data().set(NPC.Metadata.SNEAKING, false);
+                npc.setSneaking(false);
             });
             added = true;
         }
