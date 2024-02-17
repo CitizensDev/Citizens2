@@ -274,10 +274,10 @@ public class Settings {
         USE_SCOREBOARD_TEAMS("npc.scoreboard-teams.enable", true),
         WARN_ON_RELOAD("general.reload-warning-enabled", true),;
 
-        protected String comments;
+        private String comments;
         private Duration duration;
-        protected String migrate;
-        protected String path;
+        private String migrate;
+        private final String path;
         protected Object value;
 
         Setting(String path, Object value) {
@@ -347,14 +347,7 @@ public class Settings {
         }
 
         protected void loadFromKey(DataKey root) {
-            if (SUPPORTS_SET_COMMENTS && root.keyExists(path)) {
-                try {
-                    ((YamlKey) root).getSection("").setComments(path,
-                            comments == null ? null : Arrays.asList(comments.split("<br>")));
-                } catch (Throwable t) {
-                    SUPPORTS_SET_COMMENTS = false;
-                }
-            }
+            setComments(root);
             if (migrate != null && root.keyExists(migrate) && !root.keyExists(path)) {
                 value = root.getRaw(migrate);
                 root.removeKey(migrate);
@@ -365,6 +358,18 @@ public class Settings {
 
         protected void setAtKey(DataKey root) {
             root.setRaw(path, value);
+            setComments(root);
+        }
+
+        private void setComments(DataKey root) {
+            if (SUPPORTS_SET_COMMENTS && root.keyExists(path)) {
+                try {
+                    ((YamlKey) root).getSection("").setComments(path,
+                            comments == null ? null : Arrays.asList(comments.split("<br>")));
+                } catch (Throwable t) {
+                    SUPPORTS_SET_COMMENTS = false;
+                }
+            }
         }
     }
 

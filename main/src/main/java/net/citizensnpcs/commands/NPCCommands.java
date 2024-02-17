@@ -339,7 +339,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "armorstand --visible [visible] --small [small] --marker [marker] --gravity [gravity] --arms [arms] --baseplate [baseplate] --(body|leftarm|leftleg|rightarm|rightleg)pose [angle x,y,z]",
+            usage = "armorstand --visible [visible] --small [small] --marker [marker] --gravity [gravity] --arms [arms] --baseplate [baseplate] --(head|body|leftarm|leftleg|rightarm|rightleg)pose [angle x,y,z]",
             desc = "Edit armorstand properties",
             modifiers = { "armorstand" },
             min = 1,
@@ -370,6 +370,9 @@ public class NPCCommands {
             trait.setHasBaseplate(baseplate);
         }
         ArmorStand ent = (ArmorStand) npc.getEntity();
+        if (args.hasValueFlag("headpose")) {
+            ent.setHeadPose(args.parseEulerAngle(args.getFlag("headpose")));
+        }
         if (args.hasValueFlag("bodypose")) {
             ent.setBodyPose(args.parseEulerAngle(args.getFlag("bodypose")));
         }
