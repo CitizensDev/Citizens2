@@ -918,6 +918,13 @@ public class ShopTrait extends Trait {
             evt.setCancelled(true);
             if (evt.getSlotType() != SlotType.RESULT)
                 return;
+            // TODO: work around crafting slot limitations in minecraft
+            player.getInventory().addItem(evt.getClickedInventory().getItem(0));
+            evt.getClickedInventory().setItem(0, null);
+            if (evt.getClickedInventory().getItem(1) != null) {
+                player.getInventory().addItem(evt.getClickedInventory().getItem(1));
+                evt.getClickedInventory().setItem(1, null);
+            }
             trades.get(selectedTrade).onClick(shop, player, evt.getClick().isShiftClick(),
                     lastClickedTrade == selectedTrade);
             lastClickedTrade = selectedTrade;
