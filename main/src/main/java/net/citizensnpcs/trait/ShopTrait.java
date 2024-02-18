@@ -446,8 +446,11 @@ public class ShopTrait extends Trait {
             StringBuffer sb = new StringBuffer();
             Matcher matcher = PLACEHOLDER_REGEX.matcher(string);
             while (matcher.find()) {
-                matcher.appendReplacement(sb, Joiner.on(", ").join(
-                        Iterables.transform(matcher.group(1).equals("cost") ? cost : result, NPCShopAction::describe)));
+                matcher.appendReplacement(sb,
+                        Joiner.on(", ")
+                                .join(Iterables.transform(matcher.group(1).equalsIgnoreCase("cost") ? cost : result,
+                                        NPCShopAction::describe))
+                                .replace("$", "\\$").replace("{", "\\{"));
             }
             matcher.appendTail(sb);
             return sb.toString();
