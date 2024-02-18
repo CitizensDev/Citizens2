@@ -14,6 +14,10 @@ import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 public class SpigotUtil {
+    private static interface ThrowingConsumer<T> {
+        void accept(T t) throws ClassNotFoundException;
+    }
+
     public static boolean checkYSafe(double y, World world) {
         if (!SUPPORT_WORLD_HEIGHT || world == null)
             return y >= 0 && y <= 255;
@@ -36,10 +40,16 @@ public class SpigotUtil {
             if (version == null)
                 throw new IllegalStateException();
             String versionString = "v" + version[0] + "_" + version[1] + "_R";
+            ThrowingConsumer<String> versionChecker = s -> Class
+                    .forName("org.bukkit.craftbukkit." + s + ".CraftServer");
+            if (Bukkit.getServer().getClass().getName().equals("org.bukkit.craftbukkit.CraftServer")) {
+                Messaging.log("Using mojmapped server, avoiding server package checks");
+                versionChecker = s -> Class.forName("net.citizensnpcs.nms." + s + ".util.NMSImpl");
+            }
             String revision = null;
             for (int i = 1; i <= 3; i++) {
                 try {
-                    Class.forName("org.bukkit.craftbukkit." + versionString + i + ".CraftServer");
+                    versionChecker.accept(versionString + i);
                     revision = versionString + i;
                     break;
                 } catch (ClassNotFoundException e) {
@@ -50,6 +60,7 @@ public class SpigotUtil {
             MINECRAFT_PACKAGE = revision;
         }
         return MINECRAFT_PACKAGE;
+
     }
 
     public static int[] getVersion() {
