@@ -151,7 +151,7 @@ public interface NMSBridge {
 
     public InventoryView openAnvilInventory(Player player, Inventory anvil, String title);
 
-    public void openHorseScreen(Tameable horse, Player equipper);
+    public void openHorseInventory(Tameable horse, Player equipper);
 
     public void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to);
 

@@ -56,18 +56,18 @@ public class ItemAction extends NPCShopAction {
         ItemStack[] contents = source.getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack toMatch = contents[i];
-            if (toMatch == null || toMatch.getType() == Material.AIR || tooDamaged(toMatch)) {
+            if (toMatch == null || toMatch.getType() == Material.AIR || tooDamaged(toMatch))
                 continue;
-            }
+
             toMatch = toMatch.clone();
             for (int j = 0; j < items.size(); j++) {
-                if (toMatch == null) {
+                if (toMatch == null)
                     break;
-                }
+
                 ItemStack item = items.get(j);
-                if (req.get(j) <= 0 || !matches(item, toMatch)) {
+                if (req.get(j) <= 0 || !matches(item, toMatch))
                     continue;
-                }
+
                 int remaining = req.get(j);
                 int taken = toMatch.getAmount() > remaining ? remaining : toMatch.getAmount();
 
