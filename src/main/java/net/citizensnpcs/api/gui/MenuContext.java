@@ -12,7 +12,7 @@ import net.citizensnpcs.api.util.Messaging;
 /**
  * A context class passed into the constructor of a {@link Menu} instance.
  */
-public class MenuContext implements SlotSource {
+public class MenuContext {
     private final Map<String, Object> data = Maps.newHashMap();
     private final Inventory inventory;
     private final InventoryMenu menu;
@@ -54,7 +54,6 @@ public class MenuContext implements SlotSource {
         return menu;
     }
 
-    @Override
     public InventoryMenuSlot getSlot(int i) {
         if (slots[i] == null)
             return slots[i] = new InventoryMenuSlot(this, i);
