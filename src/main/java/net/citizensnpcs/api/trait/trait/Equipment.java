@@ -87,7 +87,7 @@ public class Equipment extends Trait {
     private EntityEquipment getEquipmentFromEntity(Entity entity) {
         if (entity instanceof LivingEntity)
             return ((LivingEntity) entity).getEquipment();
-        throw new RuntimeException("Unsupported entity equipment");
+        throw new IllegalStateException("Unsupported entity equipment");
     }
 
     @Override

@@ -109,7 +109,7 @@ public class Inventory extends Trait {
                     if (!viewers.contains(event.getView()))
                         return;
                     ItemStack[] contents = event.getInventory().getContents();
-                    for (int i = 0; i < contents.length; i++) {
+                    for (int i = 0; i < Inventory.this.contents.length; i++) {
                         Inventory.this.contents[i] = contents[i];
                         if (i == 0) {
                             if (npc.getEntity() instanceof LivingEntity) {
@@ -134,9 +134,9 @@ public class Inventory extends Trait {
             }, CitizensAPI.getPlugin());
         }
         for (int i = 0; i < view.getSize(); i++) {
-            if (i >= contents.length) {
+            if (i >= contents.length)
                 break;
-            }
+
             view.setItem(i, contents[i]);
         }
         viewers.add(sender.openInventory(view));
