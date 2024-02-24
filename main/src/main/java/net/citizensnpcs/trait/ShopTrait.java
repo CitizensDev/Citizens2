@@ -176,7 +176,7 @@ public class ShopTrait extends Trait {
         }
 
         public ShopType getShopType() {
-            return type;
+            return type == null ? type = ShopType.DEFAULT : type;
         }
 
         public String getTitle() {
@@ -769,16 +769,19 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 0, 8 }, material = Material.CHEST, amount = 1, title = "<f>Set shop type")
         public void onSetInventoryType(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            ctx.getMenu()
-                    .transition(InputMenus.picker("Set shop type",
-                            (Choice<ShopType> choice) -> shop.setShopType(choice.getValue()),
-                            Choice.of(ShopType.DEFAULT, Material.CHEST, "Default (5x9 chest)",
-                                    shop.type == ShopType.DEFAULT),
-                            Choice.of(ShopType.CHEST_4X9, Material.CHEST, "4x9 chest", shop.type == ShopType.CHEST_4X9),
-                            Choice.of(ShopType.CHEST_3X9, Material.CHEST, "3x9 chest", shop.type == ShopType.CHEST_3X9),
-                            Choice.of(ShopType.CHEST_2X9, Material.CHEST, "2x9 chest", shop.type == ShopType.CHEST_2X9),
-                            Choice.of(ShopType.CHEST_1X9, Material.CHEST, "1x9 chest", shop.type == ShopType.CHEST_1X9),
-                            Choice.of(ShopType.TRADER, Material.EMERALD, "Trader", shop.type == ShopType.TRADER)));
+            ctx.getMenu().transition(InputMenus.picker("Set shop type",
+                    (Choice<ShopType> choice) -> shop.setShopType(choice.getValue()),
+                    Choice.of(ShopType.DEFAULT, Material.CHEST, "Default (5x9 chest)",
+                            shop.getShopType() == ShopType.DEFAULT),
+                    Choice.of(ShopType.CHEST_4X9, Material.CHEST, "4x9 chest",
+                            shop.getShopType() == ShopType.CHEST_4X9),
+                    Choice.of(ShopType.CHEST_3X9, Material.CHEST, "3x9 chest",
+                            shop.getShopType() == ShopType.CHEST_3X9),
+                    Choice.of(ShopType.CHEST_2X9, Material.CHEST, "2x9 chest",
+                            shop.getShopType() == ShopType.CHEST_2X9),
+                    Choice.of(ShopType.CHEST_1X9, Material.CHEST, "1x9 chest",
+                            shop.getShopType() == ShopType.CHEST_1X9),
+                    Choice.of(ShopType.TRADER, Material.EMERALD, "Trader", shop.getShopType() == ShopType.TRADER)));
         }
 
         @MenuSlot(slot = { 0, 4 }, material = Material.NAME_TAG, amount = 1)
@@ -916,7 +919,7 @@ public class ShopTrait extends Trait {
             if (!evt.getView().equals(view))
                 return;
             evt.setCancelled(true);
-            if (evt.getSlotType() != SlotType.RESULT)
+            if (evt.getSlotType() != SlotType.RESULT || !evt.getAction().name().contains("PICKUP"))
                 return;
             // TODO: work around crafting slot limitations in minecraft
             player.getInventory().addItem(evt.getClickedInventory().getItem(0));
