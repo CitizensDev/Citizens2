@@ -60,7 +60,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.NBTStorage;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.Storage;
@@ -177,14 +176,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private NPCDataStore createStorage(File folder) {
-        Storage saves = null;
-        String type = Setting.STORAGE_TYPE.asString();
-        if (type.equalsIgnoreCase("nbt")) {
-            saves = new NBTStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
-        }
-        if (saves == null) {
-            saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
-        }
+        Storage saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
         if (!saves.load())
             return null;
 
@@ -612,7 +604,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
             Messaging.logTr(Messages.NUM_LOADED_NOTIFICATION, Iterables.size(npcRegistry), "?");
             startMetrics();
-            scheduleSaveTask(Setting.SAVE_TASK_DELAY.asTicks());
+            scheduleSaveTask(Setting.SAVE_TASK_FREQUENCY.asTicks());
             Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
             new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
             enabled = true;

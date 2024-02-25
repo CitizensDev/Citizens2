@@ -140,7 +140,7 @@ public class Settings {
                 "The distance in blocks where the NPC will switch to walking straight towards the target instead of pathfinding<br>Currently only for dynamic targets like entities",
                 "npc.pathfinding.straight-line-targeting-distance", 5),
         DEFAULT_STUCK_ACTION(
-                "The default action to perform when NPCs are unable to find a path or are stuck in the same block for too long. Supported options are: 'teleport to destination' or 'none'",
+                "The default action to perform when NPCs are unable to find a path or are stuck in the same block for too long<br>Supported options are: 'teleport to destination' or 'none'",
                 "npc.pathfinding.default-stuck-action", "none"),
         DEFAULT_TALK_CLOSE("npc.default.talk-close.enabled", false),
         DEFAULT_TALK_CLOSE_RANGE("Default talk close range in blocks", "npc.default.talk-close.range", 5),
@@ -167,7 +167,7 @@ public class Settings {
                 "npc.pathfinding.disable-mc-fallback-navigation", true),
         DISABLE_TABLIST("Whether to remove NPCs from the tablist", "npc.tablist.disable", true),
         DISPLAY_ENTITY_HOLOGRAMS(
-                "Whether to use display entities for holograms by default. In theory more performant than armor stands. Requires 1.19.4 or above. Defaults to false",
+                "Whether to use display entities for holograms by default (in theory more performant than armor stands)<br>Requires 1.19.4 or above, defaults to false",
                 "npc.hologram.use-display-entities", false),
         ENTITY_SPAWN_WAIT_DURATION(
                 "Entities are no longer spawned until the chunks are loaded from disk<br>Wait for chunk loading for one second by default, increase if your disk is slow",
@@ -176,7 +176,7 @@ public class Settings {
         FOLLOW_ACROSS_WORLDS("Whether /npc follow will teleport across worlds to follow its target",
                 "npc.follow.teleport-across-worlds", false),
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "yellow"),
-        HOLOGRAM_ALWAYS_UPDATE_POSITION("Whether to always update the hologram position every tick.",
+        HOLOGRAM_ALWAYS_UPDATE_POSITION("Whether to always update the hologram position every tick",
                 "npc.hologram.always-update-position", false),
         HOLOGRAM_UPDATE_RATE("How often to update hologram names (including placeholders)",
                 "npc.hologram.update-rate-ticks", "npc.hologram.update-rate", "1s"),
@@ -184,7 +184,7 @@ public class Settings {
         INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY("How long to wait before sending skins to joined players",
                 "npc.skins.player-join-update-delay-ticks", "npc.skins.player-join-update-delay", "1s"),
         KEEP_CHUNKS_LOADED("Whether to keep NPC chunks loaded", "npc.chunks.always-keep-loaded", false),
-        LOCALE("Controls translation files - defaults to your system language, set to en if English required",
+        LOCALE("Controls translation files - defaults to your system language, set to 'en' if English required",
                 "general.translation.locale", ""),
         MAX_CONTROLLABLE_FLIGHT_SPEED(
                 "The maximum flying speed that controllable NPCs can reach, in Minecraft velocity units",
@@ -228,7 +228,7 @@ public class Settings {
                 "Please wait for {minutes} minutes and {seconds_over} seconds."),
         NPC_COST("The default cost to create an NPC", "economy.npc.cost", 100D),
         NPC_SKIN_FETCH_DEFAULT(
-                "Whether to try and look for the player skin for all new NPCs. If this is set to false and you create an NPC named Dinnerbone, the NPC will have the default (steve/alex/...) skin rather than trying to fetch the Dinnerbone skin.",
+                "Whether to try and look for the player skin for all new NPCs<br>If this is set to false and you create an NPC named Dinnerbone, the NPC will have the default (steve/alex/etc) skin rather than trying to fetch the Dinnerbone skin",
                 "npc.skins.try-fetch-default-skin", true),
         NPC_SKIN_RETRY_DELAY("How long before retrying skin requests (typically due to Mojang rate limiting)",
                 "npc.skins.retry-delay", "5s"),
@@ -248,20 +248,19 @@ public class Settings {
         REMOVE_PLAYERS_FROM_PLAYER_LIST("Whether to remove NPCs from the Java list of players",
                 "npc.player.remove-from-list", true),
         RESET_YAW_ON_SPAWN(
-                "Whether to reset NPC yaw on spawn. Currently this is implemented by an arm swing animation due to Minecraft limitations.",
+                "Whether to reset NPC yaw on spawn<br>Currently this is implemented by an arm swing animation due to Minecraft limitations",
                 "npc.default.reset-yaw-on-spawn", true),
         RESOURCE_PACK_PATH("The resource pack path to save resource packs to", "general.resource-pack-path",
                 "plugins/Citizens/resourcepack"),
-        SAVE_TASK_DELAY("How often to save NPCs to disk", "storage.save-task.delay", "1hr"),
+        SAVE_TASK_FREQUENCY("How often to save NPCs to disk", "storage.save-task.delay", "storage.save-task-frequency",
+                "1hr"),
         SELECTION_ITEM("The default item in hand to select an NPC", "npc.selection.item", "stick"),
         SELECTION_MESSAGE("npc.selection.message", "Selected [[<npc>]] (ID [[<id>]])."),
         SERVER_OWNS_NPCS("Whether the server owns NPCs rather than individual players", "npc.server-ownership", false),
         SHOP_GLOBAL_VIEW_PERMISSION(
-                "The global view permission that players need to view any NPC shop. Defaults to empty (no permission required).",
+                "The global view permission that players need to view any NPC shop<br>Defaults to empty (no permission required).",
                 "npc.shops.global-view-permission", ""),
         STORAGE_FILE("storage.file", "saves.yml"),
-        STORAGE_TYPE("Although technically Citizens can use NBT storage, it is not well tested and YAML is recommended",
-                "storage.type", "yaml"),
         TABLIST_REMOVE_PACKET_DELAY("How long to wait before sending the tablist remove packet",
                 "npc.tablist.remove-packet-delay", "1t"),
         TALK_CLOSE_TO_NPCS("Whether to talk to NPCs (and therefore bystanders) as well as players",
@@ -270,15 +269,15 @@ public class Settings {
         USE_BOAT_CONTROLS("Whether to change vehicle direction with movement instead of strafe controls",
                 "npc.controllable.use-boat-controls", true),
         USE_NEW_PATHFINDER(
-                "Whether to use the Citizens pathfinder instead of the Minecraft pathfinder<br>Much more flexible, but may have different performance characteristics",
+                "Whether to use the Citizens pathfinder instead of the Minecraft pathfinder<br>Much more flexible, but may have different performance to Minecraft's pathfinder",
                 "npc.pathfinding.use-new-finder", false),
         USE_SCOREBOARD_TEAMS("npc.scoreboard-teams.enable", true),
         WARN_ON_RELOAD("general.reload-warning-enabled", true),;
 
-        protected String comments;
+        private String comments;
         private Duration duration;
-        protected String migrate;
-        protected String path;
+        private String migrate;
+        private final String path;
         protected Object value;
 
         Setting(String path, Object value) {
@@ -348,14 +347,7 @@ public class Settings {
         }
 
         protected void loadFromKey(DataKey root) {
-            if (SUPPORTS_SET_COMMENTS && root.keyExists(path)) {
-                try {
-                    ((YamlKey) root).getSection("").setComments(path,
-                            comments == null ? null : Arrays.asList(comments.split("<br>")));
-                } catch (Throwable t) {
-                    SUPPORTS_SET_COMMENTS = false;
-                }
-            }
+            setComments(root);
             if (migrate != null && root.keyExists(migrate) && !root.keyExists(path)) {
                 value = root.getRaw(migrate);
                 root.removeKey(migrate);
@@ -366,6 +358,18 @@ public class Settings {
 
         protected void setAtKey(DataKey root) {
             root.setRaw(path, value);
+            setComments(root);
+        }
+
+        private void setComments(DataKey root) {
+            if (SUPPORTS_SET_COMMENTS && root.keyExists(path)) {
+                try {
+                    ((YamlKey) root).getSection("").setComments(path,
+                            comments == null ? null : Arrays.asList(comments.split("<br>")));
+                } catch (Throwable t) {
+                    SUPPORTS_SET_COMMENTS = false;
+                }
+            }
         }
     }
 

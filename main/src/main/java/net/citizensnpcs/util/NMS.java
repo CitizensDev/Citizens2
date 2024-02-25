@@ -716,7 +716,7 @@ public class NMS {
     }
 
     public static void openHorseScreen(Tameable horse, Player equipper) {
-        BRIDGE.openHorseScreen(horse, equipper);
+        BRIDGE.openHorseInventory(horse, equipper);
     }
 
     public static void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to) {
@@ -986,9 +986,6 @@ public class NMS {
         } catch (ClassNotFoundException e) {
             PAPER_KNOCKBACK_EVENT_EXISTS = false;
         }
-    }
-
-    static {
         giveReflectiveAccess(Field.class, NMS.class);
         MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers", false);
     }

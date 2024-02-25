@@ -106,6 +106,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
@@ -462,6 +463,12 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onNPCLinkToPlayer(NPCLinkToPlayerEvent event) {
         NPC npc = event.getNPC();
+        if (npc.getEntity() instanceof SkinnableEntity) {
+            SkinnableEntity skinnable = (SkinnableEntity) npc.getEntity();
+            if (skinnable.getSkinTracker().getSkin() != null) {
+                skinnable.getSkinTracker().getSkin().apply(skinnable);
+            }
+        }
         if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
             onNPCPlayerLinkToPlayer(event);
         }
@@ -483,7 +490,6 @@ public class EventListen implements Listener {
 
             NMS.sendPositionUpdateNearby(tracker, false, null, null, NMS.getHeadYaw(tracker));
         }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks() + 1);
-
         boolean resetYaw = event.getNPC().data().get(NPC.Metadata.RESET_YAW_ON_SPAWN,
                 Setting.RESET_YAW_ON_SPAWN.asBoolean());
         boolean sendTabRemove = NMS.sendTabListAdd(event.getPlayer(), (Player) tracker);

@@ -99,9 +99,9 @@ public class Skin {
                     && !npc.getOrAddTrait(SkinTrait.class).fetchDefaultSkin())
                 return false;
 
-            if (hasFetched)
+            if (hasFetched) {
                 return true;
-            else {
+            } else {
                 if (!fetching) {
                     fetch();
                 }

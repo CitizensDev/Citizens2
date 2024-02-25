@@ -77,6 +77,7 @@ public class CommandTrait extends Trait {
     private boolean hideErrorMessages;
     @Persist
     private final List<ItemStack> itemRequirements = Lists.newArrayList();
+    private int lastUsedId = -1;
     @Persist
     private boolean persistSequence = false;
     @Persist(keyType = UUID.class, reify = true, value = "cooldowns")
@@ -278,7 +279,7 @@ public class CommandTrait extends Trait {
                     return;
                 }
                 int max = -1;
-                if (executionMode == ExecutionMode.SEQUENTIAL) {
+                if (executionMode == ExecutionMode.SEQUENTIAL || executionMode == ExecutionMode.CYCLE) {
                     Collections.sort(commandList, Comparator.comparing(o1 -> o1.id));
                     max = commandList.size() > 0 ? commandList.get(commandList.size() - 1).id : -1;
                 }
@@ -287,6 +288,13 @@ public class CommandTrait extends Trait {
                 }
                 for (NPCCommand command : commandList) {
                     PlayerNPCCommand info = null;
+                    if (executionMode == ExecutionMode.CYCLE) {
+                        if (command.id <= lastUsedId) {
+                            if (lastUsedId != max)
+                                continue;
+                            lastUsedId = -1;
+                        }
+                    }
                     if (executionMode == ExecutionMode.SEQUENTIAL
                             && (info = playerTracking.get(player.getUniqueId())) != null) {
                         if (info.lastUsedHand != hand) {
@@ -300,7 +308,8 @@ public class CommandTrait extends Trait {
                         }
                     }
                     runCommand(player, hand, command);
-                    if (executionMode == ExecutionMode.SEQUENTIAL || (charged != null && !charged))
+                    if (executionMode == ExecutionMode.SEQUENTIAL || executionMode == ExecutionMode.CYCLE
+                            || (charged != null && !charged))
                         break;
                 }
             }
@@ -508,6 +517,7 @@ public class CommandTrait extends Trait {
     }
 
     public enum ExecutionMode {
+        CYCLE,
         LINEAR,
         RANDOM,
         SEQUENTIAL;

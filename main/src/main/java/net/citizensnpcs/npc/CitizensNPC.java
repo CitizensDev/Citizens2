@@ -276,6 +276,11 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public void setSneaking(boolean sneaking) {
+        getOrAddTrait(SneakTrait.class).setSneaking(sneaking);
+    }
+
+    @Override
     public boolean spawn(Location at) {
         return spawn(at, SpawnReason.PLUGIN);
     }
@@ -301,7 +306,20 @@ public class CitizensNPC extends AbstractNPC {
         entityController.create(at.clone(), this);
         getEntity().setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
         getEntity().setMetadata("NPC-ID", new FixedMetadataValue(CitizensAPI.getPlugin(), getId()));
-
+        // Spawning the entity will create an entity tracker that is not controlled by Citizens. This is fixed later in
+        // spawning; to avoid sending packets twice, try to hide the entity initially
+        if (SUPPORT_VISIBLE_BY_DEFAULT) {
+            try {
+                getEntity().setVisibleByDefault(false);
+            } catch (NoSuchMethodError err) {
+                SUPPORT_VISIBLE_BY_DEFAULT = false;
+            }
+        }
+        if (!SUPPORT_VISIBLE_BY_DEFAULT && getEntity().getType() == EntityType.PLAYER) {
+            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                player.hidePlayer((Player) getEntity());
+            }
+        }
         if (getEntity() instanceof SkinnableEntity && !hasTrait(SkinLayers.class)) {
             ((SkinnableEntity) getEntity()).setSkinFlags(EnumSet.allOf(SkinLayers.Layer.class));
         }
@@ -326,15 +344,12 @@ public class CitizensNPC extends AbstractNPC {
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
         }
-        // send skin packets, if applicable, before other NMS packets are sent
-        SkinnableEntity skinnable = getEntity() instanceof SkinnableEntity ? (SkinnableEntity) getEntity() : null;
-        if (skinnable != null) {
-            skinnable.getSkinTracker().onSpawnNPC();
-        }
         NMS.setLocationDirectly(getEntity(), at);
         NMS.setHeadYaw(getEntity(), at.getYaw());
         NMS.setBodyYaw(getEntity(), at.getYaw());
 
+        // Paper now doesn't actually set entities as valid for a few ticks while adding entities to chunks
+        // Need to check the entity is really valid for a few ticks before finalising spawning
         Location to = at;
         Consumer<Runnable> postSpawn = new Consumer<Runnable>() {
             private int timer;
@@ -366,7 +381,6 @@ public class CitizensNPC extends AbstractNPC {
                     return;
                 }
                 navigator.onSpawn();
-
                 for (Trait trait : Iterables.toArray(traits.values(), Trait.class)) {
                     try {
                         trait.onSpawn();
@@ -375,9 +389,16 @@ public class CitizensNPC extends AbstractNPC {
                         ex.printStackTrace();
                     }
                 }
-                EntityType type = getEntity().getType();
+                // Replace the entity tracker and attempt to show the entity
                 NMS.replaceTracker(getEntity());
-
+                if (SUPPORT_VISIBLE_BY_DEFAULT) {
+                    getEntity().setVisibleByDefault(true);
+                } else if (getEntity().getType() == EntityType.PLAYER) {
+                    for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                        player.showPlayer((Player) getEntity());
+                    }
+                }
+                EntityType type = getEntity().getType();
                 if (type.isAlive()) {
                     LivingEntity entity = (LivingEntity) getEntity();
                     entity.setRemoveWhenFarAway(false);
@@ -532,9 +553,6 @@ public class CitizensNPC extends AbstractNPC {
                 }
                 if (getEntity() instanceof Player) {
                     updateUsingItemState((Player) getEntity());
-                    if (data().has(NPC.Metadata.SNEAKING) && !hasTrait(SneakTrait.class)) {
-                        addTrait(SneakTrait.class);
-                    }
                 }
             }
             navigator.run();
@@ -615,4 +633,5 @@ public class CitizensNPC extends AbstractNPC {
     private static boolean SUPPORT_PICKUP_ITEMS = true;
     private static boolean SUPPORT_SILENT = true;
     private static boolean SUPPORT_USE_ITEM = true;
+    private static boolean SUPPORT_VISIBLE_BY_DEFAULT = true;
 }

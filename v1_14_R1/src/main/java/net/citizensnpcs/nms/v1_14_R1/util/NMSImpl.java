@@ -1106,7 +1106,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void openHorseScreen(Tameable horse, Player equipper) {
+    public void openHorseInventory(Tameable horse, Player equipper) {
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) horse);
         EntityLiving equipperHandle = NMSImpl.getHandle(equipper);
         if (handle == null || equipperHandle == null)

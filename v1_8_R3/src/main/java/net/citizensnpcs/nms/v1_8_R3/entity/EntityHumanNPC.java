@@ -378,11 +378,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
         updateEffects = true;
         boolean itemChanged = false;
-        for (int slot = 0; slot < this.inventory.armor.length; slot++) {
+        for (int slot = 0; slot < 5; slot++) {
             ItemStack equipment = getEquipment(slot);
             ItemStack cache = equipmentCache.get(slot);
             if (((cache != null) || (equipment != null))
-                    && (cache == null ^ equipment == null || !ItemStack.equals(cache, equipment))) {
+                    && (cache == null ^ equipment == null || !ItemStack.matches(cache, equipment))) {
                 itemChanged = true;
                 if (cache != null) {
                     this.getAttributeMap().a(cache.B());
@@ -396,8 +396,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (!itemChanged)
             return;
         Location current = getBukkitEntity().getLocation(packetLocationCache);
-        Packet<?>[] packets = new Packet[this.inventory.armor.length];
-        for (int i = 0; i < this.inventory.armor.length; i++) {
+        Packet<?>[] packets = new Packet[5];
+        for (int i = 0; i < 5; i++) {
             packets[i] = new PacketPlayOutEntityEquipment(getId(), i, getEquipment(i));
         }
         NMSImpl.sendPacketsNearby(getBukkitEntity(), current, packets);

@@ -279,7 +279,7 @@ public class SkinUpdateTracker {
     }
 
     /**
-     * Update a player with skin related packets from nearby skinnable NPC's.
+     * Update a player with skin related packets from nearby skinnable NPCs.
      *
      * @param player
      *            The player to update.

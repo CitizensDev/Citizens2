@@ -191,7 +191,7 @@ public class SkinPacketTracker {
         inProgress.put(player.getUniqueId(), entry);
         skin.apply(entity);
         if (NMS.sendTabListAdd(player, entity.getBukkitEntity())) {
-            scheduleRemovePacket(entry, 2);
+            scheduleRemovePacket(entry, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
         }
     }
 

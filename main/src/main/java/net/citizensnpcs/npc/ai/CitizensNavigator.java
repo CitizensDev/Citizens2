@@ -154,6 +154,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (root.keyExists("pathfindingrange")) {
             defaultParams.range((float) root.getDouble("pathfindingrange"));
         }
+        if (root.keyExists("usenewpathfinder")) {
+            defaultParams.useNewPathfinder(root.getBoolean("usenewpathfinder"));
+        }
         if (root.keyExists("stationaryticks")) {
             defaultParams.stationaryTicks(root.getInt("stationaryticks"));
         }
@@ -334,12 +337,13 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
         }
         setTarget(params -> {
-            if (npc.isFlyable())
+            if (npc.isFlyable()) {
                 return new FlyingAStarNavigationStrategy(npc, path, params);
-            else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity))
+            } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
                 return new AStarNavigationStrategy(npc, path, params);
-            else
+            } else {
                 return new MCNavigationStrategy(npc, path, params);
+            }
         });
     }
 
@@ -353,12 +357,13 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         Location target = targetIn.clone();
         setTarget(params -> {
-            if (npc.isFlyable())
+            if (npc.isFlyable()) {
                 return new FlyingAStarNavigationStrategy(npc, target, params);
-            else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity))
+            } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
                 return new AStarNavigationStrategy(npc, target, params);
-            else
+            } else {
                 return new MCNavigationStrategy(npc, target, params);
+            }
         });
     }
 

@@ -339,7 +339,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "armorstand --visible [visible] --small [small] --gravity [gravity] --arms [arms] --baseplate [baseplate] --(body|leftarm|leftleg|rightarm|rightleg)pose [angle x,y,z]",
+            usage = "armorstand --visible [visible] --small [small] --marker [marker] --gravity [gravity] --arms [arms] --baseplate [baseplate] --(head|body|leftarm|leftleg|rightarm|rightleg)pose [angle x,y,z]",
             desc = "编辑盔甲架属性",
             modifiers = { "armorstand" },
             min = 1,
@@ -349,7 +349,7 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true, types = EntityType.ARMOR_STAND)
     public void armorstand(CommandContext args, CommandSender sender, NPC npc, @Flag("visible") Boolean visible,
             @Flag("small") Boolean small, @Flag("gravity") Boolean gravity, @Flag("arms") Boolean arms,
-            @Flag("baseplate") Boolean baseplate) throws CommandException {
+            @Flag("marker") Boolean marker, @Flag("baseplate") Boolean baseplate) throws CommandException {
         ArmorStandTrait trait = npc.getOrAddTrait(ArmorStandTrait.class);
         if (visible != null) {
             trait.setVisible(visible);
@@ -360,6 +360,9 @@ public class NPCCommands {
         if (gravity != null) {
             trait.setGravity(gravity);
         }
+        if (marker != null) {
+            trait.setMarker(marker);
+        }
         if (arms != null) {
             trait.setHasArms(arms);
         }
@@ -367,6 +370,9 @@ public class NPCCommands {
             trait.setHasBaseplate(baseplate);
         }
         ArmorStand ent = (ArmorStand) npc.getEntity();
+        if (args.hasValueFlag("headpose")) {
+            ent.setHeadPose(args.parseEulerAngle(args.getFlag("headpose")));
+        }
         if (args.hasValueFlag("bodypose")) {
             ent.setBodyPose(args.parseEulerAngle(args.getFlag("bodypose")));
         }
@@ -455,7 +461,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id|all] | permissions [permissions] | sequential | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id|all] | permissions [permissions] | sequential | cycle | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "控制单击NPC时将运行的命令",
             help = Messages.NPC_COMMAND_HELP,
             modifiers = { "command", "cmd" },
@@ -469,7 +475,7 @@ public class NPCCommands {
             @Flag(value = "delay", defValue = "0") Duration delay,
             @Arg(
                     value = 1,
-                    completions = { "add", "remove", "permissions", "persistsequence", "sequential", "random",
+                    completions = { "add", "remove", "permissions", "persistsequence", "sequential", "cycle", "random",
                             "hideerrors", "errormsg", "clearerror", "expcost", "itemcost", "cost" }) String action)
             throws CommandException {
         CommandTrait commands = npc.getOrAddTrait(CommandTrait.class);
@@ -521,6 +527,11 @@ public class NPCCommands {
             Messaging.sendTr(sender,
                     commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? Messages.COMMANDS_SEQUENTIAL_SET
                             : Messages.COMMANDS_SEQUENTIAL_UNSET);
+        } else if (action.equalsIgnoreCase("cycle")) {
+            commands.setExecutionMode(
+                    commands.getExecutionMode() == ExecutionMode.CYCLE ? ExecutionMode.LINEAR : ExecutionMode.CYCLE);
+            Messaging.sendTr(sender, commands.getExecutionMode() == ExecutionMode.CYCLE ? Messages.COMMANDS_CYCLE_SET
+                    : Messages.COMMANDS_CYCLE_UNSET);
         } else if (action.equalsIgnoreCase("persistsequence")) {
             if (args.argsLength() == 2) {
                 commands.setPersistSequence(!commands.persistSequence());
@@ -2078,11 +2089,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathto me | here | cursor | [x] [y] [z] (--margin [distance margin])",
+            usage = "pathto me | here | cursor | [x] [y] [z] (--margin [distance margin]) (-s[traight line])",
             desc = "开始寻路到某个位置",
             modifiers = { "pathto" },
             min = 2,
             max = 4,
+            flags = "s",
             permission = "citizens.npc.pathto")
     public void pathto(CommandContext args, CommandSender sender, NPC npc,
             @Arg(value = 1, completions = { "me", "here", "cursor" }) String option, @Flag("margin") Double margin)
@@ -2100,7 +2112,11 @@ public class NPCCommands {
             loc.setY(args.getDouble(2));
             loc.setZ(args.getDouble(3));
         }
-        npc.getNavigator().setTarget(loc);
+        if (args.hasFlag('s')) {
+            npc.getNavigator().setStraightLineTarget(loc);
+        } else {
+            npc.getNavigator().setTarget(loc);
+        }
         if (margin != null) {
             npc.getNavigator().getLocalParameters().distanceMargin(margin);
         }

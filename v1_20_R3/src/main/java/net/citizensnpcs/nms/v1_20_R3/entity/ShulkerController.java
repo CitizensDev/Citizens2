@@ -92,7 +92,7 @@ public class ShulkerController extends MobEntityController {
 
         @Override
         protected BodyRotationControl createBodyControl() {
-            return new BodyRotationControl(this);
+            return npc == null ? super.createBodyControl() : new BodyRotationControl(this);
         }
 
         @Override
