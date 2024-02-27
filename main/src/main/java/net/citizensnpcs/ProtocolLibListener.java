@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -228,13 +227,9 @@ public class ProtocolLibListener implements Listener {
 
     private NPC getNPCFromPacket(PacketEvent event) {
         PacketContainer packet = event.getPacket();
-        Entity entity = null;
         try {
-            Integer id = packet.getIntegers().readSafely(0);
-            if (id == null)
-                return null;
-
-            entity = manager.getEntityFromID(event.getPlayer().getWorld(), id);
+            Object entityModifier = packet.getEntityModifier(event).getTarget();
+            return entityModifier instanceof NPCHolder ? ((NPCHolder) entityModifier).getNPC() : null;
         } catch (FieldAccessException | IllegalArgumentException ex) {
             if (!LOGGED_ERROR) {
                 Messaging.severe(
@@ -246,7 +241,6 @@ public class ProtocolLibListener implements Listener {
             }
             return null;
         }
-        return entity instanceof NPCHolder ? ((NPCHolder) entity).getNPC() : null;
     }
 
     @EventHandler(ignoreCancelled = true)
