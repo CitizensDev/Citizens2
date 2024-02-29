@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -67,6 +68,7 @@ public class CommandManager implements TabCompleter {
     private final Map<String, CommandInfo> commands = Maps.newHashMap();
     private TimeUnit defaultDurationUnits;
     private Injector injector;
+    private Function<Command, String> translationPrefixProvider;
 
     public CommandManager() {
         registerAnnotationProcessor(new RequirementsProcessor());
@@ -261,6 +263,15 @@ public class CommandManager implements TabCompleter {
             }
         }
         return true;
+    }
+
+    private String format(Command command, String alias) {
+        String description = command.desc();
+        if (translationPrefixProvider != null && description.isEmpty()) {
+            description = translationPrefixProvider.apply(command) + ".description";
+        }
+        return String.format(COMMAND_FORMAT, alias, command.usage().isEmpty() ? "" : " " + command.usage(),
+                Messaging.tryTranslate(description));
     }
 
     /**
@@ -578,6 +589,13 @@ public class CommandManager implements TabCompleter {
             throw new CommandException(CommandMessages.COMMAND_MISSING, rootCommand + " " + modifier);
         Messaging.send(sender, format(info.getCommandAnnotation(), rootCommand));
         String help = Messaging.tryTranslate(info.getCommandAnnotation().help());
+        if (translationPrefixProvider != null) {
+            String helpKey = translationPrefixProvider.apply(info.getCommandAnnotation()) + ".help";
+            String attemptedTranslation = Messaging.tryTranslate(helpKey);
+            if (!helpKey.equals(attemptedTranslation)) {
+                help = attemptedTranslation;
+            }
+        }
         if (help.isEmpty())
             return;
         Messaging.send(sender, "<aqua>" + help);
@@ -589,6 +607,10 @@ public class CommandManager implements TabCompleter {
 
     public void setInjector(Injector injector) {
         this.injector = injector;
+    }
+
+    public void setTranslationPrefixProvider(Function<Command, String> provider) {
+        this.translationPrefixProvider = provider;
     }
 
     public class CommandInfo {
@@ -762,11 +784,6 @@ public class CommandManager implements TabCompleter {
     private static String capitalize(Object string) {
         String capitalize = string.toString();
         return capitalize.length() == 0 ? "" : Character.toUpperCase(capitalize.charAt(0)) + capitalize.substring(1);
-    }
-
-    private static String format(Command command, String alias) {
-        return String.format(COMMAND_FORMAT, alias, command.usage().isEmpty() ? "" : " " + command.usage(),
-                Messaging.tryTranslate(command.desc()));
     }
 
     private static int getLevenshteinDistance(String s, String t) {
