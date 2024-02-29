@@ -472,7 +472,6 @@ public abstract class AbstractNPC implements NPC {
             return;
 
         Entity bukkitEntity = getEntity();
-        updateCustomName();
 
         if (bukkitEntity.getType() == EntityType.PLAYER && !requiresNameHologram()) {
             Location old = bukkitEntity.getLocation();
@@ -481,7 +480,7 @@ public abstract class AbstractNPC implements NPC {
         }
     }
 
-    private void setNameInternal(String name) {
+    protected void setNameInternal(String name) {
         this.name = name;
         coloredNameComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
         coloredNameStringCache = Messaging.parseComponents(this.name);
@@ -549,11 +548,6 @@ public abstract class AbstractNPC implements NPC {
         if (isSpawned()) {
             goalController.run();
         }
-    }
-
-    @Override
-    public void updateCustomName() {
-        getEntity().setCustomName(getFullName());
     }
 
     @Override

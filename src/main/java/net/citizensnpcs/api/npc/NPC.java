@@ -382,6 +382,11 @@ public interface NPC extends Agent, Cloneable {
     public void setUseMinecraftAI(boolean use);
 
     /**
+     * @return Whether to remove the NPC from the tablist. Only applicable for {@link Player}-type NPCs.
+     */
+    public boolean shouldRemoveFromTabList();
+
+    /**
      * Attempts to spawn this NPC.
      *
      * @param location
@@ -410,8 +415,6 @@ public interface NPC extends Agent, Cloneable {
      *            The cause for teleporting
      */
     public void teleport(Location location, TeleportCause cause);
-
-    public void updateCustomName();
 
     /**
      * Whether the NPC is currently set to use Minecraft AI. Defaults to false.
@@ -531,6 +534,8 @@ public interface NPC extends Agent, Cloneable {
          * Whether to remove players from the player list. Defaults to true.
          */
         REMOVE_FROM_PLAYERLIST("removefromplayerlist", Boolean.class),
+        /** Whether to remove the NPC from the tablist. Defaults to the value in config.yml */
+        REMOVE_FROM_TABLIST("removefromtablist", Boolean.class),
         /**
          * Whether to reset entity pitch to <code>0</code> every tick (default Minecraft behaviour). Defaults to false.
          */
