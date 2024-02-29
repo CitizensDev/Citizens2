@@ -71,7 +71,7 @@ public class ShulkerTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "shulker (--peek [peek] --color [color])",
-            desc = "Sets shulker modifiers.",
+            desc = "",
             modifiers = { "shulker" },
             min = 1,
             max = 1,

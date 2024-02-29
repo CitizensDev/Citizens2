@@ -56,7 +56,6 @@ public class Messages {
     public static final String COLLIDABLE_SET = "citizens.commands.npc.collidable.set";
     public static final String COLLIDABLE_UNSET = "citizens.commands.npc.collidable.unset";
     public static final String COMMAND_ADDED = "citizens.commands.npc.command.command-added";
-    public static final String COMMAND_AGE_HELP = "citizens.commands.npc.age.help";
     public static final String COMMAND_COST_SET = "citizens.commands.npc.command.cost-set";
     public static final String COMMAND_DESCRIBE_TEMPLATE = "citizens.commands.npc.command.describe-format";
     public static final String COMMAND_EXPERIENCE_COST_SET = "citizens.commands.npc.command.experience-cost-set";
@@ -272,7 +271,6 @@ public class Messages {
     public static final String NPC_ALREADY_SELECTED = "citizens.commands.npc.select.already-selected";
     public static final String NPC_ALREADY_SPAWNED = "citizens.commands.npc.spawn.already-spawned";
     public static final String NPC_COMMAND_ERRORS_CLEARED = "citizens.commands.npc.command.errors-cleared";
-    public static final String NPC_COMMAND_HELP = "citizens.commands.npc.command.help";
     public static final String NPC_COMMAND_INVALID_ERROR_MESSAGE = "citizens.commands.npc.command.invalid-error-message";
     public static final String NPC_COPIED = "citizens.commands.npc.copy.copied";
     public static final String NPC_CREATE_INVALID_MOBTYPE = "citizens.commands.npc.create.invalid-mobtype";
@@ -420,7 +418,7 @@ public class Messages {
     public static final String TOGGLED_USING_HELD_ITEM = "citizens.commands.npc.useitem.held-item-toggled";
     public static final String TOGGLED_USING_OFFHAND_ITEM = "citizens.commands.npc.useitem.offhand-item-toggled";
     public static final String TPTO_SUCCESS = "citizens.commands.npc.tpto.success";
-    public static final String TRACKING_RANGE_SET = "citizens.commands.npc.trackingdistance.set";
+    public static final String TRACKING_RANGE_SET = "citizens.commands.npc.trackingrange.set";
     public static final String TRAIT_LOAD_FAILED = "citizens.notifications.trait-load-failed";
     public static final String TRAIT_NOT_CONFIGURABLE = "citizens.commands.traitc.not-configurable";
     public static final String TRAIT_NOT_FOUND = "citizens.commands.traitc.missing";
@@ -428,7 +426,6 @@ public class Messages {
     public static final String TRAIT_ONSPAWN_FAILED = "citizens.notifications.trait-onspawn-failed";
     public static final String TRAITS_ADDED = "citizens.commands.trait.added";
     public static final String TRAITS_FAILED_TO_ADD = "citizens.commands.trait.failed-to-add";
-    public static final String TRAITS_FAILED_TO_CHANGE = "citizens.commands.trait.failed-to-change";
     public static final String TRAITS_REMOVED = "citizens.commands.trait.removed";
     public static final String TRIED_TO_MOUNT_NPC_ON_ITSELF = "citizens.commands.npc.mount.mount-on-itself";
     public static final String TROPICALFISH_BODY_COLOR_SET = "citizens.commands.npc.tropicalfish.body-color-set";

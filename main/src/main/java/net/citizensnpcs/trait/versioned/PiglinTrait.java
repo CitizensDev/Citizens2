@@ -45,7 +45,7 @@ public class PiglinTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "piglin (--dancing [true|false])",
-            desc = "Sets piglin modifiers.",
+            desc = "",
             modifiers = { "piglin" },
             min = 1,
             max = 1,

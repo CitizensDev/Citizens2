@@ -69,9 +69,9 @@ public class TropicalFishTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "tfish (--body color) (--pattern pattern) (--patterncolor color)",
-            desc = "Sets tropical fish modifiers",
-            modifiers = { "tfish" },
+            usage = "tropicalfish (--body color) (--pattern pattern) (--patterncolor color)",
+            desc = "",
+            modifiers = { "tropicalfish" },
             min = 1,
             max = 1,
             permission = "citizens.npc.tropicalfish")

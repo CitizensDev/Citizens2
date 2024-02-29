@@ -30,7 +30,7 @@ public class TemplateCommands {
     @Command(
             aliases = { "template", "tpl" },
             usage = "apply [template name] (id id2...)",
-            desc = "Applies a template to the selected NPC",
+            desc = "",
             modifiers = { "apply" },
             min = 2,
             permission = "citizens.templates.apply")
@@ -63,7 +63,7 @@ public class TemplateCommands {
     @Command(
             aliases = { "template", "tpl" },
             usage = "create [template name] (-k)",
-            desc = "Creates a template from the selected NPC",
+            desc = "",
             modifiers = { "create" },
             min = 2,
             max = 2,
@@ -85,7 +85,7 @@ public class TemplateCommands {
     @Command(
             aliases = { "template", "tpl" },
             usage = "delete [template name]",
-            desc = "Deletes a template",
+            desc = "",
             modifiers = { "delete" },
             min = 2,
             max = 2,
@@ -101,7 +101,7 @@ public class TemplateCommands {
     @Command(
             aliases = { "template", "tpl" },
             usage = "list",
-            desc = "Lists available templates",
+            desc = "",
             modifiers = { "list" },
             min = 1,
             max = 1,

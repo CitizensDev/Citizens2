@@ -418,6 +418,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Template.migrate();
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         commands.registerTabCompletion(this);
+        commands.setTranslationPrefixProvider(
+                cmd -> "citizens.commands." + cmd.aliases()[0] + "." + cmd.modifiers()[0]);
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)

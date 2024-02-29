@@ -45,7 +45,7 @@ public class PhantomTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "phantom (--size size)",
-            desc = "Sets phantom modifiers",
+            desc = "",
             modifiers = { "phantom" },
             min = 1,
             max = 1,

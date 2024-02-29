@@ -60,7 +60,7 @@ public class GoatTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "goat -l(eft) -r(ight) -n(either) -b(oth) horn",
-            desc = "Sets goat modifiers",
+            desc = "",
             modifiers = { "goat" },
             flags = "lrnb",
             min = 1,

@@ -63,7 +63,7 @@ public class BeeTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "bee (-s/-n) --anger anger",
-            desc = "Sets bee modifiers",
+            desc = "",
             modifiers = { "bee" },
             min = 1,
             max = 1,

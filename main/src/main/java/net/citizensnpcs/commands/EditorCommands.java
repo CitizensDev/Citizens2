@@ -30,7 +30,7 @@ public class EditorCommands {
     @Command(
             aliases = { "npc" },
             usage = "equip",
-            desc = "Toggle the equipment editor",
+            desc = "",
             modifiers = { "equip" },
             min = 1,
             max = 1,
@@ -45,7 +45,7 @@ public class EditorCommands {
     @Command(
             aliases = { "npc" },
             usage = "path",
-            desc = "Toggle the waypoint editor",
+            desc = "",
             modifiers = { "path" },
             min = 1,
             flags = "*",
@@ -66,7 +66,7 @@ public class EditorCommands {
     @Command(
             aliases = { "npc" },
             usage = "text",
-            desc = "Toggle the text editor",
+            desc = "",
             modifiers = { "text" },
             min = 1,
             permission = "citizens.npc.edit.text")

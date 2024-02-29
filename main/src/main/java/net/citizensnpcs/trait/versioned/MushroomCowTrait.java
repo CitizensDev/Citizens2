@@ -50,9 +50,9 @@ public class MushroomCowTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "mcow (--variant [variant])",
-            desc = "Sets mushroom cow modifiers.",
-            modifiers = { "mcow", "mushroomcow" },
+            usage = "mushroomcow (--variant [variant])",
+            desc = "",
+            modifiers = { "mushroomcow" },
             min = 1,
             max = 1,
             permission = "citizens.npc.mushroomcow")

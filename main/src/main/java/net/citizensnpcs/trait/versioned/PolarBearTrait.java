@@ -44,7 +44,7 @@ public class PolarBearTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "polarbear (-r)",
-            desc = "Sets polarbear modifiers.",
+            desc = "",
             modifiers = { "polarbear" },
             min = 1,
             max = 1,

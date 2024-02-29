@@ -37,7 +37,7 @@ public class AdminCommands {
     @Command(
             aliases = { "citizens" },
             usage = "reload",
-            desc = "Load Citizens fresh from disk, without saving first",
+            desc = "",
             modifiers = { "reload", "load" },
             min = 1,
             max = 1,
@@ -64,7 +64,7 @@ public class AdminCommands {
     @Command(
             aliases = { "citizens" },
             usage = "save (-a)",
-            desc = "Save NPCs",
+            desc = "",
             help = Messages.COMMAND_SAVE_HELP,
             modifiers = { "save" },
             min = 1,

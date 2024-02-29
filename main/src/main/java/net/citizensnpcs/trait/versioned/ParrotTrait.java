@@ -46,7 +46,7 @@ public class ParrotTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "parrot (--variant variant)",
-            desc = "Sets parrot modifiers",
+            desc = "",
             modifiers = { "parrot" },
             min = 1,
             max = 1,

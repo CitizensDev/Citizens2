@@ -96,7 +96,7 @@ public class CatTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "cat (-s/-n/-l) --type type --ccolor collar color",
-            desc = "Sets cat modifiers",
+            desc = "",
             modifiers = { "cat" },
             min = 1,
             max = 1,

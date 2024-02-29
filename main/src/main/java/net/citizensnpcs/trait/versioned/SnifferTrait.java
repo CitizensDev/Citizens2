@@ -55,7 +55,7 @@ public class SnifferTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "sniffer (--state [state])",
-            desc = "Sets sniffer modifiers",
+            desc = "",
             modifiers = { "sniffer" },
             min = 1,
             max = 1,

@@ -46,7 +46,7 @@ public class FrogTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "frog (--variant variant)",
-            desc = "Sets frog modifiers",
+            desc = "",
             modifiers = { "frog" },
             min = 1,
             max = 1,

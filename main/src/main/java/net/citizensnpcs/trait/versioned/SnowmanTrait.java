@@ -57,7 +57,7 @@ public class SnowmanTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "snowman (-d[erp]) (-f[orm snow])",
-            desc = "Sets snowman modifiers.",
+            desc = "",
             modifiers = { "snowman" },
             min = 1,
             max = 1,

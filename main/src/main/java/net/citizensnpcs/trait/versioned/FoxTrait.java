@@ -79,7 +79,7 @@ public class FoxTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "fox --type type --sleeping [true|false] --sitting [true|false] --crouching [true|false]",
-            desc = "Sets fox modifiers",
+            desc = "",
             modifiers = { "fox" },
             min = 1,
             max = 1,

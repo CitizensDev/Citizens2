@@ -176,7 +176,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "activationrange [range]",
-            desc = "Sets the activation range",
+            desc = "",
             modifiers = { "activationrange" },
             min = 1,
             max = 2,
@@ -193,8 +193,8 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "age [age] (-l(ock))",
-            desc = "Set the age of a NPC",
-            help = Messages.COMMAND_AGE_HELP,
+            desc = "",
+            help = "citizens.commands.npc.age.help",
             flags = "l",
             modifiers = { "age" },
             min = 1,
@@ -238,7 +238,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "aggressive [true|false]",
-            desc = "Sets the aggressive status of the entity",
+            desc = "",
             modifiers = { "aggressive" },
             min = 1,
             max = 2,
@@ -252,7 +252,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "ai (true|false)",
-            desc = "Sets whether the NPC should use vanilla AI",
+            desc = "",
             modifiers = { "ai" },
             min = 1,
             max = 2,
@@ -267,7 +267,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "anchor (--save [name]|--assume [name]|--remove [name]) (-a) (-c)",
-            desc = "Changes/Saves/Lists NPC's location anchor(s)",
+            desc = "",
             flags = "ac",
             modifiers = { "anchor" },
             min = 1,
@@ -340,7 +340,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "armorstand --visible [visible] --small [small] --marker [marker] --gravity [gravity] --arms [arms] --baseplate [baseplate] --(head|body|leftarm|leftleg|rightarm|rightleg)pose [angle x,y,z]",
-            desc = "Edit armorstand properties",
+            desc = "",
             modifiers = { "armorstand" },
             min = 1,
             max = 1,
@@ -393,7 +393,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "breakblock --location [x,y,z] --radius [radius]",
-            desc = "Mine a block at the given location or cursor if not specified",
+            desc = "",
             modifiers = { "breakblock" },
             min = 1,
             max = 1,
@@ -426,7 +426,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "chunkload (-t(emporary))",
-            desc = "Toggle the NPC forcing chunks to stay loaded",
+            desc = "",
             modifiers = { "chunkload", "cload" },
             min = 1,
             max = 1,
@@ -446,7 +446,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "collidable",
-            desc = "Toggles an NPC's collidability",
+            desc = "",
             modifiers = { "collidable", "pushable" },
             min = 1,
             max = 1,
@@ -462,8 +462,8 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "command|cmd (add [command] | remove [id|all] | permissions [permissions] | sequential | cycle | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
-            desc = "Controls commands which will be run when clicking on an NPC",
-            help = Messages.NPC_COMMAND_HELP,
+            desc = "",
+            help = "citizens.commands.npc.command.help",
             modifiers = { "command", "cmd" },
             min = 1,
             flags = "lrpos",
@@ -613,7 +613,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "configgui",
-            desc = "Display NPC configuration GUI",
+            desc = "",
             modifiers = { "configgui" },
             min = 1,
             max = 1,
@@ -625,7 +625,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "controllable|control (-m(ount),-y,-n,-o(wner required))",
-            desc = "Toggles whether the NPC can be ridden and controlled",
+            desc = "",
             modifiers = { "controllable", "control" },
             min = 1,
             max = 1,
@@ -657,7 +657,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "copy (--name newname)",
-            desc = "Copies an NPC",
+            desc = "",
             modifiers = { "copy" },
             min = 1,
             max = 1,
@@ -697,7 +697,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x,y,z,world] --type [type] --item (item) --trait ['trait1, trait2...'] --model [model name] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
-            desc = "Create a new NPC",
+            desc = "",
             flags = "bustpc",
             modifiers = { "create" },
             min = 2,
@@ -844,7 +844,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "debug -p(aths) -n(avigation)",
-            desc = "Display debugging information",
+            desc = "",
             modifiers = { "debug" },
             min = 1,
             max = 1,
@@ -871,7 +871,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "deselect",
-            desc = "Deselect currently selected NPC",
+            desc = "",
             modifiers = { "deselect", "desel" },
             min = 1,
             max = 1,
@@ -885,7 +885,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "despawn (id)",
-            desc = "Despawn a NPC",
+            desc = "",
             modifiers = { "despawn" },
             min = 1,
             max = 2,
@@ -912,7 +912,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "drops",
-            desc = "Edit an NPC's drops",
+            desc = "",
             modifiers = { "drops" },
             min = 1,
             max = 1,
@@ -926,7 +926,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "endercrystal -b(ottom)",
-            desc = "Edit endercrystal modifiers",
+            desc = "",
             modifiers = { "endercrystal" },
             min = 1,
             max = 1,
@@ -949,7 +949,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "enderman -a(ngry)",
-            desc = "Set enderman modifiers",
+            desc = "",
             flags = "a",
             modifiers = { "enderman" },
             min = 1,
@@ -967,7 +967,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "flyable (true|false)",
-            desc = "Toggles or sets an NPC's flyable status",
+            desc = "",
             modifiers = { "flyable" },
             min = 1,
             max = 2,
@@ -988,7 +988,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "follow (player name|NPC id) (-p[rotect]) (--margin [margin]) (--enable [boolean])",
-            desc = "Toggles NPC following you",
+            desc = "",
             flags = "p",
             modifiers = { "follow" },
             min = 1,
@@ -1034,7 +1034,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "gamemode [gamemode]",
-            desc = "Changes the gamemode",
+            desc = "",
             modifiers = { "gamemode" },
             min = 1,
             max = 2,
@@ -1058,7 +1058,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "glowing --color [minecraft chat color]",
-            desc = "Toggles an NPC's glowing status",
+            desc = "",
             modifiers = { "glowing" },
             min = 1,
             max = 1,
@@ -1082,7 +1082,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "gravity",
-            desc = "Toggles gravity",
+            desc = "",
             modifiers = { "gravity" },
             min = 1,
             max = 1,
@@ -1096,7 +1096,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "hitbox --scale [scale] --width/height [value]",
-            desc = "Sets the NPC hitbox",
+            desc = "",
             modifiers = { "hitbox" },
             min = 1,
             max = 1,
@@ -1119,7 +1119,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "hologram add [text] | set [line #] [text] | remove [line #] | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
-            desc = "Controls NPC hologram text",
+            desc = "",
             modifiers = { "hologram" },
             min = 1,
             max = -1,
@@ -1218,7 +1218,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "homeloc --location [loc] --delay [delay] --distance [distance] -h(ere) -p(athfind) -t(eleport)",
-            desc = "Controls home location",
+            desc = "",
             modifiers = { "home" },
             min = 1,
             max = 1,
@@ -1264,7 +1264,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "horse|donkey|mule (--color color) (--type type) (--style style) (-cb)",
-            desc = "Sets horse and horse-like entity modifiers",
+            desc = "",
             help = "Use the -c flag to make the NPC have a chest, or the -b flag to stop them from having a chest.",
             modifiers = { "horse", "donkey", "mule" },
             min = 1,
@@ -1314,7 +1314,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "hurt [damage]",
-            desc = "Damages the NPC",
+            desc = "",
             modifiers = { "hurt" },
             min = 2,
             max = 2,
@@ -1335,7 +1335,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "id",
-            desc = "Sends the selected NPC's ID to the sender",
+            desc = "",
             modifiers = { "id" },
             min = 1,
             max = 1,
@@ -1347,7 +1347,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "inventory",
-            desc = "Show's an NPC's inventory",
+            desc = "",
             modifiers = { "inventory" },
             min = 1,
             max = 1,
@@ -1359,7 +1359,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "item (item) (metadata) (-h(and))",
-            desc = "Sets the NPC's item",
+            desc = "",
             modifiers = { "item", },
             min = 1,
             max = 3,
@@ -1386,13 +1386,13 @@ public class NPCCommands {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
-        Messaging.sendTr(sender, Messages.ITEM_SET, Util.prettyEnum(stack.getType()));
+        Messaging.sendTr(sender, Messages.ITEM_SET, npc.getName(), Util.prettyEnum(stack.getType()));
     }
 
     @Command(
             aliases = { "npc" },
             usage = "jump",
-            desc = "Makes the NPC jump",
+            desc = "",
             modifiers = { "jump" },
             min = 1,
             max = 1,
@@ -1404,7 +1404,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "knockback (--explicit true|false)",
-            desc = "Toggle NPC knockback",
+            desc = "",
             modifiers = { "knockback" },
             min = 1,
             max = 1,
@@ -1421,7 +1421,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "leashable",
-            desc = "Toggles leashability",
+            desc = "",
             modifiers = { "leashable" },
             min = 1,
             max = 1,
@@ -1442,7 +1442,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "list (page) ((-a) --owner (owner) --type (type) --char (char) --registry (name))",
-            desc = "List NPCs",
+            desc = "",
             flags = "a",
             modifiers = { "list" },
             min = 1,
@@ -1505,7 +1505,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --perplayer [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false] --targetnpcs [true|false]",
-            desc = "Toggle whether a NPC will look when a player is near",
+            desc = "",
             modifiers = { "lookclose", "look" },
             min = 1,
             max = 1,
@@ -1612,7 +1612,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "metadata set|get|remove [key] (value) (-t(emporary))",
-            desc = "Manages NPC metadata",
+            desc = "",
             modifiers = { "metadata" },
             flags = "t",
             min = 3,
@@ -1676,7 +1676,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "minecart (--item item_name(:data)) (--offset offset)",
-            desc = "Sets minecart item",
+            desc = "",
             modifiers = { "minecart" },
             min = 1,
             max = 1,
@@ -1714,7 +1714,7 @@ public class NPCCommands {
             aliases = { "npc" },
             modifiers = { "mirror" },
             usage = "mirror --name [true|false]",
-            desc = "Controls mirroring of NPC skins and more",
+            desc = "",
             min = 1,
             max = 1,
             permission = "citizens.npc.mirror")
@@ -1739,7 +1739,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "mount (--onnpc <npc id|uuid>) (-c(ancel))",
-            desc = "Mounts a controllable NPC",
+            desc = "",
             modifiers = { "mount" },
             min = 1,
             max = 1,
@@ -1787,7 +1787,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "moveto x:y:z:world | x y z world",
-            desc = "Teleports a NPC to a given location",
+            desc = "",
             modifiers = "moveto",
             min = 1,
             valueFlags = { "x", "y", "z", "yaw", "pitch", "world" },
@@ -1844,7 +1844,7 @@ public class NPCCommands {
             aliases = { "npc" },
             modifiers = { "name", "hidename" },
             usage = "name (-h(over))",
-            desc = "Toggle nameplate visibility, or only show names on hover",
+            desc = "",
             min = 1,
             max = 1,
             flags = "h",
@@ -1887,7 +1887,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "ocelot (--type type) (-s(itting), -n(ot sitting))",
-            desc = "Set the ocelot type of an NPC and whether it is sitting",
+            desc = "",
             modifiers = { "ocelot" },
             min = 1,
             max = 1,
@@ -1918,7 +1918,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "owner [uuid|SERVER]",
-            desc = "Set the owner of an NPC",
+            desc = "",
             modifiers = { "owner" },
             min = 1,
             max = 2,
@@ -1949,7 +1949,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "packet --enabled [true|false]",
-            desc = "Controls packet NPC settings",
+            desc = "",
             modifiers = { "packet" },
             min = 1,
             max = 1,
@@ -1972,7 +1972,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "painting (--art art)",
-            desc = "Set painting modifiers",
+            desc = "",
             modifiers = { "painting" },
             min = 1,
             max = 1,
@@ -1992,7 +1992,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "passive (--set [true|false])",
-            desc = "Sets whether an NPC damages other entities or not",
+            desc = "",
             modifiers = { "passive" },
             min = 1,
             max = 1,
@@ -2006,13 +2006,13 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathopt --avoid-water|aw [true|false] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --use-new-finder [true|false] --falling-distance [distance]",
-            desc = "Sets an NPC's pathfinding options",
+            usage = "pathopt --avoid-water|aw [true|false] --open-doors [true|false] --path-range [range] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --use-new-finder [true|false] --falling-distance [distance]",
+            desc = "",
             modifiers = { "pathopt", "po", "patho" },
             min = 1,
             max = 1,
             permission = "citizens.npc.pathfindingoptions")
-    public void pathfindingOptions(CommandContext args, CommandSender sender, NPC npc,
+    public void pathfindingOptions(CommandContext args, CommandSender sender, NPC npc, @Flag("path-range") Float range,
             @Flag("avoid-water") Boolean avoidwater, @Flag("open-doors") Boolean opendoors,
             @Flag("stationary-ticks") Integer stationaryTicks, @Flag("distance-margin") Double distanceMargin,
             @Flag("path-distance-margin") Double pathDistanceMargin, @Flag("attack-range") Double attackRange,
@@ -2043,6 +2043,12 @@ public class NPCCommands {
             output += " "
                     + Messaging.tr(Messages.PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET, npc.getName(), distanceMargin);
 
+        }
+        if (range != null) {
+            if (range < 1)
+                throw new CommandUsageException();
+            npc.getNavigator().getDefaultParameters().range(range);
+            output += " " + Messaging.tr(Messages.PATHFINDING_RANGE_SET, range);
         }
         if (pathDistanceMargin != null) {
             if (pathDistanceMargin < 0)
@@ -2075,22 +2081,8 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathrange [range]",
-            desc = "Sets an NPC's pathfinding range",
-            modifiers = { "pathrange", "pathfindingrange", "prange" },
-            min = 2,
-            max = 2,
-            permission = "citizens.npc.pathfindingrange")
-    public void pathfindingRange(CommandContext args, CommandSender sender, NPC npc) {
-        double range = Math.max(1, args.getDouble(1));
-        npc.getNavigator().getDefaultParameters().range((float) range);
-        Messaging.sendTr(sender, Messages.PATHFINDING_RANGE_SET, range);
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "pathto me | here | cursor | [x] [y] [z] (--margin [distance margin]) (-s[traight line])",
-            desc = "Starts pathfinding to a certain location",
+            desc = "",
             modifiers = { "pathto" },
             min = 2,
             max = 4,
@@ -2125,7 +2117,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "pausepathfinding --onrightclick [true|false] --when-player-within [range in blocks] --pauseticks [ticks]",
-            desc = "Sets pathfinding pause",
+            desc = "",
             modifiers = { "pausepathfinding" },
             min = 1,
             max = 1,
@@ -2155,7 +2147,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "pickupitems (--set [true|false])",
-            desc = "Allow NPC to pick up items",
+            desc = "",
             modifiers = { "pickupitems" },
             min = 1,
             max = 1,
@@ -2170,7 +2162,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "panimate [animation]",
-            desc = "Plays a player animation",
+            desc = "",
             modifiers = { "panimate" },
             min = 2,
             max = 2,
@@ -2189,7 +2181,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "playerfilter -a(llowlist) -e(mpty) -d(enylist) --add [uuid] --remove [uuid] --addgroup [group] --removegroup [group] -c(lear) --applywithin [blocks range]",
-            desc = "Sets the NPC filter",
+            desc = "",
             modifiers = { "playerfilter" },
             min = 1,
             max = 1,
@@ -2240,7 +2232,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "playerlist (-a(dd),r(emove))",
-            desc = "Sets whether the NPC is put in the playerlist",
+            desc = "",
             modifiers = { "playerlist" },
             min = 1,
             max = 1,
@@ -2268,7 +2260,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "playsound [sound] (volume) (pitch) (--at x:y:z:world)",
-            desc = "Plays a sound at the NPC's location",
+            desc = "",
             modifiers = { "playsound" },
             min = 2,
             max = 4,
@@ -2284,7 +2276,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "pose (--save [name] (-d) | --mirror [name] (-d) | --assume [name] | --remove [name] | --default [name]) (--yaw yaw) (--pitch pitch) (-a)",
-            desc = "Manage NPC poses",
+            desc = "",
             flags = "ad",
             modifiers = { "pose" },
             min = 1,
@@ -2354,22 +2346,23 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "power",
-            desc = "Toggle a creeper NPC as powered",
-            modifiers = { "power" },
+            usage = "powered (--set true|false)",
+            desc = "",
+            modifiers = { "powered" },
             min = 1,
             max = 1,
-            permission = "citizens.npc.power")
+            permission = "citizens.npc.powered")
     @Requirements(selected = true, ownership = true, types = { EntityType.CREEPER })
-    public void power(CommandContext args, CommandSender sender, NPC npc) {
-        Messaging.sendTr(sender,
-                npc.getOrAddTrait(Powered.class).toggle() ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
+    public void power(CommandContext args, CommandSender sender, NPC npc, @Flag("set") Boolean explicit) {
+        boolean value = explicit != null ? explicit : !npc.getOrAddTrait(Powered.class).isPowered();
+        npc.getOrAddTrait(Powered.class).setPowered(value);
+        Messaging.sendTr(sender, value ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
     }
 
     @Command(
             aliases = { "npc" },
             usage = "profession|prof [profession]",
-            desc = "Set a NPC's profession",
+            desc = "",
             modifiers = { "profession", "prof" },
             min = 2,
             max = 2,
@@ -2392,7 +2385,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "rabbittype [type]",
-            desc = "Set the Type of a Rabbit NPC",
+            desc = "",
             modifiers = { "rabbittype", "rbtype" },
             min = 2,
             permission = "citizens.npc.rabbittype")
@@ -2409,7 +2402,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "remove|rem (all|id|name| --owner [owner] | --eid [entity uuid] | --world [world])",
-            desc = "Remove a NPC",
+            desc = "",
             modifiers = { "remove", "rem" },
             min = 1,
             max = 2)
@@ -2508,7 +2501,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "rename [name]",
-            desc = "Rename a NPC",
+            desc = "",
             modifiers = { "rename" },
             min = 2,
             permission = "citizens.npc.rename")
@@ -2528,7 +2521,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "respawn [delay]",
-            desc = "Sets an NPC's respawn delay",
+            desc = "",
             modifiers = { "respawn" },
             min = 1,
             max = 2,
@@ -2545,7 +2538,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "rotate (--towards [x,y,z]) (--body [yaw]) (--head [yaw]) (--pitch [pitch]) (-s(mooth))",
-            desc = "Rotate NPC",
+            desc = "",
             flags = "s",
             modifiers = { "rotate" },
             min = 1,
@@ -2590,7 +2583,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "select|sel [id|name] (--range range) (--registry [name])",
-            desc = "Select a NPC with the given ID or name",
+            desc = "",
             modifiers = { "select", "sel" },
             min = 1,
             max = 2,
@@ -2636,7 +2629,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "setequipment [slot] [item]",
-            desc = "Sets equipment via commands",
+            desc = "",
             modifiers = { "setequipment" },
             min = 2,
             max = 3,
@@ -2658,7 +2651,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "sheep (--color [color]) (--sheared [sheared])",
-            desc = "Sets sheep modifiers",
+            desc = "",
             modifiers = { "sheep" },
             min = 1,
             max = 1,
@@ -2688,7 +2681,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "shop (edit|show|delete) (name)",
-            desc = "NPC shop edit/show",
+            desc = "",
             modifiers = { "shop" },
             min = 1,
             max = 3,
@@ -2728,7 +2721,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "sitting (--explicit [true|false]) (--at [at])",
-            desc = "Sets the NPC sitting",
+            desc = "",
             modifiers = { "sitting" },
             min = 1,
             max = 2,
@@ -2753,7 +2746,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "skin (-e(xport) -c(lear) -l(atest) -s(kull)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
-            desc = "Sets an NPC's skin name. Use -l to set the skin to always update to the latest",
+            desc = "",
             modifiers = { "skin" },
             min = 1,
             max = 4,
@@ -2858,8 +2851,10 @@ public class NPCCommands {
             } else
                 throw new ServerCommandException();
         } else {
-            if (args.argsLength() != 2)
-                throw new CommandException(Messages.SKIN_REQUIRED);
+            if (args.argsLength() != 2) {
+                Messaging.send(sender, trait.getSkinName());
+                return;
+            }
             if (args.hasFlag('l')) {
                 trait.setShouldUpdateSkins(true);
             }
@@ -2872,7 +2867,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "skinlayers (--cape [true|false]) (--hat [true|false]) (--jacket [true|false]) (--sleeves [true|false]) (--pants [true|false])",
-            desc = "Sets an NPC's skin layers visibility.",
+            desc = "",
             modifiers = { "skinlayers" },
             min = 1,
             max = 5,
@@ -2908,7 +2903,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "size [size]",
-            desc = "Sets the NPC's size",
+            desc = "",
             modifiers = { "size" },
             min = 1,
             max = 2,
@@ -2928,7 +2923,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "sound (--death [death sound|d]) (--ambient [ambient sound|d]) (--hurt [hurt sound|d]) (-n(one)/-s(ilent)) (-d(efault))",
-            desc = "Sets an NPC's played sounds",
+            desc = "",
             modifiers = { "sound" },
             flags = "dns",
             min = 1,
@@ -3006,7 +3001,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "spawn (id|name) -l(oad chunks)",
-            desc = "Spawn an existing NPC",
+            desc = "",
             modifiers = { "spawn" },
             min = 1,
             max = 2,
@@ -3050,7 +3045,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "speak [message] --bubble [duration] --target [npcid|player name] --range (range to look for entities to speak to in blocks)",
-            desc = "Says a message from the NPC",
+            desc = "",
             modifiers = { "speak" },
             min = 2,
             permission = "citizens.npc.speak")
@@ -3094,7 +3089,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "speed [speed]",
-            desc = "Sets the movement speed of an NPC as a percentage",
+            desc = "",
             modifiers = { "speed" },
             min = 2,
             max = 2,
@@ -3109,7 +3104,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "swim (--set [true|false])",
-            desc = "Sets an NPC to swim or not",
+            desc = "",
             modifiers = { "swim" },
             min = 1,
             max = 1,
@@ -3124,7 +3119,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "target [name|UUID] (-a[ggressive]) (-c[ancel])",
-            desc = "Target a given entity",
+            desc = "",
             modifiers = { "target" },
             flags = "ac",
             min = 1,
@@ -3147,7 +3142,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "targetable (-t(emporary))",
-            desc = "Toggles an NPC's targetability",
+            desc = "",
             modifiers = { "targetable" },
             min = 1,
             max = 1,
@@ -3166,7 +3161,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "tp (-e(xact))",
-            desc = "Teleport in front of an NPC",
+            desc = "",
             modifiers = { "tp", "teleport" },
             min = 1,
             max = 1,
@@ -3189,7 +3184,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "tphere (cursor) -c(enter) -f(ront)",
-            desc = "Teleport a NPC to your location",
+            desc = "",
             flags = "cf",
             modifiers = { "tphere", "tph", "move" },
             min = 1,
@@ -3235,7 +3230,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "tpto [player name|npc id] [player name|npc id]",
-            desc = "Teleport an NPC or player to another NPC or player",
+            desc = "",
             modifiers = { "tpto" },
             min = 2,
             max = 3,
@@ -3289,7 +3284,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "trackingrange [range]",
-            desc = "Sets the tracking range",
+            desc = "",
             modifiers = { "trackingrange" },
             min = 1,
             max = 2,
@@ -3306,7 +3301,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "type [type]",
-            desc = "Sets an NPC's entity type",
+            desc = "",
             modifiers = { "type" },
             min = 2,
             max = 2,
@@ -3322,7 +3317,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "undo (all)",
-            desc = "Undoes the last action (currently only create/remove supported)",
+            desc = "",
             modifiers = { "undo" },
             min = 1,
             max = 2,
@@ -3343,7 +3338,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "useitem (-o(ffhand))",
-            desc = "Sets an NPC to  be using their held items",
+            desc = "",
             modifiers = { "useitem" },
             min = 1,
             max = 1,
@@ -3367,7 +3362,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "vulnerable (-t(emporary))",
-            desc = "Toggles an NPC's vulnerability",
+            desc = "",
             modifiers = { "vulnerable" },
             min = 1,
             max = 1,
@@ -3387,7 +3382,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "wander",
-            desc = "Sets the NPC to wander around",
+            desc = "",
             modifiers = { "wander" },
             min = 1,
             max = 1,
@@ -3404,7 +3399,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "wither (--invulnerable [true|false]) (--arrow-shield [true|false])",
-            desc = "Sets wither modifiers",
+            desc = "",
             modifiers = { "wither" },
             min = 1,
             requiresFlags = true,
@@ -3425,7 +3420,7 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             usage = "wolf (-s(itting) a(ngry) t(amed) i(nfo)) --collar [hex rgb color|name]",
-            desc = "Sets wolf modifiers",
+            desc = "",
             modifiers = { "wolf" },
             min = 1,
             max = 1,

@@ -12,7 +12,7 @@ import net.citizensnpcs.api.trait.TraitName;
  * @see Creeper#setPowered(boolean)
  */
 @TraitName("powered")
-public class Powered extends Trait implements Toggleable {
+public class Powered extends Trait {
     @Persist("")
     private boolean powered;
 
@@ -31,17 +31,8 @@ public class Powered extends Trait implements Toggleable {
         }
     }
 
-    @Override
-    public boolean toggle() {
-        powered = !powered;
-        if (npc.getEntity() instanceof Creeper) {
-            ((Creeper) npc.getEntity()).setPowered(powered);
-        }
-        return powered;
-    }
-
-    @Override
-    public String toString() {
-        return "Powered{" + powered + "}";
+    public void setPowered(boolean value) {
+        powered = value;
+        onSpawn();
     }
 }

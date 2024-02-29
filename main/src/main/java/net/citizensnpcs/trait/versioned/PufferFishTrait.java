@@ -35,7 +35,7 @@ public class PufferFishTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "pufferfish (--state state)",
-            desc = "Sets pufferfish modifiers",
+            desc = "",
             modifiers = { "pufferfish" },
             min = 1,
             max = 1,

@@ -63,7 +63,7 @@ public class VillagerTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "villager (--level level) (--type type) (--profession profession) -s(hake head)",
-            desc = "Sets villager modifiers",
+            desc = "",
             modifiers = { "villager" },
             min = 1,
             max = 1,

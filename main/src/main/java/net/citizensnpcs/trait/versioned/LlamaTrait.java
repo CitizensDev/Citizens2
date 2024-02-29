@@ -60,7 +60,7 @@ public class LlamaTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "llama (--color color) (--strength strength)",
-            desc = "Sets llama modifiers",
+            desc = "",
             modifiers = { "llama" },
             min = 1,
             max = 1,

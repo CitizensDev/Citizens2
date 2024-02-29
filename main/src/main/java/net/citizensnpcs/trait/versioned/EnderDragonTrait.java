@@ -60,7 +60,7 @@ public class EnderDragonTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "enderdragon --phase [phase] --destroywalls [true|false]",
-            desc = "Control enderdragon modifiers",
+            desc = "",
             modifiers = { "enderdragon" },
             min = 1,
             max = 1,

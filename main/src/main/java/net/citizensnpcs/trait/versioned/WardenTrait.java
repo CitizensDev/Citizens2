@@ -50,7 +50,7 @@ public class WardenTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "warden dig|emerge|roar|anger [entity uuid/player name] [anger]",
-            desc = "Sets warden modifiers",
+            desc = "",
             modifiers = { "warden" },
             min = 1,
             max = 4,

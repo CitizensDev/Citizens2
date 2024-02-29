@@ -126,7 +126,7 @@ public class PandaTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "panda --gene (main gene) --hiddengene (hidden gene) -e(ating) -s(itting) -n (sneezing) -r(olling)",
-            desc = "Sets panda modifiers",
+            desc = "",
             modifiers = { "panda" },
             flags = "srne",
             min = 1,

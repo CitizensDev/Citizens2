@@ -47,7 +47,7 @@ public class SpellcasterTrait extends Trait {
     @Command(
             aliases = { "npc" },
             usage = "spellcaster (--spell spell)",
-            desc = "Sets spellcaster modifiers",
+            desc = "",
             modifiers = { "spellcaster" },
             min = 1,
             max = 1,

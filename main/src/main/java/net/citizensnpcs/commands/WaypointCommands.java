@@ -34,7 +34,7 @@ public class WaypointCommands {
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "add [x] [y] [z] (world) (--index idx)",
-            desc = "Adds a waypoint at a point",
+            desc = "",
             modifiers = { "add" },
             min = 4,
             max = 5,
@@ -61,7 +61,7 @@ public class WaypointCommands {
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "disableteleport",
-            desc = "Disables teleportation when stuck",
+            desc = "",
             modifiers = { "disableteleport", "dt" },
             min = 1,
             max = 1,
@@ -101,24 +101,8 @@ public class WaypointCommands {
 
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
-            usage = "opendoors",
-            desc = "Enables opening doors when pathfinding",
-            modifiers = { "opendoors", "od" },
-            min = 1,
-            max = 1,
-            permission = "citizens.waypoints.opendoors")
-    public void openDoors(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        boolean opensDoors = !npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, false);
-        npc.data().setPersistent(NPC.Metadata.PATHFINDER_OPEN_DOORS, opensDoors);
-        Messaging.sendTr(sender,
-                opensDoors ? Messages.PATHFINDER_OPEN_DOORS_ENABLED : Messages.PATHFINDER_OPEN_DOORS_DISABLED,
-                npc.getName());
-    }
-
-    @Command(
-            aliases = { "waypoints", "waypoint", "wp" },
             usage = "provider [provider name]",
-            desc = "Sets the current waypoint provider",
+            desc = "",
             modifiers = { "provider" },
             min = 1,
             max = 2,
@@ -142,7 +126,7 @@ public class WaypointCommands {
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "remove (x y z world) (--index idx)",
-            desc = "Adds a waypoint at a point",
+            desc = "",
             modifiers = { "remove" },
             min = 1,
             max = 5,
