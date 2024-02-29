@@ -18,7 +18,6 @@ import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
@@ -180,7 +179,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public IChatBaseComponent getPlayerListName() {
-        if (Setting.DISABLE_TABLIST.asBoolean())
+        if (npc != null && npc.shouldRemoveFromTabList())
             return new ChatComponentText("");
         return super.getPlayerListName();
     }

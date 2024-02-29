@@ -211,7 +211,6 @@ import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
@@ -1299,26 +1298,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {
+    public void sendTabListRemove(Player recipient, Collection<Player> skinnableNPCs) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(skinnableNPCs);
         ServerPlayer[] entities = new ServerPlayer[skinnableNPCs.size()];
         int i = 0;
-        for (SkinnableEntity skinnable : skinnableNPCs) {
-            entities[i] = (ServerPlayer) skinnable;
+        for (Player skinnable : skinnableNPCs) {
+            entities[i] = (ServerPlayer) getHandle(skinnable);
             i++;
         }
         NMSImpl.sendPacket(recipient,
                 new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, entities));
-    }
-
-    @Override
-    public void sendTabListRemove(Player recipient, Player listPlayer) {
-        Preconditions.checkNotNull(recipient);
-        Preconditions.checkNotNull(listPlayer);
-        ServerPlayer entity = ((CraftPlayer) listPlayer).getHandle();
-        NMSImpl.sendPacket(recipient,
-                new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, entity));
     }
 
     @Override

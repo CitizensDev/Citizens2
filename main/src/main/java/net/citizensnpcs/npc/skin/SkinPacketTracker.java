@@ -108,9 +108,9 @@ public class SkinPacketTracker {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 
         for (Player player : players) {
-            if (player.hasMetadata("NPC")) {
+            if (player.hasMetadata("NPC"))
                 continue;
-            }
+
             // send packet now and later to ensure removal from player list
             NMS.sendTabListRemove(player, entity.getBukkitEntity());
             TAB_LIST_REMOVER.sendPacket(player, entity);
@@ -136,7 +136,7 @@ public class SkinPacketTracker {
 
     private void scheduleRemovePacket(PlayerEntry entry) {
         if (isRemoved || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled()
-                || !shouldRemoveFromTabList())
+                || !entity.getNPC().shouldRemoveFromTabList())
             return;
 
         entry.removeTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
@@ -146,10 +146,6 @@ public class SkinPacketTracker {
     private void scheduleRemovePacket(PlayerEntry entry, int count) {
         entry.removeCount = count;
         scheduleRemovePacket(entry);
-    }
-
-    private boolean shouldRemoveFromTabList() {
-        return entity.getNPC().data().get("removefromtablist", Setting.DISABLE_TABLIST.asBoolean());
     }
 
     /**

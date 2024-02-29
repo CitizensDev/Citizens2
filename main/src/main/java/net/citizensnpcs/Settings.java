@@ -197,7 +197,6 @@ public class Settings {
         MAX_NPC_SKIN_RETRIES(
                 "How many times to try load NPC skins (due to Minecraft rate-limiting skin requests, should rarely be less than 5",
                 "npc.skins.max-retries", -1),
-        MAX_PACKET_ENTRIES("npc.limits.max-packet-entries", 15),
         MAX_TEXT_RANGE("The maximum range in blocks for chatting", "npc.chat.options.max-text-range", 500),
         MAXIMUM_ASTAR_ITERATIONS("The maximum number of blocks to check when pathfinding",
                 "npc.pathfinding.maximum-new-pathfinder-iterations", "npc.pathfinding.new-finder.maximum-iterations",

@@ -40,7 +40,6 @@ import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
@@ -174,9 +173,7 @@ public interface NMSBridge {
 
     public boolean sendTabListAdd(Player recipient, Player listPlayer);
 
-    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs);
-
-    public void sendTabListRemove(Player recipient, Player listPlayer);
+    public void sendTabListRemove(Player recipient, Collection<Player> players);
 
     public void sendTeamPacket(Player recipient, Team team, int mode);
 

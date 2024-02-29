@@ -219,7 +219,6 @@ import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AllayTrait;
@@ -1175,19 +1174,20 @@ public class NMSImpl implements NMSBridge {
         GameProfile playerProfile = null;
         for (int i = 0; i < list.size(); i++) {
             ClientboundPlayerInfoUpdatePacket.Entry npcInfo = list.get(i);
-            if (npcInfo == null) {
+            if (npcInfo == null)
                 continue;
-            }
+
             MirrorTrait trait = mirrorTraits.apply(npcInfo.profileId());
-            if (trait == null || !trait.isMirroring(player)) {
+            if (trait == null || !trait.isMirroring(player))
                 continue;
-            }
-            if (Setting.DISABLE_TABLIST.asBoolean() != npcInfo.listed()) {
+
+            boolean disableTablist = trait.getNPC().shouldRemoveFromTabList();
+
+            if (disableTablist != npcInfo.listed()) {
                 list.set(i,
                         new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), npcInfo.profile(),
-                                !Setting.DISABLE_TABLIST.asBoolean(), npcInfo.latency(), npcInfo.gameMode(),
-                                !Setting.DISABLE_TABLIST.asBoolean() ? npcInfo.displayName() : Component.empty(),
-                                npcInfo.chatSession()));
+                                !disableTablist, npcInfo.latency(), npcInfo.gameMode(),
+                                !disableTablist ? npcInfo.displayName() : Component.empty(), npcInfo.chatSession()));
                 changed = true;
             }
             if (playerProfile == null) {
@@ -1195,16 +1195,16 @@ public class NMSImpl implements NMSBridge {
             }
             if (trait.mirrorName()) {
                 list.set(i,
-                        new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), playerProfile,
-                                !Setting.DISABLE_TABLIST.asBoolean(), npcInfo.latency(), npcInfo.gameMode(),
-                                Component.literal(playerProfile.getName()), npcInfo.chatSession()));
+                        new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), playerProfile, !disableTablist,
+                                npcInfo.latency(), npcInfo.gameMode(), Component.literal(playerProfile.getName()),
+                                npcInfo.chatSession()));
                 changed = true;
                 continue;
             }
             Collection<Property> textures = playerProfile.getProperties().get("textures");
-            if (textures == null || textures.size() == 0) {
+            if (textures == null || textures.size() == 0)
                 continue;
-            }
+
             npcInfo.profile().getProperties().clear();
             for (String key : playerProfile.getProperties().keySet()) {
                 npcInfo.profile().getProperties().putAll(key, playerProfile.getProperties().get(key));
@@ -1363,9 +1363,7 @@ public class NMSImpl implements NMSBridge {
         ServerPlayer from = ((CraftPlayer) listPlayer).getHandle();
         ClientboundPlayerInfoUpdatePacket packet = ClientboundPlayerInfoUpdatePacket
                 .createPlayerInitializing(Arrays.asList(from));
-        boolean list = from instanceof NPCHolder
-                ? !((NPCHolder) from).getNPC().data().get("removefromtablist", Setting.DISABLE_TABLIST.asBoolean())
-                : false;
+        boolean list = from instanceof NPCHolder ? !((NPCHolder) from).getNPC().shouldRemoveFromTabList() : true;
         ClientboundPlayerInfoUpdatePacket.Entry entry = new ClientboundPlayerInfoUpdatePacket.Entry(from.getUUID(),
                 from.getGameProfile(), list, from.connection.latency(), from.gameMode.getGameModeForPlayer(),
                 list ? from.getTabListDisplayName() : Component.empty(),
@@ -1380,24 +1378,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {
+    public void sendTabListRemove(Player recipient, Collection<Player> players) {
         Preconditions.checkNotNull(recipient);
-        Preconditions.checkNotNull(skinnableNPCs);
-        ServerPlayer[] entities = new ServerPlayer[skinnableNPCs.size()];
-        int i = 0;
-        for (SkinnableEntity skinnable : skinnableNPCs) {
-            entities[i] = (ServerPlayer) skinnable;
-            i++;
-        }
+        Preconditions.checkNotNull(players);
         sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(
-                skinnableNPCs.stream().map(e -> ((ServerPlayer) e).getUUID()).collect(Collectors.toList())));
-    }
-
-    @Override
-    public void sendTabListRemove(Player recipient, Player listPlayer) {
-        Preconditions.checkNotNull(recipient);
-        Preconditions.checkNotNull(listPlayer);
-        sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(Arrays.asList(getHandle(listPlayer).getUUID())));
+                players.stream().map(e -> e.getUniqueId()).collect(Collectors.toList())));
     }
 
     @Override

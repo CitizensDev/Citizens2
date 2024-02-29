@@ -37,6 +37,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
@@ -58,7 +59,6 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.PacketNPC;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
@@ -779,12 +779,12 @@ public class NMS {
         return BRIDGE.sendTabListAdd(recipient, listPlayer);
     }
 
-    public static void sendTabListRemove(Player recipient, Collection<? extends SkinnableEntity> skinnableNPCs) {
-        BRIDGE.sendTabListRemove(recipient, skinnableNPCs);
+    public static void sendTabListRemove(Player recipient, Collection<Player> players) {
+        BRIDGE.sendTabListRemove(recipient, players);
     }
 
     public static void sendTabListRemove(Player recipient, Player listPlayer) {
-        BRIDGE.sendTabListRemove(recipient, listPlayer);
+        sendTabListRemove(recipient, ImmutableList.of(listPlayer));
     }
 
     public static void sendTeamPacket(Player recipient, Team team, int mode) {

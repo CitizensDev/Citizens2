@@ -493,7 +493,7 @@ public class EventListen implements Listener {
         boolean resetYaw = event.getNPC().data().get(NPC.Metadata.RESET_YAW_ON_SPAWN,
                 Setting.RESET_YAW_ON_SPAWN.asBoolean());
         boolean sendTabRemove = NMS.sendTabListAdd(event.getPlayer(), (Player) tracker);
-        if (!sendTabRemove || !Setting.DISABLE_TABLIST.asBoolean()) {
+        if (!sendTabRemove || !event.getNPC().shouldRemoveFromTabList()) {
             if (resetYaw) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
                         () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()));

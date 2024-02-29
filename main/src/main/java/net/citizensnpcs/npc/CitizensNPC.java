@@ -55,6 +55,7 @@ import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.util.ChunkCoord;
+import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
@@ -276,8 +277,19 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    protected void setNameInternal(String name) {
+        super.setNameInternal(name);
+        updateCustomName();
+    }
+
+    @Override
     public void setSneaking(boolean sneaking) {
         getOrAddTrait(SneakTrait.class).setSneaking(sneaking);
+    }
+
+    @Override
+    public boolean shouldRemoveFromTabList() {
+        return data().get(NPC.Metadata.REMOVE_FROM_TABLIST, Setting.DISABLE_TABLIST.asBoolean());
     }
 
     @Override
@@ -308,16 +320,10 @@ public class CitizensNPC extends AbstractNPC {
         getEntity().setMetadata("NPC-ID", new FixedMetadataValue(CitizensAPI.getPlugin(), getId()));
         // Spawning the entity will create an entity tracker that is not controlled by Citizens. This is fixed later in
         // spawning; to avoid sending packets twice, try to hide the entity initially
-        if (SUPPORT_VISIBLE_BY_DEFAULT) {
-            try {
-                getEntity().setVisibleByDefault(false);
-            } catch (NoSuchMethodError err) {
-                SUPPORT_VISIBLE_BY_DEFAULT = false;
-            }
-        }
-        if (!SUPPORT_VISIBLE_BY_DEFAULT && getEntity().getType() == EntityType.PLAYER) {
+        EntityPacketTracker tracker = NMS.getPacketTracker(getEntity());
+        if (tracker != null) {
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                player.hidePlayer((Player) getEntity());
+                tracker.unlink(player);
             }
         }
         if (getEntity() instanceof SkinnableEntity && !hasTrait(SkinLayers.class)) {
@@ -389,15 +395,8 @@ public class CitizensNPC extends AbstractNPC {
                         ex.printStackTrace();
                     }
                 }
-                // Replace the entity tracker and attempt to show the entity
+                // Replace the entity tracker
                 NMS.replaceTracker(getEntity());
-                if (SUPPORT_VISIBLE_BY_DEFAULT) {
-                    getEntity().setVisibleByDefault(true);
-                } else if (getEntity().getType() == EntityType.PLAYER) {
-                    for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                        player.showPlayer((Player) getEntity());
-                    }
-                }
                 EntityType type = getEntity().getType();
                 if (type.isAlive()) {
                     LivingEntity entity = (LivingEntity) getEntity();
@@ -565,12 +564,13 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
-    @Override
-    public void updateCustomName() {
+    private void updateCustomName() {
+        if (getEntity() == null)
+            return;
         if (coloredNameComponentCache != null) {
             NMS.setCustomName(getEntity(), coloredNameComponentCache, coloredNameStringCache);
         } else {
-            super.updateCustomName();
+            getEntity().setCustomName(getFullName());
         }
     }
 
@@ -633,5 +633,4 @@ public class CitizensNPC extends AbstractNPC {
     private static boolean SUPPORT_PICKUP_ITEMS = true;
     private static boolean SUPPORT_SILENT = true;
     private static boolean SUPPORT_USE_ITEM = true;
-    private static boolean SUPPORT_VISIBLE_BY_DEFAULT = true;
 }

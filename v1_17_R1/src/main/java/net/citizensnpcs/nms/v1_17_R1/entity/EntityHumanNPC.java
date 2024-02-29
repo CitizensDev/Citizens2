@@ -15,7 +15,6 @@ import org.bukkit.util.Vector;
 
 import com.mojang.authlib.GameProfile;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
@@ -213,7 +212,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public Component getTabListDisplayName() {
-        if (Setting.DISABLE_TABLIST.asBoolean())
+        if (npc != null && npc.shouldRemoveFromTabList())
             return new TextComponent("");
         return super.getTabListDisplayName();
     }
