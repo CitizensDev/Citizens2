@@ -376,7 +376,7 @@
   "citizens.commands.npc.sitting.description" : "Sets the NPC sitting",
   "citizens.commands.npc.sitting.set" : "[[{0}]] is now sitting at [[{1}]].",
   "citizens.commands.npc.sitting.unset" : "[[{0}]] is no longer sitting.",
-  "citizens.commands.npc.size.description" : "[[{0}]]''s size is [[{1}]].",
+  "citizens.commands.npc.size.describe" : "[[{0}]]''s size is [[{1}]].",
   "citizens.commands.npc.size.description" : "Sets the NPC''s size",
   "citizens.commands.npc.size.set" : "[[{0}]]''s size set to [[{1}]].",
   "citizens.commands.npc.skeletontype.invalid-type" : "Invalid skeleton type. Try one of the following: [[{0}]].",
