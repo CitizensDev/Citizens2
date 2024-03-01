@@ -567,7 +567,7 @@ public class EventListen implements Listener {
         if (npc == null)
             return;
 
-        if (npc.requiresNameHologram()) {
+        if (npc.requiresNameHologram() && event.getDeathMessage() != null) {
             event.setDeathMessage(event.getDeathMessage().replace(event.getEntity().getName(), npc.getFullName()));
         }
     }
