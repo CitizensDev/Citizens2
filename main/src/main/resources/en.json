@@ -1,3 +1,4 @@
+{
   "citizens.changed-implementation" : "Citizens implementation changed, disabling plugin.",
   "citizens.commands.citizens.description" : "Show basic plugin information", 
   "citizens.commands.citizens.help" : "",
@@ -765,5 +766,4 @@
   "citizens.waypoints.available-providers-header" : "List of available providers",
   "citizens.waypoints.current-provider" : "The current waypoint provider is [[{0}]].",
   "citizens.waypoints.set-provider" : "Set the waypoint provider to [[{0}]]."
-{
 }
