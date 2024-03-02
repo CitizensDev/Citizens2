@@ -592,7 +592,7 @@ public class CommandManager implements TabCompleter {
         if (translationPrefixProvider != null) {
             String helpKey = translationPrefixProvider.apply(info.getCommandAnnotation()) + ".help";
             String attemptedTranslation = Messaging.tryTranslate(helpKey);
-            if (!helpKey.equals(attemptedTranslation)) {
+            if (!helpKey.equals(attemptedTranslation) && !attemptedTranslation.isEmpty()) {
                 help = attemptedTranslation;
             }
         }
