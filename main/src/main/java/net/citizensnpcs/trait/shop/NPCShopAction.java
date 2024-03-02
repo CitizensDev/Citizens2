@@ -25,11 +25,11 @@ public abstract class NPCShopAction implements Cloneable {
 
     public abstract String describe();
 
-    public abstract int getMaxRepeats(Entity entity);
+    public abstract int getMaxRepeats(Entity entity, ItemStack[] inventory);
 
-    public abstract Transaction grant(Entity entity, int repeats);
+    public abstract Transaction grant(Entity entity, ItemStack[] inventory, int repeats);
 
-    public abstract Transaction take(Entity entity, int repeats);
+    public abstract Transaction take(Entity entity, ItemStack[] inventory, int repeats);
 
     public static interface GUI {
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback);

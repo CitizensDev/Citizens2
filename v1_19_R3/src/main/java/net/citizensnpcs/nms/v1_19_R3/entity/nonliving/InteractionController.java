@@ -110,10 +110,9 @@ public class InteractionController extends MobEntityController {
 
         @Override
         public void tick() {
+            super.tick();
             if (npc != null) {
                 npc.update();
-            } else {
-                super.tick();
             }
         }
 

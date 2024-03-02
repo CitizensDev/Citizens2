@@ -72,7 +72,6 @@ public class Messages {
     public static final String COMMAND_PAGE_MISSING = "citizens.commands.page-missing";
     public static final String COMMAND_REMOVED = "citizens.commands.npc.command.command-removed";
     public static final String COMMAND_RIGHT_HAND_HEADER = "citizens.commands.npc.command.right-hand-header";
-    public static final String COMMAND_SAVE_HELP = "citizens.commands.citizens.save.help";
     public static final String COMMAND_TEMPORARY_PERMISSIONS_SET = "citizens.commands.npc.command.temporary-permissions-set";
     public static final String COMMAND_TRIGGER_ADDED = "citizens.editors.waypoints.triggers.command.added";
     public static final String COMMAND_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.command.prompt";

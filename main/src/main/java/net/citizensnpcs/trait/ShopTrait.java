@@ -71,6 +71,7 @@ import net.citizensnpcs.trait.shop.NPCShopAction.GUI;
 import net.citizensnpcs.trait.shop.NPCShopAction.Transaction;
 import net.citizensnpcs.trait.shop.PermissionAction;
 import net.citizensnpcs.trait.shop.PermissionAction.PermissionActionGUI;
+import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.Util;
 
 /**
@@ -105,9 +106,11 @@ public class ShopTrait extends Trait {
     }
 
     public void onRightClick(Player player) {
-        if (rightClickShop == null || rightClickShop.isEmpty()
-                || !Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
-                        && !player.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString()))
+        if (rightClickShop == null || rightClickShop.isEmpty())
+            return;
+
+        String globalViewPermission = Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString();
+        if (!globalViewPermission.isEmpty() && !player.hasPermission(globalViewPermission))
             return;
 
         NPCShop shop = shops.globalShops.getOrDefault(rightClickShop, getDefaultShop());
@@ -432,9 +435,9 @@ public class ShopTrait extends Trait {
             }
         }
 
-        public void onClick(NPCShop shop, Player player, boolean shiftClick, boolean secondClick) {
-            if (purchases.containsKey(player.getUniqueId()) && timesPurchasable > 0
-                    && purchases.get(player.getUniqueId()) == timesPurchasable) {
+        public void onClick(NPCShop shop, Player player, ItemStack[] inventory, boolean shiftClick,
+                boolean secondClick) {
+            if (timesPurchasable > 0 && purchases.getOrDefault(player.getUniqueId(), 0) == timesPurchasable) {
                 if (alreadyPurchasedMessage != null) {
                     Messaging.sendColorless(player, placeholders(alreadyPurchasedMessage, player));
                 }
@@ -447,7 +450,7 @@ public class ShopTrait extends Trait {
             int max = Integer.MAX_VALUE;
             if (maxRepeatsOnShiftClick && shiftClick) {
                 for (NPCShopAction action : cost) {
-                    int r = action.getMaxRepeats(player);
+                    int r = action.getMaxRepeats(player, inventory);
                     if (r != -1) {
                         max = Math.min(max, r);
                     }
@@ -456,14 +459,14 @@ public class ShopTrait extends Trait {
                     return;
             }
             int repeats = max == Integer.MAX_VALUE ? 1 : max;
-            List<Transaction> take = apply(cost, action -> action.take(player, repeats));
+            List<Transaction> take = apply(cost, action -> action.take(player, inventory, repeats));
             if (take == null) {
                 if (costMessage != null) {
                     Messaging.sendColorless(player, placeholders(costMessage, player));
                 }
                 return;
             }
-            if (apply(result, action -> action.grant(player, repeats)) == null) {
+            if (apply(result, action -> action.grant(player, inventory, repeats)) == null) {
                 take.forEach(Transaction::rollback);
                 return;
             }
@@ -471,9 +474,7 @@ public class ShopTrait extends Trait {
                 Messaging.sendColorless(player, placeholders(resultMessage, player));
             }
             if (timesPurchasable > 0) {
-                int timesPurchasedAlready = purchases.get(player.getUniqueId()) == null ? 0
-                        : purchases.get(player.getUniqueId());
-                purchases.put(player.getUniqueId(), ++timesPurchasedAlready);
+                purchases.put(player.getUniqueId(), purchases.getOrDefault(player.getUniqueId(), 0) + 1);
             }
         }
 
@@ -835,7 +836,11 @@ public class ShopTrait extends Trait {
                 ctx.getSlot(i).setItemStack(item.getDisplayItem(player));
                 ctx.getSlot(i).setClickHandler(evt -> {
                     evt.setCancelled(true);
-                    item.onClick(shop, (Player) evt.getWhoClicked(), evt.isShiftClick(), lastClickedItem == item);
+                    InventoryMultiplexer multiplexer = new InventoryMultiplexer(
+                            ((Player) evt.getWhoClicked()).getInventory());
+                    item.onClick(shop, (Player) evt.getWhoClicked(), multiplexer.getInventory(), evt.isShiftClick(),
+                            lastClickedItem == item);
+                    multiplexer.save();
                     lastClickedItem = item;
                 });
             }
@@ -921,15 +926,15 @@ public class ShopTrait extends Trait {
             evt.setCancelled(true);
             if (evt.getSlotType() != SlotType.RESULT || !evt.getAction().name().contains("PICKUP"))
                 return;
-            // TODO: work around crafting slot limitations in minecraft
-            player.getInventory().addItem(evt.getClickedInventory().getItem(0));
-            evt.getClickedInventory().setItem(0, null);
-            if (evt.getClickedInventory().getItem(1) != null) {
-                player.getInventory().addItem(evt.getClickedInventory().getItem(1));
-                evt.getClickedInventory().setItem(1, null);
-            }
-            trades.get(selectedTrade).onClick(shop, player, evt.getClick().isShiftClick(),
+            Inventory syntheticInventory = Bukkit.createInventory(null, 9);
+            syntheticInventory.setItem(0, evt.getClickedInventory().getItem(0));
+            syntheticInventory.setItem(1, evt.getClickedInventory().getItem(1));
+            InventoryMultiplexer multiplexer = new InventoryMultiplexer(player.getInventory(), syntheticInventory);
+            trades.get(selectedTrade).onClick(shop, player, multiplexer.getInventory(), evt.getClick().isShiftClick(),
                     lastClickedTrade == selectedTrade);
+            multiplexer.save();
+            evt.getClickedInventory().setItem(0, syntheticInventory.getItem(0));
+            evt.getClickedInventory().setItem(1, syntheticInventory.getItem(1));
             lastClickedTrade = selectedTrade;
         }
 

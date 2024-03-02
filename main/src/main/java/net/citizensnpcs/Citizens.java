@@ -514,9 +514,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void setupTranslator() {
         Locale locale = Locale.getDefault();
-        if (!locale.getLanguage().equals("en")) {
-            Messaging.logTr(Messages.CONTRIBUTE_TO_TRANSLATION_PROMPT);
-        }
         String setting = Setting.LOCALE.asString();
         if (!setting.isEmpty()) {
             String[] parts = setting.split("[\\._]");
@@ -535,6 +532,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             }
         }
         Translator.setInstance(new File(getDataFolder(), "lang"), locale);
+        if (!locale.getLanguage().equals("en")) {
+            Messaging.logTr(Messages.CONTRIBUTE_TO_TRANSLATION_PROMPT);
+        }
     }
 
     private void startMetrics() {

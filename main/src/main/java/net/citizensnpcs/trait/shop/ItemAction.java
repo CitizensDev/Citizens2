@@ -51,9 +51,8 @@ public class ItemAction extends NPCShopAction {
         this.items = items;
     }
 
-    private boolean containsItems(Inventory source, int repeats, boolean modify) {
+    private boolean containsItems(ItemStack[] contents, int repeats, boolean modify) {
         List<Integer> req = items.stream().map(i -> i.getAmount() * repeats).collect(Collectors.toList());
-        ItemStack[] contents = source.getContents();
         for (int i = 0; i < contents.length; i++) {
             ItemStack toMatch = contents[i];
             if (toMatch == null || toMatch.getType() == Material.AIR || tooDamaged(toMatch))
@@ -78,9 +77,9 @@ public class ItemAction extends NPCShopAction {
                 }
                 if (modify) {
                     if (toMatch == null) {
-                        source.clear(i);
+                        contents[i] = null;
                     } else {
-                        source.setItem(i, toMatch.clone());
+                        contents[i] = toMatch.clone();
                     }
                 }
                 req.set(j, remaining - taken);
@@ -106,7 +105,7 @@ public class ItemAction extends NPCShopAction {
     }
 
     @Override
-    public int getMaxRepeats(Entity entity) {
+    public int getMaxRepeats(Entity entity, ItemStack[] inventory) {
         if (!(entity instanceof InventoryHolder))
             return 0;
 
@@ -138,7 +137,7 @@ public class ItemAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(Entity entity, int repeats) {
+    public Transaction grant(Entity entity, ItemStack[] inventory, int repeats) {
         if (!(entity instanceof InventoryHolder))
             return Transaction.fail();
         Inventory source = ((InventoryHolder) entity).getInventory();
@@ -201,15 +200,15 @@ public class ItemAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction take(Entity entity, int repeats) {
+    public Transaction take(Entity entity, ItemStack[] inventory, int repeats) {
         if (!(entity instanceof InventoryHolder))
             return Transaction.fail();
 
-        Inventory source = ((InventoryHolder) entity).getInventory();
-        return Transaction.create(() -> containsItems(source, repeats, false), () -> {
-            containsItems(source, repeats, true);
+        return Transaction.create(() -> containsItems(inventory, repeats, false), () -> {
+            containsItems(inventory, repeats, true);
         }, () -> {
-            source.addItem(items.stream().map(ItemStack::clone).toArray(ItemStack[]::new));
+            ((InventoryHolder) entity).getInventory()
+                    .addItem(items.stream().map(ItemStack::clone).toArray(ItemStack[]::new));
         });
     }
 

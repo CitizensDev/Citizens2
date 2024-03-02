@@ -65,7 +65,6 @@ public class AdminCommands {
             aliases = { "citizens" },
             usage = "save (-a)",
             desc = "",
-            help = Messages.COMMAND_SAVE_HELP,
             modifiers = { "save" },
             min = 1,
             max = 1,
