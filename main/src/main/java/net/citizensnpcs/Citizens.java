@@ -540,13 +540,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private void startMetrics() {
         try {
             Metrics metrics = new Metrics(this, 2463);
-            metrics.addCustomChart(new Metrics.SingleLineChart("total_npcs", () -> {
-                if (npcRegistry == null)
-                    return 0;
-                return Iterables.size(npcRegistry);
-            }));
-            metrics.addCustomChart(new Metrics.SingleLineChart("using_templates",
-                    () -> Math.min(1, Iterables.size(Template.getTemplates()))));
+            metrics.addCustomChart(new Metrics.SingleLineChart("total_npcs",
+                    () -> npcRegistry == null ? 0 : Iterables.size(npcRegistry)));
             metrics.addCustomChart(new Metrics.SimplePie("locale", () -> Locale.getDefault().getLanguage()));
             metrics.addCustomChart(new Metrics.AdvancedPie("traits", () -> {
                 Map<String, Integer> res = Maps.newHashMap();
@@ -563,6 +558,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
         }
     }
+
 
     public void storeNPCs() {
         storeNPCs(false);
