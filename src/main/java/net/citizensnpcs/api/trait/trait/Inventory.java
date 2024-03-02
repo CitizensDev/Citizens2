@@ -110,6 +110,10 @@ public class Inventory extends Trait {
                         return;
                     ItemStack[] contents = event.getInventory().getContents();
                     for (int i = 0; i < Inventory.this.contents.length; i++) {
+                        if (i >= contents.length) {
+                            Inventory.this.contents[i] = null;
+                            continue;
+                        }
                         Inventory.this.contents[i] = contents[i];
                         if (i == 0) {
                             if (npc.getEntity() instanceof LivingEntity) {
