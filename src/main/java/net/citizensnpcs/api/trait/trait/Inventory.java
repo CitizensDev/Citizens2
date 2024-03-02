@@ -23,6 +23,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 
@@ -49,9 +50,7 @@ public class Inventory extends Trait {
     public ItemStack[] getContents() {
         if (view != null && !viewers.isEmpty())
             return view.getContents();
-        if (npc.isSpawned()) {
-            saveContents(npc.getEntity());
-        }
+        saveContents(npc.getEntity());
         return contents;
     }
 
@@ -66,9 +65,7 @@ public class Inventory extends Trait {
 
     @Override
     public void onDespawn() {
-        if (npc.getEntity() instanceof InventoryHolder) {
-            contents = ((InventoryHolder) npc.getEntity()).getInventory().getContents();
-        }
+        saveContents(npc.getEntity());
     }
 
     @Override
@@ -98,9 +95,7 @@ public class Inventory extends Trait {
     }
 
     public void openInventory(Player sender) {
-        if (npc.isSpawned()) {
-            saveContents(npc.getEntity());
-        }
+        saveContents(npc.getEntity());
         if (!registeredListener) {
             registeredListener = true;
             Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -115,19 +110,17 @@ public class Inventory extends Trait {
                             continue;
                         }
                         Inventory.this.contents[i] = contents[i];
-                        if (i == 0) {
-                            if (npc.getEntity() instanceof LivingEntity) {
-                                npc.getOrAddTrait(Equipment.class).setItemInHand(contents[i]);
-                            }
+                        if (i == 0 && npc.getEntity() instanceof LivingEntity) {
+                            npc.getOrAddTrait(Equipment.class).set(EquipmentSlot.HAND, contents[i]);
                         }
                     }
                     if (npc.getEntity() instanceof InventoryHolder) {
-                        try {
+                        if (SUPPORT_GET_STORAGE_CONTENTS) {
                             int maxSize = ((InventoryHolder) npc.getEntity()).getInventory()
                                     .getStorageContents().length;
                             ((InventoryHolder) npc.getEntity()).getInventory()
                                     .setStorageContents(Arrays.copyOf(contents, maxSize));
-                        } catch (NoSuchMethodError e) {
+                        } else {
                             int maxSize = ((InventoryHolder) npc.getEntity()).getInventory().getContents().length;
                             ((InventoryHolder) npc.getEntity()).getInventory()
                                     .setContents(Arrays.copyOf(contents, maxSize));
@@ -185,10 +178,16 @@ public class Inventory extends Trait {
     }
 
     private void saveContents(Entity entity) {
+        if (entity == null)
+            return;
         if (view != null && !viewers.isEmpty()) {
             contents = view.getContents();
         } else if (entity instanceof InventoryHolder) {
-            contents = ((InventoryHolder) entity).getInventory().getContents();
+            if (SUPPORT_GET_STORAGE_CONTENTS) {
+                contents = ((InventoryHolder) entity).getInventory().getStorageContents();
+            } else {
+                contents = ((InventoryHolder) entity).getInventory().getContents();
+            }
         }
     }
 
@@ -208,18 +207,9 @@ public class Inventory extends Trait {
         } else if (npc.getEntity() instanceof StorageMinecart) {
             dest = ((StorageMinecart) npc.getEntity()).getInventory();
         }
-        if (SUPPORT_ABSTRACT_HORSE) {
-            try {
-                if (npc.getEntity() instanceof AbstractHorse) {
-                    dest = ((AbstractHorse) npc.getEntity()).getInventory();
-                }
-            } catch (Throwable t) {
-                SUPPORT_ABSTRACT_HORSE = false;
-                if (npc.getEntity() instanceof Horse) {
-                    dest = ((Horse) npc.getEntity()).getInventory();
-                }
-            }
-        } else if (npc.getEntity() instanceof Horse) {
+        if (SUPPORT_ABSTRACT_HORSE && npc.getEntity() instanceof AbstractHorse) {
+            dest = ((AbstractHorse) npc.getEntity()).getInventory();
+        } else if (!SUPPORT_ABSTRACT_HORSE && npc.getEntity() instanceof Horse) {
             dest = ((Horse) npc.getEntity()).getInventory();
         }
         if (dest == null)
@@ -257,7 +247,7 @@ public class Inventory extends Trait {
             ((InventoryHolder) npc.getEntity()).getInventory().setItem(slot, item);
         }
         if (slot == 0 && npc.getEntity() instanceof LivingEntity) {
-            npc.getOrAddTrait(Equipment.class).setItemInHand(item);
+            npc.getOrAddTrait(Equipment.class).set(EquipmentSlot.HAND, item);
         }
     }
 
@@ -278,4 +268,12 @@ public class Inventory extends Trait {
     }
 
     private static boolean SUPPORT_ABSTRACT_HORSE = true;
+    private static boolean SUPPORT_GET_STORAGE_CONTENTS = true;
+    static {
+        try {
+            SUPPORT_ABSTRACT_HORSE = Class.forName("org.bukkit.entity.AbstractHorse") != null;
+            SUPPORT_GET_STORAGE_CONTENTS = Inventory.class.getMethod("getStorageContents") != null;
+        } catch (Exception e) {
+        }
+    }
 }

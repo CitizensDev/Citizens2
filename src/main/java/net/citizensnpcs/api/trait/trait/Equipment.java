@@ -269,10 +269,6 @@ public class Equipment extends Trait {
         }
     }
 
-    void setItemInHand(ItemStack item) {
-        equipment[0] = item;
-    }
-
     @Override
     public String toString() {
         return "{hand=" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2] + ",leggings="
