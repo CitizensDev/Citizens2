@@ -83,7 +83,7 @@ public class WaypointCommands {
     @Command(
             aliases = { "waypoints", "waypoint", "wp" },
             usage = "hpa",
-            desc = "Debugging command",
+            desc = "",
             modifiers = { "hpa" },
             min = 1,
             max = 1,

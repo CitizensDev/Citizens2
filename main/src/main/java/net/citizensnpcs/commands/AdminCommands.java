@@ -26,7 +26,7 @@ public class AdminCommands {
         this.plugin = plugin;
     }
 
-    @Command(aliases = { "citizens" }, desc = "Show basic plugin information", max = 0, permission = "citizens.admin")
+    @Command(aliases = { "citizens" }, desc = "", max = 0, permission = "citizens.admin")
     public void citizens(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.send(sender, StringHelper.wrapHeader("<green>Citizens v" + plugin.getDescription().getVersion()));
         Messaging.send(sender, "     <yellow>-- <green>Author: fullwall");

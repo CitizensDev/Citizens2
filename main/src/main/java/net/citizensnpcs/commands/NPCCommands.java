@@ -1862,7 +1862,7 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_SET, old);
     }
 
-    @Command(aliases = { "npc" }, desc = "Show basic NPC information", max = 0, permission = "citizens.npc.info")
+    @Command(aliases = { "npc" }, desc = "", max = 0, permission = "citizens.npc.info")
     public void npc(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));
         Messaging.send(sender, "    ID: [[" + npc.getId());

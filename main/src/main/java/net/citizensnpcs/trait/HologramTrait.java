@@ -355,9 +355,9 @@ public class HologramTrait extends Trait {
             HologramLine line = lines.get(i);
             NPC hologramNPC = line.hologram;
 
-            if (hologramNPC == null || !hologramNPC.isSpawned()) {
+            if (hologramNPC == null || !hologramNPC.isSpawned())
                 continue;
-            }
+
             if (line.ticks > 0 && --line.ticks == 0) {
                 line.removeNPC();
                 lines.remove(i--);

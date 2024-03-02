@@ -478,9 +478,10 @@ public class Util {
             }
         } catch (Throwable t) {
             t.printStackTrace();
-        }
-        if (op) {
-            clicker.setOp(wasOp);
+        } finally {
+            if (op) {
+                clicker.setOp(wasOp);
+            }
         }
     }
 

@@ -86,6 +86,7 @@ public class Messages {
     public static final String COMMANDS_RANDOM_UNSET = "citizens.commands.npc.commands.random-unset";
     public static final String COMMANDS_SEQUENTIAL_SET = "citizens.commands.npc.commands.sequential-set";
     public static final String COMMANDS_SEQUENTIAL_UNSET = "citizens.commands.npc.commands.sequential-unset";
+    public static final String CONTRIBUTE_TO_TRANSLATION_PROMPT = "citizens.contribute-to-translations-prompt";
     public static final String CONTROLLABLE_REMOVED = "citizens.commands.npc.controllable.removed";
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
     public static final String COPIER_EDITOR_BEGIN = "citizens.editors.copier.begin";
@@ -367,7 +368,7 @@ public class Messages {
     public static final String SHULKER_PEEK_SET = "citizens.commands.npc.shulker.peek-set";
     public static final String SITTING_SET = "citizens.commands.npc.sitting.set";
     public static final String SITTING_UNSET = "citizens.commands.npc.sitting.unset";
-    public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.description";
+    public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.describe";
     public static final String SIZE_SET = "citizens.commands.npc.size.set";
     public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
     public static final String SKIN_CLEARED = "citizens.commands.npc.skin.cleared";

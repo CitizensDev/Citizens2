@@ -18,7 +18,7 @@ public class EditorCommands {
     @Command(
             aliases = { "npc" },
             usage = "copier",
-            desc = "Toggle the NPC copier",
+            desc = "",
             modifiers = { "copier" },
             min = 1,
             max = 1,

@@ -418,8 +418,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Template.migrate();
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         commands.registerTabCompletion(this);
-        commands.setTranslationPrefixProvider(
-                cmd -> "citizens.commands." + cmd.aliases()[0] + "." + cmd.modifiers()[0]);
+        commands.setTranslationPrefixProvider(cmd -> "citizens.commands." + cmd.aliases()[0]
+                + (cmd.modifiers().length > 0 && !cmd.modifiers()[0].isEmpty() ? "." + cmd.modifiers()[0] : ""));
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
@@ -514,6 +514,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void setupTranslator() {
         Locale locale = Locale.getDefault();
+        if (!locale.getLanguage().equals("en")) {
+            Messaging.logTr(Messages.CONTRIBUTE_TO_TRANSLATION_PROMPT);
+        }
         String setting = Setting.LOCALE.asString();
         if (!setting.isEmpty()) {
             String[] parts = setting.split("[\\._]");
