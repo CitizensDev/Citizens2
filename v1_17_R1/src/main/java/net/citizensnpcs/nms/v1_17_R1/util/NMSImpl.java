@@ -657,7 +657,7 @@ public class NMSImpl implements NMSBridge {
                 entry.broadcastRemoved();
             }
         };
-    } 
+    }
 
     @Override
     public List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
@@ -875,6 +875,14 @@ public class NMSImpl implements NMSBridge {
     @Override
     public boolean isOnGround(org.bukkit.entity.Entity entity) {
         return NMSImpl.getHandle(entity).isOnGround();
+    }
+
+    @Override
+    public boolean isSneaking(org.bukkit.entity.Entity entity) {
+        if (entity instanceof Player) {
+            return ((Player) entity).isSneaking();
+        }
+        return getHandle(entity).getPose() == Pose.CROUCHING;
     }
 
     @Override

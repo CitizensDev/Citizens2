@@ -885,6 +885,14 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public boolean isSneaking(org.bukkit.entity.Entity entity) {
+        if (entity instanceof Player) {
+            return ((Player) entity).isSneaking();
+        }
+        return getHandle(entity).getPose() == Pose.CROUCHING;
+    }
+
+    @Override
     public boolean isSolid(org.bukkit.block.Block in) {
         BlockState data = ((CraftBlock) in).getNMS();
         return data.isSuffocating(((CraftWorld) in.getWorld()).getHandle(),

@@ -8,7 +8,7 @@ import net.citizensnpcs.util.NMS;
 @TraitName("sneak")
 public class SneakTrait extends Trait {
     @Persist
-    private boolean sneaking = true;
+    private boolean sneaking;
 
     public SneakTrait() {
         super("sneak");
@@ -22,6 +22,11 @@ public class SneakTrait extends Trait {
 
     public boolean isSneaking() {
         return sneaking;
+    }
+
+    @Override
+    public void onAttach() {
+        sneaking = NMS.isSneaking(npc.getEntity());
     }
 
     @Override
