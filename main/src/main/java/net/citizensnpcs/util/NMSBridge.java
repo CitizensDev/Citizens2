@@ -128,6 +128,13 @@ public interface NMSBridge {
 
     public boolean isOnGround(Entity entity);
 
+    public default boolean isSneaking(Entity entity) {
+        if (entity instanceof Player) {
+            return ((Player) entity).isSneaking();
+        }
+        return false;
+    }
+
     public boolean isSolid(Block in);
 
     public boolean isValid(Entity entity);
@@ -244,7 +251,11 @@ public interface NMSBridge {
 
     public void setSitting(Tameable tameable, boolean sitting);
 
-    public void setSneaking(Entity entity, boolean sneaking);
+    public default void setSneaking(Entity entity, boolean sneaking) {
+        if (entity instanceof Player) {
+            ((Player) entity).setSneaking(sneaking);
+        }
+    }
 
     public default void setSnifferState(Entity entity, SnifferState state) {
     }

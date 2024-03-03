@@ -663,6 +663,10 @@ public class NMS {
         return BRIDGE.isOnGround(entity);
     }
 
+    public static boolean isSneaking(Entity entity) {
+        return BRIDGE.isSneaking(entity);
+    }
+
     public static boolean isSolid(Block in) {
         return BRIDGE.isSolid(in);
     }
