@@ -460,7 +460,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id|all] | permissions [permissions] | sequential | cycle | random | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command|cmd (add [command] | remove [id|all] | permissions [permissions] | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -476,7 +476,8 @@ public class NPCCommands {
             @Arg(
                     value = 1,
                     completions = { "add", "remove", "permissions", "persistsequence", "sequential", "cycle", "random",
-                            "hideerrors", "errormsg", "clearerror", "expcost", "itemcost", "cost" }) String action)
+                            "forgetplayer", "hideerrors", "errormsg", "clearerror", "expcost", "itemcost",
+                            "cost" }) String action)
             throws CommandException {
         CommandTrait commands = npc.getOrAddTrait(CommandTrait.class);
         if (args.argsLength() == 1) {
@@ -509,6 +510,21 @@ public class NPCCommands {
             } catch (NumberFormatException ex) {
                 throw new CommandException(CommandMessages.INVALID_NUMBER);
             }
+        } else if (action.equalsIgnoreCase("forgetplayer")) {
+            if (args.argsLength() < 3) {
+                commands.clearPlayerHistory(null);
+                Messaging.sendTr(sender, Messages.NPC_COMMAND_ALL_PLAYERS_FORGOTTEN, npc.getName());
+                return;
+            }
+            String raw = args.getString(2);
+            OfflinePlayer who = Bukkit.getPlayerExact(raw);
+            if (who == null) {
+                who = Bukkit.getOfflinePlayer(UUID.fromString(raw));
+            }
+            if (who == null || !who.hasPlayedBefore())
+                throw new CommandException(Messages.NPC_COMMAND_INVALID_PLAYER, raw);
+            commands.clearPlayerHistory(who.getUniqueId());
+            Messaging.sendTr(sender, Messages.NPC_COMMAND_PLAYER_FORGOTTEN, who.getUniqueId());
         } else if (action.equalsIgnoreCase("clearerror")) {
             if (args.argsLength() < 3)
                 throw new CommandException(Messages.NPC_COMMAND_INVALID_ERROR_MESSAGE,
@@ -518,9 +534,21 @@ public class NPCCommands {
             if (which == null)
                 throw new CommandException(Messages.NPC_COMMAND_INVALID_ERROR_MESSAGE,
                         Util.listValuesPretty(CommandTraitError.values()));
-
-            commands.clearHistory(which, args.argsLength() > 3 ? args.getString(3) : null);
-            Messaging.send(sender, Messages.NPC_COMMAND_ERRORS_CLEARED, Util.prettyEnum(which));
+            if (args.argsLength() < 4) {
+                commands.clearHistory(which, null);
+                Messaging.sendTr(sender, Messages.NPC_COMMAND_ALL_ERRORS_CLEARED, npc.getName(),
+                        Util.prettyEnum(which));
+                return;
+            }
+            String raw = args.getString(3);
+            OfflinePlayer who = Bukkit.getPlayerExact(raw);
+            if (who == null) {
+                who = Bukkit.getOfflinePlayer(UUID.fromString(raw));
+            }
+            if (who == null || !who.hasPlayedBefore())
+                throw new CommandException(Messages.NPC_COMMAND_INVALID_PLAYER, raw);
+            commands.clearHistory(which, who.getUniqueId());
+            Messaging.sendTr(sender, Messages.NPC_COMMAND_ERRORS_CLEARED, Util.prettyEnum(which), who.getUniqueId());
         } else if (action.equalsIgnoreCase("sequential")) {
             commands.setExecutionMode(commands.getExecutionMode() == ExecutionMode.SEQUENTIAL ? ExecutionMode.LINEAR
                     : ExecutionMode.SEQUENTIAL);

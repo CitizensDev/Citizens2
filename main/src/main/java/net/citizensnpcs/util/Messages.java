@@ -268,8 +268,12 @@ public class Messages {
     public static final String NOT_USING_MINECRAFT_AI = "citizens.commands.npc.ai.stopped";
     public static final String NPC_ALREADY_SELECTED = "citizens.commands.npc.select.already-selected";
     public static final String NPC_ALREADY_SPAWNED = "citizens.commands.npc.spawn.already-spawned";
+    public static final String NPC_COMMAND_ALL_ERRORS_CLEARED = "citizens.commands.npc.command.all-errors-cleared";
+    public static final String NPC_COMMAND_ALL_PLAYERS_FORGOTTEN = "citizens.commands.npc.command.all-players-forgotten";
     public static final String NPC_COMMAND_ERRORS_CLEARED = "citizens.commands.npc.command.errors-cleared";
     public static final String NPC_COMMAND_INVALID_ERROR_MESSAGE = "citizens.commands.npc.command.invalid-error-message";
+    public static final String NPC_COMMAND_INVALID_PLAYER = "citizens.commands.npc.command.invalid-player";
+    public static final String NPC_COMMAND_PLAYER_FORGOTTEN = "citizens.commands.npc.command.player-forgotten";
     public static final String NPC_COPIED = "citizens.commands.npc.copy.copied";
     public static final String NPC_CREATE_INVALID_MOBTYPE = "citizens.commands.npc.create.invalid-mobtype";
     public static final String NPC_CREATE_MISSING_MOBTYPE = "citizens.commands.npc.create.mobtype-missing";

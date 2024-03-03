@@ -147,21 +147,10 @@ public class CommandTrait extends Trait {
         commands.clear();
     }
 
-    public void clearHistory(CommandTraitError which, String raw) {
-        if (which == CommandTraitError.ON_GLOBAL_COOLDOWN && raw != null) {
-            globalCooldowns.remove(BaseEncoding.base64().encode(raw.getBytes()));
-            return;
-        }
-        Player who = null;
-        if (raw != null) {
-            who = Bukkit.getPlayerExact(raw);
-            if (who == null) {
-                who = Bukkit.getPlayer(UUID.fromString(raw));
-            }
-        }
+    public void clearHistory(CommandTraitError which, UUID who) {
         Collection<PlayerNPCCommand> toClear = Lists.newArrayList();
         if (who != null) {
-            toClear.add(playerTracking.get(who.getUniqueId()));
+            toClear.add(playerTracking.get(who));
         } else {
             toClear.addAll(playerTracking.values());
         }
@@ -183,6 +172,14 @@ public class CommandTrait extends Trait {
                 break;
             default:
                 return;
+        }
+    }
+
+    public void clearPlayerHistory(UUID who) {
+        if (who == null) {
+            playerTracking.clear();
+        } else {
+            playerTracking.remove(who);
         }
     }
 
