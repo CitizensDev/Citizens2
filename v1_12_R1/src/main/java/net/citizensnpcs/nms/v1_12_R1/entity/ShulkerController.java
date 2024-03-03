@@ -77,10 +77,9 @@ public class ShulkerController extends MobEntityController {
 
         @Override
         public void B_() {
+            super.B_();
             if (npc != null) {
                 npc.update();
-            } else {
-                super.B_();
             }
         }
 
@@ -182,6 +181,11 @@ public class ShulkerController extends MobEntityController {
             if (npc == null) {
                 super.n();
             }
+        }
+
+        @Override
+        protected boolean p() {
+            return npc == null || npc.useMinecraftAI() ? super.p() : false;
         }
 
         @Override

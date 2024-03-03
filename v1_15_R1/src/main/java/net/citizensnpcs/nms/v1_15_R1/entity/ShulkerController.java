@@ -188,6 +188,11 @@ public class ShulkerController extends MobEntityController {
         }
 
         @Override
+        protected boolean l() {
+            return npc == null || npc.useMinecraftAI() ? super.l() : false;
+        }
+
+        @Override
         public void movementTick() {
             if (npc == null || npc.useMinecraftAI()) {
                 super.movementTick();
@@ -208,14 +213,10 @@ public class ShulkerController extends MobEntityController {
 
         @Override
         public void tick() {
+            super.tick();
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (npc.useMinecraftAI()) {
-                    super.tick();
-                }
                 npc.update();
-            } else {
-                super.tick();
             }
         }
 

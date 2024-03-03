@@ -201,6 +201,11 @@ public class ShulkerController extends MobEntityController {
         }
 
         @Override
+        protected boolean teleportSomewhere() {
+            return npc == null || npc.useMinecraftAI() ? super.teleportSomewhere() : false;
+        }
+
+        @Override
         public Entity teleportTo(ServerLevel worldserver, Vec3 location) {
             if (npc == null)
                 return super.teleportTo(worldserver, location);
@@ -209,14 +214,10 @@ public class ShulkerController extends MobEntityController {
 
         @Override
         public void tick() {
+            super.tick();
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (npc.useMinecraftAI()) {
-                    super.tick();
-                }
                 npc.update();
-            } else {
-                super.tick();
             }
         }
 

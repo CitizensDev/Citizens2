@@ -125,6 +125,11 @@ public class ShulkerController extends MobEntityController {
         }
 
         @Override
+        protected boolean eK() {
+            return npc == null || npc.useMinecraftAI() ? super.eK() : false;
+        }
+
+        @Override
         public void g(Vec3D vec3d) {
             if (npc == null || !npc.isFlyable()) {
                 super.g(vec3d);
@@ -208,14 +213,10 @@ public class ShulkerController extends MobEntityController {
 
         @Override
         public void tick() {
+            super.tick();
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
-                if (npc.useMinecraftAI()) {
-                    super.tick();
-                }
                 npc.update();
-            } else {
-                super.tick();
             }
         }
 
