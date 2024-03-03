@@ -236,8 +236,8 @@ public class CommandTrait extends Trait {
         String output = Messaging.tr(Messages.COMMAND_DESCRIBE_TEMPLATE, command.command,
                 StringHelper.wrap(command.cooldown != 0 ? command.cooldown
                         : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()),
-                StringHelper.wrap(hasCost(command.id) ? command.cost : "default"),
-                StringHelper.wrap(hasExperienceCost(command.id) ? command.experienceCost : "default"), command.id);
+                StringHelper.wrap(command.cost > 0 ? command.cost : "default"),
+                StringHelper.wrap(command.experienceCost > 0 ? command.experienceCost : "default"), command.id);
         if (command.globalCooldown > 0) {
             output += "[global " + StringHelper.wrap(command.globalCooldown) + "s]";
         }
@@ -362,32 +362,16 @@ public class CommandTrait extends Trait {
         }
     }
 
-    public String fillPlaceholder(CommandSender sender, String input) {
-        return null;
-    }
-
     public double getCost() {
         return cost;
-    }
-
-    public double getCost(int id) {
-        return commands.get(id).cost;
     }
 
     public ExecutionMode getExecutionMode() {
         return executionMode;
     }
 
-    public float getExperienceCost() {
+    public int getExperienceCost() {
         return experienceCost;
-    }
-
-    public int getExperienceCost(int id) {
-        return commands.get(id).experienceCost;
-    }
-
-    public List<ItemStack> getItemCost(int id) {
-        return commands.get(id).itemCost;
     }
 
     private int getNewId() {
@@ -400,18 +384,6 @@ public class CommandTrait extends Trait {
 
     public boolean hasCommandId(int id) {
         return commands.containsKey(id);
-    }
-
-    public boolean hasCost(int id) {
-        return commands.get(id).cost != -1;
-    }
-
-    public boolean hasExperienceCost(int id) {
-        return commands.get(id).experienceCost != -1;
-    }
-
-    public boolean hasItemCost(int id) {
-        return !commands.get(id).itemCost.isEmpty();
     }
 
     public boolean isHideErrorMessages() {
@@ -462,10 +434,6 @@ public class CommandTrait extends Trait {
         this.cost = cost;
     }
 
-    public void setCost(double cost, int id) {
-        commands.get(id).cost = cost;
-    }
-
     public void setCustomErrorMessage(CommandTraitError which, String message) {
         customErrorMessages.put(which, message);
     }
@@ -478,17 +446,8 @@ public class CommandTrait extends Trait {
         this.experienceCost = experienceCost;
     }
 
-    public void setExperienceCost(int experienceCost, int id) {
-        commands.get(id).experienceCost = experienceCost;
-    }
-
     public void setHideErrorMessages(boolean hide) {
         hideErrorMessages = hide;
-    }
-
-    public void setItemCost(List<ItemStack> itemCost, int id) {
-        commands.get(id).itemCost.clear();
-        commands.get(id).itemCost.addAll(itemCost);
     }
 
     public void setPersistSequence(boolean persistSequence) {
@@ -586,7 +545,8 @@ public class CommandTrait extends Trait {
                 trait.itemRequirements.clear();
                 trait.itemRequirements.addAll(requirements);
             } else {
-                trait.setItemCost(requirements, id);
+                trait.commands.get(id).itemCost.clear();
+                trait.commands.get(id).itemCost.addAll(requirements);
             }
         }
     }

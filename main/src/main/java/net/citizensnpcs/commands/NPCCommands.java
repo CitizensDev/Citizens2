@@ -468,6 +468,8 @@ public class NPCCommands {
             permission = "citizens.npc.command")
     public void command(CommandContext args, CommandSender sender, NPC npc,
             @Flag(value = { "permissions", "permission" }) String permissions,
+            @Flag(value = "cost", defValue = "0") Double cost,
+            @Flag(value = "expcost", defValue = "0") Integer experienceCost,
             @Flag(value = "cooldown", defValue = "0") Duration cooldown,
             @Flag(value = "gcooldown", defValue = "0") Duration gcooldown, @Flag(value = "n", defValue = "-1") int n,
             @Flag(value = "delay", defValue = "0") Duration delay,
@@ -502,7 +504,7 @@ public class NPCCommands {
             try {
                 int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
                         .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o')).cooldown(cooldown)
-                        .globalCooldown(gcooldown).n(n).delay(delay));
+                        .cost(cost).experienceCost(experienceCost).globalCooldown(gcooldown).n(n).delay(delay));
                 Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
             } catch (NumberFormatException ex) {
                 throw new CommandException(CommandMessages.INVALID_NUMBER);
@@ -561,25 +563,13 @@ public class NPCCommands {
         } else if (action.equalsIgnoreCase("cost")) {
             if (args.argsLength() == 2)
                 throw new CommandException(Messages.COMMAND_MISSING_COST);
-            if (args.argsLength() == 4) {
-                commands.setCost(args.getDouble(2), args.getInteger(3));
-                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_COST_SET,
-                        args.getDouble(2) == -1 ? "-1 (default)" : args.getDouble(2), args.getInteger(3));
-            } else {
-                commands.setCost(args.getDouble(2));
-                Messaging.sendTr(sender, Messages.COMMAND_COST_SET, args.getDouble(2));
-            }
+            commands.setCost(args.getDouble(2));
+            Messaging.sendTr(sender, Messages.COMMAND_COST_SET, args.getDouble(2));
         } else if (action.equalsIgnoreCase("expcost")) {
             if (args.argsLength() == 2)
                 throw new CommandException(Messages.COMMAND_MISSING_COST);
-            if (args.argsLength() == 4) {
-                commands.setExperienceCost(args.getInteger(2), args.getInteger(3));
-                Messaging.sendTr(sender, Messages.COMMAND_INDIVIDUAL_EXPERIENCE_COST_SET,
-                        args.getInteger(2) == -1 ? "-1 (default)" : args.getInteger(2), args.getInteger(3));
-            } else {
-                commands.setExperienceCost(args.getInteger(2));
-                Messaging.sendTr(sender, Messages.COMMAND_EXPERIENCE_COST_SET, args.getInteger(2));
-            }
+            commands.setExperienceCost(args.getInteger(2));
+            Messaging.sendTr(sender, Messages.COMMAND_EXPERIENCE_COST_SET, args.getInteger(2));
         } else if (action.equalsIgnoreCase("hideerrors")) {
             commands.setHideErrorMessages(!commands.isHideErrorMessages());
             Messaging.sendTr(sender, commands.isHideErrorMessages() ? Messages.COMMAND_HIDE_ERROR_MESSAGES_SET

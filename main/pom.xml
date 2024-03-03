@@ -215,11 +215,7 @@
                                 <relocation>
                                     <pattern>gnu.trove</pattern>
                                     <shadedPattern>clib.trove</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>ch.ethz.globis.phtree</pattern>
-                                    <shadedPattern>clib.phtree</shadedPattern>
-                                </relocation>
+                                </relocation> 
                                 <relocation>
                                     <pattern>net.kyori</pattern>
                                     <shadedPattern>clib.net.kyori</shadedPattern>

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -78,8 +77,6 @@ import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.npc.profile.ProfileFetcher;
 import net.citizensnpcs.npc.skin.Skin;
-import net.citizensnpcs.trait.ClickRedirectTrait;
-import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -287,8 +284,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         lib.addMavenCentral();
         lib.setLogLevel(LogLevel.WARN);
         // Unfortunately, transitive dependency management is not supported in this library.
-        lib.loadLibrary(Library.builder().groupId("ch{}ethz{}globis{}phtree").artifactId("phtree").version("2.8.0")
-                .relocate("ch{}ethz{}globis{}phtree", "clib{}phtree").build());
+        lib.loadLibrary(
+                Library.builder().groupId("ch{}ethz{}globis{}phtree").artifactId("phtree").version("2.8.0").build());
         lib.loadLibrary(Library.builder().groupId("net{}sf{}trove4j").artifactId("trove4j").version("3.0.3")
                 .relocate("gnu{}trove", "clib{}trove").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-minimessage")
@@ -400,12 +397,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         Bukkit.getPluginManager().registerEvents(new EventListen(), this);
         Bukkit.getPluginManager().registerEvents(new Placeholders(), this);
-        Placeholders.registerNPCPlaceholder(Pattern.compile("command_[a-zA-Z_0-9]+"), (npc, sender, input) -> {
-            npc = npc.hasTrait(ClickRedirectTrait.class) ? npc.getTraitNullable(ClickRedirectTrait.class).getNPC()
-                    : npc;
-            CommandTrait trait = npc.getTraitNullable(CommandTrait.class);
-            return trait == null ? "" : trait.fillPlaceholder(sender, input);
-        });
 
         Plugin papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
         if (papi != null && papi.isEnabled()) {
@@ -558,7 +549,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Messaging.logTr(Messages.METRICS_ERROR_NOTIFICATION, e.getMessage());
         }
     }
-
 
     public void storeNPCs() {
         storeNPCs(false);
