@@ -132,4 +132,46 @@ public class TraitCommands {
         Bukkit.getPluginManager().callEvent(new NPCTraitCommandDetachEvent(npc, clazz, sender));
         npc.removeTrait(clazz);
     }
+
+    @Command(
+            aliases = { "trait" },
+            usage = "[trait name], [trait name]...",
+            desc = "",
+            modifiers = { "*" },
+            min = 1,
+            permission = "citizens.npc.trait")
+    public void toggle(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        List<String> added = Lists.newArrayList();
+        List<String> removed = Lists.newArrayList();
+        List<String> failed = Lists.newArrayList();
+        for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
+            if (!sender.hasPermission("citizens.npc.trait." + traitName)
+                    && !sender.hasPermission("citizens.npc.trait.*")) {
+                failed.add(String.format("%s: No permission", traitName));
+                continue;
+            }
+            Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitName);
+            if (clazz == null) {
+                failed.add(String.format("%s: Trait not found", traitName));
+                continue;
+            }
+            boolean remove = npc.hasTrait(clazz);
+            if (remove) {
+                removeTrait(npc, clazz, sender);
+                removed.add(StringHelper.wrap(traitName));
+                continue;
+            }
+            addTrait(npc, clazz, sender);
+            added.add(StringHelper.wrap(traitName));
+        }
+        if (added.size() > 0) {
+            Messaging.sendTr(sender, Messages.TRAITS_ADDED, Joiner.on(", ").join(added));
+        }
+        if (removed.size() > 0) {
+            Messaging.sendTr(sender, Messages.TRAITS_REMOVED, Joiner.on(", ").join(removed));
+        }
+        if (failed.size() > 0) {
+            Messaging.send(sender, "Failed to toggle traits", Joiner.on(", ").join(failed));
+        }
+    }
 }
