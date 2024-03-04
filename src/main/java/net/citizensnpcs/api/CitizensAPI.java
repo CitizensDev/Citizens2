@@ -13,7 +13,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
-import net.citizensnpcs.api.scripting.ScriptCompiler;
 import net.citizensnpcs.api.trait.TraitFactory;
 
 /**
@@ -140,16 +139,6 @@ public final class CitizensAPI {
     }
 
     /**
-     * @return The current {@link ScriptCompiler}
-     */
-    public static ScriptCompiler getScriptCompiler() {
-        if (scriptCompiler == null && getImplementation() != null) {
-            scriptCompiler = new ScriptCompiler(getImplementationClassLoader());
-        }
-        return scriptCompiler;
-    }
-
-    /**
      * Gets the current implementation's {@link TraitFactory}.
      *
      * @see CitizensPlugin
@@ -207,11 +196,7 @@ public final class CitizensAPI {
      * Shuts down any resources currently being held.
      */
     public static void shutdown() {
-        if (scriptCompiler == null)
-            return;
         instance = null;
-        scriptCompiler.interrupt();
-        scriptCompiler = null;
     }
 
     public static void talk(SpeechContext context) {
@@ -219,5 +204,4 @@ public final class CitizensAPI {
     }
 
     private static volatile CitizensPlugin instance = null;
-    private static ScriptCompiler scriptCompiler;
 }

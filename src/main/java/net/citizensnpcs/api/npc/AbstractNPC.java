@@ -266,9 +266,8 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    @Deprecated
-    public <T extends Trait> T getTrait(Class<T> clazz) {
-        return getOrAddTrait(clazz);
+    public <T extends Trait> T getTrait(Class<T> trait) {
+        return getOrAddTrait(trait);
     }
 
     protected Trait getTraitFor(Class<? extends Trait> clazz) {

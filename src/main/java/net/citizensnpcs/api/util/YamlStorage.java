@@ -9,9 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -41,11 +39,11 @@ public class YamlStorage implements FileStorage {
 
     private void create() {
         try {
-            Bukkit.getLogger().log(Level.INFO, "Creating file: " + file.getName());
+            Messaging.debug("Creating file: " + file.getName());
             file.getParentFile().mkdirs();
             file.createNewFile();
         } catch (IOException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not create file: " + file.getName());
+            Messaging.severe("Could not create file: " + file.getName());
         }
     }
 

@@ -51,7 +51,6 @@ public class PersistenceLoader {
         public void save(Object instance, DataKey root) {
             PersistenceLoader.save(instance, root);
         }
-
     }
 
     private static class PersistField {
@@ -379,18 +378,17 @@ public class PersistenceLoader {
         }
     }
 
+    private static Persister<?> getDelegate(Class<?> fieldType) {
+        if (registries.containsKey(fieldType))
+            return registries.get(fieldType);
+        if (Component.class.isAssignableFrom(fieldType))
+            return registries.get(Component.class);
+        return loadedDelegates.get(persistRedirects.get(fieldType));
+    }
+
     private static Persister<?> getDelegate(Field field, Class<?> fieldType) {
         DelegatePersistence delegate = field.getAnnotation(DelegatePersistence.class);
-        Persister<?> persister;
-        if (delegate == null) {
-            if (registries.containsKey(fieldType))
-                return registries.get(fieldType);
-            if (Component.class.isAssignableFrom(fieldType))
-                return registries.get(Component.class);
-            return loadedDelegates.get(persistRedirects.get(fieldType));
-        }
-        persister = loadedDelegates.get(delegate.value());
-        return persister == null ? loadedDelegates.get(persistRedirects.get(fieldType)) : persister;
+        return delegate == null ? getDelegate(fieldType) : getDelegate(delegate.value());
     }
 
     private static PersistField[] getFields(Class<?> clazz) {
@@ -454,10 +452,18 @@ public class PersistenceLoader {
     @SuppressWarnings("unchecked")
     public static <T> T load(Class<? extends T> clazz, DataKey root) {
         T instance = null;
+        if (persistRedirects.containsKey(clazz))
+            return (T) getDelegate(clazz).create(root);
+
         try {
             Constructor<?> constructor = constructorCache.get(clazz);
             if (constructor == null) {
                 for (Constructor<?> cons : clazz.getDeclaredConstructors()) {
+                    DelegatePersistence delegate = cons.getAnnotation(DelegatePersistence.class);
+                    if (delegate != null) {
+                        registerPersistDelegate(clazz, delegate.value());
+                        return (T) getDelegate(clazz).create(root);
+                    }
                     if (cons.getParameterCount() == 0) {
                         cons.setAccessible(true);
                         constructor = cons;
@@ -509,8 +515,8 @@ public class PersistenceLoader {
     }
 
     /**
-     * Registers a {@link Persister} redirect. Fields with the {@link Persist} annotation with a type that has been
-     * registered using this method will use the supplied {@link Persister} for (de)serialisation. The
+     * Registers a {@link Persister} redirect. Fields or constructors with the {@link Persist} annotation with a type
+     * that has been registered using this method will use the supplied {@link Persister} for (de)serialisation. The
      * {@link DelegatePersistence} annotation will be preferred if present.
      *
      * @param clazz
@@ -607,7 +613,7 @@ public class PersistenceLoader {
         }
     }
 
-    private static Map<Class<?>, Constructor<?>> constructorCache = new WeakHashMap<>();
+    private static final Map<Class<?>, Constructor<?>> constructorCache = new WeakHashMap<>();
     private static final Map<Class<?>, PersistField[]> fieldCache = new WeakHashMap<>();
     private static final Map<Class<? extends Persister<?>>, Persister<?>> loadedDelegates = new WeakHashMap<>();
     private static final Exception loadException = new Exception() {

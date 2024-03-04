@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.base.Optional;
 import com.google.common.reflect.TypeToken;
 
 import net.citizensnpcs.api.ai.GoalController;
@@ -204,8 +205,8 @@ public interface NPC extends Agent, Cloneable {
      * attached using {@link #addTrait(Class)} .
      *
      * @param trait
-     *            Trait to get
-     * @return Trait with the given name
+     *            Trait class
+     * @return Trait with the given class
      *
      * @deprecated for intransparent naming. Use {@link #getOrAddTrait(Class)} for the same behavior.
      */
@@ -213,14 +214,26 @@ public interface NPC extends Agent, Cloneable {
     public <T extends Trait> T getTrait(Class<T> trait);
 
     /**
-     * Gets a trait from the given class. If the NPC does not currently have the trait, <code>null</code> will be
-     * returned.
+     * Gets the trait instance with the given class. If the NPC does not currently have the trait, <code>null</code>
+     * will be returned.
      *
      * @param trait
-     *            Trait to get
-     * @return Trait with the given name
+     *            Trait class
+     * @return Trait with the given class
      */
     public <T extends Trait> T getTraitNullable(Class<T> trait);
+
+    /**
+     * Gets the trait instance with the given class. If the NPC does not currently have the trait,
+     * <code>Optional.absent()</code> will be returned.
+     *
+     * @param trait
+     *            Trait class
+     * @return Trait with the given class
+     */
+    public default <T extends Trait> Optional<T> getTraitOptional(Class<T> trait) {
+        return Optional.<T> fromNullable(getTraitNullable(trait));
+    }
 
     /**
      * Returns the currently attached {@link Trait}s

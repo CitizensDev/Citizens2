@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @see Persister
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ ElementType.CONSTRUCTOR, ElementType.FIELD })
 public @interface DelegatePersistence {
     Class<? extends Persister<?>> value();
 }

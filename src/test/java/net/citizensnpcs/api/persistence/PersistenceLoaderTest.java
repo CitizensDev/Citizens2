@@ -2,6 +2,7 @@ package net.citizensnpcs.api.persistence;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -150,6 +151,11 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void testCustomConstructorPersister() {
+        assertThat(PersistenceLoader.load(CustomConstructor.class, root), notNullValue());
+    }
+
+    @Test
     public void testLists() {
         ListTest load = new ListTest();
         yamlRoot.setRaw("test", Arrays.asList("one", "two", "three"));
@@ -211,6 +217,23 @@ public class PersistenceLoaderTest {
         private Map<String, Integer> map;
         @Persist
         private Set<Integer> set;
+    }
+
+    public static class CustomConstructor {
+        @DelegatePersistence(CustomConstructorPersister.class)
+        public CustomConstructor(String name) {
+        }
+
+        public static class CustomConstructorPersister implements Persister<CustomConstructor> {
+            @Override
+            public CustomConstructor create(DataKey root) {
+                return new CustomConstructor("name");
+            }
+
+            @Override
+            public void save(CustomConstructor instance, DataKey root) {
+            }
+        }
     }
 
     public static class IllegalCollectionClassTest {
