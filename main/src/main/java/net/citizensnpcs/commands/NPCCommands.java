@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +57,6 @@ import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.StoredShops;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
@@ -85,6 +85,8 @@ import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.npc.templates.Template;
+import net.citizensnpcs.api.npc.templates.TemplateRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
@@ -105,7 +107,6 @@ import net.citizensnpcs.commands.history.RemoveNPCHistoryItem;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
-import net.citizensnpcs.npc.Template;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
@@ -150,6 +151,7 @@ import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
+import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
@@ -164,11 +166,13 @@ public class NPCCommands {
     private final CommandHistory history;
     private final NPCSelector selector;
     private final StoredShops shops;
+    private final TemplateRegistry templateRegistry;
     private final NPCRegistry temporaryRegistry;
 
     public NPCCommands(Citizens plugin) {
         selector = plugin.getNPCSelector();
         shops = plugin.getShops();
+        templateRegistry = plugin.getTemplateRegistry();
         temporaryRegistry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
         history = new CommandHistory(selector);
     }
@@ -840,11 +844,18 @@ public class NPCCommands {
             Iterable<String> parts = Splitter.on(',').trimResults().split(templateName);
             StringBuilder builder = new StringBuilder();
             for (String part : parts) {
-                Template template = Template.byName(part);
-                if (template == null) {
+                if (part.contains(":")) {
+                    Template template = templateRegistry.getTemplateByNamespacedKey(part);
+                    if (template == null)
+                        continue;
+                    template.apply(npc);
+                    builder.append(StringHelper.wrap(part) + ", ");
                     continue;
                 }
-                template.apply(npc);
+                Collection<Template> templates = templateRegistry.getTemplates(part);
+                if (templates.size() != 1)
+                    continue;
+                templates.iterator().next().apply(npc);
                 builder.append(StringHelper.wrap(part) + ", ");
             }
             if (builder.length() > 0) {

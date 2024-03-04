@@ -16,8 +16,7 @@ commands:
   citizens: 
     description: Administration commands
     permission: citizens.citizens.help
-  npc:
-    aliases: [npc2]
+  npc: 
     description: Basic commands for all NPC-related things
     permission: citizens.npc.help
   template:

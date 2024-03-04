@@ -1,4 +1,4 @@
-package net.citizensnpcs;
+package net.citizensnpcs.trait.shop;
 
 import java.util.Map;
 
@@ -44,22 +44,18 @@ public class StoredShops {
     }
 
     public void load() {
-        Messaging.debug("Loading shops...", globalShops.size(), npcShops.size());
         PersistenceLoader.load(this, storage.getKey(""));
     }
 
     public boolean loadFromDisk() {
-        Messaging.debug("Loading shops from disk...");
         return storage.load();
     }
 
     public void saveToDisk() {
-        Messaging.debug("Saving shops to disk...");
         storage.save();
     }
 
     public void storeShops() {
-        Messaging.debug("Saving shops...", globalShops.size(), npcShops.size());
         PersistenceLoader.save(this, storage.getKey(""));
     }
 }

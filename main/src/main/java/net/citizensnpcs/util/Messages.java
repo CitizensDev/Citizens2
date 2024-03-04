@@ -398,10 +398,12 @@ public class Messages {
     public static final String TELEPORTED_TO_NPC = "citizens.commands.npc.tp.teleported";
     public static final String TEMPLATE_APPLIED = "citizens.commands.template.applied";
     public static final String TEMPLATE_CONFLICT = "citizens.commands.template.conflict";
-    public static final String TEMPLATE_CREATED = "citizens.commands.template.created";
     public static final String TEMPLATE_DELETED = "citizens.commands.template.delete.deleted";
     public static final String TEMPLATE_LIST_HEADER = "citizens.commands.template.list.header";
     public static final String TEMPLATE_MISSING = "citizens.commands.template.missing";
+    public static final String TEMPLATE_NAMESPACE_EXISTS = "citizens.commands.template.namespace-already-exists";
+    public static final String TEMPLATE_PICKER = "citizens.commands.template.qualified-template-required";
+    public static final String TEMPLATE_SCAFFOLD_CREATED = "citizens.commands.template.scaffold.created";
     public static final String TEXT_EDITOR_ADD_PROMPT = "citizens.editors.text.add-prompt";
     public static final String TEXT_EDITOR_ADDED_ENTRY = "citizens.editors.text.added-entry";
     public static final String TEXT_EDITOR_BEGIN = "citizens.editors.text.begin";

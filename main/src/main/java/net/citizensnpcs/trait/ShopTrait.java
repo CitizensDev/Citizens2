@@ -35,7 +35,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.StoredShops;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
 import net.citizensnpcs.api.gui.ClickHandler;
@@ -70,6 +69,7 @@ import net.citizensnpcs.trait.shop.NPCShopAction;
 import net.citizensnpcs.trait.shop.NPCShopAction.GUI;
 import net.citizensnpcs.trait.shop.NPCShopAction.Transaction;
 import net.citizensnpcs.trait.shop.PermissionAction;
+import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.trait.shop.PermissionAction.PermissionActionGUI;
 import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.Util;
