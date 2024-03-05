@@ -1,0 +1,16 @@
+{
+  "citizens.changed-implementation" : "Η εφαρμογή citizens άλλαξε, απενεργοποιώντας   το plugin.",
+  "citizens.commands.citizens.description" : "Εμφάνιση βασικών πληροφοριών του plugin",
+  "citizens.commands.citizens.reload.description" : "Φόρτωση των Citizens φρέσκο απο τον δίσκο, χωρίς να αποθηκευτεί πρώτα. ",
+  "citizens.commands.citizens.save.description" : "Κάντε αποθήκευση τους NPCs",
+  "citizens.commands.citizens.save.help" : "Χρησιμοποίησε το -a flag για να κάνεις αποθήκευση το async (εκτός του κύριου νήματος του server).",
+  "citizens.commands.console-error" : "Παρακαλώ αναφέρετε αυτό το σφάλμα: [Δείτε console]",
+  "citizens.commands.errors.missing-world" : "Ο κόσμος δεν βρέθηκε.",
+  "citizens.commands.errors.unknown-registry" : "Άγνωστο μητρώο NPC [[{0}]].",
+  "citizens.commands.help.command-missing" : "Η εντολή /{0} δεν βρέθηκε.",
+  "citizens.commands.help.header" : "Βοήθεια",
+  "citizens.commands.id-not-found" : "Δεν μπόρεσα να βρώ κανένα NPC με αναγνωριστικό [[{0}]].",
+  "citizens.commands.invalid.class" : "Μη έγκυρη κλάση εξωτερικών εντολών.",
+  "citizens.commands.invalid-mobtype" : "Το [[{0}]]  δεν είναι έγκυρος τύπος mob.",
+  "citizens.commands.invalid-number" : "Αυτό δεν είναι ένας έγκυρος αριθμός."
+}
