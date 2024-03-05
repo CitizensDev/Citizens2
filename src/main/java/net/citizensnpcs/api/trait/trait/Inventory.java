@@ -272,7 +272,7 @@ public class Inventory extends Trait {
     static {
         try {
             SUPPORT_ABSTRACT_HORSE = Class.forName("org.bukkit.entity.AbstractHorse") != null;
-            SUPPORT_GET_STORAGE_CONTENTS = Inventory.class.getMethod("getStorageContents") != null;
+            SUPPORT_GET_STORAGE_CONTENTS = org.bukkit.inventory.Inventory.class.getMethod("getStorageContents") != null;
         } catch (Exception e) {
         }
     }
