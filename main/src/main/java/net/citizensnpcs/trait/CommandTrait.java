@@ -99,7 +99,7 @@ public class CommandTrait extends Trait {
         NPCShopAction action = null;
         if (player.hasPermission("citizens.npc.command.ignoreerrors.*"))
             return Transaction.success();
-        if (cost > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
+        if (cost != 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
             action = new MoneyAction(cost);
             if (!action.take(player, null, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
@@ -119,7 +119,8 @@ public class CommandTrait extends Trait {
                         stack.getAmount());
             }
         }
-        if (command.cost != -1 && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
+        if (command.cost != -1 && command.cost != 0
+                && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
             action = new MoneyAction(command.cost);
             if (!action.take(player, null, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, command.cost);

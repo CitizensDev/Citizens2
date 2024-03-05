@@ -1135,9 +1135,6 @@ public class NMSImpl implements NMSBridge {
         return () -> {
             if (!entity.isValid())
                 return;
-            if (npc != null && npc.useMinecraftAI()) {
-                player.movementTick();
-            }
             player.playerTick();
         };
     }

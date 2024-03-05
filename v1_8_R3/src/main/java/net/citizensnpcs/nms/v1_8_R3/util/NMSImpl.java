@@ -909,9 +909,6 @@ public class NMSImpl implements NMSBridge {
             boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get("removefromplayerlist",
                     Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
             entity.l();
-            if (npc != null && npc.useMinecraftAI()) {
-                entity.m();
-            }
             if (!removeFromPlayerList)
                 return;
             if (!entity.dead) {
