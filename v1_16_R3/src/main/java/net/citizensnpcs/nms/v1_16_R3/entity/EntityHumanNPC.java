@@ -349,7 +349,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         boolean navigating = npc.getNavigator().isNavigating();
         updatePackets(navigating);
         npc.update();
+        if (npc.useMinecraftAI()) {
+            foodData.a(this);
+        }
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
+            if (this.bu > 0) {
+                --this.bu;
+            }
             AxisAlignedBB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().dead) {
                 axisalignedbb = this.getBoundingBox().b(this.getVehicle().getBoundingBox()).grow(1.0, 0.0, 1.0);
@@ -362,16 +368,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 }
             }
         }
-        /*
-         double diff = this.yaw - this.aK;
-         if (diff != 40 && diff != -40) {
-         ++this.yawUpdateRequiredTicks;
-         }
-         if (this.yawUpdateRequiredTicks > 5) {
-         this.yaw = (diff > -40 && diff < 0) || (diff > 0 && diff > 40) ? this.aK - 40 : this.aK + 40;
-         this.yawUpdateRequiredTicks = 0;
-         }
-         */
+        eu();
     }
 
     private void updatePackets(boolean navigating) {

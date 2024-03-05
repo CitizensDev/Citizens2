@@ -138,8 +138,13 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             this.onGround = false;
         }
         pushEntities();
-
+        if (npc.useMinecraftAI()) {
+            foodData.tick(this);
+        }
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
+            if (this.takeXpDelay > 0) {
+                --this.takeXpDelay;
+            }
             AABB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().isRemoved()) {
                 axisalignedbb = this.getBoundingBox().minmax(this.getVehicle().getBoundingBox()).inflate(1.0, 0.0, 1.0);
@@ -150,6 +155,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 entity.playerTouch(this);
             }
         }
+        updatePlayerPose();
     }
 
     @Override

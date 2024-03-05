@@ -278,7 +278,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
         updateAI();
         cs();
+        if (npc.useMinecraftAI()) {
+            foodData.a(this);
+        }
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
+            if (this.bA > 0) {
+                --this.bA;
+            }
             AxisAlignedBB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().dead) {
                 axisalignedbb = this.getBoundingBox().a(this.getVehicle().getBoundingBox()).grow(1.0, 0.0, 1.0);
@@ -291,6 +297,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 }
             }
         }
+        cJ();
     }
 
     @Override

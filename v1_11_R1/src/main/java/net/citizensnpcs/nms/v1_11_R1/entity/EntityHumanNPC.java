@@ -63,7 +63,6 @@ import net.minecraft.server.v1_11_R1.SoundEffect;
 import net.minecraft.server.v1_11_R1.WorldServer;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
-    private final Map<PathType, Float> bz = Maps.newEnumMap(PathType.class);
     private PlayerControllerJump controllerJump;
     private PlayerControllerMove controllerMove;
     private final Map<EnumItemSlot, ItemStack> equipmentCache = Maps.newEnumMap(EnumItemSlot.class);
@@ -72,6 +71,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
+    private final Map<PathType, Float> pathtypes = Maps.newEnumMap(PathType.class);
     private final SkinPacketTracker skinTracker;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
@@ -103,11 +103,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     public float a(PathType pathtype) {
-        return this.bz.containsKey(pathtype) ? this.bz.get(pathtype) : pathtype.a();
+        return this.pathtypes.containsKey(pathtype) ? this.pathtypes.get(pathtype) : pathtype.a();
     }
 
     public void a(PathType pathtype, float f) {
-        this.bz.put(pathtype, f);
+        this.pathtypes.put(pathtype, f);
     }
 
     @Override
@@ -340,7 +340,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
         updateAI();
         ct();
+        if (npc.useMinecraftAI()) {
+            foodData.a(this);
+        }
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
+            if (this.bz > 0) {
+                --this.bz;
+            }
             AxisAlignedBB axisalignedbb;
             if (this.isPassenger() && !this.getVehicle().dead) {
                 axisalignedbb = this.getBoundingBox().b(this.getVehicle().getBoundingBox()).grow(1.0, 0.0, 1.0);
@@ -353,6 +359,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 }
             }
         }
+        cL();
     }
 
     public void setMoveDestination(double x, double y, double z, double speed) {
