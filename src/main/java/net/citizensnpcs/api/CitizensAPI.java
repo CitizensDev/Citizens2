@@ -13,6 +13,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
+import net.citizensnpcs.api.npc.templates.TemplateRegistry;
 import net.citizensnpcs.api.trait.TraitFactory;
 
 /**
@@ -136,6 +137,10 @@ public final class CitizensAPI {
      */
     public static Plugin getPlugin() {
         return getImplementation();
+    }
+
+    public static TemplateRegistry getTemplateRegistry() {
+        return getImplementation().getTemplateRegistry();
     }
 
     /**

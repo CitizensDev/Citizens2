@@ -7,6 +7,7 @@ import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
+import net.citizensnpcs.api.npc.templates.TemplateRegistry;
 import net.citizensnpcs.api.trait.TraitFactory;
 
 public interface CitizensPlugin extends Plugin {
@@ -73,6 +74,8 @@ public interface CitizensPlugin extends Plugin {
     public NPCRegistry getNPCRegistry();
 
     public ClassLoader getOwningClassLoader();
+
+    public TemplateRegistry getTemplateRegistry();
 
     /**
      * Gets the TraitFactory.
