@@ -1025,8 +1025,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public Runnable playerTicker(Player next) {
+    public Runnable playerTicker(NPC npc, Player next) {
         return () -> {
+            if (!next.isValid())
+                return;
             EntityPlayer entity = (EntityPlayer) getHandle(next);
             boolean removeFromPlayerList = ((NPCHolder) entity).getNPC().data().get("removefromplayerlist",
                     Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());

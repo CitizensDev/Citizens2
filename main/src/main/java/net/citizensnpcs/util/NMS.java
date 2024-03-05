@@ -728,12 +728,7 @@ public class NMS {
     }
 
     public static Runnable playerTicker(Player entity) {
-        Runnable tick = BRIDGE.playerTicker(entity);
-        return () -> {
-            if (entity.isValid()) {
-                tick.run();
-            }
-        };
+        return BRIDGE.playerTicker(entity instanceof NPCHolder ? ((NPCHolder) entity).getNPC() : null, entity);
     }
 
     public static void registerEntityClass(Class<?> clazz) {

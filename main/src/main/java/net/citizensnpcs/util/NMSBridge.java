@@ -161,7 +161,7 @@ public interface NMSBridge {
 
     public void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to);
 
-    public Runnable playerTicker(Player entity);
+    public Runnable playerTicker(NPC npc, Player entity);
 
     public void registerEntityClass(Class<?> clazz);
 

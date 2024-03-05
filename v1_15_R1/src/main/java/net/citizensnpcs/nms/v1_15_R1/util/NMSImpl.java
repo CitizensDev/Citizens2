@@ -1147,8 +1147,16 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public Runnable playerTicker(Player entity) {
-        return ((EntityPlayer) getHandle(entity))::playerTick;
+    public Runnable playerTicker(NPC npc, Player entity) {
+        EntityPlayer player = (EntityPlayer) getHandle(entity);
+        return () -> {
+            if (!entity.isValid())
+                return;
+            if (npc != null && npc.useMinecraftAI()) {
+                player.movementTick();
+            }
+            player.playerTick();
+        };
     }
 
     @Override
