@@ -388,7 +388,11 @@ public class PersistenceLoader {
 
     private static Persister<?> getDelegate(Field field, Class<?> fieldType) {
         DelegatePersistence delegate = field.getAnnotation(DelegatePersistence.class);
-        return delegate == null ? getDelegate(fieldType) : getDelegate(delegate.value());
+        if (delegate == null)
+            return getDelegate(fieldType);
+
+        Persister<?> persister = loadedDelegates.get(delegate.value());
+        return persister == null ? loadedDelegates.get(persistRedirects.get(fieldType)) : persister;
     }
 
     private static PersistField[] getFields(Class<?> clazz) {
