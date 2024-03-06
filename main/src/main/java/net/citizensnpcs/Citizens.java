@@ -271,6 +271,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return shops;
     }
 
+    @Override
     public TemplateRegistry getTemplateRegistry() {
         return templateRegistry;
     }

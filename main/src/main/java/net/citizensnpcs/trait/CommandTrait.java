@@ -99,7 +99,7 @@ public class CommandTrait extends Trait {
         NPCShopAction action = null;
         if (player.hasPermission("citizens.npc.command.ignoreerrors.*"))
             return Transaction.success();
-        if (cost != 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
+        if (nonZeroOrNegativeOne(cost) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
             action = new MoneyAction(cost);
             if (!action.take(player, null, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
@@ -119,8 +119,7 @@ public class CommandTrait extends Trait {
                         stack.getAmount());
             }
         }
-        if (command.cost != -1 && command.cost != 0
-                && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
+        if (nonZeroOrNegativeOne(command.cost) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
             action = new MoneyAction(command.cost);
             if (!action.take(player, null, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, command.cost);
@@ -388,6 +387,10 @@ public class CommandTrait extends Trait {
         return hideErrorMessages;
     }
 
+    private boolean nonZeroOrNegativeOne(double value) {
+        return Math.abs(value) > 0.0001 && Math.abs(-1 - value) > 0.0001;
+    }
+
     public boolean persistSequence() {
         return persistSequence;
     }
@@ -552,9 +555,9 @@ public class CommandTrait extends Trait {
     private static class NPCCommand {
         String command;
         int cooldown;
-        double cost;
+        double cost = -1;
         int delay;
-        int experienceCost;
+        int experienceCost = -1;
         int globalCooldown;
         Hand hand;
         int id;

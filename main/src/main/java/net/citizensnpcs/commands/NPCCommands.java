@@ -472,8 +472,8 @@ public class NPCCommands {
             permission = "citizens.npc.command")
     public void command(CommandContext args, CommandSender sender, NPC npc,
             @Flag(value = { "permissions", "permission" }) String permissions,
-            @Flag(value = "cost", defValue = "0") Double cost,
-            @Flag(value = "expcost", defValue = "0") Integer experienceCost,
+            @Flag(value = "cost", defValue = "-1") Double cost,
+            @Flag(value = "expcost", defValue = "-1") Integer experienceCost,
             @Flag(value = "cooldown", defValue = "0") Duration cooldown,
             @Flag(value = "gcooldown", defValue = "0") Duration gcooldown, @Flag(value = "n", defValue = "-1") int n,
             @Flag(value = "delay", defValue = "0") Duration delay,

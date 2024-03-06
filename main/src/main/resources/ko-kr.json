@@ -490,6 +490,8 @@
   "citizens.commands.template.list.description" : "사용 가능한 템플릿 목록",
   "citizens.commands.template.list.header" : "사용 가능한 템플릿입니다:",
   "citizens.commands.template.missing" : "템플릿을 찾을 수 없습니다.",
+  "citizens.commands.template.namespace-already-exists" : "네임스페이스 [[{0}]]가 이미 존재합니다",
+  "citizens.commands.template.qualified-template-required" : "중복된 템플릿 이름 [[{0}]]. 다음 옵션 중에서 선택하세요: [[{1}]]",
   "citizens.commands.trait.add.description" : "NPC에 특성을 추가합니다.",
   "citizens.commands.trait.added" : "{0}이(가) 성공적으로 추가되었습니다.",
   "citizens.commands.traitc.*.description" : "특성을 구성합니다.",
