@@ -1,6 +1,6 @@
 package net.citizensnpcs.api.util;
 
-import org.bukkit.util.Vector;
+import org.joml.Vector3f;
 
 public class EyeHeightBoundingBox extends BoundingBox {
     public double eyeHeight;
@@ -11,8 +11,8 @@ public class EyeHeightBoundingBox extends BoundingBox {
         this.eyeHeight = eyeHeight;
     }
 
-    public Vector getCenter() {
+    public Vector3f getCenter() {
         double cx = (minX + maxX) / 2, cy = (minY + maxY) / 2, cz = (minZ + maxZ) / 2;
-        return new Vector(-cx, cy, -cz);
+        return new Vector3f((float) -cx, (float) cy, (float) -cz);
     }
 }

@@ -267,8 +267,8 @@ public class Inventory extends Trait {
         return "Inventory{" + Arrays.toString(contents) + "}";
     }
 
-    private static boolean SUPPORT_ABSTRACT_HORSE = true;
-    private static boolean SUPPORT_GET_STORAGE_CONTENTS = true;
+    private static boolean SUPPORT_ABSTRACT_HORSE = false;
+    private static boolean SUPPORT_GET_STORAGE_CONTENTS = false;
     static {
         try {
             SUPPORT_ABSTRACT_HORSE = Class.forName("org.bukkit.entity.AbstractHorse") != null;
