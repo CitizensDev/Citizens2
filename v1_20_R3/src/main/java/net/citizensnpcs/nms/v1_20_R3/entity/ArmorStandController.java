@@ -5,14 +5,13 @@ import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_20_R3.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_20_R3.util.MobAI;
+import net.citizensnpcs.nms.v1_20_R3.util.MobAI.ForwardingMobAI;
 import net.citizensnpcs.nms.v1_20_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_20_R3.util.NMSImpl;
-import net.citizensnpcs.nms.v1_20_R3.util.MobAI.ForwardingMobAI;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
@@ -99,14 +98,6 @@ public class ArmorStandController extends MobEntityController {
         @Override
         protected AABB makeBoundingBox() {
             return NMSBoundingBox.makeBB(npc, super.makeBoundingBox());
-        }
-
-        @Override
-        public void push(double x, double y, double z) {
-            Vector vector = Util.callPushEvent(npc, x, y, z);
-            if (vector != null) {
-                super.push(vector.getX(), vector.getY(), vector.getZ());
-            }
         }
 
         @Override

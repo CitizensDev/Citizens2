@@ -5,7 +5,6 @@ import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftThrownExpBottle;
 import org.bukkit.entity.ThrownExpBottle;
-import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_20_R3.entity.MobEntityController;
@@ -76,14 +75,6 @@ public class ThrownExpBottleController extends MobEntityController {
         @Override
         protected AABB makeBoundingBox() {
             return NMSBoundingBox.makeBB(npc, super.makeBoundingBox());
-        }
-
-        @Override
-        public void push(double x, double y, double z) {
-            Vector vector = Util.callPushEvent(npc, x, y, z);
-            if (vector != null) {
-                super.push(vector.getX(), vector.getY(), vector.getZ());
-            }
         }
 
         @Override

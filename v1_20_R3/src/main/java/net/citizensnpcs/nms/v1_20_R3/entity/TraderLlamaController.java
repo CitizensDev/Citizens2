@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftTraderLlama;
-import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_20_R3.util.ForwardingNPCHolder;
@@ -190,14 +189,6 @@ public class TraderLlamaController extends MobEntityController {
                 return;
             }
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::onSyncedDataUpdated);
-        }
-
-        @Override
-        public void push(double x, double y, double z) {
-            Vector vector = Util.callPushEvent(npc, x, y, z);
-            if (vector != null) {
-                super.push(vector.getX(), vector.getY(), vector.getZ());
-            }
         }
 
         @Override

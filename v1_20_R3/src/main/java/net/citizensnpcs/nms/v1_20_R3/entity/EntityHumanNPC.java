@@ -10,7 +10,6 @@ import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Vector;
 
 import com.mojang.authlib.GameProfile;
 
@@ -304,14 +303,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             return super.onClimbable();
         else
             return false;
-    }
-
-    @Override
-    public void push(double x, double y, double z) {
-        Vector vector = Util.callPushEvent(npc, x, y, z);
-        if (vector != null) {
-            super.push(vector.getX(), vector.getY(), vector.getZ());
-        }
     }
 
     @Override

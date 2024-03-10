@@ -874,6 +874,9 @@ public class EventListen implements Listener {
                     Entity pushedBy = (Entity) getPushedBy.invoke(event);
                     Vector vector = (Vector) getAcceleration.invoke(event);
                     NPCPushEvent push = new NPCPushEvent(npc, vector, pushedBy);
+                    if (pushedBy == null && !npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
+                        push.setCancelled(true);
+                    }
                     Bukkit.getPluginManager().callEvent(push);
                     ((Cancellable) event).setCancelled(push.isCancelled());
                 } catch (Throwable ex) {
