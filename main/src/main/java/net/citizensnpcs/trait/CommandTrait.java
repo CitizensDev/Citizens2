@@ -101,19 +101,19 @@ public class CommandTrait extends Trait {
             return Transaction.success();
         if (nonZeroOrNegativeOne(cost) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
             action = new MoneyAction(cost);
-            if (!action.take(player, null, 1).isPossible()) {
+            if (!action.take(player, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
             }
         }
         if (experienceCost > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
             action = new ExperienceAction(experienceCost);
-            if (!action.take(player, null, 1).isPossible()) {
+            if (!action.take(player, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, experienceCost);
             }
         }
         if (itemRequirements.size() > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
             action = new ItemAction(itemRequirements);
-            if (!action.take(player, null, 1).isPossible()) {
+            if (!action.take(player, 1).isPossible()) {
                 ItemStack stack = itemRequirements.get(0);
                 sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
                         stack.getAmount());
@@ -121,26 +121,26 @@ public class CommandTrait extends Trait {
         }
         if (nonZeroOrNegativeOne(command.cost) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
             action = new MoneyAction(command.cost);
-            if (!action.take(player, null, 1).isPossible()) {
+            if (!action.take(player, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, command.cost);
             }
         }
         if (command.experienceCost != -1 && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
             action = new ExperienceAction(command.experienceCost);
-            if (!action.take(player, null, 1).isPossible()) {
+            if (!action.take(player, 1).isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, command.experienceCost);
             }
         }
         if (command.itemCost != null && command.itemCost.size() > 0
                 && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
             action = new ItemAction(command.itemCost);
-            if (!action.take(player, null, 1).isPossible()) {
+            if (!action.take(player, 1).isPossible()) {
                 ItemStack stack = command.itemCost.get(0);
                 sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
                         stack.getAmount());
             }
         }
-        return action == null ? Transaction.success() : action.take(player, null, 1);
+        return action == null ? Transaction.success() : action.take(player, 1);
     }
 
     public void clear() {

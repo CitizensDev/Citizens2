@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Lists;
@@ -12,6 +13,7 @@ import com.google.common.collect.Lists;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.persistence.PersisterRegistry;
+import net.citizensnpcs.util.InventoryMultiplexer;
 
 public abstract class NPCShopAction implements Cloneable {
     @Override
@@ -29,7 +31,31 @@ public abstract class NPCShopAction implements Cloneable {
 
     public abstract Transaction grant(Entity entity, ItemStack[] inventory, int repeats);
 
+    public Transaction grant(Player entity, int repeats) {
+        InventoryMultiplexer im = new InventoryMultiplexer(entity.getInventory());
+        Transaction tx = grant(entity, im.getInventory(), repeats);
+        return Transaction.create(tx::isPossible, () -> {
+            tx.run();
+            im.save();
+        }, () -> {
+            tx.rollback();
+            im.save();
+        });
+    }
+
     public abstract Transaction take(Entity entity, ItemStack[] inventory, int repeats);
+
+    public Transaction take(Player entity, int repeats) {
+        InventoryMultiplexer im = new InventoryMultiplexer(entity.getInventory());
+        Transaction tx = take(entity, im.getInventory(), repeats);
+        return Transaction.create(tx::isPossible, () -> {
+            tx.run();
+            im.save();
+        }, () -> {
+            tx.rollback();
+            im.save();
+        });
+    }
 
     public static interface GUI {
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback);
