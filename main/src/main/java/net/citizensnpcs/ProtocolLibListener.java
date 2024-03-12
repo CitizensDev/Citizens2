@@ -250,9 +250,9 @@ public class ProtocolLibListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onNPCDespawn(NPCDespawnEvent event) {
-        if (event.getNPC().getEntity() != null) {
-            rotationTraits.remove(event.getNPC().getEntity().getEntityId());
-        }
+        if (event.getNPC().getEntity() == null)
+            return;
+        rotationTraits.remove(event.getNPC().getEntity().getEntityId());
         mirrorTraits.remove(event.getNPC().getEntity().getUniqueId());
     }
 
