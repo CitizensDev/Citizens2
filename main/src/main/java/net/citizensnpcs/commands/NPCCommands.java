@@ -2729,11 +2729,10 @@ public class NPCCommands {
             throw new CommandUsageException();
 
         if (action.equalsIgnoreCase("delete")) {
-            if (args.argsLength() != 3)
-                throw new CommandUsageException();
             if (!shop.canEdit(npc, sender))
                 throw new NoPermissionsException();
             shops.deleteShop(shop);
+            Messaging.sendTr(sender, Messages.SHOP_DELETED, shop.getName());
         } else if (action.equalsIgnoreCase("edit")) {
             if (!shop.canEdit(npc, sender))
                 throw new NoPermissionsException();

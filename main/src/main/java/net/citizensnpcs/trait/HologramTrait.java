@@ -20,6 +20,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+import org.joml.Vector3d;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -359,8 +360,8 @@ public class HologramTrait extends Trait {
                 continue;
 
             if (line.ticks > 0 && --line.ticks == 0) {
-                line.removeNPC();
-                lines.remove(i--);
+                lines.remove(i--).removeNPC();
+                ;
                 continue;
             }
             if (updatePosition && !useDisplayEntities) {
@@ -387,9 +388,9 @@ public class HologramTrait extends Trait {
         root.removeKey("lines");
         int i = 0;
         for (HologramLine line : lines) {
-            if (!line.persist) {
+            if (!line.persist)
                 continue;
-            }
+
             root.setString("lines." + i + ".text", line.text);
             root.setDouble("lines." + i + ".margin.top", line.mt);
             root.setDouble("lines." + i + ".margin.bottom", line.mb);
@@ -465,10 +466,49 @@ public class HologramTrait extends Trait {
         reloadLineHolograms();
     }
 
+    public abstract class AbstractRenderer implements HologramRenderer {
+        protected NPC npc;
+
+        @Override
+        public void destroy() {
+            if (npc != null) {
+                npc.destroy();
+                npc = null;
+            }
+        }
+
+        @Override
+        public void render(Entity base, Vector3d offset) {
+            if (npc == null)
+                return;
+            npc.getEntity().teleport(base.getLocation().clone().add(offset.x, offset.y, offset.z),
+                    TeleportCause.PLUGIN);
+        }
+
+        protected abstract NPC spawnNPC(Entity base, String text, Vector3d offset);
+
+        @Override
+        public void updateText(Entity base, String text) {
+            if (npc == null)
+                return;
+            NMS.setCustomName(base, text, text);
+        }
+    }
+
+    public class ArmorstandRenderer extends AbstractRenderer {
+        @Override
+        protected NPC spawnNPC(Entity base, String name, Vector3d offset) {
+            NPC hologramNPC = registry.createNPC(EntityType.ARMOR_STAND, name);
+            hologramNPC.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
+            return hologramNPC;
+        }
+    }
+
     private class HologramLine implements Function<Player, String> {
         NPC hologram;
         double mb, mt;
         boolean persist;
+        HologramRenderer renderer;
         String text;
         int ticks;
 
@@ -496,6 +536,7 @@ public class HologramTrait extends Trait {
                 return;
 
             hologram.destroy();
+            renderer = null;
             hologram = null;
         }
 
@@ -503,6 +544,7 @@ public class HologramTrait extends Trait {
             this.text = text == null ? "" : text;
 
             if (hologram != null) {
+                // renderer.updateText(hologram, text);
                 String name = Placeholders.replace(text, null, npc);
                 hologram.setName(name);
                 if (Placeholders.containsPlaceholders(text)) {
@@ -511,6 +553,29 @@ public class HologramTrait extends Trait {
                     hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, ChatColor.stripColor(name).length() > 0);
                     hologram.data().remove(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER);
                 }
+            }
+        }
+
+        private void spawn(NPC npc, String text, Vector3d offset) {
+            // hologram = renderer.spawn(npc, text, offset);
+            if (!hologram.hasTrait(ClickRedirectTrait.class)) {
+                hologram.addTrait(new ClickRedirectTrait(npc));
+            }
+            hologram.data().set(NPC.Metadata.HOLOGRAM_FOR, npc.getUniqueId().toString());
+            if (Setting.PACKET_HOLOGRAMS.asBoolean()) {
+                hologram.addTrait(PacketNPC.class);
+            }
+            if (viewRange != -1) {
+                hologram.data().set(NPC.Metadata.TRACKING_RANGE, viewRange);
+            } else if (npc.data().has(NPC.Metadata.TRACKING_RANGE)) {
+                hologram.data().set(NPC.Metadata.TRACKING_RANGE, npc.data().get(NPC.Metadata.TRACKING_RANGE));
+            }
+            hologram.spawn(npc.getEntity().getLocation().add(offset.x, offset.y, offset.z));
+            if (customHologramSupplier != null) {
+                hologram.data().set(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER,
+                        (Function<Player, String>) p -> customHologramSupplier.apply(text, p));
+            } else if (Placeholders.containsPlaceholders(text)) {
+                hologram.data().set(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER, this);
             }
         }
 
@@ -526,6 +591,49 @@ public class HologramTrait extends Trait {
         }
     }
 
+    public static interface HologramRenderer {
+        void destroy();
+
+        void render(Entity base, Vector3d offset);
+
+        void updateText(Entity base, String text);
+    }
+
+    public class InteractionRenderer extends AbstractRenderer {
+        public void render(Entity base, String name, Vector3d offset) {
+            if (this.npc.getEntity().getVehicle() == null) {
+                HologramTrait.this.npc.getEntity().addPassenger(this.npc.getEntity());
+            }
+        }
+
+        @Override
+        protected NPC spawnNPC(Entity base, String name, Vector3d offset) {
+            return registry.createNPC(EntityType.INTERACTION, name);
+        }
+    }
+
+    public class ItemRenderer extends AbstractRenderer {
+        @Override
+        protected NPC spawnNPC(Entity base, String name, Vector3d offset) {
+            Matcher itemMatcher = ITEM_MATCHER.matcher(name);
+            Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
+                    : Material.matchMaterial(itemMatcher.group(1));
+            ItemStack itemStack = new ItemStack(item, 1);
+            NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", itemStack);
+            itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+            if (itemMatcher.group(2) != null) {
+                if (itemMatcher.group(2).charAt(1) == '{') {
+                    Bukkit.getUnsafe().modifyItemStack(itemStack, itemMatcher.group(2).substring(1));
+                    itemNPC.setItemProvider(() -> itemStack);
+                } else {
+                    itemNPC.getOrAddTrait(ScoreboardTrait.class)
+                            .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
+                }
+            }
+            return itemNPC;
+        }
+    }
+
     public static class TabCompletions implements CompletionsProvider {
         @Override
         public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
@@ -538,6 +646,19 @@ public class HologramTrait extends Trait {
         }
 
         private static List<String> LINE_ARGS = ImmutableList.of("set", "remove", "margintop", "marginbottom");
+    }
+
+    public class TextDisplayRenderer extends AbstractRenderer {
+        public void render(Entity base, String name, Vector3d offset) {
+            if (this.npc.getEntity().getVehicle() == null) {
+                HologramTrait.this.npc.getEntity().addPassenger(this.npc.getEntity());
+            }
+        }
+
+        @Override
+        protected NPC spawnNPC(Entity base, String name, Vector3d offset) {
+            return registry.createNPC(EntityType.TEXT_DISPLAY, name);
+        }
     }
 
     private static Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)([:].*?)?>");

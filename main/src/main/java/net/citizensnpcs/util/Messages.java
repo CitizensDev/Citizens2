@@ -365,6 +365,7 @@ public class Messages {
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
     public static final String SHEEP_COLOR_SET = "citizens.commands.npc.sheep.color-set";
+    public static final String SHOP_DELETED = "citizens.commands.npc.shop.deleted";
     public static final String SHULKER_COLOR_SET = "citizens.commands.npc.shulker.color-set";
     public static final String SHULKER_PEEK_SET = "citizens.commands.npc.shulker.peek-set";
     public static final String SITTING_SET = "citizens.commands.npc.sitting.set";

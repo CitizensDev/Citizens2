@@ -138,7 +138,6 @@
   "citizens.commands.traitc.not-configurable" : "Esta plantilla no es configurable.",
   "citizens.commands.traitc.not-on-npc" : "Los NPC's no pueden tener esta plantilla.",
   "citizens.commands.trait.failed-to-add" : "<7>No se pueden agregar {0}.",
-  "citizens.commands.trait.failed-to-change" : "<7>No se pueden cambiar {0}.",
   "citizens.commands.trait.failed-to-remove" : "<7>No se pueden eliminar {0}.",
   "citizens.commands.trait.removed" : "Eliminado {0} satisfactoriamente.",
   "citizens.commands.unknown-command" : "Comando desconocido. Querias decir:",

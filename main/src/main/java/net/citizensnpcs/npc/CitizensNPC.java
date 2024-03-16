@@ -268,17 +268,11 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public void setName(String name) {
-        super.setName(name);
-
+    protected void setNameInternal(String name) {
+        super.setNameInternal(name);
         if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
             addTrait(HologramTrait.class);
         }
-    }
-
-    @Override
-    protected void setNameInternal(String name) {
-        super.setNameInternal(name);
         updateCustomName();
     }
 

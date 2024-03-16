@@ -263,7 +263,7 @@ public class CommandTrait extends Trait {
             return;
 
         Runnable task = new Runnable() {
-            Boolean charged = null;
+            boolean failedCharge;
 
             @Override
             public void run() {
@@ -306,7 +306,7 @@ public class CommandTrait extends Trait {
                     }
                     runCommand(player, hand, command);
                     if (executionMode == ExecutionMode.SEQUENTIAL || executionMode == ExecutionMode.CYCLE
-                            || (charged != null && !charged))
+                            || failedCharge)
                         break;
                 }
             }
@@ -319,17 +319,17 @@ public class CommandTrait extends Trait {
                         playerTracking.put(player.getUniqueId(), info = new PlayerNPCCommand());
                     }
                     Transaction charge = null;
-                    if (charged == null) {
+                    if (!failedCharge) {
                         charge = chargeCommandCosts(player, hand, command);
                         if (!charge.isPossible()) {
-                            charged = false;
+                            failedCharge = true;
                             return;
                         }
                     }
                     if (info != null && !info.canUse(CommandTrait.this, player, hand, command))
                         return;
 
-                    if (charged == null) {
+                    if (!failedCharge) {
                         charge.run();
                     }
                     if (temporaryPermissions.size() > 0) {

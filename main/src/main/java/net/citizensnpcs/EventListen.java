@@ -67,6 +67,7 @@ import org.bukkit.util.Vector;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -484,16 +485,12 @@ public class EventListen implements Listener {
 
     private void onNPCPlayerLinkToPlayer(NPCLinkToPlayerEvent event) {
         Entity tracker = event.getNPC().getEntity();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-            if (!tracker.isValid() || !event.getPlayer().isValid())
-                return;
-
-            NMS.sendPositionUpdateNearby(tracker, false, null, null, NMS.getHeadYaw(tracker));
-        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks() + 1);
         boolean resetYaw = event.getNPC().data().get(NPC.Metadata.RESET_YAW_ON_SPAWN,
                 Setting.RESET_YAW_ON_SPAWN.asBoolean());
         boolean sendTabRemove = NMS.sendTabListAdd(event.getPlayer(), (Player) tracker);
         if (!sendTabRemove || !event.getNPC().shouldRemoveFromTabList()) {
+            NMS.sendPositionUpdate(tracker, ImmutableList.of(event.getPlayer()), false, null, null,
+                    NMS.getHeadYaw(tracker));
             if (resetYaw) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
                         () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()));
@@ -505,6 +502,8 @@ public class EventListen implements Listener {
                 return;
 
             NMS.sendTabListRemove(event.getPlayer(), (Player) tracker);
+            NMS.sendPositionUpdate(tracker, ImmutableList.of(event.getPlayer()), false, null, null,
+                    NMS.getHeadYaw(tracker));
             if (resetYaw) {
                 PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer());
             }

@@ -69,8 +69,8 @@ import net.citizensnpcs.trait.shop.NPCShopAction;
 import net.citizensnpcs.trait.shop.NPCShopAction.GUI;
 import net.citizensnpcs.trait.shop.NPCShopAction.Transaction;
 import net.citizensnpcs.trait.shop.PermissionAction;
-import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.trait.shop.PermissionAction.PermissionActionGUI;
+import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.Util;
 
@@ -823,9 +823,8 @@ public class ShopTrait extends Trait {
             currentPage = newPage;
             NPCShopPage page = shop.pages.get(currentPage);
             if (page.title != null && !page.title.isEmpty()) {
-                Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
-                    ctx.setTitle(Placeholders.replace(page.title, player));
-                }, 1);
+                Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
+                        () -> ctx.setTitle(Placeholders.replace(page.title, player)), 1);
             }
             for (int i = 0; i < ctx.getInventory().getSize(); i++) {
                 ctx.getSlot(i).clear();

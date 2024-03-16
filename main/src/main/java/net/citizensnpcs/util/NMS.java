@@ -771,6 +771,7 @@ public class NMS {
 
     public static void sendPositionUpdateNearby(Entity from, boolean position, Float bodyYaw, Float pitch,
             Float headYaw) {
+        System.out.println(getNearbyPlayers(from));
         sendPositionUpdate(from, getNearbyPlayers(from), position, bodyYaw, pitch, headYaw);
     }
 

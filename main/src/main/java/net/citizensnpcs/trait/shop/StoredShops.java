@@ -26,10 +26,10 @@ public class StoredShops {
         if (Messaging.isDebugging()) {
             Messaging.debug("Deleting shop", shop.getName());
         }
-        if (npcShops.values().contains(shop)) {
-            npcShops.values().remove(shop);
+        if (npcShops.containsKey(shop.getName())) {
+            npcShops.remove(shop.getName());
         } else {
-            globalShops.values().remove(shop);
+            globalShops.remove(shop.getName());
         }
     }
 

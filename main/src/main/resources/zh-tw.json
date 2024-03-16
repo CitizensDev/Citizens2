@@ -255,7 +255,6 @@
   "citizens.commands.traitc.not-configurable" : "無法設定該特徵。",
   "citizens.commands.traitc.not-on-npc" : "NPC 沒有該特徵。",
   "citizens.commands.trait.failed-to-add" : "<7>無法新增 {0}。",
-  "citizens.commands.trait.failed-to-change" : "<7>無法變更 {0}。",
   "citizens.commands.trait.failed-to-remove" : "<7>無法移除 {0}。",
   "citizens.commands.trait.removed" : "成功移除 {0}。",
   "citizens.commands.unknown-command" : "未知的指令。您是不是指：",

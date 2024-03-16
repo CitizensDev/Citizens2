@@ -78,7 +78,6 @@
   "citizens.commands.traitc.not-configurable" : "Dit eigenschap kan niet worden aangepast.",
   "citizens.commands.traitc.not-on-npc" : "De NPC heeft deze eigenschap niet.",
   "citizens.commands.trait.failed-to-add" : "<7>Kon {0} niet toevoegen.",
-  "citizens.commands.trait.failed-to-change" : "<7>Kon {0} niet veranderen.",
   "citizens.commands.trait.failed-to-remove" : "<7>Kon {0} niet verwijderen.",
   "citizens.commands.trait.removed" : "{0} verwijderd.",
   "citizens.commands.unknown-command" : "Onbekend commando, bedoelde je:",

@@ -11,6 +11,7 @@
   "citizens.commands.errors.unknown-registry" : "Unknown NPC registry [[{0}]].",
   "citizens.commands.help.command-missing" : "Command /{0} not found.",
   "citizens.commands.help.header" : "Help",
+  "citizens.commands.npc.shop.deleted" : "Shop [[{0}]] deleted.",
   "citizens.commands.id-not-found" : "Couldn''t find any NPC with ID [[{0}]].",
   "citizens.commands.invalid-mobtype" : "[[{0}]] is not a valid mobtype.",
   "citizens.commands.invalid-number" : "That is not a valid number.",
