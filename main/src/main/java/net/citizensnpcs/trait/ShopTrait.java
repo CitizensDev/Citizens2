@@ -435,7 +435,7 @@ public class ShopTrait extends Trait {
             }
         }
 
-        public void onClick(NPCShop shop, Player player, ItemStack[] inventory, boolean shiftClick,
+        public void onClick(NPCShop shop, Player player, InventoryMultiplexer inventory, boolean shiftClick,
                 boolean secondClick) {
             if (timesPurchasable > 0 && purchases.getOrDefault(player.getUniqueId(), 0) == timesPurchasable) {
                 if (alreadyPurchasedMessage != null) {
@@ -835,11 +835,9 @@ public class ShopTrait extends Trait {
                 ctx.getSlot(i).setItemStack(item.getDisplayItem(player));
                 ctx.getSlot(i).setClickHandler(evt -> {
                     evt.setCancelled(true);
-                    InventoryMultiplexer multiplexer = new InventoryMultiplexer(
-                            ((Player) evt.getWhoClicked()).getInventory());
-                    item.onClick(shop, (Player) evt.getWhoClicked(), multiplexer.getInventory(), evt.isShiftClick(),
+                    item.onClick(shop, (Player) evt.getWhoClicked(),
+                            new InventoryMultiplexer(((Player) evt.getWhoClicked()).getInventory()), evt.isShiftClick(),
                             lastClickedItem == item);
-                    multiplexer.save();
                     lastClickedItem = item;
                 });
             }
@@ -929,9 +927,8 @@ public class ShopTrait extends Trait {
             syntheticInventory.setItem(0, evt.getClickedInventory().getItem(0));
             syntheticInventory.setItem(1, evt.getClickedInventory().getItem(1));
             InventoryMultiplexer multiplexer = new InventoryMultiplexer(player.getInventory(), syntheticInventory);
-            trades.get(selectedTrade).onClick(shop, player, multiplexer.getInventory(), evt.getClick().isShiftClick(),
+            trades.get(selectedTrade).onClick(shop, player, multiplexer, evt.getClick().isShiftClick(),
                     lastClickedTrade == selectedTrade);
-            multiplexer.save();
             evt.getClickedInventory().setItem(0, syntheticInventory.getItem(0));
             evt.getClickedInventory().setItem(1, syntheticInventory.getItem(1));
             lastClickedTrade = selectedTrade;

@@ -27,34 +27,18 @@ public abstract class NPCShopAction implements Cloneable {
 
     public abstract String describe();
 
-    public abstract int getMaxRepeats(Entity entity, ItemStack[] inventory);
+    public abstract int getMaxRepeats(Entity entity, InventoryMultiplexer inventory);
 
-    public abstract Transaction grant(Entity entity, ItemStack[] inventory, int repeats);
+    public abstract Transaction grant(Entity entity, InventoryMultiplexer inventory, int repeats);
 
-    public Transaction grant(Player entity, int repeats) {
-        InventoryMultiplexer im = new InventoryMultiplexer(entity.getInventory());
-        Transaction tx = grant(entity, im.getInventory(), repeats);
-        return Transaction.create(tx::isPossible, () -> {
-            tx.run();
-            im.save();
-        }, () -> {
-            tx.rollback();
-            im.save();
-        });
+    public Transaction grant(Player player, int repeats) {
+        return grant(player, new InventoryMultiplexer(player.getInventory()), repeats);
     }
 
-    public abstract Transaction take(Entity entity, ItemStack[] inventory, int repeats);
+    public abstract Transaction take(Entity entity, InventoryMultiplexer inventory, int repeats);
 
-    public Transaction take(Player entity, int repeats) {
-        InventoryMultiplexer im = new InventoryMultiplexer(entity.getInventory());
-        Transaction tx = take(entity, im.getInventory(), repeats);
-        return Transaction.create(tx::isPossible, () -> {
-            tx.run();
-            im.save();
-        }, () -> {
-            tx.rollback();
-            im.save();
-        });
+    public Transaction take(Player player, int repeats) {
+        return take(player, new InventoryMultiplexer(player.getInventory()), repeats);
     }
 
     public static interface GUI {

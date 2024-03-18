@@ -1,6 +1,7 @@
 package net.citizensnpcs.util;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -15,12 +16,7 @@ public class InventoryMultiplexer {
         this.sources = sources;
         int size = sources.stream().mapToInt(Inventory::getSize).sum();
         this.inventory = new ItemStack[size];
-        int i = 0;
-        for (Inventory sourceInventory : sources) {
-            ItemStack[] source = sourceInventory.getContents();
-            System.arraycopy(source, 0, inventory, i, source.length);
-            i += source.length;
-        }
+        refresh();
     }
 
     public InventoryMultiplexer(Inventory... inventories) {
@@ -31,7 +27,17 @@ public class InventoryMultiplexer {
         return inventory;
     }
 
-    public void save() {
+    public void refresh() {
+        int i = 0;
+        for (Inventory sourceInventory : sources) {
+            ItemStack[] source = sourceInventory.getContents();
+            System.arraycopy(source, 0, inventory, i, source.length);
+            i += source.length;
+        }
+    }
+
+    public void transact(Consumer<ItemStack[]> action) {
+        action.accept(inventory);
         int i = 0;
         for (Inventory source : sources) {
             ItemStack[] result = new ItemStack[source.getSize()];

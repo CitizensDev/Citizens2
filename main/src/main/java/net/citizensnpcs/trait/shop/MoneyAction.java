@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
 
@@ -32,7 +33,7 @@ public class MoneyAction extends NPCShopAction {
     }
 
     @Override
-    public int getMaxRepeats(Entity entity, ItemStack[] inventory) {
+    public int getMaxRepeats(Entity entity, InventoryMultiplexer inventory) {
         if (!(entity instanceof Player))
             return 0;
 
@@ -41,7 +42,7 @@ public class MoneyAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(Entity entity, ItemStack[] inventory, int repeats) {
+    public Transaction grant(Entity entity, InventoryMultiplexer inventory, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
 
@@ -57,7 +58,7 @@ public class MoneyAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction take(Entity entity, ItemStack[] inventory, int repeats) {
+    public Transaction take(Entity entity, InventoryMultiplexer inventory, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
 

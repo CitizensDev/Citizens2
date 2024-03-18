@@ -17,6 +17,7 @@ import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.gui.Menu;
 import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.Util;
 
 public class CommandAction extends NPCShopAction {
@@ -48,12 +49,12 @@ public class CommandAction extends NPCShopAction {
     }
 
     @Override
-    public int getMaxRepeats(Entity entity, ItemStack[] inventory) {
+    public int getMaxRepeats(Entity entity, InventoryMultiplexer inventory) {
         return -1;
     }
 
     @Override
-    public Transaction grant(Entity entity, ItemStack[] inventory, int repeats) {
+    public Transaction grant(Entity entity, InventoryMultiplexer inventory, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;
@@ -63,12 +64,13 @@ public class CommandAction extends NPCShopAction {
                     Util.runCommand(null, player, command, op, !server);
                 }
             }
+            inventory.refresh();
         }, () -> {
         });
     }
 
     @Override
-    public Transaction take(Entity entity, ItemStack[] inventory, int repeats) {
+    public Transaction take(Entity entity, InventoryMultiplexer inventory, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;
@@ -78,6 +80,7 @@ public class CommandAction extends NPCShopAction {
                     Util.runCommand(null, player, command, op, !server);
                 }
             }
+            inventory.refresh();
         }, () -> {
         });
     }
