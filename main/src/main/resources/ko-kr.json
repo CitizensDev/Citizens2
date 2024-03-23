@@ -375,6 +375,7 @@
   "citizens.commands.npc.sheep.color-set" : "양의 색상이 [{0}]로 설정되었습니다.",
   "citizens.commands.npc.sheep.description" : "양 타입 부여",
   "citizens.commands.npc.sheep.invalid-color" : "유효하지 않은 양 색상이 지정되었습니다. 유효한 색상은 다음과 같습니다: [[{0}]].",
+  "citizens.commands.npc.shop.deleted" : "상점 [[{0}]]이(가) 삭제되었습니다.",
   "citizens.commands.npc.shop.description" : "NPC 상점 편집/표시",
   "citizens.commands.npc.shulker.color-set" : "[[{0}]]의 색상이 [{1}]로 설정되었습니다.",
   "citizens.commands.npc.shulker.description" : "셜커 타입 부여",
