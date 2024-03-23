@@ -339,18 +339,11 @@ public abstract class AbstractNPC implements NPC {
             keys.remove(locationKey);
         }
         for (DataKey key : keys) {
-            if (key.name().equals("speech"))
-                continue;
-
             loadTraitFromKey(key);
         }
     }
 
     private void loadTraitFromKey(DataKey traitKey) {
-        if (traitKey.name().equals("smoothrotationtrait")) {
-            traitKey.removeKey("");
-            return;
-        }
         Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(traitKey.name());
         Trait trait;
         if (hasTrait(clazz)) {

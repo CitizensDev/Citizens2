@@ -86,7 +86,8 @@ public class YamlStorage implements FileStorage {
     }
 
     private boolean pathExists(String key) {
-        return config.get(key) != null;
+        Object object = config.get(key);
+        return object != null && !(object instanceof ConfigurationSection);
     }
 
     @Override
