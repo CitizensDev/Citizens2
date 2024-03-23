@@ -11,15 +11,19 @@ import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -64,6 +68,32 @@ public class LocationLookup extends BukkitRunnable {
 
     public Iterable<Player> getNearbyPlayers(NPC npc) {
         return getNearbyPlayers(npc.getStoredLocation(), npc.data().get(NPC.Metadata.TRACKING_RANGE, 64));
+    }
+
+    public Iterable<Player> getNearbyVisiblePlayers(Entity entity, double range) {
+        return getNearbyVisiblePlayers(entity, entity.getLocation(), range);
+    }
+
+    public Iterable<Player> getNearbyVisiblePlayers(Entity base, Location location, double dist) {
+        Player player = base instanceof Player ? (Player) base : null;
+        return Iterables.filter(getNearbyPlayers(location, dist), other -> {
+            boolean canSee = true;
+            if (SUPPORTS_ENTITY_CANSEE) {
+                try {
+                    canSee = other.canSee(base);
+                } catch (NoSuchMethodError t) {
+                    SUPPORTS_ENTITY_CANSEE = false;
+                    if (player != null) {
+                        canSee = other.canSee(player);
+                    }
+                }
+            } else if (player != null) {
+                canSee = other.canSee(player);
+            }
+            return other.getWorld() == base.getWorld() && canSee
+                    && !other.hasPotionEffect(PotionEffectType.INVISIBILITY)
+                    && other.getGameMode() != GameMode.SPECTATOR;
+        });
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -226,4 +256,6 @@ public class LocationLookup extends BukkitRunnable {
             }
         }
     }
+
+    private static boolean SUPPORTS_ENTITY_CANSEE = true;
 }

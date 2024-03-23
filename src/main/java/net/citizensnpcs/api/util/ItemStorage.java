@@ -210,7 +210,7 @@ public class ItemStorage {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(root.getString("skull.uuid")));
                 meta.setOwningPlayer(offlinePlayer);
             } else if (root.keyExists("skull.owner") && !root.getString("skull.owner").isEmpty()) {
-                meta.setOwner(root.getString("skull.owner", ""));
+                meta.setOwner(root.getString("skull.owner"));
             }
             if (root.keyExists("skull.texture") && !root.getString("skull.texture").isEmpty()) {
                 CitizensAPI.getNMSHelper().setTexture(root.getString("skull.texture", ""), meta);

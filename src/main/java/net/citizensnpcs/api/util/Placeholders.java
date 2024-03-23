@@ -90,13 +90,13 @@ public class Placeholders implements Listener {
                 double min = Double.MAX_VALUE;
                 Entity closest = null;
                 for (Player entity : CitizensAPI.getLocationLookup().getNearbyPlayers(location, 25)) {
-                    if (entity == excluding || CitizensAPI.getNPCRegistry().isNPC(entity)) {
+                    if (entity == excluding || CitizensAPI.getNPCRegistry().isNPC(entity))
                         continue;
-                    }
+
                     double dist = entity.getLocation().distanceSquared(location);
-                    if (dist > min) {
+                    if (dist > min)
                         continue;
-                    }
+
                     min = dist;
                     closest = entity;
                 }
@@ -136,6 +136,9 @@ public class Placeholders implements Listener {
             String replacement = "";
             String group = matcher.group(1);
             switch (group) {
+                case "uuid":
+                    replacement = npc.getUniqueId().toString();
+                    break;
                 case "id":
                     replacement = Integer.toString(npc.getId());
                     break;
@@ -171,27 +174,25 @@ public class Placeholders implements Listener {
             return setPlaceholderAPIPlaceholders(text, player);
         if (text == null)
             return text;
-        if (player.getPlayer() != null) {
-            StringBuffer out = new StringBuffer();
-            Matcher matcher = PLAYER_PLACEHOLDER_MATCHER.matcher(text);
-            while (matcher.find()) {
-                String replacement = "";
-                String group = matcher.group(1);
-                if (PLAYER_VARIABLES.contains(group)) {
-                    replacement = player.getName();
-                } else {
-                    replacement = getWorldReplacement(player.getPlayer().getLocation(), group, player.getPlayer());
-                }
-                matcher.appendReplacement(out, "");
-                out.append(replacement);
+        StringBuffer out = new StringBuffer();
+        Matcher matcher = PLAYER_PLACEHOLDER_MATCHER.matcher(text);
+        while (matcher.find()) {
+            String replacement = "";
+            String group = matcher.group(1);
+            if (PLAYER_VARIABLES.contains(group)) {
+                replacement = player.getName();
+            } else if (PLAYER_UUID_VARIABLES.contains(group)) {
+                replacement = player.getUniqueId().toString();
+            } else if (player.getPlayer() != null) {
+                replacement = getWorldReplacement(player.getPlayer().getLocation(), group, player.getPlayer());
+            } else {
+                replacement = group;
             }
-            matcher.appendTail(out);
-            text = out.toString();
-        } else {
-            for (int i = 0; i < PLAYER_PLACEHOLDERS.length; i++) {
-                text = text.replace(PLAYER_PLACEHOLDERS[i], player.getName());
-            }
+            matcher.appendReplacement(out, "");
+            out.append(replacement);
         }
+        matcher.appendTail(out);
+        text = out.toString();
         return setPlaceholderAPIPlaceholders(text, player);
     }
 
@@ -215,7 +216,7 @@ public class Placeholders implements Listener {
     private static boolean PLACEHOLDERAPI_ENABLED = true;
     private static final List<PlaceholderProvider> PLACEHOLDERS = Lists.newArrayList();
     private static final Pattern PLAYER_PLACEHOLDER_MATCHER = Pattern.compile(
-            "(<player>|<p>|%player%|<random_player>|<random_world_player>|<random_npc>|<random_npc_id>|<nearest_npc_id>|<nearest_player>|<world>)");
-    private static final String[] PLAYER_PLACEHOLDERS = { "<player>", "<p>", "%player%" };
+            "(<player>|<p>|%player%|<player_uuid>|<random_player>|<random_world_player>|<random_npc>|<random_npc_id>|<nearest_npc_id>|<nearest_player>|<world>)");
+    private static final Collection<String> PLAYER_UUID_VARIABLES = ImmutableSet.of("<player_uuid>");
     private static final Collection<String> PLAYER_VARIABLES = ImmutableSet.of("<player>", "<p>", "%player%");
 }
