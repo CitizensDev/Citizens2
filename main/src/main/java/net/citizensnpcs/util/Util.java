@@ -105,20 +105,6 @@ public class Util {
         return !event.isCancelled() ? event.getCollisionVector() : null;
     }
 
-    public static boolean canSee(Player player, Entity from) {
-        if (from instanceof Player)
-            return player.canSee((Player) from);
-
-        if (SUPPORTS_ENTITY_CANSEE) {
-            try {
-                return player.canSee(from);
-            } catch (NoSuchMethodError t) {
-                SUPPORTS_ENTITY_CANSEE = false;
-            }
-        }
-        return true;
-    }
-
     /**
      * Clamps the rotation angle to [-180, 180]
      */

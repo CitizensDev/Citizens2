@@ -217,6 +217,7 @@
   "citizens.commands.traitc.not-configurable" : "该特征是不可配置的.",
   "citizens.commands.traitc.not-on-npc" : "没有这个特征.",
   "citizens.commands.trait.failed-to-add" : "<7>无法添加 {0}.",
+  "citizens.commands.trait.failed-to-change" : "<7>无法更改 {0}.",
   "citizens.commands.trait.failed-to-remove" : "<7>无法删除 {0}.",
   "citizens.commands.trait.removed" : "已成功删除 {0}.",
   "citizens.commands.unknown-command" : "未知命令, 你是否要使用:",

@@ -183,9 +183,9 @@ public class BossBarTrait extends Trait {
 
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(),
                 range > 0 ? range : Setting.BOSSBAR_RANGE.asInt())) {
-            if (viewPermission != null && !player.hasPermission(viewPermission)) {
+            if (viewPermission != null && !player.hasPermission(viewPermission))
                 continue;
-            }
+
             bar.addPlayer(player);
         }
     }

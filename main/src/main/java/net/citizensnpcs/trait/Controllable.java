@@ -52,11 +52,6 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         super("controllable");
     }
 
-    public Controllable(boolean enabled) {
-        this();
-        this.enabled = enabled;
-    }
-
     /**
      * Configures the explicit type parameter.
      *

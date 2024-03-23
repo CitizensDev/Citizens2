@@ -42,7 +42,7 @@ public class ChatTrigger implements WaypointTrigger {
                 }
             }
         } else {
-            for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getStoredLocation(), radius)) {
+            for (Player player : CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(npc.getEntity(), radius)) {
                 for (String line : lines) {
                     Messaging.send(player, line);
                 }

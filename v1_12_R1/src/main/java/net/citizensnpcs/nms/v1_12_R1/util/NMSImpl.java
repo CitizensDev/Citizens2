@@ -1430,7 +1430,7 @@ public class NMSImpl implements NMSBridge {
         PerPlayerMetadata<Long> meta = CitizensAPI.getLocationLookup().registerMetadata("sleeping", null);
         if (sleep) {
             List<Player> nearbyPlayers = Lists.newArrayList(
-                    Iterables.filter(CitizensAPI.getLocationLookup().getNearbyPlayers(entity.getLocation(), 64), p -> {
+                    Iterables.filter(CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(entity, 64), p -> {
                         Long time = meta.getMarker(p.getUniqueId(), entity.getUniqueId().toString());
                         if (time == null || Math.abs(System.currentTimeMillis() - time) > 5000)
                             return true;
@@ -1973,12 +1973,7 @@ public class NMSImpl implements NMSBridge {
 
     public static void sendPacketsNearby(Player from, Location location, Collection<Packet<?>> packets, double radius) {
         radius *= radius;
-        final org.bukkit.World world = location.getWorld();
-        for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
-            if (world != player.getWorld() || from != null && !player.canSee(from)
-                    || location.distanceSquared(player.getLocation(PACKET_CACHE_LOCATION)) > radius) {
-                continue;
-            }
+        for (Player player : CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(from, location, radius)) {
             for (Packet<?> packet : packets) {
                 NMSImpl.sendPacket(player, packet);
             }

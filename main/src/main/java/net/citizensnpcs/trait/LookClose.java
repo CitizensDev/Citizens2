@@ -172,12 +172,12 @@ public class LookClose extends Trait implements Toggleable {
                         .map(e -> (Player) e).collect(Collectors.toList())
                 : CitizensAPI.getLocationLookup().getNearbyPlayers(npcLoc, range);
         for (Player player : nearby) {
-            if (player == lookingAt || !targetNPCs && CitizensAPI.getNPCRegistry().getNPC(player) != null) {
+            if (player == lookingAt || !targetNPCs && CitizensAPI.getNPCRegistry().getNPC(player) != null)
                 continue;
-            }
-            if (player.getLocation().getWorld() != npcLoc.getWorld() || isInvisible(player)) {
+
+            if (isInvisible(player))
                 continue;
-            }
+
             options.add(player);
         }
         return options;

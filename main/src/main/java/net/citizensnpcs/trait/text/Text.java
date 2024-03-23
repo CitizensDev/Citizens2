@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
@@ -175,10 +174,7 @@ public class Text extends Trait implements Runnable, Listener {
         if (!npc.isSpawned() || !talkClose || text.size() == 0)
             return;
 
-        for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getEntity().getLocation(), range)) {
-            if (player.getGameMode() == GameMode.SPECTATOR) {
-                continue;
-            }
+        for (Player player : CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(npc.getEntity(), range)) {
             talk(player);
         }
     }

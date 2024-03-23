@@ -651,13 +651,12 @@ public class NPCCommands {
             max = 1,
             flags = "myno")
     public void controllable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if (npc.isSpawned()
-                && !sender.hasPermission(
-                        "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", ""))
+        if ((npc.isSpawned() && !sender.hasPermission(
+                "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", "")))
                 || !sender.hasPermission("citizens.npc.controllable"))
             throw new NoPermissionsException();
         if (!npc.hasTrait(Controllable.class)) {
-            npc.addTrait(new Controllable(false));
+            npc.getOrAddTrait(Controllable.class).setEnabled(false);
         }
         Controllable trait = npc.getOrAddTrait(Controllable.class);
         boolean enabled = trait.toggle();

@@ -437,6 +437,8 @@ public class ShopTrait extends Trait {
 
         public void onClick(NPCShop shop, Player player, InventoryMultiplexer inventory, boolean shiftClick,
                 boolean secondClick) {
+            // TODO: InventoryMultiplexer could be lifted up to transact in apply(), which would be cleaner.
+            // if this is done, it should probably refresh after every transaction application
             if (timesPurchasable > 0 && purchases.getOrDefault(player.getUniqueId(), 0) == timesPurchasable) {
                 if (alreadyPurchasedMessage != null) {
                     Messaging.sendColorless(player, placeholders(alreadyPurchasedMessage, player));

@@ -1,12 +1,10 @@
 package net.citizensnpcs.util;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -51,19 +49,7 @@ public enum PlayerAnimation {
     }
 
     public void play(Player from, int radius) {
-        play(from, () -> {
-            Location loc = from.getLocation();
-            Location cloc = new Location(null, 0, 0, 0);
-            List<Player> to = Lists.newArrayList();
-            for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(loc, radius)) {
-                if (loc.getWorld() != player.getWorld() || !player.canSee(from)
-                        || loc.distance(player.getLocation(cloc)) > radius) {
-                    continue;
-                }
-                to.add(player);
-            }
-            return to;
-        });
+        play(from, () -> Lists.newArrayList(CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(from, radius)));
     }
 
     public void play(Player player, Iterable<Player> to) {

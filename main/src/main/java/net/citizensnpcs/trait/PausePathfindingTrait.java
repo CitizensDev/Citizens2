@@ -45,8 +45,8 @@ public class PausePathfindingTrait extends Trait {
     public void run() {
         if (playerRange == -1 || !npc.isSpawned() || unpauseTaskId == -1 && !npc.getNavigator().isNavigating())
             return;
-        if (CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getStoredLocation(), playerRange).iterator()
-                .hasNext()) {
+        if (CitizensAPI.getLocationLookup()
+                .getNearbyVisiblePlayers(npc.getEntity(), npc.getStoredLocation(), playerRange).iterator().hasNext()) {
             pause();
         }
     }
