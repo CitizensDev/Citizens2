@@ -106,9 +106,9 @@ public class Util {
     }
 
     public static boolean canSee(Player player, Entity from) {
-        if (from instanceof Player) {
+        if (from instanceof Player)
             return player.canSee((Player) from);
-        }
+
         if (SUPPORTS_ENTITY_CANSEE) {
             try {
                 return player.canSee(from);

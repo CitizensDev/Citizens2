@@ -530,8 +530,9 @@ public class NMS {
     private static Collection<Player> getNearbyPlayers(Entity from, Location location, double radius) {
         List<Player> players = Lists.newArrayList();
         for (Player player : CitizensAPI.getLocationLookup().getNearbyPlayers(location, radius)) {
-            if (location.getWorld() != player.getWorld() || from != null && Util.canSee(player, from)
-                    || location.distance(player.getLocation()) > radius)
+            if (location.getWorld() != player.getWorld() || location.distance(player.getLocation()) > radius)
+                continue;
+            if (from != null && !Util.canSee(player, from))
                 continue;
 
             players.add(player);
