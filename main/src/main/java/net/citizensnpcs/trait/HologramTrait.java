@@ -637,7 +637,7 @@ public class HologramTrait extends Trait {
     public static class TabCompletions implements CompletionsProvider {
         @Override
         public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
-            if (npc != null && LINE_ARGS.contains(args.getString(1).toLowerCase())) {
+            if (args.length() > 1 && npc != null && LINE_ARGS.contains(args.getString(1).toLowerCase())) {
                 HologramTrait ht = npc.getOrAddTrait(HologramTrait.class);
                 return IntStream.range(0, ht.getLines().size()).mapToObj(Integer::toString)
                         .collect(Collectors.toList());

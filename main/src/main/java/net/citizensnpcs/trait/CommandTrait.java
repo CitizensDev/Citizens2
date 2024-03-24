@@ -704,8 +704,8 @@ public class CommandTrait extends Trait {
             for (DataKey key : root.getRelative("itemCost").getIntegerSubKeys()) {
                 items.add(ItemStorage.loadItemStack(key));
             }
-            double cost = root.keyExists("cost") ? root.getDouble("cost") : -1;
-            int exp = root.keyExists("experienceCost") ? root.getInt("experienceCost") : -1;
+            double cost = root.getDouble("cost", -1);
+            int exp = root.getInt("experienceCost", -1);
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
                     Hand.valueOf(root.getString("hand")), Boolean.parseBoolean(root.getString("player")),
                     Boolean.parseBoolean(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
