@@ -126,6 +126,10 @@ public class HologramTrait extends Trait {
         if (itemMatcher.matches()) {
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
+            if (item == null) {
+                hologramNPC.destroy();
+                throw new IllegalStateException("Unknown material " + line);
+            }
             ItemStack itemStack = new ItemStack(item, 1);
             NPC itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", itemStack);
             itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
@@ -137,6 +141,10 @@ public class HologramTrait extends Trait {
                     itemNPC.getOrAddTrait(ScoreboardTrait.class)
                             .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
                 }
+            }
+            if (hologramNPC.data().has(NPC.Metadata.TRACKING_RANGE)) {
+                itemNPC.data().setPersistent(NPC.Metadata.TRACKING_RANGE,
+                        hologramNPC.data().get(NPC.Metadata.TRACKING_RANGE));
             }
             itemNPC.getOrAddTrait(MountTrait.class).setMountedOn(hologramNPC.getUniqueId());
             itemNPC.spawn(currentLoc);
