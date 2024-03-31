@@ -34,7 +34,6 @@ import org.bukkit.craftbukkit.v1_20_R3.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_20_R3.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftWither;
 import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_20_R3.event.CraftPortalEvent;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryAnvil;
@@ -44,7 +43,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Wither;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -1720,12 +1718,6 @@ public class NMSImpl implements NMSBridge {
         } else {
             warden.setPose(Pose.STANDING);
         }
-    }
-
-    @Override
-    public void setWitherCharged(Wither wither, boolean charged) {
-        WitherBoss handle = ((CraftWither) wither).getHandle();
-        handle.setInvulnerableTicks(charged ? 20 : 0);
     }
 
     @Override

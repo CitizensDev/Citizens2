@@ -3422,7 +3422,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "wither (--invulnerable [true|false]) (--arrow-shield [true|false])",
+            usage = "wither (--invulnerable [true|false]) (--invulnerable-ticks [ticks]) (--arrow-shield [true|false])",
             desc = "",
             modifiers = { "wither" },
             min = 1,
@@ -3431,10 +3431,14 @@ public class NPCCommands {
             permission = "citizens.npc.wither")
     @Requirements(selected = true, ownership = true, types = { EntityType.WITHER })
     public void wither(CommandContext args, CommandSender sender, NPC npc, @Flag("invulnerable") Boolean invulnerable,
-            @Flag("arrow-shield") Boolean arrows) throws CommandException {
+            @Flag("arrow-shield") Boolean arrows, @Flag("invulnerable-ticks") Integer invulnerableTicks)
+            throws CommandException {
         WitherTrait trait = npc.getOrAddTrait(WitherTrait.class);
         if (invulnerable != null) {
             trait.setInvulnerable(invulnerable);
+        }
+        if (invulnerableTicks != null) {
+            trait.setInvulnerableTicks(invulnerableTicks);
         }
         if (arrows != null) {
             trait.setBlocksArrows(arrows);

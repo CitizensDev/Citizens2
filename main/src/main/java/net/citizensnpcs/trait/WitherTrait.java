@@ -18,6 +18,8 @@ public class WitherTrait extends Trait {
     private Boolean arrowShield;
     @Persist("charged")
     private Boolean invulnerable;
+    @Persist("invulnerableticks")
+    private Integer invulnerableTicks;
 
     public WitherTrait() {
         super("withertrait");
@@ -27,8 +29,16 @@ public class WitherTrait extends Trait {
         return arrowShield;
     }
 
+    public Integer getInvulnerableTicks() {
+        return invulnerableTicks;
+    }
+
     public boolean isInvulnerable() {
-        return invulnerable == null ? npc.isProtected() : invulnerable;
+        if (invulnerable != null)
+            return invulnerable;
+        if (invulnerableTicks != null)
+            return invulnerableTicks > 0;
+        return npc.isProtected();
     }
 
     @Override
@@ -36,7 +46,13 @@ public class WitherTrait extends Trait {
         if (!(npc.getEntity() instanceof Wither))
             return;
         Wither wither = (Wither) npc.getEntity();
-        NMS.setWitherInvulnerable(wither, invulnerable == null ? npc.isProtected() : invulnerable);
+        if (invulnerable != null) {
+            NMS.setWitherInvulnerableTicks(wither, invulnerable ? 20 : 0);
+        } else if (invulnerableTicks != null) {
+            NMS.setWitherInvulnerableTicks(wither, invulnerableTicks);
+        } else {
+            NMS.setWitherInvulnerableTicks(wither, npc.isProtected() ? 20 : 0);
+        }
         if (arrowShield != null) {
             npc.data().set("wither-arrow-shield", arrowShield);
         } else {
@@ -50,5 +66,9 @@ public class WitherTrait extends Trait {
 
     public void setInvulnerable(boolean invulnerable) {
         this.invulnerable = invulnerable;
+    }
+
+    public void setInvulnerableTicks(int ticks) {
+        this.invulnerableTicks = ticks;
     }
 }

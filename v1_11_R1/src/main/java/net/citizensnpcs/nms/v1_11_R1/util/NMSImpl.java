@@ -1387,9 +1387,9 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setWitherCharged(Wither wither, boolean charged) {
+    public void setWitherInvulnerableTicks(Wither wither, int ticks) {
         EntityWither handle = ((CraftWither) wither).getHandle();
-        handle.g(charged ? 20 : 0);
+        handle.g(ticks);
     }
 
     @Override

@@ -271,7 +271,9 @@ public interface NMSBridge {
     public default void setWardenPose(Entity entity, Object pose) {
     }
 
-    public void setWitherCharged(Wither wither, boolean charged);
+    public default void setWitherInvulnerableTicks(Wither wither, int ticks) {
+        wither.setInvulnerabilityTicks(ticks);
+    }
 
     public boolean shouldJump(Entity entity);
 

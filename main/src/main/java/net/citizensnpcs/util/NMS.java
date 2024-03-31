@@ -914,8 +914,8 @@ public class NMS {
         BRIDGE.setWardenPose(entity, pose);
     }
 
-    public static void setWitherInvulnerable(Wither wither, boolean charged) {
-        BRIDGE.setWitherCharged(wither, charged);
+    public static void setWitherInvulnerableTicks(Wither wither, int ticks) {
+        BRIDGE.setWitherInvulnerableTicks(wither, ticks);
     }
 
     public static boolean shouldJump(org.bukkit.entity.Entity entity) {
