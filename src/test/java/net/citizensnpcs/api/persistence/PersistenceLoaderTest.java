@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.Before;
@@ -118,6 +119,16 @@ public class PersistenceLoaderTest {
             field.setAccessible(true);
             assertThat(field.get(test), is(field.get(newInstance)));
         }
+    }
+
+    @Test
+    public void savesNulls() throws Exception {
+        NullUUIDTest test = new NullUUIDTest();
+        test.uuid = UUID.randomUUID();
+        PersistenceLoader.save(test, root);
+        test.uuid = null;
+        PersistenceLoader.save(test, root);
+        assertThat(root.keyExists("uuid"), is(false));
     }
 
     @Before
@@ -256,6 +267,11 @@ public class PersistenceLoaderTest {
     public static class LongLoadSaveTest {
         @Persist("root2")
         public long term = 0;
+    }
+
+    public static class NullUUIDTest {
+        @Persist
+        private UUID uuid;
     }
 
     public static class ReifiedListTest {

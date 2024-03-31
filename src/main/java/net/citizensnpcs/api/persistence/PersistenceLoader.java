@@ -553,8 +553,10 @@ public class PersistenceLoader {
     }
 
     private static void serialise(PersistField field, Object fieldValue, DataKey root) {
-        if (fieldValue == null)
+        if (fieldValue == null) {
+            root.removeKey(field.key);
             return;
+        }
         if (Collection.class.isAssignableFrom(field.getType())) {
             Collection<?> collection = (Collection<?>) fieldValue;
             root.removeKey(field.key);

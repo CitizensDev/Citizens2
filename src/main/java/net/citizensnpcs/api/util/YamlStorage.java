@@ -85,11 +85,6 @@ public class YamlStorage implements FileStorage {
         }
     }
 
-    private boolean pathExists(String key) {
-        Object object = config.get(key);
-        return object != null && !(object instanceof ConfigurationSection);
-    }
-
     @Override
     public void save() {
         try {
@@ -120,6 +115,11 @@ public class YamlStorage implements FileStorage {
         }
     }
 
+    private boolean valueExists(String key) {
+        Object object = config.get(key);
+        return object != null && !(object instanceof ConfigurationSection);
+    }
+
     public class YamlKey extends DataKey {
         public YamlKey(String root) {
             super(root);
@@ -138,7 +138,7 @@ public class YamlStorage implements FileStorage {
         @Override
         public boolean getBoolean(String key) {
             String path = createRelativeKey(key);
-            if (pathExists(path)) {
+            if (valueExists(path)) {
                 if (config.getString(path) == null)
                     return config.getBoolean(path);
                 return Boolean.parseBoolean(config.getString(path));
@@ -159,7 +159,7 @@ public class YamlStorage implements FileStorage {
         @Override
         public double getDouble(String key, double def) {
             String path = createRelativeKey(key);
-            if (pathExists(path)) {
+            if (valueExists(path)) {
                 Object value = config.get(path);
                 if (value instanceof Number)
                     return ((Number) value).doubleValue();
@@ -184,7 +184,7 @@ public class YamlStorage implements FileStorage {
         @Override
         public int getInt(String key, int def) {
             String path = createRelativeKey(key);
-            if (pathExists(path)) {
+            if (valueExists(path)) {
                 Object value = config.get(path);
                 if (value instanceof Number)
                     return ((Number) value).intValue();
@@ -204,7 +204,7 @@ public class YamlStorage implements FileStorage {
         @Override
         public long getLong(String key, long def) {
             String path = createRelativeKey(key);
-            if (pathExists(path)) {
+            if (valueExists(path)) {
                 Object value = config.get(path);
                 if (value instanceof Number)
                     return ((Number) value).longValue();
@@ -244,7 +244,7 @@ public class YamlStorage implements FileStorage {
         @Override
         public String getString(String key) {
             String path = createRelativeKey(key);
-            if (pathExists(path))
+            if (valueExists(path))
                 return config.get(path).toString();
             return "";
         }
@@ -275,10 +275,7 @@ public class YamlStorage implements FileStorage {
 
         @Override
         public boolean keyExists(String key) {
-            Object value = config.get(createRelativeKey(key));
-            if (value == null)
-                return false;
-            return true;
+            return config.get(createRelativeKey(key)) != null;
         }
 
         @Override
