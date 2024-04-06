@@ -1149,7 +1149,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public CraftInventoryView getBukkitView() {
-                if (this.bukkitEntity != null) {
+                if (this.bukkitEntity == null) {
                     this.bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(),
                             new CitizensInventoryAnvil(this.access.getLocation(), this.inputSlots, this.resultSlots,
                                     this, anvil),
