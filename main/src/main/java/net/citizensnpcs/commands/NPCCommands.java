@@ -2532,9 +2532,9 @@ public class NPCCommands {
             permission = "citizens.npc.rename")
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
-        String newName = args.getJoinedStrings(1);
+        String newName = Messaging.parseComponents(args.getJoinedStrings(1));
         int nameLength = SpigotUtil.getMaxNameLength(npc.getOrAddTrait(MobType.class).getType());
-        if (Placeholders.replace(Messaging.parseComponents(newName), sender, npc).length() > nameLength) {
+        if (newName.length() > nameLength) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             newName = newName.substring(0, nameLength);
         }
