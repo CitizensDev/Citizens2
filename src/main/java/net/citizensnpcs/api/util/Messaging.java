@@ -241,6 +241,14 @@ public class Messaging {
         log(Level.SEVERE, Translator.translate(key, messages));
     }
 
+    public static String stripColor(String raw) {
+        raw = ChatColor.stripColor(convertLegacyCodes(raw));
+        if (AUDIENCES != null && MINIMESSAGE != null)
+            return MINIMESSAGE.stripTags(raw);
+
+        return raw;
+    }
+
     public static String tr(String key, Object... messages) {
         return prettify(Translator.translate(key, messages));
     }
