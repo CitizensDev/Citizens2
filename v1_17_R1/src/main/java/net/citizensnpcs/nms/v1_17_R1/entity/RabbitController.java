@@ -216,6 +216,7 @@ public class RabbitController extends MobEntityController {
                     registerGoals(); // make sure the evil goals include the default AI goals
                 }
                 super.setRabbitType(type);
+                NMSImpl.clearGoals(npc, goalSelector, targetSelector);
             } else if (NMSImpl.getRabbitTypeField() != null) {
                 entityData.set(NMSImpl.getRabbitTypeField(), type);
             }
