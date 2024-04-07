@@ -222,14 +222,19 @@ public class RabbitController extends MobEntityController {
         }
 
         @Override
-        public void setRabbitType(int i) {
-            if (npc != null) {
-                if (NMSImpl.getRabbitTypeField() == null)
-                    return;
-                this.datawatcher.set(NMSImpl.getRabbitTypeField(), i);
+        public void setRabbitType(int type) {
+            if (npc == null) {
+                super.setRabbitType(type);
                 return;
             }
-            super.setRabbitType(i);
+            if (npc.useMinecraftAI()) {
+                if (goalSelector.d().count() == 0) {
+                    initPathfinder(); // make sure the evil goals include the default AI goals
+                }
+                super.setRabbitType(type);
+            } else if (NMSImpl.getRabbitTypeField() != null) {
+                datawatcher.set(NMSImpl.getRabbitTypeField(), type);
+            }
         }
     }
 
