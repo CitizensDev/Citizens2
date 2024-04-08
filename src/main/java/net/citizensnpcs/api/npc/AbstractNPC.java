@@ -206,8 +206,8 @@ public abstract class AbstractNPC implements NPC {
     public String getFullName() {
         int nameLength = SpigotUtil.getMaxNameLength(getEntityType());
         String replaced = Placeholders.replaceName(
-                Messaging.stripColor(coloredNameStringCache != null ? coloredNameStringCache : name), null, this);
-        if (replaced.length() > nameLength) {
+                coloredNameStringCache != null ? coloredNameStringCache : Messaging.parseComponents(name), null, this);
+        if (Messaging.stripColor(replaced).length() > nameLength) {
             Messaging.severe("ID", id, "created with name length greater than " + nameLength + ", truncating", replaced,
                     "to", replaced.substring(0, nameLength));
             replaced = replaced.substring(0, nameLength);
