@@ -123,6 +123,11 @@ public class HologramTrait extends Trait {
         return base;
     }
 
+    public Collection<Entity> getHologramEntities() {
+        return lines.stream().filter(l -> l.renderer.getEntity() != null).map(l -> l.renderer.getEntity())
+                .collect(Collectors.toList());
+    }
+
     /**
      * @return The line height between each hologram line, in blocks
      */
@@ -135,6 +140,10 @@ public class HologramTrait extends Trait {
      */
     public List<String> getLines() {
         return Lists.transform(lines, l -> l.text);
+    }
+
+    public Entity getNameEntity() {
+        return nameLine == null ? null : nameLine.renderer.getEntity();
     }
 
     public int getViewRange() {
@@ -424,6 +433,9 @@ public class HologramTrait extends Trait {
     public static interface HologramRenderer {
         void destroy();
 
+        @Deprecated
+        Entity getEntity();
+
         String getPerPlayerText(NPC npc, Player viewer);
 
         default boolean isSneaking(NPC npc, Player player) {
@@ -503,6 +515,11 @@ public class HologramTrait extends Trait {
                 hologram.destroy();
                 hologram = null;
             }
+        }
+
+        @Override
+        public Entity getEntity() {
+            return hologram != null ? hologram.getEntity() : null;
         }
 
         @Override
