@@ -735,7 +735,7 @@ public class NPCCommands {
                 throw new CommandException(Messaging.tr(Messages.NPC_CREATE_MISSING_MOBTYPE, args.getFlag("type")));
         }
         int nameLength = SpigotUtil.getMaxNameLength(type);
-        if (Placeholders.replace(Messaging.parseComponents(name), sender, npc).length() > nameLength) {
+        if (Placeholders.replace(Messaging.stripColor(name), sender, npc).length() > nameLength) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             name = name.substring(0, nameLength);
         }
@@ -1042,7 +1042,7 @@ public class NPCCommands {
                 if (!(sender instanceof ConsoleCommandSender)
                         && !followingNPC.getOrAddTrait(Owner.class).isOwnedBy(sender))
                     throw new CommandException(CommandMessages.MUST_BE_OWNER);
-                boolean following = !trait.isEnabled();
+                boolean following = explicit == null ? !trait.isEnabled() : explicit;
                 trait.follow(following ? followingNPC.getEntity() : null);
                 Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
                         followingNPC.getName());
@@ -2532,9 +2532,9 @@ public class NPCCommands {
             permission = "citizens.npc.rename")
     public void rename(CommandContext args, CommandSender sender, NPC npc) {
         String oldName = npc.getName();
-        String newName = Messaging.parseComponents(args.getJoinedStrings(1));
+        String newName = args.getJoinedStrings(1);
         int nameLength = SpigotUtil.getMaxNameLength(npc.getOrAddTrait(MobType.class).getType());
-        if (newName.length() > nameLength) {
+        if (Placeholders.replace(Messaging.stripColor(newName), sender, npc).length() > nameLength) {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             newName = newName.substring(0, nameLength);
         }

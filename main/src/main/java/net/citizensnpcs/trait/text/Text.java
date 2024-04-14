@@ -12,7 +12,6 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.Maps;
 
@@ -20,11 +19,9 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.Placeholders;
@@ -44,9 +41,9 @@ public class Text extends Trait implements Runnable, Listener {
     private int delay = -1;
     @Persist(value = "talkitem")
     private String itemInHandPattern = "default";
-    private final Plugin plugin;
     @Persist(value = "random-talker")
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
+    @Persist
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
     @Persist(value = "realistic-looking")
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
@@ -54,11 +51,11 @@ public class Text extends Trait implements Runnable, Listener {
     private boolean speechBubbles;
     @Persist(value = "talk-close")
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
-    private final List<String> text = new ArrayList<>();
+    @Persist
+    private volatile List<String> text = new ArrayList<>();
 
     public Text() {
         super("text");
-        plugin = CitizensAPI.getPlugin();
     }
 
     /**
@@ -87,9 +84,9 @@ public class Text extends Trait implements Runnable, Listener {
      * Builds a text editor in game for the supplied {@link Player}.
      */
     public Editor getEditor(Player player) {
-        Conversation conversation = new ConversationFactory(plugin).withLocalEcho(false).withEscapeSequence("/npc text")
-                .withEscapeSequence("exit").withModality(false).withFirstPrompt(new TextBasePrompt(this))
-                .buildConversation(player);
+        Conversation conversation = new ConversationFactory(CitizensAPI.getPlugin()).withLocalEcho(false)
+                .withEscapeSequence("/npc text").withEscapeSequence("exit").withModality(false)
+                .withFirstPrompt(new TextBasePrompt(this)).buildConversation(player);
         return new Editor() {
             @Override
             public void begin() {
@@ -135,18 +132,6 @@ public class Text extends Trait implements Runnable, Listener {
         return randomTalker;
     }
 
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        text.clear();
-        for (DataKey sub : key.getRelative("text").getIntegerSubKeys()) {
-            text.add(sub.getString(""));
-        }
-        if (text.isEmpty()) {
-            populateDefaultText();
-        }
-        range = key.getDouble("range");
-    }
-
     @EventHandler
     private void onRightClick(NPCRightClickEvent event) {
         if (!event.getNPC().equals(npc) || text.size() == 0)
@@ -158,8 +143,11 @@ public class Text extends Trait implements Runnable, Listener {
         }
     }
 
-    private void populateDefaultText() {
-        text.addAll(Setting.DEFAULT_TEXT.asList());
+    @Override
+    public void onSpawn() {
+        if (text.isEmpty()) {
+            text.addAll(Setting.DEFAULT_TEXT.asList());
+        }
     }
 
     /**
@@ -176,15 +164,6 @@ public class Text extends Trait implements Runnable, Listener {
 
         for (Player player : CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(npc.getEntity(), range)) {
             talk(player);
-        }
-    }
-
-    @Override
-    public void save(DataKey key) {
-        key.setDouble("range", range);
-        key.removeKey("text");
-        for (int i = 0; i < text.size(); i++) {
-            key.setString("text." + String.valueOf(i), text.get(i));
         }
     }
 

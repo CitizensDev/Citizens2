@@ -192,7 +192,7 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean requiresNameHologram() {
-        return !data().has(NPC.Metadata.HOLOGRAM_FOR)
+        return !data().has(NPC.Metadata.HOLOGRAM_RENDERER)
                 && (super.requiresNameHologram() || Setting.ALWAYS_USE_NAME_HOLOGRAM.asBoolean());
     }
 

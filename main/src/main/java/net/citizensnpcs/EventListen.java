@@ -112,7 +112,7 @@ import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
-import net.citizensnpcs.trait.HologramTrait;
+import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.util.ChunkCoord;
@@ -469,17 +469,12 @@ public class EventListen implements Listener {
             if (skinnable.getSkinTracker().getSkin() != null) {
                 skinnable.getSkinTracker().getSkin().apply(skinnable);
             }
-        }
-        if (npc.isSpawned() && npc.getEntity().getType() == EntityType.PLAYER) {
             onNPCPlayerLinkToPlayer(event);
         }
-        ClickRedirectTrait crt = npc.getTraitNullable(ClickRedirectTrait.class);
-        if (crt != null) {
-            HologramTrait ht = crt.getRedirectNPC().getTraitNullable(HologramTrait.class);
-            if (ht != null) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                        () -> ht.onHologramSeenByPlayer(npc, event.getPlayer()), 2);
-            }
+        if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
+            HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    () -> hr.onSeenByPlayer(event.getPlayer()), 2);
         }
     }
 

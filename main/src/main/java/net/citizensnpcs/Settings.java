@@ -108,6 +108,9 @@ public class Settings {
         DEFAULT_DISTANCE_MARGIN(
                 "The default MOVEMENT distance in blocks where the NPC will move to before considering a path finished<br>Note: this is different from the PATHFINDING distance which is specified by path-distance-margin",
                 "npc.pathfinding.default-distance-margin", 1),
+        DEFAULT_HOLOGRAM_RENDERER(
+                "The default renderer for holograms, must be one of the following:<br>interaction - matches inbuilt nametags most closely<br>display - allows for different colored backgrounds<br>armorstand - creates an armorstand and teleports it to the player",
+                "npc.hologram.default-renderer", "interaction"),
         DEFAULT_LOOK_CLOSE("Enable look close by default", "npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("Default look close range in blocks", "npc.default.look-close.range", 10),
         DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT("Default distance between hologram lines", "npc.hologram.default-line-height",
@@ -166,9 +169,6 @@ public class Settings {
                 "Minecraft will pick a 'close-enough' location when pathfinding to a block if it can't find a direct path<br>Disabled by default",
                 "npc.pathfinding.disable-mc-fallback-navigation", true),
         DISABLE_TABLIST("Whether to remove NPCs from the tablist", "npc.tablist.disable", true),
-        DISPLAY_ENTITY_HOLOGRAMS(
-                "Whether to use display entities for holograms by default (in theory more performant than armor stands)<br>Requires 1.19.4 or above, defaults to false",
-                "npc.hologram.use-display-entities", false),
         ENTITY_SPAWN_WAIT_DURATION(
                 "Entities are no longer spawned until the chunks are loaded from disk<br>Wait for chunk loading for one second by default, increase if your disk is slow",
                 "general.entity-spawn-wait-ticks", "general.wait-for-entity-spawn", "1s"),
@@ -284,11 +284,11 @@ public class Settings {
             this.value = value;
         }
 
-        Setting(String migrate, String path, Object value) {
-            if (migrate.contains(".")) {
-                this.migrate = migrate;
+        Setting(String migrateOrComments, String path, Object value) {
+            if (migrateOrComments.contains(".") && !migrateOrComments.contains(" ")) {
+                migrate = migrateOrComments;
             } else {
-                comments = migrate;
+                comments = migrateOrComments;
             }
             this.path = path;
             this.value = value;

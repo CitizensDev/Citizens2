@@ -6,11 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -44,8 +42,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
-import net.citizensnpcs.trait.ClickRedirectTrait;
-import net.citizensnpcs.trait.HologramTrait;
+import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
@@ -71,16 +68,13 @@ public class ProtocolLibListener implements Listener {
 
                 PacketContainer packet = event.getPacket();
                 int version = manager.getProtocolVersion(event.getPlayer());
-                if (npc.data().has(NPC.Metadata.HOLOGRAM_FOR) || npc.data().has(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER)) {
-                    Function<Player, String> hvs = npc.data().get(NPC.Metadata.HOLOGRAM_LINE_SUPPLIER);
+                if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
+                    HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
                     Object fakeName = null;
-                    if (hvs != null) {
-                        String suppliedName = hvs.apply(event.getPlayer());
-                        fakeName = version <= 340 ? suppliedName
-                                : Optional.of(Messaging.minecraftComponentFromRawMessage(suppliedName));
-                    }
-                    boolean sneaking = npc.getOrAddTrait(ClickRedirectTrait.class).getRedirectNPC()
-                            .getOrAddTrait(HologramTrait.class).isHologramSneaking(npc, event.getPlayer());
+                    String suppliedName = hr.getPerPlayerText(npc, event.getPlayer());
+                    fakeName = version <= 340 ? suppliedName
+                            : Optional.of(Messaging.minecraftComponentFromRawMessage(suppliedName));
+                    boolean sneaking = hr.isSneaking(npc, event.getPlayer());
                     boolean delta = false;
 
                     if (version < 761) {

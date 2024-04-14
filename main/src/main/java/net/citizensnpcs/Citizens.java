@@ -521,7 +521,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
         Translator.setInstance(new File(getDataFolder(), "lang"), locale);
         if (!locale.getLanguage().equals("en")) {
-            Messaging.logTr(Messages.CONTRIBUTE_TO_TRANSLATION_PROMPT);
+            Messaging.logTr(Messages.CONTRIBUTE_TO_TRANSLATION_PROMPT, locale.getLanguage());
         }
     }
 

@@ -38,8 +38,8 @@ public class FollowTrait extends Trait {
     }
 
     private void cancelNavigationIfActive() {
-        if (npc.getNavigator().isNavigating() && this.entity != null && npc.getNavigator().getEntityTarget() != null
-                && this.entity == npc.getNavigator().getEntityTarget().getTarget()) {
+        if (npc.getNavigator().isNavigating() && entity != null && npc.getNavigator().getEntityTarget() != null
+                && entity == npc.getNavigator().getEntityTarget().getTarget()) {
             npc.getNavigator().cancelNavigation();
         }
     }
@@ -47,10 +47,10 @@ public class FollowTrait extends Trait {
     /**
      * Sets the {@link Entity} to follow
      */
-    public void follow(Entity entity) {
-        followingUUID = entity == null ? null : entity.getUniqueId();
+    public void follow(Entity follow) {
         cancelNavigationIfActive();
-        this.entity = null;
+        followingUUID = follow == null ? null : follow.getUniqueId();
+        entity = null;
     }
 
     public Entity getFollowing() {
