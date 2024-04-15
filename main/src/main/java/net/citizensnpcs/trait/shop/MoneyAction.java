@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
@@ -18,6 +19,8 @@ import net.milkbowl.vault.economy.Economy;
 public class MoneyAction extends NPCShopAction {
     @Persist
     public double money;
+    @Persist
+    private String formattedMoney;
 
     public MoneyAction() {
     }
@@ -29,7 +32,11 @@ public class MoneyAction extends NPCShopAction {
     @Override
     public String describe() {
         Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
-        return money + " " + economy.currencyNamePlural();
+        return getFormattedMoney() + " " + economy.currencyNamePlural();
+    }
+
+    private String getFormattedMoney() {
+        return formattedMoney == null || formattedMoney.isEmpty() ? Double.toString(money) : formattedMoney;
     }
 
     @Override
@@ -81,11 +88,12 @@ public class MoneyAction extends NPCShopAction {
             MoneyAction action = previous == null ? new MoneyAction() : (MoneyAction) previous;
             return InputMenus.filteredStringSetter(() -> Double.toString(action.money), s -> {
                 try {
-                    double result = Double.parseDouble(s);
+                    double result = Double.parseDouble(Messaging.stripColor(s));
                     if (result < 0)
                         return false;
 
                     action.money = result;
+                    action.formattedMoney = !Messaging.stripColor(s).equals(s) ? s : null;
                 } catch (NumberFormatException nfe) {
                     return false;
                 }
