@@ -7,7 +7,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.monster.Slime;
@@ -104,10 +103,7 @@ public class EntityMoveControl extends MoveControl {
                 this.entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
                 NMS.setHeadYaw(entity.getBukkitEntity(), this.entity.getYRot());
             }
-            AttributeInstance speed = this.entity.getAttribute(Attributes.MOVEMENT_SPEED);
-            float movement = (float) (this.speed * speed.getValue());
-            this.entity.setSpeed(movement);
-            this.entity.zza = movement;
+            this.entity.zza = (float) (this.speed * this.entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue());
             if (entity instanceof Slime && jumpTicks-- <= 0) {
                 this.jumpTicks = new Random().nextInt(20) + 10;
                 if (((Slime) entity).isAggressive()) {

@@ -4,7 +4,6 @@ import java.util.Random;
 
 import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_8_R3.AttributeInstance;
 import net.minecraft.server.v1_8_R3.ControllerMove;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityLiving;
@@ -82,10 +81,7 @@ public class PlayerControllerMove extends ControllerMove {
         float f = (float) Math.toDegrees(Math.atan2(dZ, dX)) - 90.0F;
         this.a.yaw = a(this.a.yaw, f, 90.0F);
         NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
-        AttributeInstance speed = this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
-        float movement = (float) (this.e * speed.getValue());
-        this.a.k(movement);
-        this.a.ba = movement;
+        this.a.ba = (float) (this.e * this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue());
         if (a instanceof EntitySlime && h-- <= 0) {
             this.h = new Random().nextInt(20) + 10;
             this.h /= 3;

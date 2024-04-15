@@ -137,21 +137,21 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         detectEquipmentUpdatesPublic();
         noPhysics = isSpectator();
         if (isSpectator()) {
-            this.onGround = false;
+            onGround = false;
         }
         pushEntities();
         if (npc.useMinecraftAI()) {
             foodData.tick(this);
         }
         if (npc.data().get(NPC.Metadata.PICKUP_ITEMS, false)) {
-            if (this.takeXpDelay > 0) {
-                --this.takeXpDelay;
+            if (takeXpDelay > 0) {
+                --takeXpDelay;
             }
             AABB axisalignedbb;
-            if (this.isPassenger() && !this.getVehicle().isRemoved()) {
-                axisalignedbb = this.getBoundingBox().minmax(this.getVehicle().getBoundingBox()).inflate(1.0, 0.0, 1.0);
+            if (isPassenger() && !getVehicle().isRemoved()) {
+                axisalignedbb = getBoundingBox().minmax(this.getVehicle().getBoundingBox()).inflate(1.0, 0.0, 1.0);
             } else {
-                axisalignedbb = this.getBoundingBox().inflate(1.0, 0.5, 1.0);
+                axisalignedbb = getBoundingBox().inflate(1.0, 0.5, 1.0);
             }
             for (Entity entity : level().getEntities(this, axisalignedbb)) {
                 entity.playerTouch(this);
@@ -210,7 +210,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public ServerStatsCounter getStats() {
-        return this.statsCache == null ? statsCache = new EmptyServerStatsCounter() : statsCache;
+        return statsCache == null ? statsCache = new EmptyServerStatsCounter() : statsCache;
     }
 
     @Override
