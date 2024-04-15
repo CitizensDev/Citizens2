@@ -710,6 +710,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public float getRidingHeightOffset(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity mount) {
+        return getHandle(entity).getMyRidingOffset(getHandle(mount));
+    }
+
+    @Override
     public String getSoundPath(Sound flag) throws CommandException {
         try {
             SoundEvent effect = CraftSound.bukkitToMinecraft(flag);
@@ -1470,13 +1475,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setCustomName(org.bukkit.entity.Entity entity, Object component, String string) {
-        if (getHandle(entity) instanceof net.minecraft.world.entity.Display.TextDisplay) {
-            net.minecraft.world.entity.Display.TextDisplay disp = (net.minecraft.world.entity.Display.TextDisplay) getHandle(
-                    entity);
-            disp.setText((Component) component);
-        } else {
-            getHandle(entity).setCustomName((Component) component);
-        }
+        getHandle(entity).setCustomName((Component) component);
     }
 
     @Override
@@ -1672,6 +1671,13 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setStepHeight(org.bukkit.entity.Entity entity, float height) {
         getHandle(entity).setMaxUpStep(height);
+    }
+
+    @Override
+    public void setTextDisplayComponent(org.bukkit.entity.Entity entity, Object component) {
+        net.minecraft.world.entity.Display.TextDisplay disp = (net.minecraft.world.entity.Display.TextDisplay) getHandle(
+                entity);
+        disp.setText((Component) component);
     }
 
     @Override

@@ -14,6 +14,7 @@ import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.Util;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Display.TextDisplay;
@@ -103,6 +104,11 @@ public class TextDisplayController extends MobEntityController {
             super.tick();
             if (npc != null) {
                 npc.update();
+                Component component = npc.data().get(NPC.Metadata.TEXT_DISPLAY_COMPONENT);
+                if (component != null) {
+                    setText(component);
+                    npc.data().remove(NPC.Metadata.TEXT_DISPLAY_COMPONENT);
+                }
             }
         }
 

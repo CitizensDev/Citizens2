@@ -100,6 +100,10 @@ public interface NMSBridge {
 
     public GameProfile getProfile(SkullMeta meta);
 
+    public default float getRidingHeightOffset(Entity entity, Entity mount) {
+        return 0;
+    }
+
     public String getSoundPath(Sound flag) throws CommandException;
 
     public Entity getSource(BlockCommandSender sender);
@@ -264,6 +268,9 @@ public interface NMSBridge {
 
     public default void setTeamNameTagVisible(Team team, boolean visible) {
         team.setOption(Team.Option.NAME_TAG_VISIBILITY, visible ? Team.OptionStatus.ALWAYS : Team.OptionStatus.NEVER);
+    }
+
+    public default void setTextDisplayComponent(Entity entity, Object component) {
     }
 
     public void setVerticalMovement(Entity bukkitEntity, double d);

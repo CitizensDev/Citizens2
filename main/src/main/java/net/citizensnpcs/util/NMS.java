@@ -906,6 +906,10 @@ public class NMS {
         BRIDGE.setTeamNameTagVisible(team, visible);
     }
 
+    public static void setTextDisplayComponent(Entity entity, Object component) {
+        BRIDGE.setTextDisplayComponent(entity, component);
+    }
+
     public static void setVerticalMovement(Entity bukkitEntity, double d) {
         BRIDGE.setVerticalMovement(bukkitEntity, d);
     }

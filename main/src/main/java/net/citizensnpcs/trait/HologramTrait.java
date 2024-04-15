@@ -11,6 +11,7 @@ import java.util.stream.IntStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -25,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
 import org.joml.Vector3d;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -75,7 +77,7 @@ public class HologramTrait extends Trait {
      *            The new line to add
      */
     public void addLine(String text) {
-        lines.add(new HologramLine(text, true));
+        lines.add(new HologramLine(text, true, -1, createDefaultHologramRenderer()));
         reloadLineHolograms();
     }
 
@@ -94,7 +96,7 @@ public class HologramTrait extends Trait {
      *            The number of ticks to last for
      */
     public void addTemporaryLine(String text, int ticks) {
-        lines.add(new HologramLine(text, false, ticks));
+        lines.add(new HologramLine(text, false, ticks, createDefaultHologramRenderer()));
         reloadLineHolograms();
     }
 
@@ -113,6 +115,23 @@ public class HologramTrait extends Trait {
         lines.clear();
     }
 
+    private HologramRenderer createDefaultHologramRenderer() {
+        String hologramSetting = Setting.DEFAULT_HOLOGRAM_RENDERER.asString();
+        if (!SUPPORTS_DISPLAY || hologramSetting.equalsIgnoreCase("armorstand"))
+            return new ArmorstandRenderer();
+        return hologramSetting.equalsIgnoreCase("interaction") ? new InteractionVehicleRenderer()
+                : new TextDisplayVehicleRenderer();
+    }
+
+    private HologramRenderer createNameRenderer() {
+        if (SpigotUtil.getVersion()[1] >= 20) {
+            return new TextDisplayVehicleRenderer();
+        } else if (SpigotUtil.getVersion()[1] == 19) {
+            return new InteractionVehicleRenderer();
+        }
+        return new ArmorstandVehicleRenderer();
+    }
+
     private double getEntityBbHeight() {
         return NMS.getBoundingBoxHeight(npc.getEntity());
     }
@@ -129,9 +148,13 @@ public class HologramTrait extends Trait {
         return base;
     }
 
+    @Deprecated
     public Collection<Entity> getHologramEntities() {
-        return lines.stream().filter(l -> l.renderer.getEntity() != null).map(l -> l.renderer.getEntity())
-                .collect(Collectors.toList());
+        return lines.stream().flatMap(l -> l.renderer.getEntities().stream()).collect(Collectors.toList());
+    }
+
+    public Collection<HologramRenderer> getHologramRenderers() {
+        return lines.stream().map(l -> l.renderer).collect(Collectors.toList());
     }
 
     /**
@@ -148,8 +171,14 @@ public class HologramTrait extends Trait {
         return Lists.transform(lines, l -> l.text);
     }
 
+    @Deprecated
     public Entity getNameEntity() {
-        return nameLine == null ? null : nameLine.renderer.getEntity();
+        return nameLine == null || nameLine.renderer.getEntities().size() == 0 ? null
+                : nameLine.renderer.getEntities().iterator().next();
+    }
+
+    public HologramRenderer getNameRenderer() {
+        return nameLine == null ? null : nameLine.renderer;
     }
 
     public int getViewRange() {
@@ -161,7 +190,7 @@ public class HologramTrait extends Trait {
         clear();
         for (DataKey key : root.getRelative("lines").getIntegerSubKeys()) {
             HologramLine line = new HologramLine(key.keyExists("text") ? key.getString("text") : key.getString(""),
-                    true);
+                    true, -1, createDefaultHologramRenderer());
             line.mt = key.keyExists("margin.top") ? key.getDouble("margin.top") : 0.0;
             line.mb = key.keyExists("margin.bottom") ? key.getDouble("margin.bottom") : 0.0;
             lines.add(line);
@@ -224,8 +253,7 @@ public class HologramTrait extends Trait {
                 nameLine.removeNPC();
                 nameLine = null;
             } else if (nameLine == null && nameplateVisible) {
-                nameLine = new HologramLine(npc.getRawName(),
-                        SUPPORTS_DISPLAY ? new InteractionVehicleRenderer() : new ArmorstandVehicleRenderer());
+                nameLine = new HologramLine(npc.getRawName(), createNameRenderer());
             }
         }
         Location npcLoc = npc.getStoredLocation();
@@ -247,7 +275,7 @@ public class HologramTrait extends Trait {
             lastEntityBbHeight = getEntityBbHeight();
         }
         if (nameLine != null) {
-            if (updatePosition) {
+            if (updatePosition || nameLine.renderer.getEntities().size() == 0) {
                 nameLine.render(offset);
             }
             if (updateName) {
@@ -261,7 +289,7 @@ public class HologramTrait extends Trait {
                 lines.remove(i--).removeNPC();
                 continue;
             }
-            if (updatePosition || line.renderer.getEntity() == null) {
+            if (updatePosition || line.renderer.getEntities().size() == 0) {
                 offset.y = getHeight(i);
                 line.render(offset);
             }
@@ -379,26 +407,6 @@ public class HologramTrait extends Trait {
         String text;
         int ticks;
 
-        public HologramLine(String text, boolean persist) {
-            this(text, persist, -1,
-                    SUPPORTS_DISPLAY && Setting.DEFAULT_HOLOGRAM_RENDERER.asString().equalsIgnoreCase("interaction")
-                            ? new InteractionVehicleRenderer()
-                            : SUPPORTS_DISPLAY
-                                    && Setting.DEFAULT_HOLOGRAM_RENDERER.asString().equalsIgnoreCase("display")
-                                            ? new TextDisplayVehicleRenderer()
-                                            : new ArmorstandRenderer());
-        }
-
-        public HologramLine(String text, boolean persist, int ticks) {
-            this(text, persist, ticks,
-                    SUPPORTS_DISPLAY && Setting.DEFAULT_HOLOGRAM_RENDERER.asString().equalsIgnoreCase("interaction")
-                            ? new InteractionVehicleRenderer()
-                            : SUPPORTS_DISPLAY
-                                    && Setting.DEFAULT_HOLOGRAM_RENDERER.asString().equalsIgnoreCase("display")
-                                            ? new TextDisplayVehicleRenderer()
-                                            : new ArmorstandRenderer());
-        }
-
         public HologramLine(String text, boolean persist, int ticks, HologramRenderer hr) {
             if (ITEM_MATCHER.matcher(text).find()) {
                 mb = 0.21;
@@ -438,8 +446,7 @@ public class HologramTrait extends Trait {
     public static interface HologramRenderer {
         void destroy();
 
-        @Deprecated
-        Entity getEntity();
+        Collection<Entity> getEntities();
 
         String getPerPlayerText(NPC npc, Player viewer);
 
@@ -468,7 +475,6 @@ public class HologramTrait extends Trait {
         public void onSeenByPlayer(Player player) {
             if (lastOffset == null)
                 return;
-            Messaging.debug("Linking", player, hologram.getEntity());
             NMS.linkTextInteraction(player, hologram.getEntity(), npc.getEntity(), lastOffset.y);
         }
 
@@ -585,8 +591,8 @@ public class HologramTrait extends Trait {
         }
 
         @Override
-        public Entity getEntity() {
-            return hologram != null ? hologram.getEntity() : null;
+        public Collection<Entity> getEntities() {
+            return hologram != null ? ImmutableList.of(hologram.getEntity()) : Collections.emptyList();
         }
 
         @Override
@@ -648,9 +654,13 @@ public class HologramTrait extends Trait {
     }
 
     public class TextDisplayVehicleRenderer extends SingleEntityHologramRenderer {
+        private Color color;
+
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
-            NPC npc = registry.createNPC(EntityType.TEXT_DISPLAY, name);
+            NPC npc = registry.createNPC(EntityType.TEXT_DISPLAY, "");
+            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+            npc.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));
             return npc;
         }
 
@@ -661,9 +671,24 @@ public class HologramTrait extends Trait {
             Transformation tf = disp.getTransformation();
             tf.getTranslation().y = (float) offset.y + 0.2f;
             disp.setTransformation(tf);
+            if (color != null) {
+                disp.setBackgroundColor(color);
+            }
             if (hologram.getEntity().getVehicle() == null) {
                 base.getEntity().addPassenger(hologram.getEntity());
             }
+        }
+
+        public void setBackgroundColor(Color color) {
+            this.color = color;
+        }
+
+        @Override
+        public void updateText(NPC npc, String raw) {
+            this.text = Placeholders.replace(raw, null, npc);
+            if (hologram == null)
+                return;
+            npc.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
         }
     }
 
