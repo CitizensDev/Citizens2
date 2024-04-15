@@ -504,7 +504,8 @@ public class HologramTrait extends Trait {
 
         @Override
         protected void render0(NPC npc, Vector3d offset) {
-            hologram.getEntity().teleport(npc.getStoredLocation().clone().add(offset.x, offset.y, offset.z),
+            hologram.getEntity().teleport(
+                    npc.getStoredLocation().clone().add(offset.x, offset.y + getEntityBbHeight(), offset.z),
                     TeleportCause.PLUGIN);
         }
     }
