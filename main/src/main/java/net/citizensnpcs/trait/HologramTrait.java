@@ -468,6 +468,7 @@ public class HologramTrait extends Trait {
         public void onSeenByPlayer(Player player) {
             if (lastOffset == null)
                 return;
+            Messaging.debug("Linking", player, hologram.getEntity());
             NMS.linkTextInteraction(player, hologram.getEntity(), npc.getEntity(), lastOffset.y);
         }
 
@@ -658,7 +659,7 @@ public class HologramTrait extends Trait {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
             disp.setBillboard(Billboard.CENTER);
             Transformation tf = disp.getTransformation();
-            tf.getTranslation().y = (float) offset.y + 0.1f;
+            tf.getTranslation().y = (float) offset.y + 0.2f;
             disp.setTransformation(tf);
             if (hologram.getEntity().getVehicle() == null) {
                 base.getEntity().addPassenger(hologram.getEntity());
