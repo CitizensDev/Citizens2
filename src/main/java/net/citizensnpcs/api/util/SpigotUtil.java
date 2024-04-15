@@ -68,11 +68,15 @@ public class SpigotUtil {
             String version = Bukkit.getBukkitVersion();
 
             if (version == null || version.isEmpty())
-                return BUKKIT_VERSION = new int[] { 1, 8 };
+                return BUKKIT_VERSION = new int[] { 1, 8, 8 };
 
             String[] parts = version.split("\\.");
             if (parts[1].contains("-")) {
                 parts[1] = parts[1].split("-")[0];
+            }
+            if (parts.length == 3) {
+                return BUKKIT_VERSION = new int[] { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
+                        Integer.parseInt(parts[2]) };
             }
             return BUKKIT_VERSION = new int[] { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) };
         }

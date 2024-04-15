@@ -29,6 +29,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.DataKey;
+import net.kyori.adventure.text.Component;
 
 /**
  * Represents an NPC with optional {@link Trait}s.
@@ -583,6 +584,7 @@ public interface NPC extends Agent, Cloneable {
          * Whether to prevent NPC being targeted by hostile mobs.
          */
         TARGETABLE("protected-target", Boolean.class),
+        TEXT_DISPLAY_COMPONENT("text-display-component", Component.class),
         /**
          * The tracking distance for packets. Defaults to the default tracking distance defined by the server
          */
