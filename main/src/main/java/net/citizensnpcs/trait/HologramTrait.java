@@ -48,7 +48,7 @@ import net.citizensnpcs.util.Util;
  * Manages a set of <em>holograms</em> attached to the NPC. Holograms are lines of text or items that follow the NPC at
  * some offset (typically vertically offset).
  */
-// TODO: cleanup
+// TODO: cleanup: make HologramRenderer static, possibly make it singleton-friendly?
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
     private Location currentLoc;
@@ -94,6 +94,11 @@ public class HologramTrait extends Trait {
      */
     public void addTemporaryLine(String text, int ticks) {
         lines.add(new HologramLine(text, false, ticks));
+        reloadLineHolograms();
+    }
+
+    public void addTemporaryLine(String text, int ticks, HologramRenderer hr) {
+        lines.add(new HologramLine(text, false, ticks, hr));
         reloadLineHolograms();
     }
 
@@ -395,7 +400,7 @@ public class HologramTrait extends Trait {
         }
 
         public HologramLine(String text, boolean persist, int ticks, HologramRenderer hr) {
-            if (ITEM_MATCHER.matcher(text).matches()) {
+            if (ITEM_MATCHER.matcher(text).find()) {
                 mb = 0.21;
                 mt = 0.07;
                 hr = new ItemRenderer();
@@ -420,7 +425,7 @@ public class HologramTrait extends Trait {
 
         public void setText(String text) {
             this.text = text == null ? "" : text;
-            if (ITEM_MATCHER.matcher(text).matches()) {
+            if (ITEM_MATCHER.matcher(text).find()) {
                 renderer.destroy();
                 mb = 0.21;
                 mt = 0.07;
@@ -479,6 +484,7 @@ public class HologramTrait extends Trait {
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
             Matcher itemMatcher = ITEM_MATCHER.matcher(name);
+            itemMatcher.find();
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
             ItemStack itemStack = new ItemStack(item, 1);
@@ -555,13 +561,13 @@ public class HologramTrait extends Trait {
         }
 
         @Override
-        public void updateText(NPC npc, String text) {
-            this.text = Placeholders.replace(text, null, npc);
+        public void updateText(NPC npc, String raw) {
+            this.text = Placeholders.replace(raw, null, npc);
             if (hologram == null)
                 return;
             hologram.setName(text);
-            if (!Placeholders.containsPlaceholders(text)) {
-                hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, Messaging.stripColor(text).length() > 0);
+            if (!Placeholders.containsPlaceholders(raw)) {
+                hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, Messaging.stripColor(raw).length() > 0);
             }
         }
     }
@@ -600,7 +606,7 @@ public class HologramTrait extends Trait {
         }
     }
 
-    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:(.*?)([:].*?)?>");
+    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:([a-zA-Z0-9_ ]*?)([:].*?)?>");
     private static boolean SUPPORTS_DISPLAY = false;
     static {
         try {
