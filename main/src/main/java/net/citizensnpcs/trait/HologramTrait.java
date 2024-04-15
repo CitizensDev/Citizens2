@@ -17,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -194,7 +195,6 @@ public class HologramTrait extends Trait {
             nameLine.removeNPC();
             nameLine = null;
         }
-        currentLoc = null;
     }
 
     /**
@@ -261,7 +261,7 @@ public class HologramTrait extends Trait {
                 lines.remove(i--).removeNPC();
                 continue;
             }
-            if (updatePosition) {
+            if (updatePosition || line.renderer.getEntity() == null) {
                 offset.y = getHeight(i);
                 line.render(offset);
             }
@@ -425,7 +425,7 @@ public class HologramTrait extends Trait {
 
         public void setText(String text) {
             this.text = text == null ? "" : text;
-            if (ITEM_MATCHER.matcher(text).find()) {
+            if (ITEM_MATCHER.matcher(text).find() && !(renderer instanceof ItemRenderer)) {
                 renderer.destroy();
                 mb = 0.21;
                 mt = 0.07;
@@ -480,7 +480,7 @@ public class HologramTrait extends Trait {
         }
     }
 
-    public class ItemRenderer extends SingleEntityHologramRenderer {
+    public class ItemDisplayRenderer extends SingleEntityHologramRenderer {
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
             Matcher itemMatcher = ITEM_MATCHER.matcher(name);
@@ -488,7 +488,7 @@ public class HologramTrait extends Trait {
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
             ItemStack itemStack = new ItemStack(item, 1);
-            NPC npc = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", itemStack);
+            NPC npc = registry.createNPCUsingItem(EntityType.ITEM_DISPLAY, "", itemStack);
             npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
                 if (itemMatcher.group(2).charAt(1) == '{') {
@@ -503,10 +503,69 @@ public class HologramTrait extends Trait {
         }
 
         @Override
+        public void render0(NPC base, Vector3d offset) {
+            ItemDisplay disp = (ItemDisplay) hologram.getEntity();
+            Transformation tf = disp.getTransformation();
+            tf.getTranslation().y = (float) offset.y + 0.1f;
+            disp.setTransformation(tf);
+            if (hologram.getEntity().getVehicle() == null) {
+                base.getEntity().addPassenger(hologram.getEntity());
+            }
+        }
+
+        @Override
+        public void updateText(NPC npc, String text) {
+            this.text = Placeholders.replace(text, null, npc);
+        }
+    }
+
+    public class ItemRenderer extends SingleEntityHologramRenderer {
+        private NPC itemNPC;
+
+        @Override
+        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+            NPC mount = registry.createNPC(EntityType.ARMOR_STAND, "");
+            mount.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
+            Matcher itemMatcher = ITEM_MATCHER.matcher(name);
+            itemMatcher.find();
+            Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
+                    : Material.matchMaterial(itemMatcher.group(1));
+            ItemStack itemStack = new ItemStack(item, 1);
+            itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", itemStack);
+            itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+            if (itemMatcher.group(2) != null) {
+                if (itemMatcher.group(2).charAt(1) == '{') {
+                    Bukkit.getUnsafe().modifyItemStack(itemStack, itemMatcher.group(2).substring(1));
+                    itemNPC.setItemProvider(() -> itemStack);
+                } else {
+                    itemNPC.getOrAddTrait(ScoreboardTrait.class)
+                            .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
+                }
+            }
+            itemNPC.spawn(base.getLocation());
+            itemNPC.getOrAddTrait(MountTrait.class).setMountedOn(mount.getUniqueId());
+            return mount;
+        }
+
+        @Override
+        public void destroy() {
+            super.destroy();
+            if (itemNPC == null)
+                return;
+            itemNPC.destroy();
+            itemNPC = null;
+        }
+
+        @Override
         protected void render0(NPC npc, Vector3d offset) {
             hologram.getEntity().teleport(
                     npc.getStoredLocation().clone().add(offset.x, offset.y + getEntityBbHeight(), offset.z),
                     TeleportCause.PLUGIN);
+        }
+
+        @Override
+        public void updateText(NPC npc, String text) {
+            this.text = Placeholders.replace(text, null, npc);
         }
     }
 
