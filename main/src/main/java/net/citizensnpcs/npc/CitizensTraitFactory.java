@@ -36,6 +36,7 @@ import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HomeTrait;
 import net.citizensnpcs.trait.HorseModifiers;
+import net.citizensnpcs.trait.ItemFrameTrait;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.MountTrait;
@@ -89,6 +90,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(HorseModifiers.class));
         registerTrait(TraitInfo.create(HologramTrait.class));
         registerTrait(TraitInfo.create(Inventory.class));
+        registerTrait(TraitInfo.create(ItemFrameTrait.class));
         registerTrait(TraitInfo.create(LookClose.class));
         registerTrait(TraitInfo.create(PaintingTrait.class));
         registerTrait(TraitInfo.create(MirrorTrait.class).optInToStats());

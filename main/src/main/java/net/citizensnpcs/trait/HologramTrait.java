@@ -395,7 +395,7 @@ public class HologramTrait extends Trait {
         @Override
         public void render0(NPC base, Vector3d offset) {
             if (hologram.getEntity().getVehicle() == null) {
-                base.getEntity().addPassenger(hologram.getEntity());
+                NMS.mount(base.getEntity(), hologram.getEntity());
             }
         }
     }
@@ -482,7 +482,7 @@ public class HologramTrait extends Trait {
         public void render0(NPC npc, Vector3d offset) {
             lastOffset = new Vector3d(offset);
             if (hologram.getEntity().getVehicle() == null) {
-                npc.getEntity().addPassenger(hologram.getEntity());
+                NMS.mount(npc.getEntity(), hologram.getEntity());
             }
         }
     }
@@ -516,7 +516,7 @@ public class HologramTrait extends Trait {
             tf.getTranslation().y = (float) offset.y + 0.1f;
             disp.setTransformation(tf);
             if (hologram.getEntity().getVehicle() == null) {
-                base.getEntity().addPassenger(hologram.getEntity());
+                NMS.mount(base.getEntity(), hologram.getEntity());
             }
         }
 
@@ -658,15 +658,17 @@ public class HologramTrait extends Trait {
 
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
-            NPC npc = registry.createNPC(EntityType.TEXT_DISPLAY, "");
-            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-            npc.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));
-            return npc;
+            NPC hologram = registry.createNPC(EntityType.TEXT_DISPLAY, "");
+            hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+            hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));
+            return hologram;
         }
 
         @Override
         public void render0(NPC base, Vector3d offset) {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
+            disp.setInterpolationDelay(0);
+            disp.setInterpolationDuration(0);
             disp.setBillboard(Billboard.CENTER);
             Transformation tf = disp.getTransformation();
             tf.getTranslation().y = (float) offset.y + 0.2f;
@@ -675,7 +677,7 @@ public class HologramTrait extends Trait {
                 disp.setBackgroundColor(color);
             }
             if (hologram.getEntity().getVehicle() == null) {
-                base.getEntity().addPassenger(hologram.getEntity());
+                NMS.mount(base.getEntity(), hologram.getEntity());
             }
         }
 
@@ -688,7 +690,7 @@ public class HologramTrait extends Trait {
             this.text = Placeholders.replace(raw, null, npc);
             if (hologram == null)
                 return;
-            npc.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
+            hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
         }
     }
 

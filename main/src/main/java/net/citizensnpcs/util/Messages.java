@@ -204,6 +204,10 @@ public class Messages {
     public static final String INVALID_TROPICALFISH_PATTERN = "citizens.commands.npc.tropicalfish.invalid-pattern";
     public static final String INVALID_VILLAGER_TYPE = "citizens.commands.npc.villager.invalid-type";
     public static final String ITEM_SET = "citizens.commands.npc.item.item-set";
+    public static final String ITEMFRAME_FIXED_SET = "citizens.commands.npc.itemframe.fixed-set";
+    public static final String ITEMFRAME_ITEM_SET = "citizens.commands.npc.itemframe.item-set";
+    public static final String ITEMFRAME_ROTATION_SET = "citizens.commands.npc.itemframe.rotation-set";
+    public static final String ITEMFRAME_VISIBLE_SET = "citizens.commands.npc.itemframe.visible-set";
     public static final String KNOCKBACK_SET = "citizens.commands.npc.knockback.set";
     public static final String KNOCKBACK_UNSET = "citizens.commands.npc.knockback.unset";
     public static final String LEASHABLE_SET = "citizens.commands.npc.leashable.set";
