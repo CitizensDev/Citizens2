@@ -459,6 +459,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
 
         templateRegistry = new TemplateRegistry(new File(this.getDataFolder(), "templates").toPath());
+
         saves.reloadFromSource();
         saves.loadInto(npcRegistry);
 

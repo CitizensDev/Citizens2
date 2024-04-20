@@ -124,6 +124,12 @@ public class Messages {
     public static final String FOLLOW_UNSET = "citizens.commands.npc.follow.unset";
     public static final String FOX_CROUCHING_SET = "citizens.commands.npc.fox.crouching-set";
     public static final String FOX_CROUCHING_UNSET = "citizens.commands.npc.fox.crouching-unset";
+    public static final String FOX_FACEPLANTED_SET = "citizens.commands.npc.fox.faceplanted-set";
+    public static final String FOX_FACEPLANTED_UNSET = "citizens.commands.npc.fox.faceplanted-unset";
+    public static final String FOX_INTERESTED_SET = "citizens.commands.npc.fox.interested-set";
+    public static final String FOX_INTERESTED_UNSET = "citizens.commands.npc.fox.interested-unset";
+    public static final String FOX_POUNCING_SET = "citizens.commands.npc.fox.pouncing-set";
+    public static final String FOX_POUNCING_UNSET = "citizens.commands.npc.fox.pouncing-unset";
     public static final String FOX_SITTING_SET = "citizens.commands.npc.fox.sitting-set";
     public static final String FOX_SITTING_UNSET = "citizens.commands.npc.fox.sitting-unset";
     public static final String FOX_SLEEPING_SET = "citizens.commands.npc.fox.sleeping-set";

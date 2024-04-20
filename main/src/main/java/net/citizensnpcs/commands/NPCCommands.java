@@ -976,42 +976,6 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "itemframe --visible [true|false] --fixed [true|false] --rotation [rotation] --item [item]",
-            desc = "",
-            modifiers = { "itemframe" },
-            min = 1,
-            max = 1,
-            flags = "",
-            permission = "citizens.npc.itemframe")
-    @Requirements(ownership = true, selected = true, types = EntityType.ITEM_FRAME)
-    public void endercrystal(CommandContext args, CommandSender sender, NPC npc, @Flag("visible") Boolean visible,
-            @Flag("fixed") Boolean fixed, @Flag("rotation") Rotation rotation, @Flag("item") ItemStack item)
-            throws CommandException {
-        ItemFrameTrait ift = npc.getOrAddTrait(ItemFrameTrait.class);
-        String msg = "";
-        if (visible != null) {
-            ift.setVisible(visible);
-            msg += " " + Messaging.tr(Messages.ITEMFRAME_VISIBLE_SET, visible);
-        }
-        if (fixed != null) {
-            ift.setFixed(fixed);
-            msg += " " + Messaging.tr(Messages.ITEMFRAME_FIXED_SET, fixed);
-        }
-        if (item != null) {
-            ift.setItem(item);
-            msg += " " + Messaging.tr(Messages.ITEMFRAME_ITEM_SET, item);
-        }
-        if (rotation != null) {
-            ift.setRotation(rotation);
-            msg += " " + Messaging.tr(Messages.ITEMFRAME_ROTATION_SET, rotation);
-        }
-        if (msg.isEmpty())
-            throw new CommandUsageException();
-        Messaging.send(sender, msg.trim());
-    }
-
-    @Command(
-            aliases = { "npc" },
             usage = "enderman -a(ngry)",
             desc = "",
             flags = "a",
@@ -1450,6 +1414,42 @@ public class NPCCommands {
             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
         Messaging.sendTr(sender, Messages.ITEM_SET, npc.getName(), Util.prettyEnum(stack.getType()));
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "itemframe --visible [true|false] --fixed [true|false] --rotation [rotation] --item [item]",
+            desc = "",
+            modifiers = { "itemframe" },
+            min = 1,
+            max = 1,
+            flags = "",
+            permission = "citizens.npc.itemframe")
+    @Requirements(ownership = true, selected = true, types = EntityType.ITEM_FRAME)
+    public void itemframe(CommandContext args, CommandSender sender, NPC npc, @Flag("visible") Boolean visible,
+            @Flag("fixed") Boolean fixed, @Flag("rotation") Rotation rotation, @Flag("item") ItemStack item)
+            throws CommandException {
+        ItemFrameTrait ift = npc.getOrAddTrait(ItemFrameTrait.class);
+        String msg = "";
+        if (visible != null) {
+            ift.setVisible(visible);
+            msg += " " + Messaging.tr(Messages.ITEMFRAME_VISIBLE_SET, visible);
+        }
+        if (fixed != null) {
+            ift.setFixed(fixed);
+            msg += " " + Messaging.tr(Messages.ITEMFRAME_FIXED_SET, fixed);
+        }
+        if (item != null) {
+            ift.setItem(item);
+            msg += " " + Messaging.tr(Messages.ITEMFRAME_ITEM_SET, item);
+        }
+        if (rotation != null) {
+            ift.setRotation(rotation);
+            msg += " " + Messaging.tr(Messages.ITEMFRAME_ROTATION_SET, rotation);
+        }
+        if (msg.isEmpty())
+            throw new CommandUsageException();
+        Messaging.send(sender, msg.trim());
     }
 
     @Command(
