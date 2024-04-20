@@ -94,6 +94,7 @@ public class Translator {
                 StandardCharsets.UTF_8)) {
             return (JSONObject) jp.parse(in);
         } catch (ParseException | IOException e) {
+            e.printStackTrace();
             return null;
         }
     }
