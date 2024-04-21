@@ -31,6 +31,7 @@ import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.api.ai.event.NavigationStuckEvent;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
+import net.citizensnpcs.api.astar.pathfinder.FlyingBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.npc.NPC;
@@ -93,7 +94,10 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public boolean canNavigateTo(Location dest, NavigatorParameters params) {
-        if (defaultParams.useNewPathfinder()) {
+        if (defaultParams.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
+            if (npc.isFlyable()) {
+                params.examiner(new FlyingBlockExaminer());
+            }
             AStarPlanner planner = new AStarPlanner(params, npc.getStoredLocation(), dest);
             planner.tick(Setting.MAXIMUM_ASTAR_ITERATIONS.asInt(), Setting.MAXIMUM_ASTAR_ITERATIONS.asInt());
             return planner.plan != null;
