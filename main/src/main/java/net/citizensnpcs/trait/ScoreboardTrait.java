@@ -42,13 +42,13 @@ public class ScoreboardTrait extends Trait {
         metadata = CitizensAPI.getLocationLookup().<Boolean> registerMetadata("scoreboard", (meta, event) -> {
             for (NPC npc : CitizensAPI.getNPCRegistry()) {
                 ScoreboardTrait trait = npc.getTraitNullable(ScoreboardTrait.class);
-                if (trait == null) {
+                if (trait == null)
                     continue;
-                }
+
                 Team team = trait.getTeam();
-                if (team == null || meta.has(event.getPlayer().getUniqueId(), team.getName())) {
+                if (team == null || meta.has(event.getPlayer().getUniqueId(), team.getName()))
                     continue;
-                }
+
                 NMS.sendTeamPacket(event.getPlayer(), team, 0);
                 meta.set(event.getPlayer().getUniqueId(), team.getName(), true);
             }
@@ -232,9 +232,9 @@ public class ScoreboardTrait extends Trait {
         if (!changed)
             return;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasMetadata("NPC")) {
+            if (player.hasMetadata("NPC"))
                 continue;
-            }
+
             if (metadata.has(player.getUniqueId(), team.getName())) {
                 NMS.sendTeamPacket(player, team, 2);
             } else {
@@ -242,6 +242,13 @@ public class ScoreboardTrait extends Trait {
                 metadata.set(player.getUniqueId(), team.getName(), true);
             }
         }
+        changed = false;
+    }
+
+    public enum TeamPacketMode {
+        ADD,
+        REMOVE,
+        UPDATE;
     }
 
     private static boolean SUPPORT_COLLIDABLE_SETOPTION = true;
