@@ -106,12 +106,6 @@ public class FoxTrait extends Trait {
         this.type = type;
     }
 
-    public enum FoxModifier {
-        FACEPLANTED,
-        INTERESTED,
-        POUNCING;
-    }
-
     @Command(
             aliases = { "npc" },
             usage = "fox --type type --sleeping [true|false] --sitting [true|false] --crouching [true|false] --interested [true|false] --pouncing [true|false] --faceplanted [true|false]",

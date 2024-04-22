@@ -592,7 +592,8 @@ public class HologramTrait extends Trait {
 
         @Override
         public Collection<Entity> getEntities() {
-            return hologram != null ? ImmutableList.of(hologram.getEntity()) : Collections.emptyList();
+            return hologram != null && hologram.getEntity() != null ? ImmutableList.of(hologram.getEntity())
+                    : Collections.emptyList();
         }
 
         @Override
