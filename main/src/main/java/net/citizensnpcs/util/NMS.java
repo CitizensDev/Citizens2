@@ -61,6 +61,7 @@ import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.PacketNPC;
+import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
 import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
@@ -788,6 +789,10 @@ public class NMS {
 
     public static void setAllayDancing(Entity entity, boolean dancing) {
         BRIDGE.setAllayDancing(entity, dancing);
+    }
+
+    public static void setArmadilloState(Entity entity, ArmadilloState state) {
+        BRIDGE.setArmadilloState(entity, state);
     }
 
     public static void setBodyYaw(Entity entity, float yaw) {

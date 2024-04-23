@@ -225,6 +225,8 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AllayTrait;
+import net.citizensnpcs.trait.versioned.ArmadilloTrait;
+import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
@@ -330,6 +332,7 @@ import net.minecraft.world.entity.animal.Pufferfish;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.animal.allay.Allay;
+import net.minecraft.world.entity.animal.armadillo.Armadillo;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
@@ -945,6 +948,7 @@ public class NMSImpl implements NMSBridge {
         registerTraitWithCommand(manager, EnderDragonTrait.class);
         registerTraitWithCommand(manager, AllayTrait.class);
         registerTraitWithCommand(manager, AxolotlTrait.class);
+        registerTraitWithCommand(manager, ArmadilloTrait.class);
         registerTraitWithCommand(manager, BeeTrait.class);
         registerTraitWithCommand(manager, BossBarTrait.class);
         registerTraitWithCommand(manager, CamelTrait.class);
@@ -1445,6 +1449,26 @@ public class NMSImpl implements NMSBridge {
     public void setAllayDancing(org.bukkit.entity.Entity entity, boolean dancing) {
         Allay allay = (Allay) getHandle(entity);
         allay.setDancing(dancing);
+    }
+
+    @Override
+    public void setArmadilloState(org.bukkit.entity.Entity entity, ArmadilloState state) {
+        Armadillo.ArmadilloState s = Armadillo.ArmadilloState.IDLE;
+        switch (state) {
+            case IDLE:
+                s = Armadillo.ArmadilloState.IDLE;
+                break;
+            case ROLLING_UP:
+                s = Armadillo.ArmadilloState.ROLLING;
+                break;
+            case ROLLING_OUT:
+                s = Armadillo.ArmadilloState.UNROLLING;
+                break;
+            case SCARED:
+                s = Armadillo.ArmadilloState.SCARED;
+                break;
+        }
+        ((Armadillo) getHandle(entity)).switchToState(s);
     }
 
     @Override

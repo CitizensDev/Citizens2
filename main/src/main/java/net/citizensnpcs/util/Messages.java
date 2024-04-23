@@ -19,6 +19,7 @@ public class Messages {
     public static final String ANCHOR_REMOVED = "citizens.commands.npc.anchor.removed";
     public static final String ANIMATION_ADDED = "citizens.editors.waypoints.triggers.animation.added";
     public static final String ANIMATION_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.animation.prompt";
+    public static final String ARMADILLO_STATE_SET = "citizens.commands.npc.armadillo.state-set";
     public static final String AVAILABLE_WAYPOINT_PROVIDERS = "citizens.waypoints.available-providers-header";
     public static final String AXOLOTL_NOT_PLAYING_DEAD = "citizens.commands.npc.axolotl.playing-dead-stopped";
     public static final String AXOLOTL_PLAYING_DEAD = "citizens.commands.npc.axolotl.playing-dead";

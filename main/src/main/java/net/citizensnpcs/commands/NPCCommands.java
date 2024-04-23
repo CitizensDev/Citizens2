@@ -41,6 +41,7 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Profession;
+import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.InventoryHolder;
@@ -3489,7 +3490,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "wolf (-s(itting) a(ngry) t(amed) i(nfo)) --collar [hex rgb color|name]",
+            usage = "wolf (-s(itting) a(ngry) t(amed) i(nfo)) --collar [hex rgb color|name] --variant [variant]",
             desc = "",
             modifiers = { "wolf" },
             min = 1,
@@ -3498,7 +3499,11 @@ public class NPCCommands {
             flags = "sati",
             permission = "citizens.npc.wolf")
     @Requirements(selected = true, ownership = true, types = EntityType.WOLF)
-    public void wolf(CommandContext args, CommandSender sender, NPC npc, @Flag("collar") String collar)
+    public void wolf(CommandContext args, CommandSender sender, NPC npc, @Flag("collar") String collar,
+            @Flag(
+                    value = "variant",
+                    completions = { "ASHEN", "BLACK", "CHESTNUT", "PALE", "RUSTY", "SNOWY", "STRIPED", "WOODS",
+                            "SPOTTED" }) String variant)
             throws CommandException {
         WolfModifiers trait = npc.getOrAddTrait(WolfModifiers.class);
         if (args.hasFlag('a')) {
@@ -3509,6 +3514,15 @@ public class NPCCommands {
         }
         if (args.hasFlag('t')) {
             trait.setTamed(!trait.isTamed());
+        }
+        if (variant != null) {
+            variant = variant.toUpperCase();
+            try {
+                Wolf.Variant.class.getField(variant);
+            } catch (Throwable t) {
+                throw new CommandUsageException();
+            }
+            trait.setVariant(variant);
         }
         if (collar != null) {
             String unparsed = collar;

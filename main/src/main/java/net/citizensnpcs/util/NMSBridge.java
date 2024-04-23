@@ -41,6 +41,7 @@ import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.trait.MirrorTrait;
+import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
 import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
@@ -193,6 +194,9 @@ public interface NMSBridge {
 
     public default void setAllayDancing(Entity entity, boolean dancing) {
         throw new UnsupportedOperationException();
+    }
+
+    public default void setArmadilloState(Entity entity, ArmadilloState state) {
     }
 
     public void setBodyYaw(Entity entity, float yaw);
