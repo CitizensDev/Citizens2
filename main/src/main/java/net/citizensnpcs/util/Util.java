@@ -240,6 +240,16 @@ public class Util {
         return entity instanceof LivingEntity ? ((LivingEntity) entity).getEyeLocation() : entity.getLocation();
     }
 
+    public static EntityType getFallbackEntityType(String first, String second) {
+        for (EntityType type : EntityType.values()) {
+            if (type.name().equals(first))
+                return type;
+            if (type.name().equals(second))
+                return type;
+        }
+        return null;
+    }
+
     public static Material getFallbackMaterial(String first, String... second) {
         try {
             return Material.valueOf(first);
@@ -274,10 +284,8 @@ public class Util {
     }
 
     public static boolean isAlwaysFlyable(EntityType type) {
-        if (type.name().toLowerCase().equals("vex") || type.name().toLowerCase().equals("parrot")
-                || type.name().toLowerCase().equals("allay") || type.name().toLowerCase().equals("bee")
-                || type.name().toLowerCase().equals("phantom"))
-            // 1.8.8 compatibility
+        if (type.name().equals("VEX") || type.name().equals("PARROT") || type.name().equals("ALLAY")
+                || type.name().equals("BEE") || type.name().equals("PHANTOM") || type.name().equals("BREEZE"))
             return true;
         switch (type) {
             case BAT:
@@ -339,7 +347,7 @@ public class Util {
         toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
         for (T check : values) {
             if (toMatch.equals(check.name().toLowerCase())
-                    || toMatch.equals("item") && check == EntityType.DROPPED_ITEM)
+                    || toMatch.equals("item") && check.name().equals("DROPPED_ITEM"))
                 return check; // check for an exact match first
 
         }
@@ -600,6 +608,7 @@ public class Util {
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
     private static boolean SUPPORTS_ENTITY_CANSEE = true;
+
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {

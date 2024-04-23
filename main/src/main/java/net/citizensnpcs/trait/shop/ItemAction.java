@@ -279,7 +279,7 @@ public class ItemAction extends NPCShopAction {
                     "Compare item similarity", base.compareSimilarity ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
             ctx.getSlot(3 * 9 + 2)
                     .addClickHandler(InputMenus.toggler(res -> base.compareSimilarity = res, base.compareSimilarity));
-            ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Material.BOOK), "NBT comparison filter",
+            ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Material.BOOK), "Component comparison filter",
                     Joiner.on("\n").join(base.metaFilter));
             ctx.getSlot(3 * 9 + 3)
                     .addClickHandler(event -> ctx.getMenu()

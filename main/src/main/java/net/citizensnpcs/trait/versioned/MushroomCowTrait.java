@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.MushroomCow.Variant;
 
@@ -15,6 +14,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
@@ -52,13 +52,16 @@ public class MushroomCowTrait extends Trait {
             aliases = { "npc" },
             usage = "mushroomcow (--variant [variant])",
             desc = "",
-            modifiers = { "mushroomcow" },
+            modifiers = { "mushroomcow", "mooshroom" },
             min = 1,
             max = 1,
             permission = "citizens.npc.mushroomcow")
-    @Requirements(selected = true, ownership = true, types = { EntityType.MUSHROOM_COW })
+    @Requirements(selected = true, ownership = true)
     public static void mushroomcow(CommandContext args, CommandSender sender, NPC npc,
             @Flag("variant") MushroomCow.Variant variant) throws CommandException {
+        if (!npc.getOrAddTrait(MobType.class).getType().name().equals("MOOSHROOM")
+                && !npc.getOrAddTrait(MobType.class).getType().name().equals("MUSHROOM_COW"))
+            throw new CommandUsageException();
         MushroomCowTrait trait = npc.getOrAddTrait(MushroomCowTrait.class);
         boolean hasArg = false;
         if (args.hasValueFlag("variant")) {

@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait.versioned;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Snowman;
 
 import net.citizensnpcs.api.command.Command;
@@ -13,6 +12,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 
@@ -58,13 +58,16 @@ public class SnowmanTrait extends Trait {
             aliases = { "npc" },
             usage = "snowman (-d[erp]) (-f[orm snow])",
             desc = "",
-            modifiers = { "snowman" },
+            modifiers = { "snowman", "snowgolem" },
             min = 1,
             max = 1,
             flags = "df",
             permission = "citizens.npc.snowman")
-    @Requirements(selected = true, ownership = true, types = { EntityType.SNOWMAN })
+    @Requirements(selected = true, ownership = true)
     public static void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (!npc.getOrAddTrait(MobType.class).getType().name().equals("SNOWMAN")
+                && !npc.getOrAddTrait(MobType.class).getType().name().equals("SNOW_GOLEM"))
+            throw new CommandUsageException();
         SnowmanTrait trait = npc.getOrAddTrait(SnowmanTrait.class);
         boolean hasArg = false;
         if (args.hasFlag('d')) {

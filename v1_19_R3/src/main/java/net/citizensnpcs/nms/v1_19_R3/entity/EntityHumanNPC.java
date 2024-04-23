@@ -469,9 +469,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     private static final float EPSILON = 0.003F;
-
     private static final MethodHandle GAMEMODE_SETTING = NMS.getFirstMethodHandle(ServerPlayerGameMode.class, true,
             GameType.class, GameType.class);
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
-    private static int MAX_LENGTH = 0;
 }

@@ -245,12 +245,6 @@ public class ScoreboardTrait extends Trait {
         changed = false;
     }
 
-    public enum TeamPacketMode {
-        ADD,
-        REMOVE,
-        UPDATE;
-    }
-
     private static boolean SUPPORT_COLLIDABLE_SETOPTION = true;
     private static boolean SUPPORT_GLOWING_COLOR = true;
     private static boolean SUPPORT_TAGS = true;

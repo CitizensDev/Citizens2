@@ -538,7 +538,7 @@ public class HologramTrait extends Trait {
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
             ItemStack itemStack = new ItemStack(item, 1);
-            itemNPC = registry.createNPCUsingItem(EntityType.DROPPED_ITEM, "", itemStack);
+            itemNPC = registry.createNPCUsingItem(Util.getFallbackEntityType("ITEM", "DROPPED_ITEM"), "", itemStack);
             itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
                 if (itemMatcher.group(2).charAt(1) == '{') {

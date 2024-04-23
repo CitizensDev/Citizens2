@@ -15,6 +15,7 @@ import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.Util;
 
 /**
  * A helper class for storing a number of entity markers. By default an entity marker is a non-persisted EnderSignal.
@@ -78,12 +79,6 @@ public class EntityMarkers<T> {
         return npc.getEntity();
     }
 
-    private static EntityType DEFAULT_ENTITY_TYPE = EntityType.ENDER_SIGNAL;
+    private static final EntityType DEFAULT_ENTITY_TYPE = Util.getFallbackEntityType("SHULKER_BULLET", "ENDER_SIGNAL");
 
-    static {
-        try {
-            DEFAULT_ENTITY_TYPE = EntityType.valueOf("SHULKER_BULLET");
-        } catch (IllegalArgumentException e) {
-        }
-    }
 }

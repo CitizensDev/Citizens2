@@ -960,8 +960,11 @@ public class NPCCommands {
             max = 1,
             flags = "b",
             permission = "citizens.npc.endercrystal")
-    @Requirements(ownership = true, selected = true, types = EntityType.ENDER_CRYSTAL)
+    @Requirements(ownership = true, selected = true)
     public void endercrystal(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+        if (!npc.getOrAddTrait(MobType.class).getType().name().equals("END_CRYSTAL")
+                && !npc.getOrAddTrait(MobType.class).getType().name().equals("ENDER_CRYSTAL"))
+            throw new CommandException();
         if (args.hasFlag('b')) {
             EnderCrystalTrait trait = npc.getOrAddTrait(EnderCrystalTrait.class);
             boolean showing = !trait.isShowBase();
@@ -1396,8 +1399,9 @@ public class NPCCommands {
     public void item(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Material mat, @Arg(2) String modify)
             throws CommandException {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
-        if (!type.name().contains("ITEM_FRAME") && !type.name().contains("ITEM_DISPLAY")
-                && !type.name().contains("BLOCK_DISPLAY") && type != EntityType.DROPPED_ITEM
+        if (!type.name().equals("OMINOUS_ITEM_SPAWNER") && !type.name().contains("ITEM_FRAME")
+                && !type.name().contains("ITEM_DISPLAY") && !type.name().contains("BLOCK_DISPLAY")
+                && !type.name().equals("DROPPED_ITEM") && !type.name().equals("ITEM")
                 && type != EntityType.FALLING_BLOCK)
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
         ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand() : new ItemStack(mat, 1);
@@ -1745,14 +1749,11 @@ public class NPCCommands {
             max = 1,
             flags = "",
             permission = "citizens.npc.minecart")
-    @Requirements(
-            selected = true,
-            ownership = true,
-            types = { EntityType.MINECART, EntityType.MINECART_CHEST, EntityType.MINECART_COMMAND,
-                    EntityType.MINECART_FURNACE, EntityType.MINECART_HOPPER, EntityType.MINECART_MOB_SPAWNER,
-                    EntityType.MINECART_TNT })
+    @Requirements(selected = true, ownership = true)
     public void minecart(CommandContext args, CommandSender sender, NPC npc, @Flag("item") String item)
             throws CommandException {
+        if (!npc.getOrAddTrait(MobType.class).getType().name().contains("MINECRAFT"))
+            throw new CommandUsageException();
         if (item != null) {
             int data = 0;
             if (item.contains(":")) {
