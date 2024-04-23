@@ -3,6 +3,8 @@ package net.citizensnpcs.api.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -220,7 +222,11 @@ public class ItemStorage {
         if (root.keyExists("banner")) {
             BannerMeta meta = ensureMeta(res);
             if (root.keyExists("banner.basecolor")) {
-                meta.setBaseColor(DyeColor.valueOf(root.getString("banner.basecolor")));
+                try {
+                    SETBASECOLOR.invoke(meta, DyeColor.valueOf(root.getString("banner.basecolor")));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
             if (root.keyExists("banner.patterns")) {
                 for (DataKey sub : root.getRelative("banner.patterns").getIntegerSubKeys()) {
@@ -236,8 +242,9 @@ public class ItemStorage {
             try {
                 PotionData data = new PotionData(PotionType.valueOf(root.getString("potion.data.type")),
                         root.getBoolean("potion.data.extended"), root.getBoolean("potion.data.upgraded"));
-                meta.setBasePotionData(data);
+                SETBASEPOTIONDATA.invoke(meta, data);
             } catch (Throwable t) {
+                t.printStackTrace();
             }
             for (DataKey sub : root.getRelative("potion.effects").getIntegerSubKeys()) {
                 int duration = sub.getInt("duration");
@@ -405,8 +412,18 @@ public class ItemStorage {
         return;
     }
 
+    private static MethodHandle SETBASECOLOR = null;
+    private static MethodHandle SETBASEPOTIONDATA = null;
     private static boolean SUPPORT_OWNING_PLAYER = true;
     private static boolean SUPPORTS_1_14_API = true;
     private static boolean SUPPORTS_ATTRIBUTES = true;
     private static boolean SUPPORTS_CUSTOM_MODEL_DATA = true;
+    static {
+        try {
+            SETBASEPOTIONDATA = MethodHandles.lookup()
+                    .unreflect(PotionMeta.class.getMethod("setBasePotionData", PotionData.class));
+            SETBASECOLOR = MethodHandles.lookup().unreflect(BannerMeta.class.getMethod("setBaseColor", DyeColor.class));
+        } catch (Throwable t) {
+        }
+    }
 }

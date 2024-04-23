@@ -47,7 +47,7 @@ public class SpigotUtil {
                 versionChecker = s -> Class.forName("net.citizensnpcs.nms." + s + ".util.NMSImpl");
             }
             String revision = null;
-            for (int i = 1; i <= 3; i++) {
+            for (int i = 1; i <= 4; i++) {
                 try {
                     versionChecker.accept(versionString + i);
                     revision = versionString + i;
@@ -86,7 +86,7 @@ public class SpigotUtil {
     public static boolean isUsing1_13API() {
         if (using1_13API == null) {
             try {
-                Enchantment.getByKey(Enchantment.ARROW_DAMAGE.getKey());
+                Enchantment.getByKey(Enchantment.getByName("ARROW_DAMAGE").getKey());
                 using1_13API = true;
             } catch (Exception ex) {
                 using1_13API = false;

@@ -31,7 +31,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -837,7 +836,7 @@ public class CommandManager implements TabCompleter {
         toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
         for (T check : values) {
             if (toMatch.equals(check.name().toLowerCase())
-                    || toMatch.equals("item") && check == EntityType.DROPPED_ITEM)
+                    || toMatch.equals("item") && check.name().equals("DROPPED_ITEM"))
                 return check; // check for an exact match first
         }
         for (T check : values) {
