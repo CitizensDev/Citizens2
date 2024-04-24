@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -49,7 +50,6 @@ import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.NPCKnockbackEvent;
-import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -214,6 +214,10 @@ public class NMS {
             return BoundingBox.EMPTY;
 
         return BRIDGE.getCollisionBox(block).add(block.getX(), block.getY(), block.getZ());
+    }
+
+    public static Map<String, Object> getComponentMap(ItemStack item) {
+        return BRIDGE.getComponentMap(item);
     }
 
     public static Location getDestination(Entity entity) {
@@ -518,10 +522,6 @@ public class NMS {
             }
         }
         return null;
-    }
-
-    public static CompoundTag getNBT(ItemStack item) {
-        return BRIDGE.getNBT(item);
     }
 
     private static Collection<Player> getNearbyPlayers(Entity from) {

@@ -2,6 +2,7 @@ package net.citizensnpcs.util;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -32,7 +33,6 @@ import com.mojang.authlib.GameProfileRepository;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
-import net.citizensnpcs.api.jnbt.CompoundTag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -81,6 +81,10 @@ public interface NMSBridge {
 
     public BoundingBox getCollisionBox(Block block);
 
+    public default Map<String, Object> getComponentMap(ItemStack item) {
+        return item.getItemMeta().serialize();
+    }
+
     public Location getDestination(Entity entity);
 
     public GameProfileRepository getGameProfileRepository();
@@ -88,8 +92,6 @@ public interface NMSBridge {
     public float getHeadYaw(Entity entity);
 
     public float getHorizontalMovement(Entity entity);
-
-    public CompoundTag getNBT(ItemStack item);
 
     public NPC getNPC(Entity entity);
 

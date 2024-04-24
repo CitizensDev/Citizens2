@@ -2,6 +2,7 @@ package net.citizensnpcs.trait.shop;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,8 +23,6 @@ import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.gui.InventoryMenuSlot;
 import net.citizensnpcs.api.gui.Menu;
 import net.citizensnpcs.api.gui.MenuContext;
-import net.citizensnpcs.api.jnbt.CompoundTag;
-import net.citizensnpcs.api.jnbt.Tag;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.InventoryMultiplexer;
@@ -157,28 +156,22 @@ public class ItemAction extends NPCShopAction {
     }
 
     private boolean metaMatches(ItemStack needle, ItemStack haystack, List<String> meta) {
-        CompoundTag source = NMS.getNBT(needle);
-        CompoundTag compare = NMS.getNBT(haystack);
+        Map<String, Object> source = NMS.getComponentMap(needle);
+        Map<String, Object> compare = NMS.getComponentMap(haystack);
         for (String nbt : meta) {
             String[] parts = nbt.split("\\.");
-            Tag acc = source;
-            Tag cmp = compare;
+            Object acc = source;
+            Object cmp = compare;
             for (int i = 0; i < parts.length; i++) {
                 if (acc == null || cmp == null)
                     return false;
-                if (i < parts.length - 1) {
-                    if (!(acc instanceof CompoundTag) || !(cmp instanceof CompoundTag))
-                        return false;
-
-                    if (parts[i].equals(acc.getName()) && acc.getName().equals(cmp.getName()))
-                        continue;
-
-                    acc = ((CompoundTag) acc).getValue().get(parts[i]);
-                    cmp = ((CompoundTag) cmp).getValue().get(parts[i]);
+                Map<String, Object> nextAcc = (Map<String, Object>) acc;
+                Map<String, Object> nextCmp = (Map<String, Object>) cmp;
+                if (!nextAcc.containsKey(parts[i]) && !nextCmp.containsKey(parts[i]))
                     continue;
-                }
-                if (!acc.getName().equals(parts[i]) || !cmp.getName().equals(parts[i])
-                        || !acc.getValue().equals(cmp.getValue()))
+                acc = nextAcc.get(parts[i]);
+                cmp = nextCmp.get(parts[i]);
+                if (i == parts.length - 1 && !acc.equals(cmp))
                     return false;
             }
         }

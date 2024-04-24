@@ -70,19 +70,6 @@ import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.gui.ForwardingInventory;
-import net.citizensnpcs.api.jnbt.ByteArrayTag;
-import net.citizensnpcs.api.jnbt.ByteTag;
-import net.citizensnpcs.api.jnbt.CompoundTag;
-import net.citizensnpcs.api.jnbt.DoubleTag;
-import net.citizensnpcs.api.jnbt.EndTag;
-import net.citizensnpcs.api.jnbt.FloatTag;
-import net.citizensnpcs.api.jnbt.IntArrayTag;
-import net.citizensnpcs.api.jnbt.IntTag;
-import net.citizensnpcs.api.jnbt.ListTag;
-import net.citizensnpcs.api.jnbt.LongTag;
-import net.citizensnpcs.api.jnbt.ShortTag;
-import net.citizensnpcs.api.jnbt.StringTag;
-import net.citizensnpcs.api.jnbt.Tag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -646,12 +633,6 @@ public class NMSImpl implements NMSBridge {
             return Float.NaN;
         LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) entity);
         return handle.zza;
-    }
-
-    @Override
-    public CompoundTag getNBT(org.bukkit.inventory.ItemStack item) {
-        throw new UnsupportedOperationException();
-        // return convertNBT(CraftItemStack.asNMSCopy(item));
     }
 
     @Override
@@ -2078,52 +2059,6 @@ public class NMSImpl implements NMSBridge {
             }
             i++;
         }
-    }
-
-    private static CompoundTag convertNBT(net.minecraft.nbt.CompoundTag tag) {
-        if (tag == null)
-            return new CompoundTag("", Collections.EMPTY_MAP);
-        Map<String, Tag> tags = Maps.newHashMap();
-        for (String key : tag.getAllKeys()) {
-            tags.put(key, convertNBT(key, tag.get(key)));
-        }
-        return new CompoundTag("", tags);
-    }
-
-    private static Tag convertNBT(String key, net.minecraft.nbt.Tag base) {
-        if (base instanceof net.minecraft.nbt.IntTag)
-            return new IntTag(key, ((net.minecraft.nbt.IntTag) base).getAsInt());
-        else if (base instanceof net.minecraft.nbt.FloatTag)
-            return new FloatTag(key, ((net.minecraft.nbt.FloatTag) base).getAsFloat());
-        else if (base instanceof net.minecraft.nbt.DoubleTag)
-            return new DoubleTag(key, ((net.minecraft.nbt.DoubleTag) base).getAsDouble());
-        else if (base instanceof net.minecraft.nbt.LongTag)
-            return new LongTag(key, ((net.minecraft.nbt.LongTag) base).getAsLong());
-        else if (base instanceof net.minecraft.nbt.ShortTag)
-            return new ShortTag(key, ((net.minecraft.nbt.ShortTag) base).getAsShort());
-        else if (base instanceof net.minecraft.nbt.ByteTag)
-            return new ByteTag(key, ((net.minecraft.nbt.ByteTag) base).getAsByte());
-        else if (base instanceof net.minecraft.nbt.ByteArrayTag)
-            return new ByteArrayTag(key, ((net.minecraft.nbt.ByteArrayTag) base).getAsByteArray());
-        else if (base instanceof net.minecraft.nbt.IntArrayTag)
-            return new IntArrayTag(key, ((net.minecraft.nbt.IntArrayTag) base).getAsIntArray());
-        else if (base instanceof net.minecraft.nbt.StringTag)
-            return new StringTag(key, base.getAsString());
-        else if (base instanceof net.minecraft.nbt.ListTag) {
-            List<net.minecraft.nbt.Tag> list = (List<net.minecraft.nbt.Tag>) base;
-            List<Tag> converted = Lists.newArrayList();
-            if (list.size() > 0) {
-                Class<? extends Tag> tagType = convertNBT("", list.get(0)).getClass();
-                for (int i = 0; i < list.size(); i++) {
-                    converted.add(convertNBT("", list.get(i)));
-                }
-                return new ListTag(key, tagType, converted);
-            }
-        } else if (base instanceof net.minecraft.nbt.CompoundTag)
-            return convertNBT((net.minecraft.nbt.CompoundTag) base);
-        else if (base instanceof net.minecraft.nbt.EndTag)
-            return new EndTag();
-        return null;
     }
 
     public static void flyingMoveLogic(LivingEntity entity, Vec3 vec3d) {

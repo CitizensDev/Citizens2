@@ -6,7 +6,6 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -76,19 +75,6 @@ import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.gui.ForwardingInventory;
-import net.citizensnpcs.api.jnbt.ByteArrayTag;
-import net.citizensnpcs.api.jnbt.ByteTag;
-import net.citizensnpcs.api.jnbt.CompoundTag;
-import net.citizensnpcs.api.jnbt.DoubleTag;
-import net.citizensnpcs.api.jnbt.EndTag;
-import net.citizensnpcs.api.jnbt.FloatTag;
-import net.citizensnpcs.api.jnbt.IntArrayTag;
-import net.citizensnpcs.api.jnbt.IntTag;
-import net.citizensnpcs.api.jnbt.ListTag;
-import net.citizensnpcs.api.jnbt.LongTag;
-import net.citizensnpcs.api.jnbt.ShortTag;
-import net.citizensnpcs.api.jnbt.StringTag;
-import net.citizensnpcs.api.jnbt.Tag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -591,11 +577,6 @@ public class NMSImpl implements NMSBridge {
             return Float.NaN;
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);
         return handle.bb;
-    }
-
-    @Override
-    public CompoundTag getNBT(org.bukkit.inventory.ItemStack item) {
-        return convertNBT(CraftItemStack.asNMSCopy(item).getTag());
     }
 
     @Override
@@ -1856,52 +1837,6 @@ public class NMSImpl implements NMSBridge {
             }
             i++;
         }
-    }
-
-    private static CompoundTag convertNBT(net.minecraft.server.v1_15_R1.NBTTagCompound tag) {
-        if (tag == null)
-            return new CompoundTag("", Collections.EMPTY_MAP);
-        Map<String, Tag> tags = Maps.newHashMap();
-        for (String key : tag.getKeys()) {
-            tags.put(key, convertNBT(key, tag.get(key)));
-        }
-        return new CompoundTag("", tags);
-    }
-
-    private static Tag convertNBT(String key, net.minecraft.server.v1_15_R1.NBTBase base) {
-        if (base instanceof net.minecraft.server.v1_15_R1.NBTTagInt)
-            return new IntTag(key, ((net.minecraft.server.v1_15_R1.NBTTagInt) base).asInt());
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagFloat)
-            return new FloatTag(key, ((net.minecraft.server.v1_15_R1.NBTTagFloat) base).asFloat());
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagDouble)
-            return new DoubleTag(key, ((net.minecraft.server.v1_15_R1.NBTTagDouble) base).asDouble());
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagLong)
-            return new LongTag(key, ((net.minecraft.server.v1_15_R1.NBTTagLong) base).asLong());
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagShort)
-            return new ShortTag(key, ((net.minecraft.server.v1_15_R1.NBTTagShort) base).asShort());
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagByte)
-            return new ByteTag(key, ((net.minecraft.server.v1_15_R1.NBTTagByte) base).asByte());
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagByteArray)
-            return new ByteArrayTag(key, ((net.minecraft.server.v1_15_R1.NBTTagByteArray) base).getBytes());
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagIntArray)
-            return new IntArrayTag(key, ((net.minecraft.server.v1_15_R1.NBTTagIntArray) base).getInts());
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagString)
-            return new StringTag(key, base.asString());
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagList) {
-            List<net.minecraft.server.v1_15_R1.NBTBase> list = (List<net.minecraft.server.v1_15_R1.NBTBase>) base;
-            List<Tag> converted = Lists.newArrayList();
-            if (list.size() > 0) {
-                Class<? extends Tag> tagType = convertNBT("", list.get(0)).getClass();
-                for (int i = 0; i < list.size(); i++) {
-                    converted.add(convertNBT("", list.get(i)));
-                }
-                return new ListTag(key, tagType, converted);
-            }
-        } else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagCompound)
-            return convertNBT((net.minecraft.server.v1_15_R1.NBTTagCompound) base);
-        else if (base instanceof net.minecraft.server.v1_15_R1.NBTTagEnd)
-            return new EndTag();
-        return null;
     }
 
     public static void flyingMoveLogic(EntityLiving entity, Vec3D vec3d) {

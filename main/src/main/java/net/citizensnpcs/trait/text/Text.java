@@ -22,6 +22,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.Placeholders;
@@ -43,7 +44,6 @@ public class Text extends Trait implements Runnable, Listener {
     private String itemInHandPattern = "default";
     @Persist(value = "random-talker")
     private boolean randomTalker = Setting.DEFAULT_RANDOM_TALKER.asBoolean();
-    @Persist
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
     @Persist(value = "realistic-looking")
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
@@ -132,6 +132,11 @@ public class Text extends Trait implements Runnable, Listener {
         return randomTalker;
     }
 
+    @Override
+    public void load(DataKey key) {
+        range = key.getDouble("range", Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble());
+    }
+
     @EventHandler
     private void onRightClick(NPCRightClickEvent event) {
         if (!event.getNPC().equals(npc) || text.size() == 0)
@@ -164,6 +169,14 @@ public class Text extends Trait implements Runnable, Listener {
 
         for (Player player : CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(npc.getEntity(), range)) {
             talk(player);
+        }
+    }
+
+    @Override
+    public void save(DataKey key) {
+        key.removeKey("range");
+        if (range != Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble()) {
+            key.setDouble("range", range);
         }
     }
 
