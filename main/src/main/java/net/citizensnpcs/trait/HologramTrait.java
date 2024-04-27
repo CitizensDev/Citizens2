@@ -120,7 +120,7 @@ public class HologramTrait extends Trait {
         if (!SUPPORTS_DISPLAY || hologramSetting.equalsIgnoreCase("armorstand"))
             return new ArmorstandRenderer();
         return hologramSetting.equalsIgnoreCase("interaction") ? new InteractionVehicleRenderer()
-                : new TextDisplayVehicleRenderer();
+                : new TextDisplayRenderer();
     }
 
     private HologramRenderer createNameRenderer() {
@@ -654,6 +654,44 @@ public class HologramTrait extends Trait {
         private static Set<String> LINE_ARGS = ImmutableSet.of("set", "remove", "margintop", "marginbottom");
     }
 
+    public class TextDisplayRenderer extends SingleEntityHologramRenderer {
+        private Color color;
+
+        @Override
+        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+            NPC hologram = registry.createNPC(EntityType.TEXT_DISPLAY, "");
+            hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+            hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));
+            return hologram;
+        }
+
+        @Override
+        public void render0(NPC base, Vector3d offset) {
+            TextDisplay disp = (TextDisplay) hologram.getEntity();
+            disp.setInterpolationDelay(0);
+            disp.setInterpolationDuration(0);
+            disp.setBillboard(Billboard.CENTER);
+            if (color != null) {
+                disp.setBackgroundColor(color);
+            }
+            hologram.getEntity().teleport(
+                    npc.getStoredLocation().clone().add(offset.x, offset.y + getEntityBbHeight(), offset.z),
+                    TeleportCause.PLUGIN);
+        }
+
+        public void setBackgroundColor(Color color) {
+            this.color = color;
+        }
+
+        @Override
+        public void updateText(NPC npc, String raw) {
+            this.text = Placeholders.replace(raw, null, npc);
+            if (hologram == null)
+                return;
+            hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
+        }
+    }
+
     public class TextDisplayVehicleRenderer extends SingleEntityHologramRenderer {
         private Color color;
 
@@ -672,7 +710,7 @@ public class HologramTrait extends Trait {
             disp.setInterpolationDuration(0);
             disp.setBillboard(Billboard.CENTER);
             Transformation tf = disp.getTransformation();
-            tf.getTranslation().y = (float) offset.y + 0.2f;
+            tf.getTranslation().y = (float) offset.y + 0.7f;
             disp.setTransformation(tf);
             if (color != null) {
                 disp.setBackgroundColor(color);

@@ -935,7 +935,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void linkTextInteraction(org.bukkit.entity.Player player, org.bukkit.entity.Entity entity,
             org.bukkit.entity.Entity mount, double offset) {
-        offset += -0.5 + getHandle(mount).getPassengersRidingOffset();
+        offset += -0.9 + getHandle(mount).getPassengersRidingOffset();
         sendPacket(player,
                 new ClientboundBundlePacket(List.of(
                         new ClientboundSetEntityDataPacket(entity.getEntityId(),
