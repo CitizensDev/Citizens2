@@ -46,6 +46,7 @@ import net.minecraft.server.v1_15_R1.DamageSource;
 import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityHuman;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
+import net.minecraft.server.v1_15_R1.EntityPose;
 import net.minecraft.server.v1_15_R1.EnumGamemode;
 import net.minecraft.server.v1_15_R1.EnumItemSlot;
 import net.minecraft.server.v1_15_R1.EnumProtocolDirection;
@@ -403,7 +404,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 }
             }
         }
-        dX();
+        if (npc.data().has(NPC.Metadata.ENTITY_POSE)) {
+            setPose(EntityPose.valueOf(npc.data().get(NPC.Metadata.ENTITY_POSE)));
+        } else {
+            dX();
+        }
     }
 
     public void updateAI() {

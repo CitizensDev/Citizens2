@@ -49,6 +49,7 @@ import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -157,7 +158,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 entity.playerTouch(this);
             }
         }
-        updatePlayerPose();
+        if (npc.data().has(NPC.Metadata.ENTITY_POSE)) {
+            setPose(Pose.valueOf(npc.data().get(NPC.Metadata.ENTITY_POSE)));
+        } else {
+            updatePlayerPose();
+        }
     }
 
     @Override

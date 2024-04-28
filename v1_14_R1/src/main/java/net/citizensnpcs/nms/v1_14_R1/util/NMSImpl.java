@@ -1500,9 +1500,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sleep(Player player, boolean sleep) {
+    public void sleep(org.bukkit.entity.Player entity, boolean sleep) {
+        EntityPose pose = sleep ? EntityPose.SLEEPING : EntityPose.STANDING;
         try {
-            ENTITY_SETPOSE_METHOD.invoke(getHandle(player), sleep ? EntityPose.SLEEPING : EntityPose.STANDING);
+            ENTITY_SETPOSE.invoke(getHandle(entity), pose);
         } catch (Throwable e) {
             e.printStackTrace();
         }
