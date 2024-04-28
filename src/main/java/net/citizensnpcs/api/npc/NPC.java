@@ -468,6 +468,7 @@ public interface NPC extends Agent, Cloneable {
          * Whether the NPC drops its inventory after death.
          */
         DROPS_ITEMS("drops-items", Boolean.class),
+        ENTITY_POSE("entity-pose", String.class),
         /**
          * Whether the NPC is pushable by fluids.
          */
