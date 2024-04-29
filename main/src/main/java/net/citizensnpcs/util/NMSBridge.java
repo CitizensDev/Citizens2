@@ -41,6 +41,7 @@ import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.EntityPoseTrait.EntityPose;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
@@ -253,6 +254,9 @@ public interface NMSBridge {
 
     public default void setPolarBearRearing(Entity entity, boolean rearing) {
         throw new UnsupportedOperationException();
+    }
+
+    public default void setPose(Entity entity, EntityPose pose) {
     }
 
     public void setProfile(SkullMeta meta, GameProfile profile);

@@ -6,10 +6,10 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.trait.EntityPoseTrait.EntityPose;
 import net.citizensnpcs.util.NMS;
 
 @TraitName("sleeptrait")
@@ -40,7 +40,7 @@ public class SleepTrait extends Trait {
         }
         if (npc.getEntity() instanceof Player) {
             Player player = (Player) npc.getEntity();
-            npc.data().set(NPC.Metadata.ENTITY_POSE, "SLEEPING");
+            npc.getOrAddTrait(EntityPoseTrait.class).setPose(EntityPose.SLEEPING);
             if (SUPPORT_BLOCKDATA) {
                 try {
                     if (at.getBlock().getBlockData() instanceof Bed || at.getBlock().getState() instanceof Bed) {
@@ -67,7 +67,7 @@ public class SleepTrait extends Trait {
     }
 
     private void wakeup() {
-        npc.data().remove(NPC.Metadata.ENTITY_POSE);
+        npc.getOrAddTrait(EntityPoseTrait.class).setPose(null);
         if (npc.getEntity() instanceof Player) {
             NMS.sleep((Player) npc.getEntity(), false);
         } else if (npc.getEntity() instanceof Villager) {

@@ -213,6 +213,7 @@ import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.EntityPoseTrait.EntityPose;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AllayTrait;
@@ -1632,6 +1633,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setPolarBearRearing(org.bukkit.entity.Entity entity, boolean rearing) {
         ((PolarBear) getHandle(entity)).setStanding(rearing);
+    }
+
+    @Override
+    public void setPose(org.bukkit.entity.Entity entity, EntityPose pose) {
+        getHandle(entity).setPose(Pose.valueOf(pose.name()));
     }
 
     @Override

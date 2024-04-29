@@ -59,6 +59,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.trait.EntityPoseTrait.EntityPose;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.PacketNPC;
 import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
@@ -879,6 +880,10 @@ public class NMS {
         BRIDGE.setPolarBearRearing(entity, rearing);
     }
 
+    public static void setPose(Entity entity, EntityPose pose) {
+        BRIDGE.setPose(entity, pose);
+    }
+
     public static void setProfile(SkullMeta meta, GameProfile profile) {
         BRIDGE.setProfile(meta, profile);
     }
@@ -978,6 +983,7 @@ public class NMS {
     private static MethodHandle UNSAFE_PUT_INT;
     private static MethodHandle UNSAFE_PUT_LONG;
     private static MethodHandle UNSAFE_PUT_OBJECT;
+
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {

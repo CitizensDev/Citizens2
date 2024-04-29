@@ -1450,6 +1450,15 @@ public class NMSImpl implements NMSBridge {
         ((EntityPolarBear) getHandle(entity)).r(rearing);
     }
 
+    public void setPose(org.bukkit.entity.Entity entity, EntityPose pose) {
+        try {
+            ENTITY_SETPOSE_METHOD.invoke(getHandle(entity),
+                    net.minecraft.server.v1_15_R1.EntityPose.valueOf(pose.name()));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SET_PROFILE_METHOD == null) {
