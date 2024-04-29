@@ -463,12 +463,14 @@ public interface NPC extends Agent, Cloneable {
          * Whether the NPC is 'protected' i.e. invulnerable to damage.
          */
         DEFAULT_PROTECTED("protected", Boolean.class),
+        /**
+         * Whether to disable the default stuck action (teleport to destination is default).
+         */
         DISABLE_DEFAULT_STUCK_ACTION("disable-default-stuck-action", Boolean.class),
         /**
          * Whether the NPC drops its inventory after death.
          */
         DROPS_ITEMS("drops-items", Boolean.class),
-        ENTITY_POSE("entity-pose", String.class),
         /**
          * Whether the NPC is pushable by fluids.
          */
