@@ -18,10 +18,11 @@ import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
-import net.citizensnpcs.api.trait.trait.Spawned; 
+import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.AttributeTrait;
 import net.citizensnpcs.trait.BoundingBoxTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
@@ -74,6 +75,7 @@ public class CitizensTraitFactory implements TraitFactory {
     public CitizensTraitFactory(Citizens plugin) {
         registerTrait(TraitInfo.create(Age.class));
         registerTrait(TraitInfo.create(ArmorStandTrait.class));
+        registerTrait(TraitInfo.create(AttributeTrait.class));
         registerTrait(TraitInfo.create(Anchors.class));
         registerTrait(TraitInfo.create(BoundingBoxTrait.class));
         registerTrait(TraitInfo.create(ClickRedirectTrait.class));
@@ -95,7 +97,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(ItemFrameTrait.class));
         registerTrait(TraitInfo.create(LookClose.class));
         registerTrait(TraitInfo.create(PaintingTrait.class));
-        registerTrait(TraitInfo.create(MirrorTrait.class).optInToStats()); 
+        registerTrait(TraitInfo.create(MirrorTrait.class).optInToStats());
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());
         registerTrait(TraitInfo.create(OcelotModifiers.class));

@@ -27,6 +27,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
@@ -63,6 +64,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.command.Arg;
+import net.citizensnpcs.api.command.Arg.CompletionsProvider;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandMessages;
@@ -112,6 +114,7 @@ import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.AttributeTrait;
 import net.citizensnpcs.trait.BoundingBoxTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
@@ -393,6 +396,27 @@ public class NPCCommands {
         }
         if (args.hasValueFlag("rightlegpose")) {
             ent.setRightLegPose(args.parseEulerAngle(args.getFlag("rightlegpose")));
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "attribute [attribute] [value]",
+            desc = "",
+            modifiers = { "attribute" },
+            min = 2,
+            max = 3,
+            permission = "citizens.npc.attribute")
+    public void attribute(CommandContext args, CommandSender sender, NPC npc,
+            @Arg(value = 1, completionsProvider = OptionalAttributeCompletions.class) String attribute,
+            @Arg(2) Double value) {
+        AttributeTrait trait = npc.getOrAddTrait(AttributeTrait.class);
+        if (value == null) {
+            trait.setDefaultAttribute(Attribute.valueOf(attribute));
+            Messaging.sendTr(sender, Messages.ATTRIBUTE_RESET, attribute);
+        } else {
+            trait.setAttributeValue(Attribute.valueOf(attribute), value);
+            Messaging.sendTr(sender, Messages.ATTRIBUTE_SET, attribute, value);
         }
     }
 
@@ -3543,5 +3567,23 @@ public class NPCCommands {
         }
         Messaging.sendTr(sender, Messages.WOLF_TRAIT_UPDATED, npc.getName(), trait.isAngry(), trait.isSitting(),
                 trait.isTamed(), trait.getCollarColor().name());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static class OptionalAttributeCompletions implements CompletionsProvider {
+        @Override
+        public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
+            if (CLAZZ == null)
+                return Collections.emptyList();
+            return Lists.transform(Arrays.asList(CLAZZ.getEnumConstants()), Enum::name);
+        }
+
+        private static Class<? extends Enum<?>> CLAZZ;
+        static {
+            try {
+                CLAZZ = (Class<? extends Enum<?>>) Class.forName("org.bukkit.attribute.Attribute");
+            } catch (ClassNotFoundException e) {
+            }
+        }
     }
 }
