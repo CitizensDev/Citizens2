@@ -1,8 +1,7 @@
 package net.citizensnpcs.api.astar;
 
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import com.google.common.base.Preconditions;
 
 public class AStarMachine<N extends AStarNode, P extends Plan> {
     private Supplier<AStarStorage> storageSupplier;
@@ -69,9 +68,9 @@ public class AStarMachine<N extends AStarNode, P extends Plan> {
 
     @SuppressWarnings("unchecked")
     private P run(AStarStorage storage, AStarGoal<N> goal, N start, int maxIterations) {
-        Preconditions.checkNotNull(goal);
-        Preconditions.checkNotNull(start);
-        Preconditions.checkNotNull(storage);
+        Objects.requireNonNull(goal);
+        Objects.requireNonNull(start);
+        Objects.requireNonNull(storage);
         N node;
         int iterations = 0;
         while (true) {

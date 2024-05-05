@@ -1,8 +1,7 @@
 package net.citizensnpcs.api.trait;
 
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Builds a trait.
@@ -75,7 +74,7 @@ public final class TraitInfo {
     }
 
     public TraitInfo withName(String name) {
-        Preconditions.checkNotNull(name);
+        Objects.requireNonNull(name);
         this.name = name.toLowerCase();
         return this;
     }
@@ -95,7 +94,7 @@ public final class TraitInfo {
      *             If the trait class does not have a no-arguments constructor
      */
     public static TraitInfo create(Class<? extends Trait> trait) {
-        Preconditions.checkNotNull(trait);
+        Objects.requireNonNull(trait);
         return new TraitInfo(trait);
     }
 }

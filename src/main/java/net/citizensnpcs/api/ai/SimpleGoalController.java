@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -36,7 +37,7 @@ public class SimpleGoalController implements GoalController {
 
     @Override
     public void addGoal(Goal goal, int priority) {
-        Preconditions.checkNotNull(goal, "goal cannot be null");
+        Objects.requireNonNull(goal, "goal cannot be null");
         Preconditions.checkState(priority > 0 && priority < Integer.MAX_VALUE, "priority must be greater than 0");
         SimpleGoalEntry entry = new SimpleGoalEntry(goal, priority);
         if (possibleGoals.contains(entry))
@@ -52,7 +53,7 @@ public class SimpleGoalController implements GoalController {
 
     @Override
     public void addPrioritisableGoal(final PrioritisableGoal goal) {
-        Preconditions.checkNotNull(goal, "goal cannot be null");
+        Objects.requireNonNull(goal, "goal cannot be null");
         possibleGoals.add(new GoalEntry() {
             @Override
             public int compareTo(GoalEntry o) {
@@ -151,7 +152,7 @@ public class SimpleGoalController implements GoalController {
 
     @Override
     public void removeGoal(Goal goal) {
-        Preconditions.checkNotNull(goal, "goal cannot be null");
+        Objects.requireNonNull(goal, "goal cannot be null");
         for (int j = 0; j < possibleGoals.size(); ++j) {
             Goal test = possibleGoals.get(j).getGoal();
             if (!test.equals(goal)) {

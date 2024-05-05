@@ -4,10 +4,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
 import org.bukkit.command.CommandSender;
+
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
@@ -34,6 +37,27 @@ public @interface Arg {
                 return Collections.emptyList();
             }
         }
+
+        public static abstract class OptionalEnumCompletions implements CompletionsProvider {
+            private Class<? extends Enum<?>> clazz;
+
+            public OptionalEnumCompletions() {
+                try {
+                    clazz = (Class<? extends Enum<?>>) Class.forName(getEnumClassName());
+                } catch (ClassNotFoundException e) {
+                    clazz = null;
+                }
+            }
+
+            @Override
+            public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
+                if (clazz == null)
+                    return Collections.emptyList();
+                return Lists.transform(Arrays.asList(clazz.getEnumConstants()), Enum::name);
+            }
+
+            public abstract String getEnumClassName();
+        }
     }
 
     public static interface FlagValidator<T> {
@@ -47,5 +71,4 @@ public @interface Arg {
             }
         }
     }
-
 }
