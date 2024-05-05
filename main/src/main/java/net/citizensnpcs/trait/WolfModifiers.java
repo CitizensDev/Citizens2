@@ -24,6 +24,8 @@ public class WolfModifiers extends Trait {
     @Persist("collarColor")
     private DyeColor collarColor = DyeColor.RED;
     @Persist
+    private boolean interested;
+    @Persist
     private boolean sitting;
     @Persist
     private boolean tamed;
@@ -46,6 +48,10 @@ public class WolfModifiers extends Trait {
         return angry;
     }
 
+    public boolean isInterested() {
+        return interested;
+    }
+
     public boolean isSitting() {
         return sitting;
     }
@@ -66,6 +72,11 @@ public class WolfModifiers extends Trait {
 
     public void setCollarColor(DyeColor color) {
         collarColor = color;
+        updateModifiers();
+    }
+
+    public void setInterested(boolean interested) {
+        this.interested = interested;
         updateModifiers();
     }
 
@@ -104,8 +115,19 @@ public class WolfModifiers extends Trait {
                 }));
             }
             wolf.setTamed(tamed);
+            if (SUPPORT_SET_INTERESTED) {
+                wolf.setInterested(interested);
+            }
         }
     }
 
+    private static boolean SUPPORT_SET_INTERESTED = true;
     private static final Map<String, Object> VARIANT_CACHE = Maps.newHashMap();
+    static {
+        try {
+            Wolf.class.getMethod("setInterested", boolean.class);
+        } catch (Throwable e) {
+            SUPPORT_SET_INTERESTED = false;
+        }
+    }
 }

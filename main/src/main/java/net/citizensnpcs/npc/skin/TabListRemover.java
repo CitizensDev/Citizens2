@@ -6,13 +6,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import com.google.common.base.Preconditions;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
@@ -39,7 +38,7 @@ public class TabListRemover {
      *            The player.
      */
     public void cancelPackets(Player player) {
-        Preconditions.checkNotNull(player);
+        Objects.requireNonNull(player);
 
         PlayerEntry entry = pending.remove(player.getUniqueId());
         if (entry == null)
@@ -59,8 +58,8 @@ public class TabListRemover {
      *            The skinnable entity.
      */
     public void cancelPackets(Player player, SkinnableEntity skinnable) {
-        Preconditions.checkNotNull(player);
-        Preconditions.checkNotNull(skinnable);
+        Objects.requireNonNull(player);
+        Objects.requireNonNull(skinnable);
 
         PlayerEntry entry = pending.get(player.getUniqueId());
         if (entry == null)
@@ -92,8 +91,8 @@ public class TabListRemover {
      *            The entity to remove.
      */
     public void sendPacket(Player player, SkinnableEntity entity) {
-        Preconditions.checkNotNull(player);
-        Preconditions.checkNotNull(entity);
+        Objects.requireNonNull(player);
+        Objects.requireNonNull(entity);
 
         PlayerEntry entry = getEntry(player);
 

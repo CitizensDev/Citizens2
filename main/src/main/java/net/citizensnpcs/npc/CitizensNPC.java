@@ -2,6 +2,7 @@ package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -17,7 +18,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
@@ -233,7 +233,7 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     public void setEntityController(EntityController newController) {
-        Preconditions.checkNotNull(newController);
+        Objects.requireNonNull(newController);
         boolean wasSpawned = entityController == null ? false : isSpawned();
         Location prev = null;
         if (wasSpawned) {
@@ -293,8 +293,8 @@ public class CitizensNPC extends AbstractNPC {
 
     @Override
     public boolean spawn(Location at, SpawnReason reason) {
-        Preconditions.checkNotNull(at, "location cannot be null");
-        Preconditions.checkNotNull(reason, "reason cannot be null");
+        Objects.requireNonNull(at, "location cannot be null");
+        Objects.requireNonNull(reason, "reason cannot be null");
         if (getEntity() != null) {
             Messaging.debug("Tried to spawn", this, "while already spawned. SpawnReason." + reason);
             return false;

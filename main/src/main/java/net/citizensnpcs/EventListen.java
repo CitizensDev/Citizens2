@@ -474,7 +474,7 @@ public class EventListen implements Listener {
         if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
             HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                    () -> hr.onSeenByPlayer(event.getPlayer()), 2);
+                    () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
         }
     }
 

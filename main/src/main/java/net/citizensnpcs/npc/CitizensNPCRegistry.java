@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -15,7 +16,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -65,8 +65,8 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
-        Preconditions.checkNotNull(name, "name cannot be null");
-        Preconditions.checkNotNull(type, "type cannot be null");
+        Objects.requireNonNull(name, "name cannot be null");
+        Objects.requireNonNull(type, "type cannot be null");
         CitizensNPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this);
         npc.getOrAddTrait(MobType.class).setType(type);
         npcs.put(id, npc);

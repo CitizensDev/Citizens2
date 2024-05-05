@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -20,7 +21,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -153,7 +153,7 @@ public class SkinUpdateTracker {
      *            The despawned NPC.
      */
     public void onNPCDespawn(NPC npc) {
-        Preconditions.checkNotNull(npc);
+        Objects.requireNonNull(npc);
         playerTrackers.remove(npc.getUniqueId());
         SkinnableEntity skinnable = getSkinnable(npc);
         if (skinnable == null)
@@ -173,7 +173,7 @@ public class SkinUpdateTracker {
      *            The navigating NPC.
      */
     public void onNPCNavigationBegin(NPC npc) {
-        Preconditions.checkNotNull(npc);
+        Objects.requireNonNull(npc);
         SkinnableEntity skinnable = getSkinnable(npc);
         if (skinnable == null)
             return;
@@ -188,7 +188,7 @@ public class SkinUpdateTracker {
      *            The finished NPC.
      */
     public void onNPCNavigationComplete(NPC npc) {
-        Preconditions.checkNotNull(npc);
+        Objects.requireNonNull(npc);
         SkinnableEntity skinnable = getSkinnable(npc);
         if (skinnable == null)
             return;
@@ -203,7 +203,7 @@ public class SkinUpdateTracker {
      *            The spawned NPC.
      */
     public void onNPCSpawn(NPC npc) {
-        Preconditions.checkNotNull(npc);
+        Objects.requireNonNull(npc);
         SkinnableEntity skinnable = getSkinnable(npc);
         if (skinnable == null)
             return;
@@ -219,7 +219,7 @@ public class SkinUpdateTracker {
      *            The player that moved.
      */
     public void onPlayerMove(Player player) {
-        Preconditions.checkNotNull(player);
+        Objects.requireNonNull(player);
         PlayerTracker updateTracker = playerTrackers.get(player.getUniqueId());
         if (updateTracker == null || !updateTracker.shouldUpdate(player))
             return;
@@ -238,7 +238,7 @@ public class SkinUpdateTracker {
      *            The ID of the player.
      */
     public void removePlayer(UUID playerId) {
-        Preconditions.checkNotNull(playerId);
+        Objects.requireNonNull(playerId);
         playerTrackers.remove(playerId);
     }
 

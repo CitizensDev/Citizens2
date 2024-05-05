@@ -57,6 +57,8 @@
   "citizens.commands.npc.axolotl.playing-dead" : "[[{0}]] now playing dead.",
   "citizens.commands.npc.axolotl.playing-dead-stopped" : "[[{0}]] no longer playing dead.",
   "citizens.commands.npc.axolotl.variant-set" : "Variant set to [[{0}]].",
+  "citizens.commands.npc.boat.type-set": "Boat type set to [[{0}]].",
+  "citizens.commands.npc.boat.description": "Sets boat modifiers",
   "citizens.commands.npc.bee.anger-set" : "Anger set to [[{0}]].",
   "citizens.commands.npc.bee.bee-stung" : "[[{0}]] has now stung.",
   "citizens.commands.npc.bee.description" : "Sets bee modifiers",

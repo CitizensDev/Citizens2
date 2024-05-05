@@ -34,6 +34,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -64,7 +65,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.command.Arg;
-import net.citizensnpcs.api.command.Arg.CompletionsProvider;
+import net.citizensnpcs.api.command.Arg.CompletionsProvider.OptionalEnumCompletions;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandMessages;
@@ -115,6 +116,7 @@ import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.AttributeTrait;
+import net.citizensnpcs.trait.BoatTrait;
 import net.citizensnpcs.trait.BoundingBoxTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
@@ -418,6 +420,26 @@ public class NPCCommands {
             trait.setAttributeValue(Attribute.valueOf(attribute), value);
             Messaging.sendTr(sender, Messages.ATTRIBUTE_SET, attribute, value);
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "boat --type [type]",
+            desc = "",
+            modifiers = { "boat" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.boat")
+    public void boat(CommandContext args, CommandSender sender, NPC npc,
+            @Flag(value = "type", completionsProvider = OptionalBoatTypeCompletions.class) String stype)
+            throws CommandException {
+        if (stype != null) {
+            Boat.Type type = Boat.Type.valueOf(stype);
+            npc.getOrAddTrait(BoatTrait.class).setType(type);
+            Messaging.sendTr(sender, Messages.BOAT_TYPE_SET, type);
+            return;
+        }
+        throw new CommandUsageException();
     }
 
     @Command(
@@ -3514,7 +3536,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "wolf (-s(itting) a(ngry) t(amed) i(nfo)) --collar [hex rgb color|name] --variant [variant]",
+            usage = "wolf (-s(itting) a(ngry) t(amed) i(nterested)) --collar [hex rgb color|name] --variant [variant]",
             desc = "",
             modifiers = { "wolf" },
             min = 1,
@@ -3538,6 +3560,9 @@ public class NPCCommands {
         }
         if (args.hasFlag('t')) {
             trait.setTamed(!trait.isTamed());
+        }
+        if (args.hasFlag('i')) {
+            trait.setInterested(!trait.isInterested());
         }
         if (variant != null) {
             variant = variant.toUpperCase();
@@ -3569,21 +3594,17 @@ public class NPCCommands {
                 trait.isTamed(), trait.getCollarColor().name());
     }
 
-    @SuppressWarnings("unchecked")
-    public static class OptionalAttributeCompletions implements CompletionsProvider {
+    public static class OptionalAttributeCompletions extends OptionalEnumCompletions {
         @Override
-        public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
-            if (CLAZZ == null)
-                return Collections.emptyList();
-            return Lists.transform(Arrays.asList(CLAZZ.getEnumConstants()), Enum::name);
+        public String getEnumClassName() {
+            return "org.bukkit.attribute.Attribute";
         }
+    }
 
-        private static Class<? extends Enum<?>> CLAZZ;
-        static {
-            try {
-                CLAZZ = (Class<? extends Enum<?>>) Class.forName("org.bukkit.attribute.Attribute");
-            } catch (ClassNotFoundException e) {
-            }
+    public static class OptionalBoatTypeCompletions extends OptionalEnumCompletions {
+        @Override
+        public String getEnumClassName() {
+            return "org.bukkit.entity.Boat.Type";
         }
     }
 }

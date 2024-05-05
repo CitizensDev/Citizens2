@@ -7,12 +7,12 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
@@ -49,7 +49,7 @@ class ProfileFetchThread implements Runnable {
      * @see ProfileFetcher#fetch
      */
     void fetch(String name, @Nullable ProfileFetchHandler handler) {
-        Preconditions.checkNotNull(name);
+        Objects.requireNonNull(name);
 
         name = name.toLowerCase();
         ProfileRequest request;
@@ -76,7 +76,7 @@ class ProfileFetchThread implements Runnable {
     }
 
     public void fetchForced(String name, ProfileFetchHandler handler) {
-        Preconditions.checkNotNull(name);
+        Objects.requireNonNull(name);
 
         name = name.toLowerCase();
         ProfileRequest request;
@@ -116,7 +116,7 @@ class ProfileFetchThread implements Runnable {
      *            The profile requests.
      */
     private void fetchRequests(Collection<ProfileRequest> requests) {
-        Preconditions.checkNotNull(requests);
+        Objects.requireNonNull(requests);
 
         String[] playerNames = new String[requests.size()];
 

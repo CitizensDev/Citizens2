@@ -51,7 +51,6 @@ import net.citizensnpcs.util.Util;
  * Manages a set of <em>holograms</em> attached to the NPC. Holograms are lines of text or items that follow the NPC at
  * some offset (typically vertically offset).
  */
-// TODO: cleanup: make HologramRenderer static, possibly make it singleton-friendly?
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
     private Location currentLoc;
@@ -130,10 +129,6 @@ public class HologramTrait extends Trait {
             return new InteractionVehicleRenderer();
         }
         return new ArmorstandVehicleRenderer();
-    }
-
-    private double getEntityBbHeight() {
-        return NMS.getBoundingBoxHeight(npc.getEntity());
     }
 
     private double getHeight(int lineNumber) {
@@ -261,7 +256,7 @@ public class HologramTrait extends Trait {
         boolean updatePosition = Setting.HOLOGRAM_ALWAYS_UPDATE_POSITION.asBoolean() || currentLoc == null
                 || currentLoc.getWorld() != npcLoc.getWorld() || currentLoc.distance(npcLoc) >= 0.001
                 || lastNameplateVisible != nameplateVisible
-                || Math.abs(lastEntityBbHeight - getEntityBbHeight()) >= 0.05;
+                || Math.abs(lastEntityBbHeight - NMS.getBoundingBoxHeight(npc.getEntity())) >= 0.05;
         boolean updateName = false;
 
         if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
@@ -272,7 +267,7 @@ public class HologramTrait extends Trait {
 
         if (updatePosition) {
             currentLoc = npcLoc.clone();
-            lastEntityBbHeight = getEntityBbHeight();
+            lastEntityBbHeight = NMS.getBoundingBoxHeight(npc.getEntity());
         }
         if (nameLine != null) {
             if (updatePosition || nameLine.renderer.getEntities().size() == 0) {
@@ -378,9 +373,8 @@ public class HologramTrait extends Trait {
 
         @Override
         protected void render0(NPC npc, Vector3d offset) {
-            hologram.getEntity().teleport(
-                    npc.getStoredLocation().clone().add(offset.x, offset.y + getEntityBbHeight(), offset.z),
-                    TeleportCause.PLUGIN);
+            hologram.getEntity().teleport(npc.getStoredLocation().clone().add(offset.x,
+                    offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
         }
     }
 
@@ -443,23 +437,81 @@ public class HologramTrait extends Trait {
         }
     }
 
+    /**
+     * API for rendering holograms. Assumptions are documented in Javadoc but the API is early and subject to change.
+     * Feedback is welcomed.
+     */
     public static interface HologramRenderer {
+        /**
+         * Destroy/teardown any rendered holograms.
+         */
         void destroy();
 
+        /**
+         * @return Any associated hologram entities. Used in {@link #getEntities()}.
+         */
         Collection<Entity> getEntities();
 
-        String getPerPlayerText(NPC npc, Player viewer);
+        /**
+         * If {@NPC.Metadata.HOLOGRAM_RENDERER} is set on any entity and ProtocolLib is enabled, this method will be
+         * called to modify the name per-player. Note: this should be async-safe. This method is fragile and may be
+         * moved elsewhere.
+         *
+         * @param hologram
+         *            the <em>hologram</em> NPC
+         * @param viewer
+         *            the viewing Player
+         * @return the modified text per Player
+         */
+        String getPerPlayerText(NPC hologram, Player viewer);
 
-        default boolean isSneaking(NPC npc, Player player) {
+        /**
+         * If {@NPC.Metadata.HOLOGRAM_RENDERER} is set on any entity and ProtocolLib is enabled, returns whether the NPC
+         * should be considered sneaking or not to the viewing player. Presently called only when player first sees the
+         * NPC (i.e. not proactively).Note: this should be async-safe. This method is fragile and may be moved
+         * elsewhere.
+         *
+         * @param hologram
+         *            the <em>hologram</em> NPC
+         * @param player
+         *            the viewing Player
+         * @return whether the NPC is sneaking
+         */
+        default boolean isSneaking(NPC hologram, Player player) {
             return NMS.isSneaking(player);
         }
 
-        default void onSeenByPlayer(Player player) {
+        /**
+         * If {@NPC.Metadata.HOLOGRAM_RENDERER} is set on any entity, called when it is seen for the first time by a
+         * Player.
+         *
+         * @param hologram
+         *            the <em>hologram</em> NPC
+         * @param player
+         *            the viewing Player
+         */
+        default void onSeenByPlayer(NPC hologram, Player player) {
         }
 
-        void render(NPC npc, Vector3d offset);
+        /**
+         * Render the hologram at a given offset. Any underlying hologram NPCs should be spawned at this point.
+         *
+         * @param parent
+         *            the <em>parent</em> NPC.
+         * @param offset
+         *            the offset, in blocks
+         */
+        void render(NPC parent, Vector3d offset);
 
-        void updateText(NPC npc, String text);
+        /**
+         * Update the hologram text. Will be called first before {@link #render(NPC, Vector3d)}.
+         *
+         * @param parent
+         *            the <em>parent</em> NPC
+         * @param text
+         *            the new hologram text
+         */
+        void updateText(NPC parent, String text);
     }
 
     public class InteractionVehicleRenderer extends SingleEntityHologramRenderer {
@@ -472,7 +524,7 @@ public class HologramTrait extends Trait {
         }
 
         @Override
-        public void onSeenByPlayer(Player player) {
+        public void onSeenByPlayer(NPC npc, Player player) {
             if (lastOffset == null)
                 return;
             NMS.linkTextInteraction(player, hologram.getEntity(), npc.getEntity(), lastOffset.y);
@@ -565,9 +617,8 @@ public class HologramTrait extends Trait {
 
         @Override
         protected void render0(NPC npc, Vector3d offset) {
-            hologram.getEntity().teleport(
-                    npc.getStoredLocation().clone().add(offset.x, offset.y + getEntityBbHeight(), offset.z),
-                    TeleportCause.PLUGIN);
+            hologram.getEntity().teleport(npc.getStoredLocation().clone().add(offset.x,
+                    offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
         }
 
         @Override
@@ -576,6 +627,10 @@ public class HologramTrait extends Trait {
         }
     }
 
+    /**
+     * A helper class that models a hologram as a single entity that represents a single line in game.
+     */
+    // TODO: make static (requires: view range/registry modelling)
     public abstract class SingleEntityHologramRenderer implements HologramRenderer {
         protected NPC hologram;
         protected String text;
@@ -609,6 +664,9 @@ public class HologramTrait extends Trait {
             render0(npc, offset);
         }
 
+        /**
+         * Hologram spawning is delegated to {@link #createNPC(Entity, String, Vector3d)}
+         */
         protected abstract void render0(NPC npc, Vector3d offset);
 
         protected void spawnHologram(NPC npc, Vector3d offset) {
@@ -625,7 +683,8 @@ public class HologramTrait extends Trait {
             } else if (npc.data().has(NPC.Metadata.TRACKING_RANGE)) {
                 hologram.data().set(NPC.Metadata.TRACKING_RANGE, npc.data().get(NPC.Metadata.TRACKING_RANGE));
             }
-            hologram.spawn(npc.getEntity().getLocation().add(offset.x, offset.y, offset.z));
+            hologram.spawn(npc.getEntity().getLocation().add(offset.x,
+                    offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z));
         }
 
         @Override
@@ -674,9 +733,8 @@ public class HologramTrait extends Trait {
             if (color != null) {
                 disp.setBackgroundColor(color);
             }
-            hologram.getEntity().teleport(
-                    npc.getStoredLocation().clone().add(offset.x, offset.y + getEntityBbHeight(), offset.z),
-                    TeleportCause.PLUGIN);
+            hologram.getEntity().teleport(npc.getStoredLocation().clone().add(offset.x,
+                    offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
         }
 
         public void setBackgroundColor(Color color) {

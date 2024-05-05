@@ -1,11 +1,11 @@
 package net.citizensnpcs.npc.profile;
 
+import java.util.Objects;
+
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
-
-import com.google.common.base.Preconditions;
 
 import net.citizensnpcs.api.CitizensAPI;
 
@@ -27,7 +27,7 @@ public class ProfileFetcher {
      *            Optional handler to handle the result. Handler always invoked from the main thread.
      */
     public static void fetch(String name, @Nullable ProfileFetchHandler handler) {
-        Preconditions.checkNotNull(name);
+        Objects.requireNonNull(name);
 
         if (PROFILE_THREAD == null) {
             initThread();
@@ -36,7 +36,7 @@ public class ProfileFetcher {
     }
 
     public static void fetchForced(String name, ProfileFetchHandler handler) {
-        Preconditions.checkNotNull(name);
+        Objects.requireNonNull(name);
 
         if (PROFILE_THREAD == null) {
             initThread();

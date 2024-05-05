@@ -1,9 +1,9 @@
 package net.citizensnpcs;
 
+import java.util.Objects;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import com.google.common.base.Preconditions;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
@@ -16,7 +16,7 @@ public class PaymentListener implements Listener {
     private final Economy provider;
 
     public PaymentListener(Economy provider) {
-        Preconditions.checkNotNull(provider, "provider cannot be null");
+        Objects.requireNonNull(provider, "provider cannot be null");
         this.provider = provider;
     }
 

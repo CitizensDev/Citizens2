@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
@@ -13,7 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.Settings.Setting;
@@ -73,7 +73,7 @@ public class Skin {
      * @return True if skin was applied, false if the data is being retrieved.
      */
     public boolean apply(SkinnableEntity entity) {
-        Preconditions.checkNotNull(entity);
+        Objects.requireNonNull(entity);
 
         NPC npc = entity.getNPC();
         SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
@@ -121,7 +121,7 @@ public class Skin {
      *            The skinnable entity.
      */
     public void applyAndRespawn(SkinnableEntity entity) {
-        Preconditions.checkNotNull(entity);
+        Objects.requireNonNull(entity);
 
         if (!apply(entity))
             return;
@@ -319,7 +319,7 @@ public class Skin {
      *            if the skin should be checked via the cache
      */
     public static Skin get(SkinnableEntity entity, boolean forceUpdate) {
-        Preconditions.checkNotNull(entity);
+        Objects.requireNonNull(entity);
 
         String skinName = entity.getSkinName().toLowerCase();
         return get(skinName, forceUpdate);
@@ -336,7 +336,7 @@ public class Skin {
      *            The name of the skin.
      */
     public static Skin get(String skinName, boolean forceUpdate) {
-        Preconditions.checkNotNull(skinName);
+        Objects.requireNonNull(skinName);
 
         skinName = skinName.toLowerCase();
 

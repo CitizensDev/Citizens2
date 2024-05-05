@@ -31,6 +31,7 @@ public class Messages {
     public static final String BEE_NO_NECTAR = "citizens.commands.npc.bee.no-nectar";
     public static final String BEE_NOT_STUNG = "citizens.commands.npc.bee.not-stung";
     public static final String BEE_STUNG = "citizens.commands.npc.bee.bee-stung";
+    public static final String BOAT_TYPE_SET = "citizens.commands.npc.boat.type-set";
     public static final String BOUNDING_BOX_SET = "citizens.commands.npc.hitbox.set";
     public static final String CAMEL_POSE_SET = "citizens.commands.npc.camel.pose-set";
     public static final String CANNOT_TELEPORT_ACROSS_WORLDS = "citizens.commands.npc.tphere.multiworld-not-allowed";

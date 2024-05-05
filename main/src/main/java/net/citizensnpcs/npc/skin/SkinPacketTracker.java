@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.skin;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -12,8 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import com.google.common.base.Preconditions;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -40,7 +39,7 @@ public class SkinPacketTracker {
      *            The skinnable entity the instance belongs to.
      */
     public SkinPacketTracker(SkinnableEntity entity) {
-        Preconditions.checkNotNull(entity);
+        Objects.requireNonNull(entity);
 
         this.entity = entity;
         skin = Skin.get(entity);
@@ -171,7 +170,7 @@ public class SkinPacketTracker {
      *            The player.
      */
     public void updateViewer(Player player) {
-        Preconditions.checkNotNull(player);
+        Objects.requireNonNull(player);
 
         if (isRemoved || player.hasMetadata("NPC"))
             return;

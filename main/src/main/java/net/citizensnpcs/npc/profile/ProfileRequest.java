@@ -2,12 +2,12 @@ package net.citizensnpcs.npc.profile;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 
-import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -35,7 +35,7 @@ public class ProfileRequest {
      */
 
     public ProfileRequest(String playerName, ProfileFetchHandler handler) {
-        Preconditions.checkNotNull(playerName);
+        Objects.requireNonNull(playerName);
 
         this.playerName = playerName;
 
@@ -55,7 +55,7 @@ public class ProfileRequest {
      *            The result handler.
      */
     public void addHandler(ProfileFetchHandler handler) {
-        Preconditions.checkNotNull(handler);
+        Objects.requireNonNull(handler);
 
         if (result != ProfileFetchResult.PENDING) {
             handler.onResult(this);

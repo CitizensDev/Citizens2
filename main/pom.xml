@@ -1,5 +1,7 @@
 <!-- Citizens build file -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.citizensnpcs</groupId>
@@ -12,8 +14,7 @@
         <craftbukkit.version>1.20.6-R0.1-SNAPSHOT</craftbukkit.version>
         <placeholderapi.version>2.11.5</placeholderapi.version>
         <citizensapi.version>${project.version}</citizensapi.version>
-        <worldguard.version>7.1.0-SNAPSHOT</worldguard.version>
-        <powermock.version>1.4.12</powermock.version>
+        <worldguard.version>7.1.0-SNAPSHOT</worldguard.version> 
     </properties>
     <repositories>
         <repository>
@@ -29,7 +30,8 @@
         </repository>
         <repository>
             <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>
+                https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
             <id>sk89q-repo</id>
@@ -53,18 +55,6 @@
             <scope>provided</scope>
         </dependency> 
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>net.sf.trove4j</groupId>
             <artifactId>trove4j</artifactId>
             <version>3.0.3</version>
@@ -75,7 +65,7 @@
             <artifactId>ProtocolLib</artifactId>
             <version>5.0.0</version>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>ch.ethz.globis.phtree</groupId>
             <artifactId>phtree</artifactId>
@@ -121,7 +111,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.15.0</version>
+            <version>4.16.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -143,25 +133,18 @@
     </scm>
     <build>
         <defaultGoal>clean package install javadoc:javadoc</defaultGoal>
-        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+        <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
             <resource>
                 <targetPath>.</targetPath>
                 <filtering>true</filtering>
-                <directory>${basedir}/src/main/resources</directory>
+                <directory>src/main/resources</directory>
                 <includes>
                     <include>plugin.yml</include>
                     <include>*.json</include>
-                </includes>
-            </resource>
-            <resource>
-                <targetPath>.</targetPath>
-                <filtering>true</filtering>
-                <directory>..</directory>
-                <includes>
                     <include>LICENSE</include>
                 </includes>
-            </resource>
+            </resource> 
         </resources>
         <plugins>
             <plugin>
@@ -215,20 +198,20 @@
                                 <relocation>
                                     <pattern>gnu.trove</pattern>
                                     <shadedPattern>clib.trove</shadedPattern>
-                                </relocation> 
+                                </relocation>
                                 <relocation>
                                     <pattern>net.kyori</pattern>
                                     <shadedPattern>clib.net.kyori</shadedPattern>
-                                </relocation> 
+                                </relocation>
                                 <relocation>
                                     <pattern>net.byteflux.libby</pattern>
                                     <shadedPattern>clib.net.byteflux.libby</shadedPattern>
-                                </relocation> 
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>  
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>

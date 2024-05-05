@@ -1,9 +1,10 @@
 package net.citizensnpcs.trait;
 
+import java.util.Objects;
+
 import org.bukkit.ChatColor;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.Settings.Setting;
@@ -139,7 +140,7 @@ public class SkinTrait extends Trait {
      * @see net.citizensnpcs.npc.skin.Skin#get(SkinnableEntity, boolean)
      */
     public void setSkinName(String name, boolean forceUpdate) {
-        Preconditions.checkNotNull(name);
+        Objects.requireNonNull(name);
         setSkinNameInternal(name);
         onSkinChange(forceUpdate);
     }
@@ -160,9 +161,9 @@ public class SkinTrait extends Trait {
      *            {@link #getTexture()}
      */
     public void setSkinPersistent(String skinName, String signature, String data) {
-        Preconditions.checkNotNull(skinName);
-        Preconditions.checkNotNull(signature);
-        Preconditions.checkNotNull(data);
+        Objects.requireNonNull(skinName);
+        Objects.requireNonNull(signature);
+        Objects.requireNonNull(data);
 
         setSkinNameInternal(skinName);
         String json = new String(BaseEncoding.base64().decode(data), Charsets.UTF_8);
