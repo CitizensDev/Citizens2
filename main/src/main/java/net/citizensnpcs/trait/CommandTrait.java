@@ -117,7 +117,9 @@ public class CommandTrait extends Trait {
             Transaction action = new ItemAction(command.itemCost).take(player, 1);
             if (!action.isPossible()) {
                 ItemStack stack = command.itemCost.get(0);
-                sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
+                sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null,
+                        stack.getItemMeta().hasDisplayName() ? stack.getItemMeta().getDisplayName()
+                                : Util.prettyEnum(stack.getType()),
                         stack.getAmount());
             }
             txns.add(action);
@@ -148,7 +150,9 @@ public class CommandTrait extends Trait {
             Transaction action = new ItemAction(itemRequirements).take(player, 1);
             if (!action.isPossible()) {
                 ItemStack stack = itemRequirements.get(0);
-                sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
+                sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null,
+                        stack.getItemMeta().hasDisplayName() ? stack.getItemMeta().getDisplayName()
+                                : Util.prettyEnum(stack.getType()),
                         stack.getAmount());
             }
             txns.add(action);
