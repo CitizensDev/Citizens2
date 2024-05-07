@@ -1,5 +1,7 @@
 package net.citizensnpcs.trait.shop;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -70,6 +72,17 @@ public abstract class NPCShopAction implements Cloneable {
 
         public void run() {
             execute.run();
+        }
+
+        public static Transaction compose(Collection<Transaction> txn) {
+            if (txn.isEmpty())
+                return success();
+            return create(() -> txn.stream().allMatch(t -> t == null || t.isPossible()),
+                    () -> txn.forEach(Transaction::run), () -> txn.forEach(Transaction::rollback));
+        }
+
+        public static Transaction compose(Transaction... txn) {
+            return compose(Arrays.asList(txn));
         }
 
         public static Transaction create(Supplier<Boolean> isPossible, Runnable execute, Runnable rollback) {

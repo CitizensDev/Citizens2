@@ -51,7 +51,6 @@ import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.trait.shop.ExperienceAction;
 import net.citizensnpcs.trait.shop.ItemAction;
 import net.citizensnpcs.trait.shop.MoneyAction;
-import net.citizensnpcs.trait.shop.NPCShopAction;
 import net.citizensnpcs.trait.shop.NPCShopAction.Transaction;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
@@ -96,51 +95,65 @@ public class CommandTrait extends Trait {
     }
 
     private Transaction chargeCommandCosts(Player player, Hand hand, NPCCommand command) {
-        NPCShopAction action = null;
         if (player.hasPermission("citizens.npc.command.ignoreerrors.*"))
             return Transaction.success();
-        if (nonZeroOrNegativeOne(cost) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
-            action = new MoneyAction(cost);
-            if (!action.take(player, 1).isPossible()) {
-                sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
-            }
-        }
-        if (experienceCost > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
-            action = new ExperienceAction(experienceCost);
-            if (!action.take(player, 1).isPossible()) {
-                sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, experienceCost);
-            }
-        }
-        if (itemRequirements.size() > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
-            action = new ItemAction(itemRequirements);
-            if (!action.take(player, 1).isPossible()) {
-                ItemStack stack = itemRequirements.get(0);
-                sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
-                        stack.getAmount());
-            }
-        }
+        Collection<Transaction> txns = Lists.newArrayList();
         if (nonZeroOrNegativeOne(command.cost) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
-            action = new MoneyAction(command.cost);
-            if (!action.take(player, 1).isPossible()) {
+            Transaction action = new MoneyAction(command.cost).take(player, 1);
+            if (!action.isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, command.cost);
             }
+            txns.add(action);
         }
         if (command.experienceCost != -1 && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
-            action = new ExperienceAction(command.experienceCost);
-            if (!action.take(player, 1).isPossible()) {
+            Transaction action = new ExperienceAction(command.experienceCost).take(player, 1);
+            if (!action.isPossible()) {
                 sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, command.experienceCost);
             }
+            txns.add(action);
         }
         if (command.itemCost != null && command.itemCost.size() > 0
                 && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
-            action = new ItemAction(command.itemCost);
-            if (!action.take(player, 1).isPossible()) {
+            Transaction action = new ItemAction(command.itemCost).take(player, 1);
+            if (!action.isPossible()) {
                 ItemStack stack = command.itemCost.get(0);
                 sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
                         stack.getAmount());
             }
+            txns.add(action);
         }
-        return action == null ? Transaction.success() : action.take(player, 1);
+        return Transaction.compose(txns);
+    }
+
+    private Transaction chargeGlobalCommandCosts(Player player, Hand hand) {
+        if (player.hasPermission("citizens.npc.command.ignoreerrors.*"))
+            return Transaction.success();
+
+        Collection<Transaction> txns = Lists.newArrayList();
+        if (nonZeroOrNegativeOne(cost) && !player.hasPermission("citizens.npc.command.ignoreerrors.cost")) {
+            Transaction action = new MoneyAction(cost).take(player, 1);
+            if (!action.isPossible()) {
+                sendErrorMessage(player, CommandTraitError.MISSING_MONEY, null, cost);
+            }
+            txns.add(action);
+        }
+        if (experienceCost > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.expcost")) {
+            Transaction action = new ExperienceAction(experienceCost).take(player, 1);
+            if (!action.isPossible()) {
+                sendErrorMessage(player, CommandTraitError.MISSING_EXPERIENCE, null, experienceCost);
+            }
+            txns.add(action);
+        }
+        if (itemRequirements.size() > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.itemcost")) {
+            Transaction action = new ItemAction(itemRequirements).take(player, 1);
+            if (!action.isPossible()) {
+                ItemStack stack = itemRequirements.get(0);
+                sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null, Util.prettyEnum(stack.getType()),
+                        stack.getAmount());
+            }
+            txns.add(action);
+        }
+        return Transaction.compose(txns);
     }
 
     public void clear() {
@@ -261,6 +274,10 @@ public class CommandTrait extends Trait {
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
+        Transaction global = chargeGlobalCommandCosts(player, hand);
+        if (!global.isPossible())
+            return;
+        global.run();
 
         Runnable task = new Runnable() {
             boolean failedCharge;
