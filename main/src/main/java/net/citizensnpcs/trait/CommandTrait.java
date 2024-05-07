@@ -118,7 +118,8 @@ public class CommandTrait extends Trait {
             if (!action.isPossible()) {
                 ItemStack stack = command.itemCost.get(0);
                 sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null,
-                        stack.getItemMeta().hasDisplayName() ? stack.getItemMeta().getDisplayName()
+                        stack.hasItemMeta() && stack.getItemMeta().hasDisplayName()
+                                ? stack.getItemMeta().getDisplayName()
                                 : Util.prettyEnum(stack.getType()),
                         stack.getAmount());
             }
@@ -151,7 +152,8 @@ public class CommandTrait extends Trait {
             if (!action.isPossible()) {
                 ItemStack stack = itemRequirements.get(0);
                 sendErrorMessage(player, CommandTraitError.MISSING_ITEM, null,
-                        stack.getItemMeta().hasDisplayName() ? stack.getItemMeta().getDisplayName()
+                        stack.hasItemMeta() && stack.getItemMeta().hasDisplayName()
+                                ? stack.getItemMeta().getDisplayName()
                                 : Util.prettyEnum(stack.getType()),
                         stack.getAmount());
             }
