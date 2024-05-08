@@ -14,7 +14,7 @@
         <craftbukkit.version>1.20.6-R0.1-SNAPSHOT</craftbukkit.version>
         <placeholderapi.version>2.11.5</placeholderapi.version>
         <citizensapi.version>${project.version}</citizensapi.version>
-        <worldguard.version>7.1.0-SNAPSHOT</worldguard.version> 
+        <worldguard.version>7.1.0-SNAPSHOT</worldguard.version>
     </properties>
     <repositories>
         <repository>
@@ -45,6 +45,10 @@
             <id>AlessioDP</id>
             <url>https://repo.alessiodp.com/releases/</url>
         </repository>
+        <repository>
+            <id>sonatype-oss-snapshots1</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -53,7 +57,7 @@
             <version>${craftbukkit.version}</version>
             <type>jar</type>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>net.sf.trove4j</groupId>
             <artifactId>trove4j</artifactId>
@@ -111,13 +115,13 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.16.0</version>
+            <version>4.17.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.3.2</version>
+            <version>4.3.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -144,7 +148,7 @@
                     <include>*.json</include>
                     <include>LICENSE</include>
                 </includes>
-            </resource> 
+            </resource>
         </resources>
         <plugins>
             <plugin>

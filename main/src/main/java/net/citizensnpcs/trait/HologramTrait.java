@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +22,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
@@ -34,6 +36,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Arg.CompletionsProvider;
 import net.citizensnpcs.api.command.CommandContext;
+import net.citizensnpcs.api.event.NPCEvent;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -115,20 +118,37 @@ public class HologramTrait extends Trait {
     }
 
     private HologramRenderer createDefaultHologramRenderer() {
+        HologramRenderer renderer;
         String hologramSetting = Setting.DEFAULT_HOLOGRAM_RENDERER.asString();
-        if (!SUPPORTS_DISPLAY || hologramSetting.equalsIgnoreCase("armorstand"))
-            return new ArmorstandRenderer();
-        return hologramSetting.equalsIgnoreCase("interaction") ? new InteractionVehicleRenderer()
-                : new TextDisplayRenderer();
+        if (!SUPPORTS_DISPLAY || hologramSetting.equalsIgnoreCase("armorstand")) {
+            renderer = new ArmorstandRenderer();
+        } else {
+            renderer = hologramSetting.equalsIgnoreCase("interaction") ? new InteractionVehicleRenderer()
+                    : new TextDisplayRenderer();
+        }
+        if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
+            HologramRendererCreateEvent event = new HologramRendererCreateEvent(npc, renderer, false);
+            Bukkit.getPluginManager().callEvent(event);
+            renderer = event.getRenderer();
+        }
+        return renderer;
     }
 
     private HologramRenderer createNameRenderer() {
+        HologramRenderer renderer;
         if (SpigotUtil.getVersion()[1] >= 20) {
-            return new TextDisplayVehicleRenderer();
+            renderer = new TextDisplayVehicleRenderer();
         } else if (SpigotUtil.getVersion()[1] == 19) {
-            return new InteractionVehicleRenderer();
+            renderer = new InteractionVehicleRenderer();
+        } else {
+            renderer = new ArmorstandVehicleRenderer();
         }
-        return new ArmorstandVehicleRenderer();
+        if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
+            HologramRendererCreateEvent event = new HologramRendererCreateEvent(npc, renderer, true);
+            Bukkit.getPluginManager().callEvent(event);
+            renderer = event.getRenderer();
+        }
+        return renderer;
     }
 
     private double getHeight(int lineNumber) {
@@ -512,6 +532,37 @@ public class HologramTrait extends Trait {
          *            the new hologram text
          */
         void updateText(NPC parent, String text);
+    }
+
+    public static class HologramRendererCreateEvent extends NPCEvent {
+        private final boolean nameRenderer;
+        private HologramRenderer renderer;
+
+        protected HologramRendererCreateEvent(NPC npc, HologramRenderer renderer, boolean nameRenderer) {
+            super(npc);
+            this.renderer = renderer;
+            this.nameRenderer = nameRenderer;
+        }
+
+        @Override
+        public HandlerList getHandlers() {
+            return handlers;
+        }
+
+        public HologramRenderer getRenderer() {
+            return renderer;
+        }
+
+        public boolean isNameRenderer() {
+            return nameRenderer;
+        }
+
+        public void setRenderer(HologramRenderer renderer) {
+            Objects.requireNonNull(renderer);
+            this.renderer = renderer;
+        }
+
+        private static final HandlerList handlers = new HandlerList();
     }
 
     public class InteractionVehicleRenderer extends SingleEntityHologramRenderer {

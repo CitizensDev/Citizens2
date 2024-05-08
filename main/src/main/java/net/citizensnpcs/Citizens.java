@@ -293,21 +293,27 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         lib.loadLibrary(Library.builder().groupId("net{}sf{}trove4j").artifactId("trove4j").version("3.0.3")
                 .relocate("gnu{}trove", "clib{}trove").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-minimessage")
-                .version("4.16.0").relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-api").version("4.16.0")
+                .version("4.17.0").relocate("net{}kyori", "clib{}net{}kyori").build());
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-api").version("4.17.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-key").version("4.16.0")
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-key").version("4.17.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("examination-api").version("1.3.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("examination-string").version("1.3.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-bukkit").version("4.3.2")
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-bukkit")
+                .version("4.3.3-SNAPSHOT")
+                .url("https://s01.oss.sonatype.org/content/repositories/snapshots/net/kyori/adventure-platform-bukkit/4.3.3-SNAPSHOT/adventure-platform-bukkit-4.3.3-20240507.021326-6.jar")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-api").version("4.3.2")
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-api")
+                .version("4.3.3-SNAPSHOT")
+                .url("https://s01.oss.sonatype.org/content/repositories/snapshots/net/kyori/adventure-platform-api/4.3.3-SNAPSHOT/adventure-platform-api-4.3.3-20240507.021326-6.jar")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-bungeecord")
-                .version("4.3.2").relocate("net{}kyori", "clib{}net{}kyori").build());
+                .version("4.3.3-SNAPSHOT")
+                .url("https://s01.oss.sonatype.org/content/repositories/snapshots/net/kyori/adventure-text-serializer-bungeecord/4.3.3-SNAPSHOT/adventure-text-serializer-bungeecord-4.3.3-20240507.021326-6.jar")
+                .relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-legacy")
                 .version("4.13.1").relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-nbt").version("4.13.1")
@@ -316,10 +322,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 .version("4.13.1").relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-gson-legacy-impl")
                 .version("4.13.1").relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-facet").version("4.3.2")
-                .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-viaversion")
-                .version("4.3.2").relocate("net{}kyori", "clib{}net{}kyori").build());
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-facet").url(
+                "https://s01.oss.sonatype.org/content/repositories/snapshots/net/kyori/adventure-platform-facet/4.3.3-SNAPSHOT/adventure-platform-facet-4.3.3-20240507.021326-6.jar")
+                .version("4.3.3-SNAPSHOT").relocate("net{}kyori", "clib{}net{}kyori").build());
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-viaversion").url(
+                "https://s01.oss.sonatype.org/content/repositories/snapshots/net/kyori/adventure-platform-viaversion/4.3.3-SNAPSHOT/adventure-platform-viaversion-4.3.3-20240507.021326-6.jar")
+                .version("4.3.3-SNAPSHOT").relocate("net{}kyori", "clib{}net{}kyori").build());
         try {
             Class.forName("org.joml.Vector3f");
         } catch (Throwable t) {

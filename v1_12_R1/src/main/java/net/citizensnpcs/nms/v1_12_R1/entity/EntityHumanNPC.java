@@ -180,14 +180,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (dead)
             return;
         super.die(damagesource);
-        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> world.removeEntity(EntityHumanNPC.this), 35); // give
-                                                                                                                        // enough
-                                                                                                                        // time
-                                                                                                                        // for
-                                                                                                                        // death
-                                                                                                                        // and
-                                                                                                                        // smoke
-                                                                                                                        // animation
+        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> world.removeEntity(EntityHumanNPC.this), 35);
+        // give enough time for death and smoke animation
     }
 
     @Override

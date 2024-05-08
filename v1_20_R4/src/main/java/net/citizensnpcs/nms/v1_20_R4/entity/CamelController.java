@@ -60,9 +60,7 @@ public class CamelController extends MobEntityController {
 
     public static class EntityCamelNPC extends Camel implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityCamelNPC(EntityType<? extends Camel> types, Level level) {
