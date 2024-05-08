@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.citizensnpcs</groupId>
     <artifactId>citizensapi</artifactId>
@@ -8,13 +10,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <bukkit.version>1.20.6-R0.1-SNAPSHOT</bukkit.version>
         <placeholderapi.version>2.11.5</placeholderapi.version>
-        <worldguard.version>7.0.4</worldguard.version> 
+        <worldguard.version>7.0.4</worldguard.version>
         <build.number>Unknown</build.number>
     </properties>
     <repositories>
         <repository>
             <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>
+                https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
             <id>sk89q-repo</id>
@@ -26,6 +29,10 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>sonatype-oss-snapshots1</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -62,13 +69,13 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.16.0</version>
+            <version>4.17.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.3.2</version>
+            <version>4.3.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -112,7 +119,8 @@
                     <doclint>none</doclint>
                     <links>
                         <link>https://hub.spigotmc.org/javadocs/spigot</link>
-                        <link>https://jd.adventure.kyori.net/platform/bukkit/4.1.2</link>
+                        <link>
+                            https://jd.adventure.kyori.net/platform/bukkit/4.1.2</link>
                         <link>https://jd.adventure.kyori.net/api/4.11.0</link>
                     </links>
                 </configuration>
@@ -125,7 +133,8 @@
                         <id>bundle-sources</id>
                         <phase>package</phase>
                         <goals>
-                            <!-- produce source artifact for main project sources -->
+                            <!-- produce source artifact for main project
+                            sources -->
                             <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
