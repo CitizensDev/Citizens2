@@ -21,6 +21,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.trait.Inventory;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.nms.v1_15_R1.network.EmptyNetHandler;
 import net.citizensnpcs.nms.v1_15_R1.network.EmptyNetworkManager;
@@ -202,7 +203,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     public IChatBaseComponent getPlayerListName() {
         if (npc != null && npc.shouldRemoveFromTabList())
             return new ChatComponentText("");
-        return super.getPlayerListName();
+        return npc != null ? (IChatBaseComponent) Messaging.minecraftComponentFromRawMessage(npc.getRawName())
+                : super.getPlayerListName();
     }
 
     @Override
