@@ -405,8 +405,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         traitFactory = new CitizensTraitFactory(this);
         traitFactory.registerTrait(TraitInfo.create(ShopTrait.class).withSupplier(() -> new ShopTrait(shops)));
         selector = new NPCSelector(this);
-        templateRegistry = new TemplateRegistry(new File(this.getDataFolder(), "templates").toPath());
-
+        templateRegistry = new TemplateRegistry(new File(getDataFolder(), "templates").toPath());
+        if (!new File(getDataFolder(), "skins").exists()) {
+            new File(getDataFolder(), "skins").mkdir();
+        }
         Bukkit.getPluginManager().registerEvents(new EventListen(), this);
         Bukkit.getPluginManager().registerEvents(new Placeholders(), this);
 

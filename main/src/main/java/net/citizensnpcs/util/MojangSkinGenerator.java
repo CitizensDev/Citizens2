@@ -30,7 +30,7 @@ public class MojangSkinGenerator {
                 con.setRequestProperty("User-Agent", "Citizens/2.0");
                 con.setRequestProperty("Cache-Control", "no-cache");
                 con.setRequestProperty("Content-Type", "multipart/form-data;boundary=*****");
-                con.setConnectTimeout(1000);
+                con.setConnectTimeout(2000);
                 con.setReadTimeout(30000);
                 out = new DataOutputStream(con.getOutputStream());
                 out.writeBytes("--*****\r\n");
@@ -91,7 +91,7 @@ public class MojangSkinGenerator {
                 con.setRequestProperty("Cache-Control", "no-cache");
                 con.setRequestProperty("Accept", "application/json");
                 con.setRequestProperty("Content-Type", "application/json");
-                con.setConnectTimeout(1000);
+                con.setConnectTimeout(2000);
                 con.setReadTimeout(30000);
                 out = new DataOutputStream(con.getOutputStream());
                 JSONObject req = new JSONObject();

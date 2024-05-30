@@ -110,7 +110,7 @@ public class Settings {
                 "npc.pathfinding.default-distance-margin", 1),
         DEFAULT_HOLOGRAM_RENDERER(
                 "The default renderer for holograms, must be one of the following:<br>interaction - matches inbuilt nametags most closely<br>display - allows for different colored backgrounds<br>armorstand - creates an armorstand and teleports it to the player",
-                "npc.hologram.default-renderer", "interaction"),
+                "npc.hologram.default-renderer", "display"),
         DEFAULT_LOOK_CLOSE("Enable look close by default", "npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("Default look close range in blocks", "npc.default.look-close.range", 10),
         DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT("Default distance between hologram lines", "npc.hologram.default-line-height",

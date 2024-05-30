@@ -3,6 +3,7 @@ package net.citizensnpcs.commands;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 
 import com.google.common.base.Joiner;
@@ -36,25 +37,47 @@ public class TemplateCommands {
             min = 2,
             permission = "citizens.templates.apply")
     public void apply(CommandContext args, CommandSender sender, NPC npc,
-            @Arg(value = 1, completionsProvider = TemplateCompletions.class) String templateName)
+            @Arg(value = 1, completionsProvider = TemplateCompletions.class) String templateKey)
             throws CommandException {
         Template template = null;
-        if (templateName.contains(":")) {
-            template = registry.getTemplateByNamespacedKey(templateName);
+        if (templateKey.contains(":")) {
+            int idx = templateKey.indexOf(':');
+            template = registry
+                    .getTemplateByKey(new NamespacedKey(templateKey.substring(0, idx), templateKey.substring(idx + 1)));
         } else {
-            Collection<Template> templates = registry.getTemplates(templateName);
+            Collection<Template> templates = registry.getTemplates(templateKey);
             if (templates.isEmpty())
                 throw new CommandException(Messages.TEMPLATE_MISSING);
             if (templates.size() > 1)
-                throw new CommandException(Messages.TEMPLATE_PICKER, templateName, Joiner.on(", ").join(templates
-                        .stream().map(t -> t.getNamespace() + ":" + t.getName()).collect(Collectors.toList())));
+                throw new CommandException(Messages.TEMPLATE_PICKER, templateKey,
+                        Joiner.on(", ").join(templates.stream().map(t -> t.getKey()).collect(Collectors.toList())));
             template = templates.iterator().next();
         }
         if (template == null)
             throw new CommandException(Messages.TEMPLATE_MISSING);
 
         template.apply(npc);
-        Messaging.sendTr(sender, Messages.TEMPLATE_APPLIED, template.getName(), npc.getName());
+        Messaging.sendTr(sender, Messages.TEMPLATE_APPLIED, template.getKey().getKey(), npc.getName());
+    }
+
+    @Command(
+            aliases = { "template", "tpl" },
+            usage = "generate (template namespace:)[name]",
+            desc = "",
+            modifiers = { "generate" },
+            min = 2,
+            max = 2,
+            permission = "citizens.templates.generate")
+    public void generate(CommandContext args, CommandSender sender, NPC npc,
+            @Arg(value = 1, completionsProvider = TemplateCompletions.class) String templateName)
+            throws CommandException {
+        int idx = templateName.indexOf(':');
+        NamespacedKey key = idx == -1 ? new NamespacedKey("generated", templateName)
+                : new NamespacedKey(templateName.substring(0, idx), templateName.substring(idx + 1));
+        if (registry.getTemplateByKey(key) != null)
+            throw new CommandException(Messages.TEMPLATE_CONFLICT);
+        registry.generateTemplateFromNPC(key, npc);
+        Messaging.sendTr(sender, Messages.TEMPLATE_GENERATED, npc.getName());
     }
 
     @Command(
@@ -68,7 +91,7 @@ public class TemplateCommands {
     public void list(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.sendTr(sender, Messages.TEMPLATE_LIST_HEADER);
         for (Template template : registry.getAllTemplates()) {
-            Messaging.send(sender, "[[-]]    " + template.getNamespace() + ":" + template.getName());
+            Messaging.send(sender, "[[-]]    " + template.getKey());
         }
     }
 
@@ -81,7 +104,7 @@ public class TemplateCommands {
 
         @Override
         public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
-            return templateRegistry.getAllTemplates().stream().map(t -> t.getNamespace() + ":" + t.getName())
+            return templateRegistry.getAllTemplates().stream().map(t -> t.getKey().toString())
                     .collect(Collectors.toList());
         }
     }

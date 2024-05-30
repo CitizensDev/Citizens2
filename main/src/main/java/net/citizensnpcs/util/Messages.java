@@ -414,6 +414,7 @@ public class Messages {
     public static final String TEMPLATE_APPLIED = "citizens.commands.template.applied";
     public static final String TEMPLATE_CONFLICT = "citizens.commands.template.conflict";
     public static final String TEMPLATE_DELETED = "citizens.commands.template.delete.deleted";
+    public static final String TEMPLATE_GENERATED = "citizens.commands.template.generate.generated";
     public static final String TEMPLATE_LIST_HEADER = "citizens.commands.template.list.header";
     public static final String TEMPLATE_MISSING = "citizens.commands.template.missing";
     public static final String TEMPLATE_NAMESPACE_EXISTS = "citizens.commands.template.namespace-already-exists";

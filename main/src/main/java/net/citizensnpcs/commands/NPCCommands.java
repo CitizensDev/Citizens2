@@ -23,6 +23,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
 import org.bukkit.Sound;
@@ -893,7 +894,9 @@ public class NPCCommands {
             StringBuilder builder = new StringBuilder();
             for (String part : parts) {
                 if (part.contains(":")) {
-                    Template template = templateRegistry.getTemplateByNamespacedKey(part);
+                    int idx = part.indexOf(':');
+                    Template template = templateRegistry
+                            .getTemplateByKey(new NamespacedKey(part.substring(0, idx), part.substring(idx + 1)));
                     if (template == null)
                         continue;
                     template.apply(npc);
@@ -3347,7 +3350,8 @@ public class NPCCommands {
             modifiers = { "tpto" },
             min = 2,
             max = 3,
-            permission = "citizens.npc.tpto")
+            permission = "citizens.npc.tpto",
+            parsePlaceholders = true)
     @Requirements
     public void tpto(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Entity from = null, to = null;

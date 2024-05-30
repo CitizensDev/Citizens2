@@ -618,6 +618,8 @@
   "citizens.commands.requirements.must-have-selected" : "You must have an NPC selected to execute that command.",
   "citizens.commands.requirements.too-few-arguments" : "Too few arguments.",
   "citizens.commands.requirements.too-many-arguments" : "Too many arguments.  ",
+  "citizens.commands.template.generate.generated" : "Generated template from [[{0}]]",
+  "citizens.commands.template.generate.description" : "Generate a template from the selected NPC",
   "citizens.commands.template.applied" : "Applied [[{0}]] to [[{1}]].",
   "citizens.commands.template.apply.description" : "Applies a template to the selected NPC",
   "citizens.commands.template.apply.help" : "",

@@ -456,6 +456,7 @@ public class EventListen implements Listener {
 
     @EventHandler
     public void onNPCKnockback(NPCKnockbackEvent event) {
+        event.setCancelled(event.getNPC().isProtected());
         if (event.getNPC().data().has(NPC.Metadata.KNOCKBACK)) {
             event.setCancelled(!event.getNPC().data().get(NPC.Metadata.KNOCKBACK, true));
         }

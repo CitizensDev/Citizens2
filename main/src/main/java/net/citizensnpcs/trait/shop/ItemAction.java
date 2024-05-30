@@ -28,6 +28,8 @@ import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.Component;
 
 public class ItemAction extends NPCShopAction {
     @Persist
@@ -53,11 +55,11 @@ public class ItemAction extends NPCShopAction {
     @Override
     public String describe() {
         if (items.size() == 1)
-            return items.get(0).getAmount() + " " + Util.prettyEnum(items.get(0).getType());
+            return stringify(items.get(0));
         String description = items.size() + " items";
         for (int i = 0; i < items.size(); i++) {
             ItemStack item = items.get(i);
-            description += "\n" + item.getAmount() + " " + Util.prettyEnum(item.getType());
+            description += "\n" + stringify(item);
             if (i == 3) {
                 description += "...";
                 break;
@@ -155,6 +157,7 @@ public class ItemAction extends NPCShopAction {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     private boolean metaMatches(ItemStack needle, ItemStack haystack, List<String> meta) {
         Map<String, Object> source = NMS.getComponentMap(needle);
         Map<String, Object> compare = NMS.getComponentMap(haystack);
@@ -176,6 +179,14 @@ public class ItemAction extends NPCShopAction {
             }
         }
         return true;
+    }
+
+    private String stringify(ItemStack item) {
+        if (SUPPORT_TRANSLATABLE) {
+            return BukkitComponentSerializer.legacy().serialize(Component.text(item.getAmount() + " ")
+                    .append(Component.translatable().key(item.getTranslationKey())));
+        }
+        return item.getAmount() + " " + Util.prettyEnum(item.getType());
     }
 
     @Override
@@ -312,6 +323,16 @@ public class ItemAction extends NPCShopAction {
         @Override
         public boolean manages(NPCShopAction action) {
             return action instanceof ItemAction;
+        }
+    }
+
+    private static boolean SUPPORT_TRANSLATABLE = true;
+
+    static {
+        try {
+            Class.forName("org.bukkit.Translatable");
+        } catch (ClassNotFoundException e) {
+            SUPPORT_TRANSLATABLE = false;
         }
     }
 }

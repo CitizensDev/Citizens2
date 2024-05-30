@@ -700,7 +700,8 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public float getRidingHeightOffset(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity mount) {
-        return (float) getHandle(entity).getPassengerRidingPosition(getHandle(mount)).y;
+        Entity handle = getHandle(entity);
+        return (float) (handle.getPassengerRidingPosition(getHandle(mount)).y - handle.position().y);
     }
 
     @Override
@@ -911,8 +912,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void linkTextInteraction(org.bukkit.entity.Player player, org.bukkit.entity.Entity entity,
             org.bukkit.entity.Entity mount, double offset) {
-        Interaction handle = (Interaction) getHandle(entity);
-        offset += handle.getPassengerRidingPosition(getHandle(mount)).y;
+        offset += getRidingHeightOffset(entity, mount);
         sendPacket(player,
                 new ClientboundBundlePacket(List.of(
                         new ClientboundSetEntityDataPacket(entity.getEntityId(),
