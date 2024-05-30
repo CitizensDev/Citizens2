@@ -7,10 +7,13 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
+import org.bukkit.NamespacedKey;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Storage;
@@ -18,7 +21,7 @@ import net.citizensnpcs.api.util.YamlStorage;
 
 public class TemplateRegistry {
     private final Path baseFolder;
-    private final Map<String, Template> fullyQualifiedTemplates = Maps.newHashMap();
+    private final Map<NamespacedKey, Template> fullyQualifiedTemplates = Maps.newHashMap();
     private final Multimap<String, Template> templatesByName = HashMultimap.create();
 
     public TemplateRegistry(Path folder) {
@@ -29,15 +32,24 @@ public class TemplateRegistry {
         loadTemplates(baseFolder);
     }
 
+    public void generateTemplateFromNPC(NamespacedKey key, NPC npc) {
+        String namespace = key.getNamespace();
+        String file = "templates.yml";
+        File namespaceFolder = new File(baseFolder.toFile(), namespace);
+        namespaceFolder.mkdirs();
+        Storage templateStorage = new YamlStorage(new File(namespaceFolder, file));
+        if (!templateStorage.load())
+            throw new IllegalStateException();
+        DataKey root = templateStorage.getKey(key.getKey());
+        npc.save(root.getRelative("yaml_replace"));
+        templateStorage.save();
+    }
+
     public Collection<Template> getAllTemplates() {
         return fullyQualifiedTemplates.values();
     }
 
-    public Template getTemplateByKey(String namespace, String name) {
-        return fullyQualifiedTemplates.get(namespace + ":" + name);
-    }
-
-    public Template getTemplateByNamespacedKey(String key) {
+    public Template getTemplateByKey(NamespacedKey key) {
         return fullyQualifiedTemplates.get(key);
     }
 
@@ -46,20 +58,21 @@ public class TemplateRegistry {
     }
 
     public boolean hasNamespace(String namespace) {
-        for (String key : fullyQualifiedTemplates.keySet()) {
-            if (key.split(":")[0].equalsIgnoreCase(namespace))
+        for (NamespacedKey key : fullyQualifiedTemplates.keySet()) {
+            if (key.getNamespace().equals(namespace))
                 return true;
         }
         return false;
     }
 
     private void loadTemplate(File folder, String namespace, DataKey key) throws TemplateLoadException {
-        if (fullyQualifiedTemplates.containsKey(namespace + ":" + key.name()))
-            throw new TemplateLoadException("Duplicate template key " + namespace + ":" + key.name());
+        NamespacedKey namespacedKey = new NamespacedKey(namespace, key.name());
+        if (fullyQualifiedTemplates.containsKey(namespacedKey))
+            throw new TemplateLoadException("Duplicate template key " + namespacedKey);
 
-        Template template = Template.load(new TemplateWorkspace(folder), namespace, key);
-        fullyQualifiedTemplates.put(namespace + ":" + key.name(), template);
-        templatesByName.put(key.name(), template);
+        Template template = Template.load(new TemplateWorkspace(folder), namespacedKey, key);
+        fullyQualifiedTemplates.put(namespacedKey, template);
+        templatesByName.put(namespacedKey.getKey(), template);
     }
 
     private void loadTemplates(Path folder) {

@@ -46,6 +46,11 @@ public @interface Command {
     String[] modifiers() default "";
 
     /**
+     * Whether to parse placeholders from the input command.
+     */
+    boolean parsePlaceholders() default false;
+
+    /**
      * The permission of the command. The comamnd sender will get an error if this is not met.
      */
     String permission() default "";

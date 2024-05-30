@@ -3,6 +3,8 @@ package net.citizensnpcs.api.npc.templates;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.bukkit.NamespacedKey;
+
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.event.DespawnReason;
@@ -13,12 +15,10 @@ import net.citizensnpcs.api.util.DataKey;
 
 public class Template {
     private final List<Consumer<NPC>> actions = Lists.newArrayList();
-    private final String name;
-    private final String namespace;
+    private final NamespacedKey key;
 
-    private Template(String namespace, String name) {
-        this.namespace = namespace;
-        this.name = name;
+    private Template(NamespacedKey key) {
+        this.key = key;
     }
 
     private void addAction(Consumer<NPC> action) {
@@ -38,16 +38,12 @@ public class Template {
         }
     }
 
-    public String getName() {
-        return name;
+    public NamespacedKey getKey() {
+        return key;
     }
 
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public static Template load(TemplateWorkspace workspace, String namespace, DataKey key) {
-        Template template = new Template(namespace, key.name());
+    public static Template load(TemplateWorkspace workspace, NamespacedKey nkey, DataKey key) {
+        Template template = new Template(nkey);
         if (key.keyExists("yaml_replace")) {
             template.addAction(PersistenceLoader.load(YamlReplacementAction.class, key.getRelative("yaml_replace")));
         }

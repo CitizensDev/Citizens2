@@ -8,9 +8,7 @@ import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.event.NPCEvent;
 
 /**
- * Represents an event where an NPC speaks, with {@link SpeechContext}. This event takes place before being sent to the
- * {@link VocalChord}
- *
+ * Represents an event where an NPC speaks using /npc speak. 
  */
 public class NPCSpeechEvent extends NPCEvent implements Cancellable {
     private boolean cancelled = false;
@@ -20,12 +18,7 @@ public class NPCSpeechEvent extends NPCEvent implements Cancellable {
         super(CitizensAPI.getNPCRegistry().getNPC(context.getTalker().getEntity()));
         this.context = context;
     }
-
-    /**
-     * Returns the {@link SpeechContext} that will be sent to the VocalChord.
-     *
-     * @return the SpeechContext
-     */
+ 
     public SpeechContext getContext() {
         return context;
     }

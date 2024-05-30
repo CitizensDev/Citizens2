@@ -54,6 +54,7 @@ import net.citizensnpcs.api.command.exception.WrappedCommandException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
 
 public class CommandManager implements TabCompleter {
@@ -131,6 +132,12 @@ public class CommandManager implements TabCompleter {
             throw new NoPermissionsException();
 
         Command cmd = info.commandAnnotation;
+        if (cmd.parsePlaceholders()) {
+            NPC npc = methodArgs.length > 2 && methodArgs[2] instanceof NPC ? (NPC) methodArgs[2] : null;
+            for (int i = 1; i < args.length; i++) {
+                args[i] = Placeholders.replace(args[i], sender, npc);
+            }
+        }
         CommandContext context = new CommandContext(sender, args);
 
         if (cmd.requiresFlags() && !context.hasAnyFlags())
