@@ -784,8 +784,10 @@ public class HologramTrait extends Trait {
             if (color != null) {
                 disp.setBackgroundColor(color);
             }
-            hologram.getEntity().teleport(npc.getStoredLocation().clone().add(offset.x,
-                    offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
+            hologram.getEntity().teleport(
+                    npc.getStoredLocation().clone().add(offset.x,
+                            offset.y + NMS.getBoundingBoxHeight(npc.getEntity()) + 0.2f, offset.z),
+                    TeleportCause.PLUGIN);
         }
 
         public void setBackgroundColor(Color color) {
@@ -819,7 +821,7 @@ public class HologramTrait extends Trait {
             disp.setInterpolationDuration(0);
             disp.setBillboard(Billboard.CENTER);
             Transformation tf = disp.getTransformation();
-            tf.getTranslation().y = (float) offset.y + 0.7f;
+            tf.getTranslation().y = (float) offset.y + 0.4f;
             disp.setTransformation(tf);
             if (color != null) {
                 disp.setBackgroundColor(color);
