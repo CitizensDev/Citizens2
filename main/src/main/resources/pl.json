@@ -253,7 +253,6 @@
   "citizens.commands.traitc.not-configurable" : "Nie można konfigurować tej cechy.",
   "citizens.commands.traitc.not-on-npc" : "NPC nie ma tej cechy.",
   "citizens.commands.trait.failed-to-add" : "<7>Nie udało się dodać {0}.",
-  "citizens.commands.trait.failed-to-change" : "<7>Nie udało się zmienić {0}.",
   "citizens.commands.trait.failed-to-remove" : "<7>Nie udało się usunąć {0}.",
   "citizens.commands.trait.removed" : "Pomyślnie usunięto {0}.",
   "citizens.commands.unknown-command" : "Nieznana komenda. Myślałeś może o:",

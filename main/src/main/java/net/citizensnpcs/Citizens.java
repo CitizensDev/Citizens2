@@ -181,9 +181,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     private void despawnNPCs(boolean save) {
         for (NPCRegistry registry : Iterables.concat(Arrays.asList(npcRegistry), citizensBackedRegistries)) {
-            if (registry == null) {
+            if (registry == null)
                 continue;
-            }
+
             if (save) {
                 if (registry == npcRegistry) {
                     storeNPCs(false);
@@ -398,10 +398,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        locationLookup = new LocationLookup();
+        npcRegistry = new CitizensNPCRegistry(saves, "citizens");
+        locationLookup = new LocationLookup(npcRegistry);
         locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
 
-        npcRegistry = new CitizensNPCRegistry(saves, "citizens");
         traitFactory = new CitizensTraitFactory(this);
         traitFactory.registerTrait(TraitInfo.create(ShopTrait.class).withSupplier(() -> new ShopTrait(shops)));
         selector = new NPCSelector(this);

@@ -686,7 +686,7 @@ public class HologramTrait extends Trait {
     /**
      * A helper class that models a hologram as a single entity that represents a single line in game.
      */
-    // TODO: make static (requires: view range/registry modelling)
+    // TODO: make view range part of hologram renderer?
     public abstract static class SingleEntityHologramRenderer implements HologramRenderer {
         protected NPC hologram;
         private NPCRegistry registry;

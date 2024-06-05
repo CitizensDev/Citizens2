@@ -124,6 +124,12 @@
             <version>4.3.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <url>http://www.citizensnpcs.co</url>
     <ciManagement>

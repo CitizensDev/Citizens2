@@ -66,6 +66,7 @@ import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
 import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
+import net.citizensnpcs.util.NMS.MinecraftNavigationType;
 
 public class NMS {
     private NMS() {
@@ -560,6 +561,10 @@ public class NMS {
 
     public static GameProfile getProfile(SkullMeta meta) {
         return BRIDGE.getProfile(meta);
+    }
+
+    public static float getRidingHeightOffset(Entity entity, Entity mount) {
+        return BRIDGE.getRidingHeightOffset(entity, mount);
     }
 
     public static MethodHandle getSetter(Class<?> clazz, String name) {
