@@ -108,6 +108,9 @@ public class Settings {
         DEFAULT_DISTANCE_MARGIN(
                 "The default MOVEMENT distance in blocks where the NPC will move to before considering a path finished<br>Note: this is different from the PATHFINDING distance which is specified by path-distance-margin",
                 "npc.pathfinding.default-distance-margin", 1),
+        DEFAULT_HOLOGRAM_BACKGROUND_COLOR(
+                "The default background color for holograms, specified as an RGB or RGBA value<br>For example 0,255,123,0 would be green",
+                "npc.hologram.default-background-color", ""),
         DEFAULT_HOLOGRAM_RENDERER(
                 "The default renderer for holograms, must be one of the following:<br>interaction - matches inbuilt nametags most closely<br>display - allows for different colored backgrounds<br>armorstand - creates an armorstand and teleports it to the player",
                 "npc.hologram.default-renderer", "display"),

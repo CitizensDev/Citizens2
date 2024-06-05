@@ -59,6 +59,8 @@
   "citizens.commands.npc.axolotl.variant-set" : "Variant set to [[{0}]].",
   "citizens.commands.npc.boat.type-set": "Boat type set to [[{0}]].",
   "citizens.commands.npc.boat.description": "Sets boat modifiers",
+  "citizens.commands.npc.hologram.background-color-set": "Background color at line [[{0}]] set to [[{1}]].",
+  "citizens.commands.npc.hologram.default-background-color-set": "Default background color set to [[{0}]].",
   "citizens.commands.npc.bee.anger-set" : "Anger set to [[{0}]].",
   "citizens.commands.npc.bee.bee-stung" : "[[{0}]] has now stung.",
   "citizens.commands.npc.bee.description" : "Sets bee modifiers",

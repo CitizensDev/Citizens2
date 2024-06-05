@@ -12,9 +12,11 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -392,6 +394,18 @@ public class Util {
         return list;
     }
 
+    public static Color parseColor(String string) {
+        if (!string.contains(","))
+            return Color.fromRGB(Integer.decode(string));
+        List<Integer> list = Splitter.on(',').splitToStream(string).map(Integer::parseInt).collect(Collectors.toList());
+        if (list.size() == 3) {
+            return Color.fromRGB(list.get(0), list.get(1), list.get(2));
+        } else if (list.size() == 4) {
+            return Color.fromARGB(list.get(0), list.get(1), list.get(2), list.get(3));
+        }
+        throw new NumberFormatException();
+    }
+
     public static ItemStack parseItemStack(ItemStack stack, String item) {
         if (stack == null || stack.getType() == Material.AIR) {
             stack = new ItemStack(Material.STONE, 1);
@@ -607,8 +621,6 @@ public class Util {
 
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
-    private static boolean SUPPORTS_ENTITY_CANSEE = true;
-
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {

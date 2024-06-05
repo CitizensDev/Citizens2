@@ -30,6 +30,7 @@ import org.joml.Vector3d;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
@@ -57,6 +58,9 @@ import net.citizensnpcs.util.Util;
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
     private Location currentLoc;
+    @Persist
+    private Color defaultBackgroundColor = Setting.DEFAULT_HOLOGRAM_BACKGROUND_COLOR.asString().isEmpty() ? null
+            : Util.parseColor(Setting.DEFAULT_HOLOGRAM_BACKGROUND_COLOR.asString());
     private double lastEntityBbHeight = 0;
     private boolean lastNameplateVisible;
     @Persist
@@ -151,6 +155,10 @@ public class HologramTrait extends Trait {
         return renderer;
     }
 
+    public Color getDefaultBackgroundColor() {
+        return defaultBackgroundColor;
+    }
+
     private double getHeight(int lineNumber) {
         double base = lastNameplateVisible ? 0 : -getLineHeight();
         for (int i = 0; i <= lineNumber; i++) {
@@ -208,6 +216,9 @@ public class HologramTrait extends Trait {
                     true, -1, createDefaultHologramRenderer());
             line.mt = key.keyExists("margin.top") ? key.getDouble("margin.top") : 0.0;
             line.mb = key.keyExists("margin.bottom") ? key.getDouble("margin.bottom") : 0.0;
+            if (key.keyExists("backgroundcolor")) {
+                line.setBackgroundColor(Color.fromARGB(key.getInt("backgroundcolor")));
+            }
             lines.add(line);
         }
     }
@@ -321,12 +332,31 @@ public class HologramTrait extends Trait {
         for (HologramLine line : lines) {
             if (!line.persist)
                 continue;
-
+            if (line.backgroundColor != null && !line.backgroundColor.equals(defaultBackgroundColor)) {
+                root.setInt("lines." + i + ".backgroundcolor", line.backgroundColor.asARGB());
+            } else {
+                root.removeKey("lines." + i + ".backgroundcolor");
+            }
             root.setString("lines." + i + ".text", line.text);
             root.setDouble("lines." + i + ".margin.top", line.mt);
             root.setDouble("lines." + i + ".margin.bottom", line.mb);
             i++;
         }
+    }
+
+    public void setBackgroundColor(int idx, Color color) {
+        lines.get(idx).setBackgroundColor(color);
+        reloadLineHolograms();
+    }
+
+    public void setDefaultBackgroundColor(Color color) {
+        this.defaultBackgroundColor = color;
+        for (HologramLine line : Iterables.concat(lines, ImmutableList.of(nameLine))) {
+            if (line.backgroundColor == null) {
+                line.setBackgroundColor(color);
+            }
+        }
+        reloadLineHolograms();
     }
 
     /**
@@ -414,7 +444,8 @@ public class HologramTrait extends Trait {
         }
     }
 
-    private class HologramLine {
+    class HologramLine {
+        Color backgroundColor = defaultBackgroundColor;
         double mb, mt;
         boolean persist;
         HologramRenderer renderer;
@@ -426,6 +457,8 @@ public class HologramTrait extends Trait {
                 mb = 0.21;
                 mt = 0.07;
                 hr = new ItemRenderer();
+            } else if (SUPPORTS_DISPLAY && backgroundColor != null) {
+                renderer = new TextDisplayRenderer(backgroundColor);
             }
             this.persist = persist;
             this.ticks = ticks;
@@ -448,6 +481,11 @@ public class HologramTrait extends Trait {
 
         public void render(Vector3d vector3d) {
             renderer.render(npc, vector3d);
+        }
+
+        public void setBackgroundColor(Color color) {
+            this.backgroundColor = color;
+            renderer.setBackgroundColor(color);
         }
 
         public void setText(String text) {
@@ -527,6 +565,9 @@ public class HologramTrait extends Trait {
          *            the offset, in blocks
          */
         void render(NPC parent, Vector3d offset);
+
+        default void setBackgroundColor(Color color) {
+        }
 
         /**
          * Update the hologram text. Will be called first before {@link #render(NPC, Vector3d)}.
@@ -787,6 +828,13 @@ public class HologramTrait extends Trait {
     public static class TextDisplayRenderer extends SingleEntityHologramRenderer {
         private Color color;
 
+        public TextDisplayRenderer() {
+        }
+
+        public TextDisplayRenderer(Color color) {
+            this.color = color;
+        }
+
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
             NPC hologram = registry().createNPC(EntityType.TEXT_DISPLAY, "");
@@ -810,6 +858,7 @@ public class HologramTrait extends Trait {
                     TeleportCause.PLUGIN);
         }
 
+        @Override
         public void setBackgroundColor(Color color) {
             this.color = color;
         }
@@ -851,6 +900,7 @@ public class HologramTrait extends Trait {
             }
         }
 
+        @Override
         public void setBackgroundColor(Color color) {
             this.color = color;
         }
