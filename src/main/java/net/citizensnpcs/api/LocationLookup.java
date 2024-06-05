@@ -29,13 +29,23 @@ import com.google.common.collect.Maps;
 
 import ch.ethz.globis.phtree.PhTreeF;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 
 public class LocationLookup extends BukkitRunnable {
     private final Map<String, PerPlayerMetadata<?>> metadata = Maps.newHashMap();
     private Future<Map<UUID, PhTreeF<NPC>>> npcFuture = null;
     private Map<UUID, PhTreeF<NPC>> npcWorlds = Maps.newHashMap();
     private Future<Map<UUID, PhTreeF<Player>>> playerFuture = null;
+    private final NPCRegistry sourceRegistry;
     private Map<UUID, PhTreeF<Player>> worlds = Maps.newHashMap();
+
+    public LocationLookup() {
+        this(CitizensAPI.getNPCRegistry());
+    }
+
+    public LocationLookup(NPCRegistry sourceRegistry) {
+        this.sourceRegistry = sourceRegistry;
+    }
 
     public PerPlayerMetadata<?> getMetadata(String key) {
         return metadata.get(key);
@@ -122,6 +132,10 @@ public class LocationLookup extends BukkitRunnable {
         if (cache != null) {
             cache.clear();
         }
+        PhTreeF<NPC> npcCache = npcWorlds.remove(event.getWorld().getUID());
+        if (npcCache != null) {
+            npcCache.clear();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -143,7 +157,7 @@ public class LocationLookup extends BukkitRunnable {
         if (npcFuture == null) {
             Map<UUID, Collection<TreeFactory.Node<NPC>>> map = Maps.newHashMap();
             Location loc = new Location(null, 0, 0, 0);
-            for (NPC npc : CitizensAPI.getNPCRegistry()) {
+            for (NPC npc : sourceRegistry) {
                 if (!npc.isSpawned())
                     continue;
                 npc.getEntity().getLocation(loc);
@@ -193,6 +207,43 @@ public class LocationLookup extends BukkitRunnable {
         }
     }
 
+    // TODO: separate out NPCs and Player lookups into this
+    public static abstract class AsyncPhTreeLoader<K, V> implements Runnable {
+        private Future<Map<K, PhTreeF<V>>> future;
+        protected Map<K, PhTreeF<V>> mapping = Maps.newHashMap();
+
+        protected abstract Map<K, Collection<TreeFactory.Node<V>>> generateLoaderMap();
+
+        public Iterable<V> getNearby(K lookup, double dist, double[] center) {
+            PhTreeF<V> tree = mapping.get(lookup);
+            if (tree == null)
+                return Collections.emptyList();
+            return () -> tree.rangeQuery(dist, center);
+        }
+
+        public Iterable<V> getNearby(K lookup, double[] min, double[] max) {
+            PhTreeF<V> tree = mapping.get(lookup);
+            if (tree == null)
+                return Collections.emptyList();
+            return () -> tree.query(min, max);
+        }
+
+        @Override
+        public void run() {
+            if (future != null && future.isDone()) {
+                try {
+                    mapping = future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                future = null;
+            }
+            if (future == null) {
+                future = ForkJoinPool.commonPool().submit(new TreeFactory<>(generateLoaderMap()));
+            }
+        }
+    }
+
     public static class PerPlayerMetadata<T> {
         private final BiConsumer<PerPlayerMetadata<T>, PlayerJoinEvent> onJoin;
         private final Map<UUID, Map<String, T>> sent = Maps.newHashMap();
@@ -226,22 +277,22 @@ public class LocationLookup extends BukkitRunnable {
         }
     }
 
-    private static final class TreeFactory<T> implements Callable<Map<UUID, PhTreeF<T>>> {
-        private final Map<UUID, Collection<Node<T>>> source;
+    private static final class TreeFactory<K, V> implements Callable<Map<K, PhTreeF<V>>> {
+        private final Map<K, Collection<Node<V>>> source;
 
-        public TreeFactory(Map<UUID, Collection<Node<T>>> source) {
+        public TreeFactory(Map<K, Collection<Node<V>>> source) {
             this.source = source;
         }
 
         @Override
-        public Map<UUID, PhTreeF<T>> call() throws Exception {
-            Map<UUID, PhTreeF<T>> result = Maps.newHashMap();
-            for (UUID uuid : source.keySet()) {
-                PhTreeF<T> tree = PhTreeF.create(3);
-                for (Node<T> entry : source.get(uuid)) {
+        public Map<K, PhTreeF<V>> call() throws Exception {
+            Map<K, PhTreeF<V>> result = Maps.newHashMap();
+            for (K k : source.keySet()) {
+                PhTreeF<V> tree = PhTreeF.create(3);
+                for (Node<V> entry : source.get(k)) {
                     tree.put(entry.loc, entry.t);
                 }
-                result.put(uuid, tree);
+                result.put(k, tree);
             }
             return result;
         }
