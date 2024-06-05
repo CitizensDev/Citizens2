@@ -383,10 +383,10 @@ public class HologramTrait extends Trait {
         reloadLineHolograms();
     }
 
-    public class ArmorstandRenderer extends SingleEntityHologramRenderer {
+    public static class ArmorstandRenderer extends SingleEntityHologramRenderer {
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
-            NPC npc = registry.createNPC(EntityType.ARMOR_STAND, name);
+            NPC npc = registry().createNPC(EntityType.ARMOR_STAND, name);
             npc.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
             return npc;
         }
@@ -398,10 +398,10 @@ public class HologramTrait extends Trait {
         }
     }
 
-    public class ArmorstandVehicleRenderer extends ArmorstandRenderer {
+    public static class ArmorstandVehicleRenderer extends ArmorstandRenderer {
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
-            NPC npc = registry.createNPC(EntityType.ARMOR_STAND, name);
+            NPC npc = registry().createNPC(EntityType.ARMOR_STAND, name);
             npc.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
             return npc;
         }
@@ -430,6 +430,11 @@ public class HologramTrait extends Trait {
             this.persist = persist;
             this.ticks = ticks;
             this.renderer = hr;
+            if (renderer instanceof SingleEntityHologramRenderer) {
+                SingleEntityHologramRenderer sr = (SingleEntityHologramRenderer) renderer;
+                sr.setViewRange(viewRange);
+                sr.setRegistry(registry);
+            }
             setText(text);
         }
 
@@ -473,8 +478,8 @@ public class HologramTrait extends Trait {
         Collection<Entity> getEntities();
 
         /**
-         * If {@NPC.Metadata.HOLOGRAM_RENDERER} is set on any entity and ProtocolLib is enabled, this method will be
-         * called to modify the name per-player. Note: this should be async-safe. This method is fragile and may be
+         * If {@link NPC.Metadata.HOLOGRAM_RENDERER} is set on any entity and ProtocolLib is enabled, this method will
+         * be called to modify the name per-player. Note: this should be async-safe. This method is fragile and may be
          * moved elsewhere.
          *
          * @param hologram
@@ -486,9 +491,9 @@ public class HologramTrait extends Trait {
         String getPerPlayerText(NPC hologram, Player viewer);
 
         /**
-         * If {@NPC.Metadata.HOLOGRAM_RENDERER} is set on any entity and ProtocolLib is enabled, returns whether the NPC
-         * should be considered sneaking or not to the viewing player. Presently called only when player first sees the
-         * NPC (i.e. not proactively).Note: this should be async-safe. This method is fragile and may be moved
+         * If {@link NPC.Metadata.HOLOGRAM_RENDERER} is set on any entity and ProtocolLib is enabled, returns whether
+         * the NPC should be considered sneaking or not to the viewing player. Presently called only when player first
+         * sees the NPC (i.e. not proactively).Note: this should be async-safe. This method is fragile and may be moved
          * elsewhere.
          *
          * @param hologram
@@ -502,8 +507,8 @@ public class HologramTrait extends Trait {
         }
 
         /**
-         * If {@NPC.Metadata.HOLOGRAM_RENDERER} is set on any entity, called when it is seen for the first time by a
-         * Player.
+         * If {@link NPC.Metadata.HOLOGRAM_RENDERER} is set on any entity, called when it is seen for the first time by
+         * a Player.
          *
          * @param hologram
          *            the <em>hologram</em> NPC
@@ -565,13 +570,13 @@ public class HologramTrait extends Trait {
         private static final HandlerList handlers = new HandlerList();
     }
 
-    public class InteractionVehicleRenderer extends SingleEntityHologramRenderer {
+    public static class InteractionVehicleRenderer extends SingleEntityHologramRenderer {
         private Vector3d lastOffset;
 
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
             lastOffset = new Vector3d(offset);
-            return registry.createNPC(EntityType.INTERACTION, name);
+            return registry().createNPC(EntityType.INTERACTION, name);
         }
 
         @Override
@@ -590,7 +595,7 @@ public class HologramTrait extends Trait {
         }
     }
 
-    public class ItemDisplayRenderer extends SingleEntityHologramRenderer {
+    public static class ItemDisplayRenderer extends SingleEntityHologramRenderer {
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
             Matcher itemMatcher = ITEM_MATCHER.matcher(name);
@@ -598,7 +603,7 @@ public class HologramTrait extends Trait {
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
             ItemStack itemStack = new ItemStack(item, 1);
-            NPC npc = registry.createNPCUsingItem(EntityType.ITEM_DISPLAY, "", itemStack);
+            NPC npc = registry().createNPCUsingItem(EntityType.ITEM_DISPLAY, "", itemStack);
             npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
                 if (itemMatcher.group(2).charAt(1) == '{') {
@@ -629,19 +634,19 @@ public class HologramTrait extends Trait {
         }
     }
 
-    public class ItemRenderer extends SingleEntityHologramRenderer {
+    public static class ItemRenderer extends SingleEntityHologramRenderer {
         private NPC itemNPC;
 
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
-            NPC mount = registry.createNPC(EntityType.ARMOR_STAND, "");
+            NPC mount = registry().createNPC(EntityType.ARMOR_STAND, "");
             mount.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
             Matcher itemMatcher = ITEM_MATCHER.matcher(name);
             itemMatcher.find();
             Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
             ItemStack itemStack = new ItemStack(item, 1);
-            itemNPC = registry.createNPCUsingItem(Util.getFallbackEntityType("ITEM", "DROPPED_ITEM"), "", itemStack);
+            itemNPC = registry().createNPCUsingItem(Util.getFallbackEntityType("ITEM", "DROPPED_ITEM"), "", itemStack);
             itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
                 if (itemMatcher.group(2).charAt(1) == '{') {
@@ -682,9 +687,11 @@ public class HologramTrait extends Trait {
      * A helper class that models a hologram as a single entity that represents a single line in game.
      */
     // TODO: make static (requires: view range/registry modelling)
-    public abstract class SingleEntityHologramRenderer implements HologramRenderer {
+    public abstract static class SingleEntityHologramRenderer implements HologramRenderer {
         protected NPC hologram;
+        private NPCRegistry registry;
         protected String text;
+        protected int viewRange = -1;
 
         protected abstract NPC createNPC(Entity base, String text, Vector3d offset);
 
@@ -707,6 +714,11 @@ public class HologramTrait extends Trait {
             return Placeholders.replace(text, viewer, npc);
         }
 
+        protected NPCRegistry registry() {
+            return registry == null ? registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore())
+                    : registry;
+        }
+
         @Override
         public void render(NPC npc, Vector3d offset) {
             if (hologram == null) {
@@ -719,6 +731,14 @@ public class HologramTrait extends Trait {
          * Hologram spawning is delegated to {@link #createNPC(Entity, String, Vector3d)}
          */
         protected abstract void render0(NPC npc, Vector3d offset);
+
+        public void setRegistry(NPCRegistry registry) {
+            this.registry = registry;
+        }
+
+        public void setViewRange(int range) {
+            this.viewRange = range;
+        }
 
         protected void spawnHologram(NPC npc, Vector3d offset) {
             hologram = createNPC(npc.getEntity(), text, offset);
@@ -764,12 +784,12 @@ public class HologramTrait extends Trait {
         private static Set<String> LINE_ARGS = ImmutableSet.of("set", "remove", "margintop", "marginbottom");
     }
 
-    public class TextDisplayRenderer extends SingleEntityHologramRenderer {
+    public static class TextDisplayRenderer extends SingleEntityHologramRenderer {
         private Color color;
 
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
-            NPC hologram = registry.createNPC(EntityType.TEXT_DISPLAY, "");
+            NPC hologram = registry().createNPC(EntityType.TEXT_DISPLAY, "");
             hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));
             return hologram;
@@ -785,8 +805,8 @@ public class HologramTrait extends Trait {
                 disp.setBackgroundColor(color);
             }
             hologram.getEntity().teleport(
-                    npc.getStoredLocation().clone().add(offset.x,
-                            offset.y + NMS.getBoundingBoxHeight(npc.getEntity()) + 0.2f, offset.z),
+                    base.getStoredLocation().clone().add(offset.x,
+                            offset.y + NMS.getBoundingBoxHeight(base.getEntity()) + 0.2f, offset.z),
                     TeleportCause.PLUGIN);
         }
 
@@ -803,12 +823,12 @@ public class HologramTrait extends Trait {
         }
     }
 
-    public class TextDisplayVehicleRenderer extends SingleEntityHologramRenderer {
+    public static class TextDisplayVehicleRenderer extends SingleEntityHologramRenderer {
         private Color color;
 
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
-            NPC hologram = registry.createNPC(EntityType.TEXT_DISPLAY, "");
+            NPC hologram = registry().createNPC(EntityType.TEXT_DISPLAY, "");
             hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));
             return hologram;
