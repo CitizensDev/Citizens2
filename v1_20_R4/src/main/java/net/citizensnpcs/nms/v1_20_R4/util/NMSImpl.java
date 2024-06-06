@@ -416,8 +416,8 @@ public class NMSImpl implements NMSBridge {
     public void attack(org.bukkit.entity.LivingEntity attacker, org.bukkit.entity.LivingEntity btarget) {
         LivingEntity source = getHandle(attacker);
         LivingEntity target = getHandle(btarget);
-        if (source instanceof ServerPlayer) {
-            ((ServerPlayer) source).attack(target);
+        if (source instanceof net.minecraft.world.entity.player.Player) {
+            ((net.minecraft.world.entity.player.Player) source).attack(target);
             PlayerAnimation.ARM_SWING.play((Player) source.getBukkitEntity());
             return;
         }

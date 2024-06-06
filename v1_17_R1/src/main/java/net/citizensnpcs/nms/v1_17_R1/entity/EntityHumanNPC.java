@@ -163,6 +163,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                 entity.playerTouch(this);
             }
         }
+        ++attackStrengthTicker;
+        getCooldowns().tick();
         if (!npc.hasTrait(EntityPoseTrait.class) || npc.getTraitNullable(EntityPoseTrait.class).getPose() == null) {
             updatePlayerPose();
         }

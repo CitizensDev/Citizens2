@@ -406,6 +406,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
                 }
             }
         }
+        aB++;
+        getCooldownTracker().a();
         if (!npc.hasTrait(EntityPoseTrait.class) || npc.getTraitNullable(EntityPoseTrait.class).getPose() == null) {
             dX();
         }
