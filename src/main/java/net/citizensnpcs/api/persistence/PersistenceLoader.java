@@ -17,6 +17,8 @@ import java.util.WeakHashMap;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
+import org.joml.Quaternionfc;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -633,6 +635,8 @@ public class PersistenceLoader {
     private static final Map<Class<?>, PersisterRegistry<?>> registries = new WeakHashMap<>();
 
     static {
+        registerPersistDelegate(Quaternionfc.class, QuaternionfPersister.class);
+        registerPersistDelegate(Vector.class, VectorPersister.class);
         registerPersistDelegate(Component.class, ComponentPersister.class);
         registerPersistDelegate(Location.class, LocationPersister.class);
         registerPersistDelegate(ItemStack.class, ItemStackPersister.class);

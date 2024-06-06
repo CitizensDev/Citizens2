@@ -582,7 +582,7 @@ public interface NPC extends Agent, Cloneable {
         /**
          * Whether to allow swimming. Boolean.
          */
-        SWIMMING("swim", Boolean.class),
+        SWIM("swim", Boolean.class),
         /**
          * Whether to prevent NPC being targeted by hostile mobs.
          */

@@ -9,8 +9,6 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import net.citizensnpcs.api.npc.NPC;
 
 public class EntityTargetNPCEvent extends NPCEvent implements Cancellable {
-    private boolean cancelled;
-
     private final EntityTargetEvent event;
 
     public EntityTargetNPCEvent(EntityTargetEvent event, NPC npc) {
@@ -43,12 +41,12 @@ public class EntityTargetNPCEvent extends NPCEvent implements Cancellable {
 
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return event.isCancelled();
     }
 
     @Override
     public void setCancelled(boolean cancel) {
-        cancelled = cancel;
+        event.setCancelled(cancel);
     }
 
     public static HandlerList getHandlerList() {

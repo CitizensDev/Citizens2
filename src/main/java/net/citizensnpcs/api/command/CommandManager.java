@@ -34,6 +34,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
+import org.joml.Quaternionfc;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
@@ -193,6 +195,10 @@ public class CommandManager implements TabCompleter {
                     val = UUID.fromString(val.toString());
                 } else if (desiredType == Duration.class) {
                     val = SpigotUtil.parseDuration(val.toString(), defaultDurationUnits);
+                } else if (desiredType == Vector.class) {
+                    val = CommandContext.parseVector(val.toString());
+                } else if (Quaternionfc.class.isAssignableFrom(desiredType)) {
+                    val = CommandContext.parseQuaternion(val.toString());
                 }
                 methodArgs[entry.getKey()] = val;
             }

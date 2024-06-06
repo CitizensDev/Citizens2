@@ -80,13 +80,24 @@ public class LocationLookup extends BukkitRunnable {
         return getNearbyPlayers(npc.getStoredLocation(), npc.data().get(NPC.Metadata.TRACKING_RANGE, 64));
     }
 
+    public Iterable<Player> getNearbyPlayers(World base, double[] min, double[] max) {
+        PhTreeF<Player> tree = worlds.get(base.getUID());
+        if (tree == null)
+            return Collections.emptyList();
+        return () -> tree.query(min, max);
+    }
+
     public Iterable<Player> getNearbyVisiblePlayers(Entity entity, double range) {
         return getNearbyVisiblePlayers(entity, entity.getLocation(), range);
     }
 
-    public Iterable<Player> getNearbyVisiblePlayers(Entity base, Location location, double dist) {
+    public Iterable<Player> getNearbyVisiblePlayers(Entity base, double[] min, double[] max) {
+        return filterToVisiblePlayers(base, getNearbyPlayers(base.getWorld(), min, max));
+    }
+
+    public Iterable<Player> filterToVisiblePlayers(Entity base, Iterable<Player> players) {
         Player player = base instanceof Player ? (Player) base : null;
-        return Iterables.filter(getNearbyPlayers(location, dist), other -> {
+        return Iterables.filter(players, other -> {
             boolean canSee = true;
             if (SUPPORTS_ENTITY_CANSEE) {
                 try {
@@ -104,6 +115,10 @@ public class LocationLookup extends BukkitRunnable {
                     && !other.hasPotionEffect(PotionEffectType.INVISIBILITY)
                     && other.getGameMode() != GameMode.SPECTATOR;
         });
+    }
+
+    public Iterable<Player> getNearbyVisiblePlayers(Entity base, Location location, double range) {
+        return filterToVisiblePlayers(base, getNearbyPlayers(location, range));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

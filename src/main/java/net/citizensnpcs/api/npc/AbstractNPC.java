@@ -92,7 +92,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void addRunnable(Runnable runnable) {
-        this.runnables.add(runnable);
+        runnables.add(runnable);
     }
 
     @Override
@@ -533,8 +533,8 @@ public abstract class AbstractNPC implements NPC {
     }
 
     public void update() {
-        for (int i = 0; i < runnables.size(); ++i) {
-            runnables.get(i).run();
+        for (Runnable runnable : runnables) {
+            runnable.run();
         }
         if (isSpawned()) {
             goalController.run();
