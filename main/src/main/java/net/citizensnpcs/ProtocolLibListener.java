@@ -115,8 +115,16 @@ public class ProtocolLibListener implements Listener {
                                         delta = true;
                                     }
                                     break;
+                                case 22:
+                                    if (version <= 762 && fakeName != null
+                                            && npc.getEntity().getType() == EntityType.TEXT_DISPLAY) {
+                                        wdv.setRawValue(((Optional<?>) fakeName).get());
+                                        delta = true;
+                                    }
+                                    break;
                                 case 23:
-                                    if (fakeName != null && npc.getEntity().getType() == EntityType.TEXT_DISPLAY) {
+                                    if (version > 762 && fakeName != null
+                                            && npc.getEntity().getType() == EntityType.TEXT_DISPLAY) {
                                         wdv.setRawValue(((Optional<?>) fakeName).get());
                                         delta = true;
                                     }
