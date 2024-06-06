@@ -101,13 +101,26 @@ public class ProtocolLibListener implements Listener {
                             return;
 
                         for (WrappedDataValue wdv : wdvs) {
-                            if (fakeName != null && wdv.getIndex() == 2) {
-                                wdv.setRawValue(fakeName);
-                                delta = true;
-                            } else if (sneaking && wdv.getIndex() == 0) {
-                                byte b = (byte) (((Number) wdv.getValue()).byteValue() | 0x02);
-                                wdv.setValue(b);
-                                delta = true;
+                            switch (wdv.getIndex()) {
+                                case 0:
+                                    if (sneaking) {
+                                        byte flags = (byte) (((Number) wdv.getValue()).byteValue() | 0x02);
+                                        wdv.setValue(flags);
+                                        delta = true;
+                                    }
+                                    break;
+                                case 2:
+                                    if (fakeName != null) {
+                                        wdv.setRawValue(fakeName);
+                                        delta = true;
+                                    }
+                                    break;
+                                case 23:
+                                    if (fakeName != null && npc.getEntity().getType() == EntityType.TEXT_DISPLAY) {
+                                        wdv.setRawValue(((Optional<?>) fakeName).get());
+                                        delta = true;
+                                    }
+                                    break;
                             }
                         }
                         if (delta) {
@@ -222,7 +235,7 @@ public class ProtocolLibListener implements Listener {
     private NPC getNPCFromPacket(PacketEvent event) {
         PacketContainer packet = event.getPacket();
         try {
-            Object entityModifier = packet.getEntityModifier(event).getTarget();
+            Object entityModifier = packet.getEntityModifier(event).read(0);
             return entityModifier instanceof NPCHolder ? ((NPCHolder) entityModifier).getNPC() : null;
         } catch (FieldAccessException | IllegalArgumentException ex) {
             if (!LOGGED_ERROR) {
