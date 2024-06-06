@@ -486,7 +486,7 @@ public class CitizensNPC extends AbstractNPC {
                     NMS.activate(getEntity());
                 }
             }
-            boolean shouldSwim = data().get(NPC.Metadata.SWIMMING, SwimmingExaminer.isWaterMob(getEntity()))
+            boolean shouldSwim = data().get(NPC.Metadata.SWIM, SwimmingExaminer.isWaterMob(getEntity()))
                     && MinecraftBlockExaminer.isLiquid(getEntity().getLocation().getBlock().getType());
             if (navigator.isNavigating()) {
                 if (shouldSwim) {

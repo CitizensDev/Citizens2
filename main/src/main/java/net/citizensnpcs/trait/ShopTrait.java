@@ -117,6 +117,10 @@ public class ShopTrait extends Trait {
         shop.display(player);
     }
 
+    public void setDefaultShop(NPCShop shop) {
+        shops.npcShops.put(npc.getUniqueId().toString(), shop);
+    }
+
     public static class NPCShop {
         @Persist(value = "")
         private String name;

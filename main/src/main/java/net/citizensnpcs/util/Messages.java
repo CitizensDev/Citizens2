@@ -103,6 +103,7 @@ public class Messages {
     public static final String ENDERMAN_ANGRY_SET = "citizens.commands.npc.enderman.angry-set";
     public static final String ENDERMAN_ANGRY_UNSET = "citizens.commands.npc.enderman.angry-unset";
     public static final String ENTITY_TYPE_SET = "citizens.commands.npc.type.set";
+    public static final String ENTITYPOSE_SET = "citizens.commands.npc.entitypose.set";
     public static final String EQUIPMENT_EDITOR_BEGIN = "citizens.editors.equipment.begin";
     public static final String EQUIPMENT_EDITOR_END = "citizens.editors.equipment.end";
     public static final String EQUIPMENT_EDITOR_SHEEP_COLOURED = "citizens.editors.equipment.sheep-coloured";
@@ -126,6 +127,10 @@ public class Messages {
     public static final String FOLLOW_PLAYER_NOT_INGAME = "citizens.commands.npc.follow.player-not-ingame";
     public static final String FOLLOW_SET = "citizens.commands.npc.follow.set";
     public static final String FOLLOW_UNSET = "citizens.commands.npc.follow.unset";
+    public static final String FORCEFIELD_DESCRIBE = "citizens.commands.npc.forcefield.describe";
+    public static final String FORCEFIELD_HEIGHT_SET = "citizens.commands.npc.forcefield.height-set";
+    public static final String FORCEFIELD_STRENGTH_SET = "citizens.commands.npc.forcefield.strength-set";
+    public static final String FORCEFIELD_WIDTH_SET = "citizens.commands.npc.forcefield.width-set";
     public static final String FOX_CROUCHING_SET = "citizens.commands.npc.fox.crouching-set";
     public static final String FOX_CROUCHING_UNSET = "citizens.commands.npc.fox.crouching-unset";
     public static final String FOX_FACEPLANTED_SET = "citizens.commands.npc.fox.faceplanted-set";
@@ -407,8 +412,9 @@ public class Messages {
     public static final String SPEED_MODIFIER_SET = "citizens.commands.npc.speed.set";
     public static final String SPEED_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.speed.prompt";
     public static final String SPELL_SET = "citizens.commands.npc.spellcaster.spell-set";
-    public static final String SWIMMING_SET = "citizens.commands.npc.swim.set";
-    public static final String SWIMMING_UNSET = "citizens.commands.npc.swim.unset";
+    public static final String SWIM_SET = "citizens.commands.npc.swim.set";
+    public static final String SWIM_UNSET = "citizens.commands.npc.swim.unset";
+    public static final String TARGETABLE_PLAYERLIST_WARNING = "citizens.commands.npc.targetable.playerlist-warning";
     public static final String TARGETABLE_SET = "citizens.commands.npc.targetable.set";
     public static final String TARGETABLE_UNSET = "citizens.commands.npc.targetable.unset";
     public static final String TELEPORT_NPC_LOCATION_NOT_FOUND = "citizens.commands.npc.tp.location-not-found";
@@ -442,9 +448,6 @@ public class Messages {
     public static final String TPTO_SUCCESS = "citizens.commands.npc.tpto.success";
     public static final String TRACKING_RANGE_SET = "citizens.commands.npc.trackingrange.set";
     public static final String TRAIT_LOAD_FAILED = "citizens.notifications.trait-load-failed";
-    public static final String TRAIT_NOT_CONFIGURABLE = "citizens.commands.traitc.not-configurable";
-    public static final String TRAIT_NOT_FOUND = "citizens.commands.traitc.missing";
-    public static final String TRAIT_NOT_FOUND_ON_NPC = "citizens.commands.traitc.not-on-npc";
     public static final String TRAIT_ONSPAWN_FAILED = "citizens.notifications.trait-onspawn-failed";
     public static final String TRAITS_ADDED = "citizens.commands.trait.added";
     public static final String TRAITS_FAILED_TO_ADD = "citizens.commands.trait.failed-to-add";

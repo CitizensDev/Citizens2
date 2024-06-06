@@ -93,6 +93,7 @@ import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.templates.Template;
 import net.citizensnpcs.api.npc.templates.TemplateRegistry;
+import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
@@ -101,7 +102,9 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.EntityDim;
+import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.Placeholders;
@@ -126,11 +129,15 @@ import net.citizensnpcs.trait.CommandTrait.ExecutionMode;
 import net.citizensnpcs.trait.CommandTrait.ItemRequirementGUI;
 import net.citizensnpcs.trait.CommandTrait.NPCCommandBuilder;
 import net.citizensnpcs.trait.Controllable;
+import net.citizensnpcs.trait.Controllable.BuiltInControls;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.DropsTrait;
 import net.citizensnpcs.trait.EnderCrystalTrait;
 import net.citizensnpcs.trait.EndermanTrait;
+import net.citizensnpcs.trait.EntityPoseTrait;
+import net.citizensnpcs.trait.EntityPoseTrait.EntityPose;
 import net.citizensnpcs.trait.FollowTrait;
+import net.citizensnpcs.trait.ForcefieldTrait;
 import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
@@ -434,13 +441,11 @@ public class NPCCommands {
     public void boat(CommandContext args, CommandSender sender, NPC npc,
             @Flag(value = "type", completionsProvider = OptionalBoatTypeCompletions.class) String stype)
             throws CommandException {
-        if (stype != null) {
-            Boat.Type type = Boat.Type.valueOf(stype);
-            npc.getOrAddTrait(BoatTrait.class).setType(type);
-            Messaging.sendTr(sender, Messages.BOAT_TYPE_SET, type);
-            return;
-        }
-        throw new CommandUsageException();
+        if (stype == null)
+            throw new CommandUsageException();
+        Boat.Type type = Boat.Type.valueOf(stype);
+        npc.getOrAddTrait(BoatTrait.class).setType(type);
+        Messaging.sendTr(sender, Messages.BOAT_TYPE_SET, type);
     }
 
     @Command(
@@ -452,7 +457,7 @@ public class NPCCommands {
             max = 1,
             valueFlags = "location",
             permission = "citizens.npc.breakblock")
-    @Requirements(selected = true, ownership = true, livingEntity = true)
+    @Requirements(selected = true, ownership = true)
     public void breakblock(CommandContext args, CommandSender sender, NPC npc, @Flag("radius") Double radius)
             throws CommandException {
         BlockBreakerConfiguration cfg = new BlockBreakerConfiguration();
@@ -694,31 +699,34 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "controllable|control (-m(ount),-y,-n,-o(wner required))",
+            usage = "controllable|control (-m(ount),-o(wner required)) (--controls [controls]) (--enabled [true|false])",
             desc = "",
             modifiers = { "controllable", "control" },
             min = 1,
             max = 1,
-            flags = "myno")
-    public void controllable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+            flags = "mo")
+    public void controllable(CommandContext args, CommandSender sender, NPC npc,
+            @Flag("controls") BuiltInControls controls, @Flag("enabled") Boolean enabled) throws CommandException {
         if ((npc.isSpawned() && !sender.hasPermission(
                 "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", "")))
                 || !sender.hasPermission("citizens.npc.controllable"))
             throw new NoPermissionsException();
-        if (!npc.hasTrait(Controllable.class)) {
+        if (!npc.hasTrait(Controllable.class) && enabled == null) {
             npc.getOrAddTrait(Controllable.class).setEnabled(false);
         }
         Controllable trait = npc.getOrAddTrait(Controllable.class);
-        boolean enabled = trait.toggle();
-        if (args.hasFlag('y')) {
-            enabled = trait.setEnabled(true);
-        } else if (args.hasFlag('n')) {
-            enabled = trait.setEnabled(false);
+        if (enabled != null) {
+            trait.setEnabled(enabled);
+        } else {
+            enabled = trait.toggle();
+        }
+        if (controls != null) {
+            trait.setControls(controls);
         }
         trait.setOwnerRequired(args.hasFlag('o'));
         String key = enabled ? Messages.CONTROLLABLE_SET : Messages.CONTROLLABLE_REMOVED;
         Messaging.sendTr(sender, key, npc.getName());
-        if (enabled && args.hasFlag('m') && sender instanceof Player) {
+        if (trait.isEnabled() && args.hasFlag('m') && sender instanceof Player) {
             trait.mount((Player) sender);
         }
     }
@@ -1047,6 +1055,22 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "entitypose [pose]",
+            desc = "",
+            modifiers = { "entitypose" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.entitypose")
+    public void entitypose(CommandContext args, CommandSender sender, NPC npc, @Arg(1) EntityPose pose)
+            throws CommandException {
+        if (pose == null)
+            throw new CommandUsageException();
+        npc.getOrAddTrait(EntityPoseTrait.class).setPose(pose);
+        Messaging.sendTr(sender, Messages.ENTITYPOSE_SET, pose);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "flyable (true|false)",
             desc = "",
             modifiers = { "flyable" },
@@ -1110,6 +1134,38 @@ public class NPCCommands {
         trait.follow(following ? player.getPlayer() : null);
         Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
                 player.getName());
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "forcefield --width [width] --height [height] --strength [strength]",
+            desc = "",
+            modifiers = { "forcefield" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.forcefield")
+    public void forcefield(CommandContext args, CommandSender sender, NPC npc, @Flag("width") Double width,
+            @Flag("height") Double height, @Flag("strength") Double strength) throws CommandException {
+        ForcefieldTrait trait = npc.getOrAddTrait(ForcefieldTrait.class);
+        String output = "";
+        if (width != null) {
+            trait.setWidth(width);
+            output += Messaging.tr(Messages.FORCEFIELD_WIDTH_SET, width);
+        }
+        if (height != null) {
+            trait.setHeight(height);
+            output += Messaging.tr(Messages.FORCEFIELD_HEIGHT_SET, height);
+        }
+        if (strength != null) {
+            trait.setStrength(strength);
+            output += Messaging.tr(Messages.FORCEFIELD_STRENGTH_SET, strength);
+        }
+        if (!output.isEmpty()) {
+            Messaging.send(sender, output);
+        } else {
+            Messaging.sendTr(sender, Messages.FORCEFIELD_DESCRIBE, npc.getName(), trait.getHeight(), trait.getWidth(),
+                    trait.getStrength());
+        }
     }
 
     @Command(
@@ -2374,8 +2430,6 @@ public class NPCCommands {
         }
         npc.data().setPersistent(NPC.Metadata.REMOVE_FROM_PLAYERLIST, remove);
         if (npc.isSpawned()) {
-            npc.despawn(DespawnReason.PENDING_RESPAWN);
-            npc.spawn(npc.getOrAddTrait(CurrentLocation.class).getLocation(), SpawnReason.RESPAWN);
             NMS.addOrRemoveFromPlayerList(npc.getEntity(), remove);
         }
         Messaging.sendTr(sender, remove ? Messages.REMOVED_FROM_PLAYERLIST : Messages.ADDED_TO_PLAYERLIST,
@@ -2805,7 +2859,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "shop (edit|show|delete) (name)",
+            usage = "shop (edit|show|delete|copyfrom) (name)",
             desc = "",
             modifiers = { "shop" },
             min = 1,
@@ -2813,7 +2867,8 @@ public class NPCCommands {
             permission = "citizens.npc.shop")
     @Requirements(selected = false, ownership = true)
     public void shop(CommandContext args, Player sender, NPC npc,
-            @Arg(value = 1, completions = { "edit", "show", "delete" }) String action) throws CommandException {
+            @Arg(value = 1, completions = { "edit", "show", "delete", "copyfrom" }) String action)
+            throws CommandException {
         if (args.argsLength() == 1) {
             if (npc != null) {
                 npc.getOrAddTrait(ShopTrait.class).getDefaultShop().display(sender);
@@ -2836,6 +2891,13 @@ public class NPCCommands {
             if (!shop.canEdit(npc, sender))
                 throw new NoPermissionsException();
             shop.displayEditor(npc == null ? null : npc.getOrAddTrait(ShopTrait.class), sender);
+        } else if (action.equalsIgnoreCase("copyfrom")) {
+            if (!shop.canEdit(npc, sender) || !npc.getOrAddTrait(ShopTrait.class).getDefaultShop().canEdit(npc, sender))
+                throw new NoPermissionsException();
+            DataKey key = new MemoryDataKey();
+            PersistenceLoader.save(shop, key);
+            NPCShop copy = PersistenceLoader.load(NPCShop.class, key);
+            npc.getOrAddTrait(ShopTrait.class).setDefaultShop(copy);
         } else if (action.equalsIgnoreCase("show")) {
             shop.display(sender);
         } else
@@ -3235,9 +3297,9 @@ public class NPCCommands {
             permission = "citizens.npc.swim")
     public void swim(CommandContext args, CommandSender sender, NPC npc, @Flag("set") Boolean set)
             throws CommandException {
-        boolean swim = set != null ? set : !npc.data().get(NPC.Metadata.SWIMMING, true);
-        npc.data().setPersistent(NPC.Metadata.SWIMMING, swim);
-        Messaging.sendTr(sender, swim ? Messages.SWIMMING_SET : Messages.SWIMMING_UNSET, npc.getName());
+        boolean swim = set != null ? set : !npc.data().get(NPC.Metadata.SWIM, true);
+        npc.data().setPersistent(NPC.Metadata.SWIM, swim);
+        Messaging.sendTr(sender, swim ? Messages.SWIM_SET : Messages.SWIM_UNSET, npc.getName());
     }
 
     @Command(
@@ -3276,11 +3338,23 @@ public class NPCCommands {
             flags = "t",
             permission = "citizens.npc.targetable")
     public void targetable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean targetable = !npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected());
+        boolean targetable = !npc.data().get(NPC.Metadata.TARGETABLE, npc.isProtected());
         if (args.hasFlag('t')) {
             npc.data().set(NPC.Metadata.TARGETABLE, targetable);
         } else {
             npc.data().setPersistent(NPC.Metadata.TARGETABLE, targetable);
+        }
+        if (targetable && npc.getOrAddTrait(MobType.class).getType() == EntityType.PLAYER
+                && npc.data().get(NPC.Metadata.REMOVE_FROM_PLAYERLIST, true)) {
+            Messaging.sendTr(sender, Messages.TARGETABLE_PLAYERLIST_WARNING);
+            if (args.hasFlag('t')) {
+                npc.data().set(NPC.Metadata.REMOVE_FROM_PLAYERLIST, false);
+            } else {
+                npc.data().setPersistent(NPC.Metadata.REMOVE_FROM_PLAYERLIST, false);
+            }
+            if (npc.isSpawned()) {
+                NMS.addOrRemoveFromPlayerList(npc.getEntity(), false);
+            }
         }
         Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());
     }

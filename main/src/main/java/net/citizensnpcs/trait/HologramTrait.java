@@ -457,12 +457,11 @@ public class HologramTrait extends Trait {
                 mb = 0.21;
                 mt = 0.07;
                 hr = new ItemRenderer();
-            } else if (SUPPORTS_DISPLAY && backgroundColor != null) {
-                renderer = new TextDisplayRenderer(backgroundColor);
             }
             this.persist = persist;
             this.ticks = ticks;
             this.renderer = hr;
+            renderer.setBackgroundColor(backgroundColor);
             if (renderer instanceof SingleEntityHologramRenderer) {
                 SingleEntityHologramRenderer sr = (SingleEntityHologramRenderer) renderer;
                 sr.setViewRange(viewRange);

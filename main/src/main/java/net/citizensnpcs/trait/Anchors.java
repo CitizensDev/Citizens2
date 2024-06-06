@@ -45,9 +45,10 @@ public class Anchors extends Trait {
     }
 
     public Anchor getAnchor(String name) {
-        for (Anchor anchor : anchors)
+        for (Anchor anchor : anchors) {
             if (anchor.getName().equalsIgnoreCase(name))
                 return anchor;
+        }
         return null;
     }
 
@@ -75,11 +76,7 @@ public class Anchors extends Trait {
     }
 
     public boolean removeAnchor(Anchor anchor) {
-        if (anchors.contains(anchor)) {
-            anchors.remove(anchor);
-            return true;
-        }
-        return false;
+        return anchors.remove(anchor);
     }
 
     @Override

@@ -34,6 +34,7 @@ import net.citizensnpcs.trait.EnderCrystalTrait;
 import net.citizensnpcs.trait.EndermanTrait;
 import net.citizensnpcs.trait.EntityPoseTrait;
 import net.citizensnpcs.trait.FollowTrait;
+import net.citizensnpcs.trait.ForcefieldTrait;
 import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
@@ -90,6 +91,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(EntityPoseTrait.class));
         registerTrait(TraitInfo.create(Equipment.class));
         registerTrait(TraitInfo.create(FollowTrait.class).optInToStats());
+        registerTrait(TraitInfo.create(ForcefieldTrait.class).optInToStats());
         registerTrait(TraitInfo.create(GameModeTrait.class));
         registerTrait(TraitInfo.create(Gravity.class));
         registerTrait(TraitInfo.create(HomeTrait.class).optInToStats());

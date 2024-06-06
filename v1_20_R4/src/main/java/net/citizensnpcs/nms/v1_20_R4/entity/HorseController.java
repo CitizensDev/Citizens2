@@ -54,9 +54,7 @@ public class HorseController extends MobEntityController {
 
     public static class EntityHorseNPC extends Horse implements NPCHolder {
         private double baseMovementSpeed;
-
         private final CitizensNPC npc;
-
         private boolean riding;
 
         public EntityHorseNPC(EntityType<? extends Horse> types, Level level) {

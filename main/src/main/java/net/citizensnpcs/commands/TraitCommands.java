@@ -11,11 +11,9 @@ import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Command;
-import net.citizensnpcs.api.command.CommandConfigurable;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
-import net.citizensnpcs.api.command.exception.NoPermissionsException;
 import net.citizensnpcs.api.event.NPCTraitCommandAttachEvent;
 import net.citizensnpcs.api.event.NPCTraitCommandDetachEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -65,30 +63,6 @@ public class TraitCommands {
     private void addTrait(NPC npc, Class<? extends Trait> clazz, CommandSender sender) {
         npc.addTrait(clazz);
         Bukkit.getPluginManager().callEvent(new NPCTraitCommandAttachEvent(npc, clazz, sender));
-    }
-
-    @Command(
-            aliases = { "traitc", "trc" },
-            usage = "[trait name] (flags)",
-            desc = "",
-            modifiers = { "*" },
-            min = 1,
-            flags = "*",
-            permission = "citizens.npc.trait-configure")
-    public void configure(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        String traitName = args.getString(0);
-        if (!sender.hasPermission("citizens.npc.trait-configure." + traitName)
-                && !sender.hasPermission("citizens.npc.trait-configure.*"))
-            throw new NoPermissionsException();
-        Class<? extends Trait> clazz = CitizensAPI.getTraitFactory().getTraitClass(args.getString(0));
-        if (clazz == null)
-            throw new CommandException(Messages.TRAIT_NOT_FOUND);
-        if (!CommandConfigurable.class.isAssignableFrom(clazz))
-            throw new CommandException(Messages.TRAIT_NOT_CONFIGURABLE);
-        if (!npc.hasTrait(clazz))
-            throw new CommandException(Messages.TRAIT_NOT_FOUND_ON_NPC);
-        CommandConfigurable trait = (CommandConfigurable) npc.getOrAddTrait(clazz);
-        trait.configure(args);
     }
 
     @Command(

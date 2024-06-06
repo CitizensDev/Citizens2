@@ -1,13 +1,10 @@
 package net.citizensnpcs.trait;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -17,19 +14,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
-import com.google.common.collect.Maps;
-
 import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.command.CommandConfigurable;
-import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -40,39 +31,17 @@ import net.citizensnpcs.util.Util;
  * e.g. arrow keys.
  */
 @TraitName("controllable")
-public class Controllable extends Trait implements Toggleable, CommandConfigurable {
+public class Controllable extends Trait implements Toggleable {
     private MovementController controller = new GroundController();
     @Persist
+    private BuiltInControls controls;
+    @Persist
     private boolean enabled = true;
-    private EntityType explicitType;
     @Persist("owner_required")
     private boolean ownerRequired;
 
     public Controllable() {
         super("controllable");
-    }
-
-    /**
-     * Configures the explicit type parameter.
-     *
-     * @see #setExplicitType(EntityType)
-     */
-    @Override
-    public void configure(CommandContext args) {
-        if (args.hasFlag('f')) {
-            explicitType = EntityType.BLAZE;
-        } else if (args.hasFlag('g')) {
-            explicitType = EntityType.OCELOT;
-        } else if (args.hasFlag('o')) {
-            explicitType = EntityType.UNKNOWN;
-        } else if (args.hasFlag('r')) {
-            explicitType = null;
-        } else if (args.hasValueFlag("explicittype")) {
-            explicitType = Util.matchEnum(EntityType.values(), args.getFlag("explicittype"));
-        }
-        if (npc.isSpawned()) {
-            loadController();
-        }
     }
 
     private void enterOrLeaveVehicle(Player player) {
@@ -96,36 +65,18 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         return enabled;
     }
 
-    @Override
-    public void load(DataKey key) throws NPCLoadException {
-        if (key.keyExists("explicittype")) {
-            explicitType = Util.matchEnum(EntityType.values(), key.getString("explicittype"));
-        }
-    }
-
     private void loadController() {
-        EntityType type = npc.getEntity().getType();
-        if (explicitType != null) {
-            type = explicitType;
+        if (controls != null) {
+            controller = controls.create(this);
+            return;
         }
-        if (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof Vehicle) && (explicitType == null
-                || explicitType == EntityType.UNKNOWN || npc.getEntity().getType() == explicitType)) {
+        if (!(npc.getEntity() instanceof LivingEntity) && !(npc.getEntity() instanceof Vehicle)) {
             controller = new LookAirController();
             return;
         }
-        Constructor<? extends MovementController> innerConstructor = CONTROLLER_TYPES.get(type);
-        if (innerConstructor == null) {
-            controller = new GroundController();
-            return;
-        }
-        try {
-            if (innerConstructor.getParameterCount() == 0) {
-                controller = innerConstructor.newInstance();
-            } else {
-                controller = innerConstructor.newInstance(this);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (Util.isAlwaysFlyable(npc.getEntity().getType())) {
+            controller = new PlayerInputAirController();
+        } else {
             controller = new GroundController();
         }
     }
@@ -202,28 +153,13 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         controller.run((Player) passengers.get(0));
     }
 
-    @Override
-    public void save(DataKey key) {
-        if (explicitType == null) {
-            key.removeKey("explicittype");
-        } else {
-            key.setString("explicittype", explicitType.name());
-        }
+    public void setControls(BuiltInControls controls) {
+        this.controls = controls;
     }
 
     public boolean setEnabled(boolean enabled) {
         this.enabled = enabled;
         return enabled;
-    }
-
-    /**
-     * Configures the explicit typei.e. whether the NPC should be controlled as if it was a certain {@link EntityType}.
-     *
-     * @param type
-     *            the explicit type
-     */
-    public void setExplicitType(EntityType type) {
-        explicitType = type;
     }
 
     private void setMountedYaw(Entity entity) {
@@ -297,6 +233,35 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         }
     }
 
+    public enum BuiltInControls {
+        AIR {
+            @Override
+            MovementController create(Controllable trait) {
+                return trait.new PlayerInputAirController();
+            }
+        },
+        GROUND {
+            @Override
+            MovementController create(Controllable trait) {
+                return trait.new GroundController();
+            }
+        },
+        GROUND_JUMPLESS {
+            @Override
+            MovementController create(Controllable trait) {
+                return trait.new JumplessGroundController();
+            }
+        },
+        LOOK_AIR {
+            @Override
+            MovementController create(Controllable trait) {
+                return trait.new LookAirController();
+            }
+        };
+
+        abstract MovementController create(Controllable trait);
+    }
+
     public class GroundController implements MovementController {
         private int jumpTicks = 0;
         private double speed = 0.07D;
@@ -334,6 +299,38 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
         private static final float AIR_SPEED = 0.5F;
         private static final float GROUND_SPEED = 0.5F;
         private static final float JUMP_VELOCITY = 0.5F;
+    }
+
+    public class JumplessGroundController implements MovementController {
+        private double speed = 0.07D;
+
+        @Override
+        public void leftClick(PlayerInteractEvent event) {
+        }
+
+        @Override
+        public void rightClick(PlayerInteractEvent event) {
+        }
+
+        @Override
+        public void rightClickEntity(NPCRightClickEvent event) {
+            enterOrLeaveVehicle(event.getClicker());
+        }
+
+        @Override
+        public void run(Player rider) {
+            boolean onGround = NMS.isOnGround(npc.getEntity());
+            float impulse = npc.getNavigator().getDefaultParameters()
+                    .modifiedSpeed(onGround ? GROUND_SPEED : AIR_SPEED);
+            if (!Util.isHorse(npc.getEntity().getType())) {
+                speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, impulse,
+                        Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble());
+            }
+            setMountedYaw(npc.getEntity());
+        }
+
+        private static final float AIR_SPEED = 0.5F;
+        private static final float GROUND_SPEED = 0.5F;
     }
 
     public class LookAirController implements MovementController {
@@ -411,45 +408,5 @@ public class Controllable extends Trait implements Toggleable, CommandConfigurab
             npc.getEntity().setVelocity(npc.getEntity().getVelocity().multiply(new Vector(1, 0.98, 1)));
             setMountedYaw(npc.getEntity());
         }
-    }
-
-    /**
-     * Register a movement controller for a certain {@link EntityType} to be used for {@link NPC}s with that type.
-     *
-     * Default controllers are registered for BAT, BLAZE, ENDER_DRAGON, GHAST, WITHER and PARROT using
-     * {@link PlayerInputAirController}.
-     *
-     * @param type
-     *            the entity type
-     * @param clazz
-     *            the controller class
-     */
-    public static void registerControllerType(EntityType type, Class<? extends MovementController> clazz) {
-        try {
-            Constructor<? extends MovementController> constructor = clazz.getConstructor(Controllable.class);
-            constructor.setAccessible(true);
-            CONTROLLER_TYPES.put(type, constructor);
-            return;
-        } catch (Exception e) {
-            try {
-                Constructor<? extends MovementController> constructor = clazz.getConstructor();
-                constructor.setAccessible(true);
-                CONTROLLER_TYPES.put(type, constructor);
-            } catch (Exception e2) {
-                throw new RuntimeException(e2);
-            }
-        }
-    }
-
-    private static Map<EntityType, Constructor<? extends MovementController>> CONTROLLER_TYPES = Maps
-            .newEnumMap(EntityType.class);
-
-    static {
-        for (EntityType type : EntityType.values()) {
-            if (Util.isAlwaysFlyable(type)) {
-                registerControllerType(type, PlayerInputAirController.class);
-            }
-        }
-        registerControllerType(EntityType.UNKNOWN, LookAirController.class);
     }
 }
