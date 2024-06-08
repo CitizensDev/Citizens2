@@ -312,6 +312,7 @@ public class PersistenceLoader {
         return deserialised;
     }
 
+    @SuppressWarnings("unchecked")
     private static void deserialiseMap(Map<Object, Object> map, DataKey root, PersistField field) {
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
             Object loaded = deserialiseCollectionValue(field, subKey, field.persistAnnotation.valueType());
@@ -342,6 +343,8 @@ public class PersistenceLoader {
                     }
                 } else if (type == UUID.class) {
                     key = UUID.fromString(String.valueOf(key));
+                } else if (type.isEnum()) {
+                    key = Enum.valueOf((Class<? extends Enum>) type, String.valueOf(key));
                 } else
                     throw new UnsupportedOperationException();
             }
