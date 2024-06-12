@@ -47,6 +47,7 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.trait.shop.ExperienceAction;
 import net.citizensnpcs.trait.shop.ItemAction;
@@ -63,7 +64,7 @@ public class CommandTrait extends Trait {
     private final Map<Integer, NPCCommand> commands = Maps.newHashMap();
     @Persist
     private double cost = -1;
-    @Persist
+    @Persist(keyType = CommandTraitError.class)
     private final Map<CommandTraitError, String> customErrorMessages = Maps.newEnumMap(CommandTraitError.class);
     private final Map<String, Set<CommandTraitError>> executionErrors = Maps.newHashMap();
     @Persist
@@ -445,7 +446,8 @@ public class CommandTrait extends Trait {
                 return;
             sent.add(msg);
         }
-        String messageRaw = customErrorMessages.getOrDefault(msg, msg.setting.asString());
+        String messageRaw = Placeholders.replace(customErrorMessages.getOrDefault(msg, msg.setting.asString()), player,
+                npc);
         if (transform != null) {
             messageRaw = transform.apply(messageRaw);
         }
