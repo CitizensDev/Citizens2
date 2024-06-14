@@ -253,14 +253,24 @@ public class EventListen implements Listener {
                 new double[] { (event.getChunk().getX() << 4) - 0.5, 0, (event.getChunk().getZ() << 4) - 0.5 },
                 new double[] { (event.getChunk().getX() + 1 << 4) + 0.5, 256,
                         (event.getChunk().getZ() + 1 << 4) + 0.5 }));
-        for (Entity entity : event.getChunk().getEntities()) {
-            NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
-            // XXX npc#isSpawned() checks valid status which is now inconsistent on chunk unload
-            // between different server software so check for npc.getEntity() == null instead.
-            if (npc == null || npc.getEntity() == null || toDespawn.contains(npc))
-                continue;
+        if (SUPPORTS_UNLOAD_CHUNK_ENTITIES == null) {
+            try {
+                event.getChunk().getEntities();
+                SUPPORTS_UNLOAD_CHUNK_ENTITIES = true;
+            } catch (Throwable t) {
+                SUPPORTS_UNLOAD_CHUNK_ENTITIES = false;
+            }
+        }
+        if (SUPPORTS_UNLOAD_CHUNK_ENTITIES) {
+            for (Entity entity : event.getChunk().getEntities()) {
+                NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
+                // XXX npc#isSpawned() checks valid status which is now inconsistent on chunk unload
+                // between different server software so check for npc.getEntity() == null instead.
+                if (npc == null || npc.getEntity() == null || toDespawn.contains(npc))
+                    continue;
 
-            toDespawn.add(npc);
+                toDespawn.add(npc);
+            }
         }
         if (toDespawn.isEmpty())
             return;
@@ -956,4 +966,6 @@ public class EventListen implements Listener {
     }
 
     private static boolean SUPPORT_STOP_USE_ITEM = true;
+
+    private static Boolean SUPPORTS_UNLOAD_CHUNK_ENTITIES;
 }
