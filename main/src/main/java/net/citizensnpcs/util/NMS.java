@@ -66,7 +66,6 @@ import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
 import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
-import net.citizensnpcs.util.NMS.MinecraftNavigationType;
 
 public class NMS {
     private NMS() {

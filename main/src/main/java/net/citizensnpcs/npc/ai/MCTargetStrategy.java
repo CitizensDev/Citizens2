@@ -127,8 +127,8 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         NMS.look(handle, target);
         if (aggro && canAttack()) {
             AttackStrategy strategy = parameters.attackStrategy();
-            if (strategy != null && strategy.handle((LivingEntity) handle, (LivingEntity) getTarget())) {
-            } else if (strategy != parameters.defaultAttackStrategy()) {
+            if (strategy != null && !strategy.handle((LivingEntity) handle, (LivingEntity) getTarget())
+                    && strategy != parameters.defaultAttackStrategy()) {
                 parameters.defaultAttackStrategy().handle((LivingEntity) handle, (LivingEntity) getTarget());
             }
             attackTicks = parameters.attackDelayTicks();

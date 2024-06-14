@@ -145,7 +145,7 @@ public class HologramTrait extends Trait {
         } else if (SpigotUtil.getVersion()[1] == 19) {
             renderer = new InteractionVehicleRenderer();
         } else {
-            renderer = new ArmorstandVehicleRenderer();
+            renderer = new ArmorstandRenderer();
         }
         if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
             HologramRendererCreateEvent event = new HologramRendererCreateEvent(npc, renderer, true);
@@ -425,22 +425,6 @@ public class HologramTrait extends Trait {
         protected void render0(NPC npc, Vector3d offset) {
             hologram.getEntity().teleport(npc.getStoredLocation().clone().add(offset.x,
                     offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
-        }
-    }
-
-    public static class ArmorstandVehicleRenderer extends ArmorstandRenderer {
-        @Override
-        protected NPC createNPC(Entity base, String name, Vector3d offset) {
-            NPC npc = registry().createNPC(EntityType.ARMOR_STAND, name);
-            npc.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
-            return npc;
-        }
-
-        @Override
-        public void render0(NPC base, Vector3d offset) {
-            if (hologram.getEntity().getVehicle() == null) {
-                NMS.mount(base.getEntity(), hologram.getEntity());
-            }
         }
     }
 

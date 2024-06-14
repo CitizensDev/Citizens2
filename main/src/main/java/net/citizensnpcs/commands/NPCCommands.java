@@ -2255,9 +2255,7 @@ public class NPCCommands {
         }
         if (output.isEmpty())
             throw new CommandUsageException();
-        else {
-            Messaging.send(sender, output.trim());
-        }
+        Messaging.send(sender, output.trim());
     }
 
     @Command(
@@ -2972,7 +2970,7 @@ public class NPCCommands {
                         FileOutputStream out = new FileOutputStream(skin)) {
                     out.getChannel().transferFrom(in, 0, 10000);
                 }
-                Messaging.send(sender, Messages.SKIN_EXPORTED, skin.getName());
+                Messaging.sendTr(sender, Messages.SKIN_EXPORTED, skin.getName());
             } catch (Exception e) {
                 throw new CommandException("Couldn't parse texture: " + e.getMessage());
             }
