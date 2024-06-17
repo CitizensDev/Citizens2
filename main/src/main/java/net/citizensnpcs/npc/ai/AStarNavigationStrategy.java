@@ -50,6 +50,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         this.params = params;
         destination = dest;
         this.npc = npc;
+        planner = new AStarPlanner(params, npc.getEntity().getLocation(), destination);
     }
 
     @Override
@@ -77,19 +78,14 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public boolean update() {
-        if (plan == null) {
-            if (planner == null) {
-                planner = new AStarPlanner(params, npc.getEntity().getLocation(), destination);
-            }
+        if (planner != null) {
             CancelReason reason = planner.tick(Setting.ASTAR_ITERATIONS_PER_TICK.asInt(),
                     Setting.MAXIMUM_ASTAR_ITERATIONS.asInt());
-            if (reason != null) {
-                setCancelReason(reason);
-            }
             plan = planner.plan;
-            if (plan != null) {
-                planner = null;
-            }
+            if (reason == null || plan == null)
+                return false;
+            setCancelReason(reason);
+            planner = null;
         }
         if (getCancelReason() != null || plan == null || plan.isComplete())
             return true;
@@ -98,7 +94,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location loc = npc.getEntity().getLocation();
         /* Proper door movement - gets stuck on corners at times
-
+        
          Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
           if (MinecraftBlockExaminer.isDoor(block.getType())) {
             Door door = (Door) block.getState().getData();
