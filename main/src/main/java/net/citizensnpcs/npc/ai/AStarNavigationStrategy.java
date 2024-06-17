@@ -82,7 +82,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             CancelReason reason = planner.tick(Setting.ASTAR_ITERATIONS_PER_TICK.asInt(),
                     Setting.MAXIMUM_ASTAR_ITERATIONS.asInt());
             plan = planner.plan;
-            if (reason == null || plan == null)
+            if (reason == null && plan == null)
                 return false;
             setCancelReason(reason);
             planner = null;
@@ -93,18 +93,18 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             vector = plan.getCurrentVector();
         }
         Location loc = npc.getEntity().getLocation();
-        /* Proper door movement - gets stuck on corners at times
-        
-         Block block = currLoc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
-          if (MinecraftBlockExaminer.isDoor(block.getType())) {
-            Door door = (Door) block.getState().getData();
-            if (door.isOpen()) {
-                BlockFace targetFace = door.getFacing().getOppositeFace();
-                destVector.setX(vector.getX() + targetFace.getModX());
-                destVector.setZ(vector.getZ() + targetFace.getModZ());
-            }
-        }*/
         Location dest = Util.getCenterLocation(vector.toLocation(loc.getWorld()).getBlock());
+        /* Proper door movement - gets stuck on corners at times
+
+        Block block = loc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+         if (MinecraftBlockExaminer.isDoor(block.getType())) {
+           Door door = (Door) block.getState().getData();
+           if (door.isOpen()) {
+               BlockFace targetFace = door.getFacing().getOppositeFace();
+               dest.setX(vector.getX() + targetFace.getModX());
+               dest.setZ(vector.getZ() + targetFace.getModZ());
+           }
+        }*/
         double dX = dest.getX() - loc.getX();
         double dZ = dest.getZ() - loc.getZ();
         double dY = dest.getY() - loc.getY();
