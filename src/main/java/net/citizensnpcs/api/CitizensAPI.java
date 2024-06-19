@@ -37,17 +37,6 @@ public final class CitizensAPI {
     }
 
     /**
-     * Creates a new <em>anonymous</em> {@link NPCRegistry} that is "Citizens-backed" i.e. will reload and unload at the
-     * same time that Citizens reloads and unloads.
-     *
-     * @param store
-     *            The {@link NPCDataStore} to use with the registry
-     */
-    public static NPCRegistry createCitizensBackedNPCRegistry(NPCDataStore store) {
-        return getImplementation().createCitizensBackedNPCRegistry(store);
-    }
-
-    /**
      * Creates a new {@link NPCRegistry} with its own set of {@link NPC}s that does not save to disk.
      */
     public static NPCRegistry createInMemoryNPCRegistry(String name) {
@@ -141,6 +130,15 @@ public final class CitizensAPI {
 
     public static TemplateRegistry getTemplateRegistry() {
         return getImplementation().getTemplateRegistry();
+    }
+
+    /**
+     * Gets the current implementation's <em>default</em> <em>temporary</em> {@link NPCRegistry}.
+     *
+     * @return The temporary NPC registry
+     */
+    public static NPCRegistry getTemporaryNPCRegistry() {
+        return getImplementation().getTemporaryNPCRegistry();
     }
 
     /**
