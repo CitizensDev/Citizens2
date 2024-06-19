@@ -38,7 +38,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.Arg.CompletionsProvider;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.event.NPCEvent;
-import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.persistence.Persist;
@@ -67,7 +66,7 @@ public class HologramTrait extends Trait {
     private double lineHeight = -1;
     private final List<HologramLine> lines = Lists.newArrayList();
     private HologramLine nameLine;
-    private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
+    private final NPCRegistry registry = CitizensAPI.getTemporaryNPCRegistry();
     private int t;
     @Persist
     private int viewRange = -1;
@@ -739,8 +738,7 @@ public class HologramTrait extends Trait {
         }
 
         protected NPCRegistry registry() {
-            return registry == null ? registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore())
-                    : registry;
+            return registry == null ? registry = CitizensAPI.getTemporaryNPCRegistry() : registry;
         }
 
         @Override

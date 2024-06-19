@@ -102,11 +102,12 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 }
             }
 
-            private NPC createMarker(Waypoint element) {
-                Entity entity = markers.createMarker(element, element.getLocation().clone().add(0, 1, 0));
+            private NPC createMarker(Waypoint waypoint) {
+                Entity entity = markers.createMarker(waypoint, waypoint.getLocation().clone().add(0, 1, 0));
                 if (entity == null)
                     return null;
-                ((NPCHolder) entity).getNPC().data().setPersistent("waypointhashcode", element.hashCode());
+                NPC npc2 = ((NPCHolder) entity).getNPC();
+                npc2.data().setPersistent("waypointhashcode", waypoint.hashCode());
                 return ((NPCHolder) entity).getNPC();
             }
 

@@ -242,14 +242,18 @@ public class Util {
         return entity instanceof LivingEntity ? ((LivingEntity) entity).getEyeLocation() : entity.getLocation();
     }
 
-    public static EntityType getFallbackEntityType(String first, String second) {
-        for (EntityType type : EntityType.values()) {
-            if (type.name().equals(first))
-                return type;
-            if (type.name().equals(second))
-                return type;
+    public static EntityType getFallbackEntityType(String first, String... second) {
+        try {
+            return EntityType.valueOf(first);
+        } catch (IllegalArgumentException e) {
+            for (String s : second) {
+                try {
+                    return EntityType.valueOf(s);
+                } catch (IllegalArgumentException iae) {
+                }
+            }
+            return null;
         }
-        return null;
     }
 
     public static Material getFallbackMaterial(String first, String... second) {

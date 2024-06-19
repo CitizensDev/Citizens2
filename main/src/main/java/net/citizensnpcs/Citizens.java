@@ -48,6 +48,7 @@ import net.citizensnpcs.api.event.CitizensPreReloadEvent;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -85,7 +86,6 @@ import net.milkbowl.vault.economy.Economy;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final List<NPCRegistry> anonymousRegistries = Lists.newArrayList();
-    private final List<NPCRegistry> citizensBackedRegistries = Lists.newArrayList();
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private boolean enabled;
@@ -148,19 +148,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private StoredShops shops;
     private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
     private TemplateRegistry templateRegistry;
+    private NPCRegistry temporaryRegistry;
     private CitizensTraitFactory traitFactory;
 
     @Override
     public NPCRegistry createAnonymousNPCRegistry(NPCDataStore store) {
         CitizensNPCRegistry anon = new CitizensNPCRegistry(store, "anonymous-" + UUID.randomUUID().toString());
         anonymousRegistries.add(anon);
-        return anon;
-    }
-
-    @Override
-    public NPCRegistry createCitizensBackedNPCRegistry(NPCDataStore store) {
-        CitizensNPCRegistry anon = new CitizensNPCRegistry(store, "anonymous-citizens-" + UUID.randomUUID().toString());
-        citizensBackedRegistries.add(anon);
         return anon;
     }
 
@@ -180,7 +174,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void despawnNPCs(boolean save) {
-        for (NPCRegistry registry : Iterables.concat(Arrays.asList(npcRegistry), citizensBackedRegistries)) {
+        for (NPCRegistry registry : Arrays.asList(npcRegistry, temporaryRegistry)) {
             if (registry == null)
                 continue;
 
@@ -235,7 +229,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             @Override
             public NPCRegistry next() {
                 if (stored == null) {
-                    stored = Iterables.concat(storedRegistries.values(), anonymousRegistries, citizensBackedRegistries)
+                    stored = Iterables
+                            .concat(storedRegistries.values(), anonymousRegistries, Arrays.asList(temporaryRegistry))
                             .iterator();
                     return npcRegistry;
                 }
@@ -274,6 +269,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public TemplateRegistry getTemplateRegistry() {
         return templateRegistry;
+    }
+
+    @Override
+    public NPCRegistry getTemporaryNPCRegistry() {
+        return temporaryRegistry;
     }
 
     @Override
@@ -391,6 +391,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         }
         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
+        npcRegistry = new CitizensNPCRegistry(new MemoryNPCDataStore(), "citizens-temporary");
         locationLookup = new LocationLookup(npcRegistry);
         locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
 

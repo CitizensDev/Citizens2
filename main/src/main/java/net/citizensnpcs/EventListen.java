@@ -130,7 +130,7 @@ public class EventListen implements Listener {
         skinUpdateTracker = new SkinUpdateTracker();
         try {
             Class.forName("org.bukkit.event.world.EntitiesLoadEvent");
-            Bukkit.getPluginManager().registerEvents(chunkEventListener = new Listener() {
+            Bukkit.getPluginManager().registerEvents(new Listener() {
                 @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
                 public void onEntitiesLoad(EntitiesLoadEvent event) {
                     loadNPCs(event);

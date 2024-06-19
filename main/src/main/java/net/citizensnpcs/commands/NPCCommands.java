@@ -189,7 +189,7 @@ public class NPCCommands {
         selector = plugin.getNPCSelector();
         shops = plugin.getShops();
         templateRegistry = plugin.getTemplateRegistry();
-        temporaryRegistry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
+        temporaryRegistry = plugin.getTemporaryNPCRegistry();
         history = new CommandHistory(selector);
     }
 
@@ -3034,6 +3034,7 @@ public class NPCCommands {
                 args.getSenderLocation().getWorld().dropItem(args.getSenderLocation(), is);
             } else
                 throw new ServerCommandException();
+            return;
         } else {
             if (args.argsLength() != 2) {
                 Messaging.send(sender, trait.getSkinName());

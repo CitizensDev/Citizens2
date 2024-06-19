@@ -143,6 +143,7 @@ import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.EnderCrystalController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.EnderPearlController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.EnderSignalController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.EvokerFangsController;
+import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.ExperienceOrbController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.FallingBlockController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.FireworkController;
 import net.citizensnpcs.nms.v1_11_R1.entity.nonliving.FishingHookController;
@@ -836,6 +837,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.SPIDER, SpiderController.class);
         EntityControllers.setEntityControllerForType(EntityType.SPLASH_POTION, ThrownPotionController.class);
         EntityControllers.setEntityControllerForType(EntityType.SQUID, SquidController.class);
+        EntityControllers.setEntityControllerForType(EntityType.EXPERIENCE_ORB, ExperienceOrbController.class);
         EntityControllers.setEntityControllerForType(EntityType.TIPPED_ARROW, TippedArrowController.class);
         EntityControllers.setEntityControllerForType(EntityType.THROWN_EXP_BOTTLE, ThrownExpBottleController.class);
         EntityControllers.setEntityControllerForType(EntityType.PRIMED_TNT, TNTPrimedController.class);

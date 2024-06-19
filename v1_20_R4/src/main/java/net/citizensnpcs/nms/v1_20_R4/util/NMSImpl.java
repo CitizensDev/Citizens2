@@ -172,6 +172,7 @@ import net.citizensnpcs.nms.v1_20_R4.entity.nonliving.EggController;
 import net.citizensnpcs.nms.v1_20_R4.entity.nonliving.EnderCrystalController;
 import net.citizensnpcs.nms.v1_20_R4.entity.nonliving.EnderPearlController;
 import net.citizensnpcs.nms.v1_20_R4.entity.nonliving.EvokerFangsController;
+import net.citizensnpcs.nms.v1_20_R4.entity.nonliving.ExperienceOrbController;
 import net.citizensnpcs.nms.v1_20_R4.entity.nonliving.EyeOfEnderController;
 import net.citizensnpcs.nms.v1_20_R4.entity.nonliving.FallingBlockController;
 import net.citizensnpcs.nms.v1_20_R4.entity.nonliving.FireworkController;
@@ -996,6 +997,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.ENDERMITE, EndermiteController.class);
         EntityControllers.setEntityControllerForType(EntityType.EVOKER, EvokerController.class);
         EntityControllers.setEntityControllerForType(EntityType.EVOKER_FANGS, EvokerFangsController.class);
+        EntityControllers.setEntityControllerForType(EntityType.EXPERIENCE_ORB, ExperienceOrbController.class);
         EntityControllers.setEntityControllerForType(EntityType.EXPERIENCE_BOTTLE, ThrownExpBottleController.class);
         EntityControllers.setEntityControllerForType(EntityType.EYE_OF_ENDER, EyeOfEnderController.class);
         EntityControllers.setEntityControllerForType(EntityType.FALLING_BLOCK, FallingBlockController.class);

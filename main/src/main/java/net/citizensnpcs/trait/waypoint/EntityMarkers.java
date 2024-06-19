@@ -11,7 +11,6 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
-import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -22,7 +21,7 @@ import net.citizensnpcs.util.Util;
  */
 public class EntityMarkers<T> {
     private final Map<T, Entity> markers = Maps.newHashMap();
-    private final NPCRegistry registry = CitizensAPI.createCitizensBackedNPCRegistry(new MemoryNPCDataStore());
+    private final NPCRegistry registry = CitizensAPI.getTemporaryNPCRegistry();
     private EntityType type;
 
     public EntityMarkers() {
@@ -79,6 +78,7 @@ public class EntityMarkers<T> {
         return npc.getEntity();
     }
 
-    private static final EntityType DEFAULT_ENTITY_TYPE = Util.getFallbackEntityType("SHULKER_BULLET", "ENDER_SIGNAL");
+    private static final EntityType DEFAULT_ENTITY_TYPE = Util.getFallbackEntityType("SHULKER_BULLET", "LEASH_KNOT",
+            "LEASH_HITCH");
 
 }
