@@ -391,7 +391,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         }
         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
-        npcRegistry = new CitizensNPCRegistry(new MemoryNPCDataStore(), "citizens-temporary");
+        temporaryRegistry = new CitizensNPCRegistry(new MemoryNPCDataStore(), "citizens-temporary");
         locationLookup = new LocationLookup(npcRegistry);
         locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
 
