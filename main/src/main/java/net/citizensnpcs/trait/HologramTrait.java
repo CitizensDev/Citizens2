@@ -695,6 +695,13 @@ public class HologramTrait extends Trait {
         }
 
         @Override
+        public Collection<Entity> getEntities() {
+            return itemNPC != null && itemNPC.getEntity() != null
+                    ? ImmutableList.of(hologram.getEntity(), itemNPC.getEntity())
+                    : Collections.emptyList();
+        }
+
+        @Override
         protected void render0(NPC npc, Vector3d offset) {
             hologram.getEntity().teleport(npc.getStoredLocation().clone().add(offset.x,
                     offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
@@ -743,7 +750,8 @@ public class HologramTrait extends Trait {
 
         @Override
         public void render(NPC npc, Vector3d offset) {
-            if (hologram == null) {
+            if (getEntities().isEmpty()) {
+                destroy();
                 spawnHologram(npc, offset);
             }
             render0(npc, offset);
