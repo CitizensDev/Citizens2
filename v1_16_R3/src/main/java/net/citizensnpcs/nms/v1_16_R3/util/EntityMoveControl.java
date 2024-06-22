@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v1_16_R3.util;
 import java.util.Random;
 
 import net.citizensnpcs.util.NMS;
-import net.minecraft.server.v1_16_R3.AttributeModifiable;
 import net.minecraft.server.v1_16_R3.ControllerMove;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;

@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_8_R3.util;
 
 import java.util.Random;
 
-import net.citizensnpcs.nms.v1_8_R3.entity.EntityHumanNPC;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.v1_8_R3.ControllerMove;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
@@ -86,12 +85,8 @@ public class PlayerControllerMove extends ControllerMove {
             this.h = new Random().nextInt(20) + 10;
             this.h /= 3;
             ((EntityInsentient) this.a).getControllerJump().a();
-        } else if (dY >= NMS.getStepHeight(a.getBukkitEntity()) && dXZ < 0.4D) {
-            if (this.a instanceof EntityHumanNPC) {
-                ((EntityHumanNPC) this.a).getControllerJump().a();
-            } else {
-                ((EntityInsentient) this.a).getControllerJump().a();
-            }
+        } else if (dY > NMS.getStepHeight(a.getBukkitEntity()) && dXZ < 0.4D) {
+            NMS.setShouldJump(a.getBukkitEntity());
         }
     }
 

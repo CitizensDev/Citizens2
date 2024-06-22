@@ -308,7 +308,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.control.JumpControl;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
@@ -1663,10 +1662,11 @@ public class NMSImpl implements NMSBridge {
         Entity handle = getHandle(entity);
         if (handle == null)
             return;
-        if (handle instanceof Mob) {
-            JumpControl controller = ((Mob) handle).getJumpControl();
-            controller.jump();
-        } else {
+        MobAI ai = MobAI.from(handle);
+        if (ai != null) {
+            ai.getJumpControl().jump();
+        }
+        if (handle instanceof LivingEntity) {
             ((LivingEntity) handle).setJumping(true);
         }
     }

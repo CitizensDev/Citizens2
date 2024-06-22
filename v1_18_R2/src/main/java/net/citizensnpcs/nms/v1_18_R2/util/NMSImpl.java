@@ -1519,7 +1519,12 @@ public class NMSImpl implements NMSBridge {
         if (handle == null)
             return;
         MobAI ai = MobAI.from(handle);
-        ai.getJumpControl().jump();
+        if (ai != null) {
+            ai.getJumpControl().jump();
+        }
+        if (handle instanceof LivingEntity) {
+            ((LivingEntity) handle).setJumping(true);
+        }
     }
 
     @Override
