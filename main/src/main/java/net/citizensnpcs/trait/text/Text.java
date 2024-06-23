@@ -141,7 +141,7 @@ public class Text extends Trait implements Runnable, Listener {
     private void onRightClick(NPCRightClickEvent event) {
         if (!event.getNPC().equals(npc) || text.size() == 0)
             return;
-        String localPattern = itemInHandPattern.equals("default") ? Setting.TALK_ITEM.asString() : itemInHandPattern;
+        String localPattern = "default".equals(itemInHandPattern) ? Setting.TALK_ITEM.asString() : itemInHandPattern;
         if (Util.matchesItemInHand(event.getClicker(), localPattern) && !shouldTalkClose()) {
             talk(event.getClicker());
             event.setDelayedCancellation(true);
