@@ -13,6 +13,7 @@ import net.citizensnpcs.api.astar.pathfinder.PathPoint;
 import net.citizensnpcs.api.util.SpigotUtil;
 
 public class FallingExaminer implements BlockExaminer {
+
     private final Map<PathPoint, Integer> fall = Maps.newHashMap();
     private final int maxFallDistance;
     private final MinecraftBlockExaminer mc = new MinecraftBlockExaminer();
@@ -29,22 +30,35 @@ public class FallingExaminer implements BlockExaminer {
     @Override
     public PassableState isPassable(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
-        if (!SpigotUtil.checkYSafe(pos.getBlockY() - 1, source.getWorld()))
-            return PassableState.IGNORE;
+        PathPoint parentPoint = point.getParentPoint();
+        Vector parentPos = parentPoint != null ? parentPoint.getVector() : null;
 
-        if (fall.containsKey(point))
+        // Ignore points above the previous point to fix "falling up"
+        if (parentPos != null && pos.getBlockY() > parentPos.getBlockY()) {
+            return PassableState.IGNORE;
+        }
+
+        if (!SpigotUtil.checkYSafe(pos.getBlockY() - 1, source.getWorld())) {
+            return PassableState.IGNORE;
+        }
+
+        if (fall.containsKey(point)) {
             return PassableState.PASSABLE;
+        }
 
         if (!MinecraftBlockExaminer
                 .canStandOn(source.getBlockAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ()))) {
-            Integer dist = fall.get(point.getParentPoint());
-            if (dist == null && mc.isPassable(source, point.getParentPoint()) == PassableState.PASSABLE) {
+            if (parentPoint == null) {
+                return PassableState.IGNORE;
+            }
+            Integer dist = fall.get(parentPoint);
+            if (dist == null && mc.isPassable(source, parentPoint) == PassableState.PASSABLE) {
                 // start a fall
                 fall.put(point, 0);
                 return PassableState.PASSABLE;
-            } else if (dist != null && pos.getBlockY() < point.getParentPoint().getVector().getBlockY()
-                    && pos.getBlockX() == point.getParentPoint().getVector().getBlockX()
-                    && pos.getBlockZ() == point.getParentPoint().getVector().getBlockZ() && dist < maxFallDistance) {
+            } else if (dist != null && pos.getBlockY() < parentPoint.getVector().getBlockY()
+                    && pos.getBlockX() == parentPoint.getVector().getBlockX()
+                    && pos.getBlockZ() == parentPoint.getVector().getBlockZ() && dist < maxFallDistance) {
                 fall.put(point, dist + 1);
                 return PassableState.PASSABLE;
             }
