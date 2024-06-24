@@ -158,6 +158,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         @Override
         public void setPath() {
             // TODO: should use fallback-style pathfinding
+            if (strategy != null) {
+                strategy.stop();
+            }
             setStrategy();
             strategy.update();
             CancelReason subReason = strategy.getCancelReason();

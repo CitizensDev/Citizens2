@@ -294,6 +294,9 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
+        if (isNavigating()) {
+            cancelNavigation(CancelReason.REPLACE);
+        }
         setTarget(params -> {
             params.straightLineTargetingDistance(100000);
             return new MCTargetStrategy(npc, target, aggressive, params);
@@ -309,6 +312,9 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
+        if (isNavigating()) {
+            cancelNavigation(CancelReason.REPLACE);
+        }
         setTarget(params -> new StraightLineNavigationStrategy(npc, target.clone(), params));
     }
 
@@ -321,6 +327,9 @@ public class CitizensNavigator implements Navigator, Runnable {
             cancelNavigation();
             return;
         }
+        if (isNavigating()) {
+            cancelNavigation(CancelReason.REPLACE);
+        }
         setTarget(params -> new MCTargetStrategy(npc, target, aggressive, params));
     }
 
@@ -328,6 +337,9 @@ public class CitizensNavigator implements Navigator, Runnable {
     public void setTarget(Function<NavigatorParameters, PathStrategy> strategy) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
+        if (isNavigating()) {
+            cancelNavigation(CancelReason.REPLACE);
+        }
         switchParams();
         switchStrategyTo(strategy.apply(localParams));
     }
@@ -339,6 +351,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (path == null || Iterables.size(path) == 0) {
             cancelNavigation();
             return;
+        }
+        if (isNavigating()) {
+            cancelNavigation(CancelReason.REPLACE);
         }
         setTarget(params -> {
             if (npc.isFlyable()) {
@@ -358,6 +373,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (targetIn == null) {
             cancelNavigation();
             return;
+        }
+        if (isNavigating()) {
+            cancelNavigation(CancelReason.REPLACE);
         }
         Location target = targetIn.clone();
         setTarget(params -> {

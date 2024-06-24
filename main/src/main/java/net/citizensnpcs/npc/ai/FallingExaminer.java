@@ -33,8 +33,11 @@ public class FallingExaminer implements BlockExaminer {
         PathPoint parentPoint = point.getParentPoint();
         Vector parentPos = parentPoint != null ? parentPoint.getVector() : null;
 
-        // Ignore points above the previous point to fix "falling up"
         if (parentPos != null && pos.getBlockY() > parentPos.getBlockY()) {
+            return PassableState.IGNORE;
+        }
+
+        if (!MinecraftBlockExaminer.canStandIn(source.getBlockAt(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))) {
             return PassableState.IGNORE;
         }
 
