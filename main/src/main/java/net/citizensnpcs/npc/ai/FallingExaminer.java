@@ -35,6 +35,7 @@ public class FallingExaminer implements BlockExaminer {
         if (fall.containsKey(point))
             return PassableState.PASSABLE;
 
+        Vector ppos = point.getParentPoint().getVector();
         if (!MinecraftBlockExaminer
                 .canStandOn(source.getBlockAt(pos.getBlockX(), pos.getBlockY() - 1, pos.getBlockZ()))) {
             Integer dist = fall.get(point.getParentPoint());
@@ -42,9 +43,9 @@ public class FallingExaminer implements BlockExaminer {
                 // start a fall
                 fall.put(point, 0);
                 return PassableState.PASSABLE;
-            } else if (dist != null && pos.getBlockY() < point.getParentPoint().getVector().getBlockY()
-                    && pos.getBlockX() == point.getParentPoint().getVector().getBlockX()
-                    && pos.getBlockZ() == point.getParentPoint().getVector().getBlockZ() && dist < maxFallDistance) {
+            } else if (dist != null && dist < maxFallDistance && pos.getBlockY() < ppos.getBlockY()
+                    && pos.getBlockX() == ppos.getBlockX() && pos.getBlockZ() == ppos.getBlockZ()
+                    && MinecraftBlockExaminer.canStandIn(source.getBlockAt(pos))) {
                 fall.put(point, dist + 1);
                 return PassableState.PASSABLE;
             }

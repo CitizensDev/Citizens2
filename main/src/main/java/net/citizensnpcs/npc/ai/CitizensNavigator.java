@@ -328,8 +328,30 @@ public class CitizensNavigator implements Navigator, Runnable {
     public void setTarget(Function<NavigatorParameters, PathStrategy> strategy) {
         if (!npc.isSpawned())
             throw new IllegalStateException("npc is not spawned");
-        switchParams();
-        switchStrategyTo(strategy.apply(localParams));
+
+        if (executing != null) {
+            stopNavigating(CancelReason.REPLACE);
+        }
+        localParams = defaultParams.clone();
+        int fallDistance = npc.data().get(NPC.Metadata.PATHFINDER_FALL_DISTANCE,
+                Setting.PATHFINDER_FALL_DISTANCE.asInt());
+        if (fallDistance != -1) {
+            localParams.examiner(new FallingExaminer(fallDistance));
+        }
+        if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
+            localParams.examiner(new DoorExaminer());
+        }
+        if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {
+            localParams.examiner(new BoundingBoxExaminer(npc.getEntity()));
+        }
+        updatePathfindingRange();
+        executing = strategy.apply(localParams);
+        stationaryTicks = 0;
+        if (npc.isSpawned()) {
+            NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
+            updateTicket(executing.getTargetAsLocation());
+        }
+        Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
     }
 
     @Override
@@ -431,41 +453,13 @@ public class CitizensNavigator implements Navigator, Runnable {
                 return;
             }
         }
-        NavigationCancelEvent event = new NavigationCancelEvent(this, reason);
+        NavigationCancelEvent event = reason == CancelReason.REPLACE ? new NavigationReplaceEvent(this)
+                : new NavigationCancelEvent(this, reason);
         PathStrategy old = executing;
         Bukkit.getPluginManager().callEvent(event);
         if (old == executing) {
             stopNavigating();
         }
-    }
-
-    private void switchParams() {
-        localParams = defaultParams.clone();
-        int fallDistance = npc.data().get(NPC.Metadata.PATHFINDER_FALL_DISTANCE,
-                Setting.PATHFINDER_FALL_DISTANCE.asInt());
-        if (fallDistance != -1) {
-            localParams.examiner(new FallingExaminer(fallDistance));
-        }
-        if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
-            localParams.examiner(new DoorExaminer());
-        }
-        if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {
-            localParams.examiner(new BoundingBoxExaminer(npc.getEntity()));
-        }
-    }
-
-    private void switchStrategyTo(PathStrategy newStrategy) {
-        updatePathfindingRange();
-        if (executing != null) {
-            Bukkit.getPluginManager().callEvent(new NavigationReplaceEvent(this));
-        }
-        executing = newStrategy;
-        stationaryTicks = 0;
-        if (npc.isSpawned()) {
-            NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
-            updateTicket(executing.getTargetAsLocation());
-        }
-        Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
     }
 
     private void updateMountedStatus() {
