@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -60,6 +59,7 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
+import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.api.util.YamlStorage;
@@ -106,8 +106,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
 
         @Override
-        public InventoryView openAnvilInventory(Player player, Inventory inventory, String title) {
-            return NMS.openAnvilInventory(player, inventory, title);
+        public InventoryViewAPI openAnvilInventory(Player player, Inventory inventory, String title) {
+            return new InventoryViewAPI(NMS.openAnvilInventory(player, inventory, title));
         }
 
         @Override
@@ -132,10 +132,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
 
         @Override
-        public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
-            if (view.getTopInventory().getType() == InventoryType.CRAFTING
-                    || view.getTopInventory().getType() == InventoryType.CREATIVE
-                    || view.getTopInventory().getType() == InventoryType.PLAYER)
+        public void updateInventoryTitle(Player player, InventoryViewAPI view, String newTitle) {
+            Inventory top = view.getTopInventory();
+            if (top.getType() == InventoryType.CRAFTING || top.getType() == InventoryType.CREATIVE
+                    || top.getType() == InventoryType.PLAYER)
                 return;
             NMS.updateInventoryTitle(player, view, newTitle);
         }

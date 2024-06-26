@@ -81,6 +81,7 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.nms.v1_18_R2.entity.ArmorStandController;
 import net.citizensnpcs.nms.v1_18_R2.entity.AxolotlController;
 import net.citizensnpcs.nms.v1_18_R2.entity.BatController;
@@ -1609,7 +1610,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+    public void updateInventoryTitle(Player player, InventoryViewAPI view, String newTitle) {
         ServerPlayer handle = (ServerPlayer) getHandle(player);
         MenuType<?> menuType = null;
         switch (view.getTopInventory().getType()) {

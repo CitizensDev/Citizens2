@@ -56,6 +56,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -959,7 +960,7 @@ public class NMS {
         BRIDGE.trySwim(entity, power);
     }
 
-    public static void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+    public static void updateInventoryTitle(Player player, InventoryViewAPI view, String newTitle) {
         BRIDGE.updateInventoryTitle(player, view, newTitle);
     }
 

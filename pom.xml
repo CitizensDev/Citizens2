@@ -16,6 +16,7 @@
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.4.1</maven-jar-plugin.version>
         <maven-shade-plugin.version>3.5.2</maven-shade-plugin.version>
+        <special-source-plugin.version>2.0.3</special-source-plugin.version>
     </properties>
     <distributionManagement>
         <repository>

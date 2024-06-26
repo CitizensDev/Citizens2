@@ -38,6 +38,7 @@ import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
+import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
@@ -306,7 +307,7 @@ public interface NMSBridge {
 
     public void trySwim(Entity entity, float power);
 
-    public void updateInventoryTitle(Player player, InventoryView view, String newTitle);
+    public void updateInventoryTitle(Player player, InventoryViewAPI view, String newTitle);
 
     public void updateNavigationWorld(Entity entity, World world);
 

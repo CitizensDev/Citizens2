@@ -55,7 +55,7 @@
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>specialsource-maven-plugin</artifactId>
-                <version>1.2.4</version>
+                <version>${special-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
