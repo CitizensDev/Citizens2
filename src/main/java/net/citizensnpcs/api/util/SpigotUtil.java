@@ -41,19 +41,26 @@ public class SpigotUtil {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj || obj == null) {
+            if (this == obj || obj == null)
                 return true;
-            }
-            if (getClass() != obj.getClass()) {
+
+            if (getClass() != obj.getClass())
                 return false;
-            }
+
             InventoryViewAPI other = (InventoryViewAPI) obj;
             if (view == null) {
                 if (other.view != null) {
                     return false;
                 }
-            } else if (!view.equals(other.view)) {
-                return false;
+            } else {
+                try {
+                    if (!(boolean) EQUALS.invoke(view, other.view))
+                        return false;
+
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    return false;
+                }
             }
             return true;
         }
@@ -82,7 +89,12 @@ public class SpigotUtil {
 
         @Override
         public int hashCode() {
-            return 31 + ((view == null) ? 0 : view.hashCode());
+            try {
+                return 31 + ((view == null) ? 0 : (int) HASHCODE.invoke(view));
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return 31;
+            }
         }
 
         private static MethodHandle getMethod(Class<?> clazz, String method, Class<?>... params) {
@@ -101,7 +113,9 @@ public class SpigotUtil {
         }
 
         private static final MethodHandle CLOSE = getMethod(InventoryView.class, "close");
+        private static final MethodHandle EQUALS = getMethod(Object.class, "equals", Object.class);
         private static final MethodHandle GET_PLAYER = getMethod(InventoryView.class, "getPlayer");
+        private static final MethodHandle HASHCODE = getMethod(Object.class, "hashCode");
         private static final MethodHandle TOP_INVENTORY = getMethod(InventoryView.class, "getTopInventory");
     }
 
