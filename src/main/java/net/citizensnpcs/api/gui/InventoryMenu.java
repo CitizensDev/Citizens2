@@ -38,6 +38,7 @@ import com.google.common.collect.Queues;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 
 // TODO: class-based injection? sub-inventory pages
 /**
@@ -69,7 +70,7 @@ public class InventoryMenu implements Listener, Runnable {
     private int pickupAmount = -1;
     private final Deque<PageContext> stack = Queues.newArrayDeque();
     private boolean transitioning;
-    private Collection<InventoryView> views = Lists.newArrayList();
+    private Collection<InventoryViewAPI> views = Lists.newArrayList();
 
     public InventoryMenu(InventoryMenuInfo info, InventoryMenuPage instance) {
         transition(info, instance, Maps.newHashMap());
@@ -98,7 +99,7 @@ public class InventoryMenu implements Listener, Runnable {
         HandlerList.unregisterAll(this);
         closingViews = true;
         runViewerModifier(() -> {
-            for (InventoryView view : views) {
+            for (InventoryViewAPI view : views) {
                 if (page != null) {
                     page.page.onClose(view.getPlayer());
                 }
@@ -115,9 +116,9 @@ public class InventoryMenu implements Listener, Runnable {
     public void close(HumanEntity entity) {
         closingViews = true;
         runViewerModifier(() -> {
-            Iterator<InventoryView> itr = views.iterator();
+            Iterator<InventoryViewAPI> itr = views.iterator();
             while (itr.hasNext()) {
-                InventoryView view = itr.next();
+                InventoryViewAPI view = itr.next();
                 if (view.getPlayer() == entity) {
                     view.close();
                     itr.remove();
@@ -361,16 +362,16 @@ public class InventoryMenu implements Listener, Runnable {
         }
     }
 
-    private InventoryView openInventory(HumanEntity player, Inventory inventory, String title) {
+    private InventoryViewAPI openInventory(HumanEntity player, Inventory inventory, String title) {
         InventoryView view;
         if (inventory.getType() == InventoryType.ANVIL) {
-            view = CitizensAPI.getNMSHelper().openAnvilInventory((Player) player, inventory, title);
+            view = CitizensAPI.getNMSHelper().openAnvilInventory((Player) player, inventory, title).getView();
         } else {
             view = player.openInventory(inventory);
         }
         if (view == null)
             throw new RuntimeException("null inventory opened " + player + " " + inventory + " " + title);
-        return view;
+        return new InventoryViewAPI(view);
     }
 
     private InventoryMenuPattern parsePattern(int[] dim, List<InventoryMenuTransition> transitions,
@@ -565,7 +566,7 @@ public class InventoryMenu implements Listener, Runnable {
     public void transitionBack() {
         if (page == null)
             return;
-        for (InventoryView view : views) {
+        for (InventoryViewAPI view : views) {
             page.page.onClose(view.getPlayer());
         }
         Map<String, Object> data = page.ctx.data();
@@ -588,9 +589,9 @@ public class InventoryMenu implements Listener, Runnable {
             return;
         transitioning = true;
         runViewerModifier(() -> {
-            Collection<InventoryView> old = views;
+            Collection<InventoryViewAPI> old = views;
             views = Lists.newArrayListWithExpectedSize(old.size());
-            for (InventoryView view : old) {
+            for (InventoryViewAPI view : old) {
                 view.close();
                 if (!view.getPlayer().isValid() || inventory == null)
                     continue;
@@ -602,8 +603,8 @@ public class InventoryMenu implements Listener, Runnable {
     }
 
     void updateTitle(String newTitle) {
-        for (InventoryView view : views) {
-            CitizensAPI.getNMSHelper().updateInventoryTitle((Player) view.getPlayer(), view, newTitle);
+        for (InventoryViewAPI view : views) {
+            CitizensAPI.getNMSHelper().updateInventoryTitle(view.getPlayer(), view, newTitle);
         }
     }
 

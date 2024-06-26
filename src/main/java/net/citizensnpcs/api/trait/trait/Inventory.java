@@ -16,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -26,6 +25,7 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
+import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 
 /**
  * Represents an NPC's inventory.
@@ -35,7 +35,7 @@ public class Inventory extends Trait {
     private ItemStack[] contents;
     private boolean registeredListener;
     private org.bukkit.inventory.Inventory view;
-    private final Set<InventoryView> viewers = new HashSet<>();
+    private final Set<InventoryViewAPI> viewers = new HashSet<>();
 
     public Inventory() {
         super("inventory");
@@ -101,7 +101,7 @@ public class Inventory extends Trait {
             Bukkit.getPluginManager().registerEvents(new Listener() {
                 @EventHandler(ignoreCancelled = true)
                 public void inventoryCloseEvent(InventoryCloseEvent event) {
-                    if (!viewers.contains(event.getView()))
+                    if (!viewers.contains(new InventoryViewAPI(event.getView())))
                         return;
                     ItemStack[] contents = event.getInventory().getContents();
                     for (int i = 0; i < Inventory.this.contents.length; i++) {
@@ -126,7 +126,7 @@ public class Inventory extends Trait {
                                     .setContents(Arrays.copyOf(contents, maxSize));
                         }
                     }
-                    viewers.remove(event.getView());
+                    viewers.remove(new InventoryViewAPI(event.getView()));
                 }
             }, CitizensAPI.getPlugin());
         }
@@ -136,7 +136,7 @@ public class Inventory extends Trait {
 
             view.setItem(i, contents[i]);
         }
-        viewers.add(sender.openInventory(view));
+        viewers.add(new InventoryViewAPI(sender.openInventory(view)));
     }
 
     private ItemStack[] parseContents(DataKey key) throws NPCLoadException {
@@ -151,9 +151,9 @@ public class Inventory extends Trait {
     public void run() {
         if (viewers.isEmpty())
             return;
-        Iterator<InventoryView> itr = viewers.iterator();
+        Iterator<InventoryViewAPI> itr = viewers.iterator();
         while (itr.hasNext()) {
-            InventoryView iview = itr.next();
+            InventoryViewAPI iview = itr.next();
             if (!iview.getPlayer().isValid()) {
                 iview.close();
                 itr.remove();

@@ -1,5 +1,8 @@
 package net.citizensnpcs.api.util;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
@@ -9,11 +12,99 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 public class SpigotUtil {
+    /**
+     * Spigot has changed InventoryViews to be an abstract class instead of an interface necessitating an abstraction
+     * over the existing API to avoid java runtime errors. This class is subject to change as required.
+     */
+    public static class InventoryViewAPI {
+        private final InventoryView view;
+
+        public InventoryViewAPI(InventoryView view) {
+            this.view = view;
+        }
+
+        public void close() {
+            try {
+                CLOSE.invoke(view);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj || obj == null) {
+                return true;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            InventoryViewAPI other = (InventoryViewAPI) obj;
+            if (view == null) {
+                if (other.view != null) {
+                    return false;
+                }
+            } else if (!view.equals(other.view)) {
+                return false;
+            }
+            return true;
+        }
+
+        public Player getPlayer() {
+            try {
+                return (Player) GET_PLAYER.invoke(view);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        public Inventory getTopInventory() {
+            try {
+                return (Inventory) TOP_INVENTORY.invoke(view);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        public InventoryView getView() {
+            return view;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + ((view == null) ? 0 : view.hashCode());
+        }
+
+        private static MethodHandle getMethod(Class<?> clazz, String method, Class<?>... params) {
+            try {
+                Method f = null;
+                try {
+                    f = clazz.getMethod(method, params);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return MethodHandles.publicLookup().unreflect(f);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        private static final MethodHandle CLOSE = getMethod(InventoryView.class, "close");
+        private static final MethodHandle GET_PLAYER = getMethod(InventoryView.class, "getPlayer");
+        private static final MethodHandle TOP_INVENTORY = getMethod(InventoryView.class, "getTopInventory");
+    }
+
     private static interface ThrowingConsumer<T> {
         void accept(T t) throws ClassNotFoundException;
     }
