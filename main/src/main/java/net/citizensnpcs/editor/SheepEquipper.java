@@ -12,6 +12,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.Util;
 
 public class SheepEquipper implements Equipper {
     @Override
@@ -28,7 +29,7 @@ public class SheepEquipper implements Equipper {
             DyeColor color = dye.getColor();
             toEquip.getOrAddTrait(WoolColor.class).setColor(color);
             Messaging.sendTr(equipper, Messages.EQUIPMENT_EDITOR_SHEEP_COLOURED, toEquip.getName(),
-                    color.name().toLowerCase().replace("_", " "));
+                    Util.prettyEnum(color));
 
             hand.setAmount(hand.getAmount() - 1);
         } else {

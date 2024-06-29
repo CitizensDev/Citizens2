@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -509,7 +510,7 @@ public class CommandTrait extends Trait {
 
         @Override
         public String toString() {
-            return name().charAt(0) + name().substring(1).toLowerCase();
+            return name().charAt(0) + name().substring(1).toLowerCase(Locale.US);
         }
     }
 

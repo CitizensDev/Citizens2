@@ -52,8 +52,7 @@ public class Controllable extends Trait implements Toggleable {
             }
             return;
         }
-        if (!player.hasPermission(
-                "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", ""))
+        if (!player.hasPermission("citizens.npc.controllable." + Util.prettyEnum(npc.getEntity().getType()))
                 || !player.hasPermission("citizens.npc.controllable")
                 || ownerRequired && !npc.getOrAddTrait(Owner.class).isOwnedBy(player))
             return;

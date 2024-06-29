@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -340,7 +341,7 @@ public class Util {
     }
 
     public static String listValuesPretty(Enum<?>[] values) {
-        return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).toLowerCase();
+        return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).toLowerCase(Locale.US);
     }
 
     public static boolean locationWithinRange(Location current, Location target, double range) {
@@ -350,15 +351,15 @@ public class Util {
     }
 
     public static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
-        toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
+        toMatch = toMatch.replace('-', '_').replace(' ', '_');
         for (T check : values) {
-            if (toMatch.equals(check.name().toLowerCase())
-                    || toMatch.equals("item") && check.name().equals("DROPPED_ITEM"))
+            if (toMatch.equalsIgnoreCase(check.name())
+                    || toMatch.equalsIgnoreCase("item") && check.name().equals("DROPPED_ITEM"))
                 return check; // check for an exact match first
 
         }
         for (T check : values) {
-            String name = check.name().toLowerCase();
+            String name = check.name().toLowerCase(Locale.US);
             if (name.replace("_", "").equals(toMatch) || name.startsWith(toMatch))
                 return check;
 
@@ -442,17 +443,13 @@ public class Util {
     }
 
     public static String prettyEnum(Enum<?> e) {
-        return e.name().toLowerCase().replace('_', ' ');
+        return e.name().toLowerCase(Locale.US).replace('_', ' ');
     }
 
     public static String prettyPrintLocation(Location to) {
         return String.format("%s at %s, %s, %s (%s, %s)", to.getWorld().getName(), TWO_DIGIT_DECIMAL.format(to.getX()),
                 TWO_DIGIT_DECIMAL.format(to.getY()), TWO_DIGIT_DECIMAL.format(to.getZ()),
                 TWO_DIGIT_DECIMAL.format(to.getYaw()), TWO_DIGIT_DECIMAL.format(to.getPitch()));
-    }
-
-    public static String rawtype(Enum<?>[] values) {
-        return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).toLowerCase();
     }
 
     public static void runCommand(NPC npc, Player clicker, String command, boolean op, boolean player) {

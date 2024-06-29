@@ -2,6 +2,7 @@ package net.citizensnpcs.npc;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -176,7 +177,7 @@ public class CitizensTraitFactory implements TraitFactory {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(String name) {
-        TraitInfo info = registered.get(name.toLowerCase());
+        TraitInfo info = registered.get(name.toLowerCase(Locale.US));
         if (info == null)
             return null;
         return (T) create(info);
@@ -184,7 +185,7 @@ public class CitizensTraitFactory implements TraitFactory {
 
     @Override
     public Class<? extends Trait> getTraitClass(String name) {
-        TraitInfo info = registered.get(name.toLowerCase());
+        TraitInfo info = registered.get(name.toLowerCase(Locale.US));
         return info == null ? null : info.getTraitClass();
     }
 

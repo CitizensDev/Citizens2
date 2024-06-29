@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -558,7 +559,7 @@ public class NPCCommands {
             if (permissions != null) {
                 perms.addAll(Arrays.asList(permissions.split(",")));
             }
-            if (command.toLowerCase().startsWith("npc select"))
+            if (command.startsWith("npc select"))
                 throw new CommandException("npc select not currently supported within commands. Use --id <id> instead");
 
             try {
@@ -707,8 +708,8 @@ public class NPCCommands {
             flags = "mo")
     public void controllable(CommandContext args, CommandSender sender, NPC npc,
             @Flag("controls") BuiltInControls controls, @Flag("enabled") Boolean enabled) throws CommandException {
-        if ((npc.isSpawned() && !sender.hasPermission(
-                "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase().replace("_", "")))
+        if ((npc.isSpawned()
+                && !sender.hasPermission("citizens.npc.controllable." + Util.prettyEnum(npc.getEntity().getType())))
                 || !sender.hasPermission("citizens.npc.controllable"))
             throw new NoPermissionsException();
         if (!npc.hasTrait(Controllable.class) && enabled == null) {
@@ -801,7 +802,7 @@ public class NPCCommands {
             throw new CommandException();
 
         if (!sender.hasPermission("citizens.npc.create.*") && !sender.hasPermission("citizens.npc.createall")
-                && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase().replace("_", "")))
+                && !sender.hasPermission("citizens.npc.create." + Util.prettyEnum(type)))
             throw new NoPermissionsException();
 
         if ((at != null || registryName != null || traits != null || templateName != null)
@@ -1180,8 +1181,7 @@ public class NPCCommands {
     public void gamemode(CommandContext args, CommandSender sender, NPC npc, @Arg(1) GameMode mode) {
         Player player = (Player) npc.getEntity();
         if (args.argsLength() == 1) {
-            Messaging.sendTr(sender, Messages.GAMEMODE_DESCRIBE, npc.getName(),
-                    player.getGameMode().name().toLowerCase());
+            Messaging.sendTr(sender, Messages.GAMEMODE_DESCRIBE, npc.getName(), Util.prettyEnum(player.getGameMode()));
             return;
         }
         if (mode == null) {
@@ -2845,7 +2845,7 @@ public class NPCCommands {
         if (args.hasValueFlag("color")) {
             if (color != null) {
                 trait.setColor(color);
-                Messaging.sendTr(sender, Messages.SHEEP_COLOR_SET, color.toString().toLowerCase());
+                Messaging.sendTr(sender, Messages.SHEEP_COLOR_SET, Util.prettyEnum(color));
             } else {
                 Messaging.sendErrorTr(sender, Messages.INVALID_SHEEP_COLOR, Util.listValuesPretty(DyeColor.values()));
             }
@@ -2875,7 +2875,7 @@ public class NPCCommands {
         }
         NPCShop shop = npc != null ? npc.getOrAddTrait(ShopTrait.class).getDefaultShop() : null;
         if (args.argsLength() == 3) {
-            shop = shops.getShop(args.getString(2).toLowerCase());
+            shop = shops.getShop(args.getString(2));
         }
         if (shop == null)
             throw new CommandUsageException();
@@ -3653,7 +3653,7 @@ public class NPCCommands {
             trait.setInterested(!trait.isInterested());
         }
         if (variant != null) {
-            variant = variant.toUpperCase();
+            variant = variant.toUpperCase(Locale.US);
             try {
                 Wolf.Variant.class.getField(variant);
             } catch (Throwable t) {

@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -803,7 +804,7 @@ public class HologramTrait extends Trait {
     public static class TabCompletions implements CompletionsProvider {
         @Override
         public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
-            if (args.length() > 1 && npc != null && LINE_ARGS.contains(args.getString(1).toLowerCase())) {
+            if (args.length() > 1 && npc != null && LINE_ARGS.contains(args.getString(1).toLowerCase(Locale.US))) {
                 HologramTrait ht = npc.getOrAddTrait(HologramTrait.class);
                 return IntStream.range(0, ht.getLines().size()).mapToObj(Integer::toString)
                         .collect(Collectors.toList());
@@ -811,7 +812,7 @@ public class HologramTrait extends Trait {
             return Collections.emptyList();
         }
 
-        private static Set<String> LINE_ARGS = ImmutableSet.of("set", "remove", "margintop", "marginbottom");
+        private static final Set<String> LINE_ARGS = ImmutableSet.of("set", "remove", "margintop", "marginbottom");
     }
 
     public static class TextDisplayRenderer extends SingleEntityHologramRenderer {
