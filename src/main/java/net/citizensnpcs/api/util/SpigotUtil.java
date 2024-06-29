@@ -214,7 +214,7 @@ public class SpigotUtil {
             return Duration.of(Longs.tryParse(raw), toChronoUnit(defaultUnits));
         if (raw.endsWith("t"))
             return Duration.ofMillis(Integer.parseInt(raw.substring(0, raw.length() - 1)) * 50);
-        raw = DAY_MATCHER.matcher(raw).replaceFirst("P$1T").replace("min", "m").replace("hr", "h");
+        raw = DAY_MATCHER.matcher(raw).replaceFirst("P$1").replace("min", "m").replace("hr", "h");
         if (raw.charAt(0) != 'P') {
             raw = "PT" + raw;
         }
