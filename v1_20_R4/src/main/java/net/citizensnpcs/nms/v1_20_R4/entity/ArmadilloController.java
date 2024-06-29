@@ -19,12 +19,17 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.armadillo.Armadillo;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -94,6 +99,9 @@ public class ArmadilloController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
+                if (npc.isProtected()) {
+                    NMSImpl.setScuteTime(this, 2);
+                }
             }
         }
 
@@ -160,6 +168,16 @@ public class ArmadilloController extends MobEntityController {
         @Override
         protected AABB makeBoundingBox() {
             return NMSBoundingBox.makeBB(npc, super.makeBoundingBox());
+        }
+
+        @Override
+        public InteractionResult mobInteract(Player entityhuman, InteractionHand enumhand) {
+            if (npc == null || !npc.isProtected())
+                return super.mobInteract(entityhuman, enumhand);
+            ItemStack itemstack = entityhuman.getItemInHand(enumhand);
+            if (itemstack.getItem() == Items.BRUSH)
+                return InteractionResult.FAIL;
+            return super.mobInteract(entityhuman, enumhand);
         }
 
         @Override

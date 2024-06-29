@@ -18,12 +18,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.armadillo.Armadillo;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -75,6 +80,13 @@ public class ArmadilloController extends MobEntityController {
         }
 
         @Override
+        public Entity changeDimension(DimensionTransition transition) {
+            if (npc == null)
+                return super.changeDimension(transition);
+            return NMSImpl.teleportAcrossWorld(this, transition);
+        }
+
+        @Override
         public void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();
@@ -94,6 +106,9 @@ public class ArmadilloController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
+                if (npc.isProtected()) {
+                    NMSImpl.setScuteTime(this, 2);
+                }
             }
         }
 
@@ -163,6 +178,16 @@ public class ArmadilloController extends MobEntityController {
         }
 
         @Override
+        public InteractionResult mobInteract(Player entityhuman, InteractionHand enumhand) {
+            if (npc == null || !npc.isProtected())
+                return super.mobInteract(entityhuman, enumhand);
+            ItemStack itemstack = entityhuman.getItemInHand(enumhand);
+            if (itemstack.getItem() == Items.BRUSH)
+                return InteractionResult.FAIL;
+            return super.mobInteract(entityhuman, enumhand);
+        }
+
+        @Override
         public boolean onClimbable() {
             if (npc == null || !npc.isFlyable())
                 return super.onClimbable();
@@ -192,13 +217,6 @@ public class ArmadilloController extends MobEntityController {
         @Override
         public boolean save(CompoundTag save) {
             return npc == null ? super.save(save) : false;
-        }
-
-        @Override
-        public Entity changeDimension(DimensionTransition transition) {
-            if (npc == null)
-                return super.changeDimension(transition);
-            return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
         @Override

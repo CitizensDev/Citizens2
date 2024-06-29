@@ -937,7 +937,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     private void loadEntityTypes() {
-
         EntityControllers.setEntityControllerForType(EntityType.ALLAY, AllayController.class);
         EntityControllers.setEntityControllerForType(EntityType.AREA_EFFECT_CLOUD, AreaEffectCloudController.class);
         EntityControllers.setEntityControllerForType(EntityType.ARMADILLO, ArmadilloController.class);
@@ -2426,6 +2425,16 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static void setScuteTime(Entity armadillo, int scuteTime) {
+        if (ARMADILLO_SCUTE_TIME == null)
+            return;
+        try {
+            ARMADILLO_SCUTE_TIME.invoke(armadillo, scuteTime);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void setSize(Entity entity, boolean justCreated) {
         try {
             EntityDimensions entitysize = (EntityDimensions) SIZE_FIELD_GETTER.invoke(entity);
@@ -2511,6 +2520,7 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_SETTER = NMS.getFirstFinalSetter(ServerPlayer.class,
             PlayerAdvancements.class);
+    private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "cn");
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
@@ -2562,10 +2572,10 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS
             .getFirstMethodHandleWithReturnType(PathNavigation.class, true, PathFinder.class, int.class);
     private static final MethodHandle NAVIGATION_PATH = NMS.getFirstGetter(PathNavigation.class, Path.class);
+
     private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFirstFinalSetter(PathNavigation.class,
             PathFinder.class);
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
-
     private static final MethodHandle PLAYER_INFO_ENTRIES_LIST = NMS
             .getFirstFinalSetter(ClientboundPlayerInfoUpdatePacket.class, List.class);
     private static final MethodHandle PLAYERINFO_ENTRIES = PLAYER_INFO_ENTRIES_LIST;

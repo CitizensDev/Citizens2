@@ -58,7 +58,6 @@ public class AllayController extends MobEntityController {
 
     public static class EntityAllayNPC extends Allay implements NPCHolder {
         private final CitizensNPC npc;
-
         private int taskId = -1;
 
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level) {
@@ -82,6 +81,13 @@ public class AllayController extends MobEntityController {
             if (npc == null || !npc.isFlyable())
                 return super.causeFallDamage(f, f1, damagesource);
             return false;
+        }
+
+        @Override
+        public Entity changeDimension(DimensionTransition transition) {
+            if (npc == null)
+                return super.changeDimension(transition);
+            return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
         @Override
@@ -215,13 +221,6 @@ public class AllayController extends MobEntityController {
         @Override
         public boolean save(CompoundTag save) {
             return npc == null ? super.save(save) : false;
-        }
-
-        @Override
-        public Entity changeDimension(DimensionTransition transition) {
-            if (npc == null)
-                return super.changeDimension(transition);
-            return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
         @Override
