@@ -44,7 +44,7 @@ public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPr
 
     @Override
     public WaypointTrigger createFromShortInput(ConversationContext context, String input) {
-        return null;
+        return new ChatTrigger(radius, Lists.newArrayList(input));
     }
 
     @Override
@@ -54,6 +54,7 @@ public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPr
                     "Current lines:<br>-   " + Joiner.on("<br>-   ").join(lines));
         } else {
             Messaging.sendTr((CommandSender) context.getForWhom(), Messages.CHAT_TRIGGER_PROMPT);
+            context.setSessionData("said", true);
         }
         return "";
     }

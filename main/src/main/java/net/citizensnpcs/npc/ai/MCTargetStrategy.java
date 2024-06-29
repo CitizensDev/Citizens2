@@ -186,6 +186,9 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                 }
                 location = block.getLocation();
             }
+            if (strategy != null) {
+                strategy.stop();
+            }
             strategy = npc.isFlyable() ? new FlyingAStarNavigationStrategy(npc, location, parameters)
                     : new AStarNavigationStrategy(npc, location, parameters);
         }
