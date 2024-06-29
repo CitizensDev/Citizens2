@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.trait;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -41,7 +42,7 @@ public final class TraitInfo {
         if (name == null && !triedAnnotation) {
             TraitName anno = trait.getAnnotation(TraitName.class);
             if (anno != null) {
-                name = anno.value().toLowerCase();
+                name = anno.value().toLowerCase(Locale.US);
             }
             triedAnnotation = true;
         }
@@ -75,7 +76,7 @@ public final class TraitInfo {
 
     public TraitInfo withName(String name) {
         Objects.requireNonNull(name);
-        this.name = name.toLowerCase();
+        this.name = name.toLowerCase(Locale.US);
         return this;
     }
 

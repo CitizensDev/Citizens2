@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -101,7 +102,7 @@ public class CommandManager implements TabCompleter {
         // must put command into split.
         String[] newArgs = new String[args.length + 1];
         System.arraycopy(args, 0, newArgs, 1, args.length);
-        newArgs[0] = command.getName().toLowerCase();
+        newArgs[0] = command.getName().toLowerCase(Locale.US);
 
         Object[] newMethodArgs = new Object[methodArgs.length + 1];
         System.arraycopy(methodArgs, 0, newMethodArgs, 1, methodArgs.length);
@@ -109,9 +110,9 @@ public class CommandManager implements TabCompleter {
     }
 
     private void executeCommand(String[] args, CommandSender sender, Object[] methodArgs) throws CommandException {
-        String cmdName = args[0].toLowerCase();
+        String cmdName = args[0].toLowerCase(Locale.US);
         String modifier = args.length > 1 ? args[1] : "";
-        boolean help = modifier.toLowerCase().equals("help");
+        boolean help = modifier.equalsIgnoreCase("help");
 
         CommandInfo info = getCommand(cmdName, modifier);
         if (info == null || info.method == null) {
@@ -178,7 +179,7 @@ public class CommandManager implements TabCompleter {
                     val = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(val.toString(), false)
                             : Material.matchMaterial(val.toString());
                 } else if (Enum.class.isAssignableFrom(desiredType)) {
-                    val = matchEnum((Enum[]) desiredType.getEnumConstants(), val.toString().toUpperCase());
+                    val = matchEnum((Enum[]) desiredType.getEnumConstants(), val.toString().toUpperCase(Locale.US));
                 } else if (desiredType == double.class || desiredType == Double.class) {
                     val = Double.parseDouble(val.toString());
                 } else if (desiredType == int.class || desiredType == Integer.class) {
@@ -321,7 +322,7 @@ public class CommandManager implements TabCompleter {
      * @return The command info for the command
      */
     public CommandInfo getCommand(String... commandParts) {
-        return commands.get(Joiner.on(' ').join(commandParts).toLowerCase());
+        return commands.get(Joiner.on(' ').join(commandParts).toLowerCase(Locale.US));
     }
 
     /**
@@ -334,12 +335,12 @@ public class CommandManager implements TabCompleter {
      * @return The list of {@link CommandInfo}s
      */
     public List<CommandInfo> getCommands(String topLevelCommand) {
-        topLevelCommand = topLevelCommand.toLowerCase();
+        topLevelCommand = topLevelCommand.toLowerCase(Locale.US);
         List<CommandInfo> cmds = Lists.newArrayList();
         for (Entry<String, CommandInfo> entry : commands.entrySet()) {
-            if (!entry.getKey().startsWith(topLevelCommand) || entry.getValue() == null) {
+            if (!entry.getKey().startsWith(topLevelCommand) || entry.getValue() == null)
                 continue;
-            }
+
             cmds.add(entry.getValue());
         }
         return cmds;
@@ -379,7 +380,7 @@ public class CommandManager implements TabCompleter {
      * @return Whether the command is handled
      */
     public boolean hasCommand(org.bukkit.command.Command cmd, String... modifier) {
-        String cmdName = cmd.getName().toLowerCase();
+        String cmdName = cmd.getName().toLowerCase(Locale.US);
         String[] parts = new String[modifier.length + 1];
         System.arraycopy(modifier, 0, parts, 1, modifier.length);
         parts[0] = cmdName;
@@ -411,7 +412,7 @@ public class CommandManager implements TabCompleter {
             String[] args) {
         List<String> results = new ArrayList<>();
         if (args.length <= 2 && args[0].equalsIgnoreCase("help"))
-            return getCommands(command.getName().toLowerCase()).stream()
+            return getCommands(command.getName().toLowerCase(Locale.US)).stream()
                     .map(info -> info.commandAnnotation.modifiers().length > 0 ? info.commandAnnotation.modifiers()[0]
                             : null)
                     .collect(Collectors.toList());
@@ -431,9 +432,9 @@ public class CommandManager implements TabCompleter {
             }
             return results;
         }
-        CommandInfo cmd = getCommand(command.getName().toLowerCase(), args[0]);
+        CommandInfo cmd = getCommand(command.getName(), args[0]);
         if (cmd == null && args.length > 1) {
-            cmd = getCommand(command.getName().toLowerCase(), args[0], args[1]);
+            cmd = getCommand(command.getName(), args[0], args[1]);
         }
         if (cmd == null)
             return results;
@@ -441,13 +442,13 @@ public class CommandManager implements TabCompleter {
         // partial parse
         String[] newArgs = new String[args.length + 1];
         System.arraycopy(args, 0, newArgs, 1, args.length);
-        newArgs[0] = command.getName().toLowerCase();
+        newArgs[0] = command.getName().toLowerCase(Locale.US);
         CommandContext context = new CommandContext(false, sender, newArgs);
 
         results.addAll(cmd.getArgTabCompletions(context, sender, args.length - 1));
 
         String lastArg = (newArgs.length >= 2 ? newArgs[newArgs.length - 2] : newArgs[newArgs.length - 1])
-                .toLowerCase();
+                .toLowerCase(Locale.US);
         String hyphenStrippedArg = lastArg.replaceFirst("--", "");
 
         if (lastArg.startsWith("--") && cmd.valueFlags().contains(hyphenStrippedArg)) {
@@ -588,7 +589,7 @@ public class CommandManager implements TabCompleter {
         Paginator paginator = new Paginator()
                 .header(capitalize(name) + " " + Messaging.tr(CommandMessages.COMMAND_HELP_HEADER))
                 .console(sender instanceof ConsoleCommandSender);
-        for (String line : getLines(sender, name.toLowerCase())) {
+        for (String line : getLines(sender, name.toLowerCase(Locale.US))) {
             paginator.addLine(line);
         }
         if (!paginator.sendPage(sender, page))
@@ -734,7 +735,7 @@ public class CommandManager implements TabCompleter {
             this.paramType = paramType;
             this.names = flag.value();
             for (int i = 0; i < this.names.length; i++) {
-                this.names[i] = this.names[i].toLowerCase();
+                this.names[i] = this.names[i].toLowerCase(Locale.US);
             }
             this.permission = flag.permission().isEmpty() ? null : flag.permission();
             this.completions = flag.completions();
@@ -846,14 +847,14 @@ public class CommandManager implements TabCompleter {
     }
 
     private static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
-        toMatch = toMatch.toLowerCase().replace('-', '_').replace(' ', '_');
+        toMatch = toMatch.toLowerCase(Locale.US).replace('-', '_').replace(' ', '_');
         for (T check : values) {
-            if (toMatch.equals(check.name().toLowerCase())
+            if (toMatch.equals(check.name().toLowerCase(Locale.US))
                     || toMatch.equals("item") && check.name().equals("DROPPED_ITEM"))
                 return check; // check for an exact match first
         }
         for (T check : values) {
-            String name = check.name().toLowerCase();
+            String name = check.name().toLowerCase(Locale.US);
             if (name.replace("_", "").equals(toMatch) || name.startsWith(toMatch))
                 return check;
         }

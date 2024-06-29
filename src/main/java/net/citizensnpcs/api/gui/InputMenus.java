@@ -2,6 +2,7 @@ package net.citizensnpcs.api.gui;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -58,7 +59,7 @@ public class InputMenus {
                 meta.setLore(Arrays.asList(parts[1].split("\n")));
             } else if (getValue() instanceof Enum) {
                 String name = ((Enum<?>) getValue()).name();
-                meta.setDisplayName(name.charAt(0) + name.substring(1).toLowerCase());
+                meta.setDisplayName(name.charAt(0) + name.substring(1).toLowerCase(Locale.US));
                 meta.setLore(Arrays.asList(getDescription().split("\n")));
             }
             meta.setDisplayName((isActive() ? ChatColor.GREEN : ChatColor.RED) + meta.getDisplayName());

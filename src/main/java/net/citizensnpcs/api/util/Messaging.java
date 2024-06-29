@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.FileHandler;
@@ -46,7 +47,7 @@ public class Messaging {
 
             String out = this.date.format(rec.getMillis());
 
-            out += "[" + rec.getLevel().getName().toUpperCase() + "] ";
+            out += "[" + rec.getLevel().getName().toUpperCase(Locale.US) + "] ";
             out += rec.getMessage() + '\n';
 
             if (exception != null) {
@@ -117,8 +118,8 @@ public class Messaging {
         m = LEGACY_COLORCODE_MATCHER.matcher(sb.toString());
         sb = new StringBuffer();
         while (m.find()) {
-            m.appendReplacement(sb,
-                    COLORCODE_CONVERTER.get(m.group(1) == null ? m.group(2).toLowerCase() : m.group(1).toLowerCase()));
+            m.appendReplacement(sb, COLORCODE_CONVERTER
+                    .get(m.group(1) == null ? m.group(2).toLowerCase(Locale.US) : m.group(1).toLowerCase(Locale.US)));
         }
         m.appendTail(sb);
         return MINIMESSAGE_COLORCODE_MATCHER.matcher(sb.toString()).replaceAll("$0<csr>");

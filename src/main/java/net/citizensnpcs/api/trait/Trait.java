@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.trait;
 
+import java.util.Locale;
+
 import org.bukkit.event.Listener;
 
 import net.citizensnpcs.api.event.DespawnReason;
@@ -20,7 +22,7 @@ public abstract class Trait implements Listener, Runnable {
     private boolean runImplemented = true;
 
     protected Trait(String name) {
-        this.name = name.toLowerCase();
+        this.name = name.toLowerCase(Locale.US);
     }
 
     /**

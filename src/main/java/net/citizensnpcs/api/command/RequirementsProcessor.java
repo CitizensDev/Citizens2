@@ -3,6 +3,7 @@ package net.citizensnpcs.api.command;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -73,7 +74,7 @@ public class RequirementsProcessor implements CommandAnnotationProcessor {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
         if (!types.contains(type))
             throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE,
-                    type.name().toLowerCase().replace('_', ' ')));
+                    type.name().toLowerCase(Locale.US).replace('_', ' ')));
         if (requirements.livingEntity() && !type.isAlive())
             throw new RequirementMissingException(
                     Messaging.tr(CommandMessages.REQUIREMENTS_MUST_BE_LIVING_ENTITY, methodArgs));
