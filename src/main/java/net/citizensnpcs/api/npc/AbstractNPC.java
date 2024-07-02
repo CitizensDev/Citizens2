@@ -533,8 +533,9 @@ public abstract class AbstractNPC implements NPC {
     }
 
     public void update() {
-        for (Runnable runnable : runnables) {
-            runnable.run();
+        // can modify itself during running
+        for (int i = 0; i < runnables.size(); i++) {
+            runnables.get(i).run();
         }
         if (isSpawned()) {
             goalController.run();
