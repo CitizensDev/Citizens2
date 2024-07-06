@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -125,10 +124,10 @@ public class HologramTrait extends Trait {
     private HologramRenderer createDefaultHologramRenderer() {
         HologramRenderer renderer;
         String hologramSetting = Setting.DEFAULT_HOLOGRAM_RENDERER.asString();
-        if (!SUPPORTS_DISPLAY || hologramSetting.equalsIgnoreCase("armorstand")) {
+        if (!SUPPORTS_DISPLAY || hologramSetting.equals("armorstand")) {
             renderer = new ArmorstandRenderer();
         } else {
-            renderer = hologramSetting.equalsIgnoreCase("interaction") ? new InteractionVehicleRenderer()
+            renderer = hologramSetting.equals("interaction") ? new InteractionVehicleRenderer()
                     : new TextDisplayRenderer();
         }
         if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
@@ -141,13 +140,17 @@ public class HologramTrait extends Trait {
 
     private HologramRenderer createNameRenderer() {
         HologramRenderer renderer;
-        System.out.println(Arrays.asList(SpigotUtil.getVersion()));
-        if (SpigotUtil.getVersion()[1] >= 20) {
+        String setting = Setting.DEFAULT_NAME_HOLOGRAM_RENDERER.asString();
+        if (setting.equals("display")) {
+            renderer = new TextDisplayRenderer();
+        } else if (SpigotUtil.getVersion()[1] >= 20 && (setting.isEmpty() || setting.equals("display_vehicle"))) {
             renderer = new TextDisplayVehicleRenderer();
-        } else if (SpigotUtil.getVersion()[1] == 19) {
+        } else if (SpigotUtil.getVersion()[1] == 19 && (setting.isEmpty() || setting.equals("interaction"))) {
             renderer = new InteractionVehicleRenderer();
-        } else {
+        } else if (setting.equals("armorstand")) {
             renderer = new ArmorstandRenderer();
+        } else {
+            renderer = new ArmorstandVehicleRenderer();
         }
         if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
             HologramRendererCreateEvent event = new HologramRendererCreateEvent(npc, renderer, true);
@@ -426,6 +429,22 @@ public class HologramTrait extends Trait {
         protected void render0(NPC npc, Vector3d offset) {
             hologram.getEntity().teleport(npc.getEntity().getLocation().clone().add(offset.x,
                     offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
+        }
+    }
+
+    public static class ArmorstandVehicleRenderer extends SingleEntityHologramRenderer {
+        @Override
+        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+            NPC npc = registry().createNPC(EntityType.ARMOR_STAND, name);
+            npc.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
+            return npc;
+        }
+
+        @Override
+        protected void render0(NPC npc, Vector3d offset) {
+            if (hologram.getEntity().getVehicle() == null) {
+                NMS.mount(npc.getEntity(), hologram.getEntity());
+            }
         }
     }
 
@@ -875,25 +894,19 @@ public class HologramTrait extends Trait {
         }
 
         @Override
-        public void render0(NPC base, Vector3d offset) {
+        public void render0(NPC npc, Vector3d offset) {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
             disp.setInterpolationDelay(0);
             disp.setInterpolationDuration(0);
             disp.setBillboard(Billboard.CENTER);
             Transformation tf = disp.getTransformation();
-            tf.getTranslation().y = (float) offset.y + 0.35f;
+            tf.getTranslation().y = (float) offset.y + 0.34f;
             disp.setTransformation(tf);
             if (color != null) {
                 disp.setBackgroundColor(color);
-            } else {
-                disp.setDefaultBackground(true);
             }
-            if (SUPPORTS_LINE_WIDTH) {
-                disp.setLineWidth(10000);
-            }
-            Messaging.debug(disp.getLineWidth(), disp.getDisplayHeight(), disp.getHeight(), tf.getTranslation());
             if (hologram.getEntity().getVehicle() == null) {
-                NMS.mount(base.getEntity(), hologram.getEntity());
+                NMS.mount(npc.getEntity(), hologram.getEntity());
             }
         }
 
@@ -908,16 +921,6 @@ public class HologramTrait extends Trait {
             if (hologram == null)
                 return;
             hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
-        }
-
-        private static boolean SUPPORTS_LINE_WIDTH = false;
-
-        static {
-            try {
-                TextDisplay.class.getMethod("setLineWidth", int.class);
-                SUPPORTS_LINE_WIDTH = true;
-            } catch (Exception e) {
-            }
         }
     }
 
