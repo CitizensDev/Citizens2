@@ -122,14 +122,7 @@ public class HologramTrait extends Trait {
     }
 
     private HologramRenderer createDefaultHologramRenderer() {
-        HologramRenderer renderer;
-        String hologramSetting = Setting.DEFAULT_HOLOGRAM_RENDERER.asString();
-        if (!SUPPORTS_DISPLAY || hologramSetting.equals("armorstand")) {
-            renderer = new ArmorstandRenderer();
-        } else {
-            renderer = hologramSetting.equals("interaction") ? new InteractionVehicleRenderer()
-                    : new TextDisplayRenderer();
-        }
+        HologramRenderer renderer = createRenderer(Setting.DEFAULT_HOLOGRAM_RENDERER.asString());
         if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
             HologramRendererCreateEvent event = new HologramRendererCreateEvent(npc, renderer, false);
             Bukkit.getPluginManager().callEvent(event);
@@ -141,23 +134,39 @@ public class HologramTrait extends Trait {
     private HologramRenderer createNameRenderer() {
         HologramRenderer renderer;
         String setting = Setting.DEFAULT_NAME_HOLOGRAM_RENDERER.asString();
-        if (setting.equals("display")) {
-            renderer = new TextDisplayRenderer();
-        } else if (SpigotUtil.getVersion()[1] >= 20 && (setting.isEmpty() || setting.equals("display_vehicle"))) {
-            renderer = new TextDisplayVehicleRenderer();
-        } else if (SpigotUtil.getVersion()[1] == 19 && (setting.isEmpty() || setting.equals("interaction"))) {
-            renderer = new InteractionVehicleRenderer();
-        } else if (setting.equals("armorstand")) {
-            renderer = new ArmorstandRenderer();
-        } else {
-            renderer = new ArmorstandVehicleRenderer();
+        if (setting.isEmpty()) {
+            if (SpigotUtil.getVersion()[1] >= 20) {
+                setting = "display_vehicle";
+            } else if (SpigotUtil.getVersion()[1] == 19) {
+                setting = "interaction";
+            } else {
+                setting = "armorstand";
+            }
         }
+        renderer = createRenderer(setting);
         if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
             HologramRendererCreateEvent event = new HologramRendererCreateEvent(npc, renderer, true);
             Bukkit.getPluginManager().callEvent(event);
             renderer = event.getRenderer();
         }
         return renderer;
+    }
+
+    private HologramRenderer createRenderer(String setting) {
+        if (!SUPPORTS_DISPLAY)
+            return setting.equals("armorstand_vehicle") ? new ArmorstandVehicleRenderer() : new ArmorstandRenderer();
+        switch (setting) {
+            case "display":
+                return new TextDisplayRenderer();
+            case "display_vehicle":
+                return new TextDisplayVehicleRenderer();
+            case "interaction":
+                return new InteractionVehicleRenderer();
+            case "armorstand_vehicle":
+                return new ArmorstandVehicleRenderer();
+            default:
+                return new ArmorstandRenderer();
+        }
     }
 
     public Color getDefaultBackgroundColor() {
