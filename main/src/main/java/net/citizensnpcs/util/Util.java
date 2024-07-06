@@ -340,8 +340,8 @@ public class Util {
         }
     }
 
-    public static String listValuesPretty(Enum<?>[] values) {
-        return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).toLowerCase(Locale.US);
+    public static String listValuesPretty(Object[] values) {
+        return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).replace('_', ' ').toLowerCase(Locale.US);
     }
 
     public static boolean locationWithinRange(Location current, Location target, double range) {
@@ -374,13 +374,6 @@ public class Util {
         for (String part : Splitter.on(',').split(parts)) {
             Material matchMaterial = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(part, false)
                     : Material.matchMaterial(part);
-            if (matchMaterial == null) {
-                if (part.equals("280")) {
-                    matchMaterial = Material.STICK;
-                } else if (part.equals("340")) {
-                    matchMaterial = Material.BOOK;
-                }
-            }
             if (matchMaterial == player.getInventory().getItemInHand().getType())
                 return true;
 

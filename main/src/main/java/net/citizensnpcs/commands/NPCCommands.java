@@ -904,8 +904,8 @@ public class NPCCommands {
             for (String part : parts) {
                 if (part.contains(":")) {
                     int idx = part.indexOf(':');
-                    Template template = templateRegistry
-                            .getTemplateByKey(new NamespacedKey(part.substring(0, idx), part.substring(idx + 1)));
+                    Template template = templateRegistry.getTemplateByKey(
+                            new NamespacedKey(part.substring(0, idx), part.substring(idx + 1).toLowerCase(Locale.US)));
                     if (template == null)
                         continue;
                     template.apply(npc);
@@ -2556,7 +2556,7 @@ public class NPCCommands {
                     Util.listValuesPretty(Profession.values()));
 
         npc.getOrAddTrait(VillagerProfession.class).setProfession(parsed);
-        Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), Util.prettyEnum(parsed));
+        Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), parsed);
     }
 
     @Command(

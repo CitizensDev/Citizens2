@@ -844,7 +844,7 @@ public class HologramTrait extends Trait {
             }
             hologram.getEntity().teleport(
                     base.getStoredLocation().clone().add(offset.x,
-                            offset.y + NMS.getBoundingBoxHeight(base.getEntity()) + 0.2f, offset.z),
+                            offset.y + NMS.getBoundingBoxHeight(base.getEntity()) + 0.1f, offset.z),
                     TeleportCause.PLUGIN);
         }
 

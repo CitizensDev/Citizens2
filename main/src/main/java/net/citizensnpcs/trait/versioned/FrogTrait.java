@@ -60,7 +60,7 @@ public class FrogTrait extends Trait {
             if (variant == null)
                 throw new CommandException(Messages.INVALID_FROG_VARIANT, Util.listValuesPretty(Frog.Variant.values()));
             trait.setVariant(variant);
-            output += Messaging.tr(Messages.FROG_VARIANT_SET, Util.prettyEnum(variant));
+            output += Messaging.tr(Messages.FROG_VARIANT_SET, variant);
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);

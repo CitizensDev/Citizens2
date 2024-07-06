@@ -1,6 +1,7 @@
 package net.citizensnpcs.commands;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.bukkit.NamespacedKey;
@@ -42,8 +43,8 @@ public class TemplateCommands {
         Template template = null;
         if (templateKey.contains(":")) {
             int idx = templateKey.indexOf(':');
-            template = registry
-                    .getTemplateByKey(new NamespacedKey(templateKey.substring(0, idx), templateKey.substring(idx + 1)));
+            template = registry.getTemplateByKey(new NamespacedKey(templateKey.substring(0, idx),
+                    templateKey.substring(idx + 1).toLowerCase(Locale.US)));
         } else {
             Collection<Template> templates = registry.getTemplates(templateKey);
             if (templates.isEmpty())
@@ -72,8 +73,9 @@ public class TemplateCommands {
             @Arg(value = 1, completionsProvider = TemplateCompletions.class) String templateName)
             throws CommandException {
         int idx = templateName.indexOf(':');
-        NamespacedKey key = idx == -1 ? new NamespacedKey("generated", templateName)
-                : new NamespacedKey(templateName.substring(0, idx), templateName.substring(idx + 1));
+        NamespacedKey key = idx == -1 ? new NamespacedKey("generated", templateName.toLowerCase(Locale.US))
+                : new NamespacedKey(templateName.substring(0, idx),
+                        templateName.substring(idx + 1).toLowerCase(Locale.US));
         if (registry.getTemplateByKey(key) != null)
             throw new CommandException(Messages.TEMPLATE_CONFLICT);
         registry.generateTemplateFromNPC(key, npc);
