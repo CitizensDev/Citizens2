@@ -217,7 +217,7 @@ public class EnderDragonController extends MobEntityController {
                 if (mot.getX() != 0 || mot.getY() != 0 || mot.getZ() != 0) {
                     mot = mot.d(0.98, 0.98, 0.98);
                     if (getRidingPassenger() == null) {
-                        yaw = Util.getDragonYaw(getBukkitEntity(), mot.x, mot.z);
+                        yaw = Util.getYawFromVelocity(getBukkitEntity(), mot.x, mot.z);
                     }
                     setPosition(locX() + mot.getX(), locY() + mot.getY(), locZ() + mot.getZ());
                     setMot(mot);

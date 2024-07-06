@@ -529,6 +529,13 @@ public class ShopTrait extends Trait {
             callback = consumer;
         }
 
+        private ItemStack editTitle(ItemStack item, Function<String, String> transform) {
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(transform.apply(meta.hasDisplayName() ? meta.getDisplayName() : ""));
+            item.setItemMeta(meta);
+            return item;
+        }
+
         @Override
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
@@ -595,13 +602,13 @@ public class ShopTrait extends Trait {
 
                 NPCShopAction oldCost = modified.cost.stream().filter(template::manages).findFirst().orElse(null);
                 costItems.getSlots().get(pos)
-                        .setItemStack(Util.editTitle(template.createMenuItem(oldCost), title -> title + " Cost"));
+                        .setItemStack(editTitle(template.createMenuItem(oldCost), title -> title + " Cost"));
                 costItems.getSlots().get(pos).setClickHandler(event -> ctx.getMenu().transition(
                         template.createEditor(oldCost, cost -> modified.changeCost(template::manages, cost))));
 
                 NPCShopAction oldResult = modified.result.stream().filter(template::manages).findFirst().orElse(null);
                 actionItems.getSlots().get(pos)
-                        .setItemStack(Util.editTitle(template.createMenuItem(oldResult), title -> title + " Result"));
+                        .setItemStack(editTitle(template.createMenuItem(oldResult), title -> title + " Result"));
                 actionItems.getSlots().get(pos).setClickHandler(event -> ctx.getMenu().transition(
                         template.createEditor(oldResult, result -> modified.changeResult(template::manages, result))));
 

@@ -888,7 +888,7 @@ public class NMSImpl implements NMSBridge {
                 yaw += Math.abs(180 - yaw) * 2;
             }
             if (handle instanceof EntityEnderDragon) {
-                yaw = Util.getDragonYaw(handle.getBukkitEntity(), xDiff, zDiff);
+                yaw = Util.getYawFromVelocity(handle.getBukkitEntity(), xDiff, zDiff);
             } else {
                 yaw = yaw - 90;
             }

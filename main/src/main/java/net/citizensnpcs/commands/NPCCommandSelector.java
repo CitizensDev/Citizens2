@@ -26,7 +26,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
-import net.citizensnpcs.util.Util;
 
 public class NPCCommandSelector extends NumericPrompt {
     private final Callback callback;
@@ -114,7 +113,7 @@ public class NPCCommandSelector extends NumericPrompt {
         for (NPC test : npcRegistry) {
             if (test.getName().equalsIgnoreCase(name)) {
                 if (range > 0 && test.isSpawned()
-                        && !Util.locationWithinRange(args.getSenderLocation(), test.getEntity().getLocation(), range)) {
+                        && args.getSenderLocation().distance(test.getEntity().getLocation()) > range) {
                     continue;
                 }
                 possible.add(test);

@@ -2347,7 +2347,7 @@ public class NPCCommands {
             max = 2,
             permission = "citizens.npc.panimate")
     @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
-    public void playerAnimate(CommandContext args, CommandSender sender, NPC npc, @Arg(1) PlayerAnimation animation)
+    public void playeranimate(CommandContext args, CommandSender sender, NPC npc, @Arg(1) PlayerAnimation animation)
             throws CommandException {
         if (animation == null) {
             Messaging.sendErrorTr(sender, Messages.UNKNOWN_PLAYER_ANIMATION,

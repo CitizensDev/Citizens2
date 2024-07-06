@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -152,13 +151,6 @@ public class Util {
         return stack;
     }
 
-    public static ItemStack editTitle(ItemStack item, Function<String, String> transform) {
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(transform.apply(meta.hasDisplayName() ? meta.getDisplayName() : ""));
-        item.setItemMeta(meta);
-        return item;
-    }
-
     public static void face(Entity entity, float yaw, float pitch) {
         double pitchCos = Math.cos(Math.toRadians(pitch));
         Vector vector = new Vector(Math.sin(Math.toRadians(yaw)) * -pitchCos, -Math.sin(Math.toRadians(pitch)),
@@ -199,23 +191,6 @@ public class Util {
             center.setY(center.getY() + (bb.maxY - bb.minY));
         }
         return center;
-    }
-
-    /**
-     * Returns the yaw to face along the given velocity (corrected for dragon yaw i.e. facing backwards)
-     */
-    public static float getDragonYaw(Entity entity, double motX, double motZ) {
-        Location location = entity.getLocation();
-        double x = location.getX();
-        double z = location.getZ();
-        double tX = x + motX;
-        double tZ = z + motZ;
-        if (z > tZ)
-            return (float) -Math.toDegrees(Math.atan((x - tX) / (z - tZ)));
-        if (z < tZ)
-            return (float) -Math.toDegrees(Math.atan((x - tX) / (z - tZ))) + 180.0F;
-
-        return location.getYaw();
     }
 
     public static Scoreboard getDummyScoreboard() {
@@ -277,6 +252,23 @@ public class Util {
 
     public static String getTeamName(UUID id) {
         return "CIT-" + id.toString().replace("-", "").substring(0, 12);
+    }
+
+    /**
+     * Returns the yaw to face along the given velocity (corrected for dragon yaw i.e. facing backwards)
+     */
+    public static float getYawFromVelocity(Entity entity, double motX, double motZ) {
+        Location location = entity.getLocation();
+        double x = location.getX();
+        double z = location.getZ();
+        double tX = x + motX;
+        double tZ = z + motZ;
+        if (z > tZ)
+            return (float) -Math.toDegrees(Math.atan((x - tX) / (z - tZ)));
+        if (z < tZ)
+            return (float) -Math.toDegrees(Math.atan((x - tX) / (z - tZ))) + 180.0F;
+
+        return location.getYaw();
     }
 
     public static boolean inBlock(Entity entity) {
@@ -342,12 +334,6 @@ public class Util {
 
     public static String listValuesPretty(Object[] values) {
         return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).replace('_', ' ').toLowerCase(Locale.US);
-    }
-
-    public static boolean locationWithinRange(Location current, Location target, double range) {
-        if (current == null || target == null || (current.getWorld() != target.getWorld()))
-            return false;
-        return current.distance(target) <= range;
     }
 
     public static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
@@ -450,7 +436,7 @@ public class Util {
         String bungeeServer = split.size() == 2 && split.get(0).equalsIgnoreCase("server") ? split.get(1) : null;
         String cmd = command;
         if (command.startsWith("say")) {
-            cmd = "npc speak " + command.replaceFirst("say", "").trim() + " --target <p>";
+            cmd = "npc speak \"" + command.replaceFirst("say", "").trim() + "\" --target <p>";
         }
         if ((cmd.startsWith("npc ") || cmd.startsWith("waypoints ") || cmd.startsWith("wp "))
                 && !cmd.contains("--id ")) {

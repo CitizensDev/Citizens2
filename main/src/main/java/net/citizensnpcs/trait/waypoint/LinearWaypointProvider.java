@@ -625,8 +625,8 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             }
             double margin = getNavigator().getLocalParameters().distanceMargin();
             getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
-                if (npc.isSpawned() && currentDestination != null && Util.locationWithinRange(npc.getStoredLocation(),
-                        currentDestination.getLocation(), margin + 1)) {
+                if (npc.isSpawned() && currentDestination != null
+                        && npc.getStoredLocation().distance(currentDestination.getLocation()) <= margin + 1) {
                     currentDestination.onReach(npc);
                     if (cachePaths && cancelReason == null) {
                         Iterable<Vector> path = getNavigator().getPathStrategy().getPath();
