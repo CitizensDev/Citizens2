@@ -119,6 +119,11 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled())
                 return;
+            Integer trackingRange = npc.data().get(NPC.Metadata.TRACKING_RANGE);
+            if (trackingRange != null && npc.data().get("last-tracking-range", -1) != b) {
+                b = trackingRange;
+                npc.data().set("last-tracking-range", trackingRange);
+            }
         }
         super.updatePlayer(entityplayer);
     }
