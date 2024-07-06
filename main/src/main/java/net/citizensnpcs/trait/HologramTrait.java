@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -140,6 +141,7 @@ public class HologramTrait extends Trait {
 
     private HologramRenderer createNameRenderer() {
         HologramRenderer renderer;
+        System.out.println(Arrays.asList(SpigotUtil.getVersion()));
         if (SpigotUtil.getVersion()[1] >= 20) {
             renderer = new TextDisplayVehicleRenderer();
         } else if (SpigotUtil.getVersion()[1] == 19) {
@@ -422,7 +424,6 @@ public class HologramTrait extends Trait {
 
         @Override
         protected void render0(NPC npc, Vector3d offset) {
-            Messaging.debug(npc, offset.y, NMS.getBoundingBoxHeight(npc.getEntity()));
             hologram.getEntity().teleport(npc.getEntity().getLocation().clone().add(offset.x,
                     offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
         }
@@ -880,11 +881,17 @@ public class HologramTrait extends Trait {
             disp.setInterpolationDuration(0);
             disp.setBillboard(Billboard.CENTER);
             Transformation tf = disp.getTransformation();
-            tf.getTranslation().y = (float) offset.y + 0.4f;
+            tf.getTranslation().y = (float) offset.y + 0.35f;
             disp.setTransformation(tf);
             if (color != null) {
                 disp.setBackgroundColor(color);
+            } else {
+                disp.setDefaultBackground(true);
             }
+            if (SUPPORTS_LINE_WIDTH) {
+                disp.setLineWidth(10000);
+            }
+            Messaging.debug(disp.getLineWidth(), disp.getDisplayHeight(), disp.getHeight(), tf.getTranslation());
             if (hologram.getEntity().getVehicle() == null) {
                 NMS.mount(base.getEntity(), hologram.getEntity());
             }
@@ -901,6 +908,16 @@ public class HologramTrait extends Trait {
             if (hologram == null)
                 return;
             hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
+        }
+
+        private static boolean SUPPORTS_LINE_WIDTH = false;
+
+        static {
+            try {
+                TextDisplay.class.getMethod("setLineWidth", int.class);
+                SUPPORTS_LINE_WIDTH = true;
+            } catch (Exception e) {
+            }
         }
     }
 
