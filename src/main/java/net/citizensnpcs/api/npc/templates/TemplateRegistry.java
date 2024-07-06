@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.NamespacedKey;
@@ -66,7 +67,7 @@ public class TemplateRegistry {
     }
 
     private void loadTemplate(File folder, String namespace, DataKey key) throws TemplateLoadException {
-        NamespacedKey namespacedKey = new NamespacedKey(namespace, key.name());
+        NamespacedKey namespacedKey = new NamespacedKey(namespace, key.name().toLowerCase(Locale.US));
         if (fullyQualifiedTemplates.containsKey(namespacedKey))
             throw new TemplateLoadException("Duplicate template key " + namespacedKey);
 

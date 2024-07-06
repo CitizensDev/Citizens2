@@ -322,7 +322,7 @@ public class ItemStorage {
         Material material = null;
         if (root.keyExists("type_key") && SpigotUtil.isUsing1_13API()) {
             NamespacedKey key = new NamespacedKey(root.getString("type_namespace", "minecraft"),
-                    root.getString("type_key"));
+                    root.getString("type_key").toLowerCase(Locale.US));
             material = Material.getMaterial(key.getKey().toUpperCase(Locale.US), false);
         } else {
             String raw = root.getString("type", root.getString("id"));
