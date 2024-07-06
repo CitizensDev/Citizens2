@@ -57,11 +57,11 @@ import net.citizensnpcs.util.Util;
  */
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
-    private Location currentLoc;
     @Persist
     private Color defaultBackgroundColor = Setting.DEFAULT_HOLOGRAM_BACKGROUND_COLOR.asString().isEmpty() ? null
             : Util.parseColor(Setting.DEFAULT_HOLOGRAM_BACKGROUND_COLOR.asString());
     private double lastEntityBbHeight = 0;
+    private Location lastLoc;
     private boolean lastNameplateVisible;
     @Persist
     private double lineHeight = -1;
@@ -282,10 +282,10 @@ public class HologramTrait extends Trait {
                 nameLine = new HologramLine(npc.getRawName(), createNameRenderer());
             }
         }
-        Location npcLoc = npc.getStoredLocation();
+        Location npcLoc = npc.getEntity().getLocation();
         Vector3d offset = new Vector3d();
-        boolean updatePosition = Setting.HOLOGRAM_ALWAYS_UPDATE_POSITION.asBoolean() || currentLoc == null
-                || currentLoc.getWorld() != npcLoc.getWorld() || currentLoc.distance(npcLoc) >= 0.001
+        boolean updatePosition = Setting.HOLOGRAM_ALWAYS_UPDATE_POSITION.asBoolean() || lastLoc == null
+                || lastLoc.getWorld() != npcLoc.getWorld() || lastLoc.distance(npcLoc) >= 0.001
                 || lastNameplateVisible != nameplateVisible
                 || Math.abs(lastEntityBbHeight - NMS.getBoundingBoxHeight(npc.getEntity())) >= 0.05;
         boolean updateName = false;
@@ -297,7 +297,7 @@ public class HologramTrait extends Trait {
         lastNameplateVisible = nameplateVisible;
 
         if (updatePosition) {
-            currentLoc = npcLoc.clone();
+            lastLoc = npcLoc.clone();
             lastEntityBbHeight = NMS.getBoundingBoxHeight(npc.getEntity());
         }
         if (nameLine != null) {
@@ -372,8 +372,7 @@ public class HologramTrait extends Trait {
             addLine(text);
             return;
         }
-        HologramLine line = lines.get(idx);
-        line.setText(text);
+        lines.get(idx).setText(text);
         reloadLineHolograms();
     }
 
@@ -423,7 +422,8 @@ public class HologramTrait extends Trait {
 
         @Override
         protected void render0(NPC npc, Vector3d offset) {
-            hologram.getEntity().teleport(npc.getStoredLocation().clone().add(offset.x,
+            Messaging.debug(npc, offset.y, NMS.getBoundingBoxHeight(npc.getEntity()));
+            hologram.getEntity().teleport(npc.getEntity().getLocation().clone().add(offset.x,
                     offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
         }
     }
@@ -704,7 +704,7 @@ public class HologramTrait extends Trait {
 
         @Override
         protected void render0(NPC npc, Vector3d offset) {
-            hologram.getEntity().teleport(npc.getStoredLocation().clone().add(offset.x,
+            hologram.getEntity().teleport(npc.getEntity().getLocation().clone().add(offset.x,
                     offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
         }
 
@@ -843,8 +843,8 @@ public class HologramTrait extends Trait {
                 disp.setBackgroundColor(color);
             }
             hologram.getEntity().teleport(
-                    base.getStoredLocation().clone().add(offset.x,
-                            offset.y + NMS.getBoundingBoxHeight(base.getEntity()) + 0.1f, offset.z),
+                    base.getEntity().getLocation().clone().add(offset.x,
+                            offset.y + NMS.getBoundingBoxHeight(base.getEntity()) + 0.2f, offset.z),
                     TeleportCause.PLUGIN);
         }
 
