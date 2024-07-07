@@ -37,9 +37,9 @@ public class YamlReplacementAction implements Consumer<NPC> {
                     continue;
                 }
                 boolean overwrite = memoryKey.keyExists(fullKey) || override;
-                if (!overwrite || fullKey.equals("uuid")) {
+                if (!overwrite || fullKey.equals("uuid"))
                     continue;
-                }
+
                 memoryKey.setRaw(fullKey, entry.getValue());
             }
         }
