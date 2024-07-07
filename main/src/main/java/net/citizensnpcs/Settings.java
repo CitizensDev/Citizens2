@@ -112,13 +112,11 @@ public class Settings {
                 "The default background color for holograms, specified as an RGB or RGBA value<br>For example 0,255,123,0 would be green",
                 "npc.hologram.default-background-color", ""),
         DEFAULT_HOLOGRAM_RENDERER(
-                "The default renderer for holograms, must be one of the following:<br>interaction - matches inbuilt nametags most closely<br>display - allows for different colored backgrounds<br>armorstand - the most stable option, very very small hit to client FPS compared to other options",
+                "The default renderer for holograms, must be one of the following:<br>interaction - matches inbuilt nametags most closely<br>display - allows for different colored backgrounds<br>display_vehicle - mounts the display on the NPC<br>armorstand - the safest option, very very small hit to client FPS compared to other options<br>armorstand_vehicle - mounts the armorstand on the NPC",
                 "npc.hologram.default-renderer", "display"),
         DEFAULT_LOOK_CLOSE("Enable look close by default", "npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("Default look close range in blocks", "npc.default.look-close.range", 10),
-        DEFAULT_NAME_HOLOGRAM_RENDERER(
-                "The default renderer for name holograms, must be one of the following:<br>interaction - matches inbuilt nametags most closely<br>display - allows for different colored backgrounds<br>display_vehicle - allows for different colored backgrounds<br>armorstand - the most stable option, very very small hit to client FPS compared to other options<br>armorstand_vehicle - the most stable option, very very small hit to client FPS compared to other options",
-                "npc.hologram.default-name-renderer", ""),
+        DEFAULT_NAME_HOLOGRAM_RENDERER("npc.hologram.default-name-renderer", ""),
         DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT("Default distance between hologram lines", "npc.hologram.default-line-height",
                 0.4D),
         DEFAULT_NPC_LIMIT(

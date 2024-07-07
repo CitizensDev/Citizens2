@@ -15,6 +15,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.OldEnumCompat.FrogVariantEnum;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
@@ -58,7 +59,8 @@ public class FrogTrait extends Trait {
         String output = "";
         if (args.hasValueFlag("variant")) {
             if (variant == null)
-                throw new CommandException(Messages.INVALID_FROG_VARIANT, Util.listValuesPretty(Frog.Variant.values()));
+                throw new CommandException(Messages.INVALID_FROG_VARIANT,
+                        Util.listValuesPretty(FrogVariantEnum.values()));
             trait.setVariant(variant);
             output += Messaging.tr(Messages.FROG_VARIANT_SET, variant);
         }

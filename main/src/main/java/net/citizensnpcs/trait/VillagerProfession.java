@@ -8,11 +8,12 @@ import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.OldEnumCompat.VillagerProfessionEnum;
 
 /**
  * Persists the Villager profession metadata.
  *
- * @see Profession
+ * @see Villager.Profession
  */
 @TraitName("profession")
 public class VillagerProfession extends Trait {
@@ -29,8 +30,9 @@ public class VillagerProfession extends Trait {
     @Override
     public void load(DataKey key) throws NPCLoadException {
         try {
-            profession = Profession.valueOf(key.getString(""));
-            if ("NORMAL".equals(profession.name())) {
+            VillagerProfessionEnum vpe = VillagerProfessionEnum.valueOf(key.getString(""));
+            profession = vpe.getInstance();
+            if ("NORMAL".equals(vpe.name())) {
                 profession = Profession.FARMER;
             }
         } catch (IllegalArgumentException ex) {
@@ -47,23 +49,19 @@ public class VillagerProfession extends Trait {
             return;
         }
         if (SUPPORT_ZOMBIE_VILLAGER) {
-            try {
-                if (npc.getEntity() instanceof ZombieVillager) {
-                    ((ZombieVillager) npc.getEntity()).setVillagerProfession(profession);
-                }
-            } catch (Throwable t) {
-                SUPPORT_ZOMBIE_VILLAGER = false;
+            if (npc.getEntity() instanceof ZombieVillager) {
+                ((ZombieVillager) npc.getEntity()).setVillagerProfession(profession);
             }
         }
     }
 
     @Override
     public void save(DataKey key) {
-        key.setString("", profession.name());
+        key.setString("", new VillagerProfessionEnum(profession).name());
     }
 
     public void setProfession(Profession profession) {
-        if ("NORMAL".equals(profession.name())) {
+        if ("NORMAL".equals(new VillagerProfessionEnum(profession).name())) {
             profession = Profession.FARMER;
         }
         this.profession = profession;
@@ -75,5 +73,14 @@ public class VillagerProfession extends Trait {
         return "Profession{" + profession + "}";
     }
 
-    private static boolean SUPPORT_ZOMBIE_VILLAGER = true;
+    private static boolean SUPPORT_ZOMBIE_VILLAGER = false;
+    static {
+        try {
+            Class.forName("org.bukkit.entity.ZombieVillager").getMethod("setVillagerProfession",
+                    Villager.Profession.class);
+            SUPPORT_ZOMBIE_VILLAGER = true;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 }

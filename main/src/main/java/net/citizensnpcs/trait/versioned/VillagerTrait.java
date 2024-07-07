@@ -18,6 +18,8 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.OldEnumCompat.VillagerProfessionEnum;
+import net.citizensnpcs.api.util.OldEnumCompat.VillagerTypeEnum;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
@@ -84,14 +86,14 @@ public class VillagerTrait extends Trait {
         if (args.hasValueFlag("type")) {
             if (type == null)
                 throw new CommandException(Messages.INVALID_VILLAGER_TYPE,
-                        Util.listValuesPretty(Villager.Type.values()));
+                        Util.listValuesPretty(VillagerTypeEnum.values()));
             trait.setType(type);
             output += " " + Messaging.tr(Messages.VILLAGER_TYPE_SET, args.getFlag("type"));
         }
         if (args.hasValueFlag("profession")) {
             if (profession == null)
                 throw new CommandException(Messages.INVALID_PROFESSION, args.getFlag("profession"),
-                        Joiner.on(',').join(Profession.values()));
+                        Joiner.on(',').join(VillagerProfessionEnum.values()));
             npc.getOrAddTrait(VillagerProfession.class).setProfession(profession);
             output += " " + Messaging.tr(Messages.PROFESSION_SET, npc.getName(), args.getFlag("profession"));
         }

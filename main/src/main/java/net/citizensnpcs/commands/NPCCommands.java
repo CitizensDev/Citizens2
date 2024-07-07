@@ -107,6 +107,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.OldEnumCompat.VillagerProfessionEnum;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
@@ -2553,7 +2554,7 @@ public class NPCCommands {
 
         if (parsed == null)
             throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1),
-                    Util.listValuesPretty(Profession.values()));
+                    Util.listValuesPretty(VillagerProfessionEnum.values()));
 
         npc.getOrAddTrait(VillagerProfession.class).setProfession(parsed);
         Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), parsed);
