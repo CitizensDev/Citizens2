@@ -38,7 +38,8 @@ public class TemplateRegistry {
         String file = "templates.yml";
         File namespaceFolder = new File(baseFolder.toFile(), namespace);
         namespaceFolder.mkdirs();
-        Storage templateStorage = new YamlStorage(new File(namespaceFolder, file));
+        File generatedFile = new File(namespaceFolder, file);
+        Storage templateStorage = new YamlStorage(generatedFile);
         if (!templateStorage.load())
             throw new IllegalStateException();
         DataKey root = templateStorage.getKey(key.getKey());
@@ -46,6 +47,11 @@ public class TemplateRegistry {
         root.setBoolean("yaml_replace.override", true);
         root.removeKey("uuid");
         templateStorage.save();
+        try {
+            loadTemplatesFromYamlFile(namespace, generatedFile);
+        } catch (TemplateLoadException e) {
+            e.printStackTrace();
+        }
     }
 
     public Collection<Template> getAllTemplates() {
