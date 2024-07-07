@@ -104,6 +104,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public boolean aL() {
+        return npc == null ? super.aL() : npc.isPushableByFluids();
+    }
+
+    @Override
     protected String bo() {
         return NMSImpl.getSoundEffect(npc, super.bo(), NPC.Metadata.HURT_SOUND);
     }
@@ -387,7 +392,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         for (int slot = 0; slot < 5; slot++) {
             ItemStack equipment = getEquipment(slot);
             ItemStack cache = equipmentCache.get(slot);
-            if (((cache != null) || (equipment != null))
+            if ((cache != null || equipment != null)
                     && (cache == null ^ equipment == null || !ItemStack.matches(cache, equipment))) {
                 itemChanged = true;
                 if (cache != null) {

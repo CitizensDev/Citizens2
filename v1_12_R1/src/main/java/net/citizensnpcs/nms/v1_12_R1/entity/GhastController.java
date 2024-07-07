@@ -62,6 +62,11 @@ public class GhastController extends MobEntityController {
         }
 
         @Override
+        public boolean bo() {
+            return npc == null ? super.bo() : npc.isPushableByFluids();
+        }
+
+        @Override
         public boolean cC() {
             return npc != null;
         }

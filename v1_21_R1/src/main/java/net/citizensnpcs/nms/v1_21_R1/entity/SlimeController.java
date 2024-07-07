@@ -80,6 +80,13 @@ public class SlimeController extends MobEntityController {
         }
 
         @Override
+        public Entity changeDimension(DimensionTransition transition) {
+            if (npc == null)
+                return super.changeDimension(transition);
+            return NMSImpl.teleportAcrossWorld(this, transition);
+        }
+
+        @Override
         public void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();
@@ -195,13 +202,6 @@ public class SlimeController extends MobEntityController {
         @Override
         public boolean save(CompoundTag save) {
             return npc == null ? super.save(save) : false;
-        }
-
-        @Override
-        public Entity changeDimension(DimensionTransition transition) {
-            if (npc == null)
-                return super.changeDimension(transition);
-            return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
         @Override

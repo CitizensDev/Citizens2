@@ -103,6 +103,13 @@ public class PhantomController extends MobEntityController {
         }
 
         @Override
+        public Entity changeDimension(DimensionTransition transition) {
+            if (npc == null)
+                return super.changeDimension(transition);
+            return NMSImpl.teleportAcrossWorld(this, transition);
+        }
+
+        @Override
         public void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();
@@ -223,13 +230,6 @@ public class PhantomController extends MobEntityController {
         @Override
         protected boolean shouldDespawnInPeaceful() {
             return npc != null ? false : super.shouldDespawnInPeaceful();
-        }
-
-        @Override
-        public Entity changeDimension(DimensionTransition transition) {
-            if (npc == null)
-                return super.changeDimension(transition);
-            return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
         @Override

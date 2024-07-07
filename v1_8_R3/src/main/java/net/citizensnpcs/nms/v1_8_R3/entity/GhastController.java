@@ -59,6 +59,11 @@ public class GhastController extends MobEntityController {
         }
 
         @Override
+        public boolean aL() {
+            return npc == null ? super.aL() : npc.isPushableByFluids();
+        }
+
+        @Override
         public float bE() {
             return NMS.getJumpPower(npc, super.bE());
         }

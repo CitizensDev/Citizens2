@@ -437,7 +437,7 @@ public class NMSImpl implements NMSBridge {
                 (float) source.getAttributeValue(Attributes.ATTACK_KNOCKBACK));
         if (k > 0) {
             target.knockback(k * 0.5F, Mth.sin(source.getYRot() * 0.017453292F),
-                    (-Mth.cos(source.getYRot() * 0.017453292F)), source, KnockbackCause.ENTITY_ATTACK);
+                    -Mth.cos(source.getYRot() * 0.017453292F), source, KnockbackCause.ENTITY_ATTACK);
             source.setDeltaMovement(source.getDeltaMovement().multiply(0.6, 1, 0.6));
         }
         source.setLastHurtMob(target);

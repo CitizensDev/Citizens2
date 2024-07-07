@@ -94,6 +94,11 @@ public class MagmaCubeController extends MobEntityController {
         }
 
         @Override
+        public boolean bo() {
+            return npc == null ? super.bo() : npc.isPushableByFluids();
+        }
+
+        @Override
         protected SoundEffect cf() {
             return NMSImpl.getSoundEffect(npc, super.cf(), NPC.Metadata.DEATH_SOUND);
         }

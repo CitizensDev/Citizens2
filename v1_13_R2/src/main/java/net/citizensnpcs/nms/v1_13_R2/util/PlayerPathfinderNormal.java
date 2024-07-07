@@ -232,7 +232,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 var8.m = var12;
                 var8.l = Math.max(var8.l, var13);
             }
-            if ((var12 != PathType.WALKABLE)) {
+            if (var12 != PathType.WALKABLE) {
                 if (var8 == null && var4 > 0 && var12 != PathType.FENCE && var12 != PathType.TRAPDOOR) {
                     var8 = this.a(var1, var2 + 1, var3, var4 - 1, var5, var7);
                     if (var8 != null && (var8.m == PathType.OPEN || var8.m == PathType.WALKABLE)

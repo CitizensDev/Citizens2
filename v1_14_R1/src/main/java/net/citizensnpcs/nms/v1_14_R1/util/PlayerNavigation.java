@@ -187,7 +187,7 @@ public class PlayerNavigation extends NavigationAbstract {
 
     @Override
     protected PathEntity a(Set var0, int var1, boolean var2, int var3) {
-        if (var0.isEmpty() || (this.a.locY < 0.0D) || !this.a())
+        if (var0.isEmpty() || this.a.locY < 0.0D || !this.a())
             return null;
         else if (this.c != null && !this.c.b() && var0.contains(this.q))
             return this.c;
@@ -247,9 +247,7 @@ public class PlayerNavigation extends NavigationAbstract {
         double var7 = var1.x - var0.x;
         double var9 = var1.z - var0.z;
         double var11 = var7 * var7 + var9 * var9;
-        if (var11 < 1.0E-8D)
-            return false;
-        else {
+        if ((var11 >= 1.0E-8D)) {
             double var13 = 1.0D / Math.sqrt(var11);
             var7 *= var13;
             var9 *= var13;
@@ -290,8 +288,8 @@ public class PlayerNavigation extends NavigationAbstract {
                     }
                 } while (this.a(var5, MathHelper.floor(var0.y), var6, var2, var3, var4, var0, var7, var9));
             }
-            return false;
         }
+        return false;
     }
 
     @Override

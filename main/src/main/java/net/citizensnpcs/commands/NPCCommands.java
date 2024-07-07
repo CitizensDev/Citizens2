@@ -505,14 +505,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "collidable",
+            usage = "collidable --fluids [true|false]",
             desc = "",
             modifiers = { "collidable", "pushable" },
             min = 1,
             max = 1,
             permission = "citizens.npc.collidable")
     @Requirements(ownership = true, selected = true)
-    public void collidable(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public void collidable(CommandContext args, CommandSender sender, NPC npc, @Flag("fluids") Boolean fluids)
+            throws CommandException {
+        if (fluids != null) {
+            npc.data().setPersistent(NPC.Metadata.FLUID_PUSHABLE, fluids);
+            Messaging.sendTr(sender, fluids ? Messages.FLUID_PUSHABLE_SET : Messages.FLUID_PUSHABLE_UNSET,
+                    npc.getName());
+            return;
+        }
         npc.data().setPersistent(NPC.Metadata.COLLIDABLE, !npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected()));
         Messaging.sendTr(sender,
                 npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE) ? Messages.COLLIDABLE_SET : Messages.COLLIDABLE_UNSET,

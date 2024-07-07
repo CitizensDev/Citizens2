@@ -48,6 +48,13 @@ public class MinecartRideableController extends MobEntityController {
         }
 
         @Override
+        public Entity changeDimension(DimensionTransition transition) {
+            if (npc == null)
+                return super.changeDimension(transition);
+            return NMSImpl.teleportAcrossWorld(this, transition);
+        }
+
+        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new MinecartRideableNPC(this));
@@ -89,13 +96,6 @@ public class MinecartRideableController extends MobEntityController {
         @Override
         public boolean save(CompoundTag save) {
             return npc == null ? super.save(save) : false;
-        }
-
-        @Override
-        public Entity changeDimension(DimensionTransition transition) {
-            if (npc == null)
-                return super.changeDimension(transition);
-            return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
         @Override

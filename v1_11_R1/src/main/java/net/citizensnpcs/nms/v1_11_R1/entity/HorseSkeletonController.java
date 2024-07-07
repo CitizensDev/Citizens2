@@ -48,8 +48,8 @@ public class HorseSkeletonController extends MobEntityController {
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
-        private boolean riding;
 
+        private boolean riding;
         public EntityHorseSkeletonNPC(World world) {
             this(world, null);
         }
@@ -94,6 +94,11 @@ public class HorseSkeletonController extends MobEntityController {
         @Override
         public int aY() {
             return NMS.getFallDistance(npc, super.aY());
+        }
+
+        @Override
+        public boolean bg() {
+            return npc == null ? super.bg() : npc.isPushableByFluids();
         }
 
         @Override

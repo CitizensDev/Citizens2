@@ -399,7 +399,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     protected boolean isDiagonalValid(Node var0, Node var1, Node var2, Node var3) {
-        if (((var3 == null) || (var2 == null) || (var1 == null)) || var3.closed)
+        if (var3 == null || var2 == null || var1 == null || var3.closed)
             return false;
         else if (var2.y <= var0.y && var1.y <= var0.y) {
             if (var1.type != BlockPathTypes.WALKABLE_DOOR && var2.type != BlockPathTypes.WALKABLE_DOOR

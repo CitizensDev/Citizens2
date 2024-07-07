@@ -70,6 +70,13 @@ public class RabbitController extends MobEntityController {
         }
 
         @Override
+        public Entity changeDimension(DimensionTransition transition) {
+            if (npc == null)
+                return super.changeDimension(transition);
+            return NMSImpl.teleportAcrossWorld(this, transition);
+        }
+
+        @Override
         public void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();
@@ -212,13 +219,6 @@ public class RabbitController extends MobEntityController {
             } else if (NMSImpl.RABBIT_TYPE_DATAWATCHER != null) {
                 entityData.set(NMSImpl.RABBIT_TYPE_DATAWATCHER, variant.id());
             }
-        }
-
-        @Override
-        public Entity changeDimension(DimensionTransition transition) {
-            if (npc == null)
-                return super.changeDimension(transition);
-            return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
         @Override

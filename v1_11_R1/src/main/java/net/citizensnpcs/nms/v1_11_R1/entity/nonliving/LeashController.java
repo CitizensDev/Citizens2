@@ -55,6 +55,11 @@ public class LeashController extends MobEntityController {
         }
 
         @Override
+        public boolean bg() {
+            return npc == null ? super.bg() : npc.isPushableByFluids();
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_11_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.

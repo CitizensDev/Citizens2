@@ -1188,13 +1188,13 @@ public class NMSImpl implements NMSBridge {
         GameProfile playerProfile = null;
         for (int i = 0; i < list.size(); i++) {
             ClientboundPlayerInfoUpdatePacket.Entry npcInfo = list.get(i);
-            if (npcInfo == null)
+            if (npcInfo == null) {
                 continue;
-
+            }
             MirrorTrait trait = mirrorTraits.apply(npcInfo.profileId());
-            if (trait == null || !trait.isMirroring(player))
+            if (trait == null || !trait.isMirroring(player)) {
                 continue;
-
+            }
             boolean disableTablist = trait.getNPC().shouldRemoveFromTabList();
 
             if (disableTablist != npcInfo.listed()) {
@@ -1216,9 +1216,9 @@ public class NMSImpl implements NMSBridge {
                 continue;
             }
             Collection<Property> textures = playerProfile.getProperties().get("textures");
-            if (textures == null || textures.size() == 0)
+            if (textures == null || textures.size() == 0) {
                 continue;
-
+            }
             npcInfo.profile().getProperties().clear();
             for (String key : playerProfile.getProperties().keySet()) {
                 npcInfo.profile().getProperties().putAll(key, playerProfile.getProperties().get(key));
@@ -1308,9 +1308,9 @@ public class NMSImpl implements NMSBridge {
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
             net.minecraft.world.entity.EntityType<?> type = ENTITY_REGISTRY.findType(search);
             ResourceLocation key = ENTITY_REGISTRY.getKey(type);
-            if (key == null || type == null)
+            if (key == null || type == null) {
                 continue;
-
+            }
             CITIZENS_ENTITY_TYPES.put(clazz, type);
             int code = ENTITY_REGISTRY.getId(type);
             ENTITY_REGISTRY.put(code, key, type);
@@ -1401,7 +1401,7 @@ public class NMSImpl implements NMSBridge {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(players);
         sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(
-                players.stream().map(e -> e.getUniqueId()).collect(Collectors.toList())));
+                players.stream().map((Function<? super Player, ? extends UUID>) Player::getUniqueId).collect(Collectors.toList())));
     }
 
     @Override

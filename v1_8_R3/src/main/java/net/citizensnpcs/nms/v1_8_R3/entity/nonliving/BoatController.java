@@ -53,6 +53,7 @@ public class BoatController extends MobEntityController {
 
     public static class EntityBoatNPC extends EntityBoat implements NPCHolder {
         private double b;
+
         private final CitizensNPC npc;
 
         public EntityBoatNPC(World world) {
@@ -67,6 +68,11 @@ public class BoatController extends MobEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean aL() {
+            return npc == null ? super.aL() : npc.isPushableByFluids();
         }
 
         @Override

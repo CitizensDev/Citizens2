@@ -71,6 +71,13 @@ public class WolfController extends MobEntityController {
         }
 
         @Override
+        public Entity changeDimension(DimensionTransition transition) {
+            if (npc == null)
+                return super.changeDimension(transition);
+            return NMSImpl.teleportAcrossWorld(this, transition);
+        }
+
+        @Override
         public void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();
@@ -193,13 +200,6 @@ public class WolfController extends MobEntityController {
         @Override
         public boolean setTarget(LivingEntity entityliving, EntityTargetEvent.TargetReason reason, boolean fire) {
             return npc == null || this.equals(entityliving) ? super.setTarget(entityliving, reason, fire) : false;
-        }
-
-        @Override
-        public Entity changeDimension(DimensionTransition transition) {
-            if (npc == null)
-                return super.changeDimension(transition);
-            return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
         @Override

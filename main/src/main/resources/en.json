@@ -99,6 +99,8 @@
   "citizens.commands.npc.chunkload.unset" : "[[{0}]] will no longer force chunks to be loaded.",
   "citizens.commands.npc.collidable.description" : "Toggles an NPC''s collidability",
   "citizens.commands.npc.collidable.help" : "",
+  "citizens.commands.npc.collidable.fluid-set" : "[[{0}]] will now be pushable by fluids.",
+  "citizens.commands.npc.collidable.fluid-unset" : "[[{0}]] will no longer be pushable by fluids.",
   "citizens.commands.npc.collidable.set" : "[[{0}]] will now collide with entities.",
   "citizens.commands.npc.collidable.unset" : "[[{0}]] will no longer collide with entities.",
   "citizens.commands.npc.command.all-errors-cleared" : "[[{0}]] cleared all [[{1}]] errors.",

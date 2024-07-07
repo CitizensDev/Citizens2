@@ -85,6 +85,11 @@ public class FallingBlockController extends AbstractEntityController {
         }
 
         @Override
+        public boolean bo() {
+            return npc == null ? super.bo() : npc.isPushableByFluids();
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_12_R1.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.

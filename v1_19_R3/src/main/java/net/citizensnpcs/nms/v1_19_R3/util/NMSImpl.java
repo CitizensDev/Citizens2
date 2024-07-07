@@ -916,9 +916,8 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public boolean isSneaking(org.bukkit.entity.Entity entity) {
-        if (entity instanceof Player) {
+        if (entity instanceof Player)
             return ((Player) entity).isSneaking();
-        }
         return getHandle(entity).getPose() == Pose.CROUCHING;
     }
 
@@ -1202,12 +1201,13 @@ public class NMSImpl implements NMSBridge {
         GameProfile playerProfile = null;
         for (int i = 0; i < list.size(); i++) {
             ClientboundPlayerInfoUpdatePacket.Entry npcInfo = list.get(i);
-            if (npcInfo == null)
+            if (npcInfo == null) {
                 continue;
-
+            }
             MirrorTrait trait = mirrorTraits.apply(npcInfo.profileId());
-            if (trait == null || !trait.isMirroring(player))
+            if (trait == null || !trait.isMirroring(player)) {
                 continue;
+            }
             boolean disableTablist = trait.getNPC().shouldRemoveFromTabList();
 
             if (disableTablist != npcInfo.listed()) {
@@ -1229,9 +1229,9 @@ public class NMSImpl implements NMSBridge {
                 continue;
             }
             Collection<Property> textures = playerProfile.getProperties().get("textures");
-            if (textures == null || textures.size() == 0)
+            if (textures == null || textures.size() == 0) {
                 continue;
-
+            }
             npcInfo.profile().getProperties().clear();
             for (String key : playerProfile.getProperties().keySet()) {
                 npcInfo.profile().getProperties().putAll(key, playerProfile.getProperties().get(key));
@@ -1414,7 +1414,7 @@ public class NMSImpl implements NMSBridge {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(skinnableNPCs);
         sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(
-                skinnableNPCs.stream().map(e -> e.getUniqueId()).collect(Collectors.toList())));
+                skinnableNPCs.stream().map((Function<? super Player, ? extends UUID>) Player::getUniqueId).collect(Collectors.toList())));
     }
 
     @Override

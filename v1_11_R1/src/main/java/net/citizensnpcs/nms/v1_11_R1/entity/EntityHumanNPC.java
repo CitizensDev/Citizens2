@@ -124,6 +124,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public boolean bg() {
+        return npc == null ? super.bg() : npc.isPushableByFluids();
+    }
+
+    @Override
     protected SoundEffect bW() {
         return NMSImpl.getSoundEffect(npc, super.bW(), NPC.Metadata.DEATH_SOUND);
     }
@@ -413,7 +418,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         for (EnumItemSlot slot : EnumItemSlot.values()) {
             ItemStack equipment = getEquipment(slot);
             ItemStack cache = equipmentCache.get(slot);
-            if (((cache != null) || (equipment != null))
+            if ((cache != null || equipment != null)
                     && (cache == null ^ equipment == null || !ItemStack.equals(cache, equipment))) {
                 itemChanged = true;
                 if (cache != null && !cache.isEmpty()) {

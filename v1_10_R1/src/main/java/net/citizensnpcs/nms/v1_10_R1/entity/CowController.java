@@ -106,6 +106,11 @@ public class CowController extends MobEntityController {
         }
 
         @Override
+        public boolean bg() {
+            return npc == null ? super.bg() : npc.isPushableByFluids();
+        }
+
+        @Override
         protected SoundEffect bV() {
             return NMSImpl.getSoundEffect(npc, super.bV(), NPC.Metadata.DEATH_SOUND);
         }

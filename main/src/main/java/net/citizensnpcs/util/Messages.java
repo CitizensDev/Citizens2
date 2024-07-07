@@ -121,6 +121,8 @@ public class Messages {
     public static final String FAILED_TO_MOUNT_NPC = "citizens.commands.npc.mount.failed";
     public static final String FAILED_TO_REMOVE = "citizens.commands.trait.failed-to-remove";
     public static final String FETCHING_SKIN = "citizens.commands.npc.skin.fetching";
+    public static final String FLUID_PUSHABLE_SET = "citizens.commands.npc.collidable.fluid-set";
+    public static final String FLUID_PUSHABLE_UNSET = "citizens.commands.npc.collidable.fluid-unset";
     public static final String FLYABLE_SET = "citizens.commands.npc.flyable.set";
     public static final String FLYABLE_UNSET = "citizens.commands.npc.flyable.unset";
     public static final String FOLLOW_MARGIN_SET = "citizens.commands.npc.follow.margin-set";

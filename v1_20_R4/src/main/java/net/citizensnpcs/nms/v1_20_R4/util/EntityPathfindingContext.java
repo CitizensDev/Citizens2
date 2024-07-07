@@ -66,50 +66,45 @@ public class EntityPathfindingContext extends PathfindingContext {
     static PathType getPathTypeFromState(BlockGetter var0, BlockPos var1) {
         BlockState var2 = var0.getBlockState(var1);
         Block var3 = var2.getBlock();
-        if (var2.isAir()) {
+        if (var2.isAir())
             return PathType.OPEN;
-        } else if (!var2.is(BlockTags.TRAPDOORS) && !var2.is(Blocks.LILY_PAD) && !var2.is(Blocks.BIG_DRIPLEAF)) {
-            if (var2.is(Blocks.POWDER_SNOW)) {
+        else if (!var2.is(BlockTags.TRAPDOORS) && !var2.is(Blocks.LILY_PAD) && !var2.is(Blocks.BIG_DRIPLEAF)) {
+            if (var2.is(Blocks.POWDER_SNOW))
                 return PathType.POWDER_SNOW;
-            } else if (!var2.is(Blocks.CACTUS) && !var2.is(Blocks.SWEET_BERRY_BUSH)) {
-                if (var2.is(Blocks.HONEY_BLOCK)) {
+            else if (!var2.is(Blocks.CACTUS) && !var2.is(Blocks.SWEET_BERRY_BUSH)) {
+                if (var2.is(Blocks.HONEY_BLOCK))
                     return PathType.STICKY_HONEY;
-                } else if (var2.is(Blocks.COCOA)) {
+                else if (var2.is(Blocks.COCOA))
                     return PathType.COCOA;
-                } else if (!var2.is(Blocks.WITHER_ROSE) && !var2.is(Blocks.POINTED_DRIPSTONE)) {
+                else if (!var2.is(Blocks.WITHER_ROSE) && !var2.is(Blocks.POINTED_DRIPSTONE)) {
                     FluidState var4 = var2.getFluidState();
-                    if (var4.is(FluidTags.LAVA)) {
+                    if (var4.is(FluidTags.LAVA))
                         return PathType.LAVA;
-                    } else if (isBurningBlock(var2)) {
+                    else if (isBurningBlock(var2))
                         return PathType.DAMAGE_FIRE;
-                    } else if (var3 instanceof DoorBlock) {
+                    else if (var3 instanceof DoorBlock) {
                         DoorBlock var5 = (DoorBlock) var3;
-                        if (var2.getValue(DoorBlock.OPEN)) {
+                        if (var2.getValue(DoorBlock.OPEN))
                             return PathType.DOOR_OPEN;
-                        } else {
+                        else
                             return var5.type().canOpenByHand() ? PathType.DOOR_WOOD_CLOSED : PathType.DOOR_IRON_CLOSED;
-                        }
-                    } else if (var3 instanceof BaseRailBlock) {
+                    } else if (var3 instanceof BaseRailBlock)
                         return PathType.RAIL;
-                    } else if (var3 instanceof LeavesBlock) {
+                    else if (var3 instanceof LeavesBlock)
                         return PathType.LEAVES;
-                    } else if (var2.is(BlockTags.FENCES) || var2.is(BlockTags.WALLS)
-                            || var3 instanceof FenceGateBlock && !(Boolean) var2.getValue(FenceGateBlock.OPEN)) {
+                    else if (var2.is(BlockTags.FENCES) || var2.is(BlockTags.WALLS)
+                            || var3 instanceof FenceGateBlock && !(Boolean) var2.getValue(FenceGateBlock.OPEN))
                         return PathType.FENCE;
-                    } else if (!var2.isPathfindable(PathComputationType.LAND)) {
+                    else if (!var2.isPathfindable(PathComputationType.LAND))
                         return PathType.BLOCKED;
-                    } else {
+                    else
                         return var4.is(FluidTags.WATER) ? PathType.WATER : PathType.OPEN;
-                    }
-                } else {
+                } else
                     return PathType.DAMAGE_CAUTIOUS;
-                }
-            } else {
+            } else
                 return PathType.DAMAGE_OTHER;
-            }
-        } else {
+        } else
             return PathType.TRAPDOOR;
-        }
     }
 
     static boolean isBurningBlock(BlockState var0) {

@@ -60,6 +60,11 @@ public class EnderSignalController extends MobEntityController {
         }
 
         @Override
+        public boolean aL() {
+            return npc == null ? super.aL() : npc.isPushableByFluids();
+        }
+
+        @Override
         public void collide(net.minecraft.server.v1_8_R3.Entity entity) {
             // this method is called by both the entities involved - cancelling
             // it will not stop the NPC from moving.

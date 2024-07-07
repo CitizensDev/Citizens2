@@ -98,10 +98,9 @@ public class EntityMoveControl extends MoveControl {
         double dY = this.ty - this.entity.getY();
         double dXZ = Math.sqrt(dX * dX + dZ * dZ);
         double dXYZ = Math.sqrt(dX * dX + dY * dY + dZ * dZ);
-        if (dXYZ < 2.500000277905201E-7) {
+        if (dXYZ < 2.500000277905201E-7)
             // this.entity.zza = 0.0F;
             return;
-        }
         if (dXZ > 0.4) {
             float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
             entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));

@@ -146,25 +146,24 @@ public class EntityNavigation extends PathNavigation {
     public Path createPath(BlockPos var0, int var1) {
         LevelChunk var2 = this.level.getChunkSource().getChunkNow(SectionPos.blockToSectionCoord(var0.getX()),
                 SectionPos.blockToSectionCoord(var0.getZ()));
-        if (var2 == null) {
+        if (var2 == null)
             return null;
-        } else {
+        else {
             BlockPos var3;
             if (var2.getBlockState(var0).isAir()) {
                 for (var3 = var0.below(); var3.getY() > this.level.getMinBuildHeight()
                         && var2.getBlockState(var3).isAir(); var3 = var3.below()) {
                 }
-                if (var3.getY() > this.level.getMinBuildHeight()) {
+                if (var3.getY() > this.level.getMinBuildHeight())
                     return supercreatePath(var3.above(), var1);
-                }
                 while (var3.getY() < this.level.getMaxBuildHeight() && var2.getBlockState(var3).isAir()) {
                     var3 = var3.above();
                 }
                 var0 = var3;
             }
-            if (!var2.getBlockState(var0).isSolid()) {
+            if (!var2.getBlockState(var0).isSolid())
                 return supercreatePath(var0, var1);
-            } else {
+            else {
                 for (var3 = var0.above(); var3.getY() < this.level.getMaxBuildHeight()
                         && var2.getBlockState(var3).isSolid(); var3 = var3.above()) {
                 }
@@ -326,13 +325,10 @@ public class EntityNavigation extends PathNavigation {
     }
 
     protected boolean hasValidPathType(PathType var0) {
-        if (var0 == PathType.WATER) {
+        if ((var0 == PathType.WATER) || (var0 == PathType.LAVA))
             return false;
-        } else if (var0 == PathType.LAVA) {
-            return false;
-        } else {
+        else
             return var0 != PathType.OPEN;
-        }
     }
 
     @Override
@@ -443,8 +439,7 @@ public class EntityNavigation extends PathNavigation {
 
     @Override
     public boolean shouldRecomputePath(BlockPos var0) {
-        if (this.hasDelayedRecomputation
-                || ((this.path == null) || this.path.isDone() || (this.path.getNodeCount() == 0)))
+        if (this.hasDelayedRecomputation || this.path == null || this.path.isDone() || this.path.getNodeCount() == 0)
             return false;
         else {
             Node var1 = this.path.getEndNode();
@@ -458,11 +453,11 @@ public class EntityNavigation extends PathNavigation {
         if (this.path.getNextNodeIndex() + 1 >= this.path.getNodeCount())
             return false;
         Vec3 var1 = Vec3.atBottomCenterOf(this.path.getNextNodePos());
-        if (!var0.closerThan(var1, 2.0)) {
+        if (!var0.closerThan(var1, 2.0))
             return false;
-        } else if (this.canMoveDirectly(var0, this.path.getNextEntityPos(this.mob))) {
+        else if (this.canMoveDirectly(var0, this.path.getNextEntityPos(this.mob)))
             return true;
-        } else {
+        else {
             Vec3 var2 = Vec3.atBottomCenterOf(this.path.getNodePos(this.path.getNextNodeIndex() + 1));
             Vec3 var3 = var1.subtract(var0);
             Vec3 var4 = var2.subtract(var0);
@@ -470,9 +465,9 @@ public class EntityNavigation extends PathNavigation {
             double var7 = var4.lengthSqr();
             boolean var9 = var7 < var5;
             boolean var10 = var5 < 0.5;
-            if (!var9 && !var10) {
+            if (!var9 && !var10)
                 return false;
-            } else {
+            else {
                 Vec3 var11 = var3.normalize();
                 Vec3 var12 = var4.normalize();
                 return var12.dot(var11) < 0.0;

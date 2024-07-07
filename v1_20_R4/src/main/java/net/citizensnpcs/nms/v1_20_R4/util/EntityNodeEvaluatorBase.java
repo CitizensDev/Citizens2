@@ -60,9 +60,7 @@ public abstract class EntityNodeEvaluatorBase extends NodeEvaluator {
 
     @Override
     protected Node getNode(int var0, int var1, int var2) {
-        return (Node) this.nodes.computeIfAbsent(Node.createHash(var0, var1, var2), (var3) -> {
-            return new Node(var0, var1, var2);
-        });
+        return (Node) this.nodes.computeIfAbsent(Node.createHash(var0, var1, var2), var3 -> new Node(var0, var1, var2));
     }
 
     @Override

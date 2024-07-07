@@ -3,9 +3,11 @@ package net.citizensnpcs.nms.v1_15_R1.util;
 import java.lang.invoke.MethodHandle;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.ForwardingSet;
@@ -52,7 +54,7 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
                     @Override
                     public Boolean remove(Object conn) {
                         Boolean removed = super.remove(conn);
-                        if (removed == true) {
+                        if (removed) {
                             Bukkit.getPluginManager().callEvent(new NPCUnlinkFromPlayerEvent(
                                     ((NPCHolder) tracker).getNPC(), ((EntityPlayer) conn).getBukkitEntity()));
                         }
@@ -163,10 +165,9 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
             } catch (Throwable e) {
                 return null;
             }
-            return delegate.keySet().stream().map(p -> p.getBukkitEntity()).collect(Collectors.toSet());
-        } else {
-            return tracker.trackedPlayers.stream().map(p -> p.getBukkitEntity()).collect(Collectors.toSet());
-        }
+            return delegate.keySet().stream().map((Function<? super EntityPlayer, ? extends CraftPlayer>) EntityPlayer::getBukkitEntity).collect(Collectors.toSet());
+        } else
+            return tracker.trackedPlayers.stream().map((Function<? super EntityPlayer, ? extends CraftPlayer>) EntityPlayer::getBukkitEntity).collect(Collectors.toSet());
     }
 
     private static Entity getTracker(EntityTracker entry) {

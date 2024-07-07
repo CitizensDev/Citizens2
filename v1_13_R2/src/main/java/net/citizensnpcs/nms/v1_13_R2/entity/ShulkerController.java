@@ -233,9 +233,9 @@ public class ShulkerController extends MobEntityController {
 
         @Override
         public boolean z_() {
-            if (npc == null || !npc.isFlyable()) {
+            if (npc == null || !npc.isFlyable())
                 return super.z_();
-            } else
+            else
                 return false;
         }
 

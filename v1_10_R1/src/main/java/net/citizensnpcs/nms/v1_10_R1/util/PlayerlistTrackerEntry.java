@@ -2,9 +2,11 @@ package net.citizensnpcs.nms.v1_10_R1.util;
 
 import java.lang.reflect.Field;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -99,7 +101,7 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     public static Set<org.bukkit.entity.Player> getSeenBy(EntityTrackerEntry tracker) {
-        return tracker.trackedPlayers.stream().map(p -> p.getBukkitEntity()).collect(Collectors.toSet());
+        return tracker.trackedPlayers.stream().map((Function<? super EntityPlayer, ? extends CraftPlayer>) EntityPlayer::getBukkitEntity).collect(Collectors.toSet());
     }
 
     private static Entity getTracker(EntityTrackerEntry entry) {

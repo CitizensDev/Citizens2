@@ -45,9 +45,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
         for (int var4 = 1; var4 <= var3; ++var4) {
             var1 = var1.move(var2);
-            if (this.hasCollisions(var1)) {
+            if (this.hasCollisions(var1))
                 return false;
-            }
         }
         return true;
     }
@@ -70,9 +69,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         Node var8 = null;
         BlockPos.MutableBlockPos var9 = new BlockPos.MutableBlockPos();
         double var10 = this.getFloorLevel(var9.set(var0, var1, var2));
-        if (var10 - var4 > this.getMobJumpHeight()) {
+        if (var10 - var4 > this.getMobJumpHeight())
             return null;
-        } else {
+        else {
             PathType var12 = this.getCachedPathType(var0, var1, var2);
             float var13 = this.mvmt.getPathfindingMalus(var12);
             if (var13 >= 0.0F) {
@@ -94,10 +93,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 } else if (doesBlockHavePartialCollision(var12) && var8 == null) {
                     var8 = this.getClosedNode(var0, var1, var2, var12);
                 }
-                return var8;
-            } else {
-                return var8;
             }
+            return var8;
         }
     }
 
@@ -109,9 +106,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     protected PathType getCachedPathType(int var0, int var1, int var2) {
-        return (PathType) this.pathTypesByPosCacheByMob.computeIfAbsent(BlockPos.asLong(var0, var1, var2), (var3) -> {
-            return this.getPathTypeOfMob(this.currentContext, var0, var1, var2, this.mob);
-        });
+        return (PathType) this.pathTypesByPosCacheByMob.computeIfAbsent(BlockPos.asLong(var0, var1, var2), var3 -> this.getPathTypeOfMob(this.currentContext, var0, var1, var2, this.mob));
     }
 
     private Node getClosedNode(int var0, int var1, int var2, PathType var3) {
@@ -185,58 +180,54 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
     public PathType getPathTypeOfMob(PathfindingContext var0, int var1, int var2, int var3, LivingEntity var4) {
         Set var5 = this.getPathTypeWithinMobBB(var0, var1, var2, var3);
-        if (var5.contains(PathType.FENCE)) {
+        if (var5.contains(PathType.FENCE))
             return PathType.FENCE;
-        } else if (var5.contains(PathType.UNPASSABLE_RAIL)) {
+        else if (var5.contains(PathType.UNPASSABLE_RAIL))
             return PathType.UNPASSABLE_RAIL;
-        } else {
+        else {
             PathType var6 = PathType.BLOCKED;
             Iterator<PathType> var88 = var5.iterator();
 
             while (var88.hasNext()) {
                 PathType var8 = var88.next();
-                if (mvmt.getPathfindingMalus(var8) < 0.0F) {
+                if (mvmt.getPathfindingMalus(var8) < 0.0F)
                     return var8;
-                }
                 if (mvmt.getPathfindingMalus(var8) >= mvmt.getPathfindingMalus(var6)) {
                     var6 = var8;
                 }
             }
             if (this.entityWidth <= 1 && var6 != PathType.OPEN && mvmt.getPathfindingMalus(var6) == 0.0F
-                    && this.getPathType(var0, var1, var2, var3) == PathType.OPEN) {
+                    && this.getPathType(var0, var1, var2, var3) == PathType.OPEN)
                 return PathType.OPEN;
-            } else {
+            else
                 return var6;
-            }
         }
     }
 
     @Override
     public PathType getPathTypeOfMob(PathfindingContext var0, int var1, int var2, int var3, Mob var4) {
         Set var5 = this.getPathTypeWithinMobBB(var0, var1, var2, var3);
-        if (var5.contains(PathType.FENCE)) {
+        if (var5.contains(PathType.FENCE))
             return PathType.FENCE;
-        } else if (var5.contains(PathType.UNPASSABLE_RAIL)) {
+        else if (var5.contains(PathType.UNPASSABLE_RAIL))
             return PathType.UNPASSABLE_RAIL;
-        } else {
+        else {
             PathType var6 = PathType.BLOCKED;
             Iterator<PathType> var88 = var5.iterator();
 
             while (var88.hasNext()) {
                 PathType var8 = var88.next();
-                if (var4.getPathfindingMalus(var8) < 0.0F) {
+                if (var4.getPathfindingMalus(var8) < 0.0F)
                     return var8;
-                }
                 if (var4.getPathfindingMalus(var8) >= var4.getPathfindingMalus(var6)) {
                     var6 = var8;
                 }
             }
             if (this.entityWidth <= 1 && var6 != PathType.OPEN && var4.getPathfindingMalus(var6) == 0.0F
-                    && this.getPathType(var0, var1, var2, var3) == PathType.OPEN) {
+                    && this.getPathType(var0, var1, var2, var3) == PathType.OPEN)
                 return PathType.OPEN;
-            } else {
+            else
                 return var6;
-            }
         }
     }
 
@@ -315,9 +306,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             if (this.canStartAt(var1.set(var4.minX, var0, var4.minZ))
                     || this.canStartAt(var1.set(var4.minX, var0, var4.maxZ))
                     || this.canStartAt(var1.set(var4.maxX, var0, var4.minZ))
-                    || this.canStartAt(var1.set(var4.maxX, var0, var4.maxZ))) {
+                    || this.canStartAt(var1.set(var4.maxX, var0, var4.maxZ)))
                 return this.getStartNode(var1);
-            }
         }
         return this.getStartNode(new BlockPos(var3.getX(), var0, var3.getZ()));
     }
@@ -335,9 +325,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     private boolean hasCollisions(AABB var0) {
-        return this.collisionCache.computeIfAbsent(var0, (var1) -> {
-            return !this.currentContext.level().noCollision(this.mob, var0);
-        });
+        return this.collisionCache.computeIfAbsent(var0, var1 -> !this.currentContext.level().noCollision(this.mob, var0));
     }
 
     protected boolean isAmphibious() {
@@ -345,15 +333,10 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     protected boolean isDiagonalValid(Node var0) {
-        if (var0 != null && !var0.closed) {
-            if (var0.type == PathType.WALKABLE_DOOR) {
-                return false;
-            } else {
-                return var0.costMalus >= 0.0F;
-            }
-        } else {
+        if (((var0 == null) || var0.closed) || (var0.type == PathType.WALKABLE_DOOR))
             return false;
-        }
+        else
+            return var0.costMalus >= 0.0F;
     }
 
     protected boolean isDiagonalValid(Node var0, Node var1, Node var2) {
@@ -363,12 +346,10 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                         && this.mob.getBbWidth() < 0.5;
                 return (var2.y < var0.y || var2.costMalus >= 0.0F || var3)
                         && (var1.y < var0.y || var1.costMalus >= 0.0F || var3);
-            } else {
+            } else
                 return false;
-            }
-        } else {
+        } else
             return false;
-        }
     }
 
     protected boolean isNeighborValid(Node var0, Node var1) {
@@ -389,15 +370,13 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
     private Node tryFindFirstGroundNodeBelow(int var0, int var1, int var2) {
         for (int var3 = var1 - 1; var3 >= this.mob.level().getMinBuildHeight(); --var3) {
-            if (var1 - var3 > this.mob.getMaxFallDistance()) {
+            if (var1 - var3 > this.mob.getMaxFallDistance())
                 return this.getBlockedNode(var0, var3, var2);
-            }
             PathType var4 = this.getCachedPathType(var0, var3, var2);
             float var5 = this.mvmt.getPathfindingMalus(var4);
             if (var4 != PathType.OPEN) {
-                if (var5 >= 0.0F) {
+                if (var5 >= 0.0F)
                     return this.getNodeAndUpdateCostToMax(var0, var3, var2, var4, var5);
-                }
                 return this.getBlockedNode(var0, var3, var2);
             }
         }
@@ -409,9 +388,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
         while (var1 > this.mob.level().getMinBuildHeight()) {
             PathType var4 = this.getCachedPathType(var0, var1, var2);
-            if (var4 != PathType.WATER) {
+            if (var4 != PathType.WATER)
                 return var3;
-            }
             var3 = this.getNodeAndUpdateCostToMax(var0, var1, var2, var4, this.mvmt.getPathfindingMalus(var4));
             --var1;
         }
@@ -421,13 +399,11 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     private Node tryJumpOn(int var0, int var1, int var2, int var3, double var4, Direction var6, PathType var7,
             BlockPos.MutableBlockPos var8) {
         Node var9 = this.findAcceptedNode(var0, var1 + 1, var2, var3 - 1, var4, var6, var7);
-        if (var9 == null) {
+        if (var9 == null)
             return null;
-        } else if (this.mob.getBbWidth() >= 1.0F) {
+        else if ((this.mob.getBbWidth() >= 1.0F) || (var9.type != PathType.OPEN && var9.type != PathType.WALKABLE))
             return var9;
-        } else if (var9.type != PathType.OPEN && var9.type != PathType.WALKABLE) {
-            return var9;
-        } else {
+        else {
             double var10 = var0 - var6.getStepX() + 0.5;
             double var12 = var2 - var6.getStepZ() + 0.5;
             double var14 = this.mob.getBbWidth() / 2.0;
@@ -446,18 +422,14 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 for (int var7 = -1; var7 <= 1; ++var7) {
                     if (var5 != 0 || var7 != 0) {
                         PathType var8 = var0.getPathTypeFromState(var1 + var5, var2 + var6, var3 + var7);
-                        if (var8 == PathType.DAMAGE_OTHER) {
+                        if (var8 == PathType.DAMAGE_OTHER)
                             return PathType.DANGER_OTHER;
-                        }
-                        if (var8 == PathType.DAMAGE_FIRE || var8 == PathType.LAVA) {
+                        if (var8 == PathType.DAMAGE_FIRE || var8 == PathType.LAVA)
                             return PathType.DANGER_FIRE;
-                        }
-                        if (var8 == PathType.WATER) {
+                        if (var8 == PathType.WATER)
                             return PathType.WATER_BORDER;
-                        }
-                        if (var8 == PathType.DAMAGE_CAUTIOUS) {
+                        if (var8 == PathType.DAMAGE_CAUTIOUS)
                             return PathType.DAMAGE_CAUTIOUS;
-                        }
                     }
                 }
             }
@@ -511,9 +483,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                     var10000 = checkNeighbourBlocks(var0, var2, var3, var4, PathType.WALKABLE);
             }
             return var10000;
-        } else {
+        } else
             return var5;
-        }
     }
 
     public static final double SPACE_BETWEEN_WALL_POSTS = 0.5;

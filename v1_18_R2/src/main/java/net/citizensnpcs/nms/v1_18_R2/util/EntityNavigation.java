@@ -156,7 +156,7 @@ public class EntityNavigation extends PathNavigation {
         }
         return true;
     }
-    
+
     private boolean canWalkOn(int var0, int var1, int var2, int var3, int var4, int var5, Vec3 var6, double var7,
             double var9) {
         int var11 = var0 - var3 / 2;
@@ -471,8 +471,7 @@ public class EntityNavigation extends PathNavigation {
 
     @Override
     public boolean shouldRecomputePath(BlockPos var0) {
-        if (this.hasDelayedRecomputation
-                || ((this.path == null) || this.path.isDone() || (this.path.getNodeCount() == 0)))
+        if (this.hasDelayedRecomputation || this.path == null || this.path.isDone() || this.path.getNodeCount() == 0)
             return false;
         else {
             Node var1 = this.path.getEndNode();

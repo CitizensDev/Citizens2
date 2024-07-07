@@ -89,6 +89,11 @@ public class LlamaController extends MobEntityController {
         }
 
         @Override
+        public boolean bg() {
+            return npc == null ? super.bg() : npc.isPushableByFluids();
+        }
+
+        @Override
         protected SoundEffect bW() {
             return NMSImpl.getSoundEffect(npc, super.bW(), NPC.Metadata.DEATH_SOUND);
         }

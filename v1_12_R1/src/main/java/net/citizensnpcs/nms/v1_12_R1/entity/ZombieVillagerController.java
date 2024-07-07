@@ -80,6 +80,11 @@ public class ZombieVillagerController extends MobEntityController {
         }
 
         @Override
+        public boolean bo() {
+            return npc == null ? super.bo() : npc.isPushableByFluids();
+        }
+
+        @Override
         public SoundEffect cf() {
             return NMSImpl.getSoundEffect(npc, super.cf(), NPC.Metadata.DEATH_SOUND);
         }

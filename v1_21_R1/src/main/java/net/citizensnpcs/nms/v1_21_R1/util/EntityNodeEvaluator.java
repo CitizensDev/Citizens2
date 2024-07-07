@@ -106,7 +106,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     protected PathType getCachedPathType(int var0, int var1, int var2) {
-        return (PathType) this.pathTypesByPosCacheByMob.computeIfAbsent(BlockPos.asLong(var0, var1, var2), var3 -> this.getPathTypeOfMob(this.currentContext, var0, var1, var2, this.mob));
+        return (PathType) this.pathTypesByPosCacheByMob.computeIfAbsent(BlockPos.asLong(var0, var1, var2),
+                var3 -> this.getPathTypeOfMob(this.currentContext, var0, var1, var2, this.mob));
     }
 
     private Node getClosedNode(int var0, int var1, int var2, PathType var3) {
@@ -325,7 +326,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     private boolean hasCollisions(AABB var0) {
-        return this.collisionCache.computeIfAbsent(var0, var1 -> !this.currentContext.level().noCollision(this.mob, var0));
+        return this.collisionCache.computeIfAbsent(var0,
+                var1 -> !this.currentContext.level().noCollision(this.mob, var0));
     }
 
     protected boolean isAmphibious() {
@@ -333,7 +335,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     protected boolean isDiagonalValid(Node var0) {
-        if (((var0 == null) || var0.closed) || (var0.type == PathType.WALKABLE_DOOR))
+        if (var0 == null || var0.closed || var0.type == PathType.WALKABLE_DOOR)
             return false;
         else
             return var0.costMalus >= 0.0F;
@@ -401,7 +403,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         Node var9 = this.findAcceptedNode(var0, var1 + 1, var2, var3 - 1, var4, var6, var7);
         if (var9 == null)
             return null;
-        else if ((this.mob.getBbWidth() >= 1.0F) || (var9.type != PathType.OPEN && var9.type != PathType.WALKABLE))
+        else if (this.mob.getBbWidth() >= 1.0F || var9.type != PathType.OPEN && var9.type != PathType.WALKABLE)
             return var9;
         else {
             double var10 = var0 - var6.getStepX() + 0.5;

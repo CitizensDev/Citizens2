@@ -860,9 +860,8 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public boolean isSneaking(org.bukkit.entity.Entity entity) {
-        if (entity instanceof Player) {
+        if (entity instanceof Player)
             return ((Player) entity).isSneaking();
-        }
         return getHandle(entity).getPose() == EntityPose.CROUCHING;
     }
 

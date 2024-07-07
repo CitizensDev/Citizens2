@@ -179,7 +179,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
                 var7.l = var11;
                 var7.k = Math.max(var7.k, var12);
             }
-            if ((var11 != PathType.WALKABLE)) {
+            if (var11 != PathType.WALKABLE) {
                 if ((var7 == null || var7.k < 0.0F) && var3 > 0 && var11 != PathType.FENCE
                         && var11 != PathType.TRAPDOOR) {
                     var7 = this.a(var0, var1 + 1, var2, var3 - 1, var4, var6);
@@ -262,7 +262,7 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
     }
 
     private boolean a(PathPoint var0, PathPoint var1, PathPoint var2, PathPoint var3) {
-        if (((var3 == null) || (var2 == null) || (var1 == null)) || var3.i)
+        if (var3 == null || var2 == null || var1 == null || var3.i)
             return false;
         else if (var2.b <= var0.b && var1.b <= var0.b)
             return var3.k >= 0.0F && (var2.b < var0.b || var2.k >= 0.0F) && (var1.b < var0.b || var1.k >= 0.0F);
