@@ -45,7 +45,7 @@ public class TemplateRegistry {
         DataKey root = templateStorage.getKey(key.getKey());
         npc.save(root.getRelative("yaml_replace.replacements"));
         root.setBoolean("yaml_replace.override", true);
-        root.removeKey("uuid");
+        root.removeKey("yaml_replace.replacements.uuid");
         templateStorage.save();
         try {
             loadTemplatesFromYamlFile(namespace, generatedFile);
