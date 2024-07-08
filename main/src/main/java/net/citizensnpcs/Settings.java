@@ -11,11 +11,11 @@ import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
-import net.citizensnpcs.api.util.YamlStorage.YamlKey;
 import net.citizensnpcs.util.Util;
 
 public class Settings {
@@ -367,7 +367,7 @@ public class Settings {
         private void setComments(DataKey root) {
             if (SUPPORTS_SET_COMMENTS && root.keyExists(path)) {
                 try {
-                    ((YamlKey) root).getSection("").setComments(path,
+                    ((MemoryDataKey) root).getSection("").setComments(path,
                             comments == null ? null : Arrays.asList(comments.split("<br>")));
                 } catch (Throwable t) {
                     SUPPORTS_SET_COMMENTS = false;
