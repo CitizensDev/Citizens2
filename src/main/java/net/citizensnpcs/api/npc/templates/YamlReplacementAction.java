@@ -36,10 +36,8 @@ public class YamlReplacementAction implements Consumer<NPC> {
                     queue.add(new Node(fullKey, (Map<String, Object>) entry.getValue()));
                     continue;
                 }
-                boolean overwrite = memoryKey.keyExists(fullKey) || override;
-                if (!overwrite || fullKey.equals("uuid"))
+                if (memoryKey.keyExists(fullKey) && !override)
                     continue;
-
                 memoryKey.setRaw(fullKey, entry.getValue());
             }
         }

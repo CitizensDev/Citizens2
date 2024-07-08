@@ -4,13 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -54,9 +49,7 @@ public class YamlStorage implements FileStorage {
         if (obj == null || getClass() != obj.getClass())
             return false;
         YamlStorage other = (YamlStorage) obj;
-        if (!Objects.equals(file, other.file))
-            return false;
-        return true;
+        return Objects.equals(file, other.file);
     }
 
     @Override
@@ -65,8 +58,8 @@ public class YamlStorage implements FileStorage {
     }
 
     @Override
-    public YamlKey getKey(String root) {
-        return new YamlKey(root);
+    public DataKey getKey(String root) {
+        return new MemoryDataKey(config, root);
     }
 
     @Override
@@ -112,216 +105,6 @@ public class YamlStorage implements FileStorage {
             SET_CODEPOINT_LIMIT.invoke(LOADER_OPTIONS.get(config), 67108864 /* ~64MB, Paper's limit */);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private boolean valueExists(String key) {
-        Object object = config.get(key);
-        return object != null && !(object instanceof ConfigurationSection);
-    }
-
-    public class YamlKey extends DataKey {
-        public YamlKey(String root) {
-            super(root);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (!super.equals(obj) || getClass() != obj.getClass())
-                return false;
-            YamlKey other = (YamlKey) obj;
-            return getOuterType().equals(other.getOuterType());
-        }
-
-        @Override
-        public boolean getBoolean(String key) {
-            String path = createRelativeKey(key);
-            if (valueExists(path)) {
-                if (config.getString(path) == null)
-                    return config.getBoolean(path);
-                return Boolean.parseBoolean(config.getString(path));
-            }
-            return false;
-        }
-
-        @Override
-        public boolean getBoolean(String key, boolean def) {
-            return config.getBoolean(createRelativeKey(key), def);
-        }
-
-        @Override
-        public double getDouble(String key) {
-            return getDouble(key, 0);
-        }
-
-        @Override
-        public double getDouble(String key, double def) {
-            String path = createRelativeKey(key);
-            if (valueExists(path)) {
-                Object value = config.get(path);
-                if (value instanceof Number)
-                    return ((Number) value).doubleValue();
-                String raw = value.toString();
-                if (raw.isEmpty())
-                    return def;
-                return Double.parseDouble(raw);
-            }
-            return def;
-        }
-
-        @Override
-        public DataKey getFromRoot(String path) {
-            return new YamlKey(path);
-        }
-
-        @Override
-        public int getInt(String key) {
-            return getInt(key, 0);
-        }
-
-        @Override
-        public int getInt(String key, int def) {
-            String path = createRelativeKey(key);
-            if (valueExists(path)) {
-                Object value = config.get(path);
-                if (value instanceof Number)
-                    return ((Number) value).intValue();
-                String raw = value.toString();
-                if (raw.isEmpty())
-                    return def;
-                return Integer.parseInt(raw);
-            }
-            return def;
-        }
-
-        @Override
-        public long getLong(String key) {
-            return getLong(key, 0L);
-        }
-
-        @Override
-        public long getLong(String key, long def) {
-            String path = createRelativeKey(key);
-            if (valueExists(path)) {
-                Object value = config.get(path);
-                if (value instanceof Number)
-                    return ((Number) value).longValue();
-                String raw = value.toString();
-                if (raw.isEmpty())
-                    return def;
-                return Long.parseLong(raw);
-            }
-            return def;
-        }
-
-        private YamlStorage getOuterType() {
-            return YamlStorage.this;
-        }
-
-        @Override
-        public Object getRaw(String key) {
-            return config.get(createRelativeKey(key));
-        }
-
-        @Override
-        public YamlKey getRelative(String relative) {
-            if (relative == null || relative.isEmpty())
-                return this;
-            return new YamlKey(createRelativeKey(relative));
-        }
-
-        public ConfigurationSection getSection(String key) {
-            String path = createRelativeKey(key);
-            return config.getConfigurationSection(path);
-        }
-
-        public YamlStorage getStorage() {
-            return YamlStorage.this;
-        }
-
-        @Override
-        public String getString(String key) {
-            String path = createRelativeKey(key);
-            if (valueExists(path))
-                return config.get(path).toString();
-            return "";
-        }
-
-        @Override
-        public Iterable<DataKey> getSubKeys() {
-            ConfigurationSection section = config.getConfigurationSection(path);
-            if (section == null)
-                return Collections.emptyList();
-            List<DataKey> res = new ArrayList<>();
-            for (String key : section.getKeys(false)) {
-                res.add(getRelative(key));
-            }
-            return res;
-        }
-
-        @Override
-        public Map<String, Object> getValuesDeep() {
-            return sectionToValues(config.getConfigurationSection(path));
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = prime * super.hashCode() + getOuterType().hashCode();
-            return result;
-        }
-
-        @Override
-        public boolean keyExists(String key) {
-            return config.get(createRelativeKey(key)) != null;
-        }
-
-        @Override
-        public String name() {
-            int last = path.lastIndexOf('.');
-            return path.substring(last == 0 ? 0 : last + 1);
-        }
-
-        @Override
-        public void removeKey(String key) {
-            config.set(createRelativeKey(key), null);
-        }
-
-        @Override
-        public void setBoolean(String key, boolean value) {
-            config.set(createRelativeKey(key), value);
-        }
-
-        @Override
-        public void setDouble(String key, double value) {
-            config.set(createRelativeKey(key), String.valueOf(value));
-        }
-
-        @Override
-        public void setInt(String key, int value) {
-            config.set(createRelativeKey(key), value);
-        }
-
-        @Override
-        public void setLong(String key, long value) {
-            config.set(createRelativeKey(key), value);
-        }
-
-        @Override
-        public void setRaw(String key, Object value) {
-            config.set(createRelativeKey(key), value);
-        }
-
-        @Override
-        public void setString(String key, String value) {
-            config.set(createRelativeKey(key), value);
-        }
-
-        @Override
-        public String toString() {
-            return "YamlKey [path=" + path + "]";
         }
     }
 

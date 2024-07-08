@@ -25,12 +25,13 @@ import org.junit.Test;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
+import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
-import net.citizensnpcs.api.util.YamlStorage.YamlKey;
 
 public class PersistenceLoaderTest {
     private DataKey root;
-    private YamlKey yamlRoot;
+    private DataKey yamlRoot;
+    private Storage yamlStorage;
 
     @Test
     public void canAccessPrivateMembers() {
@@ -44,6 +45,12 @@ public class PersistenceLoaderTest {
         root.setDouble("array.1", 0.0);
         root.setDouble("array.2", 360.0);
         assertThat(PersistenceLoader.load(SaveLoadTest.class, root).array, is(new float[] { -10.0F, 0.0F, 360.0F }));
+    }
+
+    @Test
+    public void getRoot() {
+        root.setString("blah.basr", "test");
+        assertThat(root.getRelative("blah").getFromRoot("").getString("blah.basr"), is("test"));
     }
 
     @Test
@@ -90,9 +97,9 @@ public class PersistenceLoaderTest {
         LongLoadSaveTest load = new LongLoadSaveTest();
         load.term = 3;
         PersistenceLoader.save(load, yamlRoot);
-        yamlRoot.getStorage().save();
+        yamlStorage.save();
         load = new LongLoadSaveTest();
-        yamlRoot.getStorage().load();
+        yamlStorage.load();
         PersistenceLoader.load(load, yamlRoot);
         assertEquals(load.term, 3);
     }
@@ -135,7 +142,8 @@ public class PersistenceLoaderTest {
     public void setUp() {
         root = new MemoryDataKey();
         try {
-            yamlRoot = new YamlStorage(File.createTempFile("citizens_test", null)).getKey("");
+            yamlStorage = new YamlStorage(File.createTempFile("citizens_test", null));
+            yamlRoot = yamlStorage.getKey("");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -219,6 +227,14 @@ public class PersistenceLoaderTest {
         SpecificCollectionClassTest instance = PersistenceLoader.load(SpecificCollectionClassTest.class, root);
         assertEquals(instance.list.getClass(), LinkedList.class);
         assertEquals(instance.set.getClass(), LinkedHashSet.class);
+    }
+
+    @Test
+    public void valuesDeep() {
+        root.setString("blah.basr", "test");
+        Map<String, Object> values = root.getRelative("blah").getValuesDeep();
+        System.out.println(values);
+        assertThat(values.get("basr"), is("test"));
     }
 
     public static class CollectionTest {

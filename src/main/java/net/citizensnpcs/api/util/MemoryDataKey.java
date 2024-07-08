@@ -12,16 +12,16 @@ import com.google.common.collect.Iterables;
 
 public class MemoryDataKey extends DataKey {
     private String name;
-    private final ConfigurationSection root;
+    private final ConfigurationSection section;
 
     public MemoryDataKey() {
         super("");
-        root = new MemoryConfiguration();
+        section = new MemoryConfiguration();
     }
 
-    private MemoryDataKey(ConfigurationSection root, String path) {
+    MemoryDataKey(ConfigurationSection root, String path) {
         super(path);
-        this.root = root;
+        this.section = root;
     }
 
     @Override
@@ -31,72 +31,122 @@ public class MemoryDataKey extends DataKey {
         if (obj == null || getClass() != obj.getClass())
             return false;
         MemoryDataKey other = (MemoryDataKey) obj;
-        if (!Objects.equals(path, other.path))
-            return false;
-        return true;
+        return Objects.equals(path, other.path);
     }
 
     @Override
     public boolean getBoolean(String key) {
-        return root.getBoolean(getKeyFor(key), false);
+        String path = createRelativeKey(key);
+        if (valueExists(path)) {
+            if (section.getString(path) == null)
+                return section.getBoolean(path);
+            return Boolean.parseBoolean(section.getString(path));
+        }
+        return false;
+    }
+
+    @Override
+    public boolean getBoolean(String key, boolean def) {
+        return (boolean) section.get(createRelativeKey(key), def);
     }
 
     @Override
     public double getDouble(String key) {
-        return root.getDouble(getKeyFor(key), 0D);
+        return getDouble(key, 0);
+    }
+
+    @Override
+    public double getDouble(String key, double def) {
+        String path = createRelativeKey(key);
+        if (valueExists(path)) {
+            Object value = section.get(path);
+            if (value instanceof Number)
+                return ((Number) value).doubleValue();
+            String raw = value.toString();
+            if (raw.isEmpty())
+                return def;
+            return Double.parseDouble(raw);
+        }
+        return def;
     }
 
     @Override
     public DataKey getFromRoot(String path) {
-        return new MemoryDataKey(root, path);
+        return new MemoryDataKey(section.getRoot(), path);
     }
 
     @Override
     public int getInt(String key) {
-        return root.getInt(getKeyFor(key), 0);
+        return getInt(key, 0);
     }
 
-    private String getKeyFor(String key) {
-        if (key.isEmpty())
-            return path;
-        if (key.charAt(0) == '.')
-            return path.isEmpty() ? key.substring(1) : path + key;
-        return path.isEmpty() ? key : path + "." + key;
+    @Override
+    public int getInt(String key, int def) {
+        String path = createRelativeKey(key);
+        if (valueExists(path)) {
+            Object value = section.get(path);
+            if (value instanceof Number)
+                return ((Number) value).intValue();
+            String raw = value.toString();
+            if (raw.isEmpty())
+                return def;
+            return Integer.parseInt(raw);
+        }
+        return def;
     }
 
     @Override
     public long getLong(String key) {
-        return root.getLong(getKeyFor(key), 0L);
+        return getLong(key, 0);
+    }
+
+    @Override
+    public long getLong(String key, long def) {
+        String path = createRelativeKey(key);
+        if (valueExists(path)) {
+            Object value = section.get(path);
+            if (value instanceof Number)
+                return ((Number) value).longValue();
+            String raw = value.toString();
+            if (raw.isEmpty())
+                return def;
+            return Long.parseLong(raw);
+        }
+        return def;
     }
 
     @Override
     public Object getRaw(String key) {
-        return root.get(getKeyFor(key));
+        return section.get(createRelativeKey(key));
     }
 
     @Override
     public MemoryDataKey getRelative(String relative) {
-        String key = getKeyFor(relative);
-        return new MemoryDataKey(root, key);
+        return new MemoryDataKey(section, createRelativeKey(relative));
+    }
+
+    public ConfigurationSection getSection(String key) {
+        return section.getConfigurationSection(createRelativeKey(key));
     }
 
     @Override
     public String getString(String key) {
-        return root.getString(getKeyFor(key), "");
+        key = createRelativeKey(key);
+        return valueExists(key) ? section.get(key).toString() : "";
     }
 
     @Override
     public Iterable<DataKey> getSubKeys() {
-        ConfigurationSection head = root.getConfigurationSection(path);
+        ConfigurationSection head = section.getConfigurationSection(path);
         if (head == null)
             return Collections.emptyList();
         Set<String> keys = head.getKeys(false);
-        return Iterables.transform(keys, input -> new MemoryDataKey(root, getKeyFor(input)));
+        return Iterables.transform(keys, input -> new MemoryDataKey(section, createRelativeKey(input)));
     }
 
     @Override
     public Map<String, Object> getValuesDeep() {
-        return sectionToValues(root);
+        return sectionToValues(section.getConfigurationSection(path));
     }
 
     @Override
@@ -106,7 +156,7 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public boolean keyExists(String key) {
-        return root.isSet(getKeyFor(key));
+        return section.get(createRelativeKey(key)) != null;
     }
 
     @Override
@@ -124,7 +174,7 @@ public class MemoryDataKey extends DataKey {
     }
 
     private void set(String key, Object value) {
-        root.set(getKeyFor(key), value);
+        section.set(createRelativeKey(key), value);
     }
 
     @Override
@@ -160,5 +210,10 @@ public class MemoryDataKey extends DataKey {
     @Override
     public String toString() {
         return "MemoryDataKey[" + path + "]";
+    }
+
+    private boolean valueExists(String key) {
+        Object object = section.get(key);
+        return object != null && !(object instanceof ConfigurationSection);
     }
 }

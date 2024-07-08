@@ -48,6 +48,7 @@ public class TemplateRegistry {
         root.removeKey("yaml_replace.replacements.uuid");
         templateStorage.save();
         try {
+            fullyQualifiedTemplates.remove(key);
             loadTemplatesFromYamlFile(namespace, generatedFile);
         } catch (TemplateLoadException e) {
             e.printStackTrace();

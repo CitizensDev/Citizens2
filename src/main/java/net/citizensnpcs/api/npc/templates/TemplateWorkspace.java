@@ -17,8 +17,6 @@ public class TemplateWorkspace {
 
     public File getFile(String fileName) {
         File test = new File(namespaceFolder, fileName);
-        if (test.exists() && test.getParentFile().equals(namespaceFolder))
-            return test;
-        return null;
+        return test.exists() && test.getParentFile().equals(namespaceFolder) ? test : null;
     }
 }

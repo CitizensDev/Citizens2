@@ -276,10 +276,6 @@ public class YamlStorageWithLists implements FileStorage {
             return new YamlKey(createRelativeKey(relative));
         }
 
-        public YamlStorageWithLists getStorage() {
-            return YamlStorageWithLists.this;
-        }
-
         @Override
         public String getString(String key) {
             String path = createRelativeKey(key);
