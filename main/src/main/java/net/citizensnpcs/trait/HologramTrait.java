@@ -750,6 +750,7 @@ public class HologramTrait extends Trait {
     public abstract static class SingleEntityHologramRenderer implements HologramRenderer {
         protected NPC hologram;
         private NPCRegistry registry;
+        private int spawnWaitTicks;
         protected String text;
         protected int viewRange = -1;
 
@@ -780,10 +781,13 @@ public class HologramTrait extends Trait {
 
         @Override
         public void render(NPC npc, Vector3d offset) {
-            if (getEntities().isEmpty()) {
+            if (getEntities().isEmpty() && spawnWaitTicks-- <= 0) {
                 destroy();
                 spawnHologram(npc, offset);
+                spawnWaitTicks = 5;
             }
+            if (!hologram.isSpawned())
+                return;
             render0(npc, offset);
         }
 

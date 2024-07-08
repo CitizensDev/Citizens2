@@ -41,8 +41,8 @@ public class HomeTrait extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || location == null || npc.getStoredLocation().distance(location) < 0.1
-                || npc.getNavigator().isNavigating()) {
+        if (!npc.isSpawned() || location == null || npc.getNavigator().isNavigating()
+                || npc.getStoredLocation().distance(location) < 0.1) {
             t = 0;
             return;
         }
