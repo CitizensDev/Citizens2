@@ -122,6 +122,8 @@ public class MemoryDataKey extends DataKey {
 
     @Override
     public MemoryDataKey getRelative(String relative) {
+        if (relative == null || relative.isEmpty())
+            return this;
         return new MemoryDataKey(section, createRelativeKey(relative));
     }
 
@@ -141,7 +143,7 @@ public class MemoryDataKey extends DataKey {
         if (head == null)
             return Collections.emptyList();
         Set<String> keys = head.getKeys(false);
-        return Iterables.transform(keys, input -> new MemoryDataKey(section, createRelativeKey(input)));
+        return Iterables.transform(keys, k -> new MemoryDataKey(section, createRelativeKey(k)));
     }
 
     @Override

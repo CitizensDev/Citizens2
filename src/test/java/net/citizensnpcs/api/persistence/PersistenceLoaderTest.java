@@ -48,6 +48,12 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void getRelativeEmpty() {
+        root.setString("blah.basr", "PLAYER");
+        assertThat(root.getRelative("blah.basr").getString(""), is("test"));
+    }
+
+    @Test
     public void getRoot() {
         root.setString("blah.basr", "test");
         assertThat(root.getRelative("blah").getFromRoot("").getString("blah.basr"), is("test"));
