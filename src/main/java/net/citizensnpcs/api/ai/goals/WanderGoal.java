@@ -26,12 +26,13 @@ import net.citizensnpcs.api.npc.NPC;
 public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private int delay;
     private int delayedTicks;
-    private final Function<NPC, Location> fallback;
+    private Function<Block, Boolean> filter;
     private boolean forceFinish;
     private int movingTicks;
     private final NPC npc;
     private boolean pathfind;
     private boolean paused;
+    private final Function<NPC, Location> picker;
     private Location target;
     private final Supplier<PhTreeSolid<Boolean>> tree;
     private final Supplier<Object> worldguardRegion;
@@ -39,19 +40,17 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
     private int yrange;
 
     private WanderGoal(NPC npc, boolean pathfind, int xrange, int yrange, Supplier<PhTreeSolid<Boolean>> tree,
-            Function<NPC, Location> fallback, Supplier<Object> worldguardRegion, int delay) {
+            Supplier<Object> worldguardRegion, int delay, Function<Block, Boolean> filter,
+            Function<NPC, Location> picker) {
         this.npc = npc;
         this.pathfind = pathfind;
         this.worldguardRegion = worldguardRegion;
         this.xrange = xrange;
         this.yrange = yrange;
         this.tree = tree;
-        this.fallback = fallback;
         this.delay = delay;
-    }
-
-    public Function<Block, Boolean> blockFilter() {
-        return block -> {
+        this.picker = picker;
+        this.filter = filter == null ? block -> {
             if ((MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(BlockFace.UP))
                     || MinecraftBlockExaminer.isLiquidOrInLiquid(block.getRelative(0, 2, 0)))
                     && npc.getNavigator().getDefaultParameters().avoidWater())
@@ -71,18 +70,17 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
                 long[] pt = { block.getX(), block.getY(), block.getZ() };
                 if (tree.get() != null && !tree.get().queryIntersect(pt, pt).hasNext())
                     return false;
-
             }
             return true;
-        };
+        } : filter;
     }
 
     private Location findRandomPosition() {
-        Location found = MinecraftBlockExaminer.findRandomValidLocation(npc.getStoredLocation(), pathfind ? xrange : 1,
-                pathfind ? yrange : 1, blockFilter(), RANDOM);
-        if (found == null && fallback != null)
-            return fallback.apply(npc);
-        return found;
+        if (picker != null)
+            return picker.apply(npc);
+
+        return MinecraftBlockExaminer.findRandomValidLocation(npc.getStoredLocation(), pathfind ? xrange : 1,
+                pathfind ? yrange : 1, filter, RANDOM);
     }
 
     public void pause() {
@@ -170,9 +168,10 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
 
     public static class Builder {
         private int delay = 10;
-        private Function<NPC, Location> fallback;
+        private Function<Block, Boolean> filter;
         private final NPC npc;
         private boolean pathfind = true;
+        private Function<NPC, Location> picker;
         private Supplier<PhTreeSolid<Boolean>> tree;
         private Supplier<Object> worldguardRegion;
         private int xrange = 10;
@@ -180,13 +179,10 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
 
         private Builder(NPC npc) {
             this.npc = npc;
-            this.tree = null;
-            this.fallback = null;
-            this.worldguardRegion = null;
         }
 
         public WanderGoal build() {
-            return new WanderGoal(npc, pathfind, xrange, yrange, tree, fallback, worldguardRegion, delay);
+            return new WanderGoal(npc, pathfind, xrange, yrange, tree, worldguardRegion, delay, filter, picker);
         }
 
         public Builder delay(int delay) {
@@ -194,8 +190,13 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             return this;
         }
 
-        public Builder fallback(Function<NPC, Location> fallback) {
-            this.fallback = fallback;
+        public Builder destinationPicker(Function<NPC, Location> picker) {
+            this.picker = picker;
+            return this;
+        }
+
+        public Builder filter(Function<Block, Boolean> filter) {
+            this.filter = filter;
             return this;
         }
 

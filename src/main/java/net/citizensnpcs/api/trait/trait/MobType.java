@@ -41,6 +41,7 @@ public class MobType extends Trait {
         if (type == null) {
             type = EntityType.PLAYER;
         }
+        npc.setBukkitEntityType(type);
     }
 
     @Override
