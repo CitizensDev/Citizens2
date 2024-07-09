@@ -9,12 +9,16 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -94,9 +98,8 @@ public class PersistenceLoader {
         }
 
         public DataKey getDataKey(DataKey root) {
-            if (!persistAnnotation.namespace().isEmpty())
-                return root.getFromRoot("global." + persistAnnotation.namespace());
-            return root;
+            return persistAnnotation.namespace().isEmpty() ? root
+                    : root.getFromRoot("global." + persistAnnotation.namespace());
         }
 
         public Class<?> getType() {
@@ -104,8 +107,7 @@ public class PersistenceLoader {
         }
 
         public boolean isDefault(Object value) {
-            return false;
-            // return defaultValue != null && defaultValue.equals(value);
+            return defaultValue != null && defaultValue.equals(value);
         }
 
         public boolean isRequired() {
@@ -121,7 +123,7 @@ public class PersistenceLoader {
                 checkedForDefault = true;
                 if (defaultValue != null && !defaultValue.getClass().isPrimitive() && !(defaultValue instanceof Number)
                         && !(defaultValue instanceof Enum) && !(defaultValue instanceof Boolean)
-                        && !(defaultValue instanceof String)) {
+                        && !(defaultValue instanceof String) && (!SUPPORTS_KEYED || !(defaultValue instanceof Keyed))) {
                     defaultValue = null;
                 }
             } catch (Exception e) {
@@ -316,9 +318,9 @@ public class PersistenceLoader {
     private static void deserialiseMap(Map<Object, Object> map, DataKey root, PersistField field) {
         for (DataKey subKey : root.getRelative(field.key).getSubKeys()) {
             Object loaded = deserialiseCollectionValue(field, subKey, field.persistAnnotation.valueType());
-            if (loaded == null) {
+            if (loaded == null)
                 continue;
-            }
+
             Object key = subKey.name();
             Class<?> type = field.persistAnnotation.keyType();
             if (type != String.class) {
@@ -355,19 +357,29 @@ public class PersistenceLoader {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static Object deserialiseValue(PersistField field, DataKey root) {
         Class<?> type = field.field.getType().isEnum() ? field.field.getType() : getGenericType(field.field);
-        if (field.delegate == null && type.isEnum()) {
-            Class<? extends Enum> clazz = (Class<? extends Enum>) type;
-            Object obj = root.getRaw("");
-            if (obj instanceof String) {
-                try {
-                    return Enum.valueOf(clazz, obj.toString());
-                } catch (IllegalArgumentException e) {
-                    // fallback to default
+        if (field.delegate == null) {
+            if (SUPPORTS_KEYED && Keyed.class.isAssignableFrom(type)) {
+                Class<? extends Keyed> clazz = (Class<? extends Keyed>) type;
+                Object obj = root.getRaw("");
+                if (obj instanceof String) {
+                    if (!obj.toString().contains(":")) {
+                        obj = "minecraft:" + obj.toString().toLowerCase(Locale.ROOT);
+                    }
+                    return Bukkit.getRegistry(clazz).get(NamespacedKey.fromString(obj.toString()));
+                }
+            } else if (type.isEnum()) {
+                Class<? extends Enum> clazz = (Class<? extends Enum>) type;
+                Object obj = root.getRaw("");
+                if (obj instanceof String) {
+                    try {
+                        return Enum.valueOf(clazz, obj.toString());
+                    } catch (IllegalArgumentException e) {
+                        // fallback to default
+                    }
                 }
             }
         }
-        Object deserialised = field.delegate == null ? root.getRaw("") : field.delegate.create(root);
-        return deserialised;
+        return field.delegate == null ? root.getRaw("") : field.delegate.create(root);
     }
 
     private static void ensureDelegateLoaded(Class<? extends Persister<?>> delegateClass) {
@@ -615,6 +627,9 @@ public class PersistenceLoader {
         }
         if (field.delegate != null) {
             ((Persister<Object>) field.delegate).save(value, root);
+        } else if (SUPPORTS_KEYED && Keyed.class.isAssignableFrom(field.getType())) {
+            NamespacedKey nskey = ((Keyed) value).getKey();
+            root.setRaw("", nskey.getNamespace() + ":" + nskey.getKey());
         } else if (value instanceof Enum) {
             root.setRaw("", ((Enum<?>) value).name());
         } else {
@@ -636,7 +651,7 @@ public class PersistenceLoader {
     };
     private static final Map<Class<?>, Class<? extends Persister<?>>> persistRedirects = new WeakHashMap<>();
     private static final Map<Class<?>, PersisterRegistry<?>> registries = new WeakHashMap<>();
-
+    private static boolean SUPPORTS_KEYED = false;
     static {
         registerPersistDelegate(Quaternionfc.class, QuaternionfPersister.class);
         registerPersistDelegate(Vector.class, VectorPersister.class);
@@ -645,5 +660,11 @@ public class PersistenceLoader {
         registerPersistDelegate(ItemStack.class, ItemStackPersister.class);
         registerPersistDelegate(EulerAngle.class, EulerAnglePersister.class);
         registerPersistDelegate(UUID.class, UUIDPersister.class);
+        try {
+            Class.forName("org.bukkit.Keyed");
+            SUPPORTS_KEYED = true;
+            registerPersistDelegate(NamespacedKey.class, NamespacedKeyPersister.class);
+        } catch (ClassNotFoundException e) {
+        }
     }
 }

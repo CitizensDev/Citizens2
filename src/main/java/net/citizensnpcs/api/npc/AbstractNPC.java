@@ -329,15 +329,15 @@ public abstract class AbstractNPC implements NPC {
         metadata.loadFrom(root.getRelative("metadata"));
 
         String traitNames = root.getString("traitnames");
-        Set<DataKey> keys = Sets.newHashSet(root.getRelative("traits").getSubKeys());
-        Iterables.addAll(keys,
-                Iterables.transform(Splitter.on(',').split(traitNames), input -> root.getRelative("traits." + input)));
-        DataKey locationKey = root.getRelative("traits.location");
-        if (locationKey.keyExists()) {
-            loadTraitFromKey(locationKey);
-            keys.remove(locationKey);
+        Set<String> loading = Sets.newHashSet(Splitter.on(',').split(traitNames));
+        for (String key : PRIVILEGED_TRAITS) {
+            DataKey privilegedKey = root.getRelative("traits." + key);
+            if (privilegedKey.keyExists()) {
+                loadTraitFromKey(privilegedKey);
+                loading.remove(key);
+            }
         }
-        for (DataKey key : keys) {
+        for (DataKey key : Iterables.transform(loading, k -> root.getRelative("traits." + k))) {
             loadTraitFromKey(key);
         }
     }
@@ -546,4 +546,6 @@ public abstract class AbstractNPC implements NPC {
     public boolean useMinecraftAI() {
         return data().get(NPC.Metadata.USE_MINECRAFT_AI, false);
     }
+
+    private static final String[] PRIVILEGED_TRAITS = { "location", "type" };
 }

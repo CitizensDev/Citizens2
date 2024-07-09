@@ -79,7 +79,7 @@ public class ItemStorage {
     private static Enchantment deserialiseEnchantment(String string) {
         Enchantment enchantment = null;
         if (SpigotUtil.isUsing1_13API()) {
-            enchantment = Enchantment.getByKey(NamespacedKey.minecraft(string.toLowerCase(Locale.US)));
+            enchantment = Enchantment.getByKey(NamespacedKey.minecraft(string.toLowerCase(Locale.ROOT)));
         }
         if (enchantment == null) {
             enchantment = Enchantment.getByName(string);
@@ -322,8 +322,8 @@ public class ItemStorage {
         Material material = null;
         if (root.keyExists("type_key") && SpigotUtil.isUsing1_13API()) {
             NamespacedKey key = new NamespacedKey(root.getString("type_namespace", "minecraft"),
-                    root.getString("type_key").toLowerCase(Locale.US));
-            material = Material.getMaterial(key.getKey().toUpperCase(Locale.US), false);
+                    root.getString("type_key").toLowerCase(Locale.ROOT));
+            material = Material.getMaterial(key.getKey().toUpperCase(Locale.ROOT), false);
         } else {
             String raw = root.getString("type", root.getString("id"));
             if (raw == null || raw.length() == 0)

@@ -47,7 +47,7 @@ public class Messaging {
 
             String out = this.date.format(rec.getMillis());
 
-            out += "[" + rec.getLevel().getName().toUpperCase(Locale.US) + "] ";
+            out += "[" + rec.getLevel().getName().toUpperCase(Locale.ROOT) + "] ";
             out += rec.getMessage() + '\n';
 
             if (exception != null) {
@@ -119,7 +119,7 @@ public class Messaging {
         sb = new StringBuffer();
         while (m.find()) {
             m.appendReplacement(sb, COLORCODE_CONVERTER
-                    .get(m.group(1) == null ? m.group(2).toLowerCase(Locale.US) : m.group(1).toLowerCase(Locale.US)));
+                    .get(m.group(1) == null ? m.group(2).toLowerCase(Locale.ROOT) : m.group(1).toLowerCase(Locale.ROOT)));
         }
         m.appendTail(sb);
         return MINIMESSAGE_COLORCODE_MATCHER.matcher(sb.toString()).replaceAll("$0<csr>");

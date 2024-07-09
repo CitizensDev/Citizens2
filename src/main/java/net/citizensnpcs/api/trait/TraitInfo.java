@@ -42,7 +42,7 @@ public final class TraitInfo {
         if (name == null && !triedAnnotation) {
             TraitName anno = trait.getAnnotation(TraitName.class);
             if (anno != null) {
-                name = anno.value().toLowerCase(Locale.US);
+                name = anno.value().toLowerCase(Locale.ROOT);
             }
             triedAnnotation = true;
         }
@@ -76,7 +76,7 @@ public final class TraitInfo {
 
     public TraitInfo withName(String name) {
         Objects.requireNonNull(name);
-        this.name = name.toLowerCase(Locale.US);
+        this.name = name.toLowerCase(Locale.ROOT);
         return this;
     }
 

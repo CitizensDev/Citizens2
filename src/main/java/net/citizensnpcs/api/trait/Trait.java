@@ -22,7 +22,7 @@ public abstract class Trait implements Listener, Runnable {
     private boolean runImplemented = true;
 
     protected Trait(String name) {
-        this.name = name.toLowerCase(Locale.US);
+        this.name = name.toLowerCase(Locale.ROOT);
     }
 
     /**

@@ -76,7 +76,7 @@ public class TemplateRegistry {
     }
 
     private void loadTemplate(File folder, String namespace, DataKey key) throws TemplateLoadException {
-        NamespacedKey namespacedKey = new NamespacedKey(namespace, key.name().toLowerCase(Locale.US));
+        NamespacedKey namespacedKey = new NamespacedKey(namespace, key.name().toLowerCase(Locale.ROOT));
         if (fullyQualifiedTemplates.containsKey(namespacedKey))
             throw new TemplateLoadException("Duplicate template key " + namespacedKey);
 
