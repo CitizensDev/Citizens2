@@ -510,7 +510,7 @@ public class CommandTrait extends Trait {
 
         @Override
         public String toString() {
-            return name().charAt(0) + name().substring(1).toLowerCase(Locale.US);
+            return name().charAt(0) + name().substring(1).toLowerCase(Locale.ROOT);
         }
     }
 

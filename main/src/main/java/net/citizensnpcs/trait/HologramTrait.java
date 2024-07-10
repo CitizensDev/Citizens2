@@ -786,7 +786,7 @@ public class HologramTrait extends Trait {
                 spawnHologram(npc, offset);
                 spawnWaitTicks = 5;
             }
-            if (!hologram.isSpawned())
+            if (hologram == null || !hologram.isSpawned())
                 return;
             render0(npc, offset);
         }
@@ -837,7 +837,7 @@ public class HologramTrait extends Trait {
     public static class TabCompletions implements CompletionsProvider {
         @Override
         public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
-            if (args.length() > 1 && npc != null && LINE_ARGS.contains(args.getString(1).toLowerCase(Locale.US))) {
+            if (args.length() > 1 && npc != null && LINE_ARGS.contains(args.getString(1).toLowerCase(Locale.ROOT))) {
                 HologramTrait ht = npc.getOrAddTrait(HologramTrait.class);
                 return IntStream.range(0, ht.getLines().size()).mapToObj(Integer::toString)
                         .collect(Collectors.toList());
