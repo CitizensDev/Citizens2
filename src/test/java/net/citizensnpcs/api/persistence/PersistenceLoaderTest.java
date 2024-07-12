@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.entity.Horse;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,6 +38,11 @@ public class PersistenceLoaderTest {
     public void canAccessPrivateMembers() {
         root.setInt("integer", 5);
         assertThat(PersistenceLoader.load(SaveLoadTest.class, root).integer, is(5));
+    }
+
+    @Test
+    public void defaultsRemainUntouched() {
+        assertThat(PersistenceLoader.load(HorseColorTest.class, root).color, is(Horse.Color.CREAMY));
     }
 
     @Test
@@ -267,6 +273,11 @@ public class PersistenceLoaderTest {
             public void save(CustomConstructor instance, DataKey root) {
             }
         }
+    }
+
+    public static class HorseColorTest {
+        @Persist
+        private final Horse.Color color = Horse.Color.CREAMY;
     }
 
     public static class IllegalCollectionClassTest {

@@ -169,6 +169,7 @@ public class PersistenceLoader {
         // TODO: this is pretty ugly.
         if (!Collection.class.isAssignableFrom(collectionType) && !Map.class.isAssignableFrom(collectionType))
             throw loadException;
+
         if (Collection.class.isAssignableFrom(type) && !root.keyExists(field.key))
             return;
 
@@ -240,6 +241,7 @@ public class PersistenceLoader {
         }
         if (value == null && field.isRequired())
             throw loadException;
+
         if (type.isPrimitive() || Primitives.isWrapperType(type)) {
             if (value == null)
                 return;
@@ -272,6 +274,10 @@ public class PersistenceLoader {
                     && field.delegate == null) {
                 field.set(instance, root.getRelative(field.key).name());
             }
+            return;
+        }
+        if (value == null && field.defaultValue != null) {
+            field.set(instance, field.defaultValue);
             return;
         }
         field.set(instance, value);
