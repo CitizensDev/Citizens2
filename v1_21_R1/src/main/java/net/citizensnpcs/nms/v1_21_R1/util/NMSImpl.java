@@ -626,9 +626,19 @@ public class NMSImpl implements NMSBridge {
     @Override
     public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
         ServerLevel server = (ServerLevel) getHandle(entity).level();
-        TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
-        if (entry == null)
+        TrackedEntity tracked = null;
+        if (TRACKED_ENTITY_GETTER != null) {
+            try {
+                tracked = (TrackedEntity) TRACKED_ENTITY_GETTER.invoke(getHandle(entity));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else {
+            tracked = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
+        }
+        if (tracked == null)
             return null;
+        TrackedEntity entry = tracked;
         return new EntityPacketTracker() {
             @Override
             public void link(Player player) {
@@ -1335,7 +1345,16 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void replaceTrackerEntry(org.bukkit.entity.Entity entity) {
-        ServerLevel server = (ServerLevel) getHandle(entity).level();
+        Entity handle = getHandle(entity);
+        ServerLevel server = (ServerLevel) handle.level();
+        for (MethodHandle setter : TRACKED_ENTITY_SETTERS) {
+            try {
+                setter.invoke(handle, new CitizensEntityTracker(server.getChunkSource().chunkMap,
+                        (TrackedEntity) TRACKED_ENTITY_GETTER.invoke(handle)));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
         TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
         if (entry == null)
             return;
@@ -2520,7 +2539,9 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ADVANCEMENTS_PLAYER_SETTER = NMS.getFirstFinalSetter(ServerPlayer.class,
             PlayerAdvancements.class);
+
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "cn");
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
@@ -2572,10 +2593,10 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS
             .getFirstMethodHandleWithReturnType(PathNavigation.class, true, PathFinder.class, int.class);
     private static final MethodHandle NAVIGATION_PATH = NMS.getFirstGetter(PathNavigation.class, Path.class);
-
     private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFirstFinalSetter(PathNavigation.class,
             PathFinder.class);
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
+
     private static final MethodHandle PLAYER_INFO_ENTRIES_LIST = NMS
             .getFirstFinalSetter(ClientboundPlayerInfoUpdatePacket.class, List.class);
     private static final MethodHandle PLAYERINFO_ENTRIES = PLAYER_INFO_ENTRIES_LIST;
@@ -2592,6 +2613,9 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
     private static MethodHandle SKULL_META_PROFILE;
     private static MethodHandle TEAM_FIELD;
+    private static final MethodHandle TRACKED_ENTITY_GETTER = NMS.getFirstGetter(Entity.class, TrackedEntity.class);
+    private static final Collection<MethodHandle> TRACKED_ENTITY_SETTERS = NMS.getSettersOfType(Entity.class,
+            TrackedEntity.class);
     static {
         try {
             ENTITY_REGISTRY = new CustomEntityRegistry(BuiltInRegistries.ENTITY_TYPE);

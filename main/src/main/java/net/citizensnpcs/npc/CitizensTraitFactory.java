@@ -177,7 +177,7 @@ public class CitizensTraitFactory implements TraitFactory {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(String name) {
-        TraitInfo info = registered.get(name.toLowerCase(Locale.US));
+        TraitInfo info = registered.get(name.toLowerCase(Locale.ROOT));
         if (info == null)
             return null;
         return (T) create(info);
@@ -185,7 +185,7 @@ public class CitizensTraitFactory implements TraitFactory {
 
     @Override
     public Class<? extends Trait> getTraitClass(String name) {
-        TraitInfo info = registered.get(name.toLowerCase(Locale.US));
+        TraitInfo info = registered.get(name.toLowerCase(Locale.ROOT));
         return info == null ? null : info.getTraitClass();
     }
 

@@ -20,7 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.SetMultimap;
 
 import net.citizensnpcs.NPCNeedsRespawnEvent;
@@ -381,7 +381,8 @@ public class CitizensNPC extends AbstractNPC {
                     return;
                 }
                 navigator.onSpawn();
-                for (Trait trait : Iterables.toArray(traits.values(), Trait.class)) {
+
+                for (Trait trait : traits.values().toArray(ObjectArrays.newArray(Trait.class, traits.size()))) {
                     try {
                         trait.onSpawn();
                     } catch (Throwable ex) {
@@ -389,7 +390,6 @@ public class CitizensNPC extends AbstractNPC {
                         ex.printStackTrace();
                     }
                 }
-                // Replace the entity tracker
                 NMS.replaceTracker(getEntity());
                 EntityType type = getEntity().getType();
                 if (type.isAlive()) {
@@ -479,21 +479,21 @@ public class CitizensNPC extends AbstractNPC {
                 resetCachedCoord();
                 return;
             }
+            Location loc = getEntity().getLocation();
             if (data().has(NPC.Metadata.ACTIVATION_RANGE)) {
                 int range = data().get(NPC.Metadata.ACTIVATION_RANGE);
-                if (range == -1 || CitizensAPI.getLocationLookup().getNearbyPlayers(getStoredLocation(), range)
-                        .iterator().hasNext()) {
+                if (range == -1 || CitizensAPI.getLocationLookup().getNearbyPlayers(loc, range).iterator().hasNext()) {
                     NMS.activate(getEntity());
                 }
             }
             boolean shouldSwim = data().get(NPC.Metadata.SWIM, SwimmingExaminer.isWaterMob(getEntity()))
-                    && MinecraftBlockExaminer.isLiquid(getEntity().getLocation().getBlock().getType());
+                    && MinecraftBlockExaminer.isLiquid(loc.getBlock().getType());
             if (navigator.isNavigating()) {
                 if (shouldSwim) {
                     getEntity().setVelocity(getEntity().getVelocity().multiply(
                             data().get(NPC.Metadata.WATER_SPEED_MODIFIER, Setting.NPC_WATER_SPEED_MODIFIER.asFloat())));
                     Location currentDest = navigator.getPathStrategy().getCurrentDestination();
-                    if (currentDest == null || currentDest.getY() > getStoredLocation().getY()) {
+                    if (currentDest == null || currentDest.getY() > loc.getY()) {
                         NMS.trySwim(getEntity());
                     }
                 }
@@ -504,23 +504,15 @@ public class CitizensNPC extends AbstractNPC {
                 }
             }
             if (SUPPORT_GLOWING && data().has(NPC.Metadata.GLOWING)) {
-                try {
-                    getEntity().setGlowing(data().get(NPC.Metadata.GLOWING, false));
-                } catch (NoSuchMethodError e) {
-                    SUPPORT_GLOWING = false;
-                }
+                getEntity().setGlowing(data().get(NPC.Metadata.GLOWING, false));
             }
             if (SUPPORT_SILENT && data().has(NPC.Metadata.SILENT)) {
-                try {
-                    getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.Metadata.SILENT).toString()));
-                } catch (NoSuchMethodError e) {
-                    SUPPORT_SILENT = false;
-                }
+                getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.Metadata.SILENT).toString()));
             }
             boolean isLiving = getEntity() instanceof LivingEntity;
             if (isUpdating(NPCUpdate.PACKET)) {
                 if (data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean())) {
-                    ChunkCoord currentCoord = new ChunkCoord(getStoredLocation());
+                    ChunkCoord currentCoord = new ChunkCoord(loc);
                     if (!currentCoord.equals(cachedCoord)) {
                         resetCachedCoord();
                         currentCoord.setForceLoaded(true);
@@ -538,11 +530,7 @@ public class CitizensNPC extends AbstractNPC {
             if (isLiving) {
                 NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
                 if (SUPPORT_PICKUP_ITEMS) {
-                    try {
-                        ((LivingEntity) getEntity()).setCanPickupItems(data().get(NPC.Metadata.PICKUP_ITEMS, false));
-                    } catch (Throwable t) {
-                        SUPPORT_PICKUP_ITEMS = false;
-                    }
+                    ((LivingEntity) getEntity()).setCanPickupItems(data().get(NPC.Metadata.PICKUP_ITEMS, false));
                 }
                 if (getEntity() instanceof Player) {
                     updateUsingItemState((Player) getEntity());
@@ -622,9 +610,31 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
-    private static boolean SUPPORT_GLOWING = true;
-    private static boolean SUPPORT_NODAMAGE_TICKS = true;
-    private static boolean SUPPORT_PICKUP_ITEMS = true;
-    private static boolean SUPPORT_SILENT = true;
+    private static boolean SUPPORT_GLOWING = false;
+    private static boolean SUPPORT_NODAMAGE_TICKS = false;
+    private static boolean SUPPORT_PICKUP_ITEMS = false;
+    private static boolean SUPPORT_SILENT = false;
     private static boolean SUPPORT_USE_ITEM = true;
+    static {
+        try {
+            Entity.class.getMethod("setNoDamageTicks", int.class);
+            SUPPORT_NODAMAGE_TICKS = true;
+        } catch (NoSuchMethodException | SecurityException e) {
+        }
+        try {
+            Entity.class.getMethod("setGlowing", boolean.class);
+            SUPPORT_GLOWING = true;
+        } catch (NoSuchMethodException | SecurityException e) {
+        }
+        try {
+            Entity.class.getMethod("setSilent", boolean.class);
+            SUPPORT_SILENT = true;
+        } catch (NoSuchMethodException | SecurityException e) {
+        }
+        try {
+            LivingEntity.class.getMethod("setCanPickupItems", boolean.class);
+            SUPPORT_PICKUP_ITEMS = true;
+        } catch (NoSuchMethodException | SecurityException e) {
+        }
+    }
 }

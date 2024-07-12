@@ -912,8 +912,8 @@ public class NPCCommands {
             for (String part : parts) {
                 if (part.contains(":")) {
                     int idx = part.indexOf(':');
-                    Template template = templateRegistry.getTemplateByKey(
-                            new NamespacedKey(part.substring(0, idx), part.substring(idx + 1).toLowerCase(Locale.US)));
+                    Template template = templateRegistry.getTemplateByKey(new NamespacedKey(part.substring(0, idx),
+                            part.substring(idx + 1).toLowerCase(Locale.ROOT)));
                     if (template == null)
                         continue;
                     template.apply(npc);
@@ -1263,7 +1263,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] | set [line #] [text] | remove [line #] | bgcolor [line #] (color) | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
+            usage = "hologram add [text] | set [line #] [text] | remove [line #] | bgcolor [line #] (red,green,blue(,alpha)) | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
             desc = "",
             modifiers = { "hologram" },
             min = 1,
@@ -3661,7 +3661,7 @@ public class NPCCommands {
             trait.setInterested(!trait.isInterested());
         }
         if (variant != null) {
-            variant = variant.toUpperCase(Locale.US);
+            variant = variant.toUpperCase(Locale.ROOT);
             try {
                 Wolf.Variant.class.getField(variant);
             } catch (Throwable t) {

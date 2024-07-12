@@ -44,7 +44,7 @@ public class TemplateCommands {
         if (templateKey.contains(":")) {
             int idx = templateKey.indexOf(':');
             template = registry.getTemplateByKey(new NamespacedKey(templateKey.substring(0, idx),
-                    templateKey.substring(idx + 1).toLowerCase(Locale.US)));
+                    templateKey.substring(idx + 1).toLowerCase(Locale.ROOT)));
         } else {
             Collection<Template> templates = registry.getTemplates(templateKey);
             if (templates.isEmpty())
@@ -73,9 +73,9 @@ public class TemplateCommands {
             @Arg(value = 1, completionsProvider = TemplateCompletions.class) String templateName)
             throws CommandException {
         int idx = templateName.indexOf(':');
-        NamespacedKey key = idx == -1 ? new NamespacedKey("generated", templateName.toLowerCase(Locale.US))
+        NamespacedKey key = idx == -1 ? new NamespacedKey("generated", templateName.toLowerCase(Locale.ROOT))
                 : new NamespacedKey(templateName.substring(0, idx),
-                        templateName.substring(idx + 1).toLowerCase(Locale.US));
+                        templateName.substring(idx + 1).toLowerCase(Locale.ROOT));
         if (registry.getTemplateByKey(key) != null)
             throw new CommandException(Messages.TEMPLATE_CONFLICT);
         registry.generateTemplateFromNPC(key, npc);

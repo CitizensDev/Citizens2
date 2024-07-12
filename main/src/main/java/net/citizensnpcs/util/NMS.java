@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -273,7 +274,7 @@ public class NMS {
     public static List<MethodHandle> getFieldsOfType(Class<?> clazz, Class<?> type) {
         List<Field> found = getFieldsMatchingType(clazz, type, false);
         if (found.isEmpty())
-            return null;
+            return Collections.emptyList();
         return found.stream().map(f -> {
             try {
                 return LOOKUP.unreflectGetter(f);
@@ -583,6 +584,20 @@ public class NMS {
             }
         }
         return null;
+    }
+
+    public static Collection<MethodHandle> getSettersOfType(Class<?> clazz, Class<?> fieldType) {
+        List<Field> found = getFieldsMatchingType(clazz, fieldType, false);
+        if (found.isEmpty())
+            return Collections.emptyList();
+        return found.stream().map(f -> {
+            try {
+                return LOOKUP.unreflectSetter(f);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            return null;
+        }).filter(f -> f != null).collect(Collectors.toList());
     }
 
     public static String getSoundPath(Sound flag) throws CommandException {
@@ -988,7 +1003,6 @@ public class NMS {
     private static MethodHandle UNSAFE_PUT_INT;
     private static MethodHandle UNSAFE_PUT_LONG;
     private static MethodHandle UNSAFE_PUT_OBJECT;
-
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
 
     static {

@@ -1,7 +1,5 @@
 package net.citizensnpcs.trait;
 
-import java.lang.invoke.MethodHandle;
-
 import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
@@ -111,22 +109,19 @@ public class HorseModifiers extends Trait {
             horse.getInventory().setArmor(armor);
             horse.getInventory().setSaddle(saddle);
         }
-        if (CARRYING_CHEST_METHOD == null)
-            return;
-        if (npc.getEntity() instanceof ChestedHorse) {
-            try {
-                CARRYING_CHEST_METHOD.invoke(npc.getEntity(), carryingChest);
-            } catch (Throwable e) {
-            }
+        if (SUPPORTS_CARRYING_CHEST && npc.getEntity() instanceof ChestedHorse) {
+            ((ChestedHorse) npc.getEntity()).setCarryingChest(carryingChest);
         }
     }
 
-    private static MethodHandle CARRYING_CHEST_METHOD;
+    private static boolean SUPPORTS_CARRYING_CHEST;
 
     static {
         try {
-            CARRYING_CHEST_METHOD = NMS.getMethodHandle(Class.forName("org.bukkit.entity.ChestedHorse"),
-                    "setCarryingChest", false, boolean.class);
+            if (NMS.getMethodHandle(Class.forName("org.bukkit.entity.ChestedHorse"), "setCarryingChest", false,
+                    boolean.class) != null) {
+                SUPPORTS_CARRYING_CHEST = true;
+            }
         } catch (Throwable e) {
         }
     }

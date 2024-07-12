@@ -333,7 +333,7 @@ public class Util {
     }
 
     public static String listValuesPretty(Object[] values) {
-        return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).replace('_', ' ').toLowerCase(Locale.US);
+        return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).replace('_', ' ').toLowerCase(Locale.ROOT);
     }
 
     public static <T extends Enum<?>> T matchEnum(T[] values, String toMatch) {
@@ -345,7 +345,7 @@ public class Util {
 
         }
         for (T check : values) {
-            String name = check.name().toLowerCase(Locale.US);
+            String name = check.name().toLowerCase(Locale.ROOT);
             if (name.replace("_", "").equals(toMatch) || name.startsWith(toMatch))
                 return check;
 
@@ -422,7 +422,7 @@ public class Util {
     }
 
     public static String prettyEnum(Enum<?> e) {
-        return e.name().toLowerCase(Locale.US).replace('_', ' ');
+        return e.name().toLowerCase(Locale.ROOT).replace('_', ' ');
     }
 
     public static String prettyPrintLocation(Location to) {
