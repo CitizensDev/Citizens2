@@ -312,14 +312,7 @@ public class CitizensNPC extends AbstractNPC {
         entityController.create(at.clone(), this);
         getEntity().setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
         getEntity().setMetadata("NPC-ID", new FixedMetadataValue(CitizensAPI.getPlugin(), getId()));
-        // Spawning the entity will create an entity tracker that is not controlled by Citizens. This is fixed later in
-        // spawning; to avoid sending packets twice, try to hide the entity initially
-        EntityPacketTracker tracker = NMS.getPacketTracker(getEntity());
-        if (tracker != null) {
-            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                tracker.unlink(player);
-            }
-        }
+
         if (getEntity() instanceof SkinnableEntity && !hasTrait(SkinLayers.class)) {
             ((SkinnableEntity) getEntity()).setSkinFlags(EnumSet.allOf(SkinLayers.Layer.class));
         }
@@ -343,6 +336,14 @@ public class CitizensNPC extends AbstractNPC {
             entityController.remove();
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
+        }
+        // Spawning the entity will create an entity tracker that is not controlled by Citizens. This is fixed later in
+        // spawning; to avoid sending packets twice, try to hide the entity initially
+        EntityPacketTracker tracker = NMS.getPacketTracker(getEntity());
+        if (tracker != null) {
+            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                tracker.unlink(player);
+            }
         }
         NMS.setLocationDirectly(getEntity(), at);
         NMS.setHeadYaw(getEntity(), at.getYaw());
