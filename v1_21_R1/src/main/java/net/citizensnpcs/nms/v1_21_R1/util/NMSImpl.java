@@ -626,23 +626,13 @@ public class NMSImpl implements NMSBridge {
     @Override
     public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
         ServerLevel server = (ServerLevel) getHandle(entity).level();
-        TrackedEntity tracked = null;
-        if (TRACKED_ENTITY_GETTER != null) {
-            try {
-                tracked = (TrackedEntity) TRACKED_ENTITY_GETTER.invoke(getHandle(entity));
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        } else {
-            tracked = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
-        }
+        TrackedEntity tracked = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
         if (tracked == null)
             return null;
-        TrackedEntity entry = tracked;
         return new EntityPacketTracker() {
             @Override
             public void link(Player player) {
-                entry.updatePlayer((ServerPlayer) getHandle(player));
+                tracked.updatePlayer((ServerPlayer) getHandle(player));
             }
 
             @Override
@@ -651,12 +641,12 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void unlink(Player player) {
-                entry.removePlayer((ServerPlayer) getHandle(player));
+                tracked.removePlayer((ServerPlayer) getHandle(player));
             }
 
             @Override
             public void unlinkAll(Consumer<Player> callback) {
-                entry.broadcastRemoved();
+                tracked.broadcastRemoved();
             }
         };
     }
@@ -1326,8 +1316,8 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void removeFromWorld(org.bukkit.entity.Entity entity) {
         Preconditions.checkNotNull(entity);
-        Entity nmsEntity = ((CraftEntity) entity).getHandle();
-        ((ServerLevel) nmsEntity.level()).getChunkSource().removeEntity(nmsEntity);
+        Entity handle = getHandle(entity);
+        ((ServerLevel) handle.level()).getChunkSource().removeEntity(handle);
     }
 
     @Override
@@ -1346,21 +1336,20 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void replaceTrackerEntry(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
-        ServerLevel server = (ServerLevel) handle.level();
+        ChunkMap cm = ((ServerLevel) handle.level()).getChunkSource().chunkMap;
+        TrackedEntity entry = cm.entityMap.get(entity.getEntityId());
+        if (entry == null)
+            return;
+        entry.broadcastRemoved();
+        CitizensEntityTracker newTracker = new CitizensEntityTracker(cm, entry);
         for (MethodHandle setter : TRACKED_ENTITY_SETTERS) {
             try {
-                setter.invoke(handle, new CitizensEntityTracker(server.getChunkSource().chunkMap,
-                        (TrackedEntity) TRACKED_ENTITY_GETTER.invoke(handle)));
+                setter.invoke(handle, newTracker);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         }
-        TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
-        if (entry == null)
-            return;
-        entry.broadcastRemoved();
-        CitizensEntityTracker replace = new CitizensEntityTracker(server.getChunkSource().chunkMap, entry);
-        server.getChunkSource().chunkMap.entityMap.put(entity.getEntityId(), replace);
+        cm.entityMap.put(entity.getEntityId(), newTracker);
     }
 
     @Override
@@ -2613,7 +2602,6 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
     private static MethodHandle SKULL_META_PROFILE;
     private static MethodHandle TEAM_FIELD;
-    private static final MethodHandle TRACKED_ENTITY_GETTER = NMS.getFirstGetter(Entity.class, TrackedEntity.class);
     private static final Collection<MethodHandle> TRACKED_ENTITY_SETTERS = NMS.getSettersOfType(Entity.class,
             TrackedEntity.class);
     static {
