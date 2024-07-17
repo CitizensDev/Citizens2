@@ -125,7 +125,7 @@
   "citizens.commands.npc.lookclose.headonly-unset" : "[[{0}]] wird nun seinen Körper rotieren lassen.",
   "citizens.commands.npc.lookclose.random-set" : "[[{0}]] wird jetzt zufällig durch die Gegend schauen.",
   "citizens.commands.npc.lookclose.random-stopped" : "[[{0}]] wird jetzt nicht mehr zufällig durch die Gegend schauen.",
-  "citizens.commands.npc.lookclose.set" : "[[{0}]] wurd sich nun drehen, wenn Spieler in der Nähe sind.",
+  "citizens.commands.npc.lookclose.set" : "[[{0}]] wird sich nun drehen, wenn Spieler in der Nähe sind.",
   "citizens.commands.npc.lookclose.stopped" : "[[{0}]] wird sich nicht mehr drehen, wenn Spieler in der Nähe sind.",
   "citizens.commands.npc.mount.failed" : "Kontrolle von [[{0}]] fehlgeschlagen.",
   "citizens.commands.npc.moveto.format" : "Format ist x:y:z(:Welt) oder x y z( Welt).",
