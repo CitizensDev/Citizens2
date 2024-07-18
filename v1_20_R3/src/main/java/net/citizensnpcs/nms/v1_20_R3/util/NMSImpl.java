@@ -17,6 +17,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.citizensnpcs.api.util.SpigotUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -71,19 +72,6 @@ import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.gui.ForwardingInventory;
-import net.citizensnpcs.api.jnbt.ByteArrayTag;
-import net.citizensnpcs.api.jnbt.ByteTag;
-import net.citizensnpcs.api.jnbt.CompoundTag;
-import net.citizensnpcs.api.jnbt.DoubleTag;
-import net.citizensnpcs.api.jnbt.EndTag;
-import net.citizensnpcs.api.jnbt.FloatTag;
-import net.citizensnpcs.api.jnbt.IntArrayTag;
-import net.citizensnpcs.api.jnbt.IntTag;
-import net.citizensnpcs.api.jnbt.ListTag;
-import net.citizensnpcs.api.jnbt.LongTag;
-import net.citizensnpcs.api.jnbt.ShortTag;
-import net.citizensnpcs.api.jnbt.StringTag;
-import net.citizensnpcs.api.jnbt.Tag;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
@@ -643,11 +631,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public CompoundTag getNBT(org.bukkit.inventory.ItemStack item) {
-        return convertNBT(CraftItemStack.asNMSCopy(item).getTag());
-    }
-
-    @Override
     public NPC getNPC(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
@@ -925,15 +908,15 @@ public class NMSImpl implements NMSBridge {
         Interaction handle = (Interaction) getHandle(entity);
         offset += handle.getMyRidingOffset(getHandle(mount));
         sendPacket(player,
-                new ClientboundBundlePacket(List.of(
+                new ClientboundBundlePacket(Lists.newArrayList(
                         new ClientboundSetEntityDataPacket(entity.getEntityId(),
-                                List.of(new SynchedEntityData.DataItem<>(INTERACTION_WIDTH, 0f).value(),
+                                Lists.newArrayList(new SynchedEntityData.DataItem<>(INTERACTION_WIDTH, 0f).value(),
                                         new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, (float) offset).value(),
                                         new SynchedEntityData.DataItem<>(DATA_POSE, Pose.CROAKING).value(),
                                         new SynchedEntityData.DataItem<>(DATA_NAME_VISIBLE, true).value())),
                         new ClientboundSetPassengersPacket(getHandle(mount)),
                         new ClientboundSetEntityDataPacket(entity.getEntityId(),
-                                List.of(new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, 999999f).value())))));
+                                Lists.newArrayList(new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, 999999f).value())))));
     }
 
     @Override
@@ -1121,7 +1104,7 @@ public class NMSImpl implements NMSBridge {
                 yaw += Math.abs(180 - yaw) * 2;
             }
             if (handle.getBukkitEntity().getType() == EntityType.ENDER_DRAGON) {
-                yaw = Util.getDragonYaw(handle.getBukkitEntity(), xDiff, zDiff);
+                yaw = Util.getYawFromVelocity(handle.getBukkitEntity(), xDiff, zDiff);
             } else {
                 yaw = yaw - 90;
             }
@@ -1770,7 +1753,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void updateInventoryTitle(Player player, InventoryView view, String newTitle) {
+    public void updateInventoryTitle(Player player, SpigotUtil.InventoryViewAPI view, String newTitle) {
         ServerPlayer handle = (ServerPlayer) getHandle(player);
         MenuType<?> menuType = null;
         switch (view.getTopInventory().getType()) {
@@ -2031,59 +2014,11 @@ public class NMSImpl implements NMSBridge {
                     npc.data().set("selector" + i, Lists.newArrayList(list));
                 }
                 list.clear();
-            } catch (Exception e) {
-                Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
             } catch (Throwable e) {
                 Messaging.logTr(Messages.ERROR_CLEARING_GOALS, e.getLocalizedMessage());
             }
             i++;
         }
-    }
-
-    private static CompoundTag convertNBT(net.minecraft.nbt.CompoundTag tag) {
-        if (tag == null)
-            return new CompoundTag("", Collections.EMPTY_MAP);
-        Map<String, Tag> tags = Maps.newHashMap();
-        for (String key : tag.getAllKeys()) {
-            tags.put(key, convertNBT(key, tag.get(key)));
-        }
-        return new CompoundTag("", tags);
-    }
-
-    private static Tag convertNBT(String key, net.minecraft.nbt.Tag base) {
-        if (base instanceof net.minecraft.nbt.IntTag)
-            return new IntTag(key, ((net.minecraft.nbt.IntTag) base).getAsInt());
-        else if (base instanceof net.minecraft.nbt.FloatTag)
-            return new FloatTag(key, ((net.minecraft.nbt.FloatTag) base).getAsFloat());
-        else if (base instanceof net.minecraft.nbt.DoubleTag)
-            return new DoubleTag(key, ((net.minecraft.nbt.DoubleTag) base).getAsDouble());
-        else if (base instanceof net.minecraft.nbt.LongTag)
-            return new LongTag(key, ((net.minecraft.nbt.LongTag) base).getAsLong());
-        else if (base instanceof net.minecraft.nbt.ShortTag)
-            return new ShortTag(key, ((net.minecraft.nbt.ShortTag) base).getAsShort());
-        else if (base instanceof net.minecraft.nbt.ByteTag)
-            return new ByteTag(key, ((net.minecraft.nbt.ByteTag) base).getAsByte());
-        else if (base instanceof net.minecraft.nbt.ByteArrayTag)
-            return new ByteArrayTag(key, ((net.minecraft.nbt.ByteArrayTag) base).getAsByteArray());
-        else if (base instanceof net.minecraft.nbt.IntArrayTag)
-            return new IntArrayTag(key, ((net.minecraft.nbt.IntArrayTag) base).getAsIntArray());
-        else if (base instanceof net.minecraft.nbt.StringTag)
-            return new StringTag(key, base.getAsString());
-        else if (base instanceof net.minecraft.nbt.ListTag) {
-            List<net.minecraft.nbt.Tag> list = (List<net.minecraft.nbt.Tag>) base;
-            List<Tag> converted = Lists.newArrayList();
-            if (list.size() > 0) {
-                Class<? extends Tag> tagType = convertNBT("", list.get(0)).getClass();
-                for (int i = 0; i < list.size(); i++) {
-                    converted.add(convertNBT("", list.get(i)));
-                }
-                return new ListTag(key, tagType, converted);
-            }
-        } else if (base instanceof net.minecraft.nbt.CompoundTag)
-            return convertNBT((net.minecraft.nbt.CompoundTag) base);
-        else if (base instanceof net.minecraft.nbt.EndTag)
-            return new EndTag();
-        return null;
     }
 
     public static void flyingMoveLogic(LivingEntity entity, Vec3 vec3d) {
