@@ -2937,12 +2937,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-e(xport) -c(lear) -l(atest) -s(kull)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
+            usage = "skin (-e(xport) -c(lear) -l(atest) -s(kull) -b(edrock)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
             desc = "",
             modifiers = { "skin" },
             min = 1,
             max = 4,
-            flags = "ectls",
+            flags = "bectls",
             permission = "citizens.npc.skin")
     @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
     public void skin(CommandContext args, CommandSender sender, NPC npc, @Flag("url") String url,
@@ -3052,6 +3052,9 @@ public class NPCCommands {
                 trait.setShouldUpdateSkins(true);
             }
             skinName = args.getString(1);
+        }
+        if (args.hasFlag('b')) {
+            skinName = Util.possiblyConvertToBedrockName(skinName);
         }
         Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), skinName);
         trait.setSkinName(skinName, true);

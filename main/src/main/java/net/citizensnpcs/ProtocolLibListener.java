@@ -48,6 +48,7 @@ import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.SkinProperty;
+import net.citizensnpcs.util.Util;
 
 public class ProtocolLibListener implements Listener {
     private ProtocolManager manager;
@@ -168,7 +169,8 @@ public class ProtocolLibListener implements Listener {
                     if (playerProfile == null) {
                         playerProfile = NMS.getProfile(event.getPlayer());
                         wgp = WrappedGameProfile.fromPlayer(event.getPlayer());
-                        playerName = WrappedChatComponent.fromText(event.getPlayer().getDisplayName());
+                        playerName = WrappedChatComponent.fromText(
+                                Util.possiblyStripBedrockPrefix(event.getPlayer().getDisplayName(), wgp.getUUID()));
                     }
                     if (trait.mirrorName()) {
                         list.set(i, new PlayerInfoData(wgp.withId(npcInfo.getProfile().getId()), npcInfo.getLatency(),

@@ -36,17 +36,16 @@ public class SkinTrait extends Trait {
         super("skintrait");
     }
 
-    private void checkPlaceholder(boolean update) {
+    private boolean checkPlaceholder() {
         if (skinName == null)
-            return;
+            return false;
         String filled = ChatColor.stripColor(Placeholders.replace(skinName, null, npc).toLowerCase());
         if (!filled.equalsIgnoreCase(skinName) && !filled.equalsIgnoreCase(filledPlaceholder)) {
             filledPlaceholder = filled;
             Messaging.debug("Filled skin placeholder", filled, "from", skinName);
-            if (update) {
-                onSkinChange(true);
-            }
+            return true;
         }
+        return true;
     }
 
     /**
@@ -89,7 +88,7 @@ public class SkinTrait extends Trait {
 
     @Override
     public void load(DataKey key) {
-        checkPlaceholder(false);
+        checkPlaceholder();
     }
 
     private void onSkinChange(boolean forceUpdate) {
@@ -103,7 +102,9 @@ public class SkinTrait extends Trait {
         if (timer-- > 0)
             return;
         timer = Setting.PLACEHOLDER_SKIN_UPDATE_FREQUENCY.asTicks();
-        checkPlaceholder(true);
+        if (checkPlaceholder()) {
+            onSkinChange(true);
+        }
     }
 
     /**
@@ -147,7 +148,6 @@ public class SkinTrait extends Trait {
 
     private void setSkinNameInternal(String name) {
         skinName = ChatColor.stripColor(name);
-        checkPlaceholder(false);
     }
 
     /**

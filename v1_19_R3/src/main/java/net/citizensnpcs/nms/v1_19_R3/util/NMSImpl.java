@@ -1201,13 +1201,13 @@ public class NMSImpl implements NMSBridge {
         GameProfile playerProfile = null;
         for (int i = 0; i < list.size(); i++) {
             ClientboundPlayerInfoUpdatePacket.Entry npcInfo = list.get(i);
-            if (npcInfo == null) {
+            if (npcInfo == null)
                 continue;
-            }
+
             MirrorTrait trait = mirrorTraits.apply(npcInfo.profileId());
-            if (trait == null || !trait.isMirroring(player)) {
+            if (trait == null || !trait.isMirroring(player))
                 continue;
-            }
+
             boolean disableTablist = trait.getNPC().shouldRemoveFromTabList();
 
             if (disableTablist != npcInfo.listed()) {
@@ -1223,7 +1223,8 @@ public class NMSImpl implements NMSBridge {
             if (trait.mirrorName()) {
                 list.set(i,
                         new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), playerProfile, !disableTablist,
-                                npcInfo.latency(), npcInfo.gameMode(), Component.literal(playerProfile.getName()),
+                                npcInfo.latency(), npcInfo.gameMode(), Component.literal(Util
+                                        .possiblyStripBedrockPrefix(playerProfile.getName(), playerProfile.getId())),
                                 npcInfo.chatSession()));
                 changed = true;
                 continue;
@@ -1413,8 +1414,8 @@ public class NMSImpl implements NMSBridge {
     public void sendTabListRemove(Player recipient, Collection<Player> skinnableNPCs) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(skinnableNPCs);
-        sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(
-                skinnableNPCs.stream().map((Function<? super Player, ? extends UUID>) Player::getUniqueId).collect(Collectors.toList())));
+        sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(skinnableNPCs.stream()
+                .map((Function<? super Player, ? extends UUID>) Player::getUniqueId).collect(Collectors.toList())));
     }
 
     @Override

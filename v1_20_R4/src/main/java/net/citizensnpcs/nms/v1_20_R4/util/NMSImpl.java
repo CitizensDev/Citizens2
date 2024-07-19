@@ -1210,7 +1210,8 @@ public class NMSImpl implements NMSBridge {
             if (trait.mirrorName()) {
                 list.set(i,
                         new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), playerProfile, !disableTablist,
-                                npcInfo.latency(), npcInfo.gameMode(), Component.literal(playerProfile.getName()),
+                                npcInfo.latency(), npcInfo.gameMode(), Component.literal(Util
+                                        .possiblyStripBedrockPrefix(playerProfile.getName(), playerProfile.getId())),
                                 npcInfo.chatSession()));
                 changed = true;
                 continue;
@@ -1400,8 +1401,8 @@ public class NMSImpl implements NMSBridge {
     public void sendTabListRemove(Player recipient, Collection<Player> players) {
         Preconditions.checkNotNull(recipient);
         Preconditions.checkNotNull(players);
-        sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(
-                players.stream().map((Function<? super Player, ? extends UUID>) Player::getUniqueId).collect(Collectors.toList())));
+        sendPacket(recipient, new ClientboundPlayerInfoRemovePacket(players.stream()
+                .map((Function<? super Player, ? extends UUID>) Player::getUniqueId).collect(Collectors.toList())));
     }
 
     @Override

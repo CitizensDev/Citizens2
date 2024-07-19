@@ -111,6 +111,7 @@ public class TraderLlamaController extends MobEntityController {
                     super.customServerAiStep();
                 }
                 setDespawnDelay(10);
+                NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
         }

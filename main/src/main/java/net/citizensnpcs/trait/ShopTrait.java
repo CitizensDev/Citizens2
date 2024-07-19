@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -482,6 +483,9 @@ public class ShopTrait extends Trait {
             if (timesPurchasable > 0) {
                 purchases.put(player.getUniqueId(), purchases.getOrDefault(player.getUniqueId(), 0) + 1);
             }
+            if (NPCShopPurchaseEvent.HANDLERS.getRegisteredListeners().length > 0) {
+                Bukkit.getPluginManager().callEvent(new NPCShopPurchaseEvent(player, shop, this));
+            }
         }
 
         private String placeholders(String string, Player player) {
@@ -503,7 +507,7 @@ public class ShopTrait extends Trait {
         public void save(DataKey key) {
         }
 
-        private static Pattern PLACEHOLDER_REGEX = Pattern.compile("<(cost|result)>", Pattern.CASE_INSENSITIVE);
+        private static final Pattern PLACEHOLDER_REGEX = Pattern.compile("<(cost|result)>", Pattern.CASE_INSENSITIVE);
     }
 
     @Menu(title = "NPC Shop Item Editor", type = InventoryType.CHEST, dimensions = { 6, 9 })
@@ -748,6 +752,37 @@ public class ShopTrait extends Trait {
         }
     }
 
+    public static class NPCShopPurchaseEvent extends Event {
+        private final NPCShopItem item;
+        private final Player player;
+        private final NPCShop shop;
+
+        public NPCShopPurchaseEvent(Player player, NPCShop shop, NPCShopItem item) {
+            this.player = player;
+            this.shop = shop;
+            this.item = item;
+        }
+
+        @Override
+        public HandlerList getHandlers() {
+            return HANDLERS;
+        }
+
+        public NPCShopItem getItem() {
+            return item;
+        }
+
+        public Player getPlayer() {
+            return player;
+        }
+
+        public NPCShop getShop() {
+            return shop;
+        }
+
+        private static final HandlerList HANDLERS = new HandlerList();
+    }
+
     @Menu(title = "NPC Shop Editor", type = InventoryType.CHEST, dimensions = { 1, 9 })
     public static class NPCShopSettings extends InventoryMenuPage {
         private MenuContext ctx;
@@ -849,7 +884,7 @@ public class ShopTrait extends Trait {
                 ctx.getSlot(i).setClickHandler(evt -> {
                     evt.setCancelled(true);
                     item.onClick(shop, (Player) evt.getWhoClicked(),
-                            new InventoryMultiplexer(((Player) evt.getWhoClicked()).getInventory()), evt.isShiftClick(),
+                            new InventoryMultiplexer(evt.getWhoClicked().getInventory()), evt.isShiftClick(),
                             lastClickedItem == item);
                     lastClickedItem = item;
                 });

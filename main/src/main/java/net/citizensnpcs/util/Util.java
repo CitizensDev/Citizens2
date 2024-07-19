@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -198,13 +199,9 @@ public class Util {
     }
 
     public static Entity getEntity(UUID uuid) {
-        if (SUPPORTS_BUKKIT_GETENTITY) {
-            try {
-                return Bukkit.getEntity(uuid);
-            } catch (Throwable t) {
-                SUPPORTS_BUKKIT_GETENTITY = false;
-            }
-        }
+        if (SUPPORTS_BUKKIT_GETENTITY)
+            return Bukkit.getEntity(uuid);
+
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
                 if (entity.getUniqueId().equals(uuid))
@@ -298,6 +295,10 @@ public class Util {
         }
     }
 
+    public static boolean isBedrockName(String name) {
+        return BEDROCK_NAME_PREFIX != null ? name.startsWith(BEDROCK_NAME_PREFIX) : false;
+    }
+
     public static boolean isHorse(EntityType type) {
         String name = type.name();
         return type == EntityType.HORSE || name.contains("_HORSE") || name.equals("DONKEY") || name.equals("MULE")
@@ -354,10 +355,9 @@ public class Util {
     }
 
     public static boolean matchesItemInHand(Player player, String setting) {
-        String parts = setting;
-        if (parts.contains("*") || parts.isEmpty())
+        if (setting.contains("*") || setting.isEmpty())
             return true;
-        for (String part : Splitter.on(',').split(parts)) {
+        for (String part : Splitter.on(',').split(setting)) {
             Material matchMaterial = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(part, false)
                     : Material.matchMaterial(part);
             if (matchMaterial == player.getInventory().getItemInHand().getType())
@@ -419,6 +419,17 @@ public class Util {
     public static int parseTicks(String raw) {
         Duration duration = SpigotUtil.parseDuration(raw, null);
         return duration == null ? -1 : toTicks(duration);
+    }
+
+    public static String possiblyConvertToBedrockName(String name) {
+        return name.startsWith(BEDROCK_NAME_PREFIX) ? name : BEDROCK_NAME_PREFIX + name;
+    }
+
+    public static String possiblyStripBedrockPrefix(String name, UUID uuid) {
+        if (uuid.getMostSignificantBits() == 0) {
+            return stripBedrockPrefix(name);
+        }
+        return name;
     }
 
     public static String prettyEnum(Enum<?> e) {
@@ -488,6 +499,10 @@ public class Util {
                 }
             }
         }
+    }
+
+    public static String stripBedrockPrefix(String name) {
+        return name.replaceFirst(Pattern.quote(BEDROCK_NAME_PREFIX), "");
     }
 
     public static void talk(SpeechContext context) {
@@ -599,11 +614,26 @@ public class Util {
                 + TimeUnit.MILLISECONDS.convert(delay.getNano(), TimeUnit.NANOSECONDS)) / 50;
     }
 
+    private static String BEDROCK_NAME_PREFIX = ".";
     private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
     private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {
         TWO_DIGIT_DECIMAL.setMaximumFractionDigits(2);
+        try {
+            Bukkit.class.getMethod("getEntity", UUID.class);
+        } catch (Exception e) {
+            SUPPORTS_BUKKIT_GETENTITY = false;
+        }
+        Class<?> floodgateApiHolderClass;
+        try {
+            floodgateApiHolderClass = Class.forName("org.geysermc.floodgate.api.InstanceHolder");
+            Object api = floodgateApiHolderClass.getMethod("getApi").invoke(null);
+            BEDROCK_NAME_PREFIX = (String) api.getClass().getMethod("getPlayerPrefix").invoke(api);
+        } catch (ClassNotFoundException e) {
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 }

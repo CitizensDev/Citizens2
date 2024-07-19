@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.skin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -22,7 +23,7 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.npc.profile.ProfileFetcher;
+import net.citizensnpcs.npc.skin.profile.ProfileFetcher;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.SkinProperty;
 
@@ -48,7 +49,7 @@ public class Skin {
      * @param forceUpdate
      */
     Skin(String skinName) {
-        this.skinName = skinName.toLowerCase();
+        this.skinName = skinName.toLowerCase(Locale.ROOT);
 
         synchronized (CACHE) {
             if (CACHE.containsKey(this.skinName))
@@ -88,26 +89,24 @@ public class Skin {
             if (entity.getNPC().data().has("player-skin-use-latest")) {
                 entity.getNPC().data().remove("player-skin-use-latest");
             }
-            if (!skinTrait.shouldUpdateSkins())
-                // cache preferred
+            if (!skinTrait.shouldUpdateSkins()) // cache preferred
                 return true;
         }
         if (!hasSkinData()) {
-            String defaultSkinName = ChatColor.stripColor(npc.getName()).toLowerCase();
+            String defaultSkinName = ChatColor.stripColor(npc.getName()).toLowerCase(Locale.ROOT);
 
             if (npc.hasTrait(SkinTrait.class) && skinName.equals(defaultSkinName)
                     && !npc.getOrAddTrait(SkinTrait.class).fetchDefaultSkin())
                 return false;
 
-            if (hasFetched) {
+            if (hasFetched)
                 return true;
-            } else {
-                if (!fetching) {
-                    fetch();
-                }
-                pending.put(entity, null);
-                return false;
+
+            if (!fetching) {
+                fetch();
             }
+            pending.put(entity, null);
+            return false;
         }
         setNPCSkinData(entity, skinName, skinId, skinData);
 
@@ -151,7 +150,7 @@ public class Skin {
             }
             return;
         }
-        if (skinName.toLowerCase().startsWith("cit-"))
+        if (skinName.toLowerCase(Locale.ROOT).startsWith("cit-"))
             return;
 
         fetching = true;
@@ -164,9 +163,9 @@ public class Skin {
                     isValid = false;
                     break;
                 case TOO_MANY_REQUESTS:
-                    if (maxRetries == 0) {
+                    if (maxRetries == 0)
                         break;
-                    }
+
                     fetchRetries++;
                     long delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
                     retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), (Runnable) this::fetch,
@@ -194,7 +193,7 @@ public class Skin {
             Messaging.idebug(() -> "Skin name invalid length '" + skinName + "'");
             return;
         }
-        if (skinName.toLowerCase().startsWith("cit-"))
+        if (skinName.toLowerCase(Locale.ROOT).startsWith("cit-"))
             return;
 
         fetching = true;
@@ -263,7 +262,7 @@ public class Skin {
             isValid = false;
             return;
         }
-        if (!profile.getName().toLowerCase().equals(skinName)) {
+        if (!profile.getName().toLowerCase(Locale.ROOT).equals(skinName)) {
             Messaging.debug("GameProfile name (" + profile.getName() + ") and " + "skin name (" + skinName
                     + ") do not match. Has the user renamed recently?");
         }
@@ -321,8 +320,7 @@ public class Skin {
     public static Skin get(SkinnableEntity entity, boolean forceUpdate) {
         Objects.requireNonNull(entity);
 
-        String skinName = entity.getSkinName().toLowerCase();
-        return get(skinName, forceUpdate);
+        return get(entity.getSkinName(), forceUpdate);
     }
 
     /**
@@ -338,7 +336,7 @@ public class Skin {
     public static Skin get(String skinName, boolean forceUpdate) {
         Objects.requireNonNull(skinName);
 
-        skinName = skinName.toLowerCase();
+        skinName = skinName.toLowerCase(Locale.ROOT);
 
         Skin skin;
         synchronized (CACHE) {
@@ -382,7 +380,7 @@ public class Skin {
         skinProperty.apply(profile);
     }
 
-    private static Map<String, Skin> CACHE = new HashMap<>(20);
-    public static String CACHED_SKIN_UUID_METADATA = "cached-skin-uuid";
-    public static String CACHED_SKIN_UUID_NAME_METADATA = "cached-skin-uuid-name";
+    private static final Map<String, Skin> CACHE = new HashMap<>(20);
+    public static final String CACHED_SKIN_UUID_METADATA = "cached-skin-uuid";
+    public static final String CACHED_SKIN_UUID_NAME_METADATA = "cached-skin-uuid-name";
 }
