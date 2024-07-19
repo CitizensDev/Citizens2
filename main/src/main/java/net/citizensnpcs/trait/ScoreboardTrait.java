@@ -12,6 +12,7 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import net.citizensnpcs.Settings.Setting;
@@ -40,7 +41,7 @@ public class ScoreboardTrait extends Trait {
     public ScoreboardTrait() {
         super("scoreboardtrait");
         metadata = CitizensAPI.getLocationLookup().<Boolean> registerMetadata("scoreboard", (meta, event) -> {
-            for (NPC npc : CitizensAPI.getNPCRegistry()) {
+            for (NPC npc : Iterables.concat(CitizensAPI.getNPCRegistries())) {
                 ScoreboardTrait trait = npc.getTraitNullable(ScoreboardTrait.class);
                 if (trait == null)
                     continue;
