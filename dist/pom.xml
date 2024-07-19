@@ -67,20 +67,6 @@
                     <version>${project.version}</version>
                     <type>jar</type>
                     <scope>compile</scope>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>citizens-v1_8_R3</artifactId>
-                    <version>${project.version}</version>
-                    <type>jar</type>
-                    <scope>compile</scope>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>citizens-v1_16_R3</artifactId>
-                    <version>${project.version}</version>
-                    <type>jar</type>
-                    <scope>compile</scope>
                 </dependency> 
                 <dependency>
                     <groupId>${project.groupId}</groupId>

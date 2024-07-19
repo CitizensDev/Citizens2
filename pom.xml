@@ -40,9 +40,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>main</module>
-                <module>v1_8_R3</module>
-                <module>v1_16_R3</module> 
+                <module>main</module> 
                 <module>v1_19_R3</module>
                 <module>v1_20_R4</module>
                 <module>v1_21_R1</module>
