@@ -135,9 +135,7 @@ public class HologramTrait extends Trait {
         HologramRenderer renderer;
         String setting = Setting.DEFAULT_NAME_HOLOGRAM_RENDERER.asString();
         if (setting.isEmpty()) {
-            if (SpigotUtil.getVersion()[1] >= 20) {
-                setting = "display_vehicle";
-            } else if (SpigotUtil.getVersion()[1] == 19) {
+            if (SpigotUtil.getVersion()[1] >= 19) {
                 setting = "interaction";
             } else {
                 setting = "armorstand";
@@ -546,14 +544,14 @@ public class HologramTrait extends Trait {
          * sees the NPC (i.e. not proactively).Note: this should be async-safe. This method is fragile and may be moved
          * elsewhere.
          *
-         * @param hologram
-         *            the <em>hologram</em> NPC
+         * @param npc
+         *            the NPC
          * @param player
          *            the viewing Player
          * @return whether the NPC is sneaking
          */
-        default boolean isSneaking(NPC hologram, Player player) {
-            return NMS.isSneaking(player);
+        default boolean isSneaking(NPC npc, Player player) {
+            return NMS.isSneaking(npc.getEntity());
         }
 
         /**
@@ -895,45 +893,17 @@ public class HologramTrait extends Trait {
         }
     }
 
-    public static class TextDisplayVehicleRenderer extends SingleEntityHologramRenderer {
-        private Color color;
-
-        @Override
-        protected NPC createNPC(Entity base, String name, Vector3d offset) {
-            NPC hologram = registry().createNPC(EntityType.TEXT_DISPLAY, "");
-            hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-            hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));
-            return hologram;
-        }
-
+    public static class TextDisplayVehicleRenderer extends TextDisplayRenderer {
         @Override
         public void render0(NPC npc, Vector3d offset) {
+            super.render0(npc, offset);
             TextDisplay disp = (TextDisplay) hologram.getEntity();
-            disp.setInterpolationDelay(0);
-            disp.setInterpolationDuration(0);
-            disp.setBillboard(Billboard.CENTER);
             Transformation tf = disp.getTransformation();
-            tf.getTranslation().y = (float) offset.y + 0.34f;
+            tf.getTranslation().y = (float) offset.y + 0.2f;
             disp.setTransformation(tf);
-            if (color != null) {
-                disp.setBackgroundColor(color);
-            }
             if (hologram.getEntity().getVehicle() == null) {
                 NMS.mount(npc.getEntity(), hologram.getEntity());
             }
-        }
-
-        @Override
-        public void setBackgroundColor(Color color) {
-            this.color = color;
-        }
-
-        @Override
-        public void updateText(NPC npc, String raw) {
-            this.text = Placeholders.replace(raw, null, npc);
-            if (hologram == null)
-                return;
-            hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
         }
     }
 
