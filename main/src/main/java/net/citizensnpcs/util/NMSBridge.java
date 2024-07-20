@@ -150,7 +150,7 @@ public interface NMSBridge {
 
     public boolean isValid(Entity entity);
 
-    public default void linkTextInteraction(Player player, Entity interaction, Entity mount, double height) {
+    public default void positionInteractionText(Player player, Entity interaction, Entity mount, double height) {
     }
 
     public void load(CommandManager commands);

@@ -636,7 +636,7 @@ public class HologramTrait extends Trait {
         public void onSeenByPlayer(NPC npc, Player player) {
             if (lastOffset == null)
                 return;
-            NMS.linkTextInteraction(player, hologram.getEntity(), npc.getEntity(), lastOffset.y);
+            NMS.positionInteractionText(player, hologram.getEntity(), npc.getEntity(), lastOffset.y);
         }
 
         @Override

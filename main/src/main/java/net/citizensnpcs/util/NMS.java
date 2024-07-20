@@ -689,8 +689,8 @@ public class NMS {
         return BRIDGE.isValid(entity);
     }
 
-    public static void linkTextInteraction(Player player, Entity interaction, Entity mount, double height) {
-        BRIDGE.linkTextInteraction(player, interaction, mount, height);
+    public static void positionInteractionText(Player player, Entity interaction, Entity mount, double height) {
+        BRIDGE.positionInteractionText(player, interaction, mount, height);
     }
 
     public static void load(CommandManager commands) {
