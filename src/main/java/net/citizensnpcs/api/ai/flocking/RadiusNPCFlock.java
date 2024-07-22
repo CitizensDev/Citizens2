@@ -42,9 +42,8 @@ public class RadiusNPCFlock implements NPCFlock {
         cached = null;
         cacheTicks = 0;
         Collection<NPC> ret = Lists.newArrayList();
-        for (Entity entity : npc.getEntity().getNearbyEntities(radius, radius, radius)) {
-            NPC npc2 = CitizensAPI.getNPCRegistry().getNPC(entity);
-            if (npc2 != null && npc2.getNavigator().isNavigating()) {
+        for (NPC npc2 : CitizensAPI.getLocationLookup().getNearbyNPCs(npc.getEntity().getLocation(), radius)) {
+            if (npc2.getNavigator().isNavigating()) {
                 ret.add(npc2);
             }
         }

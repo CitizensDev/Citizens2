@@ -2,7 +2,6 @@ package net.citizensnpcs.api.ai.tree;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -25,7 +24,7 @@ public class Selectors {
 
         @Override
         public Behavior apply(List<Behavior> input) {
-            Collections.sort(input, comparator);
+            input.sort(comparator);
             return input.get(input.size() - 1);
         }
     }

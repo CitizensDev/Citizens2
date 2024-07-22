@@ -1,9 +1,10 @@
 package net.citizensnpcs.api.ai.goals;
 
-import java.util.Collection;
-import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -21,16 +22,16 @@ import net.citizensnpcs.api.npc.NPC;
  */
 public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
     private final boolean aggressive;
+    private final Function<Entity, Boolean> filter;
     private boolean finished;
     private final NPC npc;
     private final double radius;
     private CancelReason reason;
     private Entity target;
-    private final Set<EntityType> targetTypes;
 
-    private TargetNearbyEntityGoal(NPC npc, Set<EntityType> targets, boolean aggressive, double radius) {
+    private TargetNearbyEntityGoal(NPC npc, boolean aggressive, double radius, Function<Entity, Boolean> filter) {
         this.npc = npc;
-        this.targetTypes = targets;
+        this.filter = filter;
         this.aggressive = aggressive;
         this.radius = radius;
     }
@@ -52,12 +53,16 @@ public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
 
     @Override
     public boolean shouldExecute() {
-        if (targetTypes.isEmpty() || !npc.isSpawned())
+        if (!npc.isSpawned())
             return false;
-        Collection<Entity> nearby = npc.getEntity().getNearbyEntities(radius, radius, radius);
+        List<Entity> nearby = npc.getEntity().getNearbyEntities(radius, radius, radius);
         this.target = null;
+        Location npcLoc = npc.getEntity().getLocation();
+        Location cache = new Location(null, 0, 0, 0);
+        nearby.sort((a, b) -> Double.compare(a.getLocation(cache).distanceSquared(npcLoc),
+                b.getLocation(cache).distanceSquared(npcLoc)));
         for (Entity entity : nearby) {
-            if (targetTypes.contains(entity.getType())) {
+            if (filter.apply(entity)) {
                 target = entity;
                 break;
             }
@@ -75,9 +80,9 @@ public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
 
     public static class Builder {
         private boolean aggressive;
+        private Function<Entity, Boolean> filter = e -> false;
         private final NPC npc;
         private double radius = 10D;
-        private Set<EntityType> targetTypes = EnumSet.noneOf(EntityType.class);
 
         public Builder(NPC npc) {
             this.npc = npc;
@@ -89,7 +94,7 @@ public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
         }
 
         public TargetNearbyEntityGoal build() {
-            return new TargetNearbyEntityGoal(npc, targetTypes, aggressive, radius);
+            return new TargetNearbyEntityGoal(npc, aggressive, radius, filter);
         }
 
         public Builder radius(double radius) {
@@ -97,8 +102,13 @@ public class TargetNearbyEntityGoal extends BehaviorGoalAdapter {
             return this;
         }
 
+        public Builder targetFilter(Function<Entity, Boolean> filter) {
+            this.filter = filter;
+            return this;
+        }
+
         public Builder targets(Set<EntityType> targetTypes) {
-            this.targetTypes = targetTypes;
+            this.filter = e -> targetTypes.contains(e.getType());
             return this;
         }
     }
