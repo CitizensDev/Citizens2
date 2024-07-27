@@ -364,7 +364,8 @@ public class PersistenceLoader {
     private static Object deserialiseValue(PersistField field, DataKey root) {
         Class<?> type = field.field.getType().isEnum() ? field.field.getType() : getGenericType(field.field);
         if (field.delegate == null) {
-            if (SUPPORTS_KEYED && Keyed.class.isAssignableFrom(type)) {
+            if (SUPPORTS_KEYED && Keyed.class.isAssignableFrom(type)
+                    && Bukkit.getRegistry((Class<? extends Keyed>) type) != null) {
                 Class<? extends Keyed> clazz = (Class<? extends Keyed>) type;
                 Object obj = root.getRaw("");
                 if (obj instanceof String) {
