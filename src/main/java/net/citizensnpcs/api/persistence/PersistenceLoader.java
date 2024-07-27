@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -32,6 +31,7 @@ import com.google.common.primitives.Primitives;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.kyori.adventure.text.Component;
 
 /**
@@ -368,10 +368,7 @@ public class PersistenceLoader {
                 Class<? extends Keyed> clazz = (Class<? extends Keyed>) type;
                 Object obj = root.getRaw("");
                 if (obj instanceof String) {
-                    if (!obj.toString().contains(":")) {
-                        obj = "minecraft:" + obj.toString().toLowerCase(Locale.ROOT);
-                    }
-                    return Bukkit.getRegistry(clazz).get(NamespacedKey.fromString(obj.toString()));
+                    return Bukkit.getRegistry(clazz).get(SpigotUtil.getKey(obj.toString()));
                 }
             } else if (type.isEnum()) {
                 Class<? extends Enum> clazz = (Class<? extends Enum>) type;

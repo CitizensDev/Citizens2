@@ -1,19 +1,14 @@
 package net.citizensnpcs.api.persistence;
 
-import java.util.Locale;
-
 import org.bukkit.NamespacedKey;
 
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 public class NamespacedKeyPersister implements Persister<NamespacedKey> {
     @Override
     public NamespacedKey create(DataKey root) {
-        String value = root.getString("");
-        if (!value.contains(":")) {
-            value = "minecraft:" + value.toLowerCase(Locale.ROOT);
-        }
-        return NamespacedKey.fromString(value);
+        return SpigotUtil.getKey(root.getString(""));
     }
 
     @Override

@@ -5,10 +5,12 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -133,6 +135,20 @@ public class SpigotUtil {
             SUPPORT_WORLD_HEIGHT = false;
             return y >= 0 && y <= 255;
         }
+    }
+
+    public static NamespacedKey getKey(String raw) {
+        return getKey(raw, "minecraft");
+    }
+
+    public static NamespacedKey getKey(String raw, String defaultNamespace) {
+        if (!raw.contains(":")) {
+            raw = defaultNamespace + ":" + raw.toLowerCase(Locale.ROOT);
+        } else {
+            String[] parts = raw.split(":");
+            raw = parts[0] + parts[1].toLowerCase(Locale.ROOT);
+        }
+        return NamespacedKey.fromString(raw);
     }
 
     public static int getMaxNameLength(EntityType type) {
