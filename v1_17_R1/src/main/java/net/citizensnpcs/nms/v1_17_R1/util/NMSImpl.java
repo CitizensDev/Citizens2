@@ -372,8 +372,8 @@ public class NMSImpl implements NMSBridge {
             return;
 
         try {
-            CHUNKMAP_UPDATE_PLAYER_STATUS.invoke(
-                    ((ServerChunkCache) ((ServerLevel) handle.level).getChunkSource()).chunkMap, handle, !remove);
+            CHUNKMAP_UPDATE_PLAYER_STATUS.invoke(((ServerChunkCache) handle.level.getChunkSource()).chunkMap, handle,
+                    !remove);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -2059,9 +2059,10 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static SoundEvent getSoundEffect(NPC npc, SoundEvent snd, NPC.Metadata meta) {
-        return npc == null || !npc.data().has(meta) ? snd
-                : Registry.SOUND_EVENT
-                        .get(new ResourceLocation(npc.data().get(meta, snd == null ? "" : snd.toString())));
+        if (npc == null)
+            return snd;
+        String data = npc.data().get(meta);
+        return data == null ? snd : Registry.SOUND_EVENT.get(ResourceLocation.tryParse(data));
     }
 
     public static void initNetworkManager(Connection network) {

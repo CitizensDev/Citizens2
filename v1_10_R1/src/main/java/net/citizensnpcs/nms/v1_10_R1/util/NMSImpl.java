@@ -1777,8 +1777,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static SoundEffect getSoundEffect(NPC npc, SoundEffect snd, NPC.Metadata meta) {
-        return npc == null || !npc.data().has(meta) ? snd
-                : SoundEffect.a.get(new MinecraftKey(npc.data().get(meta, snd == null ? "" : snd.toString())));
+        if (npc == null)
+            return snd;
+        String data = npc.data().get(meta);
+        return data == null ? snd
+                : SoundEffect.a.get(data.contains(":") ? new MinecraftKey(data.split(":")[0], data.split(":")[1])
+                        : new MinecraftKey(data));
     }
 
     public static void initNetworkManager(NetworkManager network) {
