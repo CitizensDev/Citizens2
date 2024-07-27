@@ -26,8 +26,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
@@ -175,6 +178,15 @@ public class CommandManager implements TabCompleter {
                     val = entry.getValue().validator.validate(context, sender,
                             methodArgs.length > 2 && methodArgs[2] instanceof NPC ? (NPC) methodArgs[2] : null,
                             val.toString());
+                } else if (SUPPORTS_KEYED && Keyed.class.isAssignableFrom(desiredType)) {
+                    String k = val.toString();
+                    if (!k.contains(":")) {
+                        k = "minecraft:" + k.toLowerCase(Locale.ROOT);
+                    } else {
+                        String[] parts = k.split(":");
+                        k = parts[0] + parts[1].toLowerCase(Locale.ROOT);
+                    }
+                    val = Bukkit.getRegistry((Class<? extends Keyed>) desiredType).get(NamespacedKey.fromString(k));
                 } else if (desiredType == Material.class) {
                     val = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(val.toString(), false)
                             : Material.matchMaterial(val.toString());
@@ -865,4 +877,14 @@ public class CommandManager implements TabCompleter {
 
     // Logger for general errors.
     private static final Logger logger = Logger.getLogger(CommandManager.class.getCanonicalName());
+
+    private static boolean SUPPORTS_KEYED = false;
+
+    static {
+        try {
+            Class.forName("org.bukkit.Keyed");
+            SUPPORTS_KEYED = true;
+        } catch (ClassNotFoundException e) {
+        }
+    }
 }
