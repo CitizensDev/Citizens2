@@ -6,9 +6,7 @@ import org.bukkit.entity.Sittable;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -74,16 +72,12 @@ public class SitTrait extends Trait {
             return;
         }
         if (chair == null) {
-            NPCRegistry registry = CitizensAPI.getNamedNPCRegistry("SitRegistry");
-            if (registry == null) {
-                registry = CitizensAPI.createNamedNPCRegistry("SitRegistry", new MemoryNPCDataStore());
-            }
-            chair = registry.createNPC(EntityType.ARMOR_STAND, "");
+            chair = CitizensAPI.getTemporaryNPCRegistry().createNPC(EntityType.ARMOR_STAND, "");
             chair.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntity(npc);
             if (!chair.spawn(sittingAt.clone())) {
                 chair = null;
                 delay = 20;
-                Messaging.debug("Unable to spawn chair NPC");
+                Messaging.debug("Unable to spawn chair NPC for", npc);
                 return;
             }
         }

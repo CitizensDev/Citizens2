@@ -24,7 +24,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
 import org.bukkit.Sound;
@@ -51,10 +50,13 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -911,9 +913,7 @@ public class NPCCommands {
             StringBuilder builder = new StringBuilder();
             for (String part : parts) {
                 if (part.contains(":")) {
-                    int idx = part.indexOf(':');
-                    Template template = templateRegistry.getTemplateByKey(new NamespacedKey(part.substring(0, idx),
-                            part.substring(idx + 1).toLowerCase(Locale.ROOT)));
+                    Template template = templateRegistry.getTemplateByKey(SpigotUtil.getKey(part));
                     if (template == null)
                         continue;
                     template.apply(npc);
@@ -2775,7 +2775,7 @@ public class NPCCommands {
             permission = "citizens.npc.select")
     @Requirements
     public void select(CommandContext args, CommandSender sender, NPC npc,
-            @Flag(value = "range", defValue = "10") double range, @Flag("registry") String registryName)
+            @Flag(value = "range", defValue = "15") double range, @Flag("registry") String registryName)
             throws CommandException {
         NPCCommandSelector.Callback callback = toSelect -> {
             if (toSelect == null)
@@ -2795,9 +2795,22 @@ public class NPCCommands {
             if (args.getSenderLocation() == null)
                 throw new ServerCommandException();
             Location location = args.getSenderLocation();
+            if (SUPPORT_RAYTRACE && sender instanceof Player) {
+                Location eyeLoc = ((Player) sender).getEyeLocation();
+                RayTraceResult res = eyeLoc.getWorld().rayTraceEntities(eyeLoc, eyeLoc.getDirection(), range, 0.1,
+                        e -> !e.equals(sender));
+                if (res != null && registry.isNPC(res.getHitEntity())) {
+                    NPC hit = registry.getNPC(res.getHitEntity());
+                    if (hit.hasTrait(ClickRedirectTrait.class)) {
+                        hit = hit.getTraitNullable(ClickRedirectTrait.class).getRedirectNPC();
+                    }
+                    callback.run(hit);
+                    return;
+                }
+            }
             List<NPC> search = location.getWorld().getNearbyEntities(location, range, range, range).stream()
-                    .map(e -> registry.getNPC(e)).filter(e -> e != null).collect(Collectors.toList());
-            Collections.sort(search, (o1, o2) -> Double.compare(o1.getEntity().getLocation().distanceSquared(location),
+                    .map(registry::getNPC).filter(Predicates.notNull()).collect(Collectors.toList());
+            search.sort((o1, o2) -> Double.compare(o1.getEntity().getLocation().distanceSquared(location),
                     o2.getEntity().getLocation().distanceSquared(location)));
             for (NPC test : search) {
                 if (test.hasTrait(ClickRedirectTrait.class)) {
@@ -2865,11 +2878,11 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "shop (edit|show|delete|copyfrom) (name)",
+            usage = "shop (edit|show|delete|copyfrom) (name) (new_name)",
             desc = "",
             modifiers = { "shop" },
             min = 1,
-            max = 3,
+            max = 4,
             permission = "citizens.npc.shop")
     @Requirements(selected = false, ownership = true)
     public void shop(CommandContext args, Player sender, NPC npc,
@@ -2882,7 +2895,7 @@ public class NPCCommands {
             return;
         }
         NPCShop shop = npc != null ? npc.getOrAddTrait(ShopTrait.class).getDefaultShop() : null;
-        if (args.argsLength() == 3) {
+        if (args.argsLength() >= 3) {
             shop = shops.getShop(args.getString(2));
         }
         if (shop == null)
@@ -2900,7 +2913,8 @@ public class NPCCommands {
         } else if (action.equalsIgnoreCase("copyfrom")) {
             if (!shop.canEdit(npc, sender) || !npc.getOrAddTrait(ShopTrait.class).getDefaultShop().canEdit(npc, sender))
                 throw new NoPermissionsException();
-            DataKey key = new MemoryDataKey();
+            String newName = args.argsLength() == 4 ? args.getString(3) : UUID.randomUUID().toString();
+            DataKey key = new MemoryDataKey().getRelative(newName);
             PersistenceLoader.save(shop, key);
             NPCShop copy = PersistenceLoader.load(NPCShop.class, key);
             npc.getOrAddTrait(ShopTrait.class).setDefaultShop(copy);
@@ -3704,6 +3718,16 @@ public class NPCCommands {
         @Override
         public String getEnumClassName() {
             return "org.bukkit.entity.Boat.Type";
+        }
+    }
+
+    private static boolean SUPPORT_RAYTRACE = false;
+
+    static {
+        try {
+            SUPPORT_RAYTRACE = World.class.getMethod("rayTraceEntities", Location.class, Vector.class,
+                    double.class) != null;
+        } catch (Exception e) {
         }
     }
 }

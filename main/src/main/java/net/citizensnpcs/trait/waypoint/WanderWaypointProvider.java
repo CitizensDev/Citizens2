@@ -52,9 +52,9 @@ public class WanderWaypointProvider implements WaypointProvider {
     private String worldguardRegion;
     private Object worldguardRegionCache;
     @Persist
-    private int xrange = DEFAULT_XRANGE;
+    private int xrange = 25;
     @Persist
-    private int yrange = DEFAULT_YRANGE;
+    private int yrange = 3;
 
     public void addRegionCentre(Location centre) {
         regionCentres.add(centre);
@@ -376,7 +376,4 @@ public class WanderWaypointProvider implements WaypointProvider {
             return val;
         }
     }
-
-    private static int DEFAULT_XRANGE = 25;
-    private static int DEFAULT_YRANGE = 3;
 }

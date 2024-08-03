@@ -94,7 +94,8 @@ public class Settings {
                 "general.debug-chunk-loads", false),
         DEBUG_FILE("Send Citizens debug output to a specific file", "general.debug-file", ""),
         DEBUG_MODE("Enable Citizens debugging", "general.debug-mode", false),
-        DEBUG_PATHFINDING("Debug pathfinding by showing fake target blocks", "general.debug-pathfinding", false),
+        DEBUG_PATHFINDING("Debug pathfinding by showing fake target blocks", "general.debug-pathfinding",
+                "npc.pathfinding.debug", false),
         DEFAULT_BLOCK_BREAKER_RADIUS(
                 "The default distance radius for block breaking, in blocks<br>The NPC will pathfind to be this far away from the target block if greater than 0",
                 "npc.defaults.block-breaker-radius", "npc.default.block-breaker-radius", -1),
@@ -128,7 +129,7 @@ public class Settings {
         DEFAULT_PATHFINDER_UPDATE_PATH_RATE("How often to repathfind when targeting a dynamic target such as an entity",
                 "npc.pathfinding.update-path-rate", "1s"),
         DEFAULT_PATHFINDING_RANGE(
-                "The default pathfinding range in blocks<br>Shouldn't be set too high to avoid lag - try pathfinding in sections instead",
+                "The default pathfinding range in blocks<br>Shouldn't be set too high to avoid lag - try pathfinding in shorter segments instead",
                 "npc.default.pathfinding.range", "npc.pathfinding.default-range-blocks", 75F),
         DEFAULT_RANDOM_LOOK_CLOSE("Default random look close enabled", "npc.default.look-close.random-look-enabled",
                 false),
@@ -138,11 +139,11 @@ public class Settings {
         DEFAULT_REALISTIC_LOOKING("Default to checking for line of sight when looking at players",
                 "npc.default.realistic-looking", "npc.default.look-close.realistic-looking", false),
         DEFAULT_SPAWN_NODAMAGE_DURATION(
-                "Default duration of no-damage-ticks on entity spawn, Minecraft default is 20 ticks",
-                "npc.default.spawn-nodamage-ticks", "npc.default.spawn-nodamage-duration", "1s"),
+                "Default duration of invincibility on entity spawn, Minecraft default is 20 ticks",
+                "npc.default.spawn-nodamage-duration", "npc.default.spawn-invincibility-duration", "1s"),
         DEFAULT_STATIONARY_DURATION(
                 "Default duration in the same location before the NPC considers itself stuck and failed pathfinding",
-                "npc.default.stationary-ticks", "npc.default.stationary-duration", -1),
+                "npc.default.stationary-duration", "npc.pathfinding.default-stationary-duration", -1),
         DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE(
                 "The distance in blocks where the NPC will switch to walking straight towards the target instead of pathfinding<br>Currently only for dynamic targets like entities",
                 "npc.pathfinding.straight-line-targeting-distance", 5),
@@ -171,7 +172,8 @@ public class Settings {
                 "npc.default.look-close.disable-while-navigating", true),
         DISABLE_MC_NAVIGATION_FALLBACK(
                 "Minecraft will pick a 'close-enough' location when pathfinding to a block if it can't find a direct path<br>Disabled by default",
-                "npc.pathfinding.disable-mc-fallback-navigation", true),
+                "npc.pathfinding.disable-mc-fallback-navigation",
+                "npc.pathfinding.minecraft.disable-fallback-navigation", true),
         DISABLE_TABLIST("Whether to remove NPCs from the tablist", "npc.tablist.disable", true),
         ENTITY_SPAWN_WAIT_DURATION(
                 "Entities are no longer spawned until the chunks are loaded from disk<br>Wait for chunk loading for one second by default, increase if your disk is slow",
@@ -204,9 +206,9 @@ public class Settings {
         MAX_TEXT_RANGE("The maximum range in blocks for chatting", "npc.chat.options.max-text-range", 500),
         MAXIMUM_ASTAR_ITERATIONS("The maximum number of blocks to check when pathfinding",
                 "npc.pathfinding.maximum-new-pathfinder-iterations", "npc.pathfinding.new-finder.maximum-iterations",
-                768),
-        MAXIMUM_VISITED_NODES("The maximum number of blocks to check when MINECRAFT pathfinding",
-                "npc.pathfinding.maximum-visited-nodes", "npc.pathfinding.maximum-visited-blocks", 1024),
+                1024),
+        MAXIMUM_VISITED_NODES("The maximum number of blocks to check", "npc.pathfinding.maximum-visited-blocks",
+                "npc.pathfinding.minecraft.max-visited-blocks", 1024),
         MESSAGE_COLOUR("general.color-scheme.message", "<green>"),
         NEW_PATHFINDER_CHECK_BOUNDING_BOXES(
                 "Whether to check bounding boxes when pathfinding such as between fences, inside doors, or other half-blocks",
@@ -229,21 +231,22 @@ public class Settings {
                 "Please wait for {minutes} minutes and {seconds_over} seconds."),
         NPC_COMMAND_ON_GLOBAL_COOLDOWN_MESSAGE("npc.commands.error-messages.on-global-cooldown",
                 "Please wait for {minutes} minutes and {seconds_over} seconds."),
-        NPC_COST("The default cost to create an NPC", "economy.npc.cost", 100D),
+        NPC_COST("The default cost to create an NPC", "economy.npc.cost", "npc.defaults.npc-cost", 100D),
         NPC_SKIN_FETCH_DEFAULT(
                 "Whether to try and look for the player skin for all new NPCs<br>If this is set to false and you create an NPC named Dinnerbone, the NPC will have the default (steve/alex/etc) skin rather than trying to fetch the Dinnerbone skin",
                 "npc.skins.try-fetch-default-skin", true),
         NPC_SKIN_RETRY_DELAY("How long before retrying skin requests (typically due to Mojang rate limiting)",
                 "npc.skins.retry-delay", "5s"),
         NPC_SKIN_ROTATION_UPDATE_DEGREES("npc.skins.rotation-update-degrees", 90f),
-        NPC_SKIN_USE_LATEST("npc.skins.use-latest-by-default", false),
-        NPC_SKIN_VIEW_DISTANCE("npc.skins.view-distance", 100D),
+        NPC_SKIN_USE_LATEST("Whether to fetch new skins from Minecraft every so often",
+                "npc.skins.use-latest-by-default", false),
+        NPC_SKIN_VIEW_DISTANCE("View distance in blocks", "npc.skins.view-distance", 100D),
         NPC_WATER_SPEED_MODIFIER("Movement speed percentage increase while in water",
                 "npc.movement.water-speed-modifier", 1.15F),
         PACKET_HOLOGRAMS("Use packet NPCs for name holograms (experimental)", "npc.use-packet-holograms", false),
         PACKET_UPDATE_DELAY("npc.packets.update-delay", 30),
         PATHFINDER_FALL_DISTANCE(
-                "The default allowed maximum fall distance when pathfinding, set to -1 to use the Minecraft value",
+                "The default allowed maximum fall distance when pathfinding, set to -1 to use the default value",
                 "npc.pathfinding.allowed-fall-distance", -1),
         PLACEHOLDER_SKIN_UPDATE_FREQUENCY("How often to update placeholders",
                 "npc.skins.placeholder-update-frequency-ticks", "npc.skins.placeholder-update-frequency", "5m"),
@@ -262,7 +265,7 @@ public class Settings {
         SERVER_OWNS_NPCS("Whether the server owns NPCs rather than individual players", "npc.server-ownership", false),
         SHOP_GLOBAL_VIEW_PERMISSION(
                 "The global view permission that players need to view any NPC shop<br>Defaults to empty (no permission required).",
-                "npc.shops.global-view-permission", ""),
+                "npc.shops.global-view-permission", "npc.defaults.shops.global-view-permission", ""),
         STORAGE_FILE("storage.file", "saves.yml"),
         TABLIST_REMOVE_PACKET_DELAY("How long to wait before sending the tablist remove packet",
                 "npc.tablist.remove-packet-delay", "1t"),
@@ -274,7 +277,7 @@ public class Settings {
         USE_NEW_PATHFINDER(
                 "Whether to use the Citizens pathfinder instead of the Minecraft pathfinder<br>Much more flexible, but may have different performance to Minecraft's pathfinder",
                 "npc.pathfinding.use-new-finder", false),
-        USE_SCOREBOARD_TEAMS("npc.scoreboard-teams.enable", true),
+        USE_SCOREBOARD_TEAMS("npc.scoreboard-teams.enable", "npc.defaults.enable-scoreboard-teams", true),
         WARN_ON_RELOAD("general.reload-warning-enabled", true),;
 
         private String comments;

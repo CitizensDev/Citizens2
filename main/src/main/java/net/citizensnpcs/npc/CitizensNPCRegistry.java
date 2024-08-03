@@ -1,7 +1,6 @@
 package net.citizensnpcs.npc;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -238,7 +237,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     @Override
     public Iterable<NPC> sorted() {
         List<NPC> vals = new ArrayList<>(npcs.valueCollection());
-        Collections.sort(vals, Comparator.comparing(NPC::getId));
+        vals.sort(Comparator.comparing(NPC::getId));
         return vals;
     }
 }

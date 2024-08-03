@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 
 /**
@@ -127,8 +128,8 @@ public class SkinPacketTracker {
                 if (!entity.getNPC().isSpawned())
                     return;
 
-                double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
-                updateNearbyViewers(viewDistance);
+                updateNearbyViewers(entity.getNPC().data().get(NPC.Metadata.TRACKING_RANGE,
+                        Setting.NPC_SKIN_VIEW_DISTANCE.asDouble()));
             }
         }.runTaskLater(CitizensAPI.getPlugin(), 15);
     }

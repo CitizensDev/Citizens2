@@ -385,7 +385,7 @@ public class Util {
         if (list.size() == 3) {
             return Color.fromRGB(list.get(0), list.get(1), list.get(2));
         } else if (list.size() == 4) {
-            return Color.fromARGB(list.get(0), list.get(1), list.get(2), list.get(3));
+            return Color.fromARGB(list.get(3), list.get(0), list.get(1), list.get(2));
         }
         throw new NumberFormatException();
     }

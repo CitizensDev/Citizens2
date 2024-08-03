@@ -63,7 +63,8 @@ public class SkinUpdateTracker {
         Location playerLoc = player.getLocation();
         Location skinLoc = entity.getLocation();
 
-        if (playerLoc.distance(skinLoc) > Setting.NPC_SKIN_VIEW_DISTANCE.asDouble())
+        if (playerLoc.distance(skinLoc) > skinnable.getNPC().data().get(NPC.Metadata.TRACKING_RANGE,
+                Setting.NPC_SKIN_VIEW_DISTANCE.asDouble()))
             return false;
 
         // see if the NPC is within the players field of view
@@ -260,7 +261,8 @@ public class SkinUpdateTracker {
         if (entity == null || !entity.isValid())
             return;
 
-        double viewDistance = Setting.NPC_SKIN_VIEW_DISTANCE.asDouble();
+        double viewDistance = skinnable.getNPC().data().get(NPC.Metadata.TRACKING_RANGE,
+                Setting.NPC_SKIN_VIEW_DISTANCE.asDouble());
         Location location = entity.getLocation();
         List<Player> players = entity.getWorld().getPlayers();
         for (Player player : players) {

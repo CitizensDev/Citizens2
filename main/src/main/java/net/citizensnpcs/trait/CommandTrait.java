@@ -2,7 +2,6 @@ package net.citizensnpcs.trait;
 
 import java.time.Duration;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -302,7 +301,7 @@ public class CommandTrait extends Trait {
                 }
                 int max = -1;
                 if (executionMode == ExecutionMode.SEQUENTIAL || executionMode == ExecutionMode.CYCLE) {
-                    Collections.sort(commandList, Comparator.comparing(o1 -> o1.id));
+                    commandList.sort(Comparator.comparing(o1 -> o1.id));
                     max = commandList.size() > 0 ? commandList.get(commandList.size() - 1).id : -1;
                 }
                 if (executionMode == ExecutionMode.LINEAR) {
@@ -784,7 +783,7 @@ public class CommandTrait extends Trait {
             String commandKey = command.getEncodedKey();
             if (!player.hasPermission("citizens.npc.command.ignoreerrors.cooldown")
                     && lastUsed.containsKey(commandKey)) {
-                long deadline = ((Number) lastUsed.get(commandKey)).longValue()
+                long deadline = lastUsed.get(commandKey).longValue()
                         + (command.cooldown != 0 ? command.cooldown : globalDelay);
                 if (currentTimeSec < deadline) {
                     long seconds = deadline - currentTimeSec;
@@ -796,7 +795,7 @@ public class CommandTrait extends Trait {
             }
             if (!player.hasPermission("citizens.npc.command.ignoreerrors.globalcooldown") && command.globalCooldown > 0
                     && trait.globalCooldowns.containsKey(commandKey)) {
-                long deadline = ((Number) trait.globalCooldowns.get(commandKey)).longValue() + command.globalCooldown;
+                long deadline = trait.globalCooldowns.get(commandKey).longValue() + command.globalCooldown;
                 if (currentTimeSec < deadline) {
                     long seconds = deadline - currentTimeSec;
                     trait.sendErrorMessage(player, CommandTraitError.ON_GLOBAL_COOLDOWN,

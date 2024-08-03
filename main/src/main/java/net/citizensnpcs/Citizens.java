@@ -91,7 +91,14 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private boolean enabled;
     private LocationLookup locationLookup;
     private final NMSHelper nmsHelper = new NMSHelper() {
-        private boolean SUPPORT_OWNER_PROFILE = true;
+        private boolean SUPPORT_OWNER_PROFILE = false;
+        {
+            try {
+                SkullMeta.class.getMethod("getOwnerProfile");
+                SUPPORT_OWNER_PROFILE = true;
+            } catch (Exception e) {
+            }
+        }
 
         @Override
         public OfflinePlayer getPlayer(BlockCommandSender sender) {
@@ -115,14 +122,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             GameProfile profile = NMS.getProfile(meta);
             if (profile == null) {
                 if (SUPPORT_OWNER_PROFILE) {
-                    try {
-                        profile = new GameProfile(meta.getOwnerProfile().getUniqueId(),
-                                meta.getOwnerProfile().getName());
-                    } catch (Exception e) {
-                        SUPPORT_OWNER_PROFILE = false;
-                    }
-                }
-                if (profile == null) {
+                    profile = new GameProfile(meta.getOwnerProfile().getUniqueId(), meta.getOwnerProfile().getName());
+                } else {
                     profile = new GameProfile(UUID.randomUUID(), null);
                 }
             }

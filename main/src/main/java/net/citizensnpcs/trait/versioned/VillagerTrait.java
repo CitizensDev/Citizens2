@@ -5,8 +5,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 
-import com.google.common.base.Joiner;
-
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Flag;
@@ -93,7 +91,7 @@ public class VillagerTrait extends Trait {
         if (args.hasValueFlag("profession")) {
             if (profession == null)
                 throw new CommandException(Messages.INVALID_PROFESSION, args.getFlag("profession"),
-                        Joiner.on(',').join(VillagerProfessionEnum.values()));
+                        Util.listValuesPretty(VillagerProfessionEnum.values()));
             npc.getOrAddTrait(VillagerProfession.class).setProfession(profession);
             output += " " + Messaging.tr(Messages.PROFESSION_SET, npc.getName(), args.getFlag("profession"));
         }
