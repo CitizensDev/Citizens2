@@ -36,7 +36,7 @@ import org.bukkit.craftbukkit.v1_21_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_21_R1.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftInventoryAnvil;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftInventoryView;
+import org.bukkit.craftbukkit.v1_21_R1.inventory.view.CraftAnvilView;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -1202,7 +1202,7 @@ public class NMSImpl implements NMSBridge {
         ServerPlayer handle = (ServerPlayer) getHandle(player);
         final AnvilMenu container = new AnvilMenu(handle.nextContainerCounter(), handle.getInventory(),
                 ContainerLevelAccess.create(handle.level(), new BlockPos(0, 0, 0))) {
-            private CraftInventoryView bukkitEntity;
+            private CraftAnvilView bukkitEntity;
 
             @Override
             protected void clearContainer(net.minecraft.world.entity.player.Player entityhuman, Container iinventory) {
@@ -1215,12 +1215,10 @@ public class NMSImpl implements NMSBridge {
             }
 
             @Override
-            public CraftInventoryView getBukkitView() {
+            public CraftAnvilView getBukkitView() {
                 if (this.bukkitEntity == null) {
-                    this.bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(),
-                            new CitizensInventoryAnvil(this.access.getLocation(), this.inputSlots, this.resultSlots,
-                                    this, anvil),
-                            this);
+                    this.bukkitEntity = new CraftAnvilView(this.player.getBukkitEntity(), new CitizensInventoryAnvil(
+                            this.access.getLocation(), this.inputSlots, this.resultSlots, this, anvil), this);
                 }
                 return this.bukkitEntity;
             }
@@ -1927,7 +1925,7 @@ public class NMSImpl implements NMSBridge {
 
         public CitizensInventoryAnvil(Location location, Container inventory, Container resultInventory,
                 AnvilMenu container, Inventory wrapped) {
-            super(location, inventory, resultInventory, container);
+            super(location, inventory, resultInventory);
             this.wrapped = wrapped;
         }
 
