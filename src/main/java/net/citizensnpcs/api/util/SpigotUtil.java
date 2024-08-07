@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
@@ -146,7 +147,7 @@ public class SpigotUtil {
             raw = defaultNamespace + ":" + raw.toLowerCase(Locale.ROOT);
         } else {
             String[] parts = raw.split(":");
-            raw = parts[0] + parts[1].toLowerCase(Locale.ROOT);
+            raw = parts[0] + ":" + parts[1].toLowerCase(Locale.ROOT);
         }
         return NamespacedKey.fromString(raw);
     }
@@ -207,6 +208,11 @@ public class SpigotUtil {
         return BUKKIT_VERSION;
     }
 
+    public static boolean isKeyed(Class<?> clazz) {
+        return SUPPORTS_KEYED && Keyed.class.isAssignableFrom(clazz)
+                && Bukkit.getRegistry((Class<? extends Keyed>) clazz) != null;
+    }
+
     public static boolean isUsing1_13API() {
         if (using1_13API == null) {
             try {
@@ -259,9 +265,18 @@ public class SpigotUtil {
     }
 
     private static int[] BUKKIT_VERSION = null;
-    private static Pattern DAY_MATCHER = Pattern.compile("(\\d+d)");
+    private static final Pattern DAY_MATCHER = Pattern.compile("(\\d+d)");
     private static String MINECRAFT_PACKAGE;
-    private static Pattern NUMBER_MATCHER = Pattern.compile("(\\d+)");
+    private static final Pattern NUMBER_MATCHER = Pattern.compile("(\\d+)");
     private static boolean SUPPORT_WORLD_HEIGHT = true;
+    private static boolean SUPPORTS_KEYED;
     private static Boolean using1_13API;
+
+    static {
+        try {
+            Class.forName("org.bukkit.Keyed");
+            SUPPORTS_KEYED = true;
+        } catch (ClassNotFoundException e) {
+        }
+    }
 }

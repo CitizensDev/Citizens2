@@ -364,8 +364,7 @@ public class PersistenceLoader {
     private static Object deserialiseValue(PersistField field, DataKey root) {
         Class<?> type = field.field.getType().isEnum() ? field.field.getType() : getGenericType(field.field);
         if (field.delegate == null) {
-            if (SUPPORTS_KEYED && Keyed.class.isAssignableFrom(type)
-                    && Bukkit.getRegistry((Class<? extends Keyed>) type) != null) {
+            if (SpigotUtil.isKeyed(type)) {
                 Class<? extends Keyed> clazz = (Class<? extends Keyed>) type;
                 Object obj = root.getRaw("");
                 if (obj instanceof String) {
@@ -631,7 +630,7 @@ public class PersistenceLoader {
         }
         if (field.delegate != null) {
             ((Persister<Object>) field.delegate).save(value, root);
-        } else if (SUPPORTS_KEYED && Keyed.class.isAssignableFrom(field.getType())) {
+        } else if (SpigotUtil.isKeyed(field.getType())) {
             NamespacedKey nskey = ((Keyed) value).getKey();
             root.setRaw("", nskey.getNamespace() + ":" + nskey.getKey());
         } else if (value instanceof Enum) {

@@ -177,9 +177,7 @@ public class CommandManager implements TabCompleter {
                     val = entry.getValue().validator.validate(context, sender,
                             methodArgs.length > 2 && methodArgs[2] instanceof NPC ? (NPC) methodArgs[2] : null,
                             val.toString());
-                } else if (SUPPORTS_KEYED && Keyed.class.isAssignableFrom(desiredType)
-                        && Bukkit.getRegistry((Class<? extends Keyed>) desiredType) != null
-                        && SpigotUtil.getKey(val.toString()) != null) {
+                } else if (SpigotUtil.isKeyed(desiredType) && SpigotUtil.getKey(val.toString()) != null) {
                     val = Bukkit.getRegistry((Class<? extends Keyed>) desiredType)
                             .get(SpigotUtil.getKey(val.toString()));
                 } else if (desiredType == Material.class) {
