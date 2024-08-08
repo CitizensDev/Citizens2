@@ -108,6 +108,7 @@ public class EquipmentEditor extends Editor {
         EQUIPPER_GUIS.put(EntityType.ENDERMAN, EndermanEquipperGUI.class);
         EQUIPPERS.put(EntityType.SHEEP, new SheepEquipper());
         EQUIPPERS.put(EntityType.HORSE, new HorseEquipper());
+        EQUIPPERS.put(EntityType.WOLF, new WolfEquipper());
         for (EntityType type : Util.optionalEntitySet("ZOMBIE_HORSE", "LLAMA", "TRADER_LLAMA", "DONKEY", "MULE",
                 "SKELETON_HORSE", "CAMEL")) {
             EQUIPPERS.put(type, new HorseEquipper());
