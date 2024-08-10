@@ -23,7 +23,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.inventory.TradeSelectEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
@@ -930,7 +929,7 @@ public class ShopTrait extends Trait {
         private int selectedTrade = -1;
         private final NPCShop shop;
         private final Map<Integer, NPCShopItem> trades;
-        private final InventoryView view;
+        private final Object view;
 
         public NPCTraderShopViewer(NPCShop shop, Player player) {
             this.shop = shop;

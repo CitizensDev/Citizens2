@@ -8,6 +8,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.util.NMS;
 
 @TraitName("pausepathfinding")
 public class PausePathfindingTrait extends Trait {
@@ -37,8 +38,10 @@ public class PausePathfindingTrait extends Trait {
         }
         npc.getNavigator().cancelNavigation();
         npc.getNavigator().setPaused(true);
-        unpauseTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                () -> npc.getNavigator().setPaused(false), pauseTicks <= 0 ? 20 : pauseTicks);
+        unpauseTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            NMS.setPitch(npc.getEntity(), 0);
+            npc.getNavigator().setPaused(false);
+        }, pauseTicks <= 0 ? 20 : pauseTicks);
     }
 
     @Override
