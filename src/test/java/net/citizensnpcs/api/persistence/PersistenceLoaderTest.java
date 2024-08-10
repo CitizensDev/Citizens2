@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.entity.Cat;
 import org.bukkit.entity.Horse;
 import org.junit.Before;
 import org.junit.Test;
@@ -289,11 +288,6 @@ public class PersistenceLoaderTest {
     public static class InferenceTest {
         @Persist
         public Map<String, Integer> map = new ConcurrentHashMap<>();
-    }
-
-    public static class KeyedTest {
-        @Persist
-        public Cat.Type type = Cat.Type.TABBY;
     }
 
     public static class ListTest {

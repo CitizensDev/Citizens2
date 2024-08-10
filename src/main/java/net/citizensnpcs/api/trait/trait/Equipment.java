@@ -26,7 +26,7 @@ import net.citizensnpcs.api.util.SpigotUtil;
  */
 @TraitName("equipment")
 public class Equipment extends Trait {
-    private final ItemStack[] equipment = new ItemStack[6];
+    private final ItemStack[] equipment = new ItemStack[7];
 
     public Equipment() {
         super("equipment");
@@ -53,8 +53,8 @@ public class Equipment extends Trait {
     public ItemStack get(int slot) {
         if (npc.getEntity() instanceof Enderman && slot != 0) {
             throw new IllegalArgumentException("Slot must be 0 for enderman");
-        } else if (slot < 0 || slot > 5) {
-            throw new IllegalArgumentException("Slot must be between 0 and 5");
+        } else if (slot < 0 || slot > 6) {
+            throw new IllegalArgumentException("Slot must be between 0 and 6");
         }
         return equipment[slot];
     }
@@ -81,6 +81,7 @@ public class Equipment extends Trait {
         map.put(EquipmentSlot.LEGGINGS, equipment[3]);
         map.put(EquipmentSlot.BOOTS, equipment[4]);
         map.put(EquipmentSlot.OFF_HAND, equipment[5]);
+        map.put(EquipmentSlot.BODY, equipment[6]);
         return map;
     }
 
@@ -109,6 +110,9 @@ public class Equipment extends Trait {
         }
         if (key.keyExists("offhand")) {
             equipment[5] = ItemStorage.loadItemStack(key.getRelative("offhand"));
+        }
+        if (key.keyExists("body")) {
+            equipment[6] = ItemStorage.loadItemStack(key.getRelative("body"));
         }
     }
 
@@ -141,9 +145,11 @@ public class Equipment extends Trait {
             equip.setChestplate(equipment[2]);
             equip.setLeggings(equipment[3]);
             equip.setBoots(equipment[4]);
-            try {
+            if (SUPPORT_OFFHAND) {
                 equip.setItemInOffHand(equipment[5]);
-            } catch (NoSuchMethodError e) {
+            }
+            if (SUPPORT_BODY) {
+                equip.setItem(org.bukkit.inventory.EquipmentSlot.BODY, equipment[6]);
             }
         }
         if (npc.getEntity() instanceof Player) {
@@ -172,11 +178,10 @@ public class Equipment extends Trait {
             equipment[3] = clone(equip.getLeggings());
             equipment[4] = clone(equip.getBoots());
             if (SUPPORT_OFFHAND) {
-                try {
-                    equipment[5] = clone(equip.getItemInOffHand());
-                } catch (NoSuchMethodError e) {
-                    SUPPORT_OFFHAND = false;
-                }
+                equipment[5] = clone(equip.getItemInOffHand());
+            }
+            if (SUPPORT_BODY) {
+                equipment[6] = clone(equip.getItem(org.bukkit.inventory.EquipmentSlot.BODY));
             }
         }
     }
@@ -189,6 +194,7 @@ public class Equipment extends Trait {
         saveOrRemove(key.getRelative("leggings"), equipment[3]);
         saveOrRemove(key.getRelative("boots"), equipment[4]);
         saveOrRemove(key.getRelative("offhand"), equipment[5]);
+        saveOrRemove(key.getRelative("body"), equipment[6]);
     }
 
     private void saveOrRemove(DataKey key, ItemStack item) {
@@ -253,15 +259,15 @@ public class Equipment extends Trait {
                     break;
                 case 5:
                     if (SUPPORT_OFFHAND) {
-                        try {
-                            equip.setItemInOffHand(item);
-                        } catch (NoSuchMethodError e) {
-                            SUPPORT_OFFHAND = false;
-                        }
+                        equip.setItemInOffHand(item);
                     }
                     break;
+                case 6:
+                    if (SUPPORT_BODY) {
+                        equip.setItem(org.bukkit.inventory.EquipmentSlot.BODY, item);
+                    }
                 default:
-                    throw new IllegalArgumentException("Slot must be between 0 and 5");
+                    throw new IllegalArgumentException("Slot must be between 0 and 6");
             }
         }
         if (npc.getEntity() instanceof Player) {
@@ -269,13 +275,8 @@ public class Equipment extends Trait {
         }
     }
 
-    @Override
-    public String toString() {
-        return "{hand=" + equipment[0] + ",helmet=" + equipment[1] + ",chestplate=" + equipment[2] + ",leggings="
-                + equipment[3] + ",boots=" + equipment[4] + ",offhand=" + equipment[5] + "}";
-    }
-
     public enum EquipmentSlot {
+        BODY(6),
         BOOTS(4),
         CHESTPLATE(2),
         HAND(0),
@@ -294,5 +295,19 @@ public class Equipment extends Trait {
         }
     }
 
+    private static boolean SUPPORT_BODY = false;
     private static boolean SUPPORT_OFFHAND = true;
+    static {
+        try {
+            EntityEquipment.class.getMethod("setItemInOffHand", ItemStack.class);
+        } catch (Exception e) {
+            SUPPORT_OFFHAND = false;
+        }
+        for (org.bukkit.inventory.EquipmentSlot value : org.bukkit.inventory.EquipmentSlot.values()) {
+            if (value.name().equals("BODY")) {
+                SUPPORT_BODY = true;
+                break;
+            }
+        }
+    }
 }
