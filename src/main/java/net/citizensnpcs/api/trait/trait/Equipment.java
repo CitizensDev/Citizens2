@@ -3,9 +3,11 @@ package net.citizensnpcs.api.trait.trait;
 import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -148,7 +150,8 @@ public class Equipment extends Trait {
             if (SUPPORT_OFFHAND) {
                 equip.setItemInOffHand(equipment[5]);
             }
-            if (SUPPORT_BODY) {
+            if (SUPPORT_BODY
+                    && (npc.getEntity().getType() == EntityType.WOLF || npc.getEntity() instanceof AbstractHorse)) {
                 equip.setItem(org.bukkit.inventory.EquipmentSlot.BODY, equipment[6]);
             }
         }
@@ -180,7 +183,8 @@ public class Equipment extends Trait {
             if (SUPPORT_OFFHAND) {
                 equipment[5] = clone(equip.getItemInOffHand());
             }
-            if (SUPPORT_BODY) {
+            if (SUPPORT_BODY
+                    && (npc.getEntity().getType() == EntityType.WOLF || npc.getEntity() instanceof AbstractHorse)) {
                 equipment[6] = clone(equip.getItem(org.bukkit.inventory.EquipmentSlot.BODY));
             }
         }
