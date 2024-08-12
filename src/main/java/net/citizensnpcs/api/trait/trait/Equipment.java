@@ -49,7 +49,7 @@ public class Equipment extends Trait {
      * Get an NPC's equipment from the given slot.
      *
      * @param slot
-     *            Slot where the armor is located (0-5)
+     *            Slot where the armor is located (0-6)
      * @return ItemStack from the given armor slot
      */
     public ItemStack get(int slot) {
@@ -271,6 +271,7 @@ public class Equipment extends Trait {
                             || npc.getEntity() instanceof AbstractHorse)) {
                         equip.setItem(org.bukkit.inventory.EquipmentSlot.BODY, item);
                     }
+                    break;
                 default:
                     throw new IllegalArgumentException("Slot must be between 0 and 6");
             }
