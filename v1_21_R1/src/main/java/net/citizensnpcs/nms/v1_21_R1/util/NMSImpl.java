@@ -1200,29 +1200,8 @@ public class NMSImpl implements NMSBridge {
     @Override
     public InventoryView openAnvilInventory(Player player, Inventory anvil, String title) {
         ServerPlayer handle = (ServerPlayer) getHandle(player);
-        final AnvilMenu container = new AnvilMenu(handle.nextContainerCounter(), handle.getInventory(),
-                ContainerLevelAccess.create(handle.level(), new BlockPos(0, 0, 0))) {
-            private CraftAnvilView bukkitEntity;
-
-            @Override
-            protected void clearContainer(net.minecraft.world.entity.player.Player entityhuman, Container iinventory) {
-            }
-
-            @Override
-            public void createResult() {
-                super.createResult();
-                cost.set(0);
-            }
-
-            @Override
-            public CraftAnvilView getBukkitView() {
-                if (this.bukkitEntity == null) {
-                    this.bukkitEntity = new CraftAnvilView(this.player.getBukkitEntity(), new CitizensInventoryAnvil(
-                            this.access.getLocation(), this.inputSlots, this.resultSlots, this, anvil), this);
-                }
-                return this.bukkitEntity;
-            }
-        };
+        CitizensAnvilMenu container = new CitizensAnvilMenu(handle.nextContainerCounter(), handle.getInventory(),
+                ContainerLevelAccess.create(handle.level(), new BlockPos(0, 0, 0)), anvil);
         container.setTitle(MutableComponent.create(new LiteralContents(title == null ? "" : title)));
         container.getBukkitView().setItem(0, anvil.getItem(0));
         container.getBukkitView().setItem(1, anvil.getItem(1));
@@ -1917,6 +1896,36 @@ public class NMSImpl implements NMSBridge {
             NAVIGATION_PATHFINDER.invoke(navigation, NAVIGATION_CREATE_PATHFINDER.invoke(navigation, mc));
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+    }
+
+    private final class CitizensAnvilMenu extends AnvilMenu {
+        private final Inventory anvil;
+        private CraftAnvilView bukkitEntity;
+
+        private CitizensAnvilMenu(int i, net.minecraft.world.entity.player.Inventory playerinventory,
+                ContainerLevelAccess containeraccess, Inventory anvil) {
+            super(i, playerinventory, containeraccess);
+            this.anvil = anvil;
+        }
+
+        @Override
+        protected void clearContainer(net.minecraft.world.entity.player.Player entityhuman, Container iinventory) {
+        }
+
+        @Override
+        public void createResult() {
+            super.createResult();
+            cost.set(0);
+        }
+
+        @Override
+        public CraftAnvilView getBukkitView() {
+            if (this.bukkitEntity == null) {
+                this.bukkitEntity = new CraftAnvilView(this.player.getBukkitEntity(), new CitizensInventoryAnvil(
+                        this.access.getLocation(), this.inputSlots, this.resultSlots, this, anvil), this);
+            }
+            return this.bukkitEntity;
         }
     }
 

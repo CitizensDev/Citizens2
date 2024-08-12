@@ -829,6 +829,7 @@ public class HologramTrait extends Trait {
             if (!Placeholders.containsPlaceholders(raw)) {
                 hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, Messaging.stripColor(raw).length() > 0);
             }
+            Messaging.idebug(() -> "set hologram name to " + text + " for " + npc);
         }
     }
 
@@ -890,6 +891,8 @@ public class HologramTrait extends Trait {
             if (hologram == null)
                 return;
             hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
+            Messaging.idebug(
+                    () -> "set hologram name to " + Messaging.minecraftComponentFromRawMessage(text) + " for " + npc);
         }
     }
 

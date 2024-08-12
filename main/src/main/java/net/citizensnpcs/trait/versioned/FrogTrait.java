@@ -34,7 +34,7 @@ public class FrogTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Frog && variant != null) {
+        if (variant != null && npc.getEntity() instanceof Frog) {
             Frog frog = (Frog) npc.getEntity();
             frog.setVariant(variant);
         }
