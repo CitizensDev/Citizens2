@@ -58,7 +58,7 @@ public class Equipment extends Trait {
         } else if (slot < 0 || slot > 6) {
             throw new IllegalArgumentException("Slot must be between 0 and 6");
         }
-        return equipment[slot];
+        return equipment[slot] == null ? null : equipment[slot].clone();
     }
 
     /**
