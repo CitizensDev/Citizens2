@@ -378,7 +378,7 @@ public class ItemStorage {
         }
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
-            serialiseMeta(key.getRelative("meta"), meta);
+            serialiseMeta(key.getRelative("meta"), item.getType(), meta);
         } else {
             key.removeKey("meta");
         }
@@ -392,13 +392,15 @@ public class ItemStorage {
         }
     }
 
-    private static void serialiseMeta(DataKey key, ItemMeta meta) {
+    private static void serialiseMeta(DataKey key, Material material, ItemMeta meta) {
         key.removeKey("encoded-meta");
+        ByteArrayOutputStream defOut = new ByteArrayOutputStream();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        BukkitObjectOutputStream bukkitOut;
         try {
-            bukkitOut = new BukkitObjectOutputStream(out);
+            BukkitObjectOutputStream bukkitOut = new BukkitObjectOutputStream(out);
             bukkitOut.writeObject(meta);
+            bukkitOut = new BukkitObjectOutputStream(defOut);
+            bukkitOut.writeObject(Bukkit.getItemFactory().getItemMeta(material));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
@@ -407,7 +409,10 @@ public class ItemStorage {
             e.printStackTrace();
             return;
         }
+        String defEncoded = BaseEncoding.base64().encode(defOut.toByteArray());
         String encoded = BaseEncoding.base64().encode(out.toByteArray());
+        if (defEncoded.equals(encoded))
+            return;
         key.setString("encoded-meta", encoded);
         Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
         return;

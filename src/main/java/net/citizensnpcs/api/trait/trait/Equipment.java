@@ -267,7 +267,8 @@ public class Equipment extends Trait {
                     }
                     break;
                 case 6:
-                    if (SUPPORT_BODY) {
+                    if (SUPPORT_BODY && (npc.getEntity().getType() == EntityType.WOLF
+                            || npc.getEntity() instanceof AbstractHorse)) {
                         equip.setItem(org.bukkit.inventory.EquipmentSlot.BODY, item);
                     }
                 default:
