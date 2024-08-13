@@ -245,6 +245,10 @@ public class ShopTrait extends Trait {
                     if (display != null && evt.isShiftClick() && evt.getCursorNonNull().getType() == Material.AIR
                             && display.display != null) {
                         copying = display.clone();
+                        if (!evt.isRightClick()) {
+                            shopPage.setItem(idx, null);
+                            slot.setItemStack(null);
+                        }
                         evt.setCursor(display.getDisplayItem(null));
                         evt.setCancelled(true);
                         return;
@@ -253,6 +257,7 @@ public class ShopTrait extends Trait {
                         if (copying != null && evt.getCursorNonNull().getType() != Material.AIR
                                 && evt.getCursorNonNull().equals(copying.getDisplayItem(null))) {
                             shopPage.setItem(idx, copying);
+                            slot.setItemStack(copying.getDisplayItem(null));
                             copying = null;
                             return;
                         }
@@ -392,7 +397,16 @@ public class ShopTrait extends Trait {
         @Override
         public NPCShopItem clone() {
             try {
-                return (NPCShopItem) super.clone();
+                NPCShopItem dup = (NPCShopItem) super.clone();
+                dup.cost.clear();
+                for (NPCShopAction src : cost) {
+                    dup.cost.add(src.clone());
+                }
+                dup.cost.clear();
+                for (NPCShopAction src : result) {
+                    dup.result.add(src.clone());
+                }
+                return dup;
             } catch (CloneNotSupportedException e) {
                 throw new Error(e);
             }
