@@ -42,11 +42,23 @@ public class Placeholders implements Listener {
         }
     }
 
+    private static boolean checkPlaceholdersEnabled() {
+        if (PLACEHOLDERAPI_ENABLED == null) {
+            try {
+                Class.forName("me.clip.placeholderapi.PlaceholderAPI");
+                PLACEHOLDERAPI_ENABLED = true;
+            } catch (ClassNotFoundException e) {
+                PLACEHOLDERAPI_ENABLED = false;
+            }
+        }
+        return PLACEHOLDERAPI_ENABLED;
+    }
+
     public static boolean containsPlaceholders(String text) {
         try {
-            if (PLACEHOLDERAPI_ENABLED && PlaceholderAPI.containsPlaceholders(text))
+            if (checkPlaceholdersEnabled() && PlaceholderAPI.containsPlaceholders(text))
                 return true;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return PLAYER_PLACEHOLDER_MATCHER.matcher(text).find();
@@ -201,19 +213,19 @@ public class Placeholders implements Listener {
     }
 
     private static String setPlaceholderAPIPlaceholders(String text, OfflinePlayer player) {
-        if (!PLACEHOLDERAPI_ENABLED)
+        if (!checkPlaceholdersEnabled())
             return text;
         try {
             return PlaceholderAPI.setPlaceholders(player, text);
         } catch (Throwable t) {
-            PLACEHOLDERAPI_ENABLED = false;
+            t.printStackTrace();
             return text;
         }
     }
 
     private static final Pattern PLACEHOLDER_MATCHER = Pattern.compile(
             "<(id|npc|owner|random_player|random_world_player|random_npc|random_npc_id|nearest_npc_id|nearest_player|world)>");
-    private static boolean PLACEHOLDERAPI_ENABLED = true;
+    private static Boolean PLACEHOLDERAPI_ENABLED = null;
     private static final List<PlaceholderProvider> PLACEHOLDERS = Lists.newArrayList();
     private static final Pattern PLAYER_PLACEHOLDER_MATCHER = Pattern.compile(
             "(<player>|<p>|%player%|<player_uuid>|<random_player>|<random_world_player>|<random_npc>|<random_npc_id>|<nearest_npc_id>|<nearest_player>|<world>)");
