@@ -240,7 +240,7 @@ public class Settings {
         NPC_SKIN_ROTATION_UPDATE_DEGREES("npc.skins.rotation-update-degrees", 90f),
         NPC_SKIN_USE_LATEST("Whether to fetch new skins from Minecraft every so often",
                 "npc.skins.use-latest-by-default", false),
-        NPC_SKIN_VIEW_DISTANCE("View distance in blocks", "npc.skins.view-distance", 100D),
+        NPC_SKIN_VIEW_DISTANCE("View distance in blocks", "npc.skins.view-distance", 100),
         NPC_WATER_SPEED_MODIFIER("Movement speed percentage increase while in water",
                 "npc.movement.water-speed-modifier", 1.15F),
         PACKET_HOLOGRAMS("Use packet NPCs for name holograms (experimental)", "npc.use-packet-holograms", false),
