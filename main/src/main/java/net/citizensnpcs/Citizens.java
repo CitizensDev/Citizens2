@@ -327,6 +327,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             lib.loadLibrary(Library.builder().groupId("org{}joml").artifactId("joml").version("1.10.5").build());
         }
         PhTreeHelper.enablePooling(false);
+        PhTreeHelper.MAX_OBJECT_POOL_SIZE = 0;
     }
 
     @Override
