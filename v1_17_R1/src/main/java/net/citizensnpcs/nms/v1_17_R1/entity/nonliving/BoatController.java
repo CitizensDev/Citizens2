@@ -49,12 +49,10 @@ public class BoatController extends MobEntityController {
 
     public static class EntityBoatNPC extends Boat implements NPCHolder {
         private double aC;
-
         private float aD;
         private Status aE;
         private Status aF;
         private double ap;
-        private double ar;
         private final CitizensNPC npc;
 
         public EntityBoatNPC(EntityType<? extends Boat> types, Level level) {
@@ -174,7 +172,18 @@ public class BoatController extends MobEntityController {
         @Override
         public void tick() {
             if (npc != null) {
+                baseTick();
+                if (getControllingPassenger() instanceof NPCHolder
+                        && ((NPCHolder) getControllingPassenger()).getNPC().getNavigator().isNavigating()) {
+                    setDeltaMovement(getControllingPassenger().getDeltaMovement().multiply(20, 1, 20));
+                }
                 npc.update();
+                if (getHurtTime() > 0) {
+                    setHurtTime(getHurtTime() - 1);
+                }
+                if (getDamage() > 0.0F) {
+                    setDamage(getDamage() - 1.0F);
+                }
                 this.aF = this.aE;
                 aE = getStatus();
                 double d1 = isNoGravity() ? 0.0D : -0.04D;
@@ -205,16 +214,13 @@ public class BoatController extends MobEntityController {
                     }
                     Vec3 vec3d = getDeltaMovement();
                     setDeltaMovement(vec3d.x * this.ap, vec3d.y + d1, vec3d.z * this.ap);
-                    this.ar *= this.ap;
                     if (d2 > 0.0D) {
                         Vec3 vec3d1 = getDeltaMovement();
                         setDeltaMovement(vec3d1.x, vec3d1.y + d2 * 0.0615D, vec3d1.z);
                     }
                 }
                 move(MoverType.SELF, getDeltaMovement());
-                if (isVehicle()) {
-                    setYRot((float) (getYRot() + this.ar));
-                }
+                checkInsideBlocks();
             } else {
                 super.tick();
             }
