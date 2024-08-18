@@ -4,8 +4,12 @@ import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import org.bukkit.configuration.ConfigurationSection;
 
 import com.google.common.collect.Lists;
 
@@ -152,14 +156,26 @@ public class Settings {
                 "npc.pathfinding.default-stuck-action", "none"),
         DEFAULT_TALK_CLOSE("npc.default.talk-close.enabled", false),
         DEFAULT_TALK_CLOSE_RANGE("Default talk close range in blocks", "npc.default.talk-close.range", 5),
-        DEFAULT_TEXT("npc.default.talk-close.text.0", "Hi, I'm <npc>!") {
+        DEFAULT_TEXT("npc.default.talk-close.text", "Hi, I'm <npc>!") {
+            @SuppressWarnings("unchecked")
             @Override
             public void loadFromKey(DataKey root) {
                 List<String> list = new ArrayList<>();
-                for (DataKey key : root.getRelative("npc.default.talk-close.text").getSubKeys()) {
-                    list.add(key.getString(""));
+                Object raw = root.getRaw(path);
+                if (raw instanceof ConfigurationSection || raw instanceof Map) {
+                    for (DataKey key : root.getRelative(path).getSubKeys()) {
+                        list.add(key.getString(""));
+                    }
+                } else if (raw instanceof Collection) {
+                    list.addAll((Collection<? extends String>) raw);
                 }
                 value = list;
+            }
+
+            @Override
+            protected void setAtKey(DataKey root) {
+                root.setRaw(path, Lists.newArrayList(value));
+                setComments(root);
             }
         },
         DEFAULT_TEXT_DELAY_MAX("Default maximum delay when talking to players",
@@ -283,7 +299,7 @@ public class Settings {
         private String comments;
         private Duration duration;
         private String migrate;
-        private final String path;
+        protected final String path;
         protected Object value;
 
         Setting(String path, Object value) {
@@ -367,14 +383,14 @@ public class Settings {
             setComments(root);
         }
 
-        private void setComments(DataKey root) {
-            if (SUPPORTS_SET_COMMENTS && root.keyExists(path)) {
-                try {
-                    ((MemoryDataKey) root).getSection("").setComments(path,
-                            comments == null ? null : Arrays.asList(comments.split("<br>")));
-                } catch (Throwable t) {
-                    SUPPORTS_SET_COMMENTS = false;
-                }
+        protected void setComments(DataKey root) {
+            if (!SUPPORTS_SET_COMMENTS || !root.keyExists(path))
+                return;
+            try {
+                ((MemoryDataKey) root).getSection("").setComments(path,
+                        comments == null ? null : Arrays.asList(comments.split("<br>")));
+            } catch (Throwable t) {
+                SUPPORTS_SET_COMMENTS = false;
             }
         }
     }
