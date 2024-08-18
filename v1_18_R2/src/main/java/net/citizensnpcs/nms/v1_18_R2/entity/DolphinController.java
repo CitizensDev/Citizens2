@@ -52,9 +52,7 @@ public class DolphinController extends MobEntityController {
 
     public static class EntityDolphinNPC extends Dolphin implements NPCHolder {
         private boolean inProtectedTick;
-
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
 
         public EntityDolphinNPC(EntityType<? extends Dolphin> types, Level level) {
@@ -219,9 +217,13 @@ public class DolphinController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 if (npc.useMinecraftAI() && this.moveControl != this.oldMoveController) {
                     this.moveControl = this.oldMoveController;
+                    this.getAttribute(Attributes.MOVEMENT_SPEED)
+                            .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() * 10);
                 }
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
                     this.moveControl = new MoveControl(this);
+                    this.getAttribute(Attributes.MOVEMENT_SPEED)
+                            .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() / 10);
                 }
                 npc.update();
             }

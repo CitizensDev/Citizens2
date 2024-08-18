@@ -5,8 +5,6 @@ import org.bukkit.craftbukkit.v1_21_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftAxolotl;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftEntity;
 
-import com.mojang.serialization.Dynamic;
-
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_21_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_21_R1.util.NMSBoundingBox;
@@ -24,7 +22,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
@@ -59,7 +56,6 @@ public class AxolotlController extends MobEntityController {
 
     public static class EntityAxolotlNPC extends Axolotl implements NPCHolder {
         private final CitizensNPC npc;
-
         private MoveControl oldMoveController;
 
         public EntityAxolotlNPC(EntityType<? extends Axolotl> types, Level level) {
@@ -178,13 +174,6 @@ public class AxolotlController extends MobEntityController {
         }
 
         @Override
-        protected Brain<?> makeBrain(Dynamic<?> dynamic) {
-            if (npc == null || npc.useMinecraftAI())
-                return super.makeBrain(dynamic);
-            return brainProvider().makeBrain(dynamic);
-        }
-
-        @Override
         public InteractionResult mobInteract(Player entityhuman, InteractionHand enumhand) {
             if (npc == null || !npc.isProtected())
                 return super.mobInteract(entityhuman, enumhand);
@@ -224,9 +213,13 @@ public class AxolotlController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 if (npc.useMinecraftAI() && this.moveControl != this.oldMoveController) {
                     this.moveControl = this.oldMoveController;
+                    this.getAttribute(Attributes.MOVEMENT_SPEED)
+                            .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() * 10);
                 }
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
                     this.moveControl = new MoveControl(this);
+                    this.getAttribute(Attributes.MOVEMENT_SPEED)
+                            .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() / 10);
                 }
                 npc.update();
             }

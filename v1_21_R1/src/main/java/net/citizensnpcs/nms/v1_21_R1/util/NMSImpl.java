@@ -2316,9 +2316,9 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static boolean moveFish(NPC npc, Mob handle, Vec3 vec3d) {
-        if (npc == null)
+        if (npc == null || npc.useMinecraftAI())
             return false;
-        if (!npc.useMinecraftAI() && handle.isInWater() && !npc.getNavigator().isNavigating()) {
+        if (handle.isInWater() && !npc.getNavigator().isNavigating()) {
             handle.moveRelative(handle instanceof Dolphin || handle instanceof Axolotl ? handle.getSpeed()
                     : handle instanceof Turtle ? 0.1F : 0.01F, vec3d);
             handle.move(MoverType.SELF, handle.getDeltaMovement());

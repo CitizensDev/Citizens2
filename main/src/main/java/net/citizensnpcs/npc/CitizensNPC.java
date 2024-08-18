@@ -487,7 +487,8 @@ public class CitizensNPC extends AbstractNPC {
                     NMS.activate(getEntity());
                 }
             }
-            boolean shouldSwim = data().get(NPC.Metadata.SWIM, SwimmingExaminer.isWaterMob(getEntity()))
+            boolean shouldSwim = data().get(NPC.Metadata.SWIM,
+                    !useMinecraftAI() && SwimmingExaminer.isWaterMob(getEntity()))
                     && MinecraftBlockExaminer.isLiquid(loc.getBlock().getType());
             if (navigator.isNavigating()) {
                 if (shouldSwim) {
@@ -610,7 +611,7 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
-    private static SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
+    private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
     private static boolean SUPPORT_GLOWING = false;
     private static boolean SUPPORT_NODAMAGE_TICKS = false;
     private static boolean SUPPORT_PICKUP_ITEMS = false;

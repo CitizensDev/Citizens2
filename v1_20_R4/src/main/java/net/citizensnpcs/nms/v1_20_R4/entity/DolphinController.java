@@ -208,9 +208,13 @@ public class DolphinController extends MobEntityController {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 if (npc.useMinecraftAI() && this.moveControl != this.oldMoveController) {
                     this.moveControl = this.oldMoveController;
+                    this.getAttribute(Attributes.MOVEMENT_SPEED)
+                            .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() * 10);
                 }
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
                     this.moveControl = new MoveControl(this);
+                    this.getAttribute(Attributes.MOVEMENT_SPEED)
+                            .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() / 10);
                 }
                 npc.update();
             }
