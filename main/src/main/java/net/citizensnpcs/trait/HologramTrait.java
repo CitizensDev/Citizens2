@@ -622,7 +622,7 @@ public class HologramTrait extends Trait {
     }
 
     public static class InteractionVehicleRenderer extends SingleEntityHologramRenderer {
-        private Vector3d lastOffset;
+        private volatile Vector3d lastOffset;
 
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
@@ -746,7 +746,7 @@ public class HologramTrait extends Trait {
      */
     // TODO: make view range part of hologram renderer?
     public abstract static class SingleEntityHologramRenderer implements HologramRenderer {
-        protected NPC hologram;
+        protected volatile NPC hologram;
         private NPCRegistry registry;
         private int spawnWaitTicks;
         protected String text;
