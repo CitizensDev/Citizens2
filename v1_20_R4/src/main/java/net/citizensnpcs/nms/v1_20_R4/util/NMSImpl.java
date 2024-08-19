@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_20_R4.util;
 
 import java.lang.invoke.MethodHandle;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -58,8 +59,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
+import com.mojang.authlib.HttpAuthenticationService;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
+import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
+import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
+import com.mojang.util.UndashedUuid;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -556,7 +562,15 @@ public class NMSImpl implements NMSBridge {
         if (Bukkit.isPrimaryThread())
             throw new IllegalStateException("NMS.fillProfileProperties cannot be invoked from the main thread.");
         MinecraftSessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().getSessionService();
-        return sessionService.fetchProfile(profile.getId(), requireSecure).profile();
+        if (!(sessionService instanceof YggdrasilMinecraftSessionService))
+            return sessionService.fetchProfile(profile.getId(), requireSecure).profile();
+        URL url = HttpAuthenticationService
+                .constantURL(getAuthServerBaseUrl() + "profile/" + UndashedUuid.toString(profile.getId()));
+        url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
+        MinecraftClient client = (MinecraftClient) MINECRAFT_CLIENT.invoke(sessionService);
+        MinecraftProfilePropertiesResponse response = client.get(url, MinecraftProfilePropertiesResponse.class);
+
+        return response.toProfile();
     }
 
     public String getAuthServerBaseUrl() {
@@ -2558,6 +2572,7 @@ public class NMSImpl implements NMSBridge {
             PlayerAdvancements.class);
 
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "cj");
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
@@ -2607,6 +2622,8 @@ public class NMSImpl implements NMSBridge {
     private static EntityDataAccessor<Float> INTERACTION_WIDTH = null;
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(LivingEntity.class, "bn");
     private static final MethodHandle LOOK_CONTROL_SETTER = NMS.getFirstSetter(Mob.class, LookControl.class);
+    private static final MethodHandle MINECRAFT_CLIENT = NMS.getFirstGetter(YggdrasilMinecraftSessionService.class,
+            MinecraftClient.class);
     private static final MethodHandle MOVE_CONTROLLER_OPERATION = NMS.getSetter(MoveControl.class, "k");
     private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS
             .getFirstMethodHandleWithReturnType(PathNavigation.class, true, PathFinder.class, int.class);
