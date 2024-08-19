@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
@@ -42,6 +43,7 @@ import org.bukkit.util.Vector;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
 
 import net.citizensnpcs.Settings.Setting;
@@ -124,15 +126,11 @@ public class NMS {
             Consumer<NPCKnockbackEvent> cb) {
         if (npc.getEntity() == null)
             return;
-        if (SUPPORT_KNOCKBACK_RESISTANCE && npc.getEntity() instanceof LivingEntity) {
-            try {
-                AttributeInstance attribute = ((LivingEntity) npc.getEntity())
-                        .getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
-                if (attribute != null) {
-                    strength *= 1 - attribute.getValue();
-                }
-            } catch (Throwable t) {
-                SUPPORT_KNOCKBACK_RESISTANCE = false;
+        if (SUPPORT_KNOCKBACK_RESISTANCE && npc.getEntity() instanceof Attributable) {
+            AttributeInstance attribute = ((Attributable) npc.getEntity())
+                    .getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
+            if (attribute != null) {
+                strength *= 1 - attribute.getValue();
             }
         }
         Vector vector = npc.getEntity().getVelocity();
@@ -177,6 +175,10 @@ public class NMS {
     }
 
     public static void findProfilesByNames(String[] names, ProfileLookupCallback cb) {
+        if (SUPPORTS_FIND_PROFILES_BY_NAME) {
+            BRIDGE.getGameProfileRepository().findProfilesByNames(names, cb);
+            return;
+        }
         if (FIND_PROFILES_BY_NAMES == null) {
             try {
                 Class<?> agentClass = Class.forName("com.mojang.authlib.Agent");
@@ -689,10 +691,6 @@ public class NMS {
         return BRIDGE.isValid(entity);
     }
 
-    public static void positionInteractionText(Player player, Entity interaction, Entity mount, double height) {
-        BRIDGE.positionInteractionText(player, interaction, mount, height);
-    }
-
     public static void load(CommandManager commands) {
         BRIDGE.load(commands);
     }
@@ -743,6 +741,10 @@ public class NMS {
 
     public static Runnable playerTicker(Player entity) {
         return BRIDGE.playerTicker(entity instanceof NPCHolder ? ((NPCHolder) entity).getNPC() : null, entity);
+    }
+
+    public static void positionInteractionText(Player player, Entity interaction, Entity mount, double height) {
+        BRIDGE.positionInteractionText(player, interaction, mount, height);
     }
 
     public static void registerEntityClass(Class<?> clazz) {
@@ -995,6 +997,7 @@ public class NMS {
     private static Field MODIFIERS_FIELD;
     private static boolean PAPER_KNOCKBACK_EVENT_EXISTS = true;
     private static boolean SUPPORT_KNOCKBACK_RESISTANCE = true;
+    private static boolean SUPPORTS_FIND_PROFILES_BY_NAME = true;
     private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_BOOLEAN;
@@ -1010,6 +1013,16 @@ public class NMS {
             Class.forName("com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent");
         } catch (ClassNotFoundException e) {
             PAPER_KNOCKBACK_EVENT_EXISTS = false;
+        }
+        try {
+            Class.forName("org.bukkit.attribute.Attribute").getField("GENERIC_KNOCKBACK_RESISTANCE");
+        } catch (Exception e) {
+            SUPPORT_KNOCKBACK_RESISTANCE = false;
+        }
+        try {
+            GameProfileRepository.class.getMethod("findProfilesByNames", String[].class, ProfileLookupCallback.class);
+        } catch (Exception e) {
+            SUPPORTS_FIND_PROFILES_BY_NAME = false;
         }
         giveReflectiveAccess(Field.class, NMS.class);
         MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers", false);

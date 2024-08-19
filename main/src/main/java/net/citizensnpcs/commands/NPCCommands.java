@@ -474,7 +474,9 @@ public class NPCCommands {
             cfg.blockBreaker((block, itemstack) -> {
                 org.bukkit.inventory.Inventory inventory = ((InventoryHolder) npc.getEntity()).getInventory();
                 Location location = npc.getEntity().getLocation();
-                for (ItemStack drop : block.getDrops(itemstack)) {
+                Collection<ItemStack> drops = block.getDrops(itemstack);
+                block.setType(Material.AIR);
+                for (ItemStack drop : drops) {
                     for (ItemStack unadded : inventory.addItem(drop).values()) {
                         location.getWorld().dropItemNaturally(npc.getEntity().getLocation(), unadded);
                     }
@@ -889,9 +891,6 @@ public class NPCCommands {
         if (args.hasFlag('c')) {
             spawnLoc = Util.getCenterLocation(spawnLoc.getBlock());
         }
-        if (!args.hasFlag('u')) {
-            npc.spawn(spawnLoc, SpawnReason.CREATE);
-        }
         if (traits != null) {
             Iterable<String> parts = Splitter.on(',').trimResults().split(traits);
             StringBuilder builder = new StringBuilder();
@@ -930,6 +929,9 @@ public class NPCCommands {
                 builder.delete(builder.length() - 2, builder.length());
             }
             msg += " with templates " + builder.toString();
+        }
+        if (!args.hasFlag('u')) {
+            npc.spawn(spawnLoc, SpawnReason.CREATE);
         }
         selector.select(sender, npc);
         history.add(sender, new CreateNPCHistoryItem(npc));
