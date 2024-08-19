@@ -6,7 +6,6 @@ import org.bukkit.craftbukkit.v1_21_R1.entity.CraftCod;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftEntity;
 
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.nms.v1_21_R1.util.EntityMoveControl;
 import net.citizensnpcs.nms.v1_21_R1.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_21_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_21_R1.util.NMSImpl;
@@ -130,7 +129,7 @@ public class CodController extends MobEntityController {
                     this.moveControl = this.oldMoveController;
                 }
                 if (!npc.useMinecraftAI() && this.moveControl == this.oldMoveController) {
-                    this.moveControl = new EntityMoveControl(this);
+                    this.moveControl = new MoveControl(this);
                 }
             }
             super.customServerAiStep();
