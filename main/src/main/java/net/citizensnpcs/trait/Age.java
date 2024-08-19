@@ -17,7 +17,7 @@ import net.citizensnpcs.util.Messages;
  * @see Ageable
  */
 @TraitName("age")
-public class Age extends Trait implements Toggleable {
+public class Age extends Trait {
     @Persist
     private int age = 0;
     private Ageable ageable;
@@ -82,7 +82,6 @@ public class Age extends Trait implements Toggleable {
     /**
      * Toggles the age lock variable and returns whether the age is currently locked.
      */
-    @Override
     public boolean toggle() {
         locked = !locked;
         if (isAgeable()) {

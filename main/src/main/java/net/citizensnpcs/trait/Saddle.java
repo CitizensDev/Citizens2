@@ -14,7 +14,7 @@ import net.citizensnpcs.util.Util;
  * @see Pig#hasSaddle()
  */
 @TraitName("saddle")
-public class Saddle extends Trait implements Toggleable {
+public class Saddle extends Trait {
     @Persist("")
     private boolean saddle;
     private boolean steerable;
@@ -33,7 +33,6 @@ public class Saddle extends Trait implements Toggleable {
         }
     }
 
-    @Override
     public boolean toggle() {
         saddle = !saddle;
         if (steerable) {

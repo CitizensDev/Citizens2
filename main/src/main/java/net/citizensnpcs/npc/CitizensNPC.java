@@ -581,7 +581,7 @@ public class CitizensNPC extends AbstractNPC {
             data().setPersistent(NPC.Metadata.FLYABLE, true);
         }
         if (!hasTrait(Gravity.class)) {
-            getOrAddTrait(Gravity.class).setEnabled(true);
+            getOrAddTrait(Gravity.class).setHasGravity(false);
         }
     }
 

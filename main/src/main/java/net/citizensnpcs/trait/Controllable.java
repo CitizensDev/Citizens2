@@ -32,7 +32,7 @@ import net.citizensnpcs.util.Util;
  * e.g. arrow keys.
  */
 @TraitName("controllable")
-public class Controllable extends Trait implements Toggleable {
+public class Controllable extends Trait {
     private MovementController controller;
     @Persist
     private BuiltInControls controls;
@@ -152,7 +152,6 @@ public class Controllable extends Trait implements Toggleable {
         this.ownerRequired = ownerRequired;
     }
 
-    @Override
     public boolean toggle() {
         enabled = !enabled;
         if (!enabled && NMS.getPassengers(npc.getEntity()).size() > 0) {

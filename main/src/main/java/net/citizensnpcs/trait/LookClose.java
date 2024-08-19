@@ -36,7 +36,7 @@ import net.citizensnpcs.util.Util;
  *
  */
 @TraitName("lookclose")
-public class LookClose extends Trait implements Toggleable {
+public class LookClose extends Trait {
     @Persist("disablewhilenavigating")
     private boolean disableWhileNavigating = Setting.DISABLE_LOOKCLOSE_WHILE_NAVIGATING.asBoolean();
     @Persist("enabled")
@@ -376,7 +376,6 @@ public class LookClose extends Trait implements Toggleable {
         return targetNPCs;
     }
 
-    @Override
     public boolean toggle() {
         enabled = !enabled;
         return enabled;
