@@ -890,8 +890,6 @@ public class HologramTrait extends Trait {
             if (hologram == null)
                 return;
             hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
-            Messaging.idebug(
-                    () -> "set hologram name to " + Messaging.minecraftComponentFromRawMessage(text) + " for " + npc);
         }
     }
 
