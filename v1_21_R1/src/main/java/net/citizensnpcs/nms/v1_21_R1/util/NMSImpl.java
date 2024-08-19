@@ -544,7 +544,7 @@ public class NMSImpl implements NMSBridge {
         if (!(sessionService instanceof YggdrasilMinecraftSessionService))
             return sessionService.fetchProfile(profile.getId(), requireSecure).profile();
         URL url = HttpAuthenticationService
-                .constantURL(getAuthServerBaseUrl() + "/" + UndashedUuid.toString(profile.getId()));
+                .constantURL(getAuthServerBaseUrl() + UndashedUuid.toString(profile.getId()));
         url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
         MinecraftClient client = (MinecraftClient) MINECRAFT_CLIENT.invoke(sessionService);
         MinecraftProfilePropertiesResponse response = client.get(url, MinecraftProfilePropertiesResponse.class);
