@@ -622,7 +622,7 @@ public class HologramTrait extends Trait {
     }
 
     public static class InteractionVehicleRenderer extends SingleEntityHologramRenderer {
-        private volatile Vector3d lastOffset;
+        private Vector3d lastOffset;
 
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
@@ -632,7 +632,7 @@ public class HologramTrait extends Trait {
 
         @Override
         public void onSeenByPlayer(NPC npc, Player player) {
-            if (lastOffset == null)
+            if (lastOffset == null || hologram == null)
                 return;
             NMS.positionInteractionText(player, hologram.getEntity(), npc.getEntity(), lastOffset.y);
         }
@@ -746,11 +746,11 @@ public class HologramTrait extends Trait {
      */
     // TODO: make view range part of hologram renderer?
     public abstract static class SingleEntityHologramRenderer implements HologramRenderer {
-        protected volatile NPC hologram;
+        protected NPC hologram;
         private NPCRegistry registry;
         private int spawnWaitTicks;
         protected String text;
-        protected int viewRange = -1;
+        private int viewRange = -1;
 
         protected abstract NPC createNPC(Entity base, String text, Vector3d offset);
 
