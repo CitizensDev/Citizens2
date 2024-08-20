@@ -339,7 +339,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         // Spawning the entity will create an entity tracker that is not controlled by Citizens. This is fixed later in
         // spawning; to avoid sending packets twice, try to hide the entity initially
-        EntityPacketTracker tracker = NMS.getPacketTracker(getEntity());
+        EntityPacketTracker tracker = NMS.getPacketTrackerDirectly(getEntity());
         if (tracker != null) {
             for (Player player : Bukkit.getServer().getOnlinePlayers()) {
                 tracker.unlink(player);

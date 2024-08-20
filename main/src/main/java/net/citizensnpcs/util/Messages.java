@@ -63,12 +63,10 @@ public class Messages {
     public static final String COMMAND_COST_SET = "citizens.commands.npc.command.cost-set";
     public static final String COMMAND_DESCRIBE_TEMPLATE = "citizens.commands.npc.command.describe-format";
     public static final String COMMAND_EXPERIENCE_COST_SET = "citizens.commands.npc.command.experience-cost-set";
-    public static final String COMMAND_HELP_HEADER = "citizens.commands.help.header";
     public static final String COMMAND_HIDE_ERROR_MESSAGES_SET = "citizens.commands.npc.command.hide-error-messages-set";
     public static final String COMMAND_HIDE_ERROR_MESSAGES_UNSET = "citizens.commands.npc.command.hide-error-messages-unset";
     public static final String COMMAND_INVALID_MOBTYPE = "citizens.commands.invalid-mobtype";
     public static final String COMMAND_LEFT_HAND_HEADER = "citizens.commands.npc.command.left-hand-header";
-    public static final String COMMAND_MISSING = "citizens.commands.help.command-missing";
     public static final String COMMAND_MISSING_COST = "citizens.commands.npc.command.cost-missing";
     public static final String COMMAND_NO_COMMANDS_ADDED = "citizens.commands.npc.command.none-added";
     public static final String COMMAND_PAGE_MISSING = "citizens.commands.page-missing";
@@ -96,8 +94,6 @@ public class Messages {
     public static final String DEFAULT_POSE_SET = "citizens.commands.npc.pose.default-pose-set";
     public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
     public static final String DESELECTED_NPC = "citizens.commands.npc.deselect";
-    public static final String ELDER_SET = "citizens.commands.npc.guardian.elder-set";
-    public static final String ELDER_UNSET = "citizens.commands.npc.guardian.elder-unset";
     public static final String ENDERCRYSTAL_NOT_SHOWING_BOTTOM = "citizens.commands.npc.endercrystal.not-showing-bottom";
     public static final String ENDERCRYSTAL_SHOWING_BOTTOM = "citizens.commands.npc.endercrystal.showing-bottom";
     public static final String ENDERMAN_ANGRY_SET = "citizens.commands.npc.enderman.angry-set";
@@ -126,7 +122,6 @@ public class Messages {
     public static final String FLYABLE_SET = "citizens.commands.npc.flyable.set";
     public static final String FLYABLE_UNSET = "citizens.commands.npc.flyable.unset";
     public static final String FOLLOW_MARGIN_SET = "citizens.commands.npc.follow.margin-set";
-    public static final String FOLLOW_PLAYER_NOT_INGAME = "citizens.commands.npc.follow.player-not-ingame";
     public static final String FOLLOW_SET = "citizens.commands.npc.follow.set";
     public static final String FOLLOW_UNSET = "citizens.commands.npc.follow.unset";
     public static final String FORCEFIELD_DESCRIBE = "citizens.commands.npc.forcefield.describe";
@@ -151,10 +146,10 @@ public class Messages {
     public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
     public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";
     public static final String GAMEMODE_SET = "citizens.commands.npc.gamemode.set";
-    public static final String GLOWING_COLOR_PLAYER_ONLY = "citizens.commands.npc.glowing.player-only";
     public static final String GLOWING_COLOR_SET = "citizens.commands.npc.glowing.color-set";
     public static final String GLOWING_SET = "citizens.commands.npc.glowing.set";
     public static final String GLOWING_UNSET = "citizens.commands.npc.glowing.unset";
+    public static final String GOAT_HORNS_SET = "citizens.commands.npc.goat.horns-set";
     public static final String GRAVITY_DISABLED = "citizens.commands.npc.gravity.disabled";
     public static final String GRAVITY_ENABLED = "citizens.commands.npc.gravity.enabled";
     public static final String GUIDED_WAYPOINT_EDITOR_ADDED_AVAILABLE = "citizens.editors.waypoints.guided.added-available";
@@ -169,7 +164,6 @@ public class Messages {
     public static final String HOLOGRAM_CLEARED = "citizens.commands.npc.hologram.cleared";
     public static final String HOLOGRAM_DEFAULT_BACKGROUND_COLOR_SET = "citizens.commands.npc.hologram.default-background-color-set";
     public static final String HOLOGRAM_DESCRIBE_HEADER = "citizens.commands.npc.hologram.text-describe-header";
-    public static final String HOLOGRAM_DIRECTION_SET = "citizens.commands.npc.hologram.direction-set";
     public static final String HOLOGRAM_INVALID_LINE = "citizens.commands.npc.hologram.invalid-text-id";
     public static final String HOLOGRAM_LINE_ADD = "citizens.commands.npc.hologram.line-add";
     public static final String HOLOGRAM_LINE_HEIGHT_SET = "citizens.commands.npc.hologram.line-height-set";
@@ -214,7 +208,6 @@ public class Messages {
     public static final String INVALID_SCRIPT_FILE = "citizens.commands.npc.script.invalid-file";
     public static final String INVALID_SHEEP_COLOR = "citizens.commands.npc.sheep.invalid-color";
     public static final String INVALID_SHULKER_COLOR = "citizens.commands.npc.shulker.invalid-color";
-    public static final String INVALID_SKELETON_TYPE = "citizens.commands.npc.skeletontype.invalid-type";
     public static final String INVALID_SKIN_FILE = "citizens.commands.npc.skin.invalid-file";
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
@@ -246,10 +239,8 @@ public class Messages {
     public static final String LINKEDBODY_UNSET = "citizens.commands.npc.lookclose.linkedbody-unset";
     public static final String LLAMA_COLOR_SET = "citizens.commands.npc.llama.color-set";
     public static final String LLAMA_STRENGTH_SET = "citizens.commands.npc.llama.strength-set";
-    public static final String LOAD_NAME_NOT_FOUND = "citizens.notifications.npc-name-not-found";
     public static final String LOAD_TASK_NOT_SCHEDULED = "citizens.load-task-error";
     public static final String LOADED_ECONOMY = "citizens.economy.loaded";
-    public static final String LOCALE_NOTIFICATION = "citizens.notifications.locale";
     public static final String LOOKCLOSE_DISABLE_WHEN_NAVIGATING = "citizens.commands.npc.lookclose.disable-when-navigating";
     public static final String LOOKCLOSE_ENABLE_WHEN_NAVIGATING = "citizens.commands.npc.lookclose.enable-when-navigating";
     public static final String LOOKCLOSE_PERPLAYER_SET = "citizens.commands.npc.lookclose.perplayer-set";
@@ -272,7 +263,6 @@ public class Messages {
     public static final String METADATA_UNSET = "citizens.commands.npc.metadata.unset";
     public static final String METRICS_ERROR_NOTIFICATION = "citizens.notifications.metrics-load-error";
     public static final String MINECART_SET = "citizens.commands.npc.minecart.set";
-    public static final String MINIMUM_COST_REQUIRED = "citizens.economy.minimum-cost-required";
     public static final String MIRROR_NAME_SET = "citizens.commands.npc.mirror.namemirror-set";
     public static final String MIRROR_NAME_UNSET = "citizens.commands.npc.mirror.namemirror-unset";
     public static final String MIRROR_SET = "citizens.commands.npc.mirror.set";
@@ -285,7 +275,6 @@ public class Messages {
     public static final String MOVETO_TELEPORTED = "citizens.commands.npc.moveto.teleported";
     public static final String MUSHROOM_COW_VARIANT_SET = "citizens.commands.npc.mushroomcow.variant-set";
     public static final String NAMEPLATE_VISIBILITY_SET = "citizens.commands.npc.nameplate.set";
-    public static final String NO_HORSE_MODIFIERS_GIVEN = "citizens.commands.npc.horse.no-modifiers";
     public static final String NO_NPC_WITH_ID_FOUND = "citizens.commands.npc.spawn.missing-npc-id";
     public static final String NO_STORED_SPAWN_LOCATION = "citizens.commands.npc.spawn.no-location";
     public static final String NOT_USING_MINECRAFT_AI = "citizens.commands.npc.ai.stopped";
@@ -301,7 +290,6 @@ public class Messages {
     public static final String NPC_CREATE_INVALID_MOBTYPE = "citizens.commands.npc.create.invalid-mobtype";
     public static final String NPC_CREATE_MISSING_MOBTYPE = "citizens.commands.npc.create.mobtype-missing";
     public static final String NPC_DESPAWNED = "citizens.commands.npc.despawn.despawned";
-    public static final String NPC_GOAT_HORNS_SET = "citizens.commands.npc.goat.horns-set";
     public static final String NPC_NAME_TOO_LONG = "citizens.commands.npc.create.npc-name-too-long";
     public static final String NPC_NOT_CONTROLLABLE = "citizens.commands.npc.controllable.not-controllable";
     public static final String NPC_NOT_DAMAGEABLE = "citizens.commands.npc.hurt.not-damageable";
@@ -334,8 +322,6 @@ public class Messages {
     public static final String PARROT_VARIANT_SET = "citizens.commands.npc.parrot.variant-set";
     public static final String PASSIVE_SET = "citizens.commands.npc.passive.set";
     public static final String PASSIVE_UNSET = "citizens.commands.npc.passive.unset";
-    public static final String PATHFINDER_OPEN_DOORS_DISABLED = "citizens.commands.waypoints.opendoors.disabled";
-    public static final String PATHFINDER_OPEN_DOORS_ENABLED = "citizens.commands.waypoints.opendoors.enabled";
     public static final String PATHFINDING_OPTIONS_ATTACK_RANGE_SET = "citizens.commands.npc.pathopt.attack-range-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_SET = "citizens.commands.npc.pathopt.avoid-water-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_UNSET = "citizens.commands.npc.pathopt.avoid-water-unset";
@@ -380,8 +366,6 @@ public class Messages {
     public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
     public static final String RESPAWN_DELAY_DESCRIBE = "citizens.commands.npc.respawn.describe";
     public static final String RESPAWN_DELAY_SET = "citizens.commands.npc.respawn.delay-set";
-    public static final String SADDLED_SET = "citizens.editors.equipment.saddled-set";
-    public static final String SADDLED_STOPPED = "citizens.editors.equipment.saddled-stopped";
     public static final String SELECTION_PROMPT = "citizens.editors.selection.start-prompt";
     public static final String SELECTION_PROMPT_INVALID_CHOICE = "citizens.conversations.selection.invalid-choice";
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";
@@ -395,7 +379,6 @@ public class Messages {
     public static final String SITTING_UNSET = "citizens.commands.npc.sitting.unset";
     public static final String SIZE_DESCRIPTION = "citizens.commands.npc.size.describe";
     public static final String SIZE_SET = "citizens.commands.npc.size.set";
-    public static final String SKELETON_TYPE_SET = "citizens.commands.npc.skeletontype.set";
     public static final String SKIN_CLEARED = "citizens.commands.npc.skin.cleared";
     public static final String SKIN_EXPORTED = "citizens.commands.npc.skin.exported";
     public static final String SKIN_LATEST_SET = "citizens.commands.npc.skin.latest-set";
@@ -431,8 +414,6 @@ public class Messages {
     public static final String TEMPLATE_NAMESPACE_EXISTS = "citizens.commands.template.namespace-already-exists";
     public static final String TEMPLATE_PICKER = "citizens.commands.template.qualified-template-required";
     public static final String TEMPLATE_SCAFFOLD_CREATED = "citizens.commands.template.scaffold.created";
-    public static final String TEXT_EDITOR_ADD_PROMPT = "citizens.editors.text.add-prompt";
-    public static final String TEXT_EDITOR_ADDED_ENTRY = "citizens.editors.text.added-entry";
     public static final String TEXT_EDITOR_BEGIN = "citizens.editors.text.begin";
     public static final String TEXT_EDITOR_DELAY_SET = "citizens.editors.text.delay-set";
     public static final String TEXT_EDITOR_END = "citizens.editors.text.end";
@@ -445,7 +426,7 @@ public class Messages {
     public static final String TEXT_EDITOR_RANGE_SET = "citizens.editors.text.range-set";
     public static final String TEXT_EDITOR_SET_ITEM = "citizens.editors.text.talk-item-set";
     public static final String TEXT_EDITOR_START_PROMPT = "citizens.editors.text.start-prompt";
-    public static final String TO_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.to-not-found";
+    public static final String TPTO_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.to-not-found";
     public static final String TOGGLED_USING_HELD_ITEM = "citizens.commands.npc.useitem.held-item-toggled";
     public static final String TOGGLED_USING_OFFHAND_ITEM = "citizens.commands.npc.useitem.offhand-item-toggled";
     public static final String TPTO_SUCCESS = "citizens.commands.npc.tpto.success";
@@ -455,7 +436,7 @@ public class Messages {
     public static final String TRAITS_ADDED = "citizens.commands.trait.added";
     public static final String TRAITS_FAILED_TO_ADD = "citizens.commands.trait.failed-to-add";
     public static final String TRAITS_REMOVED = "citizens.commands.trait.removed";
-    public static final String TRIED_TO_MOUNT_NPC_ON_ITSELF = "citizens.commands.npc.mount.mount-on-itself";
+    public static final String MOUNT_TRIED_TO_MOUNT_NPC_ON_ITSELF = "citizens.commands.npc.mount.mount-on-itself";
     public static final String TROPICALFISH_BODY_COLOR_SET = "citizens.commands.npc.tropicalfish.body-color-set";
     public static final String TROPICALFISH_PATTERN_COLOR_SET = "citizens.commands.npc.tropicalfish.pattern-color-set";
     public static final String TROPICALFISH_PATTERN_SET = "citizens.commands.npc.tropicalfish.pattern-set";

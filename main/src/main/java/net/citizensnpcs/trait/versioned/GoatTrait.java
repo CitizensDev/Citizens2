@@ -84,7 +84,7 @@ public class GoatTrait extends Trait {
         }
         trait.setLeftHorn(left);
         trait.setRightHorn(right);
-        String output = Messaging.tr(Messages.NPC_GOAT_HORNS_SET, npc.getName(), left, right);
+        String output = Messaging.tr(Messages.GOAT_HORNS_SET, npc.getName(), left, right);
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
         }

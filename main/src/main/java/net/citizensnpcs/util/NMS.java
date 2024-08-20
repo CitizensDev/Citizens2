@@ -545,13 +545,17 @@ public class NMS {
         if (entity == null)
             return null;
         if (entity instanceof NPCHolder) {
-            NPC npc = ((NPCHolder) entity).getNPC();
-            if (npc.hasTrait(PacketNPC.class))
-                return npc.getOrAddTrait(PacketNPC.class).getPacketTracker();
+            PacketNPC trait = ((NPCHolder) entity).getNPC().getTraitNullable(PacketNPC.class);
+            if (trait != null)
+                return trait.getPacketTracker();
         }
         if (!entity.isValid())
             return null;
         return BRIDGE.getPacketTracker(entity);
+    }
+
+    public static EntityPacketTracker getPacketTrackerDirectly(Entity entity) {
+        return entity == null ? null : BRIDGE.getPacketTracker(entity);
     }
 
     public static List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {

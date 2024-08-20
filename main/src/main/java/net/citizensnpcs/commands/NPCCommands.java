@@ -43,7 +43,6 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -109,7 +108,6 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.OldEnumCompat.VillagerProfessionEnum;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
@@ -168,7 +166,6 @@ import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SlimeSize;
-import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.shop.StoredShops;
@@ -1950,7 +1947,7 @@ public class NPCCommands {
                 throw new CommandException(Messaging.tr(Messages.MOUNT_NPC_MUST_BE_SPAWNED, onnpc));
 
             if (mount.equals(npc))
-                throw new CommandException(Messages.TRIED_TO_MOUNT_NPC_ON_ITSELF);
+                throw new CommandException(Messages.MOUNT_TRIED_TO_MOUNT_NPC_ON_ITSELF);
 
             NMS.mount(mount.getEntity(), npc.getEntity());
             return;
@@ -2544,29 +2541,6 @@ public class NPCCommands {
         boolean value = explicit != null ? explicit : !npc.getOrAddTrait(Powered.class).isPowered();
         npc.getOrAddTrait(Powered.class).setPowered(value);
         Messaging.sendTr(sender, value ? Messages.POWERED_SET : Messages.POWERED_STOPPED);
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "profession|prof [profession]",
-            desc = "",
-            modifiers = { "profession", "prof" },
-            min = 2,
-            max = 2,
-            permission = "citizens.npc.profession")
-    @Requirements(selected = true, ownership = true)
-    public void profession(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Profession parsed)
-            throws CommandException {
-        EntityType type = npc.getOrAddTrait(MobType.class).getType();
-        if (type != EntityType.VILLAGER && !type.name().equals("ZOMBIE_VILLAGER"))
-            throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
-
-        if (parsed == null)
-            throw new CommandException(Messages.INVALID_PROFESSION, args.getString(1),
-                    Util.listValuesPretty(VillagerProfessionEnum.values()));
-
-        npc.getOrAddTrait(VillagerProfession.class).setProfession(parsed);
-        Messaging.sendTr(sender, Messages.PROFESSION_SET, npc.getName(), parsed);
     }
 
     @Command(
@@ -3513,7 +3487,7 @@ public class NPCCommands {
         if (from == null)
             throw new CommandException(Messages.FROM_ENTITY_NOT_FOUND);
         if (to == null)
-            throw new CommandException(Messages.TO_ENTITY_NOT_FOUND);
+            throw new CommandException(Messages.TPTO_ENTITY_NOT_FOUND);
         from.teleport(to);
         Messaging.sendTr(sender, Messages.TPTO_SUCCESS);
     }
