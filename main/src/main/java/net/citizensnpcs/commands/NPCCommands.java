@@ -3065,12 +3065,16 @@ public class NPCCommands {
                 throw new ServerCommandException();
             return;
         } else {
+            if (args.hasFlag('l')) {
+                trait.setShouldUpdateSkins(!trait.shouldUpdateSkins());
+                Messaging.sendTr(sender, Messages.SKIN_LATEST_SET, npc.getName(),
+                        skinName != null ? skinName : trait.getSkinName());
+                if (args.argsLength() != 2)
+                    return;
+            }
             if (args.argsLength() != 2) {
                 Messaging.send(sender, trait.getSkinName());
                 return;
-            }
-            if (args.hasFlag('l')) {
-                trait.setShouldUpdateSkins(true);
             }
             skinName = args.getString(1);
         }

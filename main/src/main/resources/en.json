@@ -513,6 +513,7 @@
   "citizens.commands.npc.size.set" : "[[{0}]]''s size set to [[{1}]].",
   "citizens.commands.npc.skeletontype.invalid-type" : "Invalid skeleton type. Try one of the following: [[{0}]].",
   "citizens.commands.npc.skeletontype.set" : "{0}''s skeleton type set to [[{1}]].",
+  "citizens.commands.npc.skin.latest-set" : "[[{0}]] set to use latest skins. Current skin name is [[{1}]]."
   "citizens.commands.npc.skin.cleared" : "[[{0}]]''s skin name was cleared.",
   "citizens.commands.npc.skin.description" : "Sets an NPC''s skin name. Use -l to set the skin to always update to the latest",
   "citizens.commands.npc.skin.error-setting-url" : "Error downloading skin texture from [[{0}]]. Are you sure the URL is valid?",
