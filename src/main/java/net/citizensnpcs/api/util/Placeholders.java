@@ -64,10 +64,6 @@ public class Placeholders implements Listener {
         return PLAYER_PLACEHOLDER_MATCHER.matcher(text).find();
     }
 
-    private static OfflinePlayer getPlayer(BlockCommandSender sender) {
-        return CitizensAPI.getNMSHelper().getPlayer(sender);
-    }
-
     private static String getWorldReplacement(Location location, String group, Entity excluding) {
         if (group.charAt(0) != '<') {
             group = '<' + group + '>';
@@ -138,8 +134,11 @@ public class Placeholders implements Listener {
     }
 
     private static String replace(String text, CommandSender sender, NPC npc, boolean name) {
-        text = replace(text, sender instanceof OfflinePlayer ? (OfflinePlayer) sender
-                : sender instanceof BlockCommandSender ? getPlayer((BlockCommandSender) sender) : null);
+        text = replace(text,
+                sender instanceof OfflinePlayer ? (OfflinePlayer) sender
+                        : sender instanceof BlockCommandSender
+                                ? CitizensAPI.getNMSHelper().getPlayer((BlockCommandSender) sender)
+                                : null);
         if (npc == null || text == null)
             return text;
         StringBuffer out = new StringBuffer();

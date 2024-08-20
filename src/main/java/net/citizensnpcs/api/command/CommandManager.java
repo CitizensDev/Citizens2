@@ -776,8 +776,10 @@ public class CommandManager implements TabCompleter {
 
             if (completions.length > 0)
                 return Arrays.asList(completions);
-
-            if (Enum.class.isAssignableFrom(paramType)) {
+            if (SpigotUtil.isKeyed(paramType)) {
+                return Bukkit.getRegistry((Class<? extends Keyed>) paramType).stream().map(Keyed::getKey)
+                        .map(Object::toString).collect(Collectors.toList());
+            } else if (Enum.class.isAssignableFrom(paramType)) {
                 Enum[] constants = (Enum[]) paramType.getEnumConstants();
                 return Lists.transform(Arrays.asList(constants), Enum::name);
             } else if (paramType == boolean.class || paramType == Boolean.class)
