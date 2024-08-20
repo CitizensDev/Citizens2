@@ -2921,6 +2921,11 @@ public class NPCCommands {
             NPCShop copy = PersistenceLoader.load(NPCShop.class, key);
             npc.getOrAddTrait(ShopTrait.class).setDefaultShop(copy);
         } else if (action.equalsIgnoreCase("show")) {
+            if (args.argsLength() == 4) {
+                sender = Bukkit.getPlayer(args.getString(3));
+                if (sender == null)
+                    throw new CommandException(Messages.SHOP_PLAYER_NOT_FOUND, args.getString(3));
+            }
             shop.display(sender);
         } else
             throw new CommandUsageException();

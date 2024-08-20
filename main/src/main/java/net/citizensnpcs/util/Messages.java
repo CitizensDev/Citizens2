@@ -356,7 +356,6 @@ public class Messages {
     public static final String PICKUP_ITEMS_UNSET = "citizens.commands.npc.pickupitems.unset";
     public static final String PIGLIN_DANCING_SET = "citizens.commands.npc.piglin.dancing-set";
     public static final String PIGLIN_DANCING_UNSET = "citizens.commands.npc.piglin.dancing-unset";
-    public static final String PLAYER_NOT_FOUND_FOR_SPAWN = "citizens.commands.npc.create.no-player-for-spawn";
     public static final String PLAYERFILTER_ALLOWLIST_SET = "citizens.commands.npc.playerfilter.allowlist-set";
     public static final String PLAYERFILTER_APPLYRANGE_SET = "citizens.commands.npc.playerfilter.applyrange-set";
     public static final String PLAYERFILTER_CLEARED = "citizens.commands.npc.playerfilter.cleared";
@@ -389,6 +388,7 @@ public class Messages {
     public static final String SHEARED_STOPPED = "citizens.editors.equipment.sheared-stopped";
     public static final String SHEEP_COLOR_SET = "citizens.commands.npc.sheep.color-set";
     public static final String SHOP_DELETED = "citizens.commands.npc.shop.deleted";
+    public static final String SHOP_PLAYER_NOT_FOUND = "citizens.commands.npc.shop.show-player-not-found";
     public static final String SHULKER_COLOR_SET = "citizens.commands.npc.shulker.color-set";
     public static final String SHULKER_PEEK_SET = "citizens.commands.npc.shulker.peek-set";
     public static final String SITTING_SET = "citizens.commands.npc.sitting.set";
