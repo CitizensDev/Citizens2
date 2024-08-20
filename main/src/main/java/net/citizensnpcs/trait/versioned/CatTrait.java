@@ -105,7 +105,15 @@ public class CatTrait extends Trait {
             permission = "citizens.npc.cat")
     @Requirements(selected = true, ownership = true, types = EntityType.CAT)
     public static void cat(CommandContext args, CommandSender sender, NPC npc, @Flag("ccolor") DyeColor ccolor,
-            @Flag("type") Cat.Type type) throws CommandException {
+                           @Flag(
+                                   value = "type",
+                                   completions = {
+                                           "TABBY", "BLACK", "RED",
+                                           "SIAMESE", "BRITISH_SHORTHAIR", "CALICO",
+                                           "PERSIAN", "RAGDOLL", "WHITE",
+                                           "JELLIE", "ALL_BLACK"
+                                   }
+                           ) Cat.Type type) throws CommandException {
         CatTrait trait = npc.getOrAddTrait(CatTrait.class);
         String output = "";
         if (args.hasValueFlag("type")) {
