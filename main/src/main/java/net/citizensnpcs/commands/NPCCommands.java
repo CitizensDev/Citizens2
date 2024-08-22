@@ -1500,13 +1500,16 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "inventory",
+            usage = "inventory (player name/uuid)",
             desc = "",
             modifiers = { "inventory" },
             min = 1,
-            max = 1,
+            max = 2,
             permission = "citizens.npc.inventory")
-    public void inventory(CommandContext args, CommandSender sender, NPC npc) {
+    public void inventory(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Player player) {
+        if (player != null) {
+            sender = player;
+        }
         npc.getOrAddTrait(Inventory.class).openInventory((Player) sender);
     }
 
@@ -3320,21 +3323,16 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.target")
-    public void target(CommandContext args, CommandSender sender, NPC npc) throws CommandUsageException {
+    public void target(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Player player)
+            throws CommandUsageException {
         if (args.hasFlag('c')) {
             npc.getNavigator().cancelNavigation();
             return;
         }
-        Entity toTarget = args.argsLength() < 2 && sender instanceof Player ? (Player) sender
-                : Bukkit.getPlayer(args.getString(1));
-        if (toTarget == null && args.argsLength() == 2) {
-            toTarget = Bukkit.getEntity(UUID.fromString(args.getString(1)));
-        }
-        if (toTarget != null) {
-            npc.getNavigator().setTarget(toTarget, args.hasFlag('a'));
-        } else {
+        Entity toTarget = player != null ? player : sender instanceof Player ? (Player) sender : null;
+        if (toTarget == null)
             throw new CommandUsageException();
-        }
+        npc.getNavigator().setTarget(toTarget, args.hasFlag('a'));
     }
 
     @Command(

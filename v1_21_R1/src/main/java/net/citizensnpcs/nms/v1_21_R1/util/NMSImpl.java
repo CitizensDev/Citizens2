@@ -452,8 +452,9 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void cancelMoveDestination(org.bukkit.entity.Entity entity) {
-        Entity handle = getHandle(entity);
-        MobAI ai = MobAI.from(handle);
+        MobAI ai = MobAI.from(getHandle(entity));
+        if (ai == null)
+            return;
         MoveControl control = ai != null ? ai.getMoveControl() : null;
         if (control instanceof EntityMoveControl) {
             ((EntityMoveControl) control).moving = false;

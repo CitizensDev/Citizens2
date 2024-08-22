@@ -399,11 +399,11 @@ public class ShopTrait extends Trait {
             try {
                 NPCShopItem dup = (NPCShopItem) super.clone();
                 dup.cost.clear();
-                for (NPCShopAction src : cost) {
+                for (NPCShopAction src : Lists.newArrayList(cost)) {
                     dup.cost.add(src.clone());
                 }
-                dup.cost.clear();
-                for (NPCShopAction src : result) {
+                dup.result.clear();
+                for (NPCShopAction src : Lists.newArrayList(result)) {
                     dup.result.add(src.clone());
                 }
                 return dup;
