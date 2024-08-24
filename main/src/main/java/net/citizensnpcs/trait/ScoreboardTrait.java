@@ -148,6 +148,15 @@ public class ScoreboardTrait extends Trait {
     }
 
     public void update() {
+        if (SUPPORT_TAGS) {
+            try {
+                if (!npc.getEntity().getScoreboardTags().equals(tags)) {
+                    tags = Sets.newHashSet(npc.getEntity().getScoreboardTags());
+                }
+            } catch (NoSuchMethodError e) {
+                SUPPORT_TAGS = false;
+            }
+        }
         String forceVisible = npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString();
         boolean nameVisibility = !npc.requiresNameHologram()
                 && (forceVisible.equals("true") || forceVisible.equals("hover"));
@@ -168,15 +177,6 @@ public class ScoreboardTrait extends Trait {
             lastName = npc.getEntity() instanceof Player && npc.getEntity().getName() != null
                     ? npc.getEntity().getName()
                     : npc.getUniqueId().toString();
-        }
-        if (SUPPORT_TAGS) {
-            try {
-                if (!npc.getEntity().getScoreboardTags().equals(tags)) {
-                    tags = Sets.newHashSet(npc.getEntity().getScoreboardTags());
-                }
-            } catch (NoSuchMethodError e) {
-                SUPPORT_TAGS = false;
-            }
         }
         if (SUPPORT_TEAM_SETOPTION) {
             try {
