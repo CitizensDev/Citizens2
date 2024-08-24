@@ -109,9 +109,6 @@ public class VillagerController extends MobEntityController {
             super.customServerAiStep();
             if (npc != null) {
                 npc.update();
-                if (npc.data().get(NPC.Metadata.RESET_PITCH_ON_TICK, true)) {
-                    NMS.setPitch(getBukkitEntity(), 0);
-                }
             }
         }
 
