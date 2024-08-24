@@ -147,6 +147,10 @@ public class ScoreboardTrait extends Trait {
         this.color = color;
     }
 
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
     public void update() {
         if (SUPPORT_TAGS) {
             try {
