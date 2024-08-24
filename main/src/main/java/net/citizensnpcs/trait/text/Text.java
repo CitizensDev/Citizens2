@@ -304,5 +304,5 @@ public class Text extends Trait implements Runnable, Listener {
         return speechBubbles;
     }
 
-    private static Random RANDOM = Util.getFastRandom();
+    private static final Random RANDOM = Util.getFastRandom();
 }

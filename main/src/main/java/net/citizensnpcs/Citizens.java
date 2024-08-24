@@ -586,10 +586,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 try {
                     protocolListener = new ProtocolLibListener(Citizens.this);
                 } catch (Throwable t) {
-                    Messaging.severe("ProtocolLib support not enabled: enable debug to see error");
-                    if (Messaging.isDebugging()) {
-                        t.printStackTrace();
-                    }
+                    Messaging.severe("ProtocolLib support not enabled due to following error:");
+                    t.printStackTrace();
                 }
             }
             saves.loadInto(npcRegistry);

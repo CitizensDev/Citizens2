@@ -66,7 +66,6 @@ public class ProtocolLibListener implements Listener {
                 NPC npc = getNPCFromPacket(event);
                 if (npc == null)
                     return;
-
                 PacketContainer packet = event.getPacket();
                 int version = manager.getProtocolVersion(event.getPlayer());
                 if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
@@ -223,13 +222,15 @@ public class ProtocolLibListener implements Listener {
                     return;
 
                 PacketRotationSession session = trait.getPacketSession(event.getPlayer());
+
                 if (session == null || !session.isActive())
                     return;
 
                 PacketContainer packet = event.getPacket();
                 PacketType type = event.getPacketType();
-                Messaging.debug(session.getBodyYaw(), session.getHeadYaw(),
-                        "OVERWRITTEN " + type + " " + packet.getHandle());
+                Messaging.debug("Modifying body/head yaw for", eid, "->", event.getPlayer().getName(),
+                        session.getBodyYaw(), degToByte(session.getBodyYaw()), session.getHeadYaw(),
+                        degToByte(session.getHeadYaw()), session.getPitch(), type);
                 if (type == Server.ENTITY_HEAD_ROTATION) {
                     packet.getBytes().write(0, degToByte(session.getHeadYaw()));
                 } else if (type == Server.ENTITY_LOOK || type == Server.ENTITY_MOVE_LOOK

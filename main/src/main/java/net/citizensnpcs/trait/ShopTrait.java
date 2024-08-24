@@ -338,7 +338,7 @@ public class ShopTrait extends Trait {
         @Persist
         private String clickToConfirmMessage;
         @Persist
-        private final List<NPCShopAction> cost = Lists.newArrayList();
+        private List<NPCShopAction> cost = Lists.newArrayList();
         @Persist
         private String costMessage;
         @Persist
@@ -348,7 +348,7 @@ public class ShopTrait extends Trait {
         @Persist(keyType = UUID.class)
         private final Map<UUID, Integer> purchases = Maps.newHashMap();
         @Persist
-        private final List<NPCShopAction> result = Lists.newArrayList();
+        private List<NPCShopAction> result = Lists.newArrayList();
         @Persist
         private String resultMessage;
         @Persist
@@ -398,12 +398,12 @@ public class ShopTrait extends Trait {
         public NPCShopItem clone() {
             try {
                 NPCShopItem dup = (NPCShopItem) super.clone();
-                dup.cost.clear();
-                for (NPCShopAction src : Lists.newArrayList(cost)) {
+                dup.cost = Lists.newArrayList();
+                for (NPCShopAction src : cost) {
                     dup.cost.add(src.clone());
                 }
-                dup.result.clear();
-                for (NPCShopAction src : Lists.newArrayList(result)) {
+                dup.result = Lists.newArrayList();
+                for (NPCShopAction src : result) {
                     dup.result.add(src.clone());
                 }
                 return dup;

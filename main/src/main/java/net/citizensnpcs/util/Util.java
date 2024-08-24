@@ -112,13 +112,14 @@ public class Util {
      * Clamps the rotation angle to [-180, 180]
      */
     public static float clamp(float angle) {
-        while (angle < -180.0F) {
-            angle += 360.0F;
+        float d = (float) (angle % 360.0);
+        if (d >= 180.0) {
+            d -= 360.0;
         }
-        while (angle >= 180.0F) {
-            angle -= 360.0F;
+        if (d < -180.0) {
+            d += 360.0;
         }
-        return angle;
+        return d;
     }
 
     public static float clamp(float angle, float min, float max, float d) {
