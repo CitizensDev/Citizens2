@@ -246,7 +246,7 @@ public class BoatController extends MobEntityController {
                 baseTick();
                 if (getControllingPassenger() instanceof NPCHolder
                         && ((NPCHolder) getControllingPassenger()).getNPC().getNavigator().isNavigating()) {
-                    setDeltaMovement(getControllingPassenger().getDeltaMovement().multiply(20, 1, 20));
+                    setDeltaMovement(getControllingPassenger().getDeltaMovement().multiply(20, 0, 20));
                 }
                 npc.update();
                 if (getHurtTime() > 0) {
