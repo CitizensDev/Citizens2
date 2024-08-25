@@ -26,6 +26,8 @@ public class Messages {
     public static final String AXOLOTL_NOT_PLAYING_DEAD = "citizens.commands.npc.axolotl.playing-dead-stopped";
     public static final String AXOLOTL_PLAYING_DEAD = "citizens.commands.npc.axolotl.playing-dead";
     public static final String AXOLOTL_VARIANT_SET = "citizens.commands.npc.axolotl.variant-set";
+    public static final String BAT_AWAKE_SET = "citizens.commands.npc.bat.awake-set";
+    public static final String BAT_AWAKE_UNSET = "citizens.commands.npc.bat.awake-unset";
     public static final String BEE_ANGER_SET = "citizens.commands.npc.bee.anger-set";
     public static final String BEE_HAS_NECTAR = "citizens.commands.npc.bee.has-nectar";
     public static final String BEE_NO_NECTAR = "citizens.commands.npc.bee.no-nectar";
@@ -271,6 +273,7 @@ public class Messages {
     public static final String MOBTYPE_CANNOT_BE_AGED = "citizens.commands.npc.age.cannot-be-aged";
     public static final String MONEY_WITHDRAWN = "citizens.economy.money-withdrawn";
     public static final String MOUNT_NPC_MUST_BE_SPAWNED = "citizens.commands.npc.mount.must-be-spawned";
+    public static final String MOUNT_TRIED_TO_MOUNT_NPC_ON_ITSELF = "citizens.commands.npc.mount.mount-on-itself";
     public static final String MOVETO_FORMAT = "citizens.commands.npc.moveto.format";
     public static final String MOVETO_TELEPORTED = "citizens.commands.npc.moveto.teleported";
     public static final String MUSHROOM_COW_VARIANT_SET = "citizens.commands.npc.mushroomcow.variant-set";
@@ -426,9 +429,9 @@ public class Messages {
     public static final String TEXT_EDITOR_RANGE_SET = "citizens.editors.text.range-set";
     public static final String TEXT_EDITOR_SET_ITEM = "citizens.editors.text.talk-item-set";
     public static final String TEXT_EDITOR_START_PROMPT = "citizens.editors.text.start-prompt";
-    public static final String TPTO_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.to-not-found";
     public static final String TOGGLED_USING_HELD_ITEM = "citizens.commands.npc.useitem.held-item-toggled";
     public static final String TOGGLED_USING_OFFHAND_ITEM = "citizens.commands.npc.useitem.offhand-item-toggled";
+    public static final String TPTO_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.to-not-found";
     public static final String TPTO_SUCCESS = "citizens.commands.npc.tpto.success";
     public static final String TRACKING_RANGE_SET = "citizens.commands.npc.trackingrange.set";
     public static final String TRAIT_LOAD_FAILED = "citizens.notifications.trait-load-failed";
@@ -436,7 +439,6 @@ public class Messages {
     public static final String TRAITS_ADDED = "citizens.commands.trait.added";
     public static final String TRAITS_FAILED_TO_ADD = "citizens.commands.trait.failed-to-add";
     public static final String TRAITS_REMOVED = "citizens.commands.trait.removed";
-    public static final String MOUNT_TRIED_TO_MOUNT_NPC_ON_ITSELF = "citizens.commands.npc.mount.mount-on-itself";
     public static final String TROPICALFISH_BODY_COLOR_SET = "citizens.commands.npc.tropicalfish.body-color-set";
     public static final String TROPICALFISH_PATTERN_COLOR_SET = "citizens.commands.npc.tropicalfish.pattern-color-set";
     public static final String TROPICALFISH_PATTERN_SET = "citizens.commands.npc.tropicalfish.pattern-set";

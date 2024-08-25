@@ -122,6 +122,7 @@ import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.AttributeTrait;
+import net.citizensnpcs.trait.BatTrait;
 import net.citizensnpcs.trait.BoatTrait;
 import net.citizensnpcs.trait.BoundingBoxTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
@@ -429,6 +430,23 @@ public class NPCCommands {
             trait.setAttributeValue(Attribute.valueOf(attribute), value);
             Messaging.sendTr(sender, Messages.ATTRIBUTE_SET, attribute, value);
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "bat --awake [awake]",
+            desc = "",
+            modifiers = { "bat" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.bat")
+    @Requirements(selected = true, ownership = true, types = EntityType.BAT)
+    public void bat(CommandContext args, CommandSender sender, NPC npc, @Flag("awake") Boolean awake)
+            throws CommandException {
+        if (awake == null)
+            throw new CommandException();
+        npc.getOrAddTrait(BatTrait.class).setAwake(awake);
+        Messaging.sendTr(sender, awake ? Messages.BAT_AWAKE_SET : Messages.BAT_AWAKE_UNSET, npc.getName());
     }
 
     @Command(

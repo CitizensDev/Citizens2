@@ -24,6 +24,7 @@ import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.AttributeTrait;
+import net.citizensnpcs.trait.BatTrait;
 import net.citizensnpcs.trait.BoatTrait;
 import net.citizensnpcs.trait.BoundingBoxTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
@@ -80,6 +81,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(ArmorStandTrait.class));
         registerTrait(TraitInfo.create(AttributeTrait.class));
         registerTrait(TraitInfo.create(Anchors.class));
+        registerTrait(TraitInfo.create(BatTrait.class));
         registerTrait(TraitInfo.create(BoatTrait.class));
         registerTrait(TraitInfo.create(BoundingBoxTrait.class));
         registerTrait(TraitInfo.create(ClickRedirectTrait.class));
