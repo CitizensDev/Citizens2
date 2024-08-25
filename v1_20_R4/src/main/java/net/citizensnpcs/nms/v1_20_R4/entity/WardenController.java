@@ -16,6 +16,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Unit;
@@ -44,6 +45,11 @@ public class WardenController extends MobEntityController {
     }
 
     public static class EntityWardenNPC extends Warden implements NPCHolder {
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
+        }
+
         private final CitizensNPC npc;
 
         public EntityWardenNPC(EntityType<? extends Warden> types, Level level) {

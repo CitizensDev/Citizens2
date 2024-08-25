@@ -23,6 +23,7 @@ import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_15_R1.EntityOcelot;
+import net.minecraft.server.v1_15_R1.EntityPlayer;
 import net.minecraft.server.v1_15_R1.EntityPose;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.EnumPistonReaction;
@@ -45,6 +46,11 @@ public class OcelotController extends MobEntityController {
     }
 
     public static class EntityOcelotNPC extends EntityOcelot implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private final CitizensNPC npc;
 
         public EntityOcelotNPC(EntityTypes<? extends EntityOcelot> types, World world) {

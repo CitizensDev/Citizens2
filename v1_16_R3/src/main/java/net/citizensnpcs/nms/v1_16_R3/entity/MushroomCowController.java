@@ -24,6 +24,7 @@ import net.minecraft.server.v1_16_R3.EntityBoat;
 import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityMinecartAbstract;
 import net.minecraft.server.v1_16_R3.EntityMushroomCow;
+import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.EnumHand;
 import net.minecraft.server.v1_16_R3.EnumInteractionResult;
@@ -47,6 +48,11 @@ public class MushroomCowController extends MobEntityController {
     }
 
     public static class EntityMushroomCowNPC extends EntityMushroomCow implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private final CitizensNPC npc;
 
         public EntityMushroomCowNPC(EntityTypes<? extends EntityMushroomCow> types, World world) {

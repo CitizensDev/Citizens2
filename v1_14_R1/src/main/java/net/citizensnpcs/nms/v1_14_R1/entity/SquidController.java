@@ -20,6 +20,7 @@ import net.minecraft.server.v1_14_R1.DamageSource;
 import net.minecraft.server.v1_14_R1.Entity;
 import net.minecraft.server.v1_14_R1.EntityBoat;
 import net.minecraft.server.v1_14_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_14_R1.EntityPlayer;
 import net.minecraft.server.v1_14_R1.EntitySquid;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EnumPistonReaction;
@@ -42,6 +43,11 @@ public class SquidController extends MobEntityController {
     }
 
     public static class EntitySquidNPC extends EntitySquid implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private final CitizensNPC npc;
 
         public EntitySquidNPC(EntityTypes<? extends EntitySquid> types, World world) {

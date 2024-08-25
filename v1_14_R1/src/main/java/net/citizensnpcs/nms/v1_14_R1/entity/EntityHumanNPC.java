@@ -31,7 +31,6 @@ import net.citizensnpcs.nms.v1_14_R1.util.NMSImpl;
 import net.citizensnpcs.nms.v1_14_R1.util.PlayerControllerJump;
 import net.citizensnpcs.nms.v1_14_R1.util.PlayerControllerMove;
 import net.citizensnpcs.nms.v1_14_R1.util.PlayerNavigation;
-import net.citizensnpcs.nms.v1_14_R1.util.PlayerlistTracker;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinPacketTracker;
@@ -76,7 +75,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
     private final Location packetLocationCache = new Location(null, 0, 0, 0);
-    private PlayerlistTracker playerlistTracker;
     private final SkinPacketTracker skinTracker;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
@@ -101,10 +99,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    public boolean a(EntityPlayer entityplayer) {
-        if (npc != null && playerlistTracker == null)
-            return false;
-        return super.a(entityplayer);
+    public boolean a(EntityPlayer player) {
+        return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
     }
 
     public float a(PathType pathtype) {
@@ -394,10 +390,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     @Override
     public void setSkinPersistent(String skinName, String signature, String data) {
         npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(skinName, signature, data);
-    }
-
-    public void setTracked(PlayerlistTracker tracker) {
-        this.playerlistTracker = tracker;
     }
 
     @Override

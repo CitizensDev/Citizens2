@@ -67,7 +67,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private PlayerControllerJump controllerJump;
     private PlayerControllerMove controllerMove;
     private final Map<EnumItemSlot, ItemStack> equipmentCache = Maps.newEnumMap(EnumItemSlot.class);
-    private boolean isTracked = false;
     private int jumpTicks = 0;
     private PlayerNavigation navigation;
     private final CitizensNPC npc;
@@ -97,10 +96,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    public boolean a(EntityPlayer entityplayer) {
-        if (npc != null && !isTracked)
-            return false;
-        return super.a(entityplayer);
+    public boolean a(EntityPlayer player) {
+        return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
     }
 
     public float a(PathType pathtype) {
@@ -398,10 +395,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     @Override
     public void setSkinPersistent(String skinName, String signature, String data) {
         npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(skinName, signature, data);
-    }
-
-    public void setTracked() {
-        isTracked = true;
     }
 
     public void updateAI() {

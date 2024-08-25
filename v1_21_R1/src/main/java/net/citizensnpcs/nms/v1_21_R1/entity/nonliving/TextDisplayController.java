@@ -12,8 +12,10 @@ import net.citizensnpcs.nms.v1_21_R1.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_21_R1.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Display.TextDisplay;
 import net.minecraft.world.entity.Entity;
@@ -36,6 +38,11 @@ public class TextDisplayController extends MobEntityController {
     }
 
     public static class EntityTextDisplayNPC extends TextDisplay implements NPCHolder {
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
+        }
+
         private final CitizensNPC npc;
 
         public EntityTextDisplayNPC(EntityType<? extends TextDisplay> types, Level level) {

@@ -22,6 +22,7 @@ import net.minecraft.server.v1_12_R1.BlockPosition;
 import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.Entity;
 import net.minecraft.server.v1_12_R1.EntityHorseZombie;
+import net.minecraft.server.v1_12_R1.EntityPlayer;
 import net.minecraft.server.v1_12_R1.EnumPistonReaction;
 import net.minecraft.server.v1_12_R1.GenericAttributes;
 import net.minecraft.server.v1_12_R1.IBlockData;
@@ -46,11 +47,17 @@ public class HorseZombieController extends MobEntityController {
     }
 
     public static class EntityHorseZombieNPC extends EntityHorseZombie implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
 
         private boolean riding;
+
         public EntityHorseZombieNPC(World world) {
             this(world, null);
         }

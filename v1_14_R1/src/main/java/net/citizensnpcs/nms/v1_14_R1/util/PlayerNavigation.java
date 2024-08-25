@@ -247,7 +247,7 @@ public class PlayerNavigation extends NavigationAbstract {
         double var7 = var1.x - var0.x;
         double var9 = var1.z - var0.z;
         double var11 = var7 * var7 + var9 * var9;
-        if ((var11 >= 1.0E-8D)) {
+        if (var11 >= 1.0E-8D) {
             double var13 = 1.0D / Math.sqrt(var11);
             var7 *= var13;
             var9 *= var13;

@@ -15,6 +15,7 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
@@ -42,6 +43,11 @@ public class IronGolemController extends MobEntityController {
     }
 
     public static class EntityIronGolemNPC extends IronGolem implements NPCHolder {
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
+        }
+
         private final CitizensNPC npc;
 
         public EntityIronGolemNPC(EntityType<? extends IronGolem> types, Level level) {

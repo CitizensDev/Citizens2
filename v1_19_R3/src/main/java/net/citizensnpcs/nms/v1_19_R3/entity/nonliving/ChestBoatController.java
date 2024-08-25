@@ -13,6 +13,7 @@ import net.citizensnpcs.nms.v1_19_R3.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_19_R3.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.PositionImpl;
@@ -51,6 +52,11 @@ public class ChestBoatController extends MobEntityController {
     }
 
     public static class EntityChestBoatNPC extends ChestBoat implements NPCHolder {
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
+        }
+
         private double aC;
 
         private float aD;

@@ -85,6 +85,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public boolean broadcastToPlayer(ServerPlayer player) {
+        return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
+    }
+
+    @Override
     public boolean causeFallDamage(float f, float f1, DamageSource damagesource) {
         if (npc == null || !npc.isFlyable())
             return super.causeFallDamage(f, f1, damagesource);

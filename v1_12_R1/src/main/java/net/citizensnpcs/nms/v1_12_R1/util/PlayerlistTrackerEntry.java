@@ -179,9 +179,13 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
             } catch (Throwable e) {
                 return null;
             }
-            return delegate.keySet().stream().map((Function<? super EntityPlayer, ? extends CraftPlayer>) EntityPlayer::getBukkitEntity).collect(Collectors.toSet());
+            return delegate.keySet().stream()
+                    .map((Function<? super EntityPlayer, ? extends CraftPlayer>) EntityPlayer::getBukkitEntity)
+                    .collect(Collectors.toSet());
         } else
-            return tracker.trackedPlayers.stream().map((Function<? super EntityPlayer, ? extends CraftPlayer>) EntityPlayer::getBukkitEntity).collect(Collectors.toSet());
+            return tracker.trackedPlayers.stream()
+                    .map((Function<? super EntityPlayer, ? extends CraftPlayer>) EntityPlayer::getBukkitEntity)
+                    .collect(Collectors.toSet());
     }
 
     private static Entity getTracker(EntityTrackerEntry entry) {

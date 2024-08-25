@@ -26,6 +26,7 @@ import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityHorseMule;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_15_R1.EntityPlayer;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.EnumPistonReaction;
 import net.minecraft.server.v1_15_R1.FluidType;
@@ -54,6 +55,11 @@ public class HorseMuleController extends MobEntityController {
     }
 
     public static class EntityHorseMuleNPC extends EntityHorseMule implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;

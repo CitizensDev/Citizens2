@@ -24,6 +24,7 @@ import net.minecraft.server.v1_13_R2.Entity;
 import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityHorseZombie;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.EnumPistonReaction;
 import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.GenericAttributes;
@@ -50,6 +51,11 @@ public class HorseZombieController extends MobEntityController {
     }
 
     public static class EntityHorseZombieNPC extends EntityHorseZombie implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;

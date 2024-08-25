@@ -22,6 +22,7 @@ import net.minecraft.server.v1_13_R2.EntityBoat;
 import net.minecraft.server.v1_13_R2.EntityCreeper;
 import net.minecraft.server.v1_13_R2.EntityLightning;
 import net.minecraft.server.v1_13_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.EnumPistonReaction;
 import net.minecraft.server.v1_13_R2.FluidType;
 import net.minecraft.server.v1_13_R2.IBlockData;
@@ -55,6 +56,11 @@ public class CreeperController extends MobEntityController {
     }
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private boolean allowPowered;
 
         private final CitizensNPC npc;

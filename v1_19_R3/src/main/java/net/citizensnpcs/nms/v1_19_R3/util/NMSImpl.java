@@ -720,7 +720,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public float getRidingHeightOffset(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity mount) {
-        return (float) (getHandle(mount).getPassengersRidingOffset());
+        return (float) getHandle(mount).getPassengersRidingOffset();
     }
 
     @Override
@@ -1190,13 +1190,13 @@ public class NMSImpl implements NMSBridge {
         GameProfile playerProfile = null;
         for (int i = 0; i < list.size(); i++) {
             ClientboundPlayerInfoUpdatePacket.Entry npcInfo = list.get(i);
-            if (npcInfo == null)
+            if (npcInfo == null) {
                 continue;
-
+            }
             MirrorTrait trait = mirrorTraits.apply(npcInfo.profileId());
-            if (trait == null || !trait.isMirroring(player))
+            if (trait == null || !trait.isMirroring(player)) {
                 continue;
-
+            }
             boolean disableTablist = trait.getNPC().shouldRemoveFromTabList();
 
             if (disableTablist != npcInfo.listed()) {

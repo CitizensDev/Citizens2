@@ -161,15 +161,14 @@ public class NMS {
         return createPacketTracker(entity, new PacketAggregator());
     }
 
-    /*
-     * Yggdrasil's default implementation of this method silently fails instead of throwing
-     * an Exception like it should.
-     */
-
     public static EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg) {
         return BRIDGE.createPacketTracker(entity, agg);
     }
 
+    /*
+     * Yggdrasil's default implementation of this method silently fails instead of throwing
+     * an Exception like it should.
+     */
     public static GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) throws Throwable {
         return BRIDGE.fillProfileProperties(profile, requireSecure);
     }
@@ -960,6 +959,10 @@ public class NMS {
 
     public static void setWitherInvulnerableTicks(Wither wither, int ticks) {
         BRIDGE.setWitherInvulnerableTicks(wither, ticks);
+    }
+
+    public static boolean shouldBroadcastToPlayer(NPC npc, Supplier<Boolean> defaultResponse) {
+        return npc != null && npc.data().has(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS) ? false : defaultResponse.get();
     }
 
     public static boolean shouldJump(org.bukkit.entity.Entity entity) {

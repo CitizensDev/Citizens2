@@ -23,6 +23,7 @@ import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityChicken;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_15_R1.EntityPlayer;
 import net.minecraft.server.v1_15_R1.EntityTypes;
 import net.minecraft.server.v1_15_R1.EnumPistonReaction;
 import net.minecraft.server.v1_15_R1.FluidType;
@@ -50,6 +51,11 @@ public class ChickenController extends MobEntityController {
     }
 
     public static class EntityChickenNPC extends EntityChicken implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private final CitizensNPC npc;
 
         public EntityChickenNPC(EntityTypes<? extends EntityChicken> types, World world) {

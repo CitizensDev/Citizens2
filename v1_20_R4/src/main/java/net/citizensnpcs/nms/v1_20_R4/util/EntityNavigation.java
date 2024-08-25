@@ -325,7 +325,7 @@ public class EntityNavigation extends PathNavigation {
     }
 
     protected boolean hasValidPathType(PathType var0) {
-        if ((var0 == PathType.WATER) || (var0 == PathType.LAVA))
+        if (var0 == PathType.WATER || var0 == PathType.LAVA)
             return false;
         else
             return var0 != PathType.OPEN;

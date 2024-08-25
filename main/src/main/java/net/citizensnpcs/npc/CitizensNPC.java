@@ -55,7 +55,6 @@ import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.util.ChunkCoord;
-import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
@@ -337,14 +336,8 @@ public class CitizensNPC extends AbstractNPC {
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
             return false;
         }
-        // Spawning the entity will create an entity tracker that is not controlled by Citizens. This is fixed later in
-        // spawning; to avoid sending packets twice, try to hide the entity initially
-        EntityPacketTracker tracker = NMS.getPacketTrackerDirectly(getEntity());
-        if (tracker != null) {
-            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                tracker.unlink(player);
-            }
-        }
+        // Spawning the entity will initially create an entity tracker that is not controlled by Citizens
+        data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
         NMS.setLocationDirectly(getEntity(), at);
         NMS.setHeadAndBodyYaw(getEntity(), at.getYaw());
 
@@ -391,6 +384,7 @@ public class CitizensNPC extends AbstractNPC {
                     }
                 }
                 NMS.replaceTracker(getEntity());
+                data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
                 EntityType type = getEntity().getType();
                 if (type.isAlive()) {
                     LivingEntity entity = (LivingEntity) getEntity();

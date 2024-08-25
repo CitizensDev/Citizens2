@@ -30,7 +30,6 @@ import net.citizensnpcs.nms.v1_16_R3.util.EmptyAdvancementDataPlayer;
 import net.citizensnpcs.nms.v1_16_R3.util.MobAI;
 import net.citizensnpcs.nms.v1_16_R3.util.MobAI.ForwardingMobAI;
 import net.citizensnpcs.nms.v1_16_R3.util.NMSImpl;
-import net.citizensnpcs.nms.v1_16_R3.util.PlayerlistTracker;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinPacketTracker;
@@ -68,8 +67,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     private final Map<EnumItemSlot, ItemStack> equipmentCache = Maps.newEnumMap(EnumItemSlot.class);
     private int jumpTicks = 0;
     private final CitizensNPC npc;
-    private PlayerlistTracker playerlistTracker;
-
     private final SkinPacketTracker skinTracker;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, WorldServer world, GameProfile gameProfile,
@@ -95,10 +92,8 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    public boolean a(EntityPlayer entityplayer) {
-        if (npc != null && playerlistTracker == null)
-            return false;
-        return super.a(entityplayer);
+    public boolean a(EntityPlayer player) {
+        return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
     }
 
     @Override
@@ -336,10 +331,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     @Override
     public void setSkinPersistent(String skinName, String signature, String data) {
         npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(skinName, signature, data);
-    }
-
-    public void setTracked(PlayerlistTracker tracker) {
-        this.playerlistTracker = tracker;
     }
 
     @Override

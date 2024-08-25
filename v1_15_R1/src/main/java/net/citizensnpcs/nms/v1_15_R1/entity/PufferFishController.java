@@ -25,6 +25,7 @@ import net.minecraft.server.v1_15_R1.Entity;
 import net.minecraft.server.v1_15_R1.EntityBoat;
 import net.minecraft.server.v1_15_R1.EntityHuman;
 import net.minecraft.server.v1_15_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_15_R1.EntityPlayer;
 import net.minecraft.server.v1_15_R1.EntityPose;
 import net.minecraft.server.v1_15_R1.EntityPufferFish;
 import net.minecraft.server.v1_15_R1.EntitySize;
@@ -52,6 +53,11 @@ public class PufferFishController extends MobEntityController {
     }
 
     public static class EntityPufferFishNPC extends EntityPufferFish implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private final CitizensNPC npc;
 
         private ControllerMove oldMoveController;

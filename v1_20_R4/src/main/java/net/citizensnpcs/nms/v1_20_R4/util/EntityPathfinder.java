@@ -46,7 +46,10 @@ public class EntityPathfinder extends PathFinder {
         if (var6 == null)
             return null;
         else {
-            Map var7 = var2.stream().collect(Collectors.toMap(var0x -> this.nodeEvaluator.getTarget(var0x.getX(), var0x.getY(), var0x.getZ()), Function.identity()));
+            Map var7 = var2.stream()
+                    .collect(Collectors.toMap(
+                            var0x -> this.nodeEvaluator.getTarget(var0x.getX(), var0x.getY(), var0x.getZ()),
+                            Function.identity()));
             Path var8 = this.findPath(var0.getProfiler(), var6, var7, var3, var4, var5);
             this.nodeEvaluator.done();
             return var8;
@@ -61,7 +64,10 @@ public class EntityPathfinder extends PathFinder {
         if (var6 == null)
             return null;
         else {
-            Map var7 = var2.stream().collect(Collectors.toMap(var0x -> this.nodeEvaluator.getTarget(var0x.getX(), var0x.getY(), var0x.getZ()), Function.identity()));
+            Map var7 = var2.stream()
+                    .collect(Collectors.toMap(
+                            var0x -> this.nodeEvaluator.getTarget(var0x.getX(), var0x.getY(), var0x.getZ()),
+                            Function.identity()));
             Path var8 = this.findPath(var0.getProfiler(), var6, var7, var3, var4, var5);
             this.nodeEvaluator.done();
             return var8;
@@ -100,7 +106,7 @@ public class EntityPathfinder extends PathFinder {
             if (!var9.isEmpty()) {
                 break;
             }
-            if ((var11.distanceTo(var1) < range)) {
+            if (var11.distanceTo(var1) < range) {
                 int var12 = this.nodeEvaluator.getNeighbors(this.neighbors, var11);
 
                 for (int i = 0; i < var12; ++i) {

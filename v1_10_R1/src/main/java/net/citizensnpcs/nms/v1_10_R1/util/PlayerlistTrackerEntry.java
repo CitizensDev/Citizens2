@@ -101,7 +101,9 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
     }
 
     public static Set<org.bukkit.entity.Player> getSeenBy(EntityTrackerEntry tracker) {
-        return tracker.trackedPlayers.stream().map((Function<? super EntityPlayer, ? extends CraftPlayer>) EntityPlayer::getBukkitEntity).collect(Collectors.toSet());
+        return tracker.trackedPlayers.stream()
+                .map((Function<? super EntityPlayer, ? extends CraftPlayer>) EntityPlayer::getBukkitEntity)
+                .collect(Collectors.toSet());
     }
 
     private static Entity getTracker(EntityTrackerEntry entry) {

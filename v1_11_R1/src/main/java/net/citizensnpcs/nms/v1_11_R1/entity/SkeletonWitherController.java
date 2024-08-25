@@ -17,6 +17,7 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_11_R1.AxisAlignedBB;
 import net.minecraft.server.v1_11_R1.BlockPosition;
 import net.minecraft.server.v1_11_R1.Entity;
+import net.minecraft.server.v1_11_R1.EntityPlayer;
 import net.minecraft.server.v1_11_R1.EntitySkeletonWither;
 import net.minecraft.server.v1_11_R1.IBlockData;
 import net.minecraft.server.v1_11_R1.NBTTagCompound;
@@ -34,6 +35,11 @@ public class SkeletonWitherController extends MobEntityController {
     }
 
     public static class EntitySkeletonWitherNPC extends EntitySkeletonWither implements NPCHolder {
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
+        }
+
         private final CitizensNPC npc;
 
         public EntitySkeletonWitherNPC(World world) {

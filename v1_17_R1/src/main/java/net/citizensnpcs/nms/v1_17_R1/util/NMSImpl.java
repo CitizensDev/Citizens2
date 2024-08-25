@@ -97,7 +97,6 @@ import net.citizensnpcs.nms.v1_17_R1.entity.DrownedController;
 import net.citizensnpcs.nms.v1_17_R1.entity.EnderDragonController;
 import net.citizensnpcs.nms.v1_17_R1.entity.EndermanController;
 import net.citizensnpcs.nms.v1_17_R1.entity.EndermiteController;
-import net.citizensnpcs.nms.v1_17_R1.entity.EntityHumanNPC;
 import net.citizensnpcs.nms.v1_17_R1.entity.EvokerController;
 import net.citizensnpcs.nms.v1_17_R1.entity.FoxController;
 import net.citizensnpcs.nms.v1_17_R1.entity.GhastController;
@@ -1238,9 +1237,6 @@ public class NMSImpl implements NMSBridge {
         entry.broadcastRemoved();
         PlayerlistTracker replace = new PlayerlistTracker(server.getChunkProvider().chunkMap, entry);
         server.getChunkProvider().chunkMap.G.put(entity.getEntityId(), replace);
-        if (getHandle(entity) instanceof EntityHumanNPC) {
-            ((EntityHumanNPC) getHandle(entity)).setTracked(replace);
-        }
     }
 
     @Override
