@@ -137,7 +137,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             moveOnCurrentHeading();
         }
         tickAI();
-        detectEquipmentUpdatesPublic();
         noPhysics = isSpectator();
         if (isSpectator()) {
             onGround = false;
@@ -355,6 +354,12 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (npc == null)
             return;
 
+        detectEquipmentUpdatesPublic();
+        float scale = this.getScale();
+        if (scale != this.appliedScale) {
+            appliedScale = scale;
+            refreshDimensions();
+        }
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
         updatePackets(npc.getNavigator().isNavigating());
         npc.update();
