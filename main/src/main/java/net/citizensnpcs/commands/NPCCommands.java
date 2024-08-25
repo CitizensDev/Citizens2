@@ -1164,14 +1164,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "forcefield --width [width] --height [height] --strength [strength]",
+            usage = "forcefield --width [width] --height [height] --strength [strength] --vertical_strength [vertical strength]",
             desc = "",
             modifiers = { "forcefield" },
             min = 1,
             max = 1,
             permission = "citizens.npc.forcefield")
     public void forcefield(CommandContext args, CommandSender sender, NPC npc, @Flag("width") Double width,
-            @Flag("height") Double height, @Flag("strength") Double strength) throws CommandException {
+            @Flag("height") Double height, @Flag("strength") Double strength,
+            @Flag("vertical_strength") Double verticalStrength) throws CommandException {
         ForcefieldTrait trait = npc.getOrAddTrait(ForcefieldTrait.class);
         String output = "";
         if (width != null) {
@@ -1185,6 +1186,10 @@ public class NPCCommands {
         if (strength != null) {
             trait.setStrength(strength);
             output += Messaging.tr(Messages.FORCEFIELD_STRENGTH_SET, strength);
+        }
+        if (verticalStrength != null) {
+            trait.setVerticalStrength(verticalStrength);
+            output += Messaging.tr(Messages.FORCEFIELD_VERTICAL_STRENGTH_SET, verticalStrength);
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);

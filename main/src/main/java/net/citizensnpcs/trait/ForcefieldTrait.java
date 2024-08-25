@@ -16,6 +16,8 @@ public class ForcefieldTrait extends Trait {
     @Persist
     private Double strength;
     @Persist
+    private Double verticalStrength;
+    @Persist
     private Double width;
 
     public ForcefieldTrait() {
@@ -28,6 +30,10 @@ public class ForcefieldTrait extends Trait {
 
     public double getStrength() {
         return strength == null ? 0.1 : strength;
+    }
+
+    public double getVerticalStrength() {
+        return verticalStrength == null ? 0 : verticalStrength;
     }
 
     public double getWidth() {
@@ -48,7 +54,7 @@ public class ForcefieldTrait extends Trait {
             Vector diff = player.getLocation().subtract(base).toVector();
             if (diff.isZero())
                 continue;
-            diff = diff.normalize().setY(0);
+            diff = diff.normalize().setY(getVerticalStrength());
             Vector force = player.getVelocity().add(diff.multiply(strength));
             player.setVelocity(force);
         }
@@ -60,6 +66,10 @@ public class ForcefieldTrait extends Trait {
 
     public void setStrength(Double strength) {
         this.strength = strength;
+    }
+
+    public void setVerticalStrength(Double verticalStrength) {
+        this.verticalStrength = verticalStrength;
     }
 
     public void setWidth(Double width) {

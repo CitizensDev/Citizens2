@@ -129,6 +129,7 @@ public class Messages {
     public static final String FORCEFIELD_DESCRIBE = "citizens.commands.npc.forcefield.describe";
     public static final String FORCEFIELD_HEIGHT_SET = "citizens.commands.npc.forcefield.height-set";
     public static final String FORCEFIELD_STRENGTH_SET = "citizens.commands.npc.forcefield.strength-set";
+    public static final String FORCEFIELD_VERTICAL_STRENGTH_SET = "citizens.commands.npc.forcefield.vertical-strength-set";
     public static final String FORCEFIELD_WIDTH_SET = "citizens.commands.npc.forcefield.width-set";
     public static final String FOX_CROUCHING_SET = "citizens.commands.npc.fox.crouching-set";
     public static final String FOX_CROUCHING_UNSET = "citizens.commands.npc.fox.crouching-unset";
