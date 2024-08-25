@@ -531,6 +531,8 @@ public interface NPC extends Agent, Cloneable {
          * Whether the NPC's nameplate should be visible.
          */
         NAMEPLATE_VISIBLE("nameplate-visible", Boolean.class),
+        /** Internal use only */
+        NPC_SPAWNING_IN_PROGRESS("citizens-internal-spawning-npc", Boolean.class),
         /**
          * The packet update delay in ticks. Defaults to setting value.
          */
