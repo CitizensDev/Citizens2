@@ -27,7 +27,6 @@ public class EntityPoseTrait extends Trait {
 
     public void setPose(EntityPose pose) {
         this.pose = pose;
-
     }
 
     public enum EntityPose {

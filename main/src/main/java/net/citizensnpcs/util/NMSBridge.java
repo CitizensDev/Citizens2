@@ -130,7 +130,7 @@ public interface NMSBridge {
     public float getVerticalMovement(Entity entity);
 
     public default Collection<Player> getViewingPlayers(Entity entity) {
-        return ((Player) entity).getTrackedBy();
+        return entity.getTrackedBy();
     }
 
     public double getWidth(Entity entity);
@@ -150,9 +150,6 @@ public interface NMSBridge {
 
     public boolean isValid(Entity entity);
 
-    public default void positionInteractionText(Player player, Entity interaction, Entity mount, double height) {
-    }
-
     public void load(CommandManager commands);
 
     public void look(Entity from, Entity to);
@@ -160,6 +157,9 @@ public interface NMSBridge {
     public void look(Entity entity, float yaw, float pitch);
 
     public void look(Entity entity, Location to, boolean headOnly, boolean immediate);
+
+    public default void markPoseDirty(Entity tracker) {
+    }
 
     public void mount(Entity entity, Entity passenger);
 
@@ -173,6 +173,9 @@ public interface NMSBridge {
     public void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to);
 
     public Runnable playerTicker(NPC npc, Player entity);
+
+    public default void positionInteractionText(Player player, Entity interaction, Entity mount, double height) {
+    }
 
     public void registerEntityClass(Class<?> clazz);
 

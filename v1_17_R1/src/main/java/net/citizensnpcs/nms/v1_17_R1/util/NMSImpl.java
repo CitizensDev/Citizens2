@@ -1098,6 +1098,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void markPoseDirty(org.bukkit.entity.Entity entity) {
+        getHandle(entity).getEntityData().markDirty(DATA_POSE);
+    }
+
+    @Override
     public void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
         if (NMSImpl.getHandle(passenger) == null)
             return;
@@ -2298,6 +2303,7 @@ public class NMSImpl implements NMSBridge {
     private static final Map<Class<?>, net.minecraft.world.entity.EntityType<?>> CITIZENS_ENTITY_TYPES = Maps
             .newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
+    private static EntityDataAccessor<Pose> DATA_POSE = null;
     private static final float DEFAULT_SPEED = 1F;
     public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EnderDragon.class, true,
             boolean.class, AABB.class);
@@ -2359,6 +2365,7 @@ public class NMSImpl implements NMSBridge {
         try {
             RABBIT_TYPE_DATAWATCHER = (EntityDataAccessor<Integer>) NMS
                     .getFirstStaticGetter(Rabbit.class, EntityDataAccessor.class).invoke();
+            DATA_POSE = (EntityDataAccessor<Pose>) NMS.getGetter(Entity.class, "ad").invoke();
         } catch (Throwable e) {
             e.printStackTrace();
         }

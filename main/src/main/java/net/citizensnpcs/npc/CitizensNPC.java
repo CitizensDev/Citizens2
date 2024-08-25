@@ -346,8 +346,7 @@ public class CitizensNPC extends AbstractNPC {
             }
         }
         NMS.setLocationDirectly(getEntity(), at);
-        NMS.setHeadYaw(getEntity(), at.getYaw());
-        NMS.setBodyYaw(getEntity(), at.getYaw());
+        NMS.setHeadAndBodyYaw(getEntity(), at.getYaw());
 
         // Paper now doesn't actually set entities as valid for a few ticks while adding entities to chunks
         // Need to check the entity is really valid for a few ticks before finalising spawning

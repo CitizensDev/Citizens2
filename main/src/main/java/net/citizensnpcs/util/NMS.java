@@ -723,6 +723,10 @@ public class NMS {
         BRIDGE.look(bhandle, btarget);
     }
 
+    public static void markPoseDirty(Entity tracker) {
+        BRIDGE.markPoseDirty(tracker);
+    }
+
     public static void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
         BRIDGE.mount(entity, passenger);
     }

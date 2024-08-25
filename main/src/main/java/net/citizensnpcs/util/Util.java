@@ -616,11 +616,15 @@ public class Util {
     }
 
     private static String BEDROCK_NAME_PREFIX = ".";
-    private static final Scoreboard DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
+    private static Scoreboard DUMMY_SCOREBOARD;
     private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {
+        try {
+            DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
+        } catch (NullPointerException e) {
+        }
         TWO_DIGIT_DECIMAL.setMaximumFractionDigits(2);
         try {
             Bukkit.class.getMethod("getEntity", UUID.class);
