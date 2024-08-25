@@ -455,7 +455,7 @@ public class NMSImpl implements NMSBridge {
         MobAI ai = MobAI.from(getHandle(entity));
         if (ai == null)
             return;
-        MoveControl control = ai != null ? ai.getMoveControl() : null;
+        MoveControl control = ai.getMoveControl();
         if (control instanceof EntityMoveControl) {
             ((EntityMoveControl) control).moving = false;
         } else {

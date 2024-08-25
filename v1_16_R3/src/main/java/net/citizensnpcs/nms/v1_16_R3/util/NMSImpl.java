@@ -1332,9 +1332,11 @@ public class NMSImpl implements NMSBridge {
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
         Entity handle = getHandle(entity);
         handle.yaw = yaw;
-        if (handle instanceof EntityLiving) {
+        if (getHandle(entity) instanceof EntityLiving) {
             ((EntityLiving) handle).aB = yaw;
-            ((EntityLiving) handle).aA = yaw; // TODO: why this
+            if (!(handle instanceof EntityHuman)) {
+                ((EntityLiving) handle).aA = yaw; // TODO: why this
+            }
         }
     }
 

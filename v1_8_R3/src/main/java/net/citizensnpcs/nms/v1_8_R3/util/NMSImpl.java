@@ -1063,12 +1063,13 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
-        getHandle(entity).yaw = yaw;
-        if (entity instanceof EntityLiving) {
-            EntityLiving handle = (EntityLiving) getHandle(entity);
-            handle.aJ = yaw;
+        Entity handle = getHandle(entity);
+        handle.yaw = yaw;
+        if (handle instanceof EntityLiving) {
+            EntityLiving living = (EntityLiving) handle;
+            living.aJ = yaw;
             if (!(handle instanceof EntityHuman)) {
-                handle.aI = yaw; // TODO: why this
+                living.aI = yaw; // TODO: why this
             }
         }
     }
@@ -1759,30 +1760,30 @@ public class NMSImpl implements NMSBridge {
             EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME, EntityType.MAGMA_CUBE, EntityType.HORSE,
             EntityType.GHAST);
     private static final float DEFAULT_SPEED = 1F;
-    public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EntityEnderDragon.class,
-            true, boolean.class, AxisAlignedBB.class);
-    private static Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class, Entity.class);
+    public static final MethodHandle ENDERDRAGON_CHECK_WALLS = NMS
+            .getFirstMethodHandleWithReturnType(EntityEnderDragon.class, true, boolean.class, AxisAlignedBB.class);
+    private static final Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class,
+            Entity.class);
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
-    private static MethodHandle ENTITY_NAVIGATION = NMS.getFirstSetter(EntityInsentient.class, Navigation.class);
+    private static final MethodHandle ENTITY_NAVIGATION = NMS.getFirstSetter(EntityInsentient.class, Navigation.class);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
-    private static Method GET_NMS_BLOCK = NMS.getMethod(CraftBlock.class, "getNMSBlock", false);
-    private static Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
+    private static final Method GET_NMS_BLOCK = NMS.getMethod(CraftBlock.class, "getNMSBlock", false);
+    private static final Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
     private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "aY");
     private static final MethodHandle LOOK_CONTROL_SETTER = NMS.getFirstSetter(EntityInsentient.class,
             ControllerLook.class);
     private static Method MAKE_REQUEST;
-    private static Field MOVE_CONTROLLER_MOVING = NMS.getField(ControllerMove.class, "f");
-    private static Field NAVIGATION_WORLD_FIELD = NMS.getField(NavigationAbstract.class, "c");
-    private static Field NETWORK_ADDRESS = NMS.getField(NetworkManager.class, "l");
-    private static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    private static Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "a");
+    private static final Field MOVE_CONTROLLER_MOVING = NMS.getField(ControllerMove.class, "f");
+    private static final Field NAVIGATION_WORLD_FIELD = NMS.getField(NavigationAbstract.class, "c");
+    private static final Field NETWORK_ADDRESS = NMS.getField(NetworkManager.class, "l");
+    private static final Field PATHFINDING_RANGE = NMS.getField(NavigationAbstract.class, "a");
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle REPAIR_INVENTORY = NMS.getGetter(ContainerAnvil.class, "h");
     private static final MethodHandle RESULT_INVENTORY = NMS.getGetter(ContainerAnvil.class, "g");
     private static Field SKULL_PROFILE_FIELD;
     private static Field TEAM_FIELD;
-    private static Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
+    private static final Field TRACKED_ENTITY_SET = NMS.getField(EntityTracker.class, "c");
     static {
         try {
             Field field = NMS.getField(EntityTypes.class, "f");
