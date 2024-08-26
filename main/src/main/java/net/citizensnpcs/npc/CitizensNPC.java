@@ -323,6 +323,7 @@ public class CitizensNPC extends AbstractNPC {
                 ex.printStackTrace();
             }
         }
+        data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
         boolean wasLoaded = Messaging.isDebugging() ? Util.isLoaded(at) : false;
         boolean couldSpawn = entityController.spawn(at);
 
@@ -334,10 +335,10 @@ public class CitizensNPC extends AbstractNPC {
             // we need to wait before trying to spawn
             entityController.remove();
             Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
+            data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
             return false;
         }
         // Spawning the entity will initially create an entity tracker that is not controlled by Citizens
-        data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
         NMS.setLocationDirectly(getEntity(), at);
         NMS.setHeadAndBodyYaw(getEntity(), at.getYaw());
 
