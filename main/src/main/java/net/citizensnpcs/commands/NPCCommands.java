@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -2811,7 +2811,7 @@ public class NPCCommands {
                 }
             }
             List<NPC> search = location.getWorld().getNearbyEntities(location, range, range, range).stream()
-                    .map(registry::getNPC).filter(Predicates.notNull()).collect(Collectors.toList());
+                    .map(registry::getNPC).filter(Objects::nonNull).collect(Collectors.toList());
             search.sort((o1, o2) -> Double.compare(o1.getEntity().getLocation().distanceSquared(location),
                     o2.getEntity().getLocation().distanceSquared(location)));
             for (NPC test : search) {

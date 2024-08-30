@@ -1,5 +1,7 @@
 package net.citizensnpcs.trait.text;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,8 @@ public class Text extends Trait implements Runnable, Listener {
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
     @Persist(value = "realistic-looking")
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
+    @Persist(value = "speech-bubble-duration")
+    private int speechBubbleDuration = Setting.DEFAULT_TEXT_SPEECH_BUBBLE_DURATION.asTicks();
     @Persist(value = "speech-bubbles")
     private boolean speechBubbles;
     @Persist(value = "talk-close")
@@ -205,11 +209,9 @@ public class Text extends Trait implements Runnable, Listener {
         }
         if (speechBubbles) {
             HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
-            trait.addTemporaryLine(Placeholders.replace(text.get(index), player, npc),
-                    Setting.DEFAULT_TEXT_SPEECH_BUBBLE_DURATION.asTicks());
-        } else {
-            npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
+            trait.addTemporaryLine(Placeholders.replace(text.get(index), player, npc), speechBubbleDuration);
         }
+        npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
         return true;
     }
 
@@ -240,6 +242,10 @@ public class Text extends Trait implements Runnable, Listener {
      */
     public void setRange(double range) {
         this.range = range;
+    }
+
+    public void setSpeechBubbleDuration(Duration duration) {
+        this.speechBubbleDuration = (int) (duration.get(ChronoUnit.MILLIS) / 50);
     }
 
     /**

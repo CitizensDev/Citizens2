@@ -55,9 +55,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.sf.trove4j</groupId>
-            <artifactId>trove4j</artifactId>
-            <version>3.0.3</version>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil</artifactId>
+            <version>8.5.14</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -202,8 +202,8 @@
                             </filters>
                             <relocations>
                                 <relocation>
-                                    <pattern>gnu.trove</pattern>
-                                    <shadedPattern>clib.trove</shadedPattern>
+                                    <pattern>it.unimi.dsi</pattern>
+                                    <shadedPattern>clib.fastutil</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>net.kyori</pattern>

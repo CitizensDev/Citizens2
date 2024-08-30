@@ -214,6 +214,7 @@ public class Messages {
     public static final String INVALID_SKIN_FILE = "citizens.commands.npc.skin.invalid-file";
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
     public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
+    public static final String INVALID_SPEECH_BUBBLES_DURATION = "citizens.commands.npc.text.invalid-speech-bubbles-duration";
     public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
     public static final String INVALID_TROPICALFISH_COLOR = "citizens.commands.npc.tropicalfish.invalid-color";
     public static final String INVALID_TROPICALFISH_PATTERN = "citizens.commands.npc.tropicalfish.invalid-pattern";
@@ -399,6 +400,7 @@ public class Messages {
     public static final String SNOWMAN_FORM_SNOW_STOPPED = "citizens.commands.npc.snowman.form-snow-stopped";
     public static final String SOUND_INFO = "citizens.commands.npc.sound.info";
     public static final String SOUND_SET = "citizens.commands.npc.sound.set";
+    public static final String SPEECH_BUBBLES_DURATION_SET = "citizens.commands.npc.text.speech-bubbles-duration-set";
     public static final String SPEED_MODIFIER_SET = "citizens.commands.npc.speed.set";
     public static final String SPEED_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.speed.prompt";
     public static final String SPELL_SET = "citizens.commands.npc.spellcaster.spell-set";

@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.text;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 import org.bukkit.ChatColor;
@@ -13,6 +14,7 @@ import com.google.common.base.Joiner;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.Messages;
 
 public class TextBasePrompt extends StringPrompt {
@@ -76,6 +78,15 @@ public class TextBasePrompt extends StringPrompt {
             text.toggleRealisticLooking();
         } else if (original.trim().equalsIgnoreCase("speech bubbles")) {
             text.toggleSpeechBubbles();
+        } else if (original.trim().startsWith("speech bubbles duration")) {
+            try {
+                Duration duration = SpigotUtil.parseDuration(original.replace("speech bubbles duration", "").trim(),
+                        null);
+                text.setSpeechBubbleDuration(duration);
+                Messaging.sendErrorTr(sender, Messages.SPEECH_BUBBLES_DURATION_SET, duration);
+            } catch (Exception exception) {
+                Messaging.sendErrorTr(sender, Messages.INVALID_SPEECH_BUBBLES_DURATION);
+            }
         } else if (input.equalsIgnoreCase("close") || original.trim().equalsIgnoreCase("talk close")) {
             text.toggleTalkClose();
         } else if (input.equalsIgnoreCase("range")) {

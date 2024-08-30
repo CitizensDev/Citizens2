@@ -291,8 +291,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         // Unfortunately, transitive dependency management is not supported in this library.
         lib.loadLibrary(
                 Library.builder().groupId("ch{}ethz{}globis{}phtree").artifactId("phtree").version("2.8.0").build());
-        lib.loadLibrary(Library.builder().groupId("net{}sf{}trove4j").artifactId("trove4j").version("3.0.3")
-                .relocate("gnu{}trove", "clib{}trove").build());
+        lib.loadLibrary(Library.builder().groupId("it{}unimi{}dsi").artifactId("fastutil").version("8.5.14")
+                .relocate("it{}unimi{}dsi", "clib{}fastutil").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-minimessage")
                 .version("4.17.0").relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-api").version("4.17.0")

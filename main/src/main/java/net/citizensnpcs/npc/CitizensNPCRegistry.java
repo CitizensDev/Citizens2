@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Maps;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -36,7 +36,7 @@ import net.citizensnpcs.util.NMS;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final String name;
-    private final TIntObjectHashMap<NPC> npcs = new TIntObjectHashMap<>();
+    private final Int2ObjectOpenHashMap<NPC> npcs = new Int2ObjectOpenHashMap<>();
     private final NPCDataStore saves;
     private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
 
@@ -130,7 +130,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
             try {
                 npc.despawn(reason);
             } catch (Throwable e) {
-                e.printStackTrace(); // ensure that all entities are despawned
+                e.printStackTrace();
             }
             itr.remove();
         }
@@ -200,7 +200,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     @Override
     public Iterator<NPC> iterator() {
         return new Iterator<NPC>() {
-            Iterator<NPC> itr = npcs.valueCollection().iterator();
+            Iterator<NPC> itr = npcs.values().iterator();
             UUID lastUUID;
 
             @Override
@@ -236,7 +236,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public Iterable<NPC> sorted() {
-        List<NPC> vals = new ArrayList<>(npcs.valueCollection());
+        List<NPC> vals = new ArrayList<>(npcs.values());
         vals.sort(Comparator.comparing(NPC::getId));
         return vals;
     }
