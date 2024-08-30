@@ -1,14 +1,15 @@
 package net.citizensnpcs.nms.v1_19_R3.util;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -61,55 +62,64 @@ public class EntityPathfinder extends PathFinder {
         return var8;
     }
 
-    private Path findPath(ProfilerFiller var0, Node var1, Map<Target, BlockPos> var2, float var3, int var4,
+    private Path findPath(ProfilerFiller var0, Node var1, Map<Target, BlockPos> var2, float range, int reachRange,
             float var5) {
         Set<Target> var6 = var2.keySet();
         var1.g = 0.0F;
-        var1.h = getBestH(var1, var6);
+        var1.h = this.getBestH(var1, var6);
         var1.f = var1.h;
         this.openSet.clear();
         this.openSet.insert(var1);
+        Set<Target> var7 = ImmutableSet.of();
         int var8 = 0;
         Set<Target> var9 = Sets.newHashSetWithExpectedSize(var6.size());
         int var10 = (int) (this.maxVisitedNodes * var5);
-        while (!this.openSet.isEmpty() && ++var8 < var10) {
-            Node node = this.openSet.pop();
-            node.closed = true;
-            for (Target target : var6) {
-                if (node.distanceManhattan(target) <= var4) {
-                    target.setReached();
-                    var9.add(target);
+
+        while (!this.openSet.isEmpty()) {
+            ++var8;
+            if (var8 >= var10) {
+                break;
+            }
+            Node var11 = this.openSet.pop();
+            var11.closed = true;
+            Iterator var13 = var6.iterator();
+
+            while (var13.hasNext()) {
+                Target var13t = (Target) var13.next();
+                if (var11.distanceManhattan(var13t) <= reachRange) {
+                    var13t.setReached();
+                    var9.add(var13t);
                 }
             }
             if (!var9.isEmpty()) {
                 break;
             }
-            if (node.distanceTo(var1) >= var3) {
-                continue;
-            }
-            int i = this.nodeEvaluator.getNeighbors(this.neighbors, node);
-            for (int var13 = 0; var13 < i; var13++) {
-                Node var14 = this.neighbors[var13];
-                float var15 = node.distanceTo(var14);
-                node.walkedDistance += var15;
-                float var16 = node.g + var15 + var14.costMalus;
-                if (var14.walkedDistance < var3 && (!var14.inOpenSet() || var16 < var14.g)) {
-                    var14.cameFrom = node;
-                    var14.g = var16;
-                    var14.h = getBestH(var14, var6) * 1.5F;
-                    if (var14.inOpenSet()) {
-                        this.openSet.changeCost(var14, var14.g + var14.h);
-                    } else {
-                        var14.f = var14.g + var14.h;
-                        this.openSet.insert(var14);
+            if (var11.distanceTo(var1) < range) {
+                int var12 = this.nodeEvaluator.getNeighbors(this.neighbors, var11);
+
+                for (int i = 0; i < var12; ++i) {
+                    Node var14 = this.neighbors[i];
+                    float var15 = this.distance(var11, var14);
+                    var14.walkedDistance = var11.walkedDistance + var15;
+                    float var16 = var11.g + var15 + var14.costMalus;
+                    if (var14.walkedDistance < range && (!var14.inOpenSet() || var16 < var14.g)) {
+                        var14.cameFrom = var11;
+                        var14.g = var16;
+                        var14.h = this.getBestH(var14, var6) * 1.5F;
+                        if (var14.inOpenSet()) {
+                            this.openSet.changeCost(var14, var14.g + var14.h);
+                        } else {
+                            var14.f = var14.g + var14.h;
+                            this.openSet.insert(var14);
+                        }
                     }
                 }
             }
         }
         Optional<Path> var11 = !var9.isEmpty()
-                ? var9.stream().map(p -> reconstructPath(p.getBestNode(), var2.get(p), true)).min(
+                ? var9.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var2.get(var1x), true)).min(
                         Comparator.comparingInt(Path::getNodeCount))
-                : getFallbackDestinations(var2, var6).findFirst();
+                : getFallbackDestinations(var2, var6);
         if (!var11.isPresent())
             return null;
         Path var12 = var11.get();
@@ -126,11 +136,11 @@ public class EntityPathfinder extends PathFinder {
         return var2;
     }
 
-    public Stream<Path> getFallbackDestinations(Map<Target, BlockPos> var1, Set<Target> var5) {
+    public Optional<Path> getFallbackDestinations(Map<Target, BlockPos> var1, Set<Target> var5) {
         if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean())
-            return Stream.empty();
+            return Optional.empty();
         return var5.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false))
-                .sorted(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
+                .min(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
     }
 
     private Path reconstructPath(Node var0, BlockPos var1, boolean var2) {

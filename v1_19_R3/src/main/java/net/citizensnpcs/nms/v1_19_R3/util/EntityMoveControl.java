@@ -93,38 +93,38 @@ public class EntityMoveControl extends MoveControl {
     @Override
     public void tick() {
         this.entity.zza = 0;
-        if (this.moving) {
-            this.moving = false;
-            double dX = this.tx - this.entity.getX();
-            double dZ = this.tz - this.entity.getZ();
-            double dY = this.ty - this.entity.getY();
-            double dXZ = Math.sqrt(dX * dX + dZ * dZ);
-            double dXYZ = Math.sqrt(dX * dX + dY * dY + dZ * dZ);
-            if (dXYZ < 2.500000277905201E-7)
-                // this.entity.zza = 0.0F;
-                return;
-            if (dXZ > 0.4) {
-                float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
-                entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
-                NMS.setHeadYaw(entity.getBukkitEntity(), entity.getYRot());
+        if (!this.moving)
+            return;
+
+        this.moving = false;
+        double dX = this.tx - this.entity.getX();
+        double dZ = this.tz - this.entity.getZ();
+        double dY = this.ty - this.entity.getY();
+        double dXZ = Math.sqrt(dX * dX + dZ * dZ);
+        double dXYZ = Math.sqrt(dX * dX + dY * dY + dZ * dZ);
+        if (dXYZ < 2.500000277905201E-7)
+            // this.entity.zza = 0.0F;
+            return;
+        if (dXZ > 0.4) {
+            float f = (float) Math.toDegrees(Mth.atan2(dZ, dX)) - 90.0F;
+            entity.setYRot(rotlerp(this.entity.getYRot(), f, 90.0F));
+            NMS.setHeadYaw(entity.getBukkitEntity(), entity.getYRot());
+        }
+        this.entity.zza = (float) (this.speedMod * entity.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue());
+        if (entity instanceof Slime && jumpTicks-- <= 0) {
+            this.jumpTicks = new Random().nextInt(20) + 10;
+            if (((Slime) entity).isAggressive()) {
+                this.jumpTicks /= 3;
             }
-            this.entity.zza = (float) (this.speedMod * entity.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue());
-            if (entity instanceof Slime && jumpTicks-- <= 0) {
-                this.jumpTicks = new Random().nextInt(20) + 10;
-                if (((Slime) entity).isAggressive()) {
-                    this.jumpTicks /= 3;
-                }
-                ((Slime) entity).getJumpControl().jump();
-                return;
-            }
-            BlockPos pos = entity.blockPosition();
-            BlockState bs = entity.level.getBlockState(pos);
-            VoxelShape vs = bs.getCollisionShape(entity.level, pos);
-            if (dY >= entity.maxUpStep() && dXZ < Math.max(1.0F, entity.getBbWidth())
-                    || !vs.isEmpty() && entity.getY() < vs.max(Axis.Y) + pos.getY() && !bs.is(BlockTags.DOORS)
-                            && !bs.is(BlockTags.FENCES)) {
-                NMS.setShouldJump(entity.getBukkitEntity());
-            }
+            ((Slime) entity).getJumpControl().jump();
+            return;
+        }
+        BlockPos pos = entity.blockPosition();
+        BlockState bs = entity.level.getBlockState(pos);
+        VoxelShape vs = bs.getCollisionShape(entity.level, pos);
+        if (dY >= entity.maxUpStep() && dXZ < Math.max(1.0F, entity.getBbWidth()) || !vs.isEmpty()
+                && entity.getY() < vs.max(Axis.Y) + pos.getY() && !bs.is(BlockTags.DOORS) && !bs.is(BlockTags.FENCES)) {
+            NMS.setShouldJump(entity.getBukkitEntity());
         }
     }
 }

@@ -156,7 +156,7 @@ public class EntityNavigation extends PathNavigation {
         }
         return true;
     }
-    
+
     private boolean canWalkOn(int var0, int var1, int var2, int var3, int var4, int var5, Vec3 var6, double var7,
             double var9) {
         int var11 = var0 - var3 / 2;
@@ -226,7 +226,7 @@ public class EntityNavigation extends PathNavigation {
 
     @Override
     protected Path createPath(Set<BlockPos> var0, int var1, boolean var2, int var3) {
-        return createPath(var0, var1, var2, var3, (float) this.mob.getAttributeValue(Attributes.FOLLOW_RANGE));
+        return createPath(var0, var1, var2, var3, (float) this.followRange.getValue());
     }
 
     @Override

@@ -208,7 +208,7 @@ public class EntityNavigation extends NavigationAbstract {
         if (this.c != null && !this.c.c() && var0.contains(this.p))
             return this.c;
         this.b.getMethodProfiler().enter("pathfind");
-        float var4 = (float) this.a.b(GenericAttributes.FOLLOW_RANGE);
+        float var4 = (float) this.followRange.getValue();
         BlockPosition var5 = var2 ? this.a.getChunkCoordinates().up() : this.a.getChunkCoordinates();
         int var6 = (int) (var4 + var1);
         ChunkCache var7 = new ChunkCache(this.b, var5.b(-var6, -var6, -var6), var5.b(var6, var6, var6));
