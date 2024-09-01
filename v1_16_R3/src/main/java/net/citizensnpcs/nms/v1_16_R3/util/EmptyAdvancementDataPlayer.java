@@ -24,6 +24,7 @@ public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
 
     @Override
     public void a() {
+        super.a();
     }
 
     @Override

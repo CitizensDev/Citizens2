@@ -62,9 +62,10 @@ public class EmptyAdvancementDataPlayer extends PlayerAdvancements {
 
     @Override
     public void stopListening() {
+        super.stopListening();
     }
 
-    public static void clear(PlayerAdvancements data) {
+    private static void clear(PlayerAdvancements data) {
         data.stopListening();
         try {
             ((Map<?, ?>) PROGRESS.invoke(data)).clear();
