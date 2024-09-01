@@ -68,6 +68,7 @@ import net.minecraft.server.v1_14_R1.Vec3D;
 import net.minecraft.server.v1_14_R1.WorldServer;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
+    private AdvancementDataPlayer advancements;
     private final Map<PathType, Float> bz = Maps.newEnumMap(PathType.class);
     private PlayerControllerJump controllerJump;
     private PlayerControllerMove controllerMove;
@@ -181,9 +182,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public AdvancementDataPlayer getAdvancementData() {
-        return npc == null ? super.getAdvancementData()
-                : new EmptyAdvancementDataPlayer(getMinecraftServer(), CitizensAPI.getDataFolder().getParentFile(),
-                        this);
+        if (npc == null)
+            return super.getAdvancementData();
+        if (advancements == null) {
+            advancements = new EmptyAdvancementDataPlayer(getMinecraftServer(), this);
+        }
+        return advancements;
     }
 
     @Override

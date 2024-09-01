@@ -66,6 +66,7 @@ import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.WorldServer;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity {
+    private AdvancementDataPlayer advancements;
     private final Map<PathType, Float> bz = Maps.newEnumMap(PathType.class);
     private PlayerControllerJump controllerJump;
     private PlayerControllerMove controllerMove;
@@ -189,8 +190,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public AdvancementDataPlayer getAdvancementData() {
-        return npc == null ? super.getAdvancementData()
-                : new EmptyAdvancementDataPlayer(server, CitizensAPI.getDataFolder().getParentFile(), this);
+        if (npc == null)
+            return super.getAdvancementData();
+        if (advancements == null) {
+            advancements = new EmptyAdvancementDataPlayer(server, this);
+        }
+        return advancements;
     }
 
     @Override

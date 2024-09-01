@@ -59,6 +59,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityHumanNPC extends ServerPlayer implements NPCHolder, SkinnableEntity, ForwardingMobAI {
+    private PlayerAdvancements advancements;
     private final MobAI ai;
     private int jumpTicks = 0;
     private final CitizensNPC npc;
@@ -174,9 +175,13 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public PlayerAdvancements getAdvancements() {
-        return npc == null ? super.getAdvancements()
-                : new EmptyAdvancementDataPlayer(getServer().getFixerUpper(), getServer().getPlayerList(),
-                        getServer().getAdvancements(), CitizensAPI.getDataFolder().getParentFile(), this);
+        if (npc == null)
+            return super.getAdvancements();
+        if (advancements == null) {
+            advancements = new EmptyAdvancementDataPlayer(getServer().getFixerUpper(), getServer().getPlayerList(),
+                    this);
+        }
+        return advancements;
     }
 
     @Override

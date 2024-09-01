@@ -1,7 +1,8 @@
 package net.citizensnpcs.nms.v1_21_R1.util;
 
-import java.io.File;
 import java.lang.invoke.MethodHandle;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,15 +13,16 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 
 public class EmptyAdvancementDataPlayer extends PlayerAdvancements {
-    public EmptyAdvancementDataPlayer(DataFixer datafixer, PlayerList playerlist,
-            ServerAdvancementManager advancementdataworld, File file, ServerPlayer entityplayer) {
-        super(datafixer, playerlist, advancementdataworld, CitizensAPI.getDataFolder().toPath(), entityplayer);
+    public EmptyAdvancementDataPlayer(DataFixer datafixer, PlayerList playerlist, ServerPlayer entityplayer) {
+        super(datafixer, playerlist, new EmptyServerAdvancementManager(), CitizensAPI.getDataFolder().toPath(),
+                entityplayer);
         save();
     }
 
@@ -63,6 +65,22 @@ public class EmptyAdvancementDataPlayer extends PlayerAdvancements {
     @Override
     public void stopListening() {
         super.stopListening();
+    }
+
+    private static class EmptyServerAdvancementManager extends ServerAdvancementManager {
+        public EmptyServerAdvancementManager() {
+            super(null);
+        }
+
+        @Override
+        public AdvancementHolder get(ResourceLocation minecraftkey) {
+            return null;
+        }
+
+        @Override
+        public Collection<AdvancementHolder> getAllAdvancements() {
+            return Collections.emptyList();
+        }
     }
 
     private static void clear(PlayerAdvancements data) {

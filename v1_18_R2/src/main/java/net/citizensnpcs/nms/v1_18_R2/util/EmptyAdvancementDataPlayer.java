@@ -1,7 +1,8 @@
 package net.citizensnpcs.nms.v1_18_R2.util;
 
-import java.io.File;
 import java.lang.invoke.MethodHandle;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import com.mojang.datafixers.DataFixer;
@@ -10,15 +11,15 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 
 public class EmptyAdvancementDataPlayer extends PlayerAdvancements {
-    public EmptyAdvancementDataPlayer(DataFixer datafixer, PlayerList playerlist,
-            ServerAdvancementManager advancementdataworld, File file, ServerPlayer entityplayer) {
-        super(datafixer, playerlist, advancementdataworld, CitizensAPI.getDataFolder(), entityplayer);
+    public EmptyAdvancementDataPlayer(DataFixer datafixer, PlayerList playerlist, ServerPlayer entityplayer) {
+        super(datafixer, playerlist, new EmptyServerAdvancementManager(), CitizensAPI.getDataFolder(), entityplayer);
         this.save();
     }
 
@@ -57,6 +58,22 @@ public class EmptyAdvancementDataPlayer extends PlayerAdvancements {
     @Override
     public void stopListening() {
         super.stopListening();
+    }
+
+    private static class EmptyServerAdvancementManager extends ServerAdvancementManager {
+        public EmptyServerAdvancementManager() {
+            super(null);
+        }
+
+        @Override
+        public Advancement getAdvancement(ResourceLocation minecraftkey) {
+            return null;
+        }
+
+        @Override
+        public Collection<Advancement> getAllAdvancements() {
+            return Collections.emptyList();
+        }
     }
 
     public static void clear(PlayerAdvancements data) {

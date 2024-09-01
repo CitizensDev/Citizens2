@@ -1,7 +1,8 @@
 package net.citizensnpcs.nms.v1_16_R3.util;
 
-import java.io.File;
 import java.lang.invoke.MethodHandle;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import com.mojang.datafixers.DataFixer;
@@ -13,12 +14,12 @@ import net.minecraft.server.v1_16_R3.AdvancementDataPlayer;
 import net.minecraft.server.v1_16_R3.AdvancementDataWorld;
 import net.minecraft.server.v1_16_R3.AdvancementProgress;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.MinecraftKey;
 import net.minecraft.server.v1_16_R3.PlayerList;
 
 public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
-    public EmptyAdvancementDataPlayer(DataFixer datafixer, PlayerList playerlist,
-            AdvancementDataWorld advancementdataworld, File file, EntityPlayer entityplayer) {
-        super(datafixer, playerlist, advancementdataworld, CitizensAPI.getDataFolder(), entityplayer);
+    public EmptyAdvancementDataPlayer(DataFixer datafixer, PlayerList playerlist, EntityPlayer entityplayer) {
+        super(datafixer, playerlist, new EmptyServerAdvancementManager(), CitizensAPI.getDataFolder(), entityplayer);
         this.b();
     }
 
@@ -57,6 +58,22 @@ public class EmptyAdvancementDataPlayer extends AdvancementDataPlayer {
     @Override
     public boolean revokeCritera(Advancement advancement, String s) {
         return false;
+    }
+
+    private static class EmptyServerAdvancementManager extends AdvancementDataWorld {
+        public EmptyServerAdvancementManager() {
+            super(null);
+        }
+
+        @Override
+        public Advancement a(MinecraftKey minecraftkey) {
+            return null;
+        }
+
+        @Override
+        public Collection<Advancement> getAdvancements() {
+            return Collections.emptyList();
+        }
     }
 
     public static void clear(AdvancementDataPlayer data) {

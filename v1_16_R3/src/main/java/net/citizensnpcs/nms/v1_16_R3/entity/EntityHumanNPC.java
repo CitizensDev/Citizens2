@@ -64,6 +64,7 @@ import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.WorldServer;
 
 public class EntityHumanNPC extends EntityPlayer implements NPCHolder, SkinnableEntity, ForwardingMobAI {
+    private AdvancementDataPlayer advancements;
     private MobAI ai;
     private final Map<EnumItemSlot, ItemStack> equipmentCache = Maps.newEnumMap(EnumItemSlot.class);
     private int jumpTicks = 0;
@@ -159,10 +160,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
 
     @Override
     public AdvancementDataPlayer getAdvancementData() {
-        return npc == null ? super.getAdvancementData()
-                : new EmptyAdvancementDataPlayer(getMinecraftServer().getDataFixer(),
-                        getMinecraftServer().getPlayerList(), getMinecraftServer().getAdvancementData(),
-                        CitizensAPI.getDataFolder().getParentFile(), this);
+        if (npc == null)
+            return super.getAdvancementData();
+        if (advancements == null) {
+            advancements = new EmptyAdvancementDataPlayer(getMinecraftServer().getDataFixer(),
+                    getMinecraftServer().getPlayerList(), this);
+        }
+        return advancements;
     }
 
     @Override
