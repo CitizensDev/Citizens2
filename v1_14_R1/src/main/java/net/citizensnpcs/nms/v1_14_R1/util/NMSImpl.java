@@ -215,7 +215,6 @@ import net.citizensnpcs.util.NMS.MinecraftNavigationType;
 import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_14_R1.AdvancementDataPlayer;
 import net.minecraft.server.v1_14_R1.AttributeInstance;
 import net.minecraft.server.v1_14_R1.AxisAlignedBB;
 import net.minecraft.server.v1_14_R1.BehaviorController;
@@ -2108,14 +2107,6 @@ public class NMSImpl implements NMSBridge {
         NMSImpl.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
-    public static void setAdvancement(Player entity, AdvancementDataPlayer instance) {
-        try {
-            ADVANCEMENT_PLAYER_FIELD.invoke(getHandle(entity), instance);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void setBukkitEntity(Entity entity, CraftEntity bukkitEntity) {
         try {
             BUKKITENTITY_FIELD_SETTER.invoke(entity, bukkitEntity);
@@ -2189,14 +2180,10 @@ public class NMSImpl implements NMSBridge {
         navigation.c();
     }
 
-    private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
-            "advancementDataPlayer");
-
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST, EntityType.SHULKER,
             EntityType.PHANTOM);
-
     private static final MethodHandle BEHAVIOR_MAP = NMS.getGetter(BehaviorController.class, "c");
     private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
             "c", false, double.class, double.class, double.class);

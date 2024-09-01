@@ -41,6 +41,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents.LiteralContents;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -172,6 +173,13 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public PlayerAdvancements getAdvancements() {
+        return npc == null ? super.getAdvancements()
+                : new EmptyAdvancementDataPlayer(getServer().getFixerUpper(), getServer().getPlayerList(),
+                        getServer().getAdvancements(), CitizensAPI.getDataFolder().getParentFile(), this);
+    }
+
+    @Override
     public MobAI getAI() {
         return ai;
     }
@@ -256,10 +264,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         this.invulnerableTime = 0;
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
-        EmptyAdvancementDataPlayer.clear(this.getAdvancements());
-        NMSImpl.setAdvancement(this.getBukkitEntity(),
-                new EmptyAdvancementDataPlayer(minecraftServer.getFixerUpper(), minecraftServer.getPlayerList(),
-                        minecraftServer.getAdvancements(), CitizensAPI.getDataFolder().getParentFile(), this));
     }
 
     @Override

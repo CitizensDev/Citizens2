@@ -39,6 +39,7 @@ import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_16_R3.AdvancementDataPlayer;
 import net.minecraft.server.v1_16_R3.AxisAlignedBB;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ChatComponentText;
@@ -157,6 +158,14 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public AdvancementDataPlayer getAdvancementData() {
+        return npc == null ? super.getAdvancementData()
+                : new EmptyAdvancementDataPlayer(getMinecraftServer().getDataFixer(),
+                        getMinecraftServer().getPlayerList(), getMinecraftServer().getAdvancementData(),
+                        CitizensAPI.getDataFolder().getParentFile(), this);
+    }
+
+    @Override
     public MobAI getAI() {
         return ai;
     }
@@ -231,10 +240,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         invulnerableTicks = 0;
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
-        EmptyAdvancementDataPlayer.clear(this.getAdvancementData());
-        NMSImpl.setAdvancement(this.getBukkitEntity(),
-                new EmptyAdvancementDataPlayer(minecraftServer.getDataFixer(), minecraftServer.getPlayerList(),
-                        minecraftServer.getAdvancementData(), CitizensAPI.getDataFolder().getParentFile(), this));
     }
 
     @Override

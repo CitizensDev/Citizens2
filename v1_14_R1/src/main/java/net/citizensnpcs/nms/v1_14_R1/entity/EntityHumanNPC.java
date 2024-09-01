@@ -40,6 +40,7 @@ import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_14_R1.AdvancementDataPlayer;
 import net.minecraft.server.v1_14_R1.AttributeInstance;
 import net.minecraft.server.v1_14_R1.AxisAlignedBB;
 import net.minecraft.server.v1_14_R1.BlockPosition;
@@ -179,6 +180,13 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public AdvancementDataPlayer getAdvancementData() {
+        return npc == null ? super.getAdvancementData()
+                : new EmptyAdvancementDataPlayer(getMinecraftServer(), CitizensAPI.getDataFolder().getParentFile(),
+                        this);
+    }
+
+    @Override
     public CraftPlayer getBukkitEntity() {
         if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
             NMSImpl.setBukkitEntity(this, new PlayerNPC(this));
@@ -260,9 +268,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         invulnerableTicks = 0;
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
-        EmptyAdvancementDataPlayer.clear(this.getAdvancementData());
-        NMSImpl.setAdvancement(this.getBukkitEntity(),
-                new EmptyAdvancementDataPlayer(minecraftServer, CitizensAPI.getDataFolder().getParentFile(), this));
     }
 
     @Override

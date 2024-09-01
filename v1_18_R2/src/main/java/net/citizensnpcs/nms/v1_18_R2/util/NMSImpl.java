@@ -242,7 +242,6 @@ import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerBossEvent;
@@ -2159,14 +2158,6 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static void setAdvancement(Player entity, PlayerAdvancements instance) {
-        try {
-            ADVANCEMENTS_PLAYER_FIELD.invoke(getHandle(entity), instance);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void setAttribute(LivingEntity entity, Attribute attribute, double value) {
         AttributeInstance attr = entity.getAttribute(attribute);
         if (attr == null) {
@@ -2325,22 +2316,15 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    private static final MethodHandle ADVANCEMENTS_PLAYER_FIELD = NMS.getFinalSetter(ServerPlayer.class, "cr");
-
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
-
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeSupplier.class, "a");
-
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
             AttributeSupplier.class);
-
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
-
     private static final MethodHandle BEHAVIOR_TREE_MAP = NMS.getGetter(Brain.class, "f");
-
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);

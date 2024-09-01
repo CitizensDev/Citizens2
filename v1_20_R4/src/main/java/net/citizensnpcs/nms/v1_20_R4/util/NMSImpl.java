@@ -280,7 +280,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerBossEvent;
@@ -2398,14 +2397,6 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
-    public static void setAdvancement(Player entity, PlayerAdvancements instance) {
-        try {
-            ADVANCEMENTS_PLAYER_SETTER.invoke(getHandle(entity), instance);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void setAttribute(LivingEntity entity, Holder<Attribute> attribute, double value) {
         AttributeInstance attr = entity.getAttribute(attribute);
         if (attr == null) {
@@ -2572,9 +2563,6 @@ public class NMSImpl implements NMSBridge {
             }
         }
     }
-
-    private static final MethodHandle ADVANCEMENTS_PLAYER_SETTER = NMS.getFirstFinalSetter(ServerPlayer.class,
-            PlayerAdvancements.class);
 
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "cj");
 

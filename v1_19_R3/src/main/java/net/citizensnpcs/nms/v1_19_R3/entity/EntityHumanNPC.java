@@ -43,6 +43,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -58,12 +59,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityHumanNPC extends ServerPlayer implements NPCHolder, SkinnableEntity, ForwardingMobAI {
-    @Override
-    public boolean broadcastToPlayer(ServerPlayer player) {
-        return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-    }
-
     private MobAI ai;
+
     private int jumpTicks = 0;
     private final CitizensNPC npc;
     private boolean setBukkitEntity;
@@ -85,6 +82,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         } else {
             skinTracker = null;
         }
+    }
+
+    @Override
+    public boolean broadcastToPlayer(ServerPlayer player) {
+        return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
     }
 
     @Override
@@ -167,6 +169,13 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (!npc.hasTrait(EntityPoseTrait.class) || npc.getTraitNullable(EntityPoseTrait.class).getPose() == null) {
             updatePlayerPose();
         }
+    }
+
+    @Override
+    public PlayerAdvancements getAdvancements() {
+        return npc == null ? super.getAdvancements()
+                : new EmptyAdvancementDataPlayer(getServer().getFixerUpper(), getServer().getPlayerList(),
+                        getServer().getAdvancements(), CitizensAPI.getDataFolder().getParentFile(), this);
     }
 
     @Override
@@ -254,10 +263,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         this.invulnerableTime = 0;
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
-        EmptyAdvancementDataPlayer.clear(this.getAdvancements());
-        NMSImpl.setAdvancement(this.getBukkitEntity(),
-                new EmptyAdvancementDataPlayer(minecraftServer.getFixerUpper(), minecraftServer.getPlayerList(),
-                        minecraftServer.getAdvancements(), CitizensAPI.getDataFolder().getParentFile(), this));
     }
 
     @Override

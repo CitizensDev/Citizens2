@@ -224,7 +224,6 @@ import net.citizensnpcs.util.NMS.MinecraftNavigationType;
 import net.citizensnpcs.util.NMSBridge;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
-import net.minecraft.server.v1_16_R3.AdvancementDataPlayer;
 import net.minecraft.server.v1_16_R3.AttributeBase;
 import net.minecraft.server.v1_16_R3.AttributeMapBase;
 import net.minecraft.server.v1_16_R3.AttributeModifiable;
@@ -2166,14 +2165,6 @@ public class NMSImpl implements NMSBridge {
         NMSImpl.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
-    public static void setAdvancement(Player entity, AdvancementDataPlayer instance) {
-        try {
-            ADVANCEMENT_PLAYER_FIELD.invoke(getHandle(entity), instance);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void setAttribute(EntityLiving entity, AttributeBase attribute, double value) {
         AttributeModifiable range = entity.getAttributeInstance(attribute);
         if (range == null) {
@@ -2296,11 +2287,7 @@ public class NMSImpl implements NMSBridge {
         navigation.c();
     }
 
-    private static final MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class,
-            "advancementDataPlayer");
-
     private static final MethodHandle ATTRIBUTE_MAP = NMS.getGetter(AttributeMapBase.class, "d");
-
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getGetter(AttributeProvider.class, "a");
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFinalSetter(AttributeProvider.class, "a");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,

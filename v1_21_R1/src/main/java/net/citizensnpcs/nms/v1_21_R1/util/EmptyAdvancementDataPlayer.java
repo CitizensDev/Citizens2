@@ -21,7 +21,7 @@ public class EmptyAdvancementDataPlayer extends PlayerAdvancements {
     public EmptyAdvancementDataPlayer(DataFixer datafixer, PlayerList playerlist,
             ServerAdvancementManager advancementdataworld, File file, ServerPlayer entityplayer) {
         super(datafixer, playerlist, advancementdataworld, CitizensAPI.getDataFolder().toPath(), entityplayer);
-        this.save();
+        save();
     }
 
     @Override
