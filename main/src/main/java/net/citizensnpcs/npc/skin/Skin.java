@@ -85,18 +85,13 @@ public class Skin {
         if (skinName.equals(cachedName) && texture != null && !texture.equals("cache")) {
             setNPCTexture(entity, new SkinProperty("textures", texture, skinTrait.getSignature()));
 
-            // check if NPC prefers to use cached skin over the latest skin.
-            if (entity.getNPC().data().has("player-skin-use-latest")) {
-                entity.getNPC().data().remove("player-skin-use-latest");
-            }
             if (!skinTrait.shouldUpdateSkins()) // cache preferred
                 return true;
         }
         if (!hasSkinData()) {
-            String defaultSkinName = ChatColor.stripColor(npc.getName()).toLowerCase(Locale.ROOT);
+            String npcName = ChatColor.stripColor(npc.getName()).toLowerCase(Locale.ROOT);
 
-            if (npc.hasTrait(SkinTrait.class) && skinName.equals(defaultSkinName)
-                    && !npc.getOrAddTrait(SkinTrait.class).fetchDefaultSkin())
+            if (!skinTrait.shouldUpdateSkins() && !skinTrait.fetchDefaultSkin() && skinName.equals(npcName))
                 return false;
 
             if (hasFetched)
