@@ -338,7 +338,6 @@ public class CitizensNPC extends AbstractNPC {
             data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
             return false;
         }
-        // Spawning the entity will initially create an entity tracker that is not controlled by Citizens
         NMS.setLocationDirectly(getEntity(), at);
         NMS.setHeadAndBodyYaw(getEntity(), at.getYaw());
 

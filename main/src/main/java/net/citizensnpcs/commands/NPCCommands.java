@@ -547,11 +547,11 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command|cmd (add [command] | remove [id|all] | permissions [permissions] | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command (add [command] | remove [id|all] | permissions [permissions] | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "",
             modifiers = { "command", "cmd" },
             min = 1,
-            flags = "lrpos",
+            flags = "sproln",
             permission = "citizens.npc.command")
     public void command(CommandContext args, CommandSender sender, NPC npc,
             @Flag(value = { "permissions", "permission" }) String permissions,
@@ -592,7 +592,8 @@ public class NPCCommands {
             try {
                 int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
                         .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o')).cooldown(cooldown)
-                        .cost(cost).experienceCost(experienceCost).globalCooldown(gcooldown).n(n).delay(delay));
+                        .cost(cost).experienceCost(experienceCost).globalCooldown(gcooldown).n(n).delay(delay)
+                        .npc(args.hasFlag('n')));
                 Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
             } catch (NumberFormatException ex) {
                 throw new CommandException(CommandMessages.INVALID_NUMBER);

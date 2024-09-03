@@ -55,7 +55,6 @@ import net.citizensnpcs.api.npc.SimpleNPCDataStore;
 import net.citizensnpcs.api.npc.templates.TemplateRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
-import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
@@ -75,7 +74,6 @@ import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.profile.ProfileFetcher;
-import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -398,7 +396,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
 
         traitFactory = new CitizensTraitFactory(this);
-        traitFactory.registerTrait(TraitInfo.create(ShopTrait.class).withSupplier(() -> new ShopTrait(shops)));
         selector = new NPCSelector(this);
         templateRegistry = new TemplateRegistry(new File(getDataFolder(), "templates").toPath());
         if (!new File(getDataFolder(), "skins").exists()) {
@@ -455,13 +452,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     public void reload() throws NPCLoadException {
+        getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
+
         Editor.leaveAll();
         config.reload();
         despawnNPCs(false);
         ProfileFetcher.reset();
         Skin.clearCache();
-
-        getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
 
         templateRegistry = new TemplateRegistry(new File(getDataFolder(), "templates").toPath());
 

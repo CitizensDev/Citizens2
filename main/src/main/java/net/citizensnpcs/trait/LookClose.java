@@ -144,7 +144,7 @@ public class LookClose extends Trait {
             }
         } else {
             double min = Double.MAX_VALUE;
-            Location npcLoc = npc.getStoredLocation();
+            Location npcLoc = npc.getEntity().getLocation();
             for (Player player : getNearbyPlayers()) {
                 double dist = player.getLocation().distance(npcLoc);
                 if (dist > min)

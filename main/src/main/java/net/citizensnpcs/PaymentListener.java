@@ -22,8 +22,7 @@ public class PaymentListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
-        boolean hasAccount = provider.hasAccount(event.getCreator());
-        if (!hasAccount || event.getCreator().hasPermission("citizens.npc.ignore-cost"))
+        if (!provider.hasAccount(event.getCreator()) || event.getCreator().hasPermission("citizens.npc.ignore-cost"))
             return;
         double cost = Setting.NPC_COST.asDouble();
         EconomyResponse response = provider.withdrawPlayer(event.getCreator(), cost);

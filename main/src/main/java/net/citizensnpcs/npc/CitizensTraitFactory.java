@@ -57,6 +57,7 @@ import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.Saddle;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SheepTrait;
+import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinTrait;
@@ -130,6 +131,8 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Saddle.class));
         registerTrait(TraitInfo.create(ScoreboardTrait.class));
         registerTrait(TraitInfo.create(SitTrait.class).optInToStats());
+        registerTrait(
+                TraitInfo.create(ShopTrait.class).optInToStats().withSupplier(() -> new ShopTrait(plugin.getShops())));
         registerTrait(TraitInfo.create(SleepTrait.class));
         registerTrait(TraitInfo.create(SheepTrait.class));
         registerTrait(TraitInfo.create(SkinLayers.class));
