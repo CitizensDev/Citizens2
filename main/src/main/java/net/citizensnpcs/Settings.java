@@ -98,7 +98,7 @@ public class Settings {
                 "general.debug-chunk-loads", false),
         DEBUG_FILE("Send Citizens debug output to a specific file", "general.debug-file", ""),
         DEBUG_MODE("Enable Citizens debugging", "general.debug-mode", false),
-        DEBUG_PATHFINDING("Debug pathfinding by showing fake target blocks", "npc.pathfinding.debug-paths",
+        DEBUG_PATHFINDING("Debug pathfinding by showing fake target blocks", "npc.pathfinding.debug",
                 "npc.pathfinding.debug-paths", false),
         DEFAULT_BLOCK_BREAKER_RADIUS(
                 "The default distance radius for block breaking, in blocks<br>The NPC will pathfind to be this far away from the target block if greater than 0",
