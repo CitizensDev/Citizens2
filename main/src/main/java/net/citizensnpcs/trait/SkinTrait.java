@@ -48,7 +48,7 @@ public class SkinTrait extends Trait {
             Messaging.debug("Filled skin placeholder", filled, "from", skinName);
             return true;
         }
-        return true;
+        return false;
     }
 
     /**
