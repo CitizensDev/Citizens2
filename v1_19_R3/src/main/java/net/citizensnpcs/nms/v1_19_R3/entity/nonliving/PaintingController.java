@@ -40,11 +40,6 @@ public class PaintingController extends MobEntityController {
     }
 
     public static class EntityPaintingNPC extends Painting implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityPaintingNPC(EntityType<? extends Painting> types, Level level) {
@@ -54,6 +49,11 @@ public class PaintingController extends MobEntityController {
         public EntityPaintingNPC(EntityType<? extends Painting> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

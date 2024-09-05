@@ -436,12 +436,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public NPC getNPC(org.bukkit.entity.Entity entity) {
-        Entity handle = getHandle(entity);
-        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
-    }
-
-    @Override
     public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
         WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
         EntityTrackerEntry entry = server.getTracker().trackedEntities.get(entity.getEntityId());
@@ -659,7 +653,7 @@ public class NMSImpl implements NMSBridge {
         Block block;
         try {
             block = (Block) GET_NMS_BLOCK.invoke(in);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return in.getType().isSolid();
         }
         return block.w();
@@ -1759,13 +1753,13 @@ public class NMSImpl implements NMSBridge {
     private static final float DEFAULT_SPEED = 1F;
     public static final MethodHandle ENDERDRAGON_CHECK_WALLS = NMS
             .getFirstMethodHandleWithReturnType(EntityEnderDragon.class, true, boolean.class, AxisAlignedBB.class);
-    private static final Method ENTITY_ATTACK_A = NMS.getMethod(Entity.class, "a", true, EntityLiving.class,
+    private static final MethodHandle ENTITY_ATTACK_A = NMS.getMethodHandle(Entity.class, "a", true, EntityLiving.class,
             Entity.class);
     private static Map<Class<?>, Integer> ENTITY_CLASS_TO_INT;
     private static Map<Class<?>, String> ENTITY_CLASS_TO_NAME;
     private static final MethodHandle ENTITY_NAVIGATION = NMS.getFirstSetter(EntityInsentient.class, Navigation.class);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
-    private static final Method GET_NMS_BLOCK = NMS.getMethod(CraftBlock.class, "getNMSBlock", false);
+    private static final MethodHandle GET_NMS_BLOCK = NMS.getMethodHandle(CraftBlock.class, "getNMSBlock", false);
     private static final Field GOAL_FIELD = NMS.getField(PathfinderGoalSelector.class, "b");
     private static final Field JUMP_FIELD = NMS.getField(EntityLiving.class, "aY");
     private static final MethodHandle LOOK_CONTROL_SETTER = NMS.getFirstSetter(EntityInsentient.class,

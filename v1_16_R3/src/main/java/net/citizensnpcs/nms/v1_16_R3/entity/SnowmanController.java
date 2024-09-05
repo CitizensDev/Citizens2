@@ -44,11 +44,6 @@ public class SnowmanController extends MobEntityController {
     }
 
     public static class EntitySnowmanNPC extends EntitySnowman implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntitySnowmanNPC(EntityTypes<? extends EntitySnowman> types, World world) {
@@ -70,6 +65,11 @@ public class SnowmanController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

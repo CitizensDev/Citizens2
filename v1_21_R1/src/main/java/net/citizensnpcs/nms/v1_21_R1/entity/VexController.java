@@ -41,11 +41,6 @@ public class VexController extends MobEntityController {
     }
 
     public static class EntityVexNPC extends Vex implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityVexNPC(EntityType<? extends Vex> types, Level level) {
@@ -58,6 +53,11 @@ public class VexController extends MobEntityController {
             if (npc != null) {
                 setNoGravity(true);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

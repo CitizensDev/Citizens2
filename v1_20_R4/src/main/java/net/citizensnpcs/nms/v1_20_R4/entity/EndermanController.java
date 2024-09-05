@@ -52,11 +52,6 @@ public class EndermanController extends MobEntityController {
     }
 
     public static class EntityEndermanNPC extends EnderMan implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEndermanNPC(EntityType<? extends EnderMan> types, Level level) {
@@ -66,6 +61,11 @@ public class EndermanController extends MobEntityController {
         public EntityEndermanNPC(EntityType<? extends EnderMan> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

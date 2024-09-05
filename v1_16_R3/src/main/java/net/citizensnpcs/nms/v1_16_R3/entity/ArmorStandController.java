@@ -49,14 +49,9 @@ public class ArmorStandController extends MobEntityController {
     }
 
     public static class EntityArmorStandNPC extends EntityArmorStand implements NPCHolder, ForwardingMobAI {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private MobAI ai;
-        private final CitizensNPC npc;
 
+        private final CitizensNPC npc;
         public EntityArmorStandNPC(EntityTypes<? extends EntityArmorStand> types, World world) {
             this(types, world, null);
         }
@@ -82,6 +77,11 @@ public class ArmorStandController extends MobEntityController {
                     getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);
             return event.isCancelled() ? EnumInteractionResult.FAIL : EnumInteractionResult.SUCCESS;
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

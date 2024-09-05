@@ -50,11 +50,6 @@ public class ItemController extends AbstractEntityController {
     }
 
     public static class EntityItemNPC extends ItemEntity implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityItemNPC(EntityType<? extends ItemEntity> types, Level level) {
@@ -65,6 +60,11 @@ public class ItemController extends AbstractEntityController {
         public EntityItemNPC(Level world, NPC npc, double x, double y, double z, ItemStack stack) {
             super(world, x, y, z, stack);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

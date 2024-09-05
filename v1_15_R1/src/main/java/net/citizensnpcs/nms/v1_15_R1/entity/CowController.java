@@ -55,11 +55,6 @@ public class CowController extends MobEntityController {
     }
 
     public static class EntityCowNPC extends EntityCow implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityCowNPC(EntityTypes<? extends EntityCow> types, World world) {
@@ -106,6 +101,11 @@ public class CowController extends MobEntityController {
             if (itemstack.getItem() == Items.BUCKET && !entityhuman.abilities.canInstantlyBuild && !this.isBaby())
                 return false;
             return super.a(entityhuman, enumhand);
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

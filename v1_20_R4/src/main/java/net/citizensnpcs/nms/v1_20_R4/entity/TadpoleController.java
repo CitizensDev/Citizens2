@@ -51,11 +51,6 @@ public class TadpoleController extends MobEntityController {
     }
 
     public static class EntityTadpoleNPC extends Tadpole implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         private MoveControl oldMoveController;
@@ -83,6 +78,11 @@ public class TadpoleController extends MobEntityController {
             if (npc != null) {
                 this.verticalCollision = lastInWater;
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

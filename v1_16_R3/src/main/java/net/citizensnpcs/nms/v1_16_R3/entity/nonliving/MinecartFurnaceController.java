@@ -38,11 +38,6 @@ public class MinecartFurnaceController extends MobEntityController {
     }
 
     public static class EntityMinecartFurnaceNPC extends EntityMinecartFurnace implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityMinecartFurnaceNPC(EntityTypes<? extends EntityMinecartFurnace> types, World world) {
@@ -57,6 +52,11 @@ public class MinecartFurnaceController extends MobEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

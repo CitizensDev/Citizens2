@@ -40,11 +40,6 @@ public class SnowballController extends MobEntityController {
     }
 
     public static class EntitySnowballNPC extends Snowball implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntitySnowballNPC(EntityType<? extends Snowball> types, Level level) {
@@ -54,6 +49,11 @@ public class SnowballController extends MobEntityController {
         public EntitySnowballNPC(EntityType<? extends Snowball> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

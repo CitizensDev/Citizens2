@@ -321,6 +321,7 @@ import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.AbstractSchoolingFish;
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.animal.Dolphin;
+import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.animal.Panda;
 import net.minecraft.world.entity.animal.PolarBear;
 import net.minecraft.world.entity.animal.Pufferfish;
@@ -649,12 +650,6 @@ public class NMSImpl implements NMSBridge {
             return Float.NaN;
         LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) entity);
         return handle.zza;
-    }
-
-    @Override
-    public NPC getNPC(org.bukkit.entity.Entity entity) {
-        Entity handle = getHandle(entity);
-        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
     }
 
     @Override
@@ -2566,6 +2561,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "cj");
 
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
@@ -2623,9 +2619,9 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFirstFinalSetter(PathNavigation.class,
             PathFinder.class);
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
-
     private static final MethodHandle PLAYER_INFO_ENTRIES_LIST = NMS
             .getFirstFinalSetter(ClientboundPlayerInfoUpdatePacket.class, List.class);
+
     private static final MethodHandle PLAYERINFO_ENTRIES = PLAYER_INFO_ENTRIES_LIST;
     private static final MethodHandle PORTAL_ENTRANCE_POS_GETTER = NMS.getGetter(Entity.class, "ay");
     private static final MethodHandle PORTAL_ENTRANCE_POS_SETTER = NMS.getSetter(Entity.class, "ay");
@@ -2637,6 +2633,7 @@ public class NMSImpl implements NMSBridge {
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SERVER_ENTITY_GETTER = NMS.getFirstGetter(TrackedEntity.class,
             ServerEntity.class);
+    public static final MethodHandle SET_FACEPLANTED = NMS.getMethodHandle(Fox.class, "A", true, boolean.class);
     private static MethodHandle SET_PROFILE_METHOD;
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getFirstGetter(Entity.class, EntityDimensions.class);
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);

@@ -55,11 +55,6 @@ public class LlamaController extends MobEntityController {
     }
 
     public static class EntityLlamaNPC extends EntityLlama implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
@@ -98,6 +93,11 @@ public class LlamaController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

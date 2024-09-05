@@ -44,11 +44,6 @@ public class GiantController extends MobEntityController {
     }
 
     public static class EntityGiantNPC extends EntityGiantZombie implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityGiantNPC(EntityTypes<? extends EntityGiantZombie> types, World world) {
@@ -70,6 +65,11 @@ public class GiantController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

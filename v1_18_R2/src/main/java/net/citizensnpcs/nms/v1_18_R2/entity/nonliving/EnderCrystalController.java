@@ -46,11 +46,6 @@ public class EnderCrystalController extends MobEntityController {
     }
 
     public static class EntityEnderCrystalNPC extends EndCrystal implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderCrystalNPC(EntityType<? extends EndCrystal> types, Level level) {
@@ -60,6 +55,11 @@ public class EnderCrystalController extends MobEntityController {
         public EntityEnderCrystalNPC(EntityType<? extends EndCrystal> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

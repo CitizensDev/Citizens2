@@ -51,11 +51,6 @@ public class CaveSpiderController extends MobEntityController {
     }
 
     public static class EntityCaveSpiderNPC extends CaveSpider implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityCaveSpiderNPC(EntityType<? extends CaveSpider> types, Level level) {
@@ -65,6 +60,11 @@ public class CaveSpiderController extends MobEntityController {
         public EntityCaveSpiderNPC(EntityType<? extends CaveSpider> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

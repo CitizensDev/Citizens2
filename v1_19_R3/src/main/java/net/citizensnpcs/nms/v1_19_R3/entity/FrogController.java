@@ -46,11 +46,6 @@ public class FrogController extends MobEntityController {
     }
 
     public static class EntityFrogNPC extends Frog implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityFrogNPC(EntityType<? extends Frog> types, Level level) {
@@ -63,6 +58,11 @@ public class FrogController extends MobEntityController {
             if (npc != null) {
                 croakAnimationState.start(1);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

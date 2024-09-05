@@ -47,11 +47,6 @@ public class WolfController extends MobEntityController {
     }
 
     public static class EntityWolfNPC extends Wolf implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityWolfNPC(EntityType<? extends Wolf> types, Level level) {
@@ -61,6 +56,11 @@ public class WolfController extends MobEntityController {
         public EntityWolfNPC(EntityType<? extends Wolf> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

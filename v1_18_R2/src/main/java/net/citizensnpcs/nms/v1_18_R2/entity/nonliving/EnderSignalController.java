@@ -47,11 +47,6 @@ public class EnderSignalController extends MobEntityController {
     }
 
     public static class EntityEnderSignalNPC extends EyeOfEnder implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderSignalNPC(EntityType<? extends EyeOfEnder> types, Level level) {
@@ -61,6 +56,11 @@ public class EnderSignalController extends MobEntityController {
         public EntityEnderSignalNPC(EntityType<? extends EyeOfEnder> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

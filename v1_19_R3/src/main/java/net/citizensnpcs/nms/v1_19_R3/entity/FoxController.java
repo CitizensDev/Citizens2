@@ -49,11 +49,6 @@ public class FoxController extends MobEntityController {
     }
 
     public static class EntityFoxNPC extends Fox implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityFoxNPC(EntityType<? extends Fox> types, Level level) {
@@ -63,6 +58,11 @@ public class FoxController extends MobEntityController {
         public EntityFoxNPC(EntityType<? extends Fox> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

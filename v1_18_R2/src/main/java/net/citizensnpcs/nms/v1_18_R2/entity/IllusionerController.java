@@ -44,11 +44,6 @@ public class IllusionerController extends MobEntityController {
     }
 
     public static class EntityIllusionerNPC extends Illusioner implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityIllusionerNPC(EntityType<? extends Illusioner> types, Level level) {
@@ -58,6 +53,11 @@ public class IllusionerController extends MobEntityController {
         public EntityIllusionerNPC(EntityType<? extends Illusioner> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

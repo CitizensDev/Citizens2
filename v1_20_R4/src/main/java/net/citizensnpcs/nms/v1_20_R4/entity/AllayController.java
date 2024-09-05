@@ -58,11 +58,6 @@ public class AllayController extends MobEntityController {
     }
 
     public static class EntityAllayNPC extends Allay implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         private int taskId = -1;
@@ -74,6 +69,11 @@ public class AllayController extends MobEntityController {
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -45,11 +45,6 @@ public class SkeletonWitherController extends MobEntityController {
     }
 
     public static class EntitySkeletonWitherNPC extends WitherSkeleton implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntitySkeletonWitherNPC(EntityType<? extends WitherSkeleton> types, Level level) {
@@ -59,6 +54,11 @@ public class SkeletonWitherController extends MobEntityController {
         public EntitySkeletonWitherNPC(EntityType<? extends WitherSkeleton> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

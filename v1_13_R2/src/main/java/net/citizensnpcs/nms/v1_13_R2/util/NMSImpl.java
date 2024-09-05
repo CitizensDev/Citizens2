@@ -526,12 +526,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public NPC getNPC(org.bukkit.entity.Entity entity) {
-        Entity handle = getHandle(entity);
-        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
-    }
-
-    @Override
     public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
         WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
         EntityTrackerEntry entry = server.getTracker().trackedEntities.get(entity.getEntityId());
@@ -2051,7 +2045,7 @@ public class NMSImpl implements NMSBridge {
             } else if (ENTITY_FISH_METHOD != null) {
                 ENTITY_FISH_METHOD.invoke(entity, false);
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             ex.printStackTrace();
         }
     }
@@ -2091,26 +2085,20 @@ public class NMSImpl implements NMSBridge {
         navigation.d();
     }
 
-    private static MethodHandle ADVANCEMENT_PLAYER_FIELD = NMS.getFinalSetter(EntityPlayer.class, "cf");
-
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.SILVERFISH,
             EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT, EntityType.SLIME,
             EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST, EntityType.SHULKER,
             EntityType.PHANTOM);
-
-    private static final Method BLOCK_POSITION_B_D = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "e", false,
-            double.class, double.class, double.class);
-
+    private static final MethodHandle BLOCK_POSITION_B_D = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
+            "e", false, double.class, double.class, double.class);
     private static final Field CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getField(CraftBossBar.class, "handle");
-
     private static final float DEFAULT_SPEED = 1F;
-
     private static final Field ENDERDRAGON_BATTLE_BAR_FIELD = NMS.getField(EnderDragonBattle.class, "c", false);
     private static final Field ENDERDRAGON_BATTLE_FIELD = NMS.getField(EntityEnderDragon.class, "bR");
     public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EntityEnderDragon.class,
             true, boolean.class, AxisAlignedBB.class);
     private static DataWatcherObject<Boolean> ENDERMAN_ANGRY;
-    private static Method ENTITY_FISH_METHOD = NMS.getMethod(EntityFish.class, "t", false, boolean.class);
+    private static MethodHandle ENTITY_FISH_METHOD = NMS.getMethodHandle(EntityFish.class, "t", false, boolean.class);
     private static Field ENTITY_FISH_NUM_IN_SCHOOL;
     private static MethodHandle ENTITY_NAVIGATION = NMS.getFirstSetter(EntityInsentient.class, Navigation.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;

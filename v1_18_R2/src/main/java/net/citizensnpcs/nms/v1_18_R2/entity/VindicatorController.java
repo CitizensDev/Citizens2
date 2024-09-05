@@ -45,11 +45,6 @@ public class VindicatorController extends MobEntityController {
     }
 
     public static class EntityVindicatorNPC extends Vindicator implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityVindicatorNPC(EntityType<? extends Vindicator> types, Level level) {
@@ -59,6 +54,11 @@ public class VindicatorController extends MobEntityController {
         public EntityVindicatorNPC(EntityType<? extends Vindicator> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

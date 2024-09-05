@@ -38,11 +38,6 @@ public class MushroomCowController extends MobEntityController {
     }
 
     public static class EntityMushroomCowNPC extends EntityMushroomCow implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityMushroomCowNPC(World world) {
@@ -86,6 +81,11 @@ public class MushroomCowController extends MobEntityController {
             if (npc == null || !npc.isProtected())
                 return super.a(entityhuman, enumhand, itemstack);
             return false;
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

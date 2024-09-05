@@ -55,11 +55,6 @@ public class HorseDonkeyController extends MobEntityController {
     }
 
     public static class EntityHorseDonkeyNPC extends Donkey implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
@@ -78,6 +73,11 @@ public class HorseDonkeyController extends MobEntityController {
                         .setDomestication(((org.bukkit.entity.Donkey) getBukkitEntity()).getMaxDomestication());
                 baseMovementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED).getValue();
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

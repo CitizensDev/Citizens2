@@ -45,11 +45,6 @@ public class SpiderController extends MobEntityController {
     }
 
     public static class EntitySpiderNPC extends Spider implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntitySpiderNPC(EntityType<? extends Spider> types, Level level) {
@@ -59,6 +54,11 @@ public class SpiderController extends MobEntityController {
         public EntitySpiderNPC(EntityType<? extends Spider> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

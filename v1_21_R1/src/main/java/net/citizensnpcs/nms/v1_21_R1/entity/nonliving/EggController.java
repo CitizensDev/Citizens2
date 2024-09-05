@@ -54,11 +54,6 @@ public class EggController extends AbstractEntityController {
     }
 
     public static class EntityEggNPC extends ThrownEgg implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEggNPC(EntityType<? extends ThrownEgg> types, Level level) {
@@ -73,6 +68,11 @@ public class EggController extends AbstractEntityController {
         public EntityEggNPC(Level level, NPC npc, double d0, double d1, double d2) {
             super(level, d0, d1, d2);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

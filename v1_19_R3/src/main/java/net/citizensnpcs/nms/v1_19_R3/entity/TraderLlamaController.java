@@ -54,11 +54,6 @@ public class TraderLlamaController extends MobEntityController {
     }
 
     public static class EntityTraderLlamaNPC extends TraderLlama implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityTraderLlamaNPC(EntityType<? extends TraderLlama> types, Level level) {
@@ -72,6 +67,11 @@ public class TraderLlamaController extends MobEntityController {
                 ((org.bukkit.entity.TraderLlama) getBukkitEntity())
                         .setDomestication(((org.bukkit.entity.TraderLlama) getBukkitEntity()).getMaxDomestication());
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

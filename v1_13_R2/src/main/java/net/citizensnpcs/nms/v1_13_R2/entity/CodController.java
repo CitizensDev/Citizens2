@@ -60,11 +60,6 @@ public class CodController extends MobEntityController {
     }
 
     public static class EntityCodNPC extends EntityCod implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityCodNPC(World world) {
@@ -105,6 +100,11 @@ public class CodController extends MobEntityController {
             if (itemstack.getItem() == Items.WATER_BUCKET && isAlive())
                 return false;
             return super.a(entityhuman, enumhand);
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

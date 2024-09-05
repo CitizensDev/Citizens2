@@ -51,11 +51,6 @@ public class ItemDisplayController extends MobEntityController {
     }
 
     public static class EntityItemDisplayNPC extends ItemDisplay implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityItemDisplayNPC(EntityType<? extends ItemDisplay> types, Level level) {
@@ -65,6 +60,11 @@ public class ItemDisplayController extends MobEntityController {
         public EntityItemDisplayNPC(EntityType<? extends ItemDisplay> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

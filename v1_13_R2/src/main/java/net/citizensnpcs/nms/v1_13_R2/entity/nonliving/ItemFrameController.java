@@ -47,11 +47,6 @@ public class ItemFrameController extends MobEntityController {
     }
 
     public static class EntityItemFrameNPC extends EntityItemFrame implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityItemFrameNPC(World world) {
@@ -66,6 +61,11 @@ public class ItemFrameController extends MobEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

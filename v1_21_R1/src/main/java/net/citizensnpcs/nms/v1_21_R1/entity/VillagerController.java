@@ -51,11 +51,6 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends Villager implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private boolean blockingATrade;
 
         private final CitizensNPC npc;
@@ -70,6 +65,11 @@ public class VillagerController extends MobEntityController {
             if (npc != null) {
                 getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

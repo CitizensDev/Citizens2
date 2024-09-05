@@ -44,11 +44,6 @@ public class GuardianController extends MobEntityController {
     }
 
     public static class EntityGuardianNPC extends Guardian implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityGuardianNPC(EntityType<? extends Guardian> types, Level level) {
@@ -73,6 +68,11 @@ public class GuardianController extends MobEntityController {
                 }
                 npc.update();
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

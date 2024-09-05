@@ -1,6 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
 
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.nms.v1_13_R2.entity.EntityHumanNPC;
@@ -528,7 +528,8 @@ public class PlayerNavigation extends NavigationAbstract {
         }
     }
 
-    private static final Method GET_MONOTONIC_MILLIS = NMS.getMethod(SystemUtils.class, "b", false);
-    private static final Method PROFILER_ENTER = NMS.getMethod(MethodProfiler.class, "a", false, String.class);
-    private static final Method PROFILER_EXIT = NMS.getMethod(MethodProfiler.class, "e", false);
+    private static final MethodHandle GET_MONOTONIC_MILLIS = NMS.getMethodHandle(SystemUtils.class, "b", false);
+    private static final MethodHandle PROFILER_ENTER = NMS.getMethodHandle(MethodProfiler.class, "a", false,
+            String.class);
+    private static final MethodHandle PROFILER_EXIT = NMS.getMethodHandle(MethodProfiler.class, "e", false);
 }

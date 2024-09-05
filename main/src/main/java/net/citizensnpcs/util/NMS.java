@@ -505,29 +505,13 @@ public class NMS {
         return original;
     }
 
-    public static Method getMethod(Class<?> clazz, String method, boolean log, Class<?>... params) {
-        if (clazz == null)
-            return null;
-        Method f = null;
-        try {
-            f = clazz.getDeclaredMethod(method, params);
-            f.setAccessible(true);
-        } catch (Exception e) {
-            if (log) {
-                Messaging.severeTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
-                if (Messaging.isDebugging()) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return f;
-    }
-
     public static MethodHandle getMethodHandle(Class<?> clazz, String method, boolean log, Class<?>... params) {
         if (clazz == null)
             return null;
         try {
-            return LOOKUP.unreflect(getMethod(clazz, method, log, params));
+            Method m = clazz.getDeclaredMethod(method, params);
+            m.setAccessible(true);
+            return LOOKUP.unreflect(m);
         } catch (Exception e) {
             if (log) {
                 Messaging.severeTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
@@ -545,10 +529,6 @@ public class NMS {
 
     private static Collection<Player> getNearbyPlayers(Entity from, Location location, double radius) {
         return Lists.newArrayList(CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(from, location, radius));
-    }
-
-    public static NPC getNPC(Entity entity) {
-        return BRIDGE.getNPC(entity);
     }
 
     public static EntityPacketTracker getPacketTracker(Entity entity) {

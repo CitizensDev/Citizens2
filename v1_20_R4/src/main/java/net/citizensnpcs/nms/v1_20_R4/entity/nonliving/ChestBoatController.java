@@ -50,20 +50,15 @@ public class ChestBoatController extends MobEntityController {
     }
 
     public static class EntityChestBoatNPC extends ChestBoat implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private double aC;
 
         private float aD;
+
         private Status aE;
         private Status aF;
         private double ap;
         private double ar;
         private final CitizensNPC npc;
-
         public EntityChestBoatNPC(EntityType<? extends Boat> types, Level level) {
             this(types, level, null);
         }
@@ -71,6 +66,11 @@ public class ChestBoatController extends MobEntityController {
         public EntityChestBoatNPC(EntityType<? extends Boat> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -41,11 +41,6 @@ public class ParrotController extends MobEntityController {
     }
 
     public static class EntityParrotNPC extends EntityParrot implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityParrotNPC(World world) {
@@ -74,6 +69,11 @@ public class ParrotController extends MobEntityController {
             if (npc == null || !npc.isProtected())
                 return super.a(paramEntityHuman, paramEnumHand);
             return false;
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

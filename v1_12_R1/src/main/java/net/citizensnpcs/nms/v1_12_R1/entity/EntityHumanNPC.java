@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_12_R1.entity;
 
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +39,7 @@ import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.minecraft.server.v1_12_R1.AdvancementDataPlayer;
 import net.minecraft.server.v1_12_R1.AttributeInstance;
 import net.minecraft.server.v1_12_R1.AxisAlignedBB;
 import net.minecraft.server.v1_12_R1.BlockPosition;
@@ -202,6 +202,12 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public AdvancementDataPlayer getAdvancementData() {
+        return npc == null ? super.getAdvancementData()
+                : new EmptyAdvancementDataPlayer(server, CitizensAPI.getDataFolder().getParentFile(), this);
+    }
+
+    @Override
     public CraftPlayer getBukkitEntity() {
         if (npc != null && !(bukkitEntity instanceof NPCHolder)) {
             bukkitEntity = new PlayerNPC(this);
@@ -274,13 +280,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         invulnerableTicks = 0;
         NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
-        EmptyAdvancementDataPlayer.clear(this.getAdvancementData());
-        try {
-            ADVANCEMENT_DATA_PLAYER.invoke(this,
-                    new EmptyAdvancementDataPlayer(minecraftServer, CitizensAPI.getDataFolder().getParentFile(), this));
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -531,7 +530,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
     }
 
-    private static MethodHandle ADVANCEMENT_DATA_PLAYER = NMS.getFinalSetter(EntityPlayer.class, "bY");
     private static final float EPSILON = 0.005F;
     private static final Location LOADED_LOCATION = new Location(null, 0, 0, 0);
 }

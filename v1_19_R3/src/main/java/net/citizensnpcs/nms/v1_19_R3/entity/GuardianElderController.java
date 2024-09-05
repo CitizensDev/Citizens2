@@ -45,11 +45,6 @@ public class GuardianElderController extends MobEntityController {
     }
 
     public static class EntityGuardianElderNPC extends ElderGuardian implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityGuardianElderNPC(EntityType<? extends ElderGuardian> types, Level level) {
@@ -74,6 +69,11 @@ public class GuardianElderController extends MobEntityController {
                 }
                 npc.update();
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

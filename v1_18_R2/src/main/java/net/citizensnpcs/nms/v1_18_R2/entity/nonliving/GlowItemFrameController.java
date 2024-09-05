@@ -51,11 +51,6 @@ public class GlowItemFrameController extends MobEntityController {
     }
 
     public static class EntityGlowItemFrameNPC extends GlowItemFrame implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityGlowItemFrameNPC(EntityType<? extends GlowItemFrame> types, Level level) {
@@ -65,6 +60,11 @@ public class GlowItemFrameController extends MobEntityController {
         public EntityGlowItemFrameNPC(EntityType<? extends GlowItemFrame> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

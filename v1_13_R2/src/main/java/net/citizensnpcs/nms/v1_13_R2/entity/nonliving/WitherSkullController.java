@@ -34,11 +34,6 @@ public class WitherSkullController extends MobEntityController {
     }
 
     public static class EntityWitherSkullNPC extends EntityWitherSkull implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityWitherSkullNPC(World world) {
@@ -53,6 +48,11 @@ public class WitherSkullController extends MobEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

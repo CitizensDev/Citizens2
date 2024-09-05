@@ -56,11 +56,6 @@ public class FallingBlockController extends AbstractEntityController {
     }
 
     public static class EntityFallingBlockNPC extends FallingBlockEntity implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityFallingBlockNPC(EntityType<? extends FallingBlockEntity> types, Level level) {
@@ -70,6 +65,11 @@ public class FallingBlockController extends AbstractEntityController {
         public EntityFallingBlockNPC(EntityType<? extends FallingBlockEntity> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

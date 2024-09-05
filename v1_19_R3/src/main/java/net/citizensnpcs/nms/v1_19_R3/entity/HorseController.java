@@ -56,11 +56,6 @@ public class HorseController extends MobEntityController {
     }
 
     public static class EntityHorseNPC extends Horse implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private double baseMovementSpeed;
 
         private final CitizensNPC npc;
@@ -79,6 +74,11 @@ public class HorseController extends MobEntityController {
                 horse.setDomestication(horse.getMaxDomestication());
                 baseMovementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED).getValue();
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

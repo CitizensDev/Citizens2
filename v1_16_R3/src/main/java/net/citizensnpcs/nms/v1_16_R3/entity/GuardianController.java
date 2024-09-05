@@ -44,11 +44,6 @@ public class GuardianController extends MobEntityController {
     }
 
     public static class EntityGuardianNPC extends EntityGuardian implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityGuardianNPC(EntityTypes<? extends EntityGuardian> types, World world) {
@@ -70,6 +65,11 @@ public class GuardianController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

@@ -46,11 +46,6 @@ public class GoatController extends MobEntityController {
     }
 
     public static class EntityGoatNPC extends Goat implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityGoatNPC(EntityType<? extends Goat> types, Level level) {
@@ -60,6 +55,11 @@ public class GoatController extends MobEntityController {
         public EntityGoatNPC(EntityType<? extends Goat> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

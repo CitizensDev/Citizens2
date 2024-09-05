@@ -57,14 +57,9 @@ public class AxolotlController extends MobEntityController {
     }
 
     public static class EntityAxolotlNPC extends Axolotl implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
-        private MoveControl oldMoveController;
 
+        private MoveControl oldMoveController;
         public EntityAxolotlNPC(EntityType<? extends Axolotl> types, Level level) {
             this(types, level, null);
         }
@@ -78,6 +73,11 @@ public class AxolotlController extends MobEntityController {
                 this.getAttribute(Attributes.MOVEMENT_SPEED)
                         .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() / 10);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

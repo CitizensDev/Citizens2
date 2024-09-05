@@ -49,11 +49,6 @@ public class TurtleController extends MobEntityController {
     }
 
     public static class EntityTurtleNPC extends Turtle implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         private JumpControl oldJumpController;
@@ -73,6 +68,11 @@ public class TurtleController extends MobEntityController {
                 this.moveControl = new MoveControl(this);
                 this.jumpControl = new EmptyControllerJump(this);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

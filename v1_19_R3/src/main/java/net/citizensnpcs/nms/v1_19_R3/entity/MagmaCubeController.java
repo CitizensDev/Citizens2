@@ -48,11 +48,6 @@ public class MagmaCubeController extends MobEntityController {
     }
 
     public static class EntityMagmaCubeNPC extends MagmaCube implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         private MoveControl oldMoveController;
@@ -69,6 +64,11 @@ public class MagmaCubeController extends MobEntityController {
                 this.oldMoveController = this.moveControl;
                 this.moveControl = new EntityMoveControl(this);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

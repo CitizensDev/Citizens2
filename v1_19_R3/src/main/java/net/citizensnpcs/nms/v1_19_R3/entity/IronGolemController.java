@@ -45,11 +45,6 @@ public class IronGolemController extends MobEntityController {
     }
 
     public static class EntityIronGolemNPC extends IronGolem implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityIronGolemNPC(EntityType<? extends IronGolem> types, Level level) {
@@ -59,6 +54,11 @@ public class IronGolemController extends MobEntityController {
         public EntityIronGolemNPC(EntityType<? extends IronGolem> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

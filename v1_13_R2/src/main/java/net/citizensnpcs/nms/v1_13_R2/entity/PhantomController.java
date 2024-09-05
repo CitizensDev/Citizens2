@@ -1,6 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
@@ -46,11 +46,6 @@ public class PhantomController extends MobEntityController {
     }
 
     public static class EntityPhantomNPC extends EntityPhantom implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityPhantomNPC(World world) {
@@ -84,6 +79,11 @@ public class PhantomController extends MobEntityController {
         public void a(Entity entity, float strength, double dx, double dz) {
             NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override
@@ -250,7 +250,7 @@ public class PhantomController extends MobEntityController {
                 return false;
         }
 
-        private static final Method MOVEMENT_TICK = NMS.getMethod(EntityPhantom.class, "k", false);
+        private static final MethodHandle MOVEMENT_TICK = NMS.getMethodHandle(EntityPhantom.class, "k", false);
     }
 
     public static class PhantomNPC extends CraftPhantom implements NPCHolder {

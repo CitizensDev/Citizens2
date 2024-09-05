@@ -43,11 +43,6 @@ public class SilverfishController extends MobEntityController {
     }
 
     public static class EntitySilverfishNPC extends Silverfish implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntitySilverfishNPC(EntityType<? extends Silverfish> types, Level level) {
@@ -57,6 +52,11 @@ public class SilverfishController extends MobEntityController {
         public EntitySilverfishNPC(EntityType<? extends Silverfish> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -43,11 +43,6 @@ public class PolarBearController extends MobEntityController {
     }
 
     public static class EntityPolarBearNPC extends EntityPolarBear implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityPolarBearNPC(EntityTypes<? extends EntityPolarBear> types, World world) {
@@ -71,6 +66,11 @@ public class PolarBearController extends MobEntityController {
                 return;
             }
             NMSImpl.checkAndUpdateHeight(this, datawatcherobject, super::a);
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

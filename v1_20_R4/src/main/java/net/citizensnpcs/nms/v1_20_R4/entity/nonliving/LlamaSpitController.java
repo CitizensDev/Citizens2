@@ -50,11 +50,6 @@ public class LlamaSpitController extends AbstractEntityController {
     }
 
     public static class EntityLlamaSpitNPC extends LlamaSpit implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityLlamaSpitNPC(EntityType<? extends LlamaSpit> types, Level level) {
@@ -69,6 +64,11 @@ public class LlamaSpitController extends AbstractEntityController {
         public EntityLlamaSpitNPC(Level world, NPC npc, Llama entity) {
             super(world, entity);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

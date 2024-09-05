@@ -57,11 +57,6 @@ public class CowController extends MobEntityController {
     }
 
     public static class EntityCowNPC extends Cow implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityCowNPC(EntityType<? extends Cow> types, Level level) {
@@ -71,6 +66,11 @@ public class CowController extends MobEntityController {
         public EntityCowNPC(EntityType<? extends Cow> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

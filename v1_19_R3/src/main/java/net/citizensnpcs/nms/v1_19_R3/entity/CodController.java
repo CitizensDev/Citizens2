@@ -58,11 +58,6 @@ public class CodController extends MobEntityController {
     }
 
     public static class EntityCodNPC extends Cod implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         private MoveControl oldMoveController;
@@ -90,6 +85,11 @@ public class CodController extends MobEntityController {
             if (npc != null) {
                 this.verticalCollision = lastInWater;
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

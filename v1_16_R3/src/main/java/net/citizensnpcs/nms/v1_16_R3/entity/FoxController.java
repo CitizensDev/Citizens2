@@ -48,11 +48,6 @@ public class FoxController extends MobEntityController {
     }
 
     public static class EntityFoxNPC extends EntityFox implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityFoxNPC(EntityTypes<? extends EntityFox> types, World world) {
@@ -83,6 +78,11 @@ public class FoxController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

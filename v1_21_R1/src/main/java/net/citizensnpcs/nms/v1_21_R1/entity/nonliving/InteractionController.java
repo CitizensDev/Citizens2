@@ -38,11 +38,6 @@ public class InteractionController extends MobEntityController {
     }
 
     public static class EntityInteractionNPC extends Interaction implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityInteractionNPC(EntityType<? extends Interaction> types, Level level) {
@@ -52,6 +47,11 @@ public class InteractionController extends MobEntityController {
         public EntityInteractionNPC(EntityType<? extends Interaction> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

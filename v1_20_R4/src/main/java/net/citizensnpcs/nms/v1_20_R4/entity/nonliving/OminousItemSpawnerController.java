@@ -50,11 +50,6 @@ public class OminousItemSpawnerController extends MobEntityController {
     }
 
     public static class EntityOminousItemSpawnerNPC extends OminousItemSpawner implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityOminousItemSpawnerNPC(EntityType<? extends OminousItemSpawner> types, Level level) {
@@ -64,6 +59,11 @@ public class OminousItemSpawnerController extends MobEntityController {
         public EntityOminousItemSpawnerNPC(EntityType<? extends OminousItemSpawner> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -48,11 +48,6 @@ public class SalmonController extends MobEntityController {
     }
 
     public static class EntitySalmonNPC extends EntitySalmon implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntitySalmonNPC(EntityTypes<? extends EntitySalmon> types, World world) {
@@ -93,6 +88,11 @@ public class SalmonController extends MobEntityController {
             if (itemstack.getItem() == Items.WATER_BUCKET && isAlive())
                 return false;
             return super.a(entityhuman, enumhand);
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

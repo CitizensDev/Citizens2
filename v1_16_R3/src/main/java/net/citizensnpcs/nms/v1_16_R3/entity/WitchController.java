@@ -44,11 +44,6 @@ public class WitchController extends MobEntityController {
     }
 
     public static class EntityWitchNPC extends EntityWitch implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityWitchNPC(EntityTypes<? extends EntityWitch> types, World world) {
@@ -70,6 +65,11 @@ public class WitchController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

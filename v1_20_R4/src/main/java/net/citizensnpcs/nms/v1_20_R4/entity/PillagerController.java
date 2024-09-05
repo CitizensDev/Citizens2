@@ -44,11 +44,6 @@ public class PillagerController extends MobEntityController {
     }
 
     public static class EntityPillagerNPC extends Pillager implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityPillagerNPC(EntityType<? extends Pillager> types, Level level) {
@@ -58,6 +53,11 @@ public class PillagerController extends MobEntityController {
         public EntityPillagerNPC(EntityType<? extends Pillager> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

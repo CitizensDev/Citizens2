@@ -45,11 +45,6 @@ public class HoglinController extends MobEntityController {
     }
 
     public static class EntityHoglinNPC extends Hoglin implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityHoglinNPC(EntityType<? extends Hoglin> types, Level level) {
@@ -62,6 +57,11 @@ public class HoglinController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.clearGoals(npc, goalSelector, targetSelector);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

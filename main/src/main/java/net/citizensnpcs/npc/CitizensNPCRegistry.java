@@ -32,7 +32,6 @@ import net.citizensnpcs.api.util.RemoveReason;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.util.NMS;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final String name;
@@ -187,9 +186,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
 
     @Override
     public NPC getNPC(Entity entity) {
-        if (entity == null)
-            return null;
-        return entity instanceof NPCHolder ? ((NPCHolder) entity).getNPC() : NMS.getNPC(entity);
+        return entity instanceof NPCHolder ? ((NPCHolder) entity).getNPC() : null;
     }
 
     @Override

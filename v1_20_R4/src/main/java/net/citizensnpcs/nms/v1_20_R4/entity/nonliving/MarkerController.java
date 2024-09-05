@@ -38,11 +38,6 @@ public class MarkerController extends MobEntityController {
     }
 
     public static class EntityMarkerNPC extends Marker implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityMarkerNPC(EntityType<? extends Marker> types, Level level) {
@@ -52,6 +47,11 @@ public class MarkerController extends MobEntityController {
         public EntityMarkerNPC(EntityType<? extends Marker> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

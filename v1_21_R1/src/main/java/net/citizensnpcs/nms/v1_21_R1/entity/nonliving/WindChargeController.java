@@ -38,11 +38,6 @@ public class WindChargeController extends MobEntityController {
     }
 
     public static class EntityWindChargeNPC extends WindCharge implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityWindChargeNPC(EntityType<? extends WindCharge> types, Level level) {
@@ -52,6 +47,11 @@ public class WindChargeController extends MobEntityController {
         public EntityWindChargeNPC(EntityType<? extends WindCharge> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -50,11 +50,6 @@ public class TropicalFishController extends MobEntityController {
     }
 
     public static class EntityTropicalFishNPC extends EntityTropicalFish implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         private ControllerMove oldMoveController;
@@ -98,6 +93,11 @@ public class TropicalFishController extends MobEntityController {
             if (itemstack.getItem() == Items.WATER_BUCKET && isAlive())
                 return false;
             return super.a(entityhuman, enumhand);
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

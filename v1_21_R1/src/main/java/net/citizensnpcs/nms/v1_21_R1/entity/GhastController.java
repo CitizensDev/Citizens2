@@ -41,11 +41,6 @@ public class GhastController extends MobEntityController {
     }
 
     public static class EntityGhastNPC extends Ghast implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityGhastNPC(EntityType<? extends Ghast> types, Level level) {
@@ -55,6 +50,11 @@ public class GhastController extends MobEntityController {
         public EntityGhastNPC(EntityType<? extends Ghast> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

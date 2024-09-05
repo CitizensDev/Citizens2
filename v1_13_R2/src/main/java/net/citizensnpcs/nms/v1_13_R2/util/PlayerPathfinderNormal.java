@@ -1,6 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.util;
 
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -450,17 +450,18 @@ public class PlayerPathfinderNormal extends PlayerPathfinderAbstract {
             try {
                 VoxelShape var3 = (VoxelShape) GET_COLLISION_SHAPE.invoke(var0.getType(var2), var0, var2);
                 return var2.getY() + ((Boolean) IS_EMPTY.invoke(var3) ? 0.0D : var3.c(EnumAxis.Y));
-            } catch (Exception ex2) {
+            } catch (Throwable ex2) {
                 ex2.printStackTrace();
                 return 0;
             }
         }
     }
 
-    private static final Method BLOCK_POSITION_B_C = NMS.getMethod(BlockPosition.PooledBlockPosition.class, "f", false,
-            int.class, int.class, int.class);
-    private static final Method GET_COLLISION_SHAPE = NMS.getMethod(IBlockData.class, "h", false, IBlockAccess.class,
+    private static final MethodHandle BLOCK_POSITION_B_C = NMS.getMethodHandle(BlockPosition.PooledBlockPosition.class,
+            "f", false, int.class, int.class, int.class);
+    private static final MethodHandle GET_COLLISION_SHAPE = NMS.getMethodHandle(IBlockData.class, "h", false,
+            IBlockAccess.class, BlockPosition.class);
+    private static final MethodHandle GET_FLUID = NMS.getMethodHandle(IBlockAccess.class, "b", false,
             BlockPosition.class);
-    private static final Method GET_FLUID = NMS.getMethod(IBlockAccess.class, "b", false, BlockPosition.class);
-    private static final Method IS_EMPTY = NMS.getMethod(VoxelShape.class, "b", false);
+    private static final MethodHandle IS_EMPTY = NMS.getMethodHandle(VoxelShape.class, "b", false);
 }

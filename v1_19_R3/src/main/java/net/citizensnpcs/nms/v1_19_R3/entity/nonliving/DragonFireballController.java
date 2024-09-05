@@ -46,11 +46,6 @@ public class DragonFireballController extends MobEntityController {
     }
 
     public static class EntityDragonFireballNPC extends DragonFireball implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityDragonFireballNPC(EntityType<? extends DragonFireball> types, Level level) {
@@ -60,6 +55,11 @@ public class DragonFireballController extends MobEntityController {
         public EntityDragonFireballNPC(EntityType<? extends DragonFireball> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

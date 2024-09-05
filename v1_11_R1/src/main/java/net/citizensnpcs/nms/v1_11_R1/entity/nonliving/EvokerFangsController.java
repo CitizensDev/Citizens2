@@ -37,11 +37,6 @@ public class EvokerFangsController extends MobEntityController {
     }
 
     public static class EntityEvokerFangsNPC extends EntityEvokerFangs implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEvokerFangsNPC(World world) {
@@ -66,6 +61,11 @@ public class EvokerFangsController extends MobEntityController {
                     getBukkitEntity());
             Bukkit.getPluginManager().callEvent(event);
             return event.isCancelled() ? EnumInteractionResult.FAIL : EnumInteractionResult.SUCCESS;
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

@@ -55,11 +55,6 @@ public class EnderDragonController extends MobEntityController {
     }
 
     public static class EntityEnderDragonNPC extends EnderDragon implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderDragonNPC(EntityType<? extends EnderDragon> types, Level level) {
@@ -149,6 +144,11 @@ public class EnderDragonController extends MobEntityController {
             } else {
                 super.aiStep();
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

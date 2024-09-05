@@ -49,11 +49,6 @@ public class SnifferController extends MobEntityController {
     }
 
     public static class EntitySnifferNPC extends Sniffer implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntitySnifferNPC(EntityType<? extends Sniffer> types, Level level) {
@@ -63,6 +58,11 @@ public class SnifferController extends MobEntityController {
         public EntitySnifferNPC(EntityType<? extends Sniffer> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

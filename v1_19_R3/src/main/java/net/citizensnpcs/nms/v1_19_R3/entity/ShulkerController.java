@@ -46,11 +46,6 @@ public class ShulkerController extends MobEntityController {
     }
 
     public static class EntityShulkerNPC extends Shulker implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityShulkerNPC(EntityType<? extends Shulker> types, Level level) {
@@ -67,6 +62,11 @@ public class ShulkerController extends MobEntityController {
             if (npc == null || npc.useMinecraftAI()) {
                 super.aiStep();
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

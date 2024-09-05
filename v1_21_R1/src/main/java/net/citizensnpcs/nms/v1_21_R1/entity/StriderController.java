@@ -43,11 +43,6 @@ public class StriderController extends MobEntityController {
     }
 
     public static class EntityStriderNPC extends Strider implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityStriderNPC(EntityType<? extends Strider> types, Level level) {
@@ -57,6 +52,11 @@ public class StriderController extends MobEntityController {
         public EntityStriderNPC(EntityType<? extends Strider> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -44,11 +44,6 @@ public class ZoglinController extends MobEntityController {
     }
 
     public static class EntityZoglinNPC extends Zoglin implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityZoglinNPC(EntityType<? extends Zoglin> types, Level level) {
@@ -58,6 +53,11 @@ public class ZoglinController extends MobEntityController {
         public EntityZoglinNPC(EntityType<? extends Zoglin> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

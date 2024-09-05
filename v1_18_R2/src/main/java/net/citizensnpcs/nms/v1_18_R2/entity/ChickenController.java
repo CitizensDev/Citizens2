@@ -51,11 +51,6 @@ public class ChickenController extends MobEntityController {
     }
 
     public static class EntityChickenNPC extends Chicken implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityChickenNPC(EntityType<? extends Chicken> types, Level level) {
@@ -73,6 +68,11 @@ public class ChickenController extends MobEntityController {
                 this.eggTime = 100;
             }
             super.aiStep();
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

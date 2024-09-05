@@ -39,11 +39,6 @@ public class ThrownExpBottleController extends MobEntityController {
     }
 
     public static class EntityThrownExpBottleNPC extends ThrownExperienceBottle implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityThrownExpBottleNPC(EntityType<? extends ThrownExperienceBottle> types, Level level) {
@@ -53,6 +48,11 @@ public class ThrownExpBottleController extends MobEntityController {
         public EntityThrownExpBottleNPC(EntityType<? extends ThrownExperienceBottle> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -47,11 +47,6 @@ public class BatController extends MobEntityController {
     }
 
     public static class EntityBatNPC extends Bat implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityBatNPC(EntityType<? extends Bat> types, Level level) {
@@ -64,6 +59,11 @@ public class BatController extends MobEntityController {
             if (npc != null) {
                 setResting(false);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

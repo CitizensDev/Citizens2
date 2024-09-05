@@ -31,11 +31,6 @@ public class ShulkerBulletController extends MobEntityController {
     }
 
     public static class EntityShulkerBulletNPC extends EntityShulkerBullet implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityShulkerBulletNPC(World world) {
@@ -50,6 +45,11 @@ public class ShulkerBulletController extends MobEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

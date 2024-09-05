@@ -44,11 +44,6 @@ public class IronGolemController extends MobEntityController {
     }
 
     public static class EntityIronGolemNPC extends EntityIronGolem implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityIronGolemNPC(EntityTypes<? extends EntityIronGolem> types, World world) {
@@ -70,6 +65,11 @@ public class IronGolemController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

@@ -51,11 +51,6 @@ public class DrownedController extends MobEntityController {
     }
 
     public static class EntityDrownedNPC extends Drowned implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityDrownedNPC(EntityType<? extends Drowned> types, Level level) {
@@ -65,6 +60,11 @@ public class DrownedController extends MobEntityController {
         public EntityDrownedNPC(EntityType<? extends Drowned> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

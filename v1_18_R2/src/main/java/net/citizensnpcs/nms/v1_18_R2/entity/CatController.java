@@ -51,11 +51,6 @@ public class CatController extends MobEntityController {
     }
 
     public static class EntityCatNPC extends Cat implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityCatNPC(EntityType<? extends Cat> types, Level level) {
@@ -65,6 +60,11 @@ public class CatController extends MobEntityController {
         public EntityCatNPC(EntityType<? extends Cat> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

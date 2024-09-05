@@ -46,11 +46,6 @@ public class RavagerController extends MobEntityController {
     }
 
     public static class EntityRavagerNPC extends Ravager implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityRavagerNPC(EntityType<? extends Ravager> types, Level level) {
@@ -60,6 +55,11 @@ public class RavagerController extends MobEntityController {
         public EntityRavagerNPC(EntityType<? extends Ravager> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

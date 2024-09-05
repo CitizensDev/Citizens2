@@ -50,11 +50,6 @@ public class BreezeController extends MobEntityController {
     }
 
     public static class EntityBreezeNPC extends Breeze implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityBreezeNPC(EntityType<? extends Breeze> types, Level level) {
@@ -64,6 +59,11 @@ public class BreezeController extends MobEntityController {
         public EntityBreezeNPC(EntityType<? extends Breeze> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

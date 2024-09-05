@@ -46,11 +46,6 @@ public class ItemController extends AbstractEntityController {
     }
 
     public static class EntityItemNPC extends EntityItem implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityItemNPC(World world) {
@@ -66,6 +61,11 @@ public class ItemController extends AbstractEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

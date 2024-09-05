@@ -1,7 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Method;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
@@ -60,11 +59,6 @@ public class EnderDragonController extends MobEntityController {
     }
 
     public static class EntityEnderDragonNPC extends EntityEnderDragon implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderDragonNPC(World world) {
@@ -85,6 +79,11 @@ public class EnderDragonController extends MobEntityController {
         public void a(Entity entity, float strength, double dx, double dz) {
             NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override
@@ -288,6 +287,6 @@ public class EnderDragonController extends MobEntityController {
                 java.util.List.class);
         private static final MethodHandle KNOCKBACK = NMS.getMethodHandle(EntityEnderDragon.class, "a", true,
                 java.util.List.class);
-        private static final Method MOVEMENT_TICK = NMS.getMethod(EntityEnderDragon.class, "k", false);
+        private static final MethodHandle MOVEMENT_TICK = NMS.getMethodHandle(EntityEnderDragon.class, "k", false);
     }
 }

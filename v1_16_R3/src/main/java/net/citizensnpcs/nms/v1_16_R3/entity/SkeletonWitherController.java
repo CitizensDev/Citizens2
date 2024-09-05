@@ -44,11 +44,6 @@ public class SkeletonWitherController extends MobEntityController {
     }
 
     public static class EntitySkeletonWitherNPC extends EntitySkeletonWither implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntitySkeletonWitherNPC(EntityTypes<? extends EntitySkeletonWither> types, World world) {
@@ -70,6 +65,11 @@ public class SkeletonWitherController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

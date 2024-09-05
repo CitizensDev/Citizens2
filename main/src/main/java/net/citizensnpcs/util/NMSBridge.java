@@ -97,8 +97,6 @@ public interface NMSBridge {
 
     public float getHorizontalMovement(Entity entity);
 
-    public NPC getNPC(Entity entity);
-
     public EntityPacketTracker getPacketTracker(Entity entity);
 
     public List<Entity> getPassengers(Entity entity);

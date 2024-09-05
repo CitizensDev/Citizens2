@@ -1,6 +1,6 @@
 package net.citizensnpcs.nms.v1_13_R2.entity;
 
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
@@ -57,11 +57,6 @@ public class ChickenController extends MobEntityController {
     }
 
     public static class EntityChickenNPC extends EntityChicken implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityChickenNPC(World world) {
@@ -98,6 +93,11 @@ public class ChickenController extends MobEntityController {
         public void a(Entity entity, float strength, double dx, double dz) {
             NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override
@@ -249,6 +249,6 @@ public class ChickenController extends MobEntityController {
                 return false;
         }
 
-        private static final Method MOVEMENT_TICK = NMS.getMethod(EntityChicken.class, "k", false);
+        private static final MethodHandle MOVEMENT_TICK = NMS.getMethodHandle(EntityChicken.class, "k", false);
     }
 }

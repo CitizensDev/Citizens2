@@ -53,11 +53,6 @@ public class DolphinController extends MobEntityController {
     }
 
     public static class EntityDolphinNPC extends Dolphin implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private boolean inProtectedTick;
 
         private final CitizensNPC npc;
@@ -77,6 +72,11 @@ public class DolphinController extends MobEntityController {
                 this.getAttribute(Attributes.MOVEMENT_SPEED)
                         .setBaseValue(this.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue() / 10);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

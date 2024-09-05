@@ -45,11 +45,6 @@ public class VindicatorController extends MobEntityController {
     }
 
     public static class EntityVindicatorNPC extends EntityVindicator implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityVindicatorNPC(EntityTypes<? extends EntityVindicator> types, World world) {
@@ -80,6 +75,11 @@ public class VindicatorController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

@@ -39,11 +39,6 @@ public class ThrownTridentController extends MobEntityController {
     }
 
     public static class EntityThrownTridentNPC extends ThrownTrident implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityThrownTridentNPC(EntityType<? extends ThrownTrident> types, Level level) {
@@ -53,6 +48,11 @@ public class ThrownTridentController extends MobEntityController {
         public EntityThrownTridentNPC(EntityType<? extends ThrownTrident> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -55,11 +55,6 @@ public class EggController extends AbstractEntityController {
     }
 
     public static class EntityEggNPC extends EntityEgg implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEggNPC(EntityTypes<? extends EntityEgg> types, World world) {
@@ -79,6 +74,11 @@ public class EggController extends AbstractEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

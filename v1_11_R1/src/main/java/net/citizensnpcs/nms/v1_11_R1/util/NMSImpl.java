@@ -503,12 +503,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public NPC getNPC(org.bukkit.entity.Entity entity) {
-        Entity handle = getHandle(entity);
-        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
-    }
-
-    @Override
     public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
         WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
         EntityTrackerEntry entry = server.getTracker().trackedEntities.get(entity.getEntityId());

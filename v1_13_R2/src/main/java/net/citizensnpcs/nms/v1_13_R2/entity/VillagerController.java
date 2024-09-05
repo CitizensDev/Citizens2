@@ -47,11 +47,6 @@ public class VillagerController extends MobEntityController {
     }
 
     public static class EntityVillagerNPC extends EntityVillager implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private boolean blockingATrade;
 
         private final CitizensNPC npc;
@@ -102,6 +97,11 @@ public class VillagerController extends MobEntityController {
                 }
             }
             return super.a(entityhuman, enumhand);
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

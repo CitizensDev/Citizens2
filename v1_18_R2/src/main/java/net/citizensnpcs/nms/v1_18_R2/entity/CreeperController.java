@@ -51,11 +51,6 @@ public class CreeperController extends MobEntityController {
     }
 
     public static class EntityCreeperNPC extends Creeper implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private boolean allowPowered;
 
         private final CitizensNPC npc;
@@ -67,6 +62,11 @@ public class CreeperController extends MobEntityController {
         public EntityCreeperNPC(EntityType<? extends Creeper> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

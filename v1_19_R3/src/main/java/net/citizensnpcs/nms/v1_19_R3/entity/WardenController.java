@@ -47,11 +47,6 @@ public class WardenController extends MobEntityController {
     }
 
     public static class EntityWardenNPC extends Warden implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityWardenNPC(EntityType<? extends Warden> types, Level level) {
@@ -62,6 +57,11 @@ public class WardenController extends MobEntityController {
             super(types, level);
             this.npc = (CitizensNPC) npc;
             this.getBrain().setMemoryWithExpiry(MemoryModuleType.DIG_COOLDOWN, Unit.INSTANCE, 1200L);
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

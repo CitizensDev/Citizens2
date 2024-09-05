@@ -38,11 +38,6 @@ public class ExperienceOrbController extends MobEntityController {
     }
 
     public static class EntityExperienceOrbNPC extends ExperienceOrb implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityExperienceOrbNPC(EntityType<? extends ExperienceOrb> types, Level level) {
@@ -52,6 +47,11 @@ public class ExperienceOrbController extends MobEntityController {
         public EntityExperienceOrbNPC(EntityType<? extends ExperienceOrb> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

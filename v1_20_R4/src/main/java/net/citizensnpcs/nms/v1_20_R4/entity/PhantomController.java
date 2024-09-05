@@ -47,11 +47,6 @@ public class PhantomController extends MobEntityController {
     }
 
     public static class EntityPhantomNPC extends Phantom implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         private LookControl oldLookController;
@@ -92,6 +87,11 @@ public class PhantomController extends MobEntityController {
                 }
                 npc.update();
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

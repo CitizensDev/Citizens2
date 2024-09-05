@@ -48,11 +48,6 @@ public class BatController extends MobEntityController {
     }
 
     public static class EntityBatNPC extends EntityBat implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityBatNPC(EntityTypes<? extends EntityBat> types, World world) {
@@ -70,6 +65,11 @@ public class BatController extends MobEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

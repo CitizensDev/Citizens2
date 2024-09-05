@@ -1,7 +1,5 @@
 package net.citizensnpcs.nms.v1_20_R4.entity;
 
-import java.lang.invoke.MethodHandle;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R4.entity.CraftEntity;
@@ -47,11 +45,6 @@ public class FoxController extends MobEntityController {
     }
 
     public static class EntityFoxNPC extends Fox implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityFoxNPC(EntityType<? extends Fox> types, Level level) {
@@ -61,6 +54,11 @@ public class FoxController extends MobEntityController {
         public EntityFoxNPC(EntityType<? extends Fox> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override
@@ -100,7 +98,7 @@ public class FoxController extends MobEntityController {
                 FoxTrait ft = npc.getTraitNullable(FoxTrait.class);
                 if (ft != null) {
                     try {
-                        SET_FACEPLANTED.invoke(this, ft.isFaceplanted());
+                        NMSImpl.SET_FACEPLANTED.invoke(this, ft.isFaceplanted());
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
@@ -234,8 +232,6 @@ public class FoxController extends MobEntityController {
             }
             return res;
         }
-
-        private static final MethodHandle SET_FACEPLANTED = NMS.getMethodHandle(Fox.class, "A", true, boolean.class);
     }
 
     public static class FoxNPC extends CraftFox implements ForwardingNPCHolder {

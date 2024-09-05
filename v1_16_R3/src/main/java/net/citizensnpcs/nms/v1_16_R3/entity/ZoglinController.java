@@ -44,11 +44,6 @@ public class ZoglinController extends MobEntityController {
     }
 
     public static class EntityZoglinNPC extends EntityZoglin implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityZoglinNPC(EntityTypes<? extends EntityZoglin> types, World world) {
@@ -70,6 +65,11 @@ public class ZoglinController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

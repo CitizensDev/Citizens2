@@ -43,11 +43,6 @@ public class WitchController extends MobEntityController {
     }
 
     public static class EntityWitchNPC extends Witch implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityWitchNPC(EntityType<? extends Witch> types, Level level) {
@@ -57,6 +52,11 @@ public class WitchController extends MobEntityController {
         public EntityWitchNPC(EntityType<? extends Witch> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -53,11 +53,6 @@ public class CreeperController extends MobEntityController {
     }
 
     public static class EntityCreeperNPC extends EntityCreeper implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private boolean allowPowered;
 
         private final CitizensNPC npc;
@@ -92,6 +87,11 @@ public class CreeperController extends MobEntityController {
         @Override
         protected boolean a(EntityHuman entityhuman, EnumHand enumhand, ItemStack itemstack) {
             return npc == null || !npc.isProtected() ? super.a(entityhuman, enumhand, itemstack) : false;
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

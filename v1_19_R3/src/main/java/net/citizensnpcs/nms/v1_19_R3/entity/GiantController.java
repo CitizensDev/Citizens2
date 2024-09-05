@@ -45,11 +45,6 @@ public class GiantController extends MobEntityController {
     }
 
     public static class EntityGiantNPC extends Giant implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityGiantNPC(EntityType<? extends Giant> types, Level level) {
@@ -59,6 +54,11 @@ public class GiantController extends MobEntityController {
         public EntityGiantNPC(EntityType<? extends Giant> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

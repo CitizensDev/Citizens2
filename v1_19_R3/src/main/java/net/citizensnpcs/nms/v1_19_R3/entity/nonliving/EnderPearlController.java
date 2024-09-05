@@ -47,11 +47,6 @@ public class EnderPearlController extends MobEntityController {
     }
 
     public static class EntityEnderPearlNPC extends ThrownEnderpearl implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEnderPearlNPC(EntityType<? extends ThrownEnderpearl> types, Level level) {
@@ -61,6 +56,11 @@ public class EnderPearlController extends MobEntityController {
         public EntityEnderPearlNPC(EntityType<? extends ThrownEnderpearl> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

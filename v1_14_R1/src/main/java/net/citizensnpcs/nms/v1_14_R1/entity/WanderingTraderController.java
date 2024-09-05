@@ -52,11 +52,6 @@ public class WanderingTraderController extends MobEntityController {
     }
 
     public static class EntityWanderingTraderNPC extends EntityVillagerTrader implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private TreeMap<?, ?> behaviorMap;
 
         private boolean blockingATrade;
@@ -111,6 +106,11 @@ public class WanderingTraderController extends MobEntityController {
                 }
             }
             return super.a(entityhuman, enumhand);
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

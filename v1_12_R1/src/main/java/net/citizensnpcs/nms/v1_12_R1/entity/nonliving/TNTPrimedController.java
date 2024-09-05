@@ -32,11 +32,6 @@ public class TNTPrimedController extends MobEntityController {
     }
 
     public static class EntityTNTPrimedNPC extends EntityTNTPrimed implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityTNTPrimedNPC(World world) {
@@ -51,6 +46,11 @@ public class TNTPrimedController extends MobEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

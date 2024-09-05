@@ -55,11 +55,6 @@ public class PufferFishController extends MobEntityController {
     }
 
     public static class EntityPufferFishNPC extends Pufferfish implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         private MoveControl oldMoveController;
@@ -90,6 +85,11 @@ public class PufferFishController extends MobEntityController {
                 this.verticalCollision = lastInWater;
                 setPuffState(lastPuffState);
             }
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

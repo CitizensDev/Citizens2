@@ -45,11 +45,6 @@ public class ShulkerController extends MobEntityController {
     }
 
     public static class EntityShulkerNPC extends EntityShulker implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityShulkerNPC(EntityTypes<? extends EntityShulker> types, World world) {
@@ -71,6 +66,11 @@ public class ShulkerController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

@@ -47,11 +47,6 @@ public class FishingHookController extends MobEntityController {
     }
 
     public static class EntityFishingHookNPC extends FishingHook implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityFishingHookNPC(EntityType<? extends FishingHook> types, Level level) {
@@ -63,6 +58,11 @@ public class FishingHookController extends MobEntityController {
                     new GameProfile(UUID.randomUUID(), "dummyfishhook")) {
             }, level, 0, 0);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

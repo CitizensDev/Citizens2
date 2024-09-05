@@ -50,18 +50,13 @@ public class BoatController extends MobEntityController {
     }
 
     public static class EntityBoatNPC extends Boat implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private float invFriction;
+
         private float landFriction;
         private Status lastStatus;
         private final CitizensNPC npc;
         private Status status;
         private double waterLevel;
-
         public EntityBoatNPC(EntityType<? extends Boat> types, Level level) {
             this(types, level, null);
         }
@@ -69,6 +64,11 @@ public class BoatController extends MobEntityController {
         public EntityBoatNPC(EntityType<? extends Boat> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

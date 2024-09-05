@@ -44,11 +44,6 @@ public class AreaEffectCloudController extends MobEntityController {
     }
 
     public static class EntityAreaEffectCloudNPC extends AreaEffectCloud implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityAreaEffectCloudNPC(EntityType<? extends AreaEffectCloud> types, Level level) {
@@ -58,6 +53,11 @@ public class AreaEffectCloudController extends MobEntityController {
         public EntityAreaEffectCloudNPC(EntityType<? extends AreaEffectCloud> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

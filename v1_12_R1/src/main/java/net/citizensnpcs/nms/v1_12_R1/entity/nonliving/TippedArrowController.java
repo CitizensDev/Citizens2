@@ -32,11 +32,6 @@ public class TippedArrowController extends MobEntityController {
     }
 
     public static class EntityTippedArrowNPC extends EntityTippedArrow implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityTippedArrowNPC(World world) {
@@ -51,6 +46,11 @@ public class TippedArrowController extends MobEntityController {
         @Override
         public void a(AxisAlignedBB bb) {
             super.a(NMSBoundingBox.makeBB(npc, bb));
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

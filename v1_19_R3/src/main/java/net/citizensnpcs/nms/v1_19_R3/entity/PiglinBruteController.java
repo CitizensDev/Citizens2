@@ -45,11 +45,6 @@ public class PiglinBruteController extends MobEntityController {
     }
 
     public static class EntityPiglinBruteNPC extends PiglinBrute implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityPiglinBruteNPC(EntityType<? extends PiglinBrute> types, Level level) {
@@ -59,6 +54,11 @@ public class PiglinBruteController extends MobEntityController {
         public EntityPiglinBruteNPC(EntityType<? extends PiglinBrute> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

@@ -38,11 +38,6 @@ public class ShulkerBulletController extends MobEntityController {
     }
 
     public static class EntityShulkerBulletNPC extends ShulkerBullet implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityShulkerBulletNPC(EntityType<? extends ShulkerBullet> types, Level level) {
@@ -52,6 +47,11 @@ public class ShulkerBulletController extends MobEntityController {
         public EntityShulkerBulletNPC(EntityType<? extends ShulkerBullet> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

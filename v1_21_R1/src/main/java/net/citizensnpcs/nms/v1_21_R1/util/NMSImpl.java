@@ -322,6 +322,7 @@ import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.AbstractSchoolingFish;
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.animal.Dolphin;
+import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.animal.Panda;
 import net.minecraft.world.entity.animal.PolarBear;
 import net.minecraft.world.entity.animal.Pufferfish;
@@ -629,12 +630,6 @@ public class NMSImpl implements NMSBridge {
             return Float.NaN;
         LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) entity);
         return handle.zza;
-    }
-
-    @Override
-    public NPC getNPC(org.bukkit.entity.Entity entity) {
-        Entity handle = getHandle(entity);
-        return handle instanceof NPCHolder ? ((NPCHolder) handle).getNPC() : null;
     }
 
     @Override
@@ -2588,6 +2583,7 @@ public class NMSImpl implements NMSBridge {
             boolean.class);
     private static final MethodHandle FLYING_MOVECONTROL_FLOAT_SETTER = NMS.getFirstSetter(FlyingMoveControl.class,
             boolean.class);
+    public static final MethodHandle FOX_SET_FACEPLANTED = NMS.getMethodHandle(Fox.class, "B", true, boolean.class);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     private static EntityDataAccessor<Float> INTERACTION_HEIGHT = null;
     private static EntityDataAccessor<Float> INTERACTION_WIDTH = null;

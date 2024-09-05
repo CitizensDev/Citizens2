@@ -44,11 +44,6 @@ public class ZombieHuskController extends MobEntityController {
     }
 
     public static class EntityZombieHuskNPC extends EntityZombieHusk implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityZombieHuskNPC(EntityTypes<? extends EntityZombieHusk> types, World world) {
@@ -70,6 +65,11 @@ public class ZombieHuskController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

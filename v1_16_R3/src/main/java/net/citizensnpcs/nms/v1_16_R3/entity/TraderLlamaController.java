@@ -55,11 +55,6 @@ public class TraderLlamaController extends MobEntityController {
     }
 
     public static class EntityTraderLlamaNPC extends EntityLlamaTrader implements NPCHolder {
-        @Override
-        public boolean a(EntityPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityTraderLlamaNPC(EntityTypes<? extends EntityLlamaTrader> types, World world) {
@@ -94,6 +89,11 @@ public class TraderLlamaController extends MobEntityController {
             if (npc == null || !npc.isFlyable()) {
                 super.a(d0, flag, block, blockposition);
             }
+        }
+
+        @Override
+        public boolean a(EntityPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
 
         @Override

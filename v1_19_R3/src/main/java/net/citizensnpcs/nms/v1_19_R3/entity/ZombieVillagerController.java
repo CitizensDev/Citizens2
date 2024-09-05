@@ -45,11 +45,6 @@ public class ZombieVillagerController extends MobEntityController {
     }
 
     public static class EntityZombieVillagerNPC extends ZombieVillager implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityZombieVillagerNPC(EntityType<? extends ZombieVillager> types, Level level) {
@@ -59,6 +54,11 @@ public class ZombieVillagerController extends MobEntityController {
         public EntityZombieVillagerNPC(EntityType<? extends ZombieVillager> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

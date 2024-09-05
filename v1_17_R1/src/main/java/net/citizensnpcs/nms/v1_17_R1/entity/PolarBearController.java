@@ -42,11 +42,6 @@ public class PolarBearController extends MobEntityController {
     }
 
     public static class EntityPolarBearNPC extends PolarBear implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityPolarBearNPC(EntityType<? extends PolarBear> types, Level level) {
@@ -56,6 +51,11 @@ public class PolarBearController extends MobEntityController {
         public EntityPolarBearNPC(EntityType<? extends PolarBear> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

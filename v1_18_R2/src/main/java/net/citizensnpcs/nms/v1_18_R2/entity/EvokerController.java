@@ -44,11 +44,6 @@ public class EvokerController extends MobEntityController {
     }
 
     public static class EntityEvokerNPC extends Evoker implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityEvokerNPC(EntityType<? extends Evoker> types, Level level) {
@@ -58,6 +53,11 @@ public class EvokerController extends MobEntityController {
         public EntityEvokerNPC(EntityType<? extends Evoker> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

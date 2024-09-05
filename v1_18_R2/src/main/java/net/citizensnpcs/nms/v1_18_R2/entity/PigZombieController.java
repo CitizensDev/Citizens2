@@ -44,11 +44,6 @@ public class PigZombieController extends MobEntityController {
     }
 
     public static class EntityPigZombieNPC extends ZombifiedPiglin implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityPigZombieNPC(EntityType<? extends ZombifiedPiglin> types, Level level) {
@@ -58,6 +53,11 @@ public class PigZombieController extends MobEntityController {
         public EntityPigZombieNPC(EntityType<? extends ZombifiedPiglin> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

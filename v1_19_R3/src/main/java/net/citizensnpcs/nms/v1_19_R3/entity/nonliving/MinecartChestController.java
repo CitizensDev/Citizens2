@@ -41,11 +41,6 @@ public class MinecartChestController extends MobEntityController {
     }
 
     public static class EntityMinecartChestNPC extends MinecartChest implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityMinecartChestNPC(EntityType<? extends MinecartChest> types, Level level) {
@@ -55,6 +50,11 @@ public class MinecartChestController extends MobEntityController {
         public EntityMinecartChestNPC(EntityType<? extends MinecartChest> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

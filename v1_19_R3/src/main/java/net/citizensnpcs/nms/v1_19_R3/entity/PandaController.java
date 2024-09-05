@@ -46,11 +46,6 @@ public class PandaController extends MobEntityController {
     }
 
     public static class EntityPandaNPC extends Panda implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntityPandaNPC(EntityType<? extends Panda> types, Level level) {
@@ -60,6 +55,11 @@ public class PandaController extends MobEntityController {
         public EntityPandaNPC(EntityType<? extends Panda> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override

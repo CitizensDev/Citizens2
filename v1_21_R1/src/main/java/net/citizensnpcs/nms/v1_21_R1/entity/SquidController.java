@@ -43,11 +43,6 @@ public class SquidController extends MobEntityController {
     }
 
     public static class EntitySquidNPC extends Squid implements NPCHolder {
-        @Override
-        public boolean broadcastToPlayer(ServerPlayer player) {
-            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
         private final CitizensNPC npc;
 
         public EntitySquidNPC(EntityType<? extends Squid> types, Level level) {
@@ -57,6 +52,11 @@ public class SquidController extends MobEntityController {
         public EntitySquidNPC(EntityType<? extends Squid> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
         }
 
         @Override
