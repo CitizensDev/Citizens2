@@ -55,12 +55,14 @@ public class MoneyAction extends NPCShopAction {
 
         return Transaction.create(() -> true, () -> {
             EconomyResponse response = economy.depositPlayer(player, amount);
-            if (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED) {
+            if (response != null
+                    && (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED)) {
                 Messaging.severe("Failed to deposit", amount, "to", player, "in NPC shop:", response.errorMessage);
             }
         }, () -> {
             EconomyResponse response = economy.withdrawPlayer(player, amount);
-            if (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED) {
+            if (response != null
+                    && (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED)) {
                 Messaging.severe("Failed to withdraw", amount, "from", player, "in NPC shop:", response.errorMessage);
             }
         });
@@ -77,12 +79,14 @@ public class MoneyAction extends NPCShopAction {
 
         return Transaction.create(() -> economy.has(player, amount), () -> {
             EconomyResponse response = economy.withdrawPlayer(player, amount);
-            if (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED) {
+            if (response != null
+                    && (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED)) {
                 Messaging.severe("Failed to withdraw", amount, "from", player, "in NPC shop:", response.errorMessage);
             }
         }, () -> {
             EconomyResponse response = economy.depositPlayer(player, amount);
-            if (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED) {
+            if (response != null
+                    && (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED)) {
                 Messaging.severe("Failed to deposit", amount, "to", player, "in NPC shop:", response.errorMessage);
             }
         });
