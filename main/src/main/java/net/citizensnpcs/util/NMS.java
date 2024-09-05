@@ -249,7 +249,7 @@ public class NMS {
             return f;
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
+                Messaging.severeTr(Messages.ERROR_GETTING_FIELD, field, e.getLocalizedMessage());
                 if (Messaging.isDebugging()) {
                     e.printStackTrace();
                 }
@@ -298,13 +298,16 @@ public class NMS {
         if (field == null)
             return null;
         if (MODIFIERS_FIELD == null) {
-            if (UNSAFE == null) {
+            if (UNSAFE_STATIC_FIELD_OFFSET == null) {
+                Object UNSAFE;
                 try {
                     UNSAFE = NMS.getField(Class.forName("sun.misc.Unsafe"), "theUnsafe").get(null);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     if (log) {
-                        Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
+                        Messaging.severeTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
+                        if (Messaging.isDebugging()) {
+                            e.printStackTrace();
+                        }
                     }
                     return null;
                 }
@@ -337,9 +340,11 @@ public class NMS {
                 return isStatic ? MethodHandles.insertArguments(mh, 0, field.getDeclaringClass(), offset)
                         : MethodHandles.insertArguments(mh, 1, offset);
             } catch (Throwable t) {
-                t.printStackTrace();
                 if (log) {
-                    Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), t.getLocalizedMessage());
+                    Messaging.severeTr(Messages.ERROR_GETTING_FIELD, field.getName(), t.getLocalizedMessage());
+                    if (Messaging.isDebugging()) {
+                        t.printStackTrace();
+                    }
                 }
                 return null;
             }
@@ -348,7 +353,7 @@ public class NMS {
             MODIFIERS_FIELD.setInt(field, field.getModifiers() & ~Modifier.FINAL);
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
+                Messaging.severeTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
                 if (Messaging.isDebugging()) {
                     e.printStackTrace();
                 }
@@ -359,7 +364,7 @@ public class NMS {
             return LOOKUP.unreflectSetter(field);
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
+                Messaging.severeTr(Messages.ERROR_GETTING_FIELD, field.getName(), e.getLocalizedMessage());
                 if (Messaging.isDebugging()) {
                     e.printStackTrace();
                 }
@@ -375,7 +380,10 @@ public class NMS {
                 return null;
             return getFinalSetter(found.get(0), true);
         } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
+            Messaging.severeTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
+            if (Messaging.isDebugging()) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -387,7 +395,10 @@ public class NMS {
                 return null;
             return LOOKUP.unreflectGetter(found.get(0));
         } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
+            Messaging.severeTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
+            if (Messaging.isDebugging()) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -426,7 +437,7 @@ public class NMS {
             return LOOKUP.unreflect(first);
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_METHOD, e.getLocalizedMessage());
+                Messaging.severeTr(Messages.ERROR_GETTING_METHOD, e.getLocalizedMessage());
                 if (Messaging.isDebugging()) {
                     e.printStackTrace();
                 }
@@ -442,7 +453,7 @@ public class NMS {
                 return null;
             return LOOKUP.unreflectSetter(found.get(0));
         } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
+            Messaging.severeTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
         }
         return null;
     }
@@ -454,7 +465,7 @@ public class NMS {
                 return null;
             return LOOKUP.unreflectGetter(found.get(0));
         } catch (Exception e) {
-            Messaging.logTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
+            Messaging.severeTr(Messages.ERROR_GETTING_FIELD, type, e.getLocalizedMessage());
         }
         return null;
     }
@@ -468,7 +479,7 @@ public class NMS {
             return LOOKUP.unreflectGetter(getField(clazz, name, log));
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_FIELD, name, e.getLocalizedMessage());
+                Messaging.severeTr(Messages.ERROR_GETTING_FIELD, name, e.getLocalizedMessage());
                 if (Messaging.isDebugging()) {
                     e.printStackTrace();
                 }
@@ -503,7 +514,7 @@ public class NMS {
             f.setAccessible(true);
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
+                Messaging.severeTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
                 if (Messaging.isDebugging()) {
                     e.printStackTrace();
                 }
@@ -519,7 +530,7 @@ public class NMS {
             return LOOKUP.unreflect(getMethod(clazz, method, log, params));
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
+                Messaging.severeTr(Messages.ERROR_GETTING_METHOD, method, e.getLocalizedMessage());
                 if (Messaging.isDebugging()) {
                     e.printStackTrace();
                 }
@@ -582,7 +593,7 @@ public class NMS {
             return LOOKUP.unreflectSetter(getField(clazz, name, log));
         } catch (Exception e) {
             if (log) {
-                Messaging.logTr(Messages.ERROR_GETTING_FIELD, name, e.getLocalizedMessage());
+                Messaging.severeTr(Messages.ERROR_GETTING_FIELD, name, e.getLocalizedMessage());
                 if (Messaging.isDebugging()) {
                     e.printStackTrace();
                 }
@@ -656,11 +667,9 @@ public class NMS {
 
     public static void giveReflectiveAccess(Class<?> from, Class<?> to) {
         try {
-            if (GET_MODULE == null) {
-                Class<?> module = Class.forName("java.lang.Module");
-                GET_MODULE = Class.class.getMethod("getModule");
-                ADD_OPENS = module.getMethod("addOpens", String.class, module);
-            }
+            Class<?> module = Class.forName("java.lang.Module");
+            Method GET_MODULE = Class.class.getMethod("getModule");
+            Method ADD_OPENS = module.getMethod("addOpens", String.class, module);
             ADD_OPENS.invoke(GET_MODULE.invoke(from), from.getPackage().getName(), GET_MODULE.invoke(to));
         } catch (Exception e) {
         }
@@ -973,6 +982,7 @@ public class NMS {
         if (BRIDGE != null) {
             BRIDGE.shutdown();
             BRIDGE = null;
+            FIND_PROFILES_BY_NAMES = null;
         }
     }
 
@@ -1000,16 +1010,13 @@ public class NMS {
         BRIDGE.updatePathfindingRange(npc, pathfindingRange);
     }
 
-    private static Method ADD_OPENS;
     private static NMSBridge BRIDGE;
-    private static MethodHandle FIND_PROFILES_BY_NAMES = null;
-    private static Method GET_MODULE;
-    private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+    private static MethodHandle FIND_PROFILES_BY_NAMES;
+    private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;
     private static boolean PAPER_KNOCKBACK_EVENT_EXISTS = true;
     private static boolean SUPPORT_KNOCKBACK_RESISTANCE = true;
     private static boolean SUPPORTS_FIND_PROFILES_BY_NAME = true;
-    private static Object UNSAFE;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_BOOLEAN;
     private static MethodHandle UNSAFE_PUT_DOUBLE;
