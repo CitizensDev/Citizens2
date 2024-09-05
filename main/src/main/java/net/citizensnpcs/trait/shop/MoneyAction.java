@@ -15,6 +15,8 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 
 public class MoneyAction extends NPCShopAction {
     @Persist
@@ -52,9 +54,15 @@ public class MoneyAction extends NPCShopAction {
         double amount = money * repeats;
 
         return Transaction.create(() -> true, () -> {
-            economy.depositPlayer(player, amount);
+            EconomyResponse response = economy.depositPlayer(player, amount);
+            if (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED) {
+                Messaging.severe("Failed to deposit", amount, "to", player, "in NPC shop:", response.errorMessage);
+            }
         }, () -> {
-            economy.withdrawPlayer(player, amount);
+            EconomyResponse response = economy.withdrawPlayer(player, amount);
+            if (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED) {
+                Messaging.severe("Failed to withdraw", amount, "from", player, "in NPC shop:", response.errorMessage);
+            }
         });
     }
 
@@ -68,14 +76,28 @@ public class MoneyAction extends NPCShopAction {
         double amount = money * repeats;
 
         return Transaction.create(() -> economy.has(player, amount), () -> {
-            economy.withdrawPlayer(player, amount);
+            EconomyResponse response = economy.withdrawPlayer(player, amount);
+            if (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED) {
+                Messaging.severe("Failed to withdraw", amount, "from", player, "in NPC shop:", response.errorMessage);
+            }
         }, () -> {
-            economy.depositPlayer(player, amount);
+            EconomyResponse response = economy.depositPlayer(player, amount);
+            if (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED) {
+                Messaging.severe("Failed to deposit", amount, "to", player, "in NPC shop:", response.errorMessage);
+            }
         });
     }
 
     public static class MoneyActionGUI implements GUI {
         private Boolean supported;
+
+        public MoneyActionGUI() {
+            try {
+                Class.forName("net.milkbowl.vault.economy.Economy");
+            } catch (ClassNotFoundException e) {
+                supported = false;
+            }
+        }
 
         @Override
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
@@ -102,6 +124,8 @@ public class MoneyAction extends NPCShopAction {
                     supported = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider() != null;
                 } catch (Throwable t) {
                     supported = false;
+                    Messaging.severe("Error fetching shop economy provider, shop economy integration will not work:");
+                    t.printStackTrace();
                 }
             }
             if (!supported)

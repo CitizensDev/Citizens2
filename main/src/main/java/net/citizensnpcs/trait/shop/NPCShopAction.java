@@ -111,6 +111,7 @@ public abstract class NPCShopAction implements Cloneable {
         GUI.add(gui);
     }
 
-    private static List<GUI> GUI = Lists.newArrayList();
-    private static PersisterRegistry<NPCShopAction> REGISTRY = PersistenceLoader.createRegistry(NPCShopAction.class);
+    private static final List<GUI> GUI = Lists.newArrayList();
+    private static final PersisterRegistry<NPCShopAction> REGISTRY = PersistenceLoader
+            .createRegistry(NPCShopAction.class);
 }
