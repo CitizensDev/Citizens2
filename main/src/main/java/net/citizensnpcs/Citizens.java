@@ -467,7 +467,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         shops.loadFromDisk();
         shops.load();
-
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
 

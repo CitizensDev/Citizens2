@@ -74,6 +74,8 @@ public class TextBasePrompt extends StringPrompt {
             }
         } else if (input.equalsIgnoreCase("random")) {
             text.toggleRandomTalker();
+        } else if (original.trim().equalsIgnoreCase("send text to chat")) {
+            text.toggleSendTextToChat();
         } else if (original.trim().equalsIgnoreCase("realistic looking")) {
             text.toggleRealisticLooking();
         } else if (original.trim().equalsIgnoreCase("speech bubbles")) {
@@ -121,7 +123,7 @@ public class TextBasePrompt extends StringPrompt {
         Messaging.send((Player) context.getForWhom(),
                 Messaging.tr(Messages.TEXT_EDITOR_START_PROMPT, colorToggleableText(text.shouldTalkClose()),
                         colorToggleableText(text.isRandomTalker()), colorToggleableText(text.useSpeechBubbles()),
-                        colorToggleableText(text.useRealisticLooking())));
+                        colorToggleableText(text.useRealisticLooking()), colorToggleableText(text.sendTextToChat())));
         int page = context.getSessionData("page") == null ? 1 : (int) context.getSessionData("page");
         text.sendPage((Player) context.getForWhom(), page);
         return "";

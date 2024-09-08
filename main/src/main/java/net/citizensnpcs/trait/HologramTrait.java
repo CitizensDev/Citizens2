@@ -220,6 +220,11 @@ public class HologramTrait extends Trait {
         return viewRange;
     }
 
+    public void insertLine(int idx, String text) {
+        lines.add(idx, new HologramLine(text, true, -1, createDefaultHologramRenderer()));
+        reloadLineHolograms();
+    }
+
     @Override
     public void load(DataKey root) {
         clear();

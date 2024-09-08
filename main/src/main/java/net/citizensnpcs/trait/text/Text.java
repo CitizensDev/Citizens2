@@ -49,6 +49,8 @@ public class Text extends Trait implements Runnable, Listener {
     private double range = Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble();
     @Persist(value = "realistic-looking")
     private boolean realisticLooker = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
+    @Persist(value = "send-text-to-chat")
+    private boolean sendTextToChat = true;
     @Persist(value = "speech-bubble-duration")
     private int speechBubbleDuration = Setting.DEFAULT_TEXT_SPEECH_BUBBLE_DURATION.asTicks();
     @Persist(value = "speech-bubbles")
@@ -56,7 +58,7 @@ public class Text extends Trait implements Runnable, Listener {
     @Persist(value = "talk-close")
     private boolean talkClose = Setting.DEFAULT_TALK_CLOSE.asBoolean();
     @Persist
-    private volatile List<String> text = new ArrayList<>();
+    private final List<String> text = new ArrayList<>();
 
     public Text() {
         super("text");
@@ -211,8 +213,14 @@ public class Text extends Trait implements Runnable, Listener {
             HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
             trait.addTemporaryLine(Placeholders.replace(text.get(index), player, npc), speechBubbleDuration);
         }
-        npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
+        if (sendTextToChat) {
+            npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
+        }
         return true;
+    }
+
+    public boolean sendTextToChat() {
+        return sendTextToChat;
     }
 
     /**
@@ -286,6 +294,13 @@ public class Text extends Trait implements Runnable, Listener {
      */
     public boolean toggleRealisticLooking() {
         return realisticLooker = !realisticLooker;
+    }
+
+    /**
+     * Toggles sending text through chat
+     */
+    public boolean toggleSendTextToChat() {
+        return sendTextToChat = !sendTextToChat;
     }
 
     /**

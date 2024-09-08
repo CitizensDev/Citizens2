@@ -1286,7 +1286,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] | set [line #] [text] | remove [line #] | bgcolor [line #] (red,green,blue(,alpha)) | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
+            usage = "hologram add [text] | insert [line #] [text] | set [line #] [text] | remove [line #] | bgcolor [line #] (red,green,blue(,alpha)) | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
             desc = "",
             modifiers = { "hologram" },
             min = 1,
@@ -1295,8 +1295,8 @@ public class NPCCommands {
     public void hologram(CommandContext args, CommandSender sender, NPC npc,
             @Arg(
                     value = 1,
-                    completions = { "add", "set", "bgcolor", "remove", "clear", "lineheight", "viewrange", "margintop",
-                            "marginbottom" }) String action,
+                    completions = { "add", "insert", "set", "bgcolor", "remove", "clear", "lineheight", "viewrange",
+                            "margintop", "marginbottom" }) String action,
             @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion)
             throws CommandException {
         HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
@@ -1314,7 +1314,8 @@ public class NPCCommands {
             if (args.argsLength() == 2)
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
 
-            int idx = Math.max(0, args.getInteger(2));
+            int idx = args.getString(2).equals("bottom") ? 0
+                    : args.getString(2).equals("top") ? trait.getLines().size() - 1 : Math.max(0, args.getInteger(2));
             if (idx >= trait.getLines().size())
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
 
@@ -1328,7 +1329,9 @@ public class NPCCommands {
                 trait.setDefaultBackgroundColor(Util.parseColor(args.getString(2)));
                 Messaging.sendTr(sender, Messages.HOLOGRAM_DEFAULT_BACKGROUND_COLOR_SET, args.getString(2));
             } else {
-                int idx = Math.max(0, args.getInteger(2));
+                int idx = args.getString(2).equals("bottom") ? 0
+                        : args.getString(2).equals("top") ? trait.getLines().size() - 1
+                                : Math.max(0, args.getInteger(2));
                 if (idx >= trait.getLines().size())
                     throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
                 trait.setBackgroundColor(idx, Util.parseColor(args.getString(3)));
@@ -1346,11 +1349,26 @@ public class NPCCommands {
 
             trait.addLine(args.getJoinedStrings(2));
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_ADD, args.getJoinedStrings(2));
+        } else if (action.equalsIgnoreCase("insert")) {
+            if (args.argsLength() == 2)
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+
+            if (args.argsLength() == 3)
+                throw new CommandException(Messages.HOLOGRAM_TEXT_MISSING);
+
+            int idx = args.getString(2).equals("bottom") ? 0
+                    : args.getString(2).equals("top") ? trait.getLines().size() - 1 : Math.max(0, args.getInteger(2));
+            if (idx > trait.getLines().size())
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+
+            trait.insertLine(idx, args.getJoinedStrings(3));
+            Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_ADD, args.getJoinedStrings(3));
         } else if (action.equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
 
-            int idx = Math.max(0, args.getInteger(2));
+            int idx = args.getString(2).equals("bottom") ? 0
+                    : args.getString(2).equals("top") ? trait.getLines().size() - 1 : Math.max(0, args.getInteger(2));
             if (idx >= trait.getLines().size())
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
 
@@ -1369,7 +1387,8 @@ public class NPCCommands {
             if (args.argsLength() == 2)
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
 
-            int idx = Math.max(0, args.getInteger(2));
+            int idx = args.getString(2).equals("bottom") ? 0
+                    : args.getString(2).equals("top") ? trait.getLines().size() - 1 : Math.max(0, args.getInteger(2));
             if (idx >= trait.getLines().size())
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
 
@@ -1382,7 +1401,8 @@ public class NPCCommands {
             if (args.argsLength() == 2)
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
 
-            int idx = Math.max(0, args.getInteger(2));
+            int idx = args.getString(2).equals("bottom") ? 0
+                    : args.getString(2).equals("top") ? trait.getLines().size() - 1 : Math.max(0, args.getInteger(2));
             if (idx >= trait.getLines().size())
                 throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
 
@@ -2725,7 +2745,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "rotate (--towards [x,y,z]) (--body [yaw]) (--head [yaw]) (--pitch [pitch]) (-s(mooth))",
+            usage = "rotate (--towards [x,y,z]) (--toentity [name|uuid|me]) (--body [yaw]) (--head [yaw]) (--pitch [pitch]) (-s(mooth))",
             desc = "",
             flags = "s",
             modifiers = { "rotate" },
@@ -2733,7 +2753,8 @@ public class NPCCommands {
             max = 1,
             permission = "citizens.npc.rotate")
     public void rotate(CommandContext args, CommandSender sender, NPC npc, @Flag("body") Float yaw,
-            @Flag("head") Float head, @Flag("pitch") Float pitch, @Flag("towards") Location towards) {
+            @Flag("head") Float head, @Flag("pitch") Float pitch, @Flag("towards") Location towards,
+            @Flag("toentity") String entity) throws CommandException {
         if (args.hasFlag('s')) {
             if (pitch == null) {
                 pitch = npc.getStoredLocation().getPitch();
@@ -2747,6 +2768,18 @@ public class NPCCommands {
             }
             npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToHave(yaw, pitch);
             return;
+        }
+        if (entity != null) {
+            if (entity.equals("me")) {
+                towards = args.getSenderLocation();
+            } else {
+                try {
+                    UUID uuid = UUID.fromString(entity);
+                    towards = Bukkit.getPlayer(uuid).getLocation();
+                } catch (IllegalArgumentException ex) {
+                    towards = Bukkit.getPlayerExact(entity).getLocation();
+                }
+            }
         }
         if (towards != null) {
             npc.getOrAddTrait(RotationTrait.class).getPhysicalSession().rotateToFace(towards);

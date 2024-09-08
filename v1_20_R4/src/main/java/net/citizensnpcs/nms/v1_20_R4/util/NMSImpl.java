@@ -84,6 +84,7 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.nms.v1_20_R4.entity.AllayController;
 import net.citizensnpcs.nms.v1_20_R4.entity.ArmadilloController;
@@ -260,6 +261,14 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.ByteArrayTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.LongArrayTag;
+import net.minecraft.nbt.NumericTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -619,6 +628,35 @@ public class NMSImpl implements NMSBridge {
         ServerLevel world = ((CraftWorld) block.getWorld()).getHandle();
         VoxelShape shape = ((CraftBlock) block).getNMS().getCollisionShape(world, ((CraftBlock) block).getPosition());
         return shape.isEmpty() ? BoundingBox.EMPTY : NMSBoundingBox.wrap(shape.bounds());
+    }
+
+    @Override
+    public Map<String, Object> getComponentMap(org.bukkit.inventory.ItemStack item) {
+        if (META_COMPOUND_TAG == null) {
+            try {
+                META_COMPOUND_TAG = NMS.getGetter(Class.forName(
+                        "org.bukkit.craftbukkit." + SpigotUtil.getMinecraftPackage() + ".inventory.CraftMetaItem"),
+                        "customTag");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        Map<String, Object> base = Maps.newHashMap(NMSBridge.super.getComponentMap(item));
+        CompoundTag ct;
+        try {
+            ct = (CompoundTag) META_COMPOUND_TAG.invoke(item.getItemMeta());
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return base;
+        }
+        if (ct == null)
+            return base;
+        Map<String, Object> custom = Maps.newHashMap();
+        for (String key : ct.getAllKeys()) {
+            custom.put(key, deserialiseNBT(ct.get(key)));
+        }
+        base.put("custom", custom);
+        return base;
     }
 
     @Override
@@ -2085,6 +2123,42 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    private static Object deserialiseNBT(Tag tag) {
+        switch (tag.getId()) {
+            case Tag.TAG_COMPOUND:
+                CompoundTag ct = (CompoundTag) tag;
+                Map<String, Object> map = Maps.newHashMapWithExpectedSize(ct.size());
+                for (String key : ct.getAllKeys()) {
+                    map.put(key, deserialiseNBT(ct.get(key)));
+                }
+                return map;
+            case Tag.TAG_LIST:
+                ListTag list = (ListTag) tag;
+                List<Object> res = Lists.newArrayList(list.size());
+                for (int i = 0; i < list.size(); i++) {
+                    res.add(deserialiseNBT(list.get(i)));
+                }
+                return res;
+            case Tag.TAG_BYTE_ARRAY:
+                return ((ByteArrayTag) tag).getAsByteArray();
+            case Tag.TAG_INT_ARRAY:
+                return ((IntArrayTag) tag).getAsIntArray();
+            case Tag.TAG_LONG_ARRAY:
+                return ((LongArrayTag) tag).getAsLongArray();
+            case Tag.TAG_STRING:
+                return ((StringTag) tag).getAsString();
+            case Tag.TAG_ANY_NUMERIC:
+            case Tag.TAG_LONG:
+            case Tag.TAG_FLOAT:
+            case Tag.TAG_DOUBLE:
+            case Tag.TAG_INT:
+            case Tag.TAG_BYTE:
+            case Tag.TAG_SHORT:
+                return ((NumericTag) tag).getAsNumber();
+        }
+        throw new IllegalArgumentException();
+    }
+
     public static void flyingMoveLogic(LivingEntity entity, Vec3 vec3d) {
         if (entity.isEffectiveAi() || entity.isControlledByLocalInstance()) {
             double d0 = 0.08D;
@@ -2564,6 +2638,7 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
+
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
             AttributeSupplier.class);
     private static final MethodHandle AVAILABLE_BEHAVIORS_BY_PRIORITY = NMS.getGetter(Brain.class, "f");
@@ -2610,6 +2685,7 @@ public class NMSImpl implements NMSBridge {
     private static EntityDataAccessor<Float> INTERACTION_WIDTH = null;
     private static final MethodHandle JUMP_FIELD = NMS.getGetter(LivingEntity.class, "bn");
     private static final MethodHandle LOOK_CONTROL_SETTER = NMS.getFirstSetter(Mob.class, LookControl.class);
+    private static MethodHandle META_COMPOUND_TAG;
     private static final MethodHandle MINECRAFT_CLIENT = NMS.getFirstGetter(YggdrasilMinecraftSessionService.class,
             MinecraftClient.class);
     private static final MethodHandle MOVE_CONTROLLER_OPERATION = NMS.getSetter(MoveControl.class, "k");
