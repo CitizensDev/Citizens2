@@ -655,7 +655,7 @@ public class NMSImpl implements NMSBridge {
         for (String key : ct.getAllKeys()) {
             custom.put(key, deserialiseNBT(ct.get(key)));
         }
-        base.put("custom", custom);
+        base.put("custom_data", custom);
         return base;
     }
 

@@ -161,6 +161,7 @@ public class ItemAction extends NPCShopAction {
     private boolean metaMatches(ItemStack needle, ItemStack haystack, List<String> meta) {
         Map<String, Object> source = NMS.getComponentMap(needle);
         Map<String, Object> compare = NMS.getComponentMap(haystack);
+        System.out.println(source + " " + compare);
         for (String nbt : meta) {
             String[] parts = nbt.split("\\.");
             Object acc = source;
@@ -168,10 +169,14 @@ public class ItemAction extends NPCShopAction {
             for (int i = 0; i < parts.length; i++) {
                 if (acc == null || cmp == null)
                     return false;
+                if (i < parts.length - 1 && !(acc instanceof Map))
+                    return false;
+                if (i < parts.length - 1 && !(cmp instanceof Map))
+                    return false;
                 Map<String, Object> nextAcc = (Map<String, Object>) acc;
                 Map<String, Object> nextCmp = (Map<String, Object>) cmp;
-                if (!nextAcc.containsKey(parts[i]) && !nextCmp.containsKey(parts[i]))
-                    continue;
+                if (!nextAcc.containsKey(parts[i]) || !nextCmp.containsKey(parts[i]))
+                    return false;
                 acc = nextAcc.get(parts[i]);
                 cmp = nextCmp.get(parts[i]);
                 if (i == parts.length - 1 && !acc.equals(cmp))
