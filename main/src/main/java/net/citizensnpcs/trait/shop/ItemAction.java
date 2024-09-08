@@ -174,7 +174,9 @@ public class ItemAction extends NPCShopAction {
                     return false;
                 Map<String, Object> nextAcc = (Map<String, Object>) acc;
                 Map<String, Object> nextCmp = (Map<String, Object>) cmp;
-                if (!nextAcc.containsKey(parts[i]) || !nextCmp.containsKey(parts[i]))
+                if (!nextAcc.containsKey(parts[i]))
+                    break;
+                if (!nextCmp.containsKey(parts[i]))
                     return false;
                 acc = nextAcc.get(parts[i]);
                 cmp = nextCmp.get(parts[i]);

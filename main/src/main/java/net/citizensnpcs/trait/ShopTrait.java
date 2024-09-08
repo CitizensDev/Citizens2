@@ -970,11 +970,8 @@ public class ShopTrait extends Trait {
                         if (action instanceof ItemAction) {
                             ItemAction ia = (ItemAction) action;
                             for (ItemStack stack : ia.items) {
-                                ItemStack ingredient = stack.clone();
-                                if (!ia.compareSimilarity) {
-                                    ingredient.setItemMeta(Bukkit.getItemFactory().getItemMeta(ingredient.getType()));
-                                }
-                                recipe.addIngredient(ingredient);
+                                stack = stack.clone();
+                                recipe.addIngredient(stack);
                                 if (recipe.getIngredients().size() == 2)
                                     break;
                             }
