@@ -38,9 +38,8 @@ public class StoredShops {
     }
 
     public NPCShop getShop(String name) {
-        if (npcShops.containsKey(name))
-            return npcShops.get(name);
-        return getGlobalShop(name);
+        NPCShop shop = npcShops.get(name);
+        return shop == null ? getGlobalShop(name) : shop;
     }
 
     public void load() {

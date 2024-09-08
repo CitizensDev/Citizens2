@@ -159,7 +159,8 @@ public class PermissionAction extends NPCShopAction {
         public ItemStack createMenuItem(NPCShopAction previous) {
             if (supported == null) {
                 try {
-                    supported = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider() != null;
+                    supported = Bukkit.getServicesManager().getRegistration(Permission.class) != null
+                            && Bukkit.getServicesManager().getRegistration(Permission.class).getProvider() != null;
                 } catch (Throwable t) {
                     supported = false;
                 }

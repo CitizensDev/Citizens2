@@ -68,6 +68,8 @@ import net.citizensnpcs.trait.shop.MoneyAction.MoneyActionGUI;
 import net.citizensnpcs.trait.shop.NPCShopAction;
 import net.citizensnpcs.trait.shop.NPCShopAction.GUI;
 import net.citizensnpcs.trait.shop.NPCShopAction.Transaction;
+import net.citizensnpcs.trait.shop.OpenShopAction;
+import net.citizensnpcs.trait.shop.OpenShopAction.OpenShopActionGUI;
 import net.citizensnpcs.trait.shop.PermissionAction;
 import net.citizensnpcs.trait.shop.PermissionAction.PermissionActionGUI;
 import net.citizensnpcs.trait.shop.StoredShops;
@@ -143,7 +145,14 @@ public class ShopTrait extends Trait {
         public boolean canEdit(NPC npc, Player sender) {
             return sender.hasPermission("citizens.admin") || sender.hasPermission("citizens.npc.shop.edit")
                     || sender.hasPermission("citizens.npc.shop.edit." + getName())
-                    || npc.getOrAddTrait(Owner.class).isOwnedBy(sender);
+                    || (npc != null && npc.getOrAddTrait(Owner.class).isOwnedBy(sender));
+        }
+
+        public boolean canView(Player sender) {
+            if (viewPermission != null && !sender.hasPermission(viewPermission))
+                return false;
+            return Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
+                    || sender.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString());
         }
 
         public void display(Player sender) {
@@ -1042,5 +1051,6 @@ public class ShopTrait extends Trait {
         NPCShopAction.register(MoneyAction.class, "money", new MoneyActionGUI());
         NPCShopAction.register(CommandAction.class, "command", new CommandActionGUI());
         NPCShopAction.register(ExperienceAction.class, "experience", new ExperienceActionGUI());
+        NPCShopAction.register(OpenShopAction.class, "open_shop", new OpenShopActionGUI());
     }
 }

@@ -125,7 +125,8 @@ public class MoneyAction extends NPCShopAction {
         public ItemStack createMenuItem(NPCShopAction previous) {
             if (supported == null) {
                 try {
-                    supported = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider() != null;
+                    supported = Bukkit.getServicesManager().getRegistration(Economy.class) != null
+                            && Bukkit.getServicesManager().getRegistration(Economy.class).getProvider() != null;
                 } catch (Throwable t) {
                     supported = false;
                     Messaging.severe("Error fetching shop economy provider, shop economy integration will not work:");
