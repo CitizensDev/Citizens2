@@ -161,7 +161,6 @@ public class ItemAction extends NPCShopAction {
     private boolean metaMatches(ItemStack needle, ItemStack haystack, List<String> meta) {
         Map<String, Object> source = NMS.getComponentMap(needle);
         Map<String, Object> compare = NMS.getComponentMap(haystack);
-        System.out.println(source + " " + compare);
         for (String nbt : meta) {
             String[] parts = nbt.split("\\.");
             Object acc = source;
