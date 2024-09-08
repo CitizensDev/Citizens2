@@ -968,8 +968,13 @@ public class ShopTrait extends Trait {
                     MerchantRecipe recipe = new MerchantRecipe(result.clone(), 100000000);
                     for (NPCShopAction action : item.cost) {
                         if (action instanceof ItemAction) {
-                            for (ItemStack stack : ((ItemAction) action).items) {
-                                recipe.addIngredient(stack.clone());
+                            ItemAction ia = (ItemAction) action;
+                            for (ItemStack stack : ia.items) {
+                                ItemStack ingredient = stack.clone();
+                                if (!ia.compareSimilarity) {
+                                    ingredient.setItemMeta(Bukkit.getItemFactory().getItemMeta(ingredient.getType()));
+                                }
+                                recipe.addIngredient(ingredient);
                                 if (recipe.getIngredients().size() == 2)
                                     break;
                             }
