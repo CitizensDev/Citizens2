@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,6 +37,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
@@ -151,6 +153,10 @@ public class NMS {
 
     public static void cancelMoveDestination(Entity entity) {
         BRIDGE.cancelMoveDestination(entity);
+    }
+
+    public static void clearMerchantComponentPredicates(Merchant merchant, Set<Integer> clearComponentPredicates) {
+        BRIDGE.clearMerchantComponentPredicates(merchant, clearComponentPredicates);
     }
 
     public static Iterable<Object> createBundlePacket(List<Object> packets) {

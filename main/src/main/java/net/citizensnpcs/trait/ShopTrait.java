@@ -2,6 +2,7 @@ package net.citizensnpcs.trait;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -33,6 +34,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -74,6 +76,7 @@ import net.citizensnpcs.trait.shop.PermissionAction;
 import net.citizensnpcs.trait.shop.PermissionAction.PermissionActionGUI;
 import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.util.InventoryMultiplexer;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 /**
@@ -958,6 +961,7 @@ public class ShopTrait extends Trait {
             this.shop = shop;
             this.player = player;
             Map<Integer, NPCShopItem> tradesMap = Maps.newHashMap();
+            Set<Integer> clearComponentPredicates = Sets.newHashSet();
             Merchant merchant = Bukkit.createMerchant(shop.getTitle());
             List<MerchantRecipe> recipes = Lists.newArrayList();
             for (NPCShopPage page : shop.pages) {
@@ -967,14 +971,17 @@ public class ShopTrait extends Trait {
                         continue;
                     MerchantRecipe recipe = new MerchantRecipe(result.clone(), 100000000);
                     for (NPCShopAction action : item.cost) {
-                        if (action instanceof ItemAction) {
-                            ItemAction ia = (ItemAction) action;
-                            for (ItemStack stack : ia.items) {
-                                stack = stack.clone();
-                                recipe.addIngredient(stack);
-                                if (recipe.getIngredients().size() == 2)
-                                    break;
-                            }
+                        if (!(action instanceof ItemAction))
+                            continue;
+                        ItemAction ia = (ItemAction) action;
+                        if (!ia.compareSimilarity && ia.items.size() > 0) {
+                            clearComponentPredicates.add(recipes.size());
+                        }
+                        for (ItemStack stack : ia.items) {
+                            stack = stack.clone();
+                            recipe.addIngredient(stack);
+                            if (recipe.getIngredients().size() == 2)
+                                break;
                         }
                     }
                     if (recipe.getIngredients().size() == 0)
@@ -984,6 +991,7 @@ public class ShopTrait extends Trait {
                 }
             }
             merchant.setRecipes(recipes);
+            NMS.clearMerchantComponentPredicates(merchant, clearComponentPredicates);
             trades = tradesMap;
             view = player.openMerchant(merchant, true);
         }

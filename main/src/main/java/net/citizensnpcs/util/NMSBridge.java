@@ -3,6 +3,7 @@ package net.citizensnpcs.util;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -23,6 +24,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
@@ -62,6 +64,10 @@ public interface NMSBridge {
     public void attack(LivingEntity attacker, LivingEntity target);
 
     public void cancelMoveDestination(Entity entity);
+
+    public default void clearMerchantComponentPredicates(Merchant merchant, Set<Integer> clearComponentPredicates) {
+        // TODO: implement for <=1.19.4
+    }
 
     public default Iterable<Object> createBundlePacket(List<Object> packets) {
         return packets;
