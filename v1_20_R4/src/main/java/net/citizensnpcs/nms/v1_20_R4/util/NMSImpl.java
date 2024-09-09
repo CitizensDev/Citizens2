@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -506,11 +505,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void clearMerchantComponentPredicates(Merchant merchant, Set<Integer> clearComponentPredicates) {
         net.minecraft.world.item.trading.Merchant handle = ((CraftMerchant) merchant).getMerchant();
-        ListIterator<MerchantOffer> itr = handle.getOffers().listIterator();
+        Iterator<MerchantOffer> itr = handle.getOffers().iterator();
         for (int i = 0; itr.hasNext(); i++) {
+            MerchantOffer offer = itr.next();
             if (!clearComponentPredicates.contains(i))
                 continue;
-            MerchantOffer offer = itr.next();
             offer.baseCostA = new ItemCost(offer.baseCostA.item(), offer.baseCostA.count(),
                     DataComponentPredicate.EMPTY, offer.baseCostA.itemStack());
             ItemCost costB = offer.getItemCostB().orElseGet(() -> null);
