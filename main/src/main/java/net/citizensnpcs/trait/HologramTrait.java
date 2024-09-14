@@ -912,7 +912,7 @@ public class HologramTrait extends Trait {
         }
     }
 
-    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:([a-zA-Z0-9_ ]*?)([:].*?)?>");
+    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:((?:minecraft:)?[a-zA-Z0-9_ ]*?)([:].*?)?>");
     private static boolean SUPPORTS_DISPLAY = false;
     static {
         try {
