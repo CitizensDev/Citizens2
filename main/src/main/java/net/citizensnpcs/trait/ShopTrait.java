@@ -1000,9 +1000,10 @@ public class ShopTrait extends Trait {
         public void onInventoryClick(InventoryClickEvent evt) {
             if (!evt.getView().equals(view))
                 return;
-            evt.setCancelled(true);
-            if (evt.getSlotType() != SlotType.RESULT || !evt.getAction().name().contains("PICKUP"))
+            if (evt.getSlotType() != SlotType.RESULT || !evt.getAction().name().contains("PICKUP")
+                    || (evt.getCursor() != null && evt.getCursor().getType() != Material.AIR))
                 return;
+            evt.setCancelled(true);
             Inventory syntheticInventory = Bukkit.createInventory(null, 9);
             syntheticInventory.setItem(0, evt.getClickedInventory().getItem(0));
             syntheticInventory.setItem(1, evt.getClickedInventory().getItem(1));
