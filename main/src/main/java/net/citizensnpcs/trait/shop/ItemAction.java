@@ -24,6 +24,7 @@ import net.citizensnpcs.api.gui.InventoryMenuSlot;
 import net.citizensnpcs.api.gui.Menu;
 import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.NMS;
@@ -161,6 +162,7 @@ public class ItemAction extends NPCShopAction {
     private boolean metaMatches(ItemStack needle, ItemStack haystack, List<String> meta) {
         Map<String, Object> source = NMS.getComponentMap(needle);
         Map<String, Object> compare = NMS.getComponentMap(haystack);
+        Messaging.idebug(() -> "Shop filter: comparing " + source + " to " + compare);
         for (String nbt : meta) {
             String[] parts = nbt.split("\\.");
             Object acc = source;
@@ -174,8 +176,11 @@ public class ItemAction extends NPCShopAction {
                     return false;
                 Map<String, Object> nextAcc = (Map<String, Object>) acc;
                 Map<String, Object> nextCmp = (Map<String, Object>) cmp;
-                if (!nextAcc.containsKey(parts[i]))
-                    break;
+                if (!nextAcc.containsKey(parts[i])) {
+                    Messaging.warn("Probable error in shop filter: source item does not contain requested meta "
+                            + metaFilter + " actual meta is: " + source);
+                    return false;
+                }
                 if (!nextCmp.containsKey(parts[i]))
                     return false;
                 acc = nextAcc.get(parts[i]);
