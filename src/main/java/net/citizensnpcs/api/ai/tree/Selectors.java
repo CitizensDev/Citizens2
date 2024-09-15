@@ -54,7 +54,8 @@ public class Selectors {
      */
     public static Selector.Builder prioritySelector(final Comparator<Behavior> comparator,
             Collection<Behavior> behaviors) {
-        Preconditions.checkArgument(behaviors.size() > 0, "must have at least one behavior for comparison");
+        if (behaviors.size() > 0)
+            throw new IllegalArgumentException("must have at least one behavior for comparison");
         return Selector.selecting(behaviors).selectionFunction(new PrioritySelection(comparator));
     }
 

@@ -68,11 +68,7 @@ public class TemplateRegistry {
     }
 
     public boolean hasNamespace(String namespace) {
-        for (NamespacedKey key : fullyQualifiedTemplates.keySet()) {
-            if (key.getNamespace().equals(namespace))
-                return true;
-        }
-        return false;
+        return fullyQualifiedTemplates.keySet().stream().anyMatch(k -> k.getNamespace().equals(namespace));
     }
 
     private void loadTemplate(File folder, String namespace, DataKey key) throws TemplateLoadException {

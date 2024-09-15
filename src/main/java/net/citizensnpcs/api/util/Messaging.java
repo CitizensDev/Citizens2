@@ -118,8 +118,8 @@ public class Messaging {
         m = LEGACY_COLORCODE_MATCHER.matcher(sb.toString());
         sb = new StringBuffer();
         while (m.find()) {
-            m.appendReplacement(sb, COLORCODE_CONVERTER
-                    .get(m.group(1) == null ? m.group(2).toLowerCase(Locale.ROOT) : m.group(1).toLowerCase(Locale.ROOT)));
+            m.appendReplacement(sb, COLORCODE_CONVERTER.get(
+                    m.group(1) == null ? m.group(2).toLowerCase(Locale.ROOT) : m.group(1).toLowerCase(Locale.ROOT)));
         }
         m.appendTail(sb);
         return MINIMESSAGE_COLORCODE_MATCHER.matcher(sb.toString()).replaceAll("$0<csr>");
@@ -132,16 +132,14 @@ public class Messaging {
     }
 
     public static void idebug(Supplier<String> msg) {
-        if (isDebugging()) {
-            DEBUG_LOGGER.log(Level.INFO, "[Citizens] " + msg.get());
-        }
+        debug(msg.get());
     }
 
     public static boolean isDebugging() {
         return DEBUG;
     }
 
-    private static void log(Level level, Object... msg) {
+    public static void log(Level level, Object... msg) {
         LOGGER.log(level, "[Citizens] " + SPACE.join(msg));
     }
 
@@ -259,6 +257,10 @@ public class Messaging {
             return "";
         String message = possible.toString();
         return TRANSLATION_MATCHER.matcher(message).find() ? tr(message) : message;
+    }
+
+    public static void warn(Object... string) {
+        log(Level.WARNING, string);
     }
 
     private static BukkitAudiences AUDIENCES;

@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.ai.tree.Behavior;
@@ -38,7 +37,8 @@ public class SimpleGoalController implements GoalController {
     @Override
     public void addGoal(Goal goal, int priority) {
         Objects.requireNonNull(goal, "goal cannot be null");
-        Preconditions.checkState(priority > 0 && priority < Integer.MAX_VALUE, "priority must be greater than 0");
+        if (priority < 0)
+            throw new IllegalArgumentException("priority must be greater than 0");
         SimpleGoalEntry entry = new SimpleGoalEntry(goal, priority);
         if (possibleGoals.contains(entry))
             return;

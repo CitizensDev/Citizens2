@@ -843,5 +843,5 @@ public class InventoryMenu implements Listener, Runnable {
         return new InventoryMenu(CACHED_INFOS.get(clazz), context);
     }
 
-    private static Map<Class<? extends InventoryMenuPage>, InventoryMenuInfo> CACHED_INFOS = new WeakHashMap<>();
+    private static final Map<Class<? extends InventoryMenuPage>, InventoryMenuInfo> CACHED_INFOS = new WeakHashMap<>();
 }

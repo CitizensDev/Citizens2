@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.google.common.io.Files;
 
-public class YamlStorage implements FileStorage {
+public class YamlStorage implements Storage {
     private final FileConfiguration config;
     private final File file;
 
@@ -50,11 +50,6 @@ public class YamlStorage implements FileStorage {
             return false;
         YamlStorage other = (YamlStorage) obj;
         return Objects.equals(file, other.file);
-    }
-
-    @Override
-    public File getFile() {
-        return file;
     }
 
     @Override

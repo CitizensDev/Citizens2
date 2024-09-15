@@ -23,7 +23,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.google.common.io.Files;
 import com.google.common.primitives.Ints;
 
-public class YamlStorageWithLists implements FileStorage {
+public class YamlStorageWithLists implements Storage {
     private final FileConfiguration config;
     private final File file;
 
@@ -62,11 +62,6 @@ public class YamlStorageWithLists implements FileStorage {
             return false;
         YamlStorageWithLists other = (YamlStorageWithLists) obj;
         return Objects.equals(file, other.file);
-    }
-
-    @Override
-    public File getFile() {
-        return file;
     }
 
     @Override
