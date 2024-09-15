@@ -662,13 +662,15 @@ public class HologramTrait extends Trait {
             NPC npc = registry().createNPCUsingItem(EntityType.ITEM_DISPLAY, "", itemStack);
             npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
-                if (itemMatcher.group(2).charAt(1) == '{') {
-                    Bukkit.getUnsafe().modifyItemStack(itemStack, itemMatcher.group(2).substring(1));
-                    npc.setItemProvider(() -> itemStack);
-                } else {
-                    npc.getOrAddTrait(ScoreboardTrait.class)
-                            .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
+                for (ChatColor color : ChatColor.values()) {
+                    if (itemMatcher.group(2).equalsIgnoreCase(color.name())) {
+                        npc.getOrAddTrait(ScoreboardTrait.class)
+                                .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2)));
+                        return npc;
+                    }
                 }
+                Bukkit.getUnsafe().modifyItemStack(itemStack, itemMatcher.group(2));
+                npc.setItemProvider(() -> itemStack.clone());
             }
             return npc;
         }
@@ -705,12 +707,18 @@ public class HologramTrait extends Trait {
             itemNPC = registry().createNPCUsingItem(Util.getFallbackEntityType("ITEM", "DROPPED_ITEM"), "", itemStack);
             itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
-                if (itemMatcher.group(2).charAt(1) == '{') {
-                    Bukkit.getUnsafe().modifyItemStack(itemStack, itemMatcher.group(2).substring(1));
-                    itemNPC.setItemProvider(() -> itemStack);
-                } else {
-                    itemNPC.getOrAddTrait(ScoreboardTrait.class)
-                            .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2).substring(1)));
+                ChatColor matched = null;
+                for (ChatColor color : ChatColor.values()) {
+                    if (itemMatcher.group(2).equalsIgnoreCase(color.name())) {
+                        itemNPC.getOrAddTrait(ScoreboardTrait.class)
+                                .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2)));
+                        matched = color;
+                        break;
+                    }
+                }
+                if (matched == null) {
+                    Bukkit.getUnsafe().modifyItemStack(itemStack, itemMatcher.group(2));
+                    itemNPC.setItemProvider(() -> itemStack.clone());
                 }
             }
             itemNPC.spawn(base.getLocation());

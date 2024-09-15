@@ -344,7 +344,6 @@ public class Util {
             if (toMatch.equalsIgnoreCase(check.name())
                     || toMatch.equalsIgnoreCase("item") && check.name().equals("DROPPED_ITEM"))
                 return check; // check for an exact match first
-
         }
         for (T check : values) {
             String name = check.name().toLowerCase(Locale.ROOT);
@@ -395,7 +394,7 @@ public class Util {
         if (stack == null || stack.getType() == Material.AIR) {
             stack = new ItemStack(Material.STONE, 1);
         }
-        if (item.charAt(0) == '{') {
+        if (item.contains("{")) {
             try {
                 Bukkit.getUnsafe().modifyItemStack(stack, item);
             } catch (Throwable t) {
