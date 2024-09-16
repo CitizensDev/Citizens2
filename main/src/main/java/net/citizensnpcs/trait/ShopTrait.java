@@ -2,7 +2,6 @@ package net.citizensnpcs.trait;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -12,6 +11,7 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -34,7 +34,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -76,7 +75,6 @@ import net.citizensnpcs.trait.shop.PermissionAction;
 import net.citizensnpcs.trait.shop.PermissionAction.PermissionActionGUI;
 import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.util.InventoryMultiplexer;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 /**
@@ -961,7 +959,6 @@ public class ShopTrait extends Trait {
             this.shop = shop;
             this.player = player;
             Map<Integer, NPCShopItem> tradesMap = Maps.newHashMap();
-            Set<Integer> clearComponentPredicates = Sets.newHashSet();
             Merchant merchant = Bukkit.createMerchant(shop.getTitle());
             List<MerchantRecipe> recipes = Lists.newArrayList();
             for (NPCShopPage page : shop.pages) {
@@ -974,11 +971,17 @@ public class ShopTrait extends Trait {
                         if (!(action instanceof ItemAction))
                             continue;
                         ItemAction ia = (ItemAction) action;
-                        if (!ia.compareSimilarity && ia.items.size() > 0) {
-                            clearComponentPredicates.add(recipes.size());
-                        }
                         for (ItemStack stack : ia.items) {
                             stack = stack.clone();
+                            if (!ia.compareSimilarity && ia.metaFilter.size() > 0) {
+                                // Minecraft implements its own trade selection logic on the client
+                                // Clear the custom component part of the itemstack since we will check it later anyway
+                                ItemMeta im = stack.getItemMeta();
+                                for (NamespacedKey nk : Lists.newArrayList(im.getPersistentDataContainer().getKeys())) {
+                                    im.getPersistentDataContainer().remove(nk);
+                                }
+                                stack.setItemMeta(im);
+                            }
                             recipe.addIngredient(stack);
                             if (recipe.getIngredients().size() == 2)
                                 break;
@@ -991,7 +994,6 @@ public class ShopTrait extends Trait {
                 }
             }
             merchant.setRecipes(recipes);
-            NMS.clearMerchantComponentPredicates(merchant, clearComponentPredicates);
             trades = tradesMap;
             view = player.openMerchant(merchant, true);
         }

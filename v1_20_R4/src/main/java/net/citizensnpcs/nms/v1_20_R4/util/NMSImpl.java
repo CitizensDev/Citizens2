@@ -9,7 +9,6 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
@@ -40,7 +39,6 @@ import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_20_R4.event.CraftPortalEvent;
 import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryAnvil;
 import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryView;
-import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftMerchant;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -48,7 +46,6 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
@@ -263,7 +260,6 @@ import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
@@ -360,8 +356,6 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.trading.ItemCost;
-import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
@@ -498,24 +492,6 @@ public class NMSImpl implements NMSBridge {
                 MOVE_CONTROLLER_OPERATION.invoke(control, null);
             } catch (Throwable t) {
                 t.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public void clearMerchantComponentPredicates(Merchant merchant, Set<Integer> clearComponentPredicates) {
-        net.minecraft.world.item.trading.Merchant handle = ((CraftMerchant) merchant).getMerchant();
-        Iterator<MerchantOffer> itr = handle.getOffers().iterator();
-        for (int i = 0; itr.hasNext(); i++) {
-            MerchantOffer offer = itr.next();
-            if (!clearComponentPredicates.contains(i))
-                continue;
-            offer.baseCostA = new ItemCost(offer.baseCostA.item(), offer.baseCostA.count(),
-                    DataComponentPredicate.EMPTY, offer.baseCostA.itemStack());
-            ItemCost costB = offer.getItemCostB().orElseGet(() -> null);
-            if (costB != null) {
-                offer.costB = Optional
-                        .of(new ItemCost(costB.item(), costB.count(), DataComponentPredicate.EMPTY, costB.itemStack()));
             }
         }
     }

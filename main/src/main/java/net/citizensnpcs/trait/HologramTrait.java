@@ -662,14 +662,14 @@ public class HologramTrait extends Trait {
             NPC npc = registry().createNPCUsingItem(EntityType.ITEM_DISPLAY, "", itemStack);
             npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
+                String modify = itemMatcher.group(2).substring(1);
                 for (ChatColor color : ChatColor.values()) {
-                    if (itemMatcher.group(2).equalsIgnoreCase(color.name())) {
-                        npc.getOrAddTrait(ScoreboardTrait.class)
-                                .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2)));
+                    if (modify.equalsIgnoreCase(color.name())) {
+                        npc.getOrAddTrait(ScoreboardTrait.class).setColor(color);
                         return npc;
                     }
                 }
-                Bukkit.getUnsafe().modifyItemStack(itemStack, itemMatcher.group(2));
+                Bukkit.getUnsafe().modifyItemStack(itemStack, modify);
                 npc.setItemProvider(() -> itemStack.clone());
             }
             return npc;
@@ -707,17 +707,17 @@ public class HologramTrait extends Trait {
             itemNPC = registry().createNPCUsingItem(Util.getFallbackEntityType("ITEM", "DROPPED_ITEM"), "", itemStack);
             itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
+                String modify = itemMatcher.group(2).substring(1);
                 ChatColor matched = null;
                 for (ChatColor color : ChatColor.values()) {
-                    if (itemMatcher.group(2).equalsIgnoreCase(color.name())) {
-                        itemNPC.getOrAddTrait(ScoreboardTrait.class)
-                                .setColor(Util.matchEnum(ChatColor.values(), itemMatcher.group(2)));
+                    if (modify.equalsIgnoreCase(color.name())) {
+                        itemNPC.getOrAddTrait(ScoreboardTrait.class).setColor(color);
                         matched = color;
                         break;
                     }
                 }
                 if (matched == null) {
-                    Bukkit.getUnsafe().modifyItemStack(itemStack, itemMatcher.group(2));
+                    Bukkit.getUnsafe().modifyItemStack(itemStack, modify);
                     itemNPC.setItemProvider(() -> itemStack.clone());
                 }
             }
@@ -920,7 +920,7 @@ public class HologramTrait extends Trait {
         }
     }
 
-    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:((?:minecraft:)?[a-zA-Z0-9_ ]*?)([:].*?)?>");
+    private static final Pattern ITEM_MATCHER = Pattern.compile("<item:((?:minecraft:)?[a-zA-Z0-9_ ]*?)(:.*?)?>");
     private static boolean SUPPORTS_DISPLAY = false;
     static {
         try {
