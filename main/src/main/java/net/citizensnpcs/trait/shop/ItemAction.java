@@ -192,6 +192,14 @@ public class ItemAction extends NPCShopAction {
         return true;
     }
 
+    private void sanityCheck() {
+        if (metaFilter.size() > 0) {
+            for (ItemStack item : items) {
+                metaMatches(item, item, metaFilter);
+            }
+        }
+    }
+
     private String stringify(ItemStack item) {
         if (SUPPORT_TRANSLATABLE) {
             return BukkitComponentSerializer.legacy().serialize(Component.text(item.getAmount() + " ")
@@ -311,6 +319,7 @@ public class ItemAction extends NPCShopAction {
                 }
             }
             base.items = items;
+            base.sanityCheck();
             callback.accept(items.isEmpty() ? null : base);
         }
     }

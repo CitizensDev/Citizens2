@@ -1000,11 +1000,15 @@ public class ShopTrait extends Trait {
 
         @EventHandler
         public void onInventoryClick(InventoryClickEvent evt) {
-            if (!evt.getView().equals(view))
-                return;
-            if (evt.getSlotType() != SlotType.RESULT)
+            if (!evt.getView().equals(view) || evt.getSlotType() != SlotType.RESULT)
                 return;
             evt.setCancelled(true);
+            if (selectedTrade == -1)
+                return;
+            if (!trades.containsKey(selectedTrade)) {
+                Messaging.severe("Invalid trade selection", selectedTrade, "from", evt.getWhoClicked());
+                return;
+            }
             if (!evt.getAction().name().contains("PICKUP")
                     || (evt.getCursor() != null && evt.getCursor().getType() != Material.AIR))
                 return;
