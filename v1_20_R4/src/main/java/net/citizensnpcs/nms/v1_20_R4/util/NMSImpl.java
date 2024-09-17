@@ -84,7 +84,6 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.nms.v1_20_R4.entity.AllayController;
 import net.citizensnpcs.nms.v1_20_R4.entity.ArmadilloController;
@@ -633,13 +632,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public Map<String, Object> getComponentMap(org.bukkit.inventory.ItemStack item) {
         if (META_COMPOUND_TAG == null) {
-            try {
-                META_COMPOUND_TAG = NMS.getGetter(Class.forName(
-                        "org.bukkit.craftbukkit." + SpigotUtil.getMinecraftPackage() + ".inventory.CraftMetaItem"),
-                        "customTag");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            Class<?> base = item.getItemMeta().getClass();
+            while (!base.getName().contains("CraftMetaItem")) {
+                base = base.getSuperclass();
             }
+            META_COMPOUND_TAG = NMS.getGetter(base, "customTag");
         }
         Map<String, Object> base = Maps.newHashMap(NMSBridge.super.getComponentMap(item));
         CompoundTag ct;
@@ -651,11 +648,7 @@ public class NMSImpl implements NMSBridge {
         }
         if (ct == null)
             return base;
-        Map<String, Object> custom = Maps.newHashMap();
-        for (String key : ct.getAllKeys()) {
-            custom.put(key, deserialiseNBT(ct.get(key)));
-        }
-        base.put("custom_data", custom);
+        base.put("custom_data", deserialiseNBT(ct));
         return base;
     }
 

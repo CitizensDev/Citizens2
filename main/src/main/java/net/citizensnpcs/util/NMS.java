@@ -36,6 +36,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
@@ -151,6 +152,27 @@ public class NMS {
 
     public static void cancelMoveDestination(Entity entity) {
         BRIDGE.cancelMoveDestination(entity);
+    }
+
+    public static void clearCustomNBT(ItemMeta meta) {
+        if (CUSTOM_NBT_TAG_MISSING)
+            return;
+        if (CUSTOM_NBT_TAG == null) {
+            Class<?> clazz = meta.getClass();
+            while (!clazz.getName().contains("CraftMetaItem")) {
+                clazz = clazz.getSuperclass();
+            }
+            CUSTOM_NBT_TAG = getSetter(clazz, "customTag");
+            if (CUSTOM_NBT_TAG == null) {
+                CUSTOM_NBT_TAG_MISSING = true;
+                return;
+            }
+        }
+        try {
+            CUSTOM_NBT_TAG.invoke(meta, null);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     public static Iterable<Object> createBundlePacket(List<Object> packets) {
@@ -991,6 +1013,8 @@ public class NMS {
     }
 
     private static NMSBridge BRIDGE;
+    private static MethodHandle CUSTOM_NBT_TAG;
+    private static boolean CUSTOM_NBT_TAG_MISSING;
     private static MethodHandle FIND_PROFILES_BY_NAMES;
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;

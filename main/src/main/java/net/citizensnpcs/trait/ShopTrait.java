@@ -75,6 +75,7 @@ import net.citizensnpcs.trait.shop.PermissionAction;
 import net.citizensnpcs.trait.shop.PermissionAction.PermissionActionGUI;
 import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.util.InventoryMultiplexer;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 /**
@@ -980,6 +981,7 @@ public class ShopTrait extends Trait {
                                 for (NamespacedKey nk : Lists.newArrayList(im.getPersistentDataContainer().getKeys())) {
                                     im.getPersistentDataContainer().remove(nk);
                                 }
+                                NMS.clearCustomNBT(im);
                                 stack.setItemMeta(im);
                             }
                             recipe.addIngredient(stack);
