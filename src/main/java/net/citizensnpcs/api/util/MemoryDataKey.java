@@ -134,7 +134,10 @@ public class MemoryDataKey extends DataKey {
     @Override
     public String getString(String key) {
         key = createRelativeKey(key);
-        return valueExists(key) ? section.get(key).toString() : "";
+        Object val = section.get(key);
+        if (val != null && !(val instanceof ConfigurationSection))
+            return val.toString();
+        return "";
     }
 
     @Override

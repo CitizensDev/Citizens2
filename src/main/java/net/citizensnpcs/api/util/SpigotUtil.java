@@ -143,11 +143,11 @@ public class SpigotUtil {
     }
 
     public static NamespacedKey getKey(String raw, String defaultNamespace) {
-        if (!raw.contains(":")) {
+        int index = raw.indexOf(':');
+        if (index == -1) {
             raw = defaultNamespace + ":" + raw.toLowerCase(Locale.ROOT);
         } else {
-            String[] parts = raw.split(":");
-            raw = parts[0] + ":" + parts[1].toLowerCase(Locale.ROOT);
+            raw = raw.substring(0, index) + raw.substring(index).toLowerCase(Locale.ROOT);
         }
         return NamespacedKey.fromString(raw);
     }

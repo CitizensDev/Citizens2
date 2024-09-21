@@ -139,7 +139,7 @@ public class Messaging {
         return DEBUG;
     }
 
-    public static void log(Level level, Object... msg) {
+    private static void log(Level level, Object... msg) {
         LOGGER.log(level, "[Citizens] " + SPACE.join(msg));
     }
 

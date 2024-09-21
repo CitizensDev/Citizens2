@@ -324,7 +324,7 @@ public abstract class AbstractNPC implements NPC {
         setNameInternal(root.getString("name"));
         if (root.keyExists("itemprovider")) {
             ItemStack item = ItemStorage.loadItemStack(root.getRelative("itemprovider"));
-            setItemProvider(() -> item);
+            setItemProvider(() -> item.clone());
         }
         metadata.loadFrom(root.getRelative("metadata"));
 
