@@ -1996,7 +1996,7 @@ public class NPCCommands {
             if (mount.equals(npc))
                 throw new CommandException(Messages.MOUNT_TRIED_TO_MOUNT_NPC_ON_ITSELF);
 
-            NMS.mount(mount.getEntity(), npc.getEntity());
+            npc.getOrAddTrait(MountTrait.class).setMountedOn(mount.getUniqueId());
             return;
         }
         if (args.hasFlag('c')) {
