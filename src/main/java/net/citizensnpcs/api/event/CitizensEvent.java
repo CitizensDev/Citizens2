@@ -8,4 +8,8 @@ import org.bukkit.event.Event;
 public abstract class CitizensEvent extends Event {
     protected CitizensEvent() {
     }
+
+    protected CitizensEvent(boolean async) {
+        super(async);
+    }
 }

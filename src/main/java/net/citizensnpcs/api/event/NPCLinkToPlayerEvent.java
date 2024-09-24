@@ -8,8 +8,8 @@ import net.citizensnpcs.api.npc.NPC;
 public class NPCLinkToPlayerEvent extends NPCEvent {
     private final Player player;
 
-    public NPCLinkToPlayerEvent(NPC npc, Player player) {
-        super(npc);
+    public NPCLinkToPlayerEvent(NPC npc, Player player, boolean async) {
+        super(npc, async);
         this.player = player;
     }
 

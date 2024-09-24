@@ -12,6 +12,11 @@ public abstract class NPCEvent extends CitizensEvent {
         this.npc = npc;
     }
 
+    protected NPCEvent(NPC npc, boolean async) {
+        super(async);
+        this.npc = npc;
+    }
+
     /**
      * Get the npc involved in the event.
      *
