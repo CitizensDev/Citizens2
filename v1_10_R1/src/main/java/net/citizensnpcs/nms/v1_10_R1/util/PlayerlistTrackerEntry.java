@@ -58,8 +58,8 @@ public class PlayerlistTrackerEntry extends EntityTrackerEntry {
                         return;
                     skinnable.getSkinTracker().updateViewer(entityplayer.getBukkitEntity());
                 }
-                Bukkit.getPluginManager().callEvent(
-                        new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), entityplayer.getBukkitEntity()));
+                Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(),
+                        entityplayer.getBukkitEntity(), !Bukkit.isPrimaryThread()));
             }
         }
     }

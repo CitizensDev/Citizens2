@@ -38,7 +38,7 @@ public class PlayerlistTracker extends ChunkMap.TrackedEntity {
                     boolean res = super.add(conn);
                     if (res) {
                         Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(),
-                                conn.getPlayer().getBukkitEntity()));
+                                conn.getPlayer().getBukkitEntity(), !Bukkit.isPrimaryThread()));
                     }
                     return res;
                 }

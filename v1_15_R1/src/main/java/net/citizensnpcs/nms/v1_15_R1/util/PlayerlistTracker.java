@@ -108,8 +108,8 @@ public class PlayerlistTracker extends PlayerChunkMap.EntityTracker {
 
     public void updateLastPlayer(EntityPlayer lastUpdatedPlayer) {
         if (lastUpdatedPlayer != null) {
-            Bukkit.getPluginManager().callEvent(
-                    new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(), lastUpdatedPlayer.getBukkitEntity()));
+            Bukkit.getPluginManager().callEvent(new NPCLinkToPlayerEvent(((NPCHolder) tracker).getNPC(),
+                    lastUpdatedPlayer.getBukkitEntity(), !Bukkit.isPrimaryThread()));
         }
     }
 
