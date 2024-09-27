@@ -26,7 +26,7 @@ public class SitTrait extends Trait {
     }
 
     public boolean isSitting() {
-        return sittingAt != null;
+        return sittingAt != null && sittingAt.getWorld() != null;
     }
 
     @Override
