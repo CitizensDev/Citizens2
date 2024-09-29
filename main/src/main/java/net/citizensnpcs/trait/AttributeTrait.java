@@ -21,6 +21,14 @@ public class AttributeTrait extends Trait {
         super("attributetrait");
     }
 
+    public Double getAttributeValue(Attribute attribute) {
+        return attributes.get(attribute);
+    }
+
+    public boolean hasAttribute(Attribute attribute) {
+        return attributes.containsKey(attribute);
+    }
+
     @Override
     public void onSpawn() {
         if (!(npc.getEntity() instanceof LivingEntity))
