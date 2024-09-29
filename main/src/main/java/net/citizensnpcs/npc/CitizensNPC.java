@@ -392,24 +392,20 @@ public class CitizensNPC extends AbstractNPC {
                     LivingEntity entity = (LivingEntity) getEntity();
                     entity.setRemoveWhenFarAway(false);
 
-                    if ((!hasTrait(AttributeTrait.class)
-                            || !getTrait(AttributeTrait.class).hasAttribute(Attribute.GENERIC_STEP_HEIGHT))
-                            && (type == EntityType.PLAYER || Util.isHorse(type))) {
-                        NMS.setStepHeight(entity, 1);
+                    if (type == EntityType.PLAYER || Util.isHorse(type)) {
+                        if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class)
+                                || !getTrait(AttributeTrait.class).hasAttribute(Attribute.GENERIC_STEP_HEIGHT)) {
+                            NMS.setStepHeight(entity, 1);
+                        }
                     }
                     if (type == EntityType.PLAYER) {
                         PlayerUpdateTask.registerPlayer(getEntity());
                     } else if (data().has(NPC.Metadata.AGGRESSIVE)) {
                         NMS.setAggressive(entity, data().<Boolean> get(NPC.Metadata.AGGRESSIVE));
                     }
-                    if (SUPPORT_NODAMAGE_TICKS && (Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks() != 20
-                            || data().has(NPC.Metadata.SPAWN_NODAMAGE_TICKS))) {
-                        try {
-                            entity.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
-                                    Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks()));
-                        } catch (NoSuchMethodError err) {
-                            SUPPORT_NODAMAGE_TICKS = false;
-                        }
+                    if (SUPPORT_NODAMAGE_TICKS) {
+                        entity.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
+                                Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks()));
                     }
                 }
                 if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
@@ -609,6 +605,7 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
+    private static boolean SUPPORT_ATTRIBUTES = false;
     private static boolean SUPPORT_GLOWING = false;
     private static boolean SUPPORT_NODAMAGE_TICKS = false;
     private static boolean SUPPORT_PICKUP_ITEMS = false;
@@ -634,6 +631,11 @@ public class CitizensNPC extends AbstractNPC {
             LivingEntity.class.getMethod("setCanPickupItems", boolean.class);
             SUPPORT_PICKUP_ITEMS = true;
         } catch (NoSuchMethodException | SecurityException e) {
+        }
+        try {
+            Class.forName("org.bukkit.attribute.Attribute");
+            SUPPORT_ATTRIBUTES = true;
+        } catch (ClassNotFoundException e) {
         }
     }
 }
