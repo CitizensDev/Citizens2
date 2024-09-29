@@ -36,7 +36,7 @@ public class SitTrait extends Trait {
             return;
         }
         if (chair != null) {
-            if (chair.getEntity() != null) {
+            if (chair.isSpawned()) {
                 chair.getEntity().eject();
                 Location npcLoc = npc.getEntity().getLocation().clone();
                 if (requiresPassengerOffsetCorrection()) {
