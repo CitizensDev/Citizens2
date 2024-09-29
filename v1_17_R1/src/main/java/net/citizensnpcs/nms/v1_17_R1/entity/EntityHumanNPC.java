@@ -261,7 +261,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             // swallow
         }
         this.invulnerableTime = 0;
-        NMS.setStepHeight(getBukkitEntity(), 1); // the default (0) breaks step climbing
         setSkinFlags((byte) 0xFF);
     }
 

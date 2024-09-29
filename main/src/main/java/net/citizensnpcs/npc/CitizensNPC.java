@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -46,6 +47,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.AttributeTrait;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
@@ -390,7 +392,9 @@ public class CitizensNPC extends AbstractNPC {
                     LivingEntity entity = (LivingEntity) getEntity();
                     entity.setRemoveWhenFarAway(false);
 
-                    if (NMS.getStepHeight(entity) < 1) {
+                    if ((!hasTrait(AttributeTrait.class)
+                            || !getTrait(AttributeTrait.class).hasAttribute(Attribute.GENERIC_STEP_HEIGHT))
+                            && (type == EntityType.PLAYER || Util.isHorse(type))) {
                         NMS.setStepHeight(entity, 1);
                     }
                     if (type == EntityType.PLAYER) {

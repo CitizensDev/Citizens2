@@ -218,7 +218,6 @@ public class HorseController extends MobEntityController {
                         e.printStackTrace();
                     }
                 }
-                NMS.setStepHeight(getBukkitEntity(), 1);
                 npc.update();
             }
         }
