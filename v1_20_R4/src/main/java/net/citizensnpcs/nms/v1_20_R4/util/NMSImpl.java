@@ -1068,7 +1068,6 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.PLAYER, HumanController.class);
         EntityControllers.setEntityControllerForType(EntityType.POLAR_BEAR, PolarBearController.class);
         EntityControllers.setEntityControllerForType(EntityType.POTION, ThrownPotionController.class);
-        EntityControllers.setEntityControllerForType(EntityType.POTION, ThrownPotionController.class);
         EntityControllers.setEntityControllerForType(EntityType.PUFFERFISH, PufferFishController.class);
         EntityControllers.setEntityControllerForType(EntityType.RABBIT, RabbitController.class);
         EntityControllers.setEntityControllerForType(EntityType.RAVAGER, RavagerController.class);
