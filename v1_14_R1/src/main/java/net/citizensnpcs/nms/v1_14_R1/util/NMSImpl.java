@@ -173,6 +173,7 @@ import net.citizensnpcs.nms.v1_14_R1.entity.nonliving.MinecartCommandController;
 import net.citizensnpcs.nms.v1_14_R1.entity.nonliving.MinecartFurnaceController;
 import net.citizensnpcs.nms.v1_14_R1.entity.nonliving.MinecartHopperController;
 import net.citizensnpcs.nms.v1_14_R1.entity.nonliving.MinecartRideableController;
+import net.citizensnpcs.nms.v1_14_R1.entity.nonliving.MinecartSpawnerController;
 import net.citizensnpcs.nms.v1_14_R1.entity.nonliving.MinecartTNTController;
 import net.citizensnpcs.nms.v1_14_R1.entity.nonliving.PaintingController;
 import net.citizensnpcs.nms.v1_14_R1.entity.nonliving.ShulkerBulletController;
@@ -908,6 +909,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.MINECART_HOPPER, MinecartHopperController.class);
         EntityControllers.setEntityControllerForType(EntityType.MINECART_TNT, MinecartTNTController.class);
         EntityControllers.setEntityControllerForType(EntityType.MUSHROOM_COW, MushroomCowController.class);
+        EntityControllers.setEntityControllerForType(EntityType.MINECART_MOB_SPAWNER, MinecartSpawnerController.class);
         EntityControllers.setEntityControllerForType(EntityType.OCELOT, OcelotController.class);
         EntityControllers.setEntityControllerForType(EntityType.PANDA, PandaController.class);
         EntityControllers.setEntityControllerForType(EntityType.PAINTING, PaintingController.class);
@@ -937,6 +939,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.SPLASH_POTION, ThrownPotionController.class);
         EntityControllers.setEntityControllerForType(EntityType.SQUID, SquidController.class);
         EntityControllers.setEntityControllerForType(EntityType.EXPERIENCE_ORB, ExperienceOrbController.class);
+        EntityControllers.setEntityControllerForType(EntityType.SPECTRAL_ARROW, SpectralArrowController.class);
         EntityControllers.setEntityControllerForType(EntityType.THROWN_EXP_BOTTLE, ThrownExpBottleController.class);
         EntityControllers.setEntityControllerForType(EntityType.TRIDENT, ThrownTridentController.class);
         EntityControllers.setEntityControllerForType(EntityType.TROPICAL_FISH, TropicalFishController.class);

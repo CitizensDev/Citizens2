@@ -198,6 +198,7 @@ import net.citizensnpcs.nms.v1_21_R1.entity.nonliving.MinecartCommandController;
 import net.citizensnpcs.nms.v1_21_R1.entity.nonliving.MinecartFurnaceController;
 import net.citizensnpcs.nms.v1_21_R1.entity.nonliving.MinecartHopperController;
 import net.citizensnpcs.nms.v1_21_R1.entity.nonliving.MinecartRideableController;
+import net.citizensnpcs.nms.v1_21_R1.entity.nonliving.MinecartSpawnerController;
 import net.citizensnpcs.nms.v1_21_R1.entity.nonliving.MinecartTNTController;
 import net.citizensnpcs.nms.v1_21_R1.entity.nonliving.OminousItemSpawnerController;
 import net.citizensnpcs.nms.v1_21_R1.entity.nonliving.PaintingController;
@@ -1033,6 +1034,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.MAGMA_CUBE, MagmaCubeController.class);
         EntityControllers.setEntityControllerForType(EntityType.MARKER, MarkerController.class);
         EntityControllers.setEntityControllerForType(EntityType.MINECART, MinecartRideableController.class);
+        EntityControllers.setEntityControllerForType(EntityType.SPAWNER_MINECART, MinecartSpawnerController.class);
         EntityControllers.setEntityControllerForType(EntityType.MOOSHROOM, MushroomCowController.class);
         EntityControllers.setEntityControllerForType(EntityType.MULE, HorseMuleController.class);
         EntityControllers.setEntityControllerForType(EntityType.OCELOT, OcelotController.class);
