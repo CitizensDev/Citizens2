@@ -1063,7 +1063,6 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.SNOW_GOLEM, SnowmanController.class);
         EntityControllers.setEntityControllerForType(EntityType.SNOWBALL, SnowballController.class);
         EntityControllers.setEntityControllerForType(EntityType.SPECTRAL_ARROW, SpectralArrowController.class);
-        EntityControllers.setEntityControllerForType(EntityType.SPECTRAL_ARROW, TippedArrowController.class);
         EntityControllers.setEntityControllerForType(EntityType.SPIDER, SpiderController.class);
         EntityControllers.setEntityControllerForType(EntityType.SQUID, SquidController.class);
         EntityControllers.setEntityControllerForType(EntityType.STRAY, SkeletonStrayController.class);

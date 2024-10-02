@@ -1058,7 +1058,6 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.SQUID, SquidController.class);
         EntityControllers.setEntityControllerForType(EntityType.EXPERIENCE_ORB, ExperienceOrbController.class);
         EntityControllers.setEntityControllerForType(EntityType.GLOW_SQUID, GlowSquidController.class);
-        EntityControllers.setEntityControllerForType(EntityType.SPECTRAL_ARROW, TippedArrowController.class);
         EntityControllers.setEntityControllerForType(EntityType.THROWN_EXP_BOTTLE, ThrownExpBottleController.class);
         EntityControllers.setEntityControllerForType(EntityType.TRIDENT, ThrownTridentController.class);
         EntityControllers.setEntityControllerForType(EntityType.TROPICAL_FISH, TropicalFishController.class);
