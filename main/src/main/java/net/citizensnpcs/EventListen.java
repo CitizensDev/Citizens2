@@ -401,21 +401,17 @@ public class EventListen implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST) // cancel this earlier than other plugins if needed
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityTarget(EntityTargetEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getTarget());
         if (npc == null)
             return;
 
         final EntityTargetNPCEvent targetNPCEvent = new EntityTargetNPCEvent(event, npc);
+        targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
         Bukkit.getPluginManager().callEvent(targetNPCEvent);
         if (targetNPCEvent.isCancelled()) {
-            event.setCancelled(true);
-        } else {
-            // nobody cares this event so let it follow the default behaviour
-            if (!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected())) {
-                event.setCancelled(true);
-            }
+            targetNPCEvent.setCancelled(true);
         }
     }
 
