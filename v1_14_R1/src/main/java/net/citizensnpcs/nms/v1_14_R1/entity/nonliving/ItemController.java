@@ -19,7 +19,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_14_R1.AxisAlignedBB;
-import net.minecraft.server.v1_14_R1.EntityHuman;
 import net.minecraft.server.v1_14_R1.EntityItem;
 import net.minecraft.server.v1_14_R1.EntityPlayer;
 import net.minecraft.server.v1_14_R1.EntityTypes;
@@ -122,13 +121,6 @@ public class ItemController extends AbstractEntityController {
         @Override
         public EnumPistonReaction getPushReaction() {
             return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
-        }
-
-        @Override
-        public void pickup(EntityHuman entityhuman) {
-            if (npc == null) {
-                super.pickup(entityhuman);
-            }
         }
 
         @Override

@@ -147,6 +147,7 @@
   "citizens.commands.npc.controllable.not-controllable" : "[[{0}]] is not controllable.",
   "citizens.commands.npc.controllable.removed" : "[[{0}]] can no longer be controlled.",
   "citizens.commands.npc.controllable.set" : "[[{0}]] can now be controlled.",
+  "citizens.commands.npc.controllable.controls-set" : "Controls set to [[{0}]].",
   "citizens.commands.npc.copier.description" : "Toggle the NPC copier",
   "citizens.commands.npc.copier.help" : "",
   "citizens.commands.npc.copy.copied" : "[[{0}]] has been copied.",

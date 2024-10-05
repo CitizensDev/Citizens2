@@ -19,7 +19,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_16_R3.AxisAlignedBB;
-import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityItem;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EntityTypes;
@@ -121,13 +120,6 @@ public class ItemController extends AbstractEntityController {
             Vector vector = Util.callPushEvent(npc, x, y, z);
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
-            }
-        }
-
-        @Override
-        public void pickup(EntityHuman entityhuman) {
-            if (npc == null) {
-                super.pickup(entityhuman);
             }
         }
 

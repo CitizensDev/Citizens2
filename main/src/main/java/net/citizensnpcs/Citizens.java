@@ -401,7 +401,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (!new File(getDataFolder(), "skins").exists()) {
             new File(getDataFolder(), "skins").mkdir();
         }
-        Bukkit.getPluginManager().registerEvents(new EventListen(), this);
+        Bukkit.getPluginManager().registerEvents(new EventListen(this), this);
         Bukkit.getPluginManager().registerEvents(new Placeholders(), this);
 
         Plugin papi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
@@ -467,6 +467,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         shops.loadFromDisk();
         shops.load();
+
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
 

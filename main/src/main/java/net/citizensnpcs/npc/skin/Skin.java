@@ -350,8 +350,7 @@ public class Skin {
         NPC npc = entity.getNPC();
         SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
 
-        // cache skins for faster initial skin availability and
-        // for use when the latest skin is not required.
+        // cache skins for faster initial skin availability and for use when the latest skin is not required.
         npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, skinName);
         npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, skinId.toString());
         if (skinProperty.value != null) {
@@ -365,8 +364,7 @@ public class Skin {
     private static void setNPCTexture(SkinnableEntity entity, SkinProperty skinProperty) {
         GameProfile profile = entity.getProfile();
 
-        // don't set property if already set since this sometimes causes
-        // packet errors that disconnect the client.
+        // don't set property if already set since this sometimes causes packet errors that disconnect the client.
         SkinProperty current = SkinProperty.fromMojangProfile(profile);
         if (current != null && current.value.equals(skinProperty.value) && current.signature != null
                 && current.signature.equals(skinProperty.signature))

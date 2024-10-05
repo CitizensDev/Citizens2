@@ -88,7 +88,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
             npc.data().set(NPC.Metadata.ITEM_AMOUNT, item.getAmount());
             npc.data().set(NPC.Metadata.ITEM_ID, item.getType().name());
             npc.data().set(NPC.Metadata.ITEM_DATA, item.getData().getData());
-            npc.setItemProvider(() -> item);
+            npc.setItemProvider(() -> item.clone());
         } else
             throw new UnsupportedOperationException("Not an item entity type");
         return npc;

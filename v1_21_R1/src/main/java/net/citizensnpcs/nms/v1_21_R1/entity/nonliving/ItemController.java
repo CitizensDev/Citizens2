@@ -23,7 +23,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
@@ -101,13 +100,6 @@ public class ItemController extends AbstractEntityController {
         @Override
         protected AABB makeBoundingBox() {
             return NMSBoundingBox.makeBB(npc, super.makeBoundingBox());
-        }
-
-        @Override
-        public void playerTouch(Player entityhuman) {
-            if (npc == null) {
-                super.playerTouch(entityhuman);
-            }
         }
 
         @Override

@@ -88,6 +88,7 @@ public class Messages {
     public static final String COMMANDS_SEQUENTIAL_SET = "citizens.commands.npc.commands.sequential-set";
     public static final String COMMANDS_SEQUENTIAL_UNSET = "citizens.commands.npc.commands.sequential-unset";
     public static final String CONTRIBUTE_TO_TRANSLATION_PROMPT = "citizens.contribute-to-translations-prompt";
+    public static final Object CONTROLLABLE_CONTROLS_SET = "citizens.commands.npc.controllable.controls-set";
     public static final String CONTROLLABLE_REMOVED = "citizens.commands.npc.controllable.removed";
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
     public static final String COPIER_EDITOR_BEGIN = "citizens.editors.copier.begin";

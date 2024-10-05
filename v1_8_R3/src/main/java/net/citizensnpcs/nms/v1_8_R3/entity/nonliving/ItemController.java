@@ -18,7 +18,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
-import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.EntityItem;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.ItemStack;
@@ -77,13 +76,6 @@ public class ItemController extends AbstractEntityController {
             super.collide(entity);
             if (npc != null) {
                 Util.callCollisionEvent(npc, entity.getBukkitEntity());
-            }
-        }
-
-        @Override
-        public void d(EntityHuman entityhuman) {
-            if (npc == null) {
-                super.d(entityhuman);
             }
         }
 

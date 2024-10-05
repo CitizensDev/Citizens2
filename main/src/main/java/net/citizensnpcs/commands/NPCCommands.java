@@ -744,13 +744,15 @@ public class NPCCommands {
             npc.getOrAddTrait(Controllable.class).setEnabled(false);
         }
         Controllable trait = npc.getOrAddTrait(Controllable.class);
+        if (controls != null) {
+            trait.setControls(controls);
+            Messaging.send(sender, Messages.CONTROLLABLE_CONTROLS_SET, controls);
+            return;
+        }
         if (enabled != null) {
             trait.setEnabled(enabled);
         } else {
             enabled = trait.toggle();
-        }
-        if (controls != null) {
-            trait.setControls(controls);
         }
         trait.setOwnerRequired(args.hasFlag('o'));
         String key = enabled ? Messages.CONTROLLABLE_SET : Messages.CONTROLLABLE_REMOVED;
@@ -1581,8 +1583,8 @@ public class NPCCommands {
         }
         if (mat == null && !args.hasFlag('h'))
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
-        ItemStack fstack = stack.clone();
-        npc.setItemProvider(() -> fstack);
+        ItemStack fstack = stack;
+        npc.setItemProvider(() -> fstack.clone());
 
         if (npc.isSpawned()) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
@@ -3157,12 +3159,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "size [size]",
+            usage = "slimesize [size]",
             desc = "",
-            modifiers = { "size" },
+            modifiers = { "slimesize" },
             min = 1,
             max = 2,
-            permission = "citizens.npc.size")
+            permission = "citizens.npc.slimesize")
     @Requirements(selected = true, ownership = true, types = { EntityType.MAGMA_CUBE, EntityType.SLIME })
     public void slimeSize(CommandContext args, CommandSender sender, NPC npc) {
         SlimeSize trait = npc.getOrAddTrait(SlimeSize.class);

@@ -14,7 +14,6 @@ import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Flag;
 import net.citizensnpcs.api.command.Requirements;
 import net.citizensnpcs.api.command.exception.CommandException;
-import net.citizensnpcs.api.command.exception.CommandUsageException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -39,6 +38,10 @@ public class DisplayTrait extends Trait {
     private Quaternionf rightRotation;
     @Persist
     private Vector scale;
+    @Persist
+    private Float shadowRadius;
+    @Persist
+    private Float shadowStrength;
     @Persist
     private Integer skyLight;
     @Persist
@@ -85,6 +88,12 @@ public class DisplayTrait extends Trait {
         if (viewRange != null) {
             display.setViewRange(viewRange);
         }
+        if (shadowRadius != null) {
+            display.setShadowRadius(shadowRadius);
+        }
+        if (shadowStrength != null) {
+            display.setShadowStrength(shadowStrength);
+        }
     }
 
     public void setBillboard(Billboard billboard) {
@@ -112,6 +121,14 @@ public class DisplayTrait extends Trait {
         this.scale = scale;
     }
 
+    public void setShadowRadius(Float shadowRadius) {
+        this.shadowRadius = shadowRadius;
+    }
+
+    public void setShadowStrength(Float shadowStrength) {
+        this.shadowStrength = shadowStrength;
+    }
+
     public void setViewRange(Float viewRange) {
         this.viewRange = viewRange;
     }
@@ -133,11 +150,12 @@ public class DisplayTrait extends Trait {
             ownership = true,
             types = { EntityType.ITEM_DISPLAY, EntityType.TEXT_DISPLAY, EntityType.BLOCK_DISPLAY })
     public static void display(CommandContext args, CommandSender sender, NPC npc,
-            @Flag("billboard") Billboard billboard, @Flag("leftrotation") Quaternionf leftrotation,
-            @Flag("rightrotation") Quaternionf rightrotation, @Flag("scale") Vector scale,
-            @Flag("viewrange") Float viewRange, @Flag("brightness") String brightness,
-            @Flag("interpolationdelay") Integer interpolationDelay,
-            @Flag("interpolationduration") Integer interpolationDuration, @Flag("height") Float height,
+            @Flag("billboard") Billboard billboard, @Flag("left_rotation") Quaternionf leftrotation,
+            @Flag("right_rotation") Quaternionf rightrotation, @Flag("scale") Vector scale,
+            @Flag("view_range") Float viewRange, @Flag("brightness") String brightness,
+            @Flag("interpolation_delay") Integer interpolationDelay,
+            @Flag("interpolation_duration") Integer interpolationDuration, @Flag("height") Float height,
+            @Flag("shadow_radius") Float shadowRadius, @Flag("shadow_strength") Float shadowStrength,
             @Flag("width") Float width) throws CommandException {
         DisplayTrait trait = npc.getOrAddTrait(DisplayTrait.class);
         String output = "";
@@ -154,6 +172,12 @@ public class DisplayTrait extends Trait {
         if (interpolationDuration != null) {
             trait.setInterpolationDuration(interpolationDuration);
         }
+        if (shadowStrength != null) {
+            trait.setShadowStrength(shadowStrength);
+        }
+        if (shadowRadius != null) {
+            trait.setShadowRadius(shadowRadius);
+        }
         if (width != null) {
             trait.setWidth(width);
         }
@@ -169,7 +193,6 @@ public class DisplayTrait extends Trait {
         trait.onSpawn();
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
-        } else
-            throw new CommandUsageException();
+        }
     }
 }
