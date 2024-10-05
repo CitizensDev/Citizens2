@@ -364,7 +364,7 @@ public class PersistenceLoader {
     private static Object deserialiseValue(PersistField field, DataKey root) {
         Class<?> type = field.field.getType().isEnum() ? field.field.getType() : getGenericType(field.field);
         if (field.delegate == null) {
-            if (SpigotUtil.isKeyed(type)) {
+            if (SpigotUtil.isRegistryKeyed(type)) {
                 Class<? extends Keyed> clazz = (Class<? extends Keyed>) type;
                 Object obj = root.getRaw("");
                 if (obj instanceof String) {
@@ -630,7 +630,7 @@ public class PersistenceLoader {
         }
         if (field.delegate != null) {
             ((Persister<Object>) field.delegate).save(value, root);
-        } else if (SpigotUtil.isKeyed(field.getType())) {
+        } else if (SpigotUtil.isRegistryKeyed(field.getType())) {
             NamespacedKey nskey = ((Keyed) value).getKey();
             root.setRaw("", nskey.getNamespace() + ":" + nskey.getKey());
         } else if (value instanceof Enum) {

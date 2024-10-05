@@ -183,7 +183,7 @@ public class CommandManager implements TabCompleter {
                     } catch (IllegalArgumentException ex) {
                         val = Bukkit.getPlayerExact(val.toString());
                     }
-                } else if (SpigotUtil.isKeyed(desiredType) && SpigotUtil.getKey(val.toString()) != null) {
+                } else if (SpigotUtil.isRegistryKeyed(desiredType) && SpigotUtil.getKey(val.toString()) != null) {
                     val = Bukkit.getRegistry((Class<? extends Keyed>) desiredType)
                             .get(SpigotUtil.getKey(val.toString()));
                 } else if (desiredType == Material.class) {
@@ -782,7 +782,7 @@ public class CommandManager implements TabCompleter {
 
             if (completions.length > 0)
                 return Arrays.asList(completions);
-            if (SpigotUtil.isKeyed(paramType)) {
+            if (SpigotUtil.isRegistryKeyed(paramType)) {
                 return Bukkit.getRegistry((Class<? extends Keyed>) paramType).stream().map(Keyed::getKey)
                         .map(Object::toString).collect(Collectors.toList());
             } else if (Enum.class.isAssignableFrom(paramType)) {

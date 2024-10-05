@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -208,9 +210,16 @@ public class SpigotUtil {
         return BUKKIT_VERSION;
     }
 
-    public static boolean isKeyed(Class<?> clazz) {
-        return SUPPORTS_KEYED && Keyed.class.isAssignableFrom(clazz)
-                && Bukkit.getRegistry((Class<? extends Keyed>) clazz) != null;
+    public static boolean isRegistryKeyed(Class<?> clazz) {
+        if (NON_REGISTRY_CLASSES.contains(clazz))
+            return false;
+        try {
+            return SUPPORTS_KEYED && Keyed.class.isAssignableFrom(clazz)
+                    && Bukkit.getRegistry((Class<? extends Keyed>) clazz) != null;
+        } catch (Exception ex) {
+            NON_REGISTRY_CLASSES.add(clazz);
+            return false;
+        }
     }
 
     public static boolean isUsing1_13API() {
@@ -267,6 +276,7 @@ public class SpigotUtil {
     private static int[] BUKKIT_VERSION = null;
     private static final Pattern DAY_MATCHER = Pattern.compile("(\\d+d)");
     private static String MINECRAFT_PACKAGE;
+    private static final Set<Class<?>> NON_REGISTRY_CLASSES = new WeakHashMap<Class<?>, Boolean>().keySet();
     private static final Pattern NUMBER_MATCHER = Pattern.compile("(\\d+)");
     private static boolean SUPPORT_WORLD_HEIGHT = true;
     private static boolean SUPPORTS_KEYED;
