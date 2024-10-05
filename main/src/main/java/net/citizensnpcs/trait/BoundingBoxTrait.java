@@ -4,7 +4,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Interaction;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -19,6 +22,7 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     private Function<EntityDim, BoundingBox> function;
     @Persist
     private float height = -1;
+    private NPC interaction;
     @Persist
     private float scale = -1;
     @Persist
@@ -53,6 +57,9 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     @Override
     public void onDespawn() {
         npc.data().remove(NPC.Metadata.BOUNDING_BOX_FUNCTION);
+        if (interaction != null) {
+            interaction.destroy();
+        }
     }
 
     @Override
@@ -64,6 +71,25 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     public void onSpawn() {
         base = EntityDim.from(npc.getEntity());
         npc.data().set(NPC.Metadata.BOUNDING_BOX_FUNCTION, this);
+        if (!SUPPORTS_INTERACTION)
+            return;
+        interaction = CitizensAPI.getTemporaryNPCRegistry().createNPC(EntityType.INTERACTION, "");
+        interaction.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        interaction.addTrait(new ClickRedirectTrait(npc));
+        interaction.spawn(npc.getStoredLocation());
+        if (SUPPORTS_RESPONSIVE) {
+            ((Interaction) interaction.getEntity()).setResponsive(true);
+        }
+    }
+
+    @Override
+    public void run() {
+        if (interaction == null)
+            return;
+        EntityDim dim = getAdjustedBoundingBox();
+        Interaction box = ((Interaction) interaction.getEntity());
+        box.setInteractionWidth(dim.width);
+        box.setInteractionHeight(dim.height);
     }
 
     public void setBoundingBoxFunction(Function<EntityDim, BoundingBox> func) {
@@ -80,5 +106,21 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
 
     public void setWidth(float width) {
         this.width = width;
+    }
+
+    private static boolean SUPPORTS_INTERACTION = true;
+    private static boolean SUPPORTS_RESPONSIVE = true;
+
+    static {
+        try {
+            Class.forName("org.bukkit.entity.Interaction");
+            try {
+                Interaction.class.getMethod("isResponsive");
+            } catch (NoSuchMethodException | SecurityException e) {
+                SUPPORTS_RESPONSIVE = false;
+            }
+        } catch (ClassNotFoundException e) {
+            SUPPORTS_INTERACTION = false;
+        }
     }
 }
