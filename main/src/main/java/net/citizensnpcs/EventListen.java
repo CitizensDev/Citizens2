@@ -297,14 +297,17 @@ public class EventListen implements Listener {
         if (npc == null)
             return;
 
-        event.setCancelled(npc.isProtected());
-
+        final NPCCombustEvent npcCombustEvent;
         if (event instanceof EntityCombustByEntityEvent) {
-            Bukkit.getPluginManager().callEvent(new NPCCombustByEntityEvent((EntityCombustByEntityEvent) event, npc));
+            npcCombustEvent = new NPCCombustByEntityEvent((EntityCombustByEntityEvent) event, npc);
         } else if (event instanceof EntityCombustByBlockEvent) {
-            Bukkit.getPluginManager().callEvent(new NPCCombustByBlockEvent((EntityCombustByBlockEvent) event, npc));
+            npcCombustEvent = new NPCCombustByBlockEvent((EntityCombustByBlockEvent) event, npc);
         } else {
-            Bukkit.getPluginManager().callEvent(new NPCCombustEvent(event, npc));
+            npcCombustEvent = new NPCCombustEvent(event, npc);
+        }
+        Bukkit.getPluginManager().callEvent(npcCombustEvent);
+        if (npcCombustEvent.isCancelled() || npc.isProtected()) {
+            event.setCancelled(true);
         }
     }
 
@@ -319,10 +322,15 @@ public class EventListen implements Listener {
                 event.setCancelled(!npc.data().get(NPC.Metadata.DAMAGE_OTHERS, true));
                 NPCDamageEntityEvent damageEvent = new NPCDamageEntityEvent(npc, (EntityDamageByEntityEvent) event);
                 Bukkit.getPluginManager().callEvent(damageEvent);
+                if (damageEvent.isCancelled()) {
+                    event.setCancelled(true);
+                }
             }
             return;
         }
-        event.setCancelled(npc.isProtected());
+        if (npc.isProtected()) {
+            event.setCancelled(true);
+        }
 
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, (EntityDamageByEntityEvent) event);
@@ -339,13 +347,23 @@ public class EventListen implements Listener {
             }
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
+            if (leftClickEvent.isCancelled()) {
+                return;
+            }
             if (npc.hasTrait(CommandTrait.class)) {
                 npc.getTraitNullable(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
             }
-        } else if (event instanceof EntityDamageByBlockEvent) {
-            Bukkit.getPluginManager().callEvent(new NPCDamageByBlockEvent(npc, (EntityDamageByBlockEvent) event));
         } else {
-            Bukkit.getPluginManager().callEvent(new NPCDamageEvent(npc, event));
+            final NPCDamageEvent npcDamageEvent;
+            if (event instanceof EntityDamageByBlockEvent) {
+                npcDamageEvent = new NPCDamageByBlockEvent(npc, (EntityDamageByBlockEvent) event);
+            } else {
+                npcDamageEvent = new NPCDamageEvent(npc, event);
+            }
+            Bukkit.getPluginManager().callEvent(npcDamageEvent);
+            if (npcDamageEvent.isCancelled()) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -401,14 +419,18 @@ public class EventListen implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityTarget(EntityTargetEvent event) {
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getTarget());
         if (npc == null)
             return;
 
-        event.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
-        Bukkit.getPluginManager().callEvent(new EntityTargetNPCEvent(event, npc));
+        final EntityTargetNPCEvent targetNPCEvent = new EntityTargetNPCEvent(event, npc);
+        targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
+        Bukkit.getPluginManager().callEvent(targetNPCEvent);
+        if (targetNPCEvent.isCancelled()) {
+            targetNPCEvent.setCancelled(true);
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
