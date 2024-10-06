@@ -327,8 +327,11 @@ public class EventListen implements Listener {
         } else {
             npcCombustEvent = new NPCCombustEvent(event, npc);
         }
+        if (npc.isProtected()) {
+            npcCombustEvent.setCancelled(true);
+        }
         Bukkit.getPluginManager().callEvent(npcCombustEvent);
-        if (npcCombustEvent.isCancelled() || npc.isProtected()) {
+        if (npcCombustEvent.isCancelled()) {
             event.setCancelled(true);
         }
     }
