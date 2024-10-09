@@ -1376,7 +1376,6 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setOpWithoutSaving(Player player, boolean op) {
         if (player.isOp() == op) return;
-        final EntityPlayer playerHandle = ((CraftPlayer) player).getHandle();
         final GameProfile profile = ((CraftPlayer) player).getProfile();
         final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
         final DedicatedServer server = playerList.getServer();
@@ -1386,7 +1385,7 @@ public class NMSImpl implements NMSBridge {
         } else {
             opList.remove(profile);
         }
-        playerList.f(playerHandle);
+        player.recalculatePermissions();
     }
 
     @Override
