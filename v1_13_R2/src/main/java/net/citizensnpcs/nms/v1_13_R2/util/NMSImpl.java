@@ -18,6 +18,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import net.minecraft.server.v1_13_R2.DedicatedPlayerList;
+import net.minecraft.server.v1_13_R2.DedicatedServer;
+import net.minecraft.server.v1_13_R2.OpList;
+import net.minecraft.server.v1_13_R2.OpListEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -1411,6 +1415,22 @@ public class NMSImpl implements NMSBridge {
     public void setWitherInvulnerableTicks(Wither wither, int ticks) {
         EntityWither handle = ((CraftWither) wither).getHandle();
         handle.d(ticks);
+    }
+
+    @Override
+    public void setOpWithoutSaving(Player player, boolean op) {
+        if (player.isOp() == op) return;
+        final EntityPlayer playerHandle = ((CraftPlayer) player).getHandle();
+        final GameProfile profile = ((CraftPlayer) player).getProfile();
+        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
+        final DedicatedServer server = playerList.getServer();
+        final OpList opList = playerList.getOPs();
+        if (op) {
+            opList.add(new OpListEntry(profile, server.getPropertyManager().getInt("op-permission-level", 4), opList.b(profile)));
+        } else {
+            opList.remove(profile);
+        }
+        playerList.f(playerHandle);
     }
 
     @Override

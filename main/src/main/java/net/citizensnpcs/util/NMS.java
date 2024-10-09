@@ -972,6 +972,10 @@ public class NMS {
         BRIDGE.setWitherInvulnerableTicks(wither, ticks);
     }
 
+    public static void setOpWithoutSaving(Player player, boolean op) {
+        BRIDGE.setOpWithoutSaving(player, op);
+    }
+
     public static boolean shouldBroadcastToPlayer(NPC npc, Supplier<Boolean> defaultResponse) {
         return npc != null && npc.data().has(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS) ? false : defaultResponse.get();
     }

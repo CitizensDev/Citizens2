@@ -463,7 +463,7 @@ public class Util {
         }
         boolean wasOp = clicker.isOp();
         if (op) {
-            clicker.setOp(true);
+            NMS.setOpWithoutSaving(clicker, true);
         }
         try {
             if (bungeeServer != null) {
@@ -479,7 +479,12 @@ public class Util {
             t.printStackTrace();
         } finally {
             if (op) {
-                clicker.setOp(wasOp);
+                if (!wasOp) {
+                    // Disk I/O operation caused by Player#setOp(boolean)
+                    // is not necessary here because changes on permission
+                    // are not actually saved
+                    NMS.setOpWithoutSaving(clicker, false);
+                }
             }
         }
     }

@@ -18,6 +18,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.minecraft.server.dedicated.DedicatedPlayerList;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.players.ServerOpList;
+import net.minecraft.server.players.ServerOpListEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -1766,6 +1770,22 @@ public class NMSImpl implements NMSBridge {
         } else {
             warden.setPose(Pose.STANDING);
         }
+    }
+
+    @Override
+    public void setOpWithoutSaving(Player player, boolean op) {
+        if (player.isOp() == op) return;
+        final ServerPlayer playerHandle = ((CraftPlayer) player).getHandle();
+        final GameProfile profile = ((CraftPlayer) player).getProfile();
+        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
+        final DedicatedServer server = playerList.getServer();
+        final ServerOpList opList = playerList.getOps();
+        if (op) {
+            opList.add(new ServerOpListEntry(profile, server.getOperatorUserPermissionLevel(), opList.canBypassPlayerLimit(profile)));
+        } else {
+            opList.remove(profile);
+        }
+        playerList.sendPlayerPermissionLevel(playerHandle);
     }
 
     @Override
