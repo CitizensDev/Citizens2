@@ -463,7 +463,7 @@ public class Util {
         }
         boolean wasOp = clicker.isOp();
         if (op) {
-            clicker.setOp(true);
+            NMS.setOpWithoutSaving(clicker, true);
         }
         try {
             if (bungeeServer != null) {

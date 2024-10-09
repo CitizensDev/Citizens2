@@ -298,6 +298,8 @@ public interface NMSBridge {
         wither.setInvulnerabilityTicks(ticks);
     }
 
+    public void setOpWithoutSaving(Player player, boolean op);
+
     public boolean shouldJump(Entity entity);
 
     public void shutdown();
