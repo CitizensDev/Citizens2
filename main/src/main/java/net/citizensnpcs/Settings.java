@@ -114,10 +114,10 @@ public class Settings {
                 "The default MOVEMENT distance in blocks where the NPC will move to before considering a path finished<br>Note: this is different from the PATHFINDING distance which is specified by path-distance-margin",
                 "npc.pathfinding.default-distance-margin", 1),
         DEFAULT_HOLOGRAM_BACKGROUND_COLOR(
-                "The default background color for holograms, specified as an RGB or RGBA value<br>For example 0,255,123,0 would be green",
+                "The default background color for holograms, specified as an RGB or RGBA value<br>For example 0,255,123 would be green and 255,255,255,255 would be transparent",
                 "npc.hologram.default-background-color", ""),
         DEFAULT_HOLOGRAM_RENDERER(
-                "The default renderer for holograms, must be one of the following:<br>interaction - matches inbuilt nametags most closely<br>display - allows for different colored backgrounds<br>display_vehicle - mounts the display on the NPC<br>armorstand - the safest option, very very small hit to client FPS compared to other options<br>armorstand_vehicle - mounts the armorstand on the NPC",
+                "The default renderer for holograms, must be one of the following:<br>interaction - requires 1.19+, matches nametags more closely than display<br>display - allows for different colored backgrounds<br>display_vehicle - mounts the display on the NPC<br>areaeffectcloud - the safest option<br>armorstand - the second safest option, has a hitbox clientside<br>armorstand_vehicle - mounts the armorstand on the NPC, only useful for nameplates",
                 "npc.hologram.default-renderer", "display"),
         DEFAULT_LOOK_CLOSE("Enable look close by default", "npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("Default look close range in blocks", "npc.default.look-close.range", 10),
@@ -386,14 +386,17 @@ public class Settings {
         protected void setComments(DataKey root) {
             if (!SUPPORTS_SET_COMMENTS || !root.keyExists(path))
                 return;
-            try {
-                ((MemoryDataKey) root).getSection("").setComments(path,
-                        comments == null ? null : Arrays.asList(comments.split("<br>")));
-            } catch (Throwable t) {
-                SUPPORTS_SET_COMMENTS = false;
-            }
+            ((MemoryDataKey) root).getSection("").setComments(path,
+                    comments == null ? null : Arrays.asList(comments.split("<br>")));
         }
     }
 
     private static boolean SUPPORTS_SET_COMMENTS = true;
+    static {
+        try {
+            ConfigurationSection.class.getMethod("getInlineComments", String.class);
+        } catch (NoSuchMethodException | SecurityException e) {
+            SUPPORTS_SET_COMMENTS = false;
+        }
+    }
 }

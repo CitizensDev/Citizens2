@@ -17,10 +17,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.minecraft.server.v1_16_R3.DedicatedPlayerList;
-import net.minecraft.server.v1_16_R3.DedicatedServer;
-import net.minecraft.server.v1_16_R3.OpList;
-import net.minecraft.server.v1_16_R3.OpListEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -202,6 +198,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.versioned.AreaEffectCloudTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.CatTrait;
@@ -251,6 +248,8 @@ import net.minecraft.server.v1_16_R3.ControllerMove;
 import net.minecraft.server.v1_16_R3.ControllerMoveFlying;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import net.minecraft.server.v1_16_R3.DataWatcherObject;
+import net.minecraft.server.v1_16_R3.DedicatedPlayerList;
+import net.minecraft.server.v1_16_R3.DedicatedServer;
 import net.minecraft.server.v1_16_R3.EnchantmentManager;
 import net.minecraft.server.v1_16_R3.Enchantments;
 import net.minecraft.server.v1_16_R3.EnderDragonBattle;
@@ -299,6 +298,8 @@ import net.minecraft.server.v1_16_R3.Navigation;
 import net.minecraft.server.v1_16_R3.NavigationAbstract;
 import net.minecraft.server.v1_16_R3.NavigationSpider;
 import net.minecraft.server.v1_16_R3.NetworkManager;
+import net.minecraft.server.v1_16_R3.OpList;
+import net.minecraft.server.v1_16_R3.OpListEntry;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutEntityLook;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook;
@@ -876,6 +877,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        registerTraitWithCommand(manager, AreaEffectCloudTrait.class);
         registerTraitWithCommand(manager, EnderDragonTrait.class);
         registerTraitWithCommand(manager, BeeTrait.class);
         registerTraitWithCommand(manager, BossBarTrait.class);
@@ -1461,6 +1463,24 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setOpWithoutSaving(Player player, boolean op) {
+        if (player.isOp() == op)
+            return;
+        final EntityPlayer playerHandle = ((CraftPlayer) player).getHandle();
+        final GameProfile profile = ((CraftPlayer) player).getProfile();
+        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
+        final DedicatedServer server = playerList.getServer();
+        final OpList opList = playerList.getOPs();
+        if (op) {
+            opList.add(new OpListEntry(profile, server.getDedicatedServerProperties().opPermissionLevel,
+                    opList.b(profile)));
+        } else {
+            opList.remove(profile);
+        }
+        playerList.d(playerHandle);
+    }
+
+    @Override
     public void setPandaSitting(org.bukkit.entity.Entity entity, boolean sitting) {
         ((EntityPanda) getHandle(entity)).t(sitting);
     }
@@ -1554,22 +1574,6 @@ public class NMSImpl implements NMSBridge {
     public void setWitherInvulnerableTicks(Wither wither, int ticks) {
         EntityWither handle = ((CraftWither) wither).getHandle();
         handle.setInvul(ticks);
-    }
-
-    @Override
-    public void setOpWithoutSaving(Player player, boolean op) {
-        if (player.isOp() == op) return;
-        final EntityPlayer playerHandle = ((CraftPlayer) player).getHandle();
-        final GameProfile profile = ((CraftPlayer) player).getProfile();
-        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
-        final DedicatedServer server = playerList.getServer();
-        final OpList opList = playerList.getOPs();
-        if (op) {
-            opList.add(new OpListEntry(profile, server.getDedicatedServerProperties().opPermissionLevel, opList.b(profile)));
-        } else {
-            opList.remove(profile);
-        }
-        playerList.d(playerHandle);
     }
 
     @Override

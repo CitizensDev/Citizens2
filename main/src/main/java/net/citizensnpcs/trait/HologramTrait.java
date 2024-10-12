@@ -16,11 +16,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.HandlerList;
@@ -135,11 +140,7 @@ public class HologramTrait extends Trait {
         HologramRenderer renderer;
         String setting = Setting.DEFAULT_NAME_HOLOGRAM_RENDERER.asString();
         if (setting.isEmpty()) {
-            if (SpigotUtil.getVersion()[1] >= 19) {
-                setting = "interaction";
-            } else {
-                setting = "armorstand";
-            }
+            setting = SpigotUtil.getVersion()[1] <= 8 ? "armorstand" : "areaeffectcloud";
         }
         renderer = createRenderer(setting);
         if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
@@ -151,17 +152,20 @@ public class HologramTrait extends Trait {
     }
 
     private HologramRenderer createRenderer(String setting) {
-        if (!SUPPORTS_DISPLAY)
-            return setting.equals("armorstand_vehicle") ? new ArmorstandVehicleRenderer() : new ArmorstandRenderer();
+        if (!SUPPORTS_DISPLAY) {
+            setting = SpigotUtil.getVersion()[1] <= 8 ? "armorstand" : "areaeffectcloud";
+        }
         switch (setting) {
+            case "areaeffectcloud":
+                return new AreaEffectCloudRenderer();
+            case "armorstand_vehicle":
+                return new ArmorstandVehicleRenderer();
             case "display":
                 return new TextDisplayRenderer();
             case "display_vehicle":
                 return new TextDisplayVehicleRenderer();
             case "interaction":
                 return new InteractionVehicleRenderer();
-            case "armorstand_vehicle":
-                return new ArmorstandVehicleRenderer();
             default:
                 return new ArmorstandRenderer();
         }
@@ -429,6 +433,30 @@ public class HologramTrait extends Trait {
         reloadLineHolograms();
     }
 
+    public static class AreaEffectCloudRenderer extends SingleEntityHologramRenderer {
+        private boolean rendered;
+
+        @Override
+        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+            NPC npc = registry().createNPC(EntityType.AREA_EFFECT_CLOUD, name);
+            rendered = false;
+            return npc;
+        }
+
+        @Override
+        protected void render0(NPC npc, Vector3d offset) {
+            AreaEffectCloud cloud = (AreaEffectCloud) hologram.getEntity();
+            if (!rendered) {
+                cloud.setRadius(0);
+                cloud.setParticle(Particle.BLOCK, Bukkit.createBlockData(Material.AIR));
+            }
+            hologram.getEntity().teleport(
+                    npc.getEntity().getLocation().clone().add(offset.x,
+                            offset.y + NMS.getBoundingBoxHeight(npc.getEntity()) - 0.5, offset.z),
+                    TeleportCause.PLUGIN);
+        }
+    }
+
     public static class ArmorstandRenderer extends SingleEntityHologramRenderer {
         @Override
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
@@ -461,7 +489,7 @@ public class HologramTrait extends Trait {
     }
 
     class HologramLine {
-        Color backgroundColor = defaultBackgroundColor;
+        Color backgroundColor;
         double mb, mt;
         boolean persist;
         HologramRenderer renderer;
@@ -477,7 +505,7 @@ public class HologramTrait extends Trait {
             this.persist = persist;
             this.ticks = ticks;
             this.renderer = hr;
-            renderer.setBackgroundColor(backgroundColor);
+            setBackgroundColor(defaultBackgroundColor);
             if (renderer instanceof SingleEntityHologramRenderer) {
                 SingleEntityHologramRenderer sr = (SingleEntityHologramRenderer) renderer;
                 sr.setViewRange(viewRange);
@@ -499,6 +527,9 @@ public class HologramTrait extends Trait {
         }
 
         public void setBackgroundColor(Color color) {
+            if (color != null) {
+                renderer = new TextDisplayRenderer();
+            }
             this.backgroundColor = color;
             renderer.setBackgroundColor(color);
         }
@@ -885,6 +916,14 @@ public class HologramTrait extends Trait {
             disp.setBillboard(Billboard.CENTER);
             if (color != null) {
                 disp.setBackgroundColor(color);
+            }
+            if (SpigotUtil.getVersion()[1] >= 21 && base.getEntity() instanceof LivingEntity) {
+                AttributeInstance inst = ((LivingEntity) base.getEntity()).getAttribute(Attribute.GENERIC_SCALE);
+                if (inst != null) {
+                    Transformation tf = disp.getTransformation();
+                    tf.getScale().set(inst.getValue());
+                    disp.setTransformation(tf);
+                }
             }
             hologram.getEntity().teleport(
                     base.getEntity().getLocation().clone().add(offset.x,

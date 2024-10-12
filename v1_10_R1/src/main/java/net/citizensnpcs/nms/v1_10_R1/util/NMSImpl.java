@@ -18,10 +18,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.minecraft.server.v1_10_R1.DedicatedPlayerList;
-import net.minecraft.server.v1_10_R1.DedicatedServer;
-import net.minecraft.server.v1_10_R1.OpList;
-import net.minecraft.server.v1_10_R1.OpListEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -164,6 +160,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.versioned.AreaEffectCloudTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.EnderDragonTrait;
 import net.citizensnpcs.trait.versioned.PolarBearTrait;
@@ -194,6 +191,8 @@ import net.minecraft.server.v1_10_R1.CrashReport;
 import net.minecraft.server.v1_10_R1.CrashReportSystemDetails;
 import net.minecraft.server.v1_10_R1.DamageSource;
 import net.minecraft.server.v1_10_R1.DataWatcherObject;
+import net.minecraft.server.v1_10_R1.DedicatedPlayerList;
+import net.minecraft.server.v1_10_R1.DedicatedServer;
 import net.minecraft.server.v1_10_R1.EnchantmentManager;
 import net.minecraft.server.v1_10_R1.EnderDragonBattle;
 import net.minecraft.server.v1_10_R1.Entity;
@@ -225,6 +224,8 @@ import net.minecraft.server.v1_10_R1.Navigation;
 import net.minecraft.server.v1_10_R1.NavigationAbstract;
 import net.minecraft.server.v1_10_R1.NavigationSpider;
 import net.minecraft.server.v1_10_R1.NetworkManager;
+import net.minecraft.server.v1_10_R1.OpList;
+import net.minecraft.server.v1_10_R1.OpListEntry;
 import net.minecraft.server.v1_10_R1.Packet;
 import net.minecraft.server.v1_10_R1.PacketPlayOutAnimation;
 import net.minecraft.server.v1_10_R1.PacketPlayOutBed;
@@ -721,6 +722,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        registerTraitWithCommand(manager, AreaEffectCloudTrait.class);
         registerTraitWithCommand(manager, EnderDragonTrait.class);
         registerTraitWithCommand(manager, BossBarTrait.class);
         registerTraitWithCommand(manager, PolarBearTrait.class);
@@ -1248,6 +1250,23 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setOpWithoutSaving(Player player, boolean op) {
+        if (player.isOp() == op)
+            return;
+        final GameProfile profile = ((CraftPlayer) player).getProfile();
+        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
+        final DedicatedServer server = playerList.getServer();
+        final OpList opList = playerList.getOPs();
+        if (op) {
+            opList.add(new OpListEntry(profile, server.getPropertyManager().getInt("op-permission-level", 4),
+                    opList.b(profile)));
+        } else {
+            opList.remove(profile);
+        }
+        player.recalculatePermissions();
+    }
+
+    @Override
     public void setPeekShulker(org.bukkit.entity.Entity shulker, int peek) {
         ((EntityShulker) getHandle(shulker)).a((byte) peek);
     }
@@ -1318,21 +1337,6 @@ public class NMSImpl implements NMSBridge {
     public void setWitherInvulnerableTicks(Wither wither, int ticks) {
         EntityWither handle = ((CraftWither) wither).getHandle();
         handle.g(ticks);
-    }
-
-    @Override
-    public void setOpWithoutSaving(Player player, boolean op) {
-        if (player.isOp() == op) return;
-        final GameProfile profile = ((CraftPlayer) player).getProfile();
-        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
-        final DedicatedServer server = playerList.getServer();
-        final OpList opList = playerList.getOPs();
-        if (op) {
-            opList.add(new OpListEntry(profile, server.getPropertyManager().getInt("op-permission-level", 4), opList.b(profile)));
-        } else {
-            opList.remove(profile);
-        }
-        player.recalculatePermissions();
     }
 
     @Override

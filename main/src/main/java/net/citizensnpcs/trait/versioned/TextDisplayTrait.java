@@ -16,6 +16,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.NMS;
 
 @TraitName("textdisplaytrait")
 public class TextDisplayTrait extends Trait {
@@ -29,6 +30,8 @@ public class TextDisplayTrait extends Trait {
     private Boolean seeThrough;
     @Persist
     private Boolean shadowed;
+    @Persist
+    private String text;
 
     public TextDisplayTrait() {
         super("textdisplaytrait");
@@ -37,6 +40,9 @@ public class TextDisplayTrait extends Trait {
     @Override
     public void onSpawn() {
         TextDisplay display = (TextDisplay) npc.getEntity();
+        if (text != null) {
+            NMS.setTextDisplayComponent(display, Messaging.minecraftComponentFromRawMessage(text));
+        }
         if (shadowed != null) {
             display.setShadowed(shadowed);
         }
@@ -74,9 +80,13 @@ public class TextDisplayTrait extends Trait {
         this.shadowed = shadowed;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
     @Command(
             aliases = { "npc" },
-            usage = "textdisplay --shadowed [true|false] --seethrough [true|false] --line_width [width]",
+            usage = "textdisplay --shadowed [true|false] --seethrough [true|false] --line_width [width] --text [text]",
             desc = "",
             modifiers = { "textdisplay" },
             min = 1,
@@ -84,7 +94,7 @@ public class TextDisplayTrait extends Trait {
             permission = "citizens.npc.textdisplay")
     @Requirements(selected = true, ownership = true, types = { EntityType.TEXT_DISPLAY })
     public static void display(CommandContext args, CommandSender sender, NPC npc, @Flag("shadowed") Boolean shadowed,
-            @Flag("seethrough") Boolean seethrough, @Flag("line_width") Integer lineWidth,
+            @Flag("seethrough") Boolean seethrough, @Flag("line_width") Integer lineWidth, @Flag("text") String text,
             @Flag("bgcolor") Color bgcolor, @Flag("alignment") TextAlignment alignment) throws CommandException {
         TextDisplayTrait trait = npc.getOrAddTrait(TextDisplayTrait.class);
         String output = "";
@@ -102,6 +112,9 @@ public class TextDisplayTrait extends Trait {
         }
         if (bgcolor != null) {
             trait.setBackgroundColor(bgcolor);
+        }
+        if (text != null) {
+            trait.setText(text);
         }
         trait.onSpawn();
         if (!output.isEmpty()) {

@@ -15,10 +15,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.minecraft.server.dedicated.DedicatedPlayerList;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.server.players.ServerOpList;
-import net.minecraft.server.players.ServerOpListEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -204,6 +200,7 @@ import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.EntityPoseTrait.EntityPose;
 import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.versioned.AreaEffectCloudTrait;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
@@ -247,6 +244,8 @@ import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedPlayerList;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerBossEvent;
@@ -255,6 +254,8 @@ import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
+import net.minecraft.server.players.ServerOpList;
+import net.minecraft.server.players.ServerOpListEntry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -886,6 +887,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        registerTraitWithCommand(manager, AreaEffectCloudTrait.class);
         registerTraitWithCommand(manager, EnderDragonTrait.class);
         registerTraitWithCommand(manager, AxolotlTrait.class);
         registerTraitWithCommand(manager, BeeTrait.class);
@@ -1466,6 +1468,24 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setOpWithoutSaving(Player player, boolean op) {
+        if (player.isOp() == op)
+            return;
+        final ServerPlayer playerHandle = ((CraftPlayer) player).getHandle();
+        final GameProfile profile = ((CraftPlayer) player).getProfile();
+        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
+        final DedicatedServer server = playerList.getServer();
+        final ServerOpList opList = playerList.getOps();
+        if (op) {
+            opList.add(new ServerOpListEntry(profile, server.getOperatorUserPermissionLevel(),
+                    opList.canBypassPlayerLimit(profile)));
+        } else {
+            opList.remove(profile);
+        }
+        playerList.sendPlayerPermissionLevel(playerHandle);
+    }
+
+    @Override
     public void setPandaSitting(org.bukkit.entity.Entity entity, boolean sitting) {
         ((Panda) getHandle(entity)).sit(sitting);
     }
@@ -1561,22 +1581,6 @@ public class NMSImpl implements NMSBridge {
     public void setWitherInvulnerableTicks(Wither wither, int ticks) {
         WitherBoss handle = ((CraftWither) wither).getHandle();
         handle.setInvulnerableTicks(ticks);
-    }
-
-    @Override
-    public void setOpWithoutSaving(Player player, boolean op) {
-        if (player.isOp() == op) return;
-        final ServerPlayer playerHandle = ((CraftPlayer) player).getHandle();
-        final GameProfile profile = ((CraftPlayer) player).getProfile();
-        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
-        final DedicatedServer server = playerList.getServer();
-        final ServerOpList opList = playerList.getOps();
-        if (op) {
-            opList.add(new ServerOpListEntry(profile, server.getOperatorUserPermissionLevel(), opList.canBypassPlayerLimit(profile)));
-        } else {
-            opList.remove(profile);
-        }
-        playerList.sendPlayerPermissionLevel(playerHandle);
     }
 
     @Override
