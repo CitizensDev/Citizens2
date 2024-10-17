@@ -113,6 +113,7 @@
   "citizens.commands.npc.command.temporary-permissions-set" : "临时权限设置为 [[{0}]].",
   "citizens.commands.npc.command.unknown-id" : "此NPC的命令ID [[{0}]] 未知.",
   "citizens.commands.npc.configgui.description" : "显示 NPC 配置 GUI",
+  "citizens.commands.npc.controllable.controls-set" : "控制器设置为 [[{0}]].",
   "citizens.commands.npc.controllable.description" : "切换 NPC 是否能被骑乘和控制",
   "citizens.commands.npc.controllable.not-controllable" : "[[{0}]] 不能控制.",
   "citizens.commands.npc.controllable.removed" : "[[{0}]] 不再受控制.",
