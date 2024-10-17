@@ -547,7 +547,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command (add [command] | remove [id|all] | permissions [permissions] | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command (add [command] | remove [id|all] | permissions [permissions] (duration) | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -672,10 +672,14 @@ public class NPCCommands {
         } else if (action.equalsIgnoreCase("permissions") || action.equalsIgnoreCase("perms")) {
             if (!sender.hasPermission("citizens.admin"))
                 throw new NoPermissionsException();
-            List<String> temporaryPermissions = Arrays.asList(args.getSlice(2));
-            commands.setTemporaryPermissions(temporaryPermissions);
+            List<String> temporaryPermissions = Arrays.asList(args.getString(2).split(","));
+            int duration = -1;
+            if (args.argsLength() == 4) {
+                duration = Util.parseTicks(args.getString(3));
+            }
+            commands.setTemporaryPermissions(temporaryPermissions, duration);
             Messaging.sendTr(sender, Messages.COMMAND_TEMPORARY_PERMISSIONS_SET,
-                    Joiner.on(' ').join(temporaryPermissions));
+                    Joiner.on(' ').join(temporaryPermissions), duration);
         } else if (action.equalsIgnoreCase("cost")) {
             if (args.argsLength() == 2)
                 throw new CommandException(Messages.COMMAND_MISSING_COST);

@@ -134,7 +134,7 @@
   "citizens.commands.npc.command.persist-sequence-unset" : "Command sequences will no longer be saved across server restarts.",
   "citizens.commands.npc.command.player-forgotten" : "Forgot player command history for [[{0}]].",
   "citizens.commands.npc.command.right-hand-header" : "Commands to run on [[right click]]:",
-  "citizens.commands.npc.command.temporary-permissions-set" : "Temporary permissions set to [[{0}]].",
+  "citizens.commands.npc.command.temporary-permissions-set" : "Temporary permissions set to [[{0}]] for [[{1}]] ticks.",
   "citizens.commands.npc.command.unknown-id" : "Unknown command id [[{0}]] for this NPC.",
   "citizens.commands.npc.commands.random-set" : "Commands will now execute at random.",
   "citizens.commands.npc.commands.random-unset" : "Commands will no longer execute at random.",

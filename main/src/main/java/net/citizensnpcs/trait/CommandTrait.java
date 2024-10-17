@@ -84,6 +84,8 @@ public class CommandTrait extends Trait {
     private final Map<UUID, PlayerNPCCommand> playerTracking = Maps.newHashMap();
     @Persist
     private final List<String> temporaryPermissions = Lists.newArrayList();
+    @Persist
+    private int temporaryPermissionsDuration;
 
     public CommandTrait() {
         super("commandtrait");
@@ -363,7 +365,12 @@ public class CommandTrait extends Trait {
                                 attachment.setPermission(permission, true);
                             }
                             command.run(npc, player);
-                            attachment.remove();
+                            if (temporaryPermissionsDuration <= 0) {
+                                attachment.remove();
+                            } else {
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                                        () -> attachment.remove());
+                            }
                             return;
                         }
                     }
@@ -481,8 +488,13 @@ public class CommandTrait extends Trait {
     }
 
     public void setTemporaryPermissions(List<String> permissions) {
+        setTemporaryPermissions(permissions, -1);
+    }
+
+    public void setTemporaryPermissions(List<String> permissions, int duration) {
         temporaryPermissions.clear();
         temporaryPermissions.addAll(permissions);
+        temporaryPermissionsDuration = duration;
     }
 
     public enum CommandTraitError {
