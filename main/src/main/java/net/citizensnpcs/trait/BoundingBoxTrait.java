@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Interaction;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -43,11 +44,6 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         }
         EntityDim dim = getAdjustedDimensions();
         NMS.setDimensions(npc.getEntity(), dim);
-        if (interaction != null) {
-            Interaction ie = (Interaction) interaction.getEntity();
-            ie.setInteractionWidth(dim.width);
-            ie.setInteractionHeight(dim.height);
-        }
         return new BoundingBox(location.getX() - dim.width / 2, location.getY(), location.getZ() - dim.width / 2,
                 location.getX() + dim.width / 2, location.getY() + dim.height, location.getZ() + dim.width / 2);
     }
@@ -78,8 +74,9 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         if (npc.getEntity().getType().toString().contains("BLOCK_DISPLAY")) {
             BoundingBox bb = NMS.getCollisionBox(((BlockDisplay) npc.getEntity()).getBlock());
             base = EntityDim.from(bb);
+        } else {
+            base = EntityDim.from(npc.getEntity());
         }
-        base = EntityDim.from(npc.getEntity());
         npc.data().set(NPC.Metadata.BOUNDING_BOX_FUNCTION, this);
         if (!SUPPORTS_INTERACTION)
             return;
@@ -97,6 +94,7 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         if (interaction == null)
             return;
         EntityDim dim = getAdjustedDimensions();
+        interaction.teleport(npc.getEntity().getLocation(), TeleportCause.PLUGIN);
         Interaction box = ((Interaction) interaction.getEntity());
         box.setInteractionWidth(dim.width);
         box.setInteractionHeight(dim.height);
