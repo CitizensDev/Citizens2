@@ -50,7 +50,7 @@ public class EntityDim {
     }
 
     public static EntityDim from(BoundingBox bb) {
-        return new EntityDim(bb.maxX - bb.minX, bb.maxY - bb.maxY);
+        return new EntityDim(bb.maxX - bb.minX, bb.maxY - bb.minY);
     }
 
     public static EntityDim from(Entity entity) {
