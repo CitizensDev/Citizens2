@@ -45,7 +45,8 @@ public class BoundingBox {
                 || Double.doubleToLongBits(maxZ) != Double.doubleToLongBits(other.maxZ)
                 || Double.doubleToLongBits(minX) != Double.doubleToLongBits(other.minX))
             return false;
-        if ((Double.doubleToLongBits(minY) != Double.doubleToLongBits(other.minY)) || (Double.doubleToLongBits(minZ) != Double.doubleToLongBits(other.minZ)))
+        if ((Double.doubleToLongBits(minY) != Double.doubleToLongBits(other.minY))
+                || (Double.doubleToLongBits(minZ) != Double.doubleToLongBits(other.minZ)))
             return false;
         return true;
     }
@@ -96,4 +97,5 @@ public class BoundingBox {
     }
 
     public static final BoundingBox EMPTY = new BoundingBox(0, 0, 0, 0, 0, 0);
+    public static final BoundingBox ONE = new BoundingBox(0, 0, 0, 1, 1, 1);
 }

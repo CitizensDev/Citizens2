@@ -29,7 +29,8 @@ public class EntityDim {
         if (obj == null || getClass() != obj.getClass())
             return false;
         EntityDim other = (EntityDim) obj;
-        if ((Double.doubleToLongBits(height) != Double.doubleToLongBits(other.height)) || (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width)))
+        if ((Double.doubleToLongBits(height) != Double.doubleToLongBits(other.height))
+                || (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width)))
             return false;
         return true;
     }
@@ -46,6 +47,10 @@ public class EntityDim {
     @Override
     public String toString() {
         return "EntityDim [height=" + height + ", width=" + width + "]";
+    }
+
+    public static EntityDim from(BoundingBox bb) {
+        return new EntityDim(bb.maxX - bb.minX, bb.maxY - bb.maxY);
     }
 
     public static EntityDim from(Entity entity) {
