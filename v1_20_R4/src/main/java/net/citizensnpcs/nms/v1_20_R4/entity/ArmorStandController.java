@@ -51,6 +51,7 @@ public class ArmorStandController extends MobEntityController {
         private MobAI ai;
 
         private final CitizensNPC npc;
+
         public EntityArmorStandNPC(EntityType<? extends ArmorStand> types, Level level) {
             this(types, level, null);
         }
@@ -60,6 +61,7 @@ public class ArmorStandController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 ai = new BasicMobAI(this);
+                NMS.setStepHeight(getBukkitEntity(), 1);
             }
         }
 

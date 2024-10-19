@@ -48,6 +48,7 @@ public class PlayerControllerMove extends ControllerMove {
             this.a.yaw = a(this.a.yaw, f, 90.0F);
             NMS.setHeadYaw(a.getBukkitEntity(), this.a.yaw);
             this.a.bb = (float) (this.e * this.a.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getBaseValue());
+            this.a.o(this.a.bb);
             if (a instanceof EntitySlime && h-- <= 0) {
                 this.h = new Random().nextInt(20) + 10;
                 this.h /= 3;

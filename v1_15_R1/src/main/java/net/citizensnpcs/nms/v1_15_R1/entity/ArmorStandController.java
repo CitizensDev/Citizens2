@@ -57,6 +57,7 @@ public class ArmorStandController extends MobEntityController {
         public EntityArmorStandNPC(EntityTypes<? extends EntityArmorStand> types, World world, NPC npc) {
             super(types, world);
             this.npc = (CitizensNPC) npc;
+            NMS.setStepHeight(getBukkitEntity(), 1);
         }
 
         @Override

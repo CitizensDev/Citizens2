@@ -50,8 +50,8 @@ public class ArmorStandController extends MobEntityController {
 
     public static class EntityArmorStandNPC extends EntityArmorStand implements NPCHolder, ForwardingMobAI {
         private MobAI ai;
-
         private final CitizensNPC npc;
+
         public EntityArmorStandNPC(EntityTypes<? extends EntityArmorStand> types, World world) {
             this(types, world, null);
         }
@@ -61,6 +61,7 @@ public class ArmorStandController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null) {
                 ai = new BasicMobAI(this);
+                NMS.setStepHeight(getBukkitEntity(), 1);
             }
         }
 

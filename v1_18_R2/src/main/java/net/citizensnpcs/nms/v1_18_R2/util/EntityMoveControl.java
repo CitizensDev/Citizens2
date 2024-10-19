@@ -109,6 +109,7 @@ public class EntityMoveControl extends MoveControl {
                 NMS.setHeadYaw(entity.getBukkitEntity(), entity.getYRot());
             }
             this.entity.zza = (float) (this.speedMod * entity.getAttribute(Attributes.MOVEMENT_SPEED).getBaseValue());
+            this.entity.setSpeed(this.entity.zza);
             if (entity instanceof Slime && jumpTicks-- <= 0) {
                 this.jumpTicks = new Random().nextInt(20) + 10;
                 if (((Slime) entity).isAggressive()) {
