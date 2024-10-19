@@ -32,6 +32,7 @@ import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.CraftSound;
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_13_R2.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_13_R2.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_13_R2.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_13_R2.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
@@ -492,6 +493,12 @@ public class NMSImpl implements NMSBridge {
     @Override
     public BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
         return NMSBoundingBox.wrap(NMSImpl.getHandle(handle).getBoundingBox());
+    }
+
+    @Override
+    public BoundingBox getCollisionBox(Object data) {
+        return NMSBoundingBox
+                .wrap(((CraftBlockData) data).getState().getCollisionShape(null, BlockPosition.ZERO).getBoundingBox());
     }
 
     @Override

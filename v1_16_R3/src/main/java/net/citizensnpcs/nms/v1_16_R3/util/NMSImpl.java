@@ -30,6 +30,7 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_16_R3.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_16_R3.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
@@ -233,6 +234,7 @@ import net.minecraft.server.v1_16_R3.AttributeProvider;
 import net.minecraft.server.v1_16_R3.AxisAlignedBB;
 import net.minecraft.server.v1_16_R3.BehaviorController;
 import net.minecraft.server.v1_16_R3.Block;
+import net.minecraft.server.v1_16_R3.BlockAccessAir;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.BossBattleServer;
 import net.minecraft.server.v1_16_R3.ChatComponentText;
@@ -320,6 +322,7 @@ import net.minecraft.server.v1_16_R3.SoundEffect;
 import net.minecraft.server.v1_16_R3.TagsFluid;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import net.minecraft.server.v1_16_R3.VoxelShape;
+import net.minecraft.server.v1_16_R3.VoxelShapeCollision;
 import net.minecraft.server.v1_16_R3.WorldServer;
 
 @SuppressWarnings("unchecked")
@@ -562,6 +565,12 @@ public class NMSImpl implements NMSBridge {
     @Override
     public BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
         return NMSBoundingBox.wrap(NMSImpl.getHandle(handle).getBoundingBox());
+    }
+
+    @Override
+    public BoundingBox getCollisionBox(Object data) {
+        return NMSBoundingBox.wrap(((CraftBlockData) data).getState()
+                .c(BlockAccessAir.INSTANCE, BlockPosition.ZERO, VoxelShapeCollision.a()).getBoundingBox());
     }
 
     @Override

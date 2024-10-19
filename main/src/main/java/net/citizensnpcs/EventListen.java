@@ -356,7 +356,6 @@ public class EventListen implements Listener {
         if (npc.isProtected()) {
             event.setCancelled(true);
         }
-
         if (event instanceof EntityDamageByEntityEvent) {
             NPCDamageByEntityEvent damageEvent = new NPCDamageByEntityEvent(npc, (EntityDamageByEntityEvent) event);
             Bukkit.getPluginManager().callEvent(damageEvent);

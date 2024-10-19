@@ -808,7 +808,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x,y,z,world] --type [type] --item (item) --trait ['trait1, trait2...'] --model [model name] --nameplate [true|false|hover] --temporaryticks [ticks] --registry [registry name]",
+            usage = "create [name] ((-b(aby),u(nspawned),s(ilent),t(emporary),c(enter),p(acket)) --at [x,y,z,world] --type [type] --item (item) --trait ['trait1, trait2...'] --model [model name] --nameplate [true|false|hover] --temporaryduration [duration] --registry [registry name]",
             desc = "",
             flags = "bustpc",
             modifiers = { "create" },
@@ -818,7 +818,7 @@ public class NPCCommands {
     public void create(CommandContext args, CommandSender sender, NPC npc, @Flag("at") Location at,
             @Flag(value = "type", defValue = "PLAYER") EntityType type, @Flag("trait") String traits,
             @Flag(value = "nameplate", completions = { "true", "false", "hover" }) String nameplate,
-            @Flag("temporaryticks") Integer temporaryTicks, @Flag("item") String item,
+            @Flag("temporaryduration") Duration temporaryDuration, @Flag("item") String item,
             @Flag("template") String templateName, @Flag("registry") String registryName) throws CommandException {
         String name = args.getJoinedStrings(1).trim();
         if (args.hasValueFlag("type")) {
@@ -851,7 +851,7 @@ public class NPCCommands {
                 Messaging.send(sender, "An in-memory registry has been created named [[" + registryName + "]].");
             }
         }
-        if (args.hasFlag('t') || temporaryTicks != null) {
+        if (args.hasFlag('t') || temporaryDuration != null) {
             registry = temporaryRegistry;
         }
         if (item != null) {
@@ -876,13 +876,13 @@ public class NPCCommands {
         if (!Setting.SERVER_OWNS_NPCS.asBoolean()) {
             npc.getOrAddTrait(Owner.class).setOwner(sender);
         }
-        if (temporaryTicks != null) {
+        if (temporaryDuration != null) {
             NPC temp = npc;
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
                 if (temporaryRegistry.getByUniqueId(temp.getUniqueId()) == temp) {
                     temp.destroy();
                 }
-            }, temporaryTicks);
+            }, Util.toTicks(temporaryDuration));
         }
         npc.getOrAddTrait(MobType.class).setType(type);
 
@@ -1286,7 +1286,7 @@ public class NPCCommands {
         if (height != null) {
             npc.getOrAddTrait(BoundingBoxTrait.class).setHeight(height);
         }
-        EntityDim dim = npc.getOrAddTrait(BoundingBoxTrait.class).getAdjustedBoundingBox();
+        EntityDim dim = npc.getOrAddTrait(BoundingBoxTrait.class).getAdjustedDimensions();
         Messaging.sendTr(sender, Messages.BOUNDING_BOX_SET, "width " + dim.width + " height " + dim.height);
     }
 

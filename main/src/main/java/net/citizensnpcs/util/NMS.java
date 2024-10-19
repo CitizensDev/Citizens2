@@ -23,6 +23,7 @@ import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
@@ -240,6 +241,10 @@ public class NMS {
             return BoundingBox.EMPTY;
 
         return BRIDGE.getCollisionBox(block).add(block.getX(), block.getY(), block.getZ());
+    }
+
+    public static BoundingBox getCollisionBox(BlockData blockdata) {
+        return BRIDGE.getCollisionBox(blockdata);
     }
 
     public static Map<String, Object> getComponentMap(ItemStack item) {
@@ -897,6 +902,10 @@ public class NMS {
         BRIDGE.setNoGravity(entity, nogravity);
     }
 
+    public static void setOpWithoutSaving(Player player, boolean op) {
+        BRIDGE.setOpWithoutSaving(player, op);
+    }
+
     public static void setPandaSitting(Entity entity, boolean sitting) {
         BRIDGE.setPandaSitting(entity, sitting);
     }
@@ -970,10 +979,6 @@ public class NMS {
 
     public static void setWitherInvulnerableTicks(Wither wither, int ticks) {
         BRIDGE.setWitherInvulnerableTicks(wither, ticks);
-    }
-
-    public static void setOpWithoutSaving(Player player, boolean op) {
-        BRIDGE.setOpWithoutSaving(player, op);
     }
 
     public static boolean shouldBroadcastToPlayer(NPC npc, Supplier<Boolean> defaultResponse) {

@@ -4,6 +4,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.bukkit.Location;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Interaction;
 
@@ -36,17 +37,22 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     public BoundingBox get() {
         Location location = npc.getEntity().getLocation();
         if (function != null) {
-            BoundingBox bb = function.apply(getAdjustedBoundingBox());
+            BoundingBox bb = function.apply(getAdjustedDimensions());
             NMS.setDimensions(npc.getEntity(), bb.toDimensions());
             return bb.add(location);
         }
-        EntityDim dim = getAdjustedBoundingBox();
+        EntityDim dim = getAdjustedDimensions();
         NMS.setDimensions(npc.getEntity(), dim);
+        if (interaction != null) {
+            Interaction ie = (Interaction) interaction.getEntity();
+            ie.setInteractionWidth(dim.width);
+            ie.setInteractionHeight(dim.height);
+        }
         return new BoundingBox(location.getX() - dim.width / 2, location.getY(), location.getZ() - dim.width / 2,
                 location.getX() + dim.width / 2, location.getY() + dim.height, location.getZ() + dim.width / 2);
     }
 
-    public EntityDim getAdjustedBoundingBox() {
+    public EntityDim getAdjustedDimensions() {
         EntityDim desired = base;
         if (scale != -1) {
             desired = desired.mul(scale);
@@ -69,6 +75,10 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
 
     @Override
     public void onSpawn() {
+        if (npc.getEntity().getType().toString().contains("BLOCK_DISPLAY")) {
+            BoundingBox bb = NMS.getCollisionBox(((BlockDisplay) npc.getEntity()).getBlock());
+            base = EntityDim.from(bb);
+        }
         base = EntityDim.from(npc.getEntity());
         npc.data().set(NPC.Metadata.BOUNDING_BOX_FUNCTION, this);
         if (!SUPPORTS_INTERACTION)
@@ -86,7 +96,7 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     public void run() {
         if (interaction == null)
             return;
-        EntityDim dim = getAdjustedBoundingBox();
+        EntityDim dim = getAdjustedDimensions();
         Interaction box = ((Interaction) interaction.getEntity());
         box.setInteractionWidth(dim.width);
         box.setInteractionHeight(dim.height);
@@ -113,9 +123,9 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
 
     static {
         try {
-            Class.forName("org.bukkit.entity.Interaction");
+            Class<?> clazz = Class.forName("org.bukkit.entity.Interaction");
             try {
-                Interaction.class.getMethod("isResponsive");
+                clazz.getMethod("isResponsive");
             } catch (NoSuchMethodException | SecurityException e) {
                 SUPPORTS_RESPONSIVE = false;
             }

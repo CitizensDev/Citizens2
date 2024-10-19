@@ -85,6 +85,10 @@ public interface NMSBridge {
 
     public BoundingBox getCollisionBox(Block block);
 
+    public default BoundingBox getCollisionBox(Object blockdata) {
+        return BoundingBox.ONE;
+    }
+
     public default Map<String, Object> getComponentMap(ItemStack item) {
         return item.getItemMeta().serialize();
     }
@@ -240,6 +244,8 @@ public interface NMSBridge {
 
     public void setNoGravity(Entity entity, boolean nogravity);
 
+    public void setOpWithoutSaving(Player player, boolean op);
+
     public default void setPandaSitting(Entity entity, boolean sitting) {
         throw new UnsupportedOperationException();
     }
@@ -297,8 +303,6 @@ public interface NMSBridge {
     public default void setWitherInvulnerableTicks(Wither wither, int ticks) {
         wither.setInvulnerabilityTicks(ticks);
     }
-
-    public void setOpWithoutSaving(Player player, boolean op);
 
     public boolean shouldJump(Entity entity);
 

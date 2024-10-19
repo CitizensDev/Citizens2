@@ -28,6 +28,7 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.CraftSound;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_18_R2.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_18_R2.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
@@ -309,6 +310,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
@@ -320,6 +322,7 @@ import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.scores.PlayerTeam;
 
@@ -578,6 +581,12 @@ public class NMSImpl implements NMSBridge {
     @Override
     public BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
         return NMSBoundingBox.wrap(NMSImpl.getHandle(handle).getBoundingBox());
+    }
+
+    @Override
+    public BoundingBox getCollisionBox(Object data) {
+        return NMSBoundingBox.wrap(((CraftBlockData) data).getState()
+                .getCollisionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CollisionContext.empty()).bounds());
     }
 
     @Override
