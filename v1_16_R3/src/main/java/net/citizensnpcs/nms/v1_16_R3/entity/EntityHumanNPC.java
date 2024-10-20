@@ -375,6 +375,17 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         if (!npc.hasTrait(EntityPoseTrait.class) || npc.getTraitNullable(EntityPoseTrait.class).getPose() == null) {
             eu();
         }
+        if (NMSImpl.PAPER_PLAYER_MOB_COUNTS != null && npc.shouldRemoveFromPlayerList()) {
+            int[] counts;
+            try {
+                counts = (int[]) NMSImpl.PAPER_PLAYER_MOB_COUNTS.invoke(this);
+                for (int i = 0; i < counts.length; i++) {
+                    counts[i] = 0;
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void updatePackets(boolean navigating) {

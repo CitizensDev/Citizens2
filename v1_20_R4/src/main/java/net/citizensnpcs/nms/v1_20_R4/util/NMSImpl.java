@@ -2723,9 +2723,10 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFirstFinalSetter(PathNavigation.class,
             PathFinder.class);
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
+    public static final MethodHandle PAPER_PLAYER_MOB_COUNTS = NMS.getGetter(ServerPlayer.class, "mobCounts");
+
     private static final MethodHandle PLAYER_INFO_ENTRIES_LIST = NMS
             .getFirstFinalSetter(ClientboundPlayerInfoUpdatePacket.class, List.class);
-
     private static final MethodHandle PLAYERINFO_ENTRIES = PLAYER_INFO_ENTRIES_LIST;
     private static final MethodHandle PORTAL_ENTRANCE_POS_GETTER = NMS.getGetter(Entity.class, "ay");
     private static final MethodHandle PORTAL_ENTRANCE_POS_SETTER = NMS.getSetter(Entity.class, "ay");

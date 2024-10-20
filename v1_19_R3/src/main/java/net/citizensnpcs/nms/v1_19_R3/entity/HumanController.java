@@ -48,9 +48,7 @@ public class HumanController extends AbstractEntityController {
             if (getBukkitEntity() == null || !getBukkitEntity().isValid()
                     || getBukkitEntity() != handle.getBukkitEntity())
                 return;
-            boolean removeFromPlayerList = npc.data().get(NPC.Metadata.REMOVE_FROM_PLAYERLIST,
-                    Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
-            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), removeFromPlayerList);
+            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList());
         }, 20);
         handle.getBukkitEntity().setSleepingIgnored(true);
         return handle.getBukkitEntity();

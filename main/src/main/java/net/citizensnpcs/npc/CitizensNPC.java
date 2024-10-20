@@ -283,6 +283,11 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public boolean shouldRemoveFromPlayerList() {
+        return data().get(NPC.Metadata.REMOVE_FROM_PLAYERLIST, Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
+    }
+
+    @Override
     public boolean shouldRemoveFromTabList() {
         return data().get(NPC.Metadata.REMOVE_FROM_TABLIST, Setting.DISABLE_TABLIST.asBoolean());
     }

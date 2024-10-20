@@ -377,6 +377,17 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         Bukkit.getServer().getPluginManager().unsubscribeFromPermission("bukkit.broadcast.user", getBukkitEntity());
         updatePackets(npc.getNavigator().isNavigating());
         npc.update();
+        if (NMSImpl.PAPER_PLAYER_MOB_COUNTS != null && npc.shouldRemoveFromPlayerList()) {
+            int[] counts;
+            try {
+                counts = (int[]) NMSImpl.PAPER_PLAYER_MOB_COUNTS.invoke(this);
+                for (int i = 0; i < counts.length; i++) {
+                    counts[i] = 0;
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
