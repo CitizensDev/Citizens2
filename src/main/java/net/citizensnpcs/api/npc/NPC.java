@@ -395,6 +395,8 @@ public interface NPC extends Agent, Cloneable {
      */
     public void setUseMinecraftAI(boolean use);
 
+    boolean shouldRemoveFromPlayerList();
+
     /**
      * @return Whether to remove the NPC from the tablist. Only applicable for {@link Player}-type NPCs.
      */
