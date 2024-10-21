@@ -61,6 +61,7 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         npc.data().remove(NPC.Metadata.BOUNDING_BOX_FUNCTION);
         if (interaction != null) {
             interaction.destroy();
+            interaction = null;
         }
     }
 
