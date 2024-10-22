@@ -2723,6 +2723,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFirstFinalSetter(PathNavigation.class,
             PathFinder.class);
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
+    // Player.mobCounts: workaround for an issue which suppresses mobs being spawn near NPC players on Paper. Need to check for every update.
     public static final MethodHandle PAPER_PLAYER_MOB_COUNTS = NMS.getGetter(ServerPlayer.class, "mobCounts", false);
 
     private static final MethodHandle PLAYER_INFO_ENTRIES_LIST = NMS
