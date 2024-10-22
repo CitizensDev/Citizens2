@@ -2367,7 +2367,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_S = NMS.getFinalSetter(NavigationAbstract.class, "s");
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getSetter(NavigationAbstract.class, "b");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    public static final MethodHandle PAPER_PLAYER_MOB_COUNTS = NMS.getGetter(EntityPlayer.class, "mobCounts");
+    // Player.mobCounts: workaround for an issue which suppresses mobs being spawn near NPC players on Paper. Need to check for every update.
+    public static final MethodHandle PAPER_PLAYER_MOB_COUNTS = NMS.getGetter(EntityPlayer.class, "mobCounts", false);
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(PlayerChunkMap.class,
             "viewDistance");
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(PlayerChunkMap.class,
