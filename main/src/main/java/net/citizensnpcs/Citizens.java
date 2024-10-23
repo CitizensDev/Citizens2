@@ -29,10 +29,6 @@ import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
 import ch.ethz.globis.phtree.PhTreeHelper;
-import net.byteflux.libby.BukkitLibraryManager;
-import net.byteflux.libby.Library;
-import net.byteflux.libby.LibraryManager;
-import net.byteflux.libby.logging.LogLevel;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -280,54 +276,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return traitFactory;
     }
 
-    private void loadMavenLibraries() {
-        getLogger().info("Loading external libraries");
-
-        LibraryManager lib = new BukkitLibraryManager(this);
-        lib.addMavenCentral();
-        lib.setLogLevel(LogLevel.WARN);
-        // Unfortunately, transitive dependency management is not supported in this library.
-        lib.loadLibrary(
-                Library.builder().groupId("ch{}ethz{}globis{}phtree").artifactId("phtree").version("2.8.0").build());
-        lib.loadLibrary(Library.builder().groupId("it{}unimi{}dsi").artifactId("fastutil").version("8.5.14")
-                .relocate("it{}unimi{}dsi", "clib{}fastutil").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-minimessage")
-                .version("4.17.0").relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-api").version("4.17.0")
-                .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-key").version("4.17.0")
-                .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("examination-api").version("1.3.0")
-                .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("examination-string").version("1.3.0")
-                .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-bukkit").version("4.3.3")
-                .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-api").version("4.3.3")
-                .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-bungeecord")
-                .version("4.3.3").relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-legacy")
-                .version("4.13.1").relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-nbt").version("4.13.1")
-                .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-gson")
-                .version("4.13.1").relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-serializer-gson-legacy-impl")
-                .version("4.13.1").relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-facet").version("4.3.3")
-                .relocate("net{}kyori", "clib{}net{}kyori").build());
-        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-viaversion")
-                .version("4.3.3").relocate("net{}kyori", "clib{}net{}kyori").build());
-        try {
-            Class.forName("org.joml.Vector3f");
-        } catch (Throwable t) {
-            lib.loadLibrary(Library.builder().groupId("org{}joml").artifactId("joml").version("1.10.5").build());
-        }
-        PhTreeHelper.enablePooling(false);
-        PhTreeHelper.MAX_OBJECT_POOL_SIZE = 0;
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String cmdName, String[] args) {
         Object[] methodArgs = { sender, selector == null ? null : selector.getSelected(sender) };
@@ -364,7 +312,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onEnable() {
-        loadMavenLibraries();
+        PhTreeHelper.enablePooling(false);
+        PhTreeHelper.MAX_OBJECT_POOL_SIZE = 0;
 
         CitizensAPI.setImplementation(this);
         config = new Settings(getDataFolder());

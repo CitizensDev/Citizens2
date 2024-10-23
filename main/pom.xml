@@ -44,7 +44,7 @@
         <repository>
             <id>AlessioDP</id>
             <url>https://repo.alessiodp.com/releases/</url>
-        </repository> 
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -102,12 +102,7 @@
             <artifactId>worldguard-bukkit</artifactId>
             <version>${worldguard.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.byteflux</groupId>
-            <artifactId>libby-bukkit</artifactId>
-            <version>1.1.5</version>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
@@ -200,6 +195,7 @@
                                     </includes>
                                 </filter>
                             </filters>
+                            <!--
                             <relocations>
                                 <relocation>
                                     <pattern>it.unimi.dsi</pattern>
@@ -214,6 +210,7 @@
                                     <shadedPattern>clib.net.byteflux.libby</shadedPattern>
                                 </relocation>
                             </relocations>
+                             -->
                         </configuration>
                     </execution>
                 </executions>

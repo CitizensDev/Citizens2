@@ -5,6 +5,11 @@ version: ${project.version} (build ${BUILD_NUMBER})
 main: net.citizensnpcs.Citizens
 website: https://www.citizensnpcs.co
 api-version: "1.13"
+libraries:
+  - ch.ethz.globis.phtree:phtree:2.8.0
+  - org.joml:joml:1.10.5
+  - net.kyori:adventure-platform-bukkit:4.3.3
+  - net.kyori:adventure-text-minimessage:4.17.0
 commands:
   trait: 
     description: Trait commands
