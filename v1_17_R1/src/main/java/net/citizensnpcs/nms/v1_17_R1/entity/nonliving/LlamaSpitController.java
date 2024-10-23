@@ -32,15 +32,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class LlamaSpitController extends AbstractEntityController {
-    public LlamaSpitController() {
-        super(EntityLlamaSpitNPC.class);
-    }
 
     @Override
     protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {
         ServerLevel ws = ((CraftWorld) at.getWorld()).getHandle();
-        final EntityLlamaSpitNPC handle = new EntityLlamaSpitNPC(
-                NMSImpl.<LlamaSpit> getEntityType(EntityLlamaSpitNPC.class), ws, npc);
+        final EntityLlamaSpitNPC handle = new EntityLlamaSpitNPC(EntityType.LLAMA_SPIT, ws, npc);
         handle.absMoveTo(at.getX(), at.getY(), at.getZ(), at.getPitch(), at.getYaw());
         return handle.getBukkitEntity();
     }

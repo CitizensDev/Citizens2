@@ -497,6 +497,15 @@ public class NMS {
         return null;
     }
 
+    public static <T> T getFirstStaticObject(Class<?> clazz, Class<?> type) {
+        try {
+            return (T) getFirstStaticGetter(clazz, type).invoke();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static MethodHandle getGetter(Class<?> clazz, String name) {
         return getGetter(clazz, name, true);
     }
@@ -635,6 +644,15 @@ public class NMS {
         return BRIDGE.getSpeedFor(npc);
     }
 
+    public static <T> T getStaticObject(Class<?> clazz, String name) {
+        try {
+            return (T) getGetter(clazz, name).invoke();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static float getStepHeight(org.bukkit.entity.Entity entity) {
         return BRIDGE.getStepHeight(entity);
     }
@@ -770,8 +788,9 @@ public class NMS {
         BRIDGE.positionInteractionText(player, interaction, mount, height);
     }
 
-    public static void registerEntityClass(Class<?> clazz) {
-        BRIDGE.registerEntityClass(clazz);
+    public static void registerEntityClass(Class<?> clazz, Object type) {
+        // TODO: is this used outside of Citizens? could remove this abstraction
+        BRIDGE.registerEntityClass(clazz, type);
     }
 
     public static void remove(Entity entity) {

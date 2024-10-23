@@ -27,9 +27,6 @@ import net.minecraft.server.v1_12_R1.World;
 import net.minecraft.server.v1_12_R1.WorldServer;
 
 public class LlamaSpitController extends AbstractEntityController {
-    public LlamaSpitController() {
-        super(EntityLlamaSpitNPC.class);
-    }
 
     @Override
     protected Entity createEntity(Location at, NPC npc) {

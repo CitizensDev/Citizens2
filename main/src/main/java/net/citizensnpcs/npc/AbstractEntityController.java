@@ -15,10 +15,6 @@ public abstract class AbstractEntityController implements EntityController {
     public AbstractEntityController() {
     }
 
-    public AbstractEntityController(Class<?> clazz) {
-        NMS.registerEntityClass(clazz);
-    }
-
     @Override
     public void create(Location at, NPC npc) {
         bukkitEntity = createEntity(at, npc);

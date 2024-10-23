@@ -19,10 +19,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.minecraft.server.v1_8_R3.DedicatedPlayerList;
-import net.minecraft.server.v1_8_R3.DedicatedServer;
-import net.minecraft.server.v1_8_R3.OpList;
-import net.minecraft.server.v1_8_R3.OpListEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -82,6 +78,8 @@ import net.citizensnpcs.api.gui.ForwardingInventory;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
@@ -154,6 +152,7 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.versioned.BoatTrait;
 import net.citizensnpcs.util.EmptyChannel;
 import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
@@ -177,6 +176,8 @@ import net.minecraft.server.v1_8_R3.ControllerMove;
 import net.minecraft.server.v1_8_R3.CrashReport;
 import net.minecraft.server.v1_8_R3.CrashReportSystemDetails;
 import net.minecraft.server.v1_8_R3.DamageSource;
+import net.minecraft.server.v1_8_R3.DedicatedPlayerList;
+import net.minecraft.server.v1_8_R3.DedicatedServer;
 import net.minecraft.server.v1_8_R3.EnchantmentManager;
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityEnderDragon;
@@ -199,6 +200,8 @@ import net.minecraft.server.v1_8_R3.MathHelper;
 import net.minecraft.server.v1_8_R3.Navigation;
 import net.minecraft.server.v1_8_R3.NavigationAbstract;
 import net.minecraft.server.v1_8_R3.NetworkManager;
+import net.minecraft.server.v1_8_R3.OpList;
+import net.minecraft.server.v1_8_R3.OpListEntry;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
@@ -672,6 +675,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager commands) {
+        registerTraitWithCommand(commands, BoatTrait.class);
     }
 
     private void loadEntityTypes() {
@@ -919,20 +923,24 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void registerEntityClass(Class<?> clazz) {
+    public void registerEntityClass(Class<?> clazz, Object raw) {
         if (ENTITY_CLASS_TO_INT == null || ENTITY_CLASS_TO_INT.containsKey(clazz))
             return;
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
-            if (!ENTITY_CLASS_TO_INT.containsKey(search)) {
+            if (!ENTITY_CLASS_TO_INT.containsKey(search))
                 continue;
-            }
             int code = ENTITY_CLASS_TO_INT.get(search);
             ENTITY_CLASS_TO_INT.put(clazz, code);
             ENTITY_CLASS_TO_NAME.put(clazz, ENTITY_CLASS_TO_NAME.get(search));
             return;
         }
         throw new IllegalArgumentException("unable to find valid entity superclass for class " + clazz.toString());
+    }
+
+    private void registerTraitWithCommand(CommandManager manager, Class<? extends Trait> clazz) {
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(clazz));
+        manager.register(clazz);
     }
 
     @Override
@@ -1170,6 +1178,23 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setOpWithoutSaving(Player player, boolean op) {
+        if (player.isOp() == op)
+            return;
+        final GameProfile profile = ((CraftPlayer) player).getProfile();
+        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
+        final DedicatedServer server = playerList.getServer();
+        final OpList opList = playerList.getOPs();
+        if (op) {
+            opList.add(new OpListEntry(profile, server.getPropertyManager().getInt("op-permission-level", 4),
+                    opList.b(profile)));
+        } else {
+            opList.remove(profile);
+        }
+        player.recalculatePermissions();
+    }
+
+    @Override
     public void setPitch(org.bukkit.entity.Entity entity, float pitch) {
         getHandle(entity).pitch = pitch;
     }
@@ -1244,21 +1269,6 @@ public class NMSImpl implements NMSBridge {
     public void setWitherInvulnerableTicks(Wither wither, int ticks) {
         EntityWither handle = ((CraftWither) wither).getHandle();
         handle.r(ticks);
-    }
-
-    @Override
-    public void setOpWithoutSaving(Player player, boolean op) {
-        if (player.isOp() == op) return;
-        final GameProfile profile = ((CraftPlayer) player).getProfile();
-        final DedicatedPlayerList playerList = ((CraftServer) player.getServer()).getHandle();
-        final DedicatedServer server = playerList.getServer();
-        final OpList opList = playerList.getOPs();
-        if (op) {
-            opList.add(new OpListEntry(profile, server.getPropertyManager().getInt("op-permission-level", 4), opList.b(profile)));
-        } else {
-            opList.remove(profile);
-        }
-        player.recalculatePermissions();
     }
 
     @Override

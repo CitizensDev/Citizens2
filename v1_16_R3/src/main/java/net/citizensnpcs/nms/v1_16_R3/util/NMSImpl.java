@@ -201,6 +201,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AreaEffectCloudTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
+import net.citizensnpcs.trait.versioned.BoatTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.CatTrait;
 import net.citizensnpcs.trait.versioned.EnderDragonTrait;
@@ -886,6 +887,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        registerTraitWithCommand(manager, BoatTrait.class);
         registerTraitWithCommand(manager, AreaEffectCloudTrait.class);
         registerTraitWithCommand(manager, EnderDragonTrait.class);
         registerTraitWithCommand(manager, BeeTrait.class);
@@ -1177,12 +1179,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void registerEntityClass(Class<?> clazz) {
+    public void registerEntityClass(Class<?> clazz, Object raw) {
         if (ENTITY_REGISTRY == null)
             return;
+        EntityTypes<?> type = (EntityTypes<?>) raw;
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
-            EntityTypes<?> type = ENTITY_REGISTRY.findType(search);
             MinecraftKey key = ENTITY_REGISTRY.getKey(type);
             if (key == null || type == null) {
                 continue;
@@ -2367,7 +2369,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_S = NMS.getFinalSetter(NavigationAbstract.class, "s");
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getSetter(NavigationAbstract.class, "b");
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    // Player.mobCounts: workaround for an issue which suppresses mobs being spawn near NPC players on Paper. Need to check for every update.
+    // Player.mobCounts: workaround for an issue which suppresses mobs being spawn near NPC players on Paper. Need to
+    // check for every update.
     public static final MethodHandle PAPER_PLAYER_MOB_COUNTS = NMS.getGetter(EntityPlayer.class, "mobCounts", false);
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(PlayerChunkMap.class,
             "viewDistance");

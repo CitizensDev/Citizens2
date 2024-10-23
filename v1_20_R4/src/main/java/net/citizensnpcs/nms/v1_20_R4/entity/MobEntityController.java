@@ -15,6 +15,7 @@ import net.citizensnpcs.nms.v1_20_R4.util.NMSImpl;
 import net.citizensnpcs.nms.v1_20_R4.util.PitchableLookControl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.trait.ScoreboardTrait;
+import net.citizensnpcs.util.NMS;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.LookControl;
@@ -24,7 +25,7 @@ public abstract class MobEntityController extends AbstractEntityController {
     private final Class<?> clazz;
 
     protected MobEntityController(Class<?> clazz) {
-        super(clazz);
+        NMS.registerEntityClass(clazz, NMSImpl.getEntityType(clazz));
         this.clazz = clazz;
     }
 

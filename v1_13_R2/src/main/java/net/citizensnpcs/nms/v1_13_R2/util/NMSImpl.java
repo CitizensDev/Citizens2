@@ -189,6 +189,7 @@ import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AreaEffectCloudTrait;
+import net.citizensnpcs.trait.versioned.BoatTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.EnderDragonTrait;
 import net.citizensnpcs.trait.versioned.LlamaTrait;
@@ -790,6 +791,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        registerTraitWithCommand(manager, BoatTrait.class);
         registerTraitWithCommand(manager, AreaEffectCloudTrait.class);
         registerTraitWithCommand(manager, EnderDragonTrait.class);
         registerTraitWithCommand(manager, BossBarTrait.class);
@@ -1094,12 +1096,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void registerEntityClass(Class<?> clazz) {
+    public void registerEntityClass(Class<?> clazz, Object raw) {
         if (ENTITY_REGISTRY == null)
             return;
+        EntityTypes<?> type = (EntityTypes<?>) raw;
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
-            EntityTypes<?> type = ENTITY_REGISTRY.findType(search);
             MinecraftKey key = ENTITY_REGISTRY.getKey(type);
             if (key == null) {
                 continue;

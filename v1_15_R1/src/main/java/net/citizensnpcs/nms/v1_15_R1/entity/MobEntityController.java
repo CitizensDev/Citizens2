@@ -25,8 +25,7 @@ import net.minecraft.server.v1_15_R1.World;
 public abstract class MobEntityController extends AbstractEntityController {
     private final Class<?> clazz;
 
-    protected MobEntityController(Class<?> clazz) {
-        super(clazz);
+protected MobEntityController(Class<?> clazz) {NMS.registerEntityClass(clazz, NMSImpl.getEntityType(clazz));
         this.clazz = clazz;
     }
 

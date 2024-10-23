@@ -35,9 +35,7 @@ import net.minecraft.server.v1_15_R1.World;
 import net.minecraft.server.v1_15_R1.WorldServer;
 
 public class FallingBlockController extends AbstractEntityController {
-    public FallingBlockController() {
-        super(EntityFallingBlockNPC.class);
-    }
+
 
     @Override
     protected Entity createEntity(Location at, NPC npc) {

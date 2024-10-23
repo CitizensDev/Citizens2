@@ -23,7 +23,7 @@ public abstract class MobEntityController extends AbstractEntityController {
     private final Constructor<?> constructor;
 
     protected MobEntityController(Class<?> clazz) {
-        super(clazz);
+        NMS.registerEntityClass(clazz, null);
         this.constructor = getConstructor(clazz);
     }
 

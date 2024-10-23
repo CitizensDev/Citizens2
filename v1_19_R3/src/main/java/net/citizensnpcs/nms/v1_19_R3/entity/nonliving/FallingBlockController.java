@@ -35,9 +35,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class FallingBlockController extends AbstractEntityController {
-    public FallingBlockController() {
-        super(EntityFallingBlockNPC.class);
-    }
+
 
     @Override
     protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {

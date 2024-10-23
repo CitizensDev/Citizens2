@@ -37,5 +37,6 @@ public class EntityControllers {
         }
     }
 
-    private static Map<EntityType, Constructor<? extends EntityController>> TYPES = Maps.newEnumMap(EntityType.class);
+    private static final Map<EntityType, Constructor<? extends EntityController>> TYPES = Maps
+            .newEnumMap(EntityType.class);
 }

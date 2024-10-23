@@ -36,7 +36,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Boat;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -123,7 +122,6 @@ import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.AttributeTrait;
 import net.citizensnpcs.trait.BatTrait;
-import net.citizensnpcs.trait.BoatTrait;
 import net.citizensnpcs.trait.BoundingBoxTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
@@ -447,24 +445,6 @@ public class NPCCommands {
             throw new CommandException();
         npc.getOrAddTrait(BatTrait.class).setAwake(awake);
         Messaging.sendTr(sender, awake ? Messages.BAT_AWAKE_SET : Messages.BAT_AWAKE_UNSET, npc.getName());
-    }
-
-    @Command(
-            aliases = { "npc" },
-            usage = "boat --type [type]",
-            desc = "",
-            modifiers = { "boat" },
-            min = 1,
-            max = 1,
-            permission = "citizens.npc.boat")
-    public void boat(CommandContext args, CommandSender sender, NPC npc,
-            @Flag(value = "type", completionsProvider = OptionalBoatTypeCompletions.class) String stype)
-            throws CommandException {
-        if (stype == null)
-            throw new CommandUsageException();
-        Boat.Type type = Boat.Type.valueOf(stype);
-        npc.getOrAddTrait(BoatTrait.class).setType(type);
-        Messaging.sendTr(sender, Messages.BOAT_TYPE_SET, type);
     }
 
     @Command(
@@ -2479,8 +2459,7 @@ public class NPCCommands {
             permission = "citizens.npc.playerlist")
     @Requirements(selected = true, ownership = true, types = EntityType.PLAYER)
     public void playerlist(CommandContext args, CommandSender sender, NPC npc) {
-        boolean remove = !npc.data().get(NPC.Metadata.REMOVE_FROM_PLAYERLIST,
-                Setting.REMOVE_PLAYERS_FROM_PLAYER_LIST.asBoolean());
+        boolean remove = !npc.shouldRemoveFromPlayerList();
         if (args.hasFlag('a')) {
             remove = false;
         } else if (args.hasFlag('r')) {
@@ -3415,7 +3394,7 @@ public class NPCCommands {
             npc.data().setPersistent(NPC.Metadata.TARGETABLE, targetable);
         }
         if (targetable && npc.getOrAddTrait(MobType.class).getType() == EntityType.PLAYER
-                && npc.data().get(NPC.Metadata.REMOVE_FROM_PLAYERLIST, true)) {
+                && npc.shouldRemoveFromPlayerList()) {
             Messaging.sendTr(sender, Messages.TARGETABLE_PLAYERLIST_WARNING);
             if (args.hasFlag('t')) {
                 npc.data().set(NPC.Metadata.REMOVE_FROM_PLAYERLIST, false);

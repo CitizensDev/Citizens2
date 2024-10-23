@@ -179,7 +179,7 @@ public interface NMSBridge {
     public default void positionInteractionText(Player player, Entity interaction, Entity mount, double height) {
     }
 
-    public void registerEntityClass(Class<?> clazz);
+    public void registerEntityClass(Class<?> clazz, Object type);
 
     public void remove(Entity entity);
 

@@ -31,9 +31,6 @@ import net.minecraft.server.v1_15_R1.Vec3D;
 import net.minecraft.server.v1_15_R1.World;
 
 public class ItemController extends AbstractEntityController {
-    public ItemController() {
-        super(EntityItemNPC.class);
-    }
 
     @Override
     protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {

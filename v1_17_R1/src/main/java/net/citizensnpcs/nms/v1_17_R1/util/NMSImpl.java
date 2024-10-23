@@ -203,6 +203,7 @@ import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AreaEffectCloudTrait;
 import net.citizensnpcs.trait.versioned.AxolotlTrait;
 import net.citizensnpcs.trait.versioned.BeeTrait;
+import net.citizensnpcs.trait.versioned.BoatTrait;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.citizensnpcs.trait.versioned.CatTrait;
 import net.citizensnpcs.trait.versioned.EnderDragonTrait;
@@ -889,6 +890,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void load(CommandManager manager) {
+        registerTraitWithCommand(manager, BoatTrait.class);
         registerTraitWithCommand(manager, AreaEffectCloudTrait.class);
         registerTraitWithCommand(manager, EnderDragonTrait.class);
         registerTraitWithCommand(manager, AxolotlTrait.class);
@@ -1183,12 +1185,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void registerEntityClass(Class<?> clazz) {
+    public void registerEntityClass(Class<?> clazz, Object raw) {
         if (ENTITY_REGISTRY == null)
             return;
+        net.minecraft.world.entity.EntityType<?> type = (net.minecraft.world.entity.EntityType) raw;
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
-            net.minecraft.world.entity.EntityType<?> type = ENTITY_REGISTRY.findType(search);
             ResourceLocation key = ENTITY_REGISTRY.getKey(type);
             if (key == null || type == null) {
                 continue;
@@ -2314,11 +2316,11 @@ public class NMSImpl implements NMSBridge {
     private static final Map<Class<?>, net.minecraft.world.entity.EntityType<?>> CITIZENS_ENTITY_TYPES = Maps
             .newHashMap();
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getSetter(CraftBossBar.class, "handle");
-    private static EntityDataAccessor<Pose> DATA_POSE = null;
+    private static final EntityDataAccessor<Pose> DATA_POSE = NMS.getStaticObject(Entity.class, "ad");
     private static final float DEFAULT_SPEED = 1F;
-    public static MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EnderDragon.class, true,
-            boolean.class, AABB.class);
-    private static EntityDataAccessor<Boolean> ENDERMAN_CREEPY = null;
+    public static final MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EnderDragon.class,
+            true, boolean.class, AABB.class);
+    private static final EntityDataAccessor<Boolean> ENDERMAN_CREEPY = NMS.getStaticObject(EnderMan.class, "bV");
     private static final MethodHandle ENTITY_FISH_NUM_IN_SCHOOL = NMS.getSetter(AbstractSchoolingFish.class, "c");
     private static final MethodHandle ENTITY_GET_SOUND_FALL = NMS.getMethodHandle(LivingEntity.class, "getSoundFall",
             true, int.class);
@@ -2341,17 +2343,19 @@ public class NMSImpl implements NMSBridge {
     private static MethodHandle MOVE_CONTROLLER_MOVING = NMS.getSetter(MoveControl.class, "k");
     private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS.getMethodHandle(PathNavigation.class, "a",
             true, int.class);
-    private static MethodHandle NAVIGATION_PATH = NMS.getGetter(PathNavigation.class, "c");
+    private static final MethodHandle NAVIGATION_PATH = NMS.getGetter(PathNavigation.class, "c");
     private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFinalSetter(PathNavigation.class, "t");
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
     public static final Location PACKET_CACHE_LOCATION = new Location(null, 0, 0, 0);
-    // Player.mobCounts: workaround for an issue which suppresses mobs being spawn near NPC players on Paper. Need to check for every update.
+    // Player.mobCounts: workaround for an issue which suppresses mobs being spawn near NPC players on Paper. Need to
+    // check for every update.
     public static final MethodHandle PAPER_PLAYER_MOB_COUNTS = NMS.getGetter(ServerPlayer.class, "mobCounts", false);
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER = NMS.getGetter(ChunkMap.class, "J");
     private static final MethodHandle PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER = NMS.getSetter(ChunkMap.class, "J");
     private static final MethodHandle PUFFERFISH_C = NMS.getSetter(Pufferfish.class, "bU");
     private static final MethodHandle PUFFERFISH_D = NMS.getSetter(Pufferfish.class, "bT");
-    private static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = null;
+    private static final EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = NMS.getFirstStaticObject(Rabbit.class,
+            EntityDataAccessor.class);
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SERVER_ENTITY_GETTER = NMS.getFirstGetter(TrackedEntity.class,
             ServerEntity.class);
@@ -2367,20 +2371,6 @@ public class NMSImpl implements NMSBridge {
             ENTITY_REGISTRY_SETTER.invoke(ENTITY_REGISTRY);
         } catch (Throwable e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
-        }
-        try {
-            ENDERMAN_CREEPY = (EntityDataAccessor<Boolean>) NMS.getField(EnderMan.class, "bV").get(null);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        try {
-            RABBIT_TYPE_DATAWATCHER = (EntityDataAccessor<Integer>) NMS
-                    .getFirstStaticGetter(Rabbit.class, EntityDataAccessor.class).invoke();
-            DATA_POSE = (EntityDataAccessor<Pose>) NMS.getGetter(Entity.class, "ad").invoke();
-        } catch (Throwable e) {
-            e.printStackTrace();
         }
     }
 }

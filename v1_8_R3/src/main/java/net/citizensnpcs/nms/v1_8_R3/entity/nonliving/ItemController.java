@@ -25,9 +25,6 @@ import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
 
 public class ItemController extends AbstractEntityController {
-    public ItemController() {
-        super(EntityItemNPC.class);
-    }
 
     @Override
     protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {

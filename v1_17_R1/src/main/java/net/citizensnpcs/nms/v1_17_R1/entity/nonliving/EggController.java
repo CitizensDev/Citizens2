@@ -31,9 +31,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class EggController extends AbstractEntityController {
-    public EggController() {
-        super(EntityEggNPC.class);
-    }
+
 
     @Override
     protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {

@@ -31,9 +31,7 @@ import net.minecraft.server.v1_14_R1.World;
 import net.minecraft.server.v1_14_R1.WorldServer;
 
 public class EggController extends AbstractEntityController {
-    public EggController() {
-        super(EntityEggNPC.class);
-    }
+
 
     @Override
     protected Entity createEntity(Location at, NPC npc) {
