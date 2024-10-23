@@ -453,7 +453,7 @@ public class EventListen implements Listener {
         targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
         Bukkit.getPluginManager().callEvent(targetNPCEvent);
         if (targetNPCEvent.isCancelled()) {
-            targetNPCEvent.setCancelled(true);
+            event.setCancelled(true);
         }
     }
 
