@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait.text;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -253,7 +252,7 @@ public class Text extends Trait implements Runnable, Listener {
     }
 
     public void setSpeechBubbleDuration(Duration duration) {
-        this.speechBubbleDuration = (int) (duration.get(ChronoUnit.MILLIS) / 50);
+        this.speechBubbleDuration = Util.toTicks(duration);
     }
 
     /**

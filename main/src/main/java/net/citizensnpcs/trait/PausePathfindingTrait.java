@@ -12,21 +12,36 @@ import net.citizensnpcs.util.NMS;
 
 @TraitName("pausepathfinding")
 public class PausePathfindingTrait extends Trait {
+    @Persist("lockoutduration")
+    private int lockoutDuration = -1;
     @Persist("pauseticks")
     private int pauseTicks;
     @Persist("playerrange")
     private double playerRange = -1;
     @Persist("rightclick")
     private boolean rightclick;
+    private int t;
     private int unpauseTaskId = -1;
 
     public PausePathfindingTrait() {
         super("pausepathfinding");
     }
 
+    public int getLockoutDuration() {
+        return lockoutDuration;
+    }
+
+    public int getPauseDuration() {
+        return pauseTicks;
+    }
+
+    public double getPlayerRangeInBlocks() {
+        return playerRange;
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onInteract(NPCRightClickEvent event) {
-        if (!rightclick || event.getNPC() != npc)
+        if (lockoutDuration > t || !rightclick || event.getNPC() != npc)
             return;
         pause();
         event.setDelayedCancellation(true);
@@ -42,27 +57,38 @@ public class PausePathfindingTrait extends Trait {
             NMS.setPitch(npc.getEntity(), 0);
             npc.getNavigator().setPaused(false);
         }, pauseTicks <= 0 ? 20 : pauseTicks);
+        t = 0;
+    }
+
+    public boolean pauseOnRightClick() {
+        return rightclick;
     }
 
     @Override
     public void run() {
-        if (playerRange == -1 || !npc.isSpawned() || unpauseTaskId == -1 && !npc.getNavigator().isNavigating())
+        if (lockoutDuration > t++ || playerRange == -1 || !npc.isSpawned()
+                || unpauseTaskId == -1 && !npc.getNavigator().isNavigating())
             return;
+
         if (CitizensAPI.getLocationLookup()
                 .getNearbyVisiblePlayers(npc.getEntity(), npc.getStoredLocation(), playerRange).iterator().hasNext()) {
             pause();
         }
     }
 
-    public void setPauseTicks(int pauseTicks) {
-        this.pauseTicks = pauseTicks;
+    public void setLockoutDuration(int ticks) {
+        this.lockoutDuration = ticks;
     }
 
-    public void setPlayerRangeBlocks(double range) {
-        playerRange = range;
+    public void setPauseDuration(int ticks) {
+        this.pauseTicks = ticks;
     }
 
-    public void setRightClick(boolean rightclick) {
+    public void setPauseOnRightClick(boolean rightclick) {
         this.rightclick = rightclick;
+    }
+
+    public void setPlayerRange(double blockRange) {
+        playerRange = blockRange;
     }
 }

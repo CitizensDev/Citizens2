@@ -339,6 +339,7 @@ public class Messages {
     public static final String PATHFINDING_OPTIONS_STATIONARY_TICKS_SET = "citizens.commands.npc.pathopt.stationary-ticks-set";
     public static final String PATHFINDING_OPTIONS_USE_NEW_FINDER = "citizens.commands.npc.pathopt.use-new-finder";
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
+    public static final String PAUSEPATHFINDING_LOCKOUT_DURATION_SET = "citizens.commands.npc.pausepathfinding.lockout-duration-set";
     public static final String PAUSEPATHFINDING_RANGE_SET = "citizens.commands.npc.pausepathfinding.pause-range-set";
     public static final String PAUSEPATHFINDING_RIGHTCLICK_SET = "citizens.commands.npc.pausepathfinding.rightclick-set";
     public static final String PAUSEPATHFINDING_RIGHTCLICK_UNSET = "citizens.commands.npc.pausepathfinding.rightclick-unset";

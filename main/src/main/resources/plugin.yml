@@ -6,8 +6,9 @@ main: net.citizensnpcs.Citizens
 website: https://www.citizensnpcs.co
 api-version: "1.13"
 libraries:
-  - ch.ethz.globis.phtree:phtree:2.8.0
-  - org.joml:joml:1.10.5
+  - ch.ethz.globis.phtree:phtree:2.8.1
+  - org.joml:joml:1.10.8
+  - it.unimi.dsi:fastutil:8.5.15
   - net.kyori:adventure-platform-bukkit:4.3.3
   - net.kyori:adventure-text-minimessage:4.17.0
 commands:

@@ -2335,7 +2335,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pausepathfinding --onrightclick [true|false] --when-player-within [range in blocks] --pauseticks [ticks]",
+            usage = "pausepathfinding --onrightclick [true|false] --when-player-within [range in blocks] --pauseduration [duration] --lockoutduration [duration]",
             desc = "",
             modifiers = { "pausepathfinding" },
             min = 1,
@@ -2343,23 +2343,28 @@ public class NPCCommands {
             permission = "citizens.npc.pausepathfinding")
     public void pausepathfinding(CommandContext args, CommandSender sender, NPC npc,
             @Flag("onrightclick") Boolean rightclick, @Flag("when-player-within") Double playerRange,
-            @Flag("pauseticks") Integer ticks) throws CommandException {
+            @Flag("pauseduration") Duration pauseDuration, @Flag("lockoutduration") Duration lockoutDuration)
+            throws CommandException {
         PausePathfindingTrait trait = npc.getOrAddTrait(PausePathfindingTrait.class);
         if (playerRange != null) {
             if (playerRange <= 0)
                 throw new CommandException("Invalid range");
-            trait.setPlayerRangeBlocks(playerRange);
+            trait.setPlayerRange(playerRange);
             Messaging.sendTr(sender, Messages.PAUSEPATHFINDING_RANGE_SET, npc.getName(), playerRange);
         }
         if (rightclick != null) {
-            trait.setRightClick(rightclick);
+            trait.setPauseOnRightClick(rightclick);
             Messaging.sendTr(sender,
                     rightclick ? Messages.PAUSEPATHFINDING_RIGHTCLICK_SET : Messages.PAUSEPATHFINDING_RIGHTCLICK_UNSET,
                     npc.getName());
         }
-        if (ticks != null) {
-            trait.setPauseTicks(ticks);
-            Messaging.sendTr(sender, Messages.PAUSEPATHFINDING_TICKS_SET, npc.getName(), ticks);
+        if (lockoutDuration != null) {
+            trait.setLockoutDuration(Util.toTicks(lockoutDuration));
+            Messaging.sendTr(sender, Messages.PAUSEPATHFINDING_LOCKOUT_DURATION_SET, npc.getName(), lockoutDuration);
+        }
+        if (pauseDuration != null) {
+            trait.setPauseDuration(Util.toTicks(pauseDuration));
+            Messaging.sendTr(sender, Messages.PAUSEPATHFINDING_TICKS_SET, npc.getName(), pauseDuration);
         }
     }
 

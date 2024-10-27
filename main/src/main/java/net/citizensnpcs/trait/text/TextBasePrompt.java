@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.text;
 
+import java.time.DateTimeException;
 import java.time.Duration;
 import java.util.Arrays;
 
@@ -86,7 +87,7 @@ public class TextBasePrompt extends StringPrompt {
                         null);
                 text.setSpeechBubbleDuration(duration);
                 Messaging.sendErrorTr(sender, Messages.SPEECH_BUBBLES_DURATION_SET, duration);
-            } catch (Exception exception) {
+            } catch (DateTimeException ex) {
                 Messaging.sendErrorTr(sender, Messages.INVALID_SPEECH_BUBBLES_DURATION);
             }
         } else if (input.equalsIgnoreCase("close") || original.trim().equalsIgnoreCase("talk close")) {
