@@ -51,6 +51,7 @@ import net.citizensnpcs.api.event.NPCCollisionEvent;
 import net.citizensnpcs.api.event.NPCPistonPushEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
@@ -298,6 +299,11 @@ public class Util {
 
     public static boolean isBedrockName(String name) {
         return BEDROCK_NAME_PREFIX != null ? name.startsWith(BEDROCK_NAME_PREFIX) : false;
+    }
+
+    public static boolean isEquippable(ItemStack stack, EquipmentSlot slot) {
+        return SUPPORTS_HAS_EQUIPPABLE && stack.hasItemMeta() && stack.getItemMeta().hasEquippable()
+                && stack.getItemMeta().getEquippable().getSlot() == slot.toBukkit();
     }
 
     public static boolean isHorse(EntityType type) {
@@ -622,6 +628,7 @@ public class Util {
     private static String BEDROCK_NAME_PREFIX = ".";
     private static Scoreboard DUMMY_SCOREBOARD;
     private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
+    private static boolean SUPPORTS_HAS_EQUIPPABLE = false;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {
@@ -630,6 +637,11 @@ public class Util {
         } catch (NullPointerException e) {
         }
         TWO_DIGIT_DECIMAL.setMaximumFractionDigits(2);
+        try {
+            ItemMeta.class.getMethod("hasEquippable");
+        } catch (NoSuchMethodException e) {
+            SUPPORTS_HAS_EQUIPPABLE = false;
+        }
         try {
             Bukkit.class.getMethod("getEntity", UUID.class);
         } catch (Exception e) {

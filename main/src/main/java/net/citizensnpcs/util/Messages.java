@@ -93,6 +93,7 @@ public class Messages {
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
     public static final String COPIER_EDITOR_BEGIN = "citizens.editors.copier.begin";
     public static final String COPIER_EDITOR_END = "citizens.editors.copier.end";
+    public static final String COSMETIC_EQUIPMENT_SET = "citizens.commands.npc.setequipment.cosmetic-set";
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.waypoints.current-provider";
     public static final String DEFAULT_POSE_SET = "citizens.commands.npc.pose.default-pose-set";
     public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
