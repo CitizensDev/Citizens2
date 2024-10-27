@@ -25,15 +25,14 @@ public abstract class MobEntityController extends AbstractEntityController {
     private final Class<?> clazz;
 
     protected MobEntityController(Class<?> clazz) {
-        NMS.registerEntityClass(clazz, NMSImpl.getEntityType(clazz));
+        NMS.registerEntityClass(clazz, null);
         this.clazz = clazz;
     }
 
     @Override
     protected Entity createEntity(Location at, NPC npc) {
-        EntityType<?> type = NMSImpl.getEntityType(clazz);
-        net.minecraft.world.entity.Entity entity = createEntityFromClass(type, ((CraftWorld) at.getWorld()).getHandle(),
-                npc);
+        net.minecraft.world.entity.Entity entity = createEntityFromClass(NMSImpl.getEntityType(clazz),
+                ((CraftWorld) at.getWorld()).getHandle(), npc);
         if (entity instanceof Mob) {
             NMSImpl.clearGoals(npc, ((Mob) entity).goalSelector, ((Mob) entity).targetSelector);
             Mob mob = (Mob) entity;

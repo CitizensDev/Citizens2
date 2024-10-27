@@ -1336,9 +1336,9 @@ public class NMSImpl implements NMSBridge {
     public void registerEntityClass(Class<?> clazz, Object raw) {
         if (ENTITY_REGISTRY == null)
             return;
-        net.minecraft.world.entity.EntityType<?> type = (net.minecraft.world.entity.EntityType) raw;
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
+            net.minecraft.world.entity.EntityType<?> type = ENTITY_REGISTRY.findType(search);
             ResourceLocation key = ENTITY_REGISTRY.getKey(type);
             if (key == null || type == null) {
                 continue;
