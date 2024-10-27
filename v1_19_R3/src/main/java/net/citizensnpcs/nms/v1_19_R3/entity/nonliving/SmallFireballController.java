@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SmallFireballController extends MobEntityController {
     public SmallFireballController() {
-        super(EntitySmallFireballNPC.class);
+        super(EntitySmallFireballNPC.class, EntityType.SMALL_FIREBALL);
     }
 
     @Override

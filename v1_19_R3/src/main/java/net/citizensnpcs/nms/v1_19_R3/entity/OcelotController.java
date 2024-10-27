@@ -38,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class OcelotController extends MobEntityController {
     public OcelotController() {
-        super(EntityOcelotNPC.class);
+        super(EntityOcelotNPC.class, EntityType.OCELOT);
     }
 
     @Override

@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PillagerController extends MobEntityController {
     public PillagerController() {
-        super(EntityPillagerNPC.class);
+        super(EntityPillagerNPC.class, EntityType.PILLAGER);
     }
 
     @Override

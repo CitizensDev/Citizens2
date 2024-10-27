@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ThrownPotionController extends MobEntityController {
     public ThrownPotionController() {
-        super(EntityThrownPotionNPC.class);
+        super(EntityThrownPotionNPC.class, EntityType.POTION);
     }
 
     @Override

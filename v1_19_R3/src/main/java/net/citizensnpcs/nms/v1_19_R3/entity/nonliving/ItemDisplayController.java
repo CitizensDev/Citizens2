@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ItemDisplayController extends MobEntityController {
     public ItemDisplayController() {
-        super(EntityItemDisplayNPC.class);
+        super(EntityItemDisplayNPC.class, EntityType.ITEM_DISPLAY);
     }
 
     @Override

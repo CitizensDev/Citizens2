@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MinecartCommandController extends MobEntityController {
     public MinecartCommandController() {
-        super(EntityMinecartCommandNPC.class);
+        super(EntityMinecartCommandNPC.class, EntityType.COMMAND_BLOCK_MINECART);
     }
 
     @Override

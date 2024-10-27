@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class DrownedController extends MobEntityController {
     public DrownedController() {
-        super(EntityDrownedNPC.class);
+        super(EntityDrownedNPC.class, EntityType.DROWNED);
     }
 
     @Override

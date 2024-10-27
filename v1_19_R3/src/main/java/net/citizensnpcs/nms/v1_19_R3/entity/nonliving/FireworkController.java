@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class FireworkController extends MobEntityController {
     public FireworkController() {
-        super(EntityFireworkNPC.class);
+        super(EntityFireworkNPC.class, EntityType.FIREWORK_ROCKET);
     }
 
     @Override

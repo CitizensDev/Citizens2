@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SheepController extends MobEntityController {
     public SheepController() {
-        super(EntitySheepNPC.class);
+        super(EntitySheepNPC.class, EntityType.SHEEP);
     }
 
     @Override

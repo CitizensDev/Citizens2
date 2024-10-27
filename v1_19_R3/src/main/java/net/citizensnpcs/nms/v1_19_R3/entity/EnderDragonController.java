@@ -40,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EnderDragonController extends MobEntityController {
     public EnderDragonController() {
-        super(EntityEnderDragonNPC.class);
+        super(EntityEnderDragonNPC.class, EntityType.ENDER_DRAGON);
     }
 
     @Override

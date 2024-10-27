@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ZoglinController extends MobEntityController {
     public ZoglinController() {
-        super(EntityZoglinNPC.class);
+        super(EntityZoglinNPC.class, EntityType.ZOGLIN);
     }
 
     @Override

@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SnowmanController extends MobEntityController {
     public SnowmanController() {
-        super(EntitySnowmanNPC.class);
+        super(EntitySnowmanNPC.class, EntityType.SNOW_GOLEM);
     }
 
     @Override

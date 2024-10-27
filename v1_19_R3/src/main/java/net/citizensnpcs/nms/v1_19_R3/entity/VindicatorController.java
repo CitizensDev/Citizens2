@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class VindicatorController extends MobEntityController {
     public VindicatorController() {
-        super(EntityVindicatorNPC.class);
+        super(EntityVindicatorNPC.class, EntityType.VINDICATOR);
     }
 
     @Override

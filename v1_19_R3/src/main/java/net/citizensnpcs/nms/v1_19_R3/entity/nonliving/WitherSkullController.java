@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class WitherSkullController extends MobEntityController {
     public WitherSkullController() {
-        super(EntityWitherSkullNPC.class);
+        super(EntityWitherSkullNPC.class, EntityType.WITHER_SKULL);
     }
 
     @Override

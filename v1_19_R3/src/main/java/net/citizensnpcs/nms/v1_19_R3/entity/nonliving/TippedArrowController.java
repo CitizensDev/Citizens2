@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class TippedArrowController extends MobEntityController {
     public TippedArrowController() {
-        super(EntityTippedArrowNPC.class);
+        super(EntityTippedArrowNPC.class, EntityType.ARROW);
     }
 
     @Override

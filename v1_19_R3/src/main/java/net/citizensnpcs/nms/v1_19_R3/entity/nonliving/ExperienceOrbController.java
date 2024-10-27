@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ExperienceOrbController extends MobEntityController {
     public ExperienceOrbController() {
-        super(EntityExperienceOrbNPC.class);
+        super(EntityExperienceOrbNPC.class, EntityType.EXPERIENCE_ORB);
     }
 
     @Override

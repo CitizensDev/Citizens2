@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CatController extends MobEntityController {
     public CatController() {
-        super(EntityCatNPC.class);
+        super(EntityCatNPC.class, EntityType.CAT);
     }
 
     @Override

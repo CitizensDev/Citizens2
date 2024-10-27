@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class WolfController extends MobEntityController {
     public WolfController() {
-        super(EntityWolfNPC.class);
+        super(EntityWolfNPC.class, EntityType.WOLF);
     }
 
     @Override

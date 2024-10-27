@@ -38,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class DolphinController extends MobEntityController {
     public DolphinController() {
-        super(EntityDolphinNPC.class);
+        super(EntityDolphinNPC.class, EntityType.DOLPHIN);
     }
 
     @Override

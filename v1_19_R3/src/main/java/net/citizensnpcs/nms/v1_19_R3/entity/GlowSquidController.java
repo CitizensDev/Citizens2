@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class GlowSquidController extends MobEntityController {
     public GlowSquidController() {
-        super(EntityGlowSquidNPC.class);
+        super(EntityGlowSquidNPC.class, EntityType.GLOW_SQUID);
     }
 
     @Override

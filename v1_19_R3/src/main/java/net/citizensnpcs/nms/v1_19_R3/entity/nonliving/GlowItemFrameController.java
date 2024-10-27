@@ -33,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class GlowItemFrameController extends MobEntityController {
     public GlowItemFrameController() {
-        super(EntityGlowItemFrameNPC.class);
+        super(EntityGlowItemFrameNPC.class, EntityType.GLOW_ITEM_FRAME);
     }
 
     @Override

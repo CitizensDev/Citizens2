@@ -38,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class RabbitController extends MobEntityController {
     public RabbitController() {
-        super(EntityRabbitNPC.class);
+        super(EntityRabbitNPC.class, EntityType.RABBIT);
     }
 
     @Override

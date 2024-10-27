@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class VexController extends MobEntityController {
     public VexController() {
-        super(EntityVexNPC.class);
+        super(EntityVexNPC.class, EntityType.VEX);
     }
 
     @Override

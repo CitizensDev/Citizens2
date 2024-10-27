@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class RavagerController extends MobEntityController {
     public RavagerController() {
-        super(EntityRavagerNPC.class);
+        super(EntityRavagerNPC.class, EntityType.RAVAGER);
     }
 
     @Override

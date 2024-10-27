@@ -43,7 +43,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CodController extends MobEntityController {
     public CodController() {
-        super(EntityCodNPC.class);
+        super(EntityCodNPC.class, EntityType.COD);
     }
 
     @Override

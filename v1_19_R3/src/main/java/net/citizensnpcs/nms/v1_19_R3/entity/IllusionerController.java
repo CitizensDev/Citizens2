@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class IllusionerController extends MobEntityController {
     public IllusionerController() {
-        super(EntityIllusionerNPC.class);
+        super(EntityIllusionerNPC.class, EntityType.ILLUSIONER);
     }
 
     @Override

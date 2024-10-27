@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class AreaEffectCloudController extends MobEntityController {
     public AreaEffectCloudController() {
-        super(EntityAreaEffectCloudNPC.class);
+        super(EntityAreaEffectCloudNPC.class, EntityType.AREA_EFFECT_CLOUD);
     }
 
     @Override

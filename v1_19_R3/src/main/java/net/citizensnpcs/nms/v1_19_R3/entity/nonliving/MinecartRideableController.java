@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MinecartRideableController extends MobEntityController {
     public MinecartRideableController() {
-        super(EntityMinecartRideableNPC.class);
+        super(EntityMinecartRideableNPC.class, EntityType.MINECART);
     }
 
     @Override

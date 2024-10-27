@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EndermanController extends MobEntityController {
     public EndermanController() {
-        super(EntityEndermanNPC.class);
+        super(EntityEndermanNPC.class, EntityType.ENDERMAN);
     }
 
     @Override

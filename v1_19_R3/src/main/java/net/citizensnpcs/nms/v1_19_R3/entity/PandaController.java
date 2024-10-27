@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PandaController extends MobEntityController {
     public PandaController() {
-        super(EntityPandaNPC.class);
+        super(EntityPandaNPC.class, EntityType.PANDA);
     }
 
     @Override

@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EnderPearlController extends MobEntityController {
     public EnderPearlController() {
-        super(EntityEnderPearlNPC.class);
+        super(EntityEnderPearlNPC.class, EntityType.ENDER_PEARL);
     }
 
     @Override

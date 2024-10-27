@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CaveSpiderController extends MobEntityController {
     public CaveSpiderController() {
-        super(EntityCaveSpiderNPC.class);
+        super(EntityCaveSpiderNPC.class, EntityType.CAVE_SPIDER);
     }
 
     @Override

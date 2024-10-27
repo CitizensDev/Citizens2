@@ -41,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class HorseMuleController extends MobEntityController {
     public HorseMuleController() {
-        super(EntityHorseMuleNPC.class);
+        super(EntityHorseMuleNPC.class, EntityType.MULE);
     }
 
     @Override

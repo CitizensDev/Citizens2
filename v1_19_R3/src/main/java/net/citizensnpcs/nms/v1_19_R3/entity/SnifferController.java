@@ -42,7 +42,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SnifferController extends MobEntityController {
     public SnifferController() {
-        super(EntitySnifferNPC.class);
+        super(EntitySnifferNPC.class, EntityType.SNIFFER);
     }
 
     @Override

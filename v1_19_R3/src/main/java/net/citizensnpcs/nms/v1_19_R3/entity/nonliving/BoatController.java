@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class BoatController extends MobEntityController {
     public BoatController() {
-        super(EntityBoatNPC.class);
+        super(EntityBoatNPC.class, EntityType.BOAT);
     }
 
     @Override

@@ -40,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class FoxController extends MobEntityController {
     public FoxController() {
-        super(EntityFoxNPC.class);
+        super(EntityFoxNPC.class, EntityType.FOX);
     }
 
     @Override

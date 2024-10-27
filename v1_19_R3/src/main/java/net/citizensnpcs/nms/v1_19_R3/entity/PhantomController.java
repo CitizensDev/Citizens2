@@ -40,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PhantomController extends MobEntityController {
     public PhantomController() {
-        super(EntityPhantomNPC.class);
+        super(EntityPhantomNPC.class, EntityType.PHANTOM);
     }
 
     @Override

@@ -38,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PigController extends MobEntityController {
     public PigController() {
-        super(EntityPigNPC.class);
+        super(EntityPigNPC.class, EntityType.PIG);
     }
 
     @Override

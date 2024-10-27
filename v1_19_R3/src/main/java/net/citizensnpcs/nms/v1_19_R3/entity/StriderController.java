@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class StriderController extends MobEntityController {
     public StriderController() {
-        super(EntityStriderNPC.class);
+        super(EntityStriderNPC.class, EntityType.STRIDER);
     }
 
     @Override

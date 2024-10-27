@@ -33,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ItemFrameController extends MobEntityController {
     public ItemFrameController() {
-        super(EntityItemFrameNPC.class);
+        super(EntityItemFrameNPC.class, EntityType.ITEM_FRAME);
     }
 
     @Override

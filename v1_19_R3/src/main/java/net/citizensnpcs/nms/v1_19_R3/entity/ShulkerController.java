@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ShulkerController extends MobEntityController {
     public ShulkerController() {
-        super(EntityShulkerNPC.class);
+        super(EntityShulkerNPC.class, EntityType.SHULKER);
     }
 
     @Override

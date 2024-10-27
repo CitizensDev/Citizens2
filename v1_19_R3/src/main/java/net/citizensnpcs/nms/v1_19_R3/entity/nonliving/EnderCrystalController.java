@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EnderCrystalController extends MobEntityController {
     public EnderCrystalController() {
-        super(EntityEnderCrystalNPC.class);
+        super(EntityEnderCrystalNPC.class, EntityType.END_CRYSTAL);
     }
 
     @Override

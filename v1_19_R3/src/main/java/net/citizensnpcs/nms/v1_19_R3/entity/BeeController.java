@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class BeeController extends MobEntityController {
     public BeeController() {
-        super(EntityBeeNPC.class);
+        super(EntityBeeNPC.class, EntityType.BEE);
     }
 
     @Override

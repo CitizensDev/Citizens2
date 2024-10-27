@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class BlazeController extends MobEntityController {
     public BlazeController() {
-        super(EntityBlazeNPC.class);
+        super(EntityBlazeNPC.class, EntityType.BLAZE);
     }
 
     @Override

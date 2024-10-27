@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ThrownExpBottleController extends MobEntityController {
     public ThrownExpBottleController() {
-        super(EntityThrownExpBottleNPC.class);
+        super(EntityThrownExpBottleNPC.class, EntityType.EXPERIENCE_BOTTLE);
     }
 
     @Override

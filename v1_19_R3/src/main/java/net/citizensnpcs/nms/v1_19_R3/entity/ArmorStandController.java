@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ArmorStandController extends MobEntityController {
     public ArmorStandController() {
-        super(EntityArmorStandNPC.class);
+        super(EntityArmorStandNPC.class, EntityType.ARMOR_STAND);
     }
 
     @Override

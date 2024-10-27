@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MarkerController extends MobEntityController {
     public MarkerController() {
-        super(EntityMarkerNPC.class);
+        super(EntityMarkerNPC.class, EntityType.MARKER);
     }
 
     @Override
