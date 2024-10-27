@@ -1,5 +1,6 @@
 package net.citizensnpcs.api.trait.trait;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -28,6 +29,7 @@ import net.citizensnpcs.api.util.SpigotUtil;
  */
 @TraitName("equipment")
 public class Equipment extends Trait {
+    private final ItemStack[] cosmetic = new ItemStack[7];
     private final ItemStack[] equipment = new ItemStack[7];
 
     public Equipment() {
@@ -49,16 +51,25 @@ public class Equipment extends Trait {
      * Get an NPC's equipment from the given slot.
      *
      * @param slot
-     *            Slot where the armor is located (0-6)
-     * @return ItemStack from the given armor slot
+     *            Slot where the equipment is located (0-6)
+     * @return ItemStack from the given equipment slot
      */
     public ItemStack get(int slot) {
         if (npc.getEntity() instanceof Enderman && slot != 0) {
             throw new IllegalArgumentException("Slot must be 0 for enderman");
-        } else if (slot < 0 || slot > 6) {
-            throw new IllegalArgumentException("Slot must be between 0 and 6");
         }
         return equipment[slot] == null ? null : equipment[slot].clone();
+    }
+
+    /**
+     * Gets the NPC's cosmetic equipment from the given slot. Nullable.
+     *
+     * @param slot
+     *            Equipment slot
+     * @return ItemStack or null in the given equipment slot
+     */
+    public ItemStack getCosmetic(EquipmentSlot slot) {
+        return cosmetic[slot.getIndex()] == null ? null : cosmetic[slot.getIndex()].clone();
     }
 
     /**
@@ -77,13 +88,9 @@ public class Equipment extends Trait {
      */
     public Map<EquipmentSlot, ItemStack> getEquipmentBySlot() {
         Map<EquipmentSlot, ItemStack> map = Maps.newEnumMap(EquipmentSlot.class);
-        map.put(EquipmentSlot.HAND, equipment[0]);
-        map.put(EquipmentSlot.HELMET, equipment[1]);
-        map.put(EquipmentSlot.CHESTPLATE, equipment[2]);
-        map.put(EquipmentSlot.LEGGINGS, equipment[3]);
-        map.put(EquipmentSlot.BOOTS, equipment[4]);
-        map.put(EquipmentSlot.OFF_HAND, equipment[5]);
-        map.put(EquipmentSlot.BODY, equipment[6]);
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            map.put(slot, equipment[slot.getIndex()] == null ? null : equipment[slot.getIndex()].clone());
+        }
         return map;
     }
 
@@ -95,26 +102,14 @@ public class Equipment extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        if (key.keyExists("hand")) {
-            equipment[0] = ItemStorage.loadItemStack(key.getRelative("hand"));
-        }
-        if (key.keyExists("helmet")) {
-            equipment[1] = ItemStorage.loadItemStack(key.getRelative("helmet"));
-        }
-        if (key.keyExists("chestplate")) {
-            equipment[2] = ItemStorage.loadItemStack(key.getRelative("chestplate"));
-        }
-        if (key.keyExists("leggings")) {
-            equipment[3] = ItemStorage.loadItemStack(key.getRelative("leggings"));
-        }
-        if (key.keyExists("boots")) {
-            equipment[4] = ItemStorage.loadItemStack(key.getRelative("boots"));
-        }
-        if (key.keyExists("offhand")) {
-            equipment[5] = ItemStorage.loadItemStack(key.getRelative("offhand"));
-        }
-        if (key.keyExists("body")) {
-            equipment[6] = ItemStorage.loadItemStack(key.getRelative("body"));
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            String name = slot.name().toLowerCase(Locale.ROOT);
+            if (key.keyExists(name)) {
+                equipment[slot.getIndex()] = ItemStorage.loadItemStack(key.getRelative(name));
+            }
+            if (key.keyExists("cosmetic_" + name)) {
+                cosmetic[slot.getIndex()] = ItemStorage.loadItemStack(key.getRelative("cosmetic_" + name));
+            }
         }
     }
 
@@ -192,13 +187,11 @@ public class Equipment extends Trait {
 
     @Override
     public void save(DataKey key) {
-        saveOrRemove(key.getRelative("hand"), equipment[0]);
-        saveOrRemove(key.getRelative("helmet"), equipment[1]);
-        saveOrRemove(key.getRelative("chestplate"), equipment[2]);
-        saveOrRemove(key.getRelative("leggings"), equipment[3]);
-        saveOrRemove(key.getRelative("boots"), equipment[4]);
-        saveOrRemove(key.getRelative("offhand"), equipment[5]);
-        saveOrRemove(key.getRelative("body"), equipment[6]);
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            saveOrRemove(key.getRelative(slot.name().toLowerCase(Locale.ROOT)), equipment[slot.getIndex()]);
+            saveOrRemove(key.getRelative("cosmetic_" + slot.name().toLowerCase(Locale.ROOT)),
+                    cosmetic[slot.getIndex()]);
+        }
     }
 
     private void saveOrRemove(DataKey key, ItemStack item) {
@@ -279,6 +272,18 @@ public class Equipment extends Trait {
         if (npc.getEntity() instanceof Player) {
             ((Player) npc.getEntity()).updateInventory();
         }
+    }
+
+    /**
+     * Set the cosmetic equipment in the given slot
+     *
+     * @param slot
+     *            The equipment slot
+     * @param stack
+     *            Thew new itemstack
+     */
+    public void setCosmetic(EquipmentSlot slot, ItemStack stack) {
+        cosmetic[slot.getIndex()] = stack.clone();
     }
 
     public enum EquipmentSlot {
