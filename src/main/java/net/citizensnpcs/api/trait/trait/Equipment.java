@@ -283,7 +283,7 @@ public class Equipment extends Trait {
      *            Thew new itemstack
      */
     public void setCosmetic(EquipmentSlot slot, ItemStack stack) {
-        cosmetic[slot.getIndex()] = stack.clone();
+        cosmetic[slot.getIndex()] = stack == null ? null : stack.clone();
     }
 
     public enum EquipmentSlot {
@@ -303,6 +303,29 @@ public class Equipment extends Trait {
 
         int getIndex() {
             return index;
+        }
+
+        public org.bukkit.inventory.EquipmentSlot toBukkit() {
+            switch (this) {
+                case BODY:
+                    return org.bukkit.inventory.EquipmentSlot.BODY;
+                case BOOTS:
+                    return org.bukkit.inventory.EquipmentSlot.FEET;
+                case CHESTPLATE:
+                    return org.bukkit.inventory.EquipmentSlot.CHEST;
+                case HAND:
+                    return org.bukkit.inventory.EquipmentSlot.HAND;
+                case HELMET:
+                    return org.bukkit.inventory.EquipmentSlot.HEAD;
+                case LEGGINGS:
+                    return org.bukkit.inventory.EquipmentSlot.LEGS;
+                case OFF_HAND:
+                    return org.bukkit.inventory.EquipmentSlot.OFF_HAND;
+                default:
+                    break;
+
+            }
+            return null;
         }
     }
 
