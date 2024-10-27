@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SkeletonWitherController extends MobEntityController {
     public SkeletonWitherController() {
-        super(EntitySkeletonWitherNPC.class);
+        super(EntitySkeletonWitherNPC.class, EntityType.WITHER_SKELETON);
     }
 
     @Override

@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EndermiteController extends MobEntityController {
     public EndermiteController() {
-        super(EntityEndermiteNPC.class);
+        super(EntityEndermiteNPC.class, EntityType.ENDERMITE);
     }
 
     @Override

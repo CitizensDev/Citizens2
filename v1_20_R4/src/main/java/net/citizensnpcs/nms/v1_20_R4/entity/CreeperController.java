@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CreeperController extends MobEntityController {
     public CreeperController() {
-        super(EntityCreeperNPC.class);
+        super(EntityCreeperNPC.class, EntityType.CREEPER);
     }
 
     @Override

@@ -40,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class WanderingTraderController extends MobEntityController {
     public WanderingTraderController() {
-        super(EntityWanderingTraderNPC.class);
+        super(EntityWanderingTraderNPC.class, EntityType.WANDERING_TRADER);
     }
 
     @Override

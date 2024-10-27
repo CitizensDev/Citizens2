@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class WitherController extends MobEntityController {
     public WitherController() {
-        super(EntityWitherNPC.class);
+        super(EntityWitherNPC.class, EntityType.WITHER);
     }
 
     @Override

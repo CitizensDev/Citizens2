@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SlimeController extends MobEntityController {
     public SlimeController() {
-        super(EntitySlimeNPC.class);
+        super(EntitySlimeNPC.class, EntityType.SLIME);
     }
 
     @Override

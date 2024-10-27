@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SilverfishController extends MobEntityController {
     public SilverfishController() {
-        super(EntitySilverfishNPC.class);
+        super(EntitySilverfishNPC.class, EntityType.SILVERFISH);
     }
 
     @Override

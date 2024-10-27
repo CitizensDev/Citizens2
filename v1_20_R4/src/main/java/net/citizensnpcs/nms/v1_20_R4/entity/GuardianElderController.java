@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class GuardianElderController extends MobEntityController {
     public GuardianElderController() {
-        super(EntityGuardianElderNPC.class);
+        super(EntityGuardianElderNPC.class, EntityType.ELDER_GUARDIAN);
     }
 
     @Override

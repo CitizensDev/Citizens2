@@ -41,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class TropicalFishController extends MobEntityController {
     public TropicalFishController() {
-        super(EntityTropicalFishNPC.class);
+        super(EntityTropicalFishNPC.class, EntityType.TROPICAL_FISH);
     }
 
     @Override

@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class TextDisplayController extends MobEntityController {
     public TextDisplayController() {
-        super(EntityTextDisplayNPC.class);
+        super(EntityTextDisplayNPC.class, EntityType.TEXT_DISPLAY);
     }
 
     @Override

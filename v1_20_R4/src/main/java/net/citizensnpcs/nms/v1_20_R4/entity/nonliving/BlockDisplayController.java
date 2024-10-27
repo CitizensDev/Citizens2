@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class BlockDisplayController extends MobEntityController {
     public BlockDisplayController() {
-        super(EntityBlockDisplayNPC.class);
+        super(EntityBlockDisplayNPC.class, EntityType.BLOCK_DISPLAY);
     }
 
     @Override

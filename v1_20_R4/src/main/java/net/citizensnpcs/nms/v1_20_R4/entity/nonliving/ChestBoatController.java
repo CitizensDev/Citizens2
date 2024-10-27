@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ChestBoatController extends MobEntityController {
     public ChestBoatController() {
-        super(EntityChestBoatNPC.class);
+        super(EntityChestBoatNPC.class, EntityType.CHEST_BOAT);
     }
 
     @Override

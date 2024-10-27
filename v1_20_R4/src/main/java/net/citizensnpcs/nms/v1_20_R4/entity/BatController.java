@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class BatController extends MobEntityController {
     public BatController() {
-        super(EntityBatNPC.class);
+        super(EntityBatNPC.class, EntityType.BAT);
     }
 
     @Override

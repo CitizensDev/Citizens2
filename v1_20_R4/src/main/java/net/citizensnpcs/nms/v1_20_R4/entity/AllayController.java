@@ -43,7 +43,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class AllayController extends MobEntityController {
     public AllayController() {
-        super(EntityAllayNPC.class);
+        super(EntityAllayNPC.class, EntityType.ALLAY);
     }
 
     @Override

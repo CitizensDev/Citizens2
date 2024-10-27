@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class FishingHookController extends MobEntityController {
     public FishingHookController() {
-        super(EntityFishingHookNPC.class);
+        super(EntityFishingHookNPC.class, EntityType.FISHING_BOBBER);
     }
 
     @Override

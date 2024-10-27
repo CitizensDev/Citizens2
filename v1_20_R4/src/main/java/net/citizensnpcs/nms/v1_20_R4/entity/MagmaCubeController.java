@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MagmaCubeController extends MobEntityController {
     public MagmaCubeController() {
-        super(EntityMagmaCubeNPC.class);
+        super(EntityMagmaCubeNPC.class, EntityType.MAGMA_CUBE);
     }
 
     @Override

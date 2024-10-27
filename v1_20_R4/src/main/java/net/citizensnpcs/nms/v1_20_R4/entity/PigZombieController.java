@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PigZombieController extends MobEntityController {
     public PigZombieController() {
-        super(EntityPigZombieNPC.class);
+        super(EntityPigZombieNPC.class, EntityType.ZOMBIFIED_PIGLIN);
     }
 
     @Override

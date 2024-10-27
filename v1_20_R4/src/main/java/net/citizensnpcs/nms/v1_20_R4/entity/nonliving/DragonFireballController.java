@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class DragonFireballController extends MobEntityController {
     public DragonFireballController() {
-        super(EntityDragonFireballNPC.class);
+        super(EntityDragonFireballNPC.class, EntityType.DRAGON_FIREBALL);
     }
 
     @Override

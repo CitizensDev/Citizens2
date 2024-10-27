@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class LeashController extends MobEntityController {
     public LeashController() {
-        super(EntityLeashNPC.class);
+        super(EntityLeashNPC.class, EntityType.LEASH_KNOT);
     }
 
     @Override

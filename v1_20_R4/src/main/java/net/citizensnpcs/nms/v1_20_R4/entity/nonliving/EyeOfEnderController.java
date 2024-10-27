@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EyeOfEnderController extends MobEntityController {
     public EyeOfEnderController() {
-        super(EntityEnderSignalNPC.class);
+        super(EntityEnderSignalNPC.class, EntityType.EYE_OF_ENDER);
     }
 
     @Override

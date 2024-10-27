@@ -33,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EvokerFangsController extends MobEntityController {
     public EvokerFangsController() {
-        super(EntityEvokerFangsNPC.class);
+        super(EntityEvokerFangsNPC.class, EntityType.EVOKER_FANGS);
     }
 
     @Override

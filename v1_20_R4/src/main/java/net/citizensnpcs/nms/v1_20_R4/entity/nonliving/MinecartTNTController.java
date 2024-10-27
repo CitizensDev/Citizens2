@@ -25,7 +25,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MinecartTNTController extends MobEntityController {
     public MinecartTNTController() {
-        super(EntityMinecartTNTNPC.class);
+        super(EntityMinecartTNTNPC.class, EntityType.TNT_MINECART);
     }
 
     @Override

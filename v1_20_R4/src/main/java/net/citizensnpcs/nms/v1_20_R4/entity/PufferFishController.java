@@ -44,7 +44,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PufferFishController extends MobEntityController {
     public PufferFishController() {
-        super(EntityPufferFishNPC.class);
+        super(EntityPufferFishNPC.class, EntityType.PUFFERFISH);
     }
 
     @Override

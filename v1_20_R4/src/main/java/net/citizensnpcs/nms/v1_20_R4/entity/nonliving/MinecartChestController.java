@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MinecartChestController extends MobEntityController {
     public MinecartChestController() {
-        super(EntityMinecartChestNPC.class);
+        super(EntityMinecartChestNPC.class, EntityType.CHEST_MINECART);
     }
 
     @Override

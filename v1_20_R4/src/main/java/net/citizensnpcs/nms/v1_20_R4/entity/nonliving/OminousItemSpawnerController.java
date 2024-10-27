@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class OminousItemSpawnerController extends MobEntityController {
     public OminousItemSpawnerController() {
-        super(EntityOminousItemSpawnerNPC.class);
+        super(EntityOminousItemSpawnerNPC.class, EntityType.OMINOUS_ITEM_SPAWNER);
     }
 
     @Override

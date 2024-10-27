@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class WitchController extends MobEntityController {
     public WitchController() {
-        super(EntityWitchNPC.class);
+        super(EntityWitchNPC.class, EntityType.WITCH);
     }
 
     @Override

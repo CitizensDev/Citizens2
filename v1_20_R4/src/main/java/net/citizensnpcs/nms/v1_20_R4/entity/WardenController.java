@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class WardenController extends MobEntityController {
     public WardenController() {
-        super(EntityWardenNPC.class);
+        super(EntityWardenNPC.class, EntityType.WARDEN);
     }
 
     @Override

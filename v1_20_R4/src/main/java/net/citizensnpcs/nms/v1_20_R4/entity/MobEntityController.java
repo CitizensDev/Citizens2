@@ -24,8 +24,8 @@ import net.minecraft.world.level.Level;
 public abstract class MobEntityController extends AbstractEntityController {
     private final Class<?> clazz;
 
-    protected MobEntityController(Class<?> clazz) {
-        NMS.registerEntityClass(clazz, NMSImpl.getEntityType(clazz));
+    protected MobEntityController(Class<?> clazz, EntityType<?> type) {
+        NMS.registerEntityClass(clazz, type);
         this.clazz = clazz;
     }
 

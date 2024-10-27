@@ -38,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MushroomCowController extends MobEntityController {
     public MushroomCowController() {
-        super(EntityMushroomCowNPC.class);
+        super(EntityMushroomCowNPC.class, EntityType.MOOSHROOM);
     }
 
     @Override

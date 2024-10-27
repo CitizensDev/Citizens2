@@ -42,7 +42,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class TadpoleController extends MobEntityController {
     public TadpoleController() {
-        super(EntityTadpoleNPC.class);
+        super(EntityTadpoleNPC.class, EntityType.TADPOLE);
     }
 
     @Override

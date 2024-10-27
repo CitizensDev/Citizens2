@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EvokerController extends MobEntityController {
     public EvokerController() {
-        super(EntityEvokerNPC.class);
+        super(EntityEvokerNPC.class, EntityType.EVOKER);
     }
 
     @Override

@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class GoatController extends MobEntityController {
     public GoatController() {
-        super(EntityGoatNPC.class);
+        super(EntityGoatNPC.class, EntityType.GOAT);
     }
 
     @Override

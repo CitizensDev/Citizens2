@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class BoggedController extends MobEntityController {
     public BoggedController() {
-        super(EntityBoggedNPC.class);
+        super(EntityBoggedNPC.class, EntityType.BOGGED);
     }
 
     @Override

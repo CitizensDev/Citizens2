@@ -41,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class VillagerController extends MobEntityController {
     public VillagerController() {
-        super(EntityVillagerNPC.class);
+        super(EntityVillagerNPC.class, EntityType.VILLAGER);
     }
 
     @Override

@@ -41,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class AxolotlController extends MobEntityController {
     public AxolotlController() {
-        super(EntityAxolotlNPC.class);
+        super(EntityAxolotlNPC.class, EntityType.AXOLOTL);
     }
 
     @Override

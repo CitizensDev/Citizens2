@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class BreezeWindChargeController extends MobEntityController {
     public BreezeWindChargeController() {
-        super(EntityBreezeWindChargeNPC.class);
+        super(EntityBreezeWindChargeNPC.class, EntityType.BREEZE_WIND_CHARGE);
     }
 
     @Override

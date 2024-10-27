@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class HorseDonkeyController extends MobEntityController {
     public HorseDonkeyController() {
-        super(EntityHorseDonkeyNPC.class);
+        super(EntityHorseDonkeyNPC.class, EntityType.DONKEY);
     }
 
     @Override

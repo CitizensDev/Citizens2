@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ZombieHuskController extends MobEntityController {
     public ZombieHuskController() {
-        super(EntityZombieHuskNPC.class);
+        super(EntityZombieHuskNPC.class, EntityType.HUSK);
     }
 
     @Override

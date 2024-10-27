@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SpectralArrowController extends MobEntityController {
     public SpectralArrowController() {
-        super(EntitySpectralArrowNPC.class);
+        super(EntitySpectralArrowNPC.class, EntityType.SPECTRAL_ARROW);
     }
 
     @Override

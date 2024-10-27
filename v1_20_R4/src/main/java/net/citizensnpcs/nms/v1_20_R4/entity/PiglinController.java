@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PiglinController extends MobEntityController {
     public PiglinController() {
-        super(EntityPiglinNPC.class);
+        super(EntityPiglinNPC.class, EntityType.PIGLIN);
     }
 
     @Override

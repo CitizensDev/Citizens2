@@ -38,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class TurtleController extends MobEntityController {
     public TurtleController() {
-        super(EntityTurtleNPC.class);
+        super(EntityTurtleNPC.class, EntityType.TURTLE);
     }
 
     @Override

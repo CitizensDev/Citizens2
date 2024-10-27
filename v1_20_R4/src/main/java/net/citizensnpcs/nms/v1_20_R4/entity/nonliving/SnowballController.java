@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SnowballController extends MobEntityController {
     public SnowballController() {
-        super(EntitySnowballNPC.class);
+        super(EntitySnowballNPC.class, EntityType.SNOWBALL);
     }
 
     @Override

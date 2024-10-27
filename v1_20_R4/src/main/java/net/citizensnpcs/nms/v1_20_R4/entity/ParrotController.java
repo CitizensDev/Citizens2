@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ParrotController extends MobEntityController {
     public ParrotController() {
-        super(EntityParrotNPC.class);
+        super(EntityParrotNPC.class, EntityType.PARROT);
     }
 
     @Override

@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class IronGolemController extends MobEntityController {
     public IronGolemController() {
-        super(EntityIronGolemNPC.class);
+        super(EntityIronGolemNPC.class, EntityType.IRON_GOLEM);
     }
 
     @Override

@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class GiantController extends MobEntityController {
     public GiantController() {
-        super(EntityGiantNPC.class);
+        super(EntityGiantNPC.class, EntityType.GIANT);
     }
 
     @Override

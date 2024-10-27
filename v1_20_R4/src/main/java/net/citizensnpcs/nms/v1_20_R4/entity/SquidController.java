@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SquidController extends MobEntityController {
     public SquidController() {
-        super(EntitySquidNPC.class);
+        super(EntitySquidNPC.class, EntityType.SQUID);
     }
 
     @Override

@@ -40,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CowController extends MobEntityController {
     public CowController() {
-        super(EntityCowNPC.class);
+        super(EntityCowNPC.class, EntityType.COW);
     }
 
     @Override

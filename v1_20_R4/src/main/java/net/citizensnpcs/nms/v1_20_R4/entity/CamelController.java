@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CamelController extends MobEntityController {
     public CamelController() {
-        super(EntityCamelNPC.class);
+        super(EntityCamelNPC.class, EntityType.CAMEL);
     }
 
     @Override

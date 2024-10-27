@@ -25,7 +25,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MinecartHopperController extends MobEntityController {
     public MinecartHopperController() {
-        super(EntityMinecartHopperNPC.class);
+        super(EntityMinecartHopperNPC.class, EntityType.HOPPER_MINECART);
     }
 
     @Override

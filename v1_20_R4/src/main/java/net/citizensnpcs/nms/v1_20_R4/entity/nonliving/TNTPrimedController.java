@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class TNTPrimedController extends MobEntityController {
     public TNTPrimedController() {
-        super(EntityTNTPrimedNPC.class);
+        super(EntityTNTPrimedNPC.class, EntityType.TNT);
     }
 
     @Override

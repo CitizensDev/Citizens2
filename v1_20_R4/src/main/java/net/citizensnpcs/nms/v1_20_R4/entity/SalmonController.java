@@ -41,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SalmonController extends MobEntityController {
     public SalmonController() {
-        super(EntitySalmonNPC.class);
+        super(EntitySalmonNPC.class, EntityType.SALMON);
     }
 
     @Override

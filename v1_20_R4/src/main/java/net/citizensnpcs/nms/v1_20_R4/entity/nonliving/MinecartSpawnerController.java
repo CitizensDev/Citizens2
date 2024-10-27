@@ -25,7 +25,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MinecartSpawnerController extends MobEntityController {
     public MinecartSpawnerController() {
-        super(EntityMinecartSpawnerNPC.class);
+        super(EntityMinecartSpawnerNPC.class, EntityType.SPAWNER_MINECART);
     }
 
     @Override

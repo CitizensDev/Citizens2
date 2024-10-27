@@ -40,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ArmadilloController extends MobEntityController {
     public ArmadilloController() {
-        super(EntityArmadilloNPC.class);
+        super(EntityArmadilloNPC.class, EntityType.ARMADILLO);
     }
 
     @Override

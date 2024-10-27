@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ThrownTridentController extends MobEntityController {
     public ThrownTridentController() {
-        super(EntityThrownTridentNPC.class);
+        super(EntityThrownTridentNPC.class, EntityType.TRIDENT);
     }
 
     @Override

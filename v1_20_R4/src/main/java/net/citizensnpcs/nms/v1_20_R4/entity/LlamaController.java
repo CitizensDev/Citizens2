@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class LlamaController extends MobEntityController {
     public LlamaController() {
-        super(EntityLlamaNPC.class);
+        super(EntityLlamaNPC.class, EntityType.LLAMA);
     }
 
     @Override

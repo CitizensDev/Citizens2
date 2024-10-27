@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class InteractionController extends MobEntityController {
     public InteractionController() {
-        super(EntityInteractionNPC.class);
+        super(EntityInteractionNPC.class, EntityType.INTERACTION);
     }
 
     @Override

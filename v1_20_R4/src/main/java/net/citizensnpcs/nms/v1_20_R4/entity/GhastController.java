@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class GhastController extends MobEntityController {
     public GhastController() {
-        super(EntityGhastNPC.class);
+        super(EntityGhastNPC.class, EntityType.GHAST);
     }
 
     @Override

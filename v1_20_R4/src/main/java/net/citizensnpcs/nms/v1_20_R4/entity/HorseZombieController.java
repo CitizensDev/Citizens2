@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class HorseZombieController extends MobEntityController {
     public HorseZombieController() {
-        super(EntityHorseZombieNPC.class);
+        super(EntityHorseZombieNPC.class, EntityType.ZOMBIE);
     }
 
     @Override

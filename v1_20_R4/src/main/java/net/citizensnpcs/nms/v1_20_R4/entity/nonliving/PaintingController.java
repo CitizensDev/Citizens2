@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PaintingController extends MobEntityController {
     public PaintingController() {
-        super(EntityPaintingNPC.class);
+        super(EntityPaintingNPC.class, EntityType.PAINTING);
     }
 
     @Override

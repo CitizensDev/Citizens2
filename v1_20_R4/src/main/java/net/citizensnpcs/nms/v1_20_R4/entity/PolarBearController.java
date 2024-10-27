@@ -33,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PolarBearController extends MobEntityController {
     public PolarBearController() {
-        super(EntityPolarBearNPC.class);
+        super(EntityPolarBearNPC.class, EntityType.POLAR_BEAR);
     }
 
     @Override

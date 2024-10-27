@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MinecartFurnaceController extends MobEntityController {
     public MinecartFurnaceController() {
-        super(EntityMinecartFurnaceNPC.class);
+        super(EntityMinecartFurnaceNPC.class, EntityType.FURNACE_MINECART);
     }
 
     @Override

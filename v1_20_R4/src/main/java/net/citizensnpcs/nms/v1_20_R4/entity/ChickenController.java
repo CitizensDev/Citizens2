@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ChickenController extends MobEntityController {
     public ChickenController() {
-        super(EntityChickenNPC.class);
+        super(EntityChickenNPC.class, EntityType.CHICKEN);
     }
 
     @Override

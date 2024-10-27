@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SkeletonStrayController extends MobEntityController {
     public SkeletonStrayController() {
-        super(EntityStrayNPC.class);
+        super(EntityStrayNPC.class, EntityType.STRAY);
     }
 
     @Override

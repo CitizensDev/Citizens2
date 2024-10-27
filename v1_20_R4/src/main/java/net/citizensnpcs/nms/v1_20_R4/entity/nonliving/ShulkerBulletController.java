@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ShulkerBulletController extends MobEntityController {
     public ShulkerBulletController() {
-        super(EntityShulkerBulletNPC.class);
+        super(EntityShulkerBulletNPC.class, EntityType.SHULKER_BULLET);
     }
 
     @Override
