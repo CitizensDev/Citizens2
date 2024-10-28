@@ -13,6 +13,8 @@ public class MirrorTrait extends Trait {
     @Persist
     private volatile boolean enabled;
     @Persist
+    private volatile boolean mirrorEquipment;
+    @Persist
     private volatile boolean mirrorName;
 
     public MirrorTrait() {
@@ -27,6 +29,10 @@ public class MirrorTrait extends Trait {
         return enabled;
     }
 
+    public boolean isMirroringEquipment() {
+        return mirrorEquipment;
+    }
+
     public boolean mirrorName() {
         return mirrorName;
     }
@@ -37,6 +43,10 @@ public class MirrorTrait extends Trait {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         }
+    }
+
+    public void setMirrorEquipment(boolean mirrorEquipment) {
+        this.mirrorEquipment = mirrorEquipment;
     }
 
     public void setMirrorName(boolean mirror) {

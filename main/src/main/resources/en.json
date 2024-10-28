@@ -492,6 +492,7 @@
   "citizens.commands.npc.select.already-selected" : "You already have that NPC selected. ",
   "citizens.commands.npc.select.description" : "Select a NPC with the given ID or name",
   "citizens.commands.npc.select.help" : "",
+  "citizens.commands.npc.setequipment.cosmetic-set" : "Set [[{0}]] (cosmetic) to [[{1}]].",
   "citizens.commands.npc.setequipment.description" : "Sets equipment via commands",
   "citizens.commands.npc.setequipment.help" : "",
   "citizens.commands.npc.setequipment.set" : "Set [[{0}]] to [[{1}]].",

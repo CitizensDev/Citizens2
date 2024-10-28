@@ -1934,20 +1934,21 @@ public class NPCCommands {
     @Command(
             aliases = { "npc" },
             modifiers = { "mirror" },
-            usage = "mirror --name [true|false]",
+            usage = "mirror --name [true|false] --equipment [true|false]",
             desc = "",
             min = 1,
             max = 1,
             permission = "citizens.npc.mirror")
     @Requirements(selected = true, ownership = true)
-    public void mirror(CommandContext args, CommandSender sender, NPC npc, @Flag("name") Boolean name)
-            throws CommandException {
+    public void mirror(CommandContext args, CommandSender sender, NPC npc, @Flag("name") Boolean name,
+            @Flag("equipment") Boolean equipment) throws CommandException {
         if (((Citizens) CitizensAPI.getPlugin()).getProtocolLibListener() == null)
             throw new CommandException("ProtocolLib must be enabled to use this feature");
 
         MirrorTrait trait = npc.getOrAddTrait(MirrorTrait.class);
         if (name != null) {
             trait.setEnabled(true);
+            trait.setMirrorEquipment(equipment);
             trait.setMirrorName(name);
             Messaging.sendTr(sender, name ? Messages.MIRROR_NAME_SET : Messages.MIRROR_NAME_UNSET, npc.getName());
         } else {
@@ -2852,8 +2853,9 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "setequipment [slot] [item]",
+            usage = "setequipment (-c(osmetic)) [slot] [item]",
             desc = "",
+            flags = "c",
             modifiers = { "setequipment" },
             min = 2,
             max = 3,
@@ -2868,8 +2870,13 @@ public class NPCCommands {
                 throw new ServerCommandException();
             item = ((Player) sender).getItemInHand().clone();
         }
-        npc.getOrAddTrait(Equipment.class).set(slot, item);
-        Messaging.sendTr(sender, Messages.EQUIPMENT_SET, slot, item);
+        if (args.hasFlag('c')) {
+            npc.getOrAddTrait(Equipment.class).setCosmetic(slot, item);
+            Messaging.sendTr(sender, Messages.COSMETIC_EQUIPMENT_SET, slot, item);
+        } else {
+            npc.getOrAddTrait(Equipment.class).set(slot, item);
+            Messaging.sendTr(sender, Messages.EQUIPMENT_SET, slot, item);
+        }
     }
 
     @Command(

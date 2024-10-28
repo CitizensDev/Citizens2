@@ -528,8 +528,8 @@ public class NMS {
         return BRIDGE.getHeadYaw(entity);
     }
 
-    public static float getHorizontalMovement(org.bukkit.entity.Entity bukkitEntity) {
-        return BRIDGE.getHorizontalMovement(bukkitEntity);
+    public static float getForwardBackwardMovement(org.bukkit.entity.Entity bukkitEntity) {
+        return BRIDGE.getForwardBackwardMovement(bukkitEntity);
     }
 
     public static float getJumpPower(NPC npc, float original) {
@@ -674,8 +674,8 @@ public class NMS {
         return BRIDGE.getVehicle(entity);
     }
 
-    public static float getVerticalMovement(org.bukkit.entity.Entity bukkitEntity) {
-        return BRIDGE.getVerticalMovement(bukkitEntity);
+    public static float getXZMovement(org.bukkit.entity.Entity bukkitEntity) {
+        return BRIDGE.getXZMovement(bukkitEntity);
     }
 
     public static Collection<Player> getViewingPlayers(org.bukkit.entity.Entity entity) {

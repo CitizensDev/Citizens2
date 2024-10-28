@@ -532,7 +532,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public float getHorizontalMovement(org.bukkit.entity.Entity entity) {
+    public float getForwardBackwardMovement(org.bukkit.entity.Entity entity) {
         if (!entity.getType().isAlive())
             return Float.NaN;
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);
@@ -748,7 +748,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public float getVerticalMovement(org.bukkit.entity.Entity entity) {
+    public float getXZMovement(org.bukkit.entity.Entity entity) {
         if (!entity.getType().isAlive())
             return Float.NaN;
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);

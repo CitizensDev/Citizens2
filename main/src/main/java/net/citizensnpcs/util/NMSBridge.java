@@ -99,7 +99,7 @@ public interface NMSBridge {
 
     public float getHeadYaw(Entity entity);
 
-    public float getHorizontalMovement(Entity entity);
+    public float getForwardBackwardMovement(Entity entity);
 
     public EntityPacketTracker getPacketTracker(Entity entity);
 
@@ -129,7 +129,7 @@ public interface NMSBridge {
 
     public Entity getVehicle(Entity entity);
 
-    public float getVerticalMovement(Entity entity);
+    public float getXZMovement(Entity entity);
 
     public default Collection<Player> getViewingPlayers(Entity entity) {
         return entity.getTrackedBy();
@@ -149,6 +149,10 @@ public interface NMSBridge {
     }
 
     public boolean isSolid(Block in);
+
+    public default boolean isSprinting(Entity entity) {
+        return entity instanceof Player ? ((Player) entity).isSprinting() : false;
+    }
 
     public boolean isValid(Entity entity);
 

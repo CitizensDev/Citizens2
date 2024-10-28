@@ -38,6 +38,7 @@ public class Controllable extends Trait {
     private BuiltInControls controls;
     @Persist
     private boolean enabled = true;
+    private ControllableInput input;
     @Persist("owner_required")
     private boolean ownerRequired;
 
@@ -128,9 +129,24 @@ public class Controllable extends Trait {
         if (!enabled || !npc.isSpawned())
             return;
         List<Entity> passengers = NMS.getPassengers(npc.getEntity());
-        if (passengers.size() == 0 || !(passengers.get(0) instanceof Player) || npc.getNavigator().isNavigating())
+        if (npc.getNavigator().isNavigating() || passengers.size() == 0 || !(passengers.get(0) instanceof Player))
             return;
-        controller.run((Player) passengers.get(0));
+        Player player = (Player) passengers.get(0);
+        input = new ControllableInput();
+        if (SUPPORTS_PLAYER_INPUT_EVENT) {
+            input.forward = player.getCurrentInput().isForward() ? 1 : player.getCurrentInput().isBackward() ? -1 : 0;
+            input.horizontal = player.getCurrentInput().isLeft() ? 1 : player.getCurrentInput().isRight() ? -1 : 0;
+            input.jump = player.getCurrentInput().isJump();
+            input.sneak = player.getCurrentInput().isSneak();
+            input.sprint = player.getCurrentInput().isSprint();
+        } else {
+            input.forward = NMS.getForwardBackwardMovement(player);
+            input.horizontal = NMS.getXZMovement(player);
+            input.jump = NMS.shouldJump(player);
+            input.sneak = NMS.isSneaking(player);
+            input.sprint = player.isSprinting();
+        }
+        controller.run(player, input);
     }
 
     public void setControls(BuiltInControls controls) {
@@ -173,6 +189,14 @@ public class Controllable extends Trait {
         }
     }
 
+    private static class ControllableInput {
+        double forward;
+        double horizontal;
+        boolean jump;
+        boolean sneak;
+        boolean sprint;
+    }
+
     public static class GroundController implements MovementController {
         private int jumpTicks = 0;
         private final NPC npc;
@@ -196,15 +220,15 @@ public class Controllable extends Trait {
         }
 
         @Override
-        public void run(Player rider) {
+        public void run(Player rider, ControllableInput input) {
             boolean onGround = NMS.isOnGround(npc.getEntity());
-            float impulse = npc.getNavigator().getDefaultParameters()
+            float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed(onGround ? GROUND_SPEED : AIR_SPEED);
             if (!Util.isHorse(npc.getEntity().getType())) {
-                speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, impulse,
+                speed = updateSpeed(npc.getEntity(), NMS.getYaw(rider), input, speed, speedMod,
                         Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble());
             }
-            if (onGround && jumpTicks <= 0 && NMS.shouldJump(rider)) {
+            if (onGround && jumpTicks <= 0 && input.jump) {
                 npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(JUMP_VELOCITY));
                 jumpTicks = 10;
             }
@@ -239,12 +263,12 @@ public class Controllable extends Trait {
         }
 
         @Override
-        public void run(Player rider) {
+        public void run(Player rider, ControllableInput input) {
             boolean onGround = NMS.isOnGround(npc.getEntity());
-            float impulse = npc.getNavigator().getDefaultParameters()
+            float speedMod = npc.getNavigator().getDefaultParameters()
                     .modifiedSpeed(onGround ? GROUND_SPEED : AIR_SPEED);
             if (!Util.isHorse(npc.getEntity().getType())) {
-                speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, impulse,
+                speed = updateSpeed(npc.getEntity(), NMS.getYaw(rider), input, speed, speedMod,
                         Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble());
             }
             setMountedYaw(npc.getEntity());
@@ -278,7 +302,7 @@ public class Controllable extends Trait {
         }
 
         @Override
-        public void run(Player rider) {
+        public void run(Player rider, ControllableInput input) {
             if (paused) {
                 npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.001));
                 return;
@@ -297,7 +321,7 @@ public class Controllable extends Trait {
 
         void rightClickEntity(NPCRightClickEvent event);
 
-        void run(Player rider);
+        void run(Player rider, ControllableInput input);
     }
 
     public static class PlayerInputAirController implements MovementController {
@@ -325,15 +349,14 @@ public class Controllable extends Trait {
         }
 
         @Override
-        public void run(Player rider) {
+        public void run(Player rider, ControllableInput input) {
             if (paused) {
                 npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.001F));
                 return;
             }
-            speed = updateHorizontalSpeed(npc.getEntity(), rider, speed, 1F,
+            speed = updateSpeed(npc.getEntity(), NMS.getYaw(rider), input, speed, 1F,
                     Setting.MAX_CONTROLLABLE_FLIGHT_SPEED.asDouble());
-            boolean shouldJump = NMS.shouldJump(rider);
-            if (shouldJump) {
+            if (input.jump) {
                 npc.getEntity().setVelocity(npc.getEntity().getVelocity().setY(0.25F));
             }
             npc.getEntity().setVelocity(npc.getEntity().getVelocity().multiply(new Vector(1, 0.98, 1)));
@@ -376,25 +399,19 @@ public class Controllable extends Trait {
         NMS.look(entity, loc.getYaw(), loc.getPitch());
     }
 
-    private static double updateHorizontalSpeed(Entity handle, Entity passenger, double speed, float speedMod,
+    private static double updateSpeed(Entity handle, double yaw, ControllableInput input, double speed, float speedMod,
             double maxSpeed) {
+        yaw = Math.toRadians(yaw);
         Vector vel = handle.getVelocity();
         double oldSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
-        double horizontal = NMS.getHorizontalMovement(passenger);
-        if (Math.abs(Math.abs(horizontal) - 0.98) > 0.02)
-            return speed;
-        double yaw = passenger.getLocation().getYaw();
-        if (horizontal > 0.0D) {
-            double dXcos = -Math.sin(yaw * Math.PI / 180.0F);
-            double dXsin = Math.cos(yaw * Math.PI / 180.0F);
-
-            vel = vel.setX(dXcos * speed * speedMod).setZ(dXsin * speed * speedMod);
+        double nxsin = -Math.sin(yaw);
+        double xcos = Math.cos(yaw);
+        if (input.forward > 0) {
+            vel = vel.setX(nxsin * speed * speedMod).setZ(xcos * speed * speedMod);
         }
-        vel = vel.add(new Vector(
-                passenger.getVelocity().getX() * speedMod * Setting.CONTROLLABLE_GROUND_DIRECTION_MODIFIER.asDouble(),
-                0D,
-                passenger.getVelocity().getZ() * speedMod * Setting.CONTROLLABLE_GROUND_DIRECTION_MODIFIER.asDouble()))
-                .multiply(0.98);
+        vel.add(new Vector(Math.sin(yaw + Math.PI / 2), 0D, -Math.cos(yaw + Math.PI / 2))
+                .multiply(speedMod * Setting.CONTROLLABLE_GROUND_DIRECTION_MODIFIER.asDouble() * input.horizontal));
+        vel.multiply(0.98);
 
         double newSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
         if (newSpeed > maxSpeed) {
@@ -407,6 +424,16 @@ public class Controllable extends Trait {
             return (float) Math.min(maxSpeed, speed + (maxSpeed - speed) / 50.0D);
         } else {
             return (float) Math.max(0, speed - speed / 50.0D);
+        }
+    }
+
+    private static boolean SUPPORTS_PLAYER_INPUT_EVENT = true;
+
+    static {
+        try {
+            Class.forName("org.bukkit.event.player.PlayerInputEvent");
+        } catch (ClassNotFoundException e) {
+            SUPPORTS_PLAYER_INPUT_EVENT = false;
         }
     }
 }

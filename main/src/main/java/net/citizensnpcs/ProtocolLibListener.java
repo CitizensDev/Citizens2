@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
@@ -36,6 +37,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -59,9 +61,9 @@ import net.citizensnpcs.util.SkinProperty;
 import net.citizensnpcs.util.Util;
 
 public class ProtocolLibListener implements Listener {
-    private ProtocolManager manager;
+    private final ProtocolManager manager;
     private final Map<UUID, MirrorTrait> mirrorTraits = Maps.newConcurrentMap();
-    private Citizens plugin;
+    private final Citizens plugin;
     private final Map<Integer, RotationTrait> rotationTraits = Maps.newConcurrentMap();
 
     public ProtocolLibListener(Citizens plugin) {
@@ -93,9 +95,27 @@ public class ProtocolLibListener implements Listener {
             @Override
             public void onPacketSending(PacketEvent event) {
                 NPC npc = getNPCFromPacket(event);
-                if (npc == null || !npc.hasTrait(Equipment.class))
+                if (npc == null)
                     return;
-                Equipment trait = npc.getOrAddTrait(Equipment.class);
+                MirrorTrait mirror = npc.getTraitNullable(MirrorTrait.class);
+                if (mirror != null && mirror.isMirroringEquipment() && mirror.isMirroring(event.getPlayer())) {
+                    StructureModifier<List<Pair<EnumWrappers.ItemSlot, ItemStack>>> modifier = event.getPacket()
+                            .getLists(BukkitConverters.getPairConverter(EnumWrappers.getItemSlotConverter(),
+                                    BukkitConverters.getItemStackConverter()));
+                    List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipment = Lists.newArrayList();
+                    PlayerInventory pi = event.getPlayer().getInventory();
+                    equipment.add(new Pair<>(ItemSlot.CHEST, pi.getChestplate()));
+                    equipment.add(new Pair<>(ItemSlot.FEET, pi.getBoots()));
+                    equipment.add(new Pair<>(ItemSlot.HEAD, pi.getHelmet()));
+                    equipment.add(new Pair<>(ItemSlot.LEGS, pi.getLeggings()));
+                    equipment.add(new Pair<>(ItemSlot.MAINHAND, pi.getItemInHand()));
+                    equipment.add(new Pair<>(ItemSlot.OFFHAND, pi.getItemInOffHand()));
+                    modifier.write(0, equipment);
+                    return;
+                }
+                Equipment trait = npc.getTraitNullable(Equipment.class);
+                if (trait == null)
+                    return;
                 PacketContainer packet = event.getPacket();
                 StructureModifier<List<Pair<EnumWrappers.ItemSlot, ItemStack>>> modifier = packet
                         .getLists(BukkitConverters.getPairConverter(EnumWrappers.getItemSlotConverter(),
@@ -120,6 +140,7 @@ public class ProtocolLibListener implements Listener {
             }
         });
         manager.addPacketListener(new PacketAdapter(plugin, ListenerPriority.HIGHEST, Server.ENTITY_METADATA) {
+
             @Override
             public void onPacketSending(PacketEvent event) {
                 NPC npc = getNPCFromPacket(event);
