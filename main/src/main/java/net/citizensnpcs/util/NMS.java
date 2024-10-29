@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attributable;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -61,6 +61,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -128,9 +129,9 @@ public class NMS {
             Consumer<NPCKnockbackEvent> cb) {
         if (npc.getEntity() == null)
             return;
-        if (SUPPORT_KNOCKBACK_RESISTANCE && npc.getEntity() instanceof Attributable) {
+        if (SUPPORTS_ATTRIBUTABLE && npc.getEntity() instanceof Attributable) {
             AttributeInstance attribute = ((Attributable) npc.getEntity())
-                    .getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
+                    .getAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey("knockback_resistance")));
             if (attribute != null) {
                 strength *= 1 - attribute.getValue();
             }
@@ -506,6 +507,10 @@ public class NMS {
         return null;
     }
 
+    public static float getForwardBackwardMovement(org.bukkit.entity.Entity bukkitEntity) {
+        return BRIDGE.getForwardBackwardMovement(bukkitEntity);
+    }
+
     public static MethodHandle getGetter(Class<?> clazz, String name) {
         return getGetter(clazz, name, true);
     }
@@ -526,10 +531,6 @@ public class NMS {
 
     public static float getHeadYaw(org.bukkit.entity.Entity entity) {
         return BRIDGE.getHeadYaw(entity);
-    }
-
-    public static float getForwardBackwardMovement(org.bukkit.entity.Entity bukkitEntity) {
-        return BRIDGE.getForwardBackwardMovement(bukkitEntity);
     }
 
     public static float getJumpPower(NPC npc, float original) {
@@ -674,16 +675,16 @@ public class NMS {
         return BRIDGE.getVehicle(entity);
     }
 
-    public static float getXZMovement(org.bukkit.entity.Entity bukkitEntity) {
-        return BRIDGE.getXZMovement(bukkitEntity);
-    }
-
     public static Collection<Player> getViewingPlayers(org.bukkit.entity.Entity entity) {
         return BRIDGE.getViewingPlayers(entity);
     }
 
     public static double getWidth(Entity entity) {
         return BRIDGE.getWidth(entity);
+    }
+
+    public static float getXZMovement(org.bukkit.entity.Entity bukkitEntity) {
+        return BRIDGE.getXZMovement(bukkitEntity);
     }
 
     public static float getYaw(Entity entity) {
@@ -1047,7 +1048,7 @@ public class NMS {
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static Field MODIFIERS_FIELD;
     private static boolean PAPER_KNOCKBACK_EVENT_EXISTS = true;
-    private static boolean SUPPORT_KNOCKBACK_RESISTANCE = true;
+    private static boolean SUPPORTS_ATTRIBUTABLE = true;
     private static boolean SUPPORTS_FIND_PROFILES_BY_NAME = true;
     private static MethodHandle UNSAFE_FIELD_OFFSET;
     private static MethodHandle UNSAFE_PUT_BOOLEAN;
@@ -1065,9 +1066,9 @@ public class NMS {
             PAPER_KNOCKBACK_EVENT_EXISTS = false;
         }
         try {
-            Class.forName("org.bukkit.attribute.Attribute").getField("GENERIC_KNOCKBACK_RESISTANCE");
-        } catch (Exception e) {
-            SUPPORT_KNOCKBACK_RESISTANCE = false;
+            Class.forName("org.bukkit.attribute.Attributable");
+        } catch (ClassNotFoundException e) {
+            SUPPORTS_ATTRIBUTABLE = false;
         }
         try {
             GameProfileRepository.class.getMethod("findProfilesByNames", String[].class, ProfileLookupCallback.class);

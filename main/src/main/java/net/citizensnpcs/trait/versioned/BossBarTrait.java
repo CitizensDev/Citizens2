@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
+import org.bukkit.Registry;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
@@ -33,6 +33,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -142,11 +143,8 @@ public class BossBarTrait extends Trait {
                     LivingEntity entity = (LivingEntity) npc.getEntity();
                     double maxHealth = entity.getMaxHealth();
                     if (SUPPORT_ATTRIBUTES) {
-                        try {
-                            maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-                        } catch (Throwable t) {
-                            SUPPORT_ATTRIBUTES = false;
-                        }
+                        maxHealth = entity.getAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey("max_health")))
+                                .getValue();
                     }
                     bar.setProgress(entity.getHealth() / maxHealth);
                 }
@@ -277,4 +275,11 @@ public class BossBarTrait extends Trait {
     }
 
     private static boolean SUPPORT_ATTRIBUTES = true;
+    static {
+        try {
+            Class.forName("org.bukkit.attribute.Attribute");
+        } catch (ClassNotFoundException e) {
+            SUPPORT_ATTRIBUTES = false;
+        }
+    }
 }

@@ -15,7 +15,7 @@ import net.citizensnpcs.api.trait.TraitName;
 @TraitName("attributetrait")
 public class AttributeTrait extends Trait {
     @Persist(keyType = Attribute.class)
-    private final Map<Attribute, Double> attributes = Maps.newEnumMap(Attribute.class);
+    private final Map<Attribute, Double> attributes = Maps.newHashMap();
 
     public AttributeTrait() {
         super("attributetrait");

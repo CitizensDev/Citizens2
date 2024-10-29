@@ -38,7 +38,6 @@ public class Controllable extends Trait {
     private BuiltInControls controls;
     @Persist
     private boolean enabled = true;
-    private ControllableInput input;
     @Persist("owner_required")
     private boolean ownerRequired;
 
@@ -132,7 +131,7 @@ public class Controllable extends Trait {
         if (npc.getNavigator().isNavigating() || passengers.size() == 0 || !(passengers.get(0) instanceof Player))
             return;
         Player player = (Player) passengers.get(0);
-        input = new ControllableInput();
+        ControllableInput input = new ControllableInput();
         if (SUPPORTS_PLAYER_INPUT_EVENT) {
             input.forward = player.getCurrentInput().isForward() ? 1 : player.getCurrentInput().isBackward() ? -1 : 0;
             input.horizontal = player.getCurrentInput().isLeft() ? 1 : player.getCurrentInput().isRight() ? -1 : 0;
@@ -404,10 +403,8 @@ public class Controllable extends Trait {
         yaw = Math.toRadians(yaw);
         Vector vel = handle.getVelocity();
         double oldSpeed = Math.sqrt(vel.getX() * vel.getX() + vel.getZ() * vel.getZ());
-        double nxsin = -Math.sin(yaw);
-        double xcos = Math.cos(yaw);
         if (input.forward > 0) {
-            vel = vel.setX(nxsin * speed * speedMod).setZ(xcos * speed * speedMod);
+            vel = vel.setX(-Math.sin(yaw) * speed * speedMod).setZ(Math.cos(yaw) * speed * speedMod);
         }
         vel.add(new Vector(Math.sin(yaw + Math.PI / 2), 0D, -Math.cos(yaw + Math.PI / 2))
                 .multiply(speedMod * Setting.CONTROLLABLE_GROUND_DIRECTION_MODIFIER.asDouble() * input.horizontal));

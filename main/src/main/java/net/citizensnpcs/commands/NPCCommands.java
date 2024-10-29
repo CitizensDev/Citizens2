@@ -26,10 +26,10 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Registry;
 import org.bukkit.Rotation;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
@@ -420,12 +420,13 @@ public class NPCCommands {
     public void attribute(CommandContext args, CommandSender sender, NPC npc,
             @Arg(value = 1, completionsProvider = OptionalAttributeCompletions.class) String attribute,
             @Arg(2) Double value) {
+
         AttributeTrait trait = npc.getOrAddTrait(AttributeTrait.class);
         if (value == null) {
-            trait.setDefaultAttribute(Attribute.valueOf(attribute));
+            trait.setDefaultAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey(attribute)));
             Messaging.sendTr(sender, Messages.ATTRIBUTE_RESET, attribute);
         } else {
-            trait.setAttributeValue(Attribute.valueOf(attribute), value);
+            trait.setAttributeValue(Registry.ATTRIBUTE.get(SpigotUtil.getKey(attribute)), value);
             Messaging.sendTr(sender, Messages.ATTRIBUTE_SET, attribute, value);
         }
     }
