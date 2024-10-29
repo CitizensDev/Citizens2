@@ -143,7 +143,7 @@ public class BossBarTrait extends Trait {
                     double maxHealth = entity.getMaxHealth();
                     if (SUPPORT_ATTRIBUTES) {
                         try {
-                            maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+                            maxHealth = entity.getAttribute(Attribute.MAX_HEALTH).getValue();
                         } catch (Throwable t) {
                             SUPPORT_ATTRIBUTES = false;
                         }

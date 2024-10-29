@@ -130,7 +130,7 @@ public class NMS {
             return;
         if (SUPPORT_KNOCKBACK_RESISTANCE && npc.getEntity() instanceof Attributable) {
             AttributeInstance attribute = ((Attributable) npc.getEntity())
-                    .getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE);
+                    .getAttribute(Attribute.KNOCKBACK_RESISTANCE);
             if (attribute != null) {
                 strength *= 1 - attribute.getValue();
             }

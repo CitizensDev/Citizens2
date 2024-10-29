@@ -399,7 +399,7 @@ public class CitizensNPC extends AbstractNPC {
 
                     if (type == EntityType.PLAYER || Util.isHorse(type)) {
                         if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class)
-                                || !getTrait(AttributeTrait.class).hasAttribute(Attribute.GENERIC_STEP_HEIGHT)) {
+                                || !getTrait(AttributeTrait.class).hasAttribute(Attribute.STEP_HEIGHT)) {
                             NMS.setStepHeight(entity, 1);
                         }
                     }
