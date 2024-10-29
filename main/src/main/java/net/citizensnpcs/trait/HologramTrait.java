@@ -448,7 +448,7 @@ public class HologramTrait extends Trait {
             AreaEffectCloud cloud = (AreaEffectCloud) hologram.getEntity();
             if (!rendered) {
                 cloud.setRadius(0);
-                cloud.setParticle(Particle.BLOCK, Bukkit.createBlockData(Material.AIR));
+                cloud.setParticle(Particle.BLOCK_MARKER, Bukkit.createBlockData(Material.AIR));
             }
             hologram.getEntity().teleport(
                     npc.getEntity().getLocation().clone().add(offset.x,
