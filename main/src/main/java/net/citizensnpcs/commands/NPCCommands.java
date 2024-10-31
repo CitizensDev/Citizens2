@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import net.citizensnpcs.EventListen;
+import net.citizensnpcs.trait.BeTargedByTrait;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -3421,22 +3422,10 @@ public class NPCCommands {
             }
         }
         if (!targetable) {
-            final List<UUID> beTargetedBy;
-            // fixme the key should be placed to where?
-            beTargetedBy = npc.data().get(EventListen.BE_TARGETED_BY_KEY);
-            if (beTargetedBy != null) {
-                for (UUID mobUUID : beTargetedBy) {
-                    final Entity entity = Bukkit.getEntity(mobUUID);
-                    if (entity instanceof Mob) {
-                        final Mob asMob = (Mob) entity;
-                        if (asMob.isValid()) {
-                            asMob.setTarget(null);
-                        }
-                    }
-                }
-                beTargetedBy.clear(); // for faster GC
+            final BeTargedByTrait beTargedByTrait = npc.getTraitNullable(BeTargedByTrait.class);
+            if (beTargedByTrait != null) { // may not be targeted by anything so prevent possible garbages
+                beTargedByTrait.clearTargets();
             }
-            npc.data().remove(EventListen.BE_TARGETED_BY_KEY);
         }
         Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());
     }
