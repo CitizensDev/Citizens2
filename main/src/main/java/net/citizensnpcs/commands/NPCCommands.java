@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import it.unimi.dsi.fastutil.Pair;
 import net.citizensnpcs.EventListen;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
@@ -3422,13 +3421,17 @@ public class NPCCommands {
             }
         }
         if (!targetable) {
-            final List<Mob> beTargetedBy;
+            final List<UUID> beTargetedBy;
             // fixme the key should be placed to where?
             beTargetedBy = npc.data().get(EventListen.BE_TARGETED_BY_KEY);
             if (beTargetedBy != null) {
-                for (Mob mob : beTargetedBy) {
-                    if (mob.isValid()) {
-                        mob.setTarget(null);
+                for (UUID mobUUID : beTargetedBy) {
+                    final Entity entity = Bukkit.getEntity(mobUUID);
+                    if (entity instanceof Mob) {
+                        final Mob asMob = (Mob) entity;
+                        if (asMob.isValid()) {
+                            asMob.setTarget(null);
+                        }
                     }
                 }
                 beTargetedBy.clear(); // for faster GC

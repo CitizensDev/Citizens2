@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -468,15 +466,15 @@ public class EventListen implements Listener {
                 if (!(cause instanceof Mob)) {
                     return;
                 }
-                final List<Mob> beTargetedBy;
-                final List<Mob> _lookup = npc.data().get(BE_TARGETED_BY_KEY);
+                final List<UUID> beTargetedBy;
+                final List<UUID> _lookup = npc.data().get(BE_TARGETED_BY_KEY);
                 if (_lookup != null) {
                     beTargetedBy = _lookup;
                 } else {
                     beTargetedBy = new ArrayList<>();
                     npc.data().set(BE_TARGETED_BY_KEY, beTargetedBy);
                 }
-                beTargetedBy.add((Mob) cause);
+                beTargetedBy.add(cause.getUniqueId());
             }
         } else {
             if (cause instanceof Mob) {
@@ -486,10 +484,10 @@ public class EventListen implements Listener {
                 }
                 final NPC previousAsNPC = plugin.getNPCRegistry().getNPC(previousTarget);
                 if (previousAsNPC != null) {
-                    final List<Mob> beTargetedBy;
+                    final List<UUID> beTargetedBy;
                     beTargetedBy = previousAsNPC.data().get(BE_TARGETED_BY_KEY);
                     if (beTargetedBy != null) {
-                        beTargetedBy.removeIf(mob -> mob.getUniqueId().equals(previousTarget.getUniqueId()));
+                        beTargetedBy.removeIf(mob -> mob.equals(previousTarget.getUniqueId()));
                     }
                 }
             }
