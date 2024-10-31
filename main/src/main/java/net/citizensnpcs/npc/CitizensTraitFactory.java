@@ -25,7 +25,7 @@ import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.AttributeTrait;
 import net.citizensnpcs.trait.BatTrait;
-import net.citizensnpcs.trait.BeTargedByTrait;
+import net.citizensnpcs.trait.TrackTargetedByTrait;
 import net.citizensnpcs.trait.BoundingBoxTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
@@ -83,7 +83,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(AttributeTrait.class));
         registerTrait(TraitInfo.create(Anchors.class));
         registerTrait(TraitInfo.create(BatTrait.class));
-        registerTrait(TraitInfo.create(BeTargedByTrait.class));
         registerTrait(TraitInfo.create(BoundingBoxTrait.class));
         registerTrait(TraitInfo.create(ClickRedirectTrait.class));
         registerTrait(TraitInfo.create(CommandTrait.class).optInToStats());
@@ -105,6 +104,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(ItemFrameTrait.class));
         registerTrait(TraitInfo.create(LookClose.class));
         registerTrait(TraitInfo.create(PaintingTrait.class));
+        registerTrait(TraitInfo.create(TrackTargetedByTrait.class));
         registerTrait(TraitInfo.create(MirrorTrait.class).optInToStats());
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());

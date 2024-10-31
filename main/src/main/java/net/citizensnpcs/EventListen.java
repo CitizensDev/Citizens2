@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
-import net.citizensnpcs.trait.BeTargedByTrait;
+import net.citizensnpcs.trait.TrackTargetedByTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -463,7 +463,7 @@ public class EventListen implements Listener {
                 if (!(cause instanceof Mob)) {
                     return;
                 }
-                final BeTargedByTrait beTargetedBy = npc.getOrAddTrait(BeTargedByTrait.class);
+                final TrackTargetedByTrait beTargetedBy = npc.getOrAddTrait(TrackTargetedByTrait.class);
                 beTargetedBy.add(cause.getUniqueId());
             }
         } else {
@@ -474,7 +474,7 @@ public class EventListen implements Listener {
                 }
                 final NPC previousAsNPC = plugin.getNPCRegistry().getNPC(previousTarget);
                 if (previousAsNPC != null) {
-                    final BeTargedByTrait beTargetedBy = previousAsNPC.getOrAddTrait(BeTargedByTrait.class);
+                    final TrackTargetedByTrait beTargetedBy = previousAsNPC.getOrAddTrait(TrackTargetedByTrait.class);
                     beTargetedBy.remove(cause.getUniqueId());
                 }
             }

@@ -18,8 +18,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import net.citizensnpcs.EventListen;
-import net.citizensnpcs.trait.BeTargedByTrait;
+import net.citizensnpcs.trait.TrackTargetedByTrait;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,7 +41,6 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
@@ -3422,9 +3420,9 @@ public class NPCCommands {
             }
         }
         if (!targetable) {
-            final BeTargedByTrait beTargedByTrait = npc.getTraitNullable(BeTargedByTrait.class);
-            if (beTargedByTrait != null) { // may not be targeted by anything so prevent possible garbages
-                beTargedByTrait.clearTargets();
+            final TrackTargetedByTrait trackTargetedByTrait = npc.getTraitNullable(TrackTargetedByTrait.class);
+            if (trackTargetedByTrait != null) { // may not be targeted by anything so prevent possible garbages
+                trackTargetedByTrait.clearTargets();
             }
         }
         Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());

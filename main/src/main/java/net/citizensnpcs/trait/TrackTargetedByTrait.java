@@ -11,10 +11,10 @@ import java.util.Set;
 import java.util.UUID;
 
 @TraitName("betargetedby")
-public class BeTargedByTrait extends Trait {
+public class TrackTargetedByTrait extends Trait {
     private Set<UUID> beTargetedBy;
 
-    public BeTargedByTrait() {
+    public TrackTargetedByTrait() {
         super("betargetedby");
     }
 
