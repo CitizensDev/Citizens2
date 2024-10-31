@@ -1,9 +1,13 @@
 package net.citizensnpcs;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
+import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,6 +16,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Vehicle;
@@ -443,17 +448,51 @@ public class EventListen implements Listener {
         event.setCancelled(true);
     }
 
+    // fixme should we put it to somewhere?
+    public static final String BE_TARGETED_BY_KEY = "be-targeted-by";
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityTarget(EntityTargetEvent event) {
-        NPC npc = plugin.getNPCRegistry().getNPC(event.getTarget());
-        if (npc == null)
-            return;
-
-        final EntityTargetNPCEvent targetNPCEvent = new EntityTargetNPCEvent(event, npc);
-        targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
-        Bukkit.getPluginManager().callEvent(targetNPCEvent);
-        if (targetNPCEvent.isCancelled()) {
-            event.setCancelled(true);
+        final Entity targeted = event.getTarget();
+        NPC npc = plugin.getNPCRegistry().getNPC(targeted);
+        final Entity cause = event.getEntity();
+        if (npc != null) {
+            final EntityTargetNPCEvent targetNPCEvent = new EntityTargetNPCEvent(event, npc);
+            targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
+            Bukkit.getPluginManager().callEvent(targetNPCEvent);
+            if (targetNPCEvent.isCancelled()) {
+                event.setCancelled(true);
+            } else {
+                if (event.isCancelled()) {
+                    return;
+                }
+                if (!(cause instanceof Mob)) {
+                    return;
+                }
+                final List<Mob> beTargetedBy;
+                final List<Mob> _lookup = npc.data().get(BE_TARGETED_BY_KEY);
+                if (_lookup != null) {
+                    beTargetedBy = _lookup;
+                } else {
+                    beTargetedBy = new ArrayList<>();
+                    npc.data().set(BE_TARGETED_BY_KEY, beTargetedBy);
+                }
+                beTargetedBy.add((Mob) cause);
+            }
+        } else {
+            if (cause instanceof Mob) {
+                final LivingEntity previousTarget = ((Mob) cause).getTarget();
+                if (previousTarget == null) { // normally it is impossible
+                    return;
+                }
+                final NPC previousAsNPC = plugin.getNPCRegistry().getNPC(previousTarget);
+                if (previousAsNPC != null) {
+                    final List<Mob> beTargetedBy;
+                    beTargetedBy = previousAsNPC.data().get(BE_TARGETED_BY_KEY);
+                    if (beTargetedBy != null) {
+                        beTargetedBy.removeIf(mob -> mob.getUniqueId().equals(previousTarget.getUniqueId()));
+                    }
+                }
+            }
         }
     }
 

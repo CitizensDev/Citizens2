@@ -18,6 +18,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import it.unimi.dsi.fastutil.Pair;
+import net.citizensnpcs.EventListen;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,6 +42,7 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
@@ -3417,6 +3420,20 @@ public class NPCCommands {
             if (npc.isSpawned()) {
                 NMS.addOrRemoveFromPlayerList(npc.getEntity(), false);
             }
+        }
+        if (!targetable) {
+            final List<Mob> beTargetedBy;
+            // fixme the key should be placed to where?
+            beTargetedBy = npc.data().get(EventListen.BE_TARGETED_BY_KEY);
+            if (beTargetedBy != null) {
+                for (Mob mob : beTargetedBy) {
+                    if (mob.isValid()) {
+                        mob.setTarget(null);
+                    }
+                }
+                beTargetedBy.clear(); // for faster GC
+            }
+            npc.data().remove(EventListen.BE_TARGETED_BY_KEY);
         }
         Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());
     }
