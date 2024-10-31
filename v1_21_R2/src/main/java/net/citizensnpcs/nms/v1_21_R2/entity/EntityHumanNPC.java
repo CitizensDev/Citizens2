@@ -348,21 +348,23 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     @Override
     public void setPos(double d0, double d1, double d2) {
         if (npc != null) {
-            final CraftWorld world = serverLevel().getWorld();
-            final Location before = CraftVector.toBukkit(position()).toLocation(world);
-            final Location after = new Location(world, d0, d1, d2);
-            if (!before.equals(after)) {
-                final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, before.clone(), after.clone());
-                Bukkit.getPluginManager().callEvent(npcMoveEvent);
-                if (!npcMoveEvent.isCancelled()) {
-                    if (!after.equals(npcMoveEvent.getTo())) {
-                        getBukkitEntity().teleport(npcMoveEvent.getTo());
-                        return;
-                    }
-                } else {
-                    if (!before.equals(npcMoveEvent.getFrom())) {
-                        getBukkitEntity().teleport(npcMoveEvent.getFrom());
-                        return;
+            if (NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
+                final CraftWorld world = serverLevel().getWorld();
+                final Location before = CraftVector.toBukkit(position()).toLocation(world);
+                final Location after = new Location(world, d0, d1, d2);
+                if (!before.equals(after)) {
+                    final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, before.clone(), after.clone());
+                    Bukkit.getPluginManager().callEvent(npcMoveEvent);
+                    if (!npcMoveEvent.isCancelled()) {
+                        if (!after.equals(npcMoveEvent.getTo())) {
+                            getBukkitEntity().teleport(npcMoveEvent.getTo());
+                            return;
+                        }
+                    } else {
+                        if (!before.equals(npcMoveEvent.getFrom())) {
+                            getBukkitEntity().teleport(npcMoveEvent.getFrom());
+                            return;
+                        }
                     }
                 }
             }
