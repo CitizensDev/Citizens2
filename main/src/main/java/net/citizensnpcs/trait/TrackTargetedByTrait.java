@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@TraitName("betargetedby")
+@TraitName("tracktargetedby")
 public class TrackTargetedByTrait extends Trait {
     private Set<UUID> beTargetedBy;
 
