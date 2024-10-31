@@ -1,11 +1,10 @@
 package net.citizensnpcs;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
+import net.citizensnpcs.trait.BeTargedByTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -446,8 +445,6 @@ public class EventListen implements Listener {
         event.setCancelled(true);
     }
 
-    // fixme should we put it to somewhere?
-    public static final String BE_TARGETED_BY_KEY = "be-targeted-by";
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityTarget(EntityTargetEvent event) {
         final Entity targeted = event.getTarget();
@@ -466,14 +463,7 @@ public class EventListen implements Listener {
                 if (!(cause instanceof Mob)) {
                     return;
                 }
-                final List<UUID> beTargetedBy;
-                final List<UUID> _lookup = npc.data().get(BE_TARGETED_BY_KEY);
-                if (_lookup != null) {
-                    beTargetedBy = _lookup;
-                } else {
-                    beTargetedBy = new ArrayList<>();
-                    npc.data().set(BE_TARGETED_BY_KEY, beTargetedBy);
-                }
+                final BeTargedByTrait beTargetedBy = npc.getOrAddTrait(BeTargedByTrait.class);
                 beTargetedBy.add(cause.getUniqueId());
             }
         } else {
@@ -484,11 +474,8 @@ public class EventListen implements Listener {
                 }
                 final NPC previousAsNPC = plugin.getNPCRegistry().getNPC(previousTarget);
                 if (previousAsNPC != null) {
-                    final List<UUID> beTargetedBy;
-                    beTargetedBy = previousAsNPC.data().get(BE_TARGETED_BY_KEY);
-                    if (beTargetedBy != null) {
-                        beTargetedBy.removeIf(mob -> mob.equals(previousTarget.getUniqueId()));
-                    }
+                    final BeTargedByTrait beTargetedBy = previousAsNPC.getOrAddTrait(BeTargedByTrait.class);
+                    beTargetedBy.remove(cause.getUniqueId());
                 }
             }
         }
