@@ -48,6 +48,7 @@ public class TrackTargetedByTrait extends Trait {
                     }
                 }
             }
+            beTargetedBy = null;
         }
     }
 }
