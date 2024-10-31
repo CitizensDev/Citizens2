@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.util.List;
 
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.event.NPCMoveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -356,13 +357,15 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
                     final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, before.clone(), after.clone());
                     Bukkit.getPluginManager().callEvent(npcMoveEvent);
                     if (!npcMoveEvent.isCancelled()) {
-                        if (!after.equals(npcMoveEvent.getTo())) {
-                            getBukkitEntity().teleport(npcMoveEvent.getTo());
+                        final Location eventTo = npcMoveEvent.getTo();
+                        if (!after.equals(eventTo)) {
+                            Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> getBukkitEntity().teleport(eventTo), 1L);
                             return;
                         }
                     } else {
-                        if (!before.equals(npcMoveEvent.getFrom())) {
-                            getBukkitEntity().teleport(npcMoveEvent.getFrom());
+                        final Location eventFrom = npcMoveEvent.getFrom();
+                        if (!before.equals(eventFrom)) {
+                            Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> getBukkitEntity().teleport(eventFrom), 1L);
                             return;
                         }
                     }
