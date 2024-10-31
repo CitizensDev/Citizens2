@@ -15,7 +15,7 @@ public class TrackTargetedByTrait extends Trait {
     private Set<UUID> beTargetedBy;
 
     public TrackTargetedByTrait() {
-        super("betargetedby");
+        super("tracktargetedby");
     }
 
     @Override
