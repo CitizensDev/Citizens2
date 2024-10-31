@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import net.citizensnpcs.trait.TrackTargetedByTrait;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -3416,6 +3417,12 @@ public class NPCCommands {
             }
             if (npc.isSpawned()) {
                 NMS.addOrRemoveFromPlayerList(npc.getEntity(), false);
+            }
+        }
+        if (!targetable) {
+            final TrackTargetedByTrait trackTargetedByTrait = npc.getTraitNullable(TrackTargetedByTrait.class);
+            if (trackTargetedByTrait != null) { // may not be targeted by anything so prevent possible garbages
+                trackTargetedByTrait.clearTargets();
             }
         }
         Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());

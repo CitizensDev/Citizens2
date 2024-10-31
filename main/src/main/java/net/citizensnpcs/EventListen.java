@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
+import net.citizensnpcs.trait.TrackTargetedByTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Vehicle;
@@ -445,15 +447,37 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityTarget(EntityTargetEvent event) {
-        NPC npc = plugin.getNPCRegistry().getNPC(event.getTarget());
-        if (npc == null)
-            return;
-
-        final EntityTargetNPCEvent targetNPCEvent = new EntityTargetNPCEvent(event, npc);
-        targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
-        Bukkit.getPluginManager().callEvent(targetNPCEvent);
-        if (targetNPCEvent.isCancelled()) {
-            event.setCancelled(true);
+        final Entity targeted = event.getTarget();
+        NPC npc = plugin.getNPCRegistry().getNPC(targeted);
+        final Entity cause = event.getEntity();
+        if (npc != null) {
+            final EntityTargetNPCEvent targetNPCEvent = new EntityTargetNPCEvent(event, npc);
+            targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
+            Bukkit.getPluginManager().callEvent(targetNPCEvent);
+            if (targetNPCEvent.isCancelled()) {
+                event.setCancelled(true);
+            } else {
+                if (event.isCancelled()) {
+                    return;
+                }
+                if (!(cause instanceof Mob)) {
+                    return;
+                }
+                final TrackTargetedByTrait beTargetedBy = npc.getOrAddTrait(TrackTargetedByTrait.class);
+                beTargetedBy.add(cause.getUniqueId());
+            }
+        } else {
+            if (cause instanceof Mob) {
+                final LivingEntity previousTarget = ((Mob) cause).getTarget();
+                if (previousTarget == null) { // normally it is impossible
+                    return;
+                }
+                final NPC previousAsNPC = plugin.getNPCRegistry().getNPC(previousTarget);
+                if (previousAsNPC != null) {
+                    final TrackTargetedByTrait beTargetedBy = previousAsNPC.getOrAddTrait(TrackTargetedByTrait.class);
+                    beTargetedBy.remove(cause.getUniqueId());
+                }
+            }
         }
     }
 
