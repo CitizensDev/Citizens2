@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.util.List;
 
+import net.citizensnpcs.api.event.NPCMoveEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_21_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_21_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R2.util.CraftVector;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -339,6 +343,31 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     public void remove(RemovalReason reason) {
         super.remove(reason);
         getAdvancements().save();
+    }
+
+    @Override
+    public void setPos(double d0, double d1, double d2) {
+        if (npc != null) {
+            final CraftWorld world = serverLevel().getWorld();
+            final Location before = CraftVector.toBukkit(position()).toLocation(world);
+            final Location after = new Location(world, d0, d1, d2);
+            if (!before.equals(after)) {
+                final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, before.clone(), after.clone());
+                Bukkit.getPluginManager().callEvent(npcMoveEvent);
+                if (!npcMoveEvent.isCancelled()) {
+                    if (!after.equals(npcMoveEvent.getTo())) {
+                        getBukkitEntity().teleport(npcMoveEvent.getTo());
+                        return;
+                    }
+                } else {
+                    if (!before.equals(npcMoveEvent.getFrom())) {
+                        getBukkitEntity().teleport(npcMoveEvent.getFrom());
+                        return;
+                    }
+                }
+            }
+        }
+        super.setPos(d0, d1, d2);
     }
 
     @Override
