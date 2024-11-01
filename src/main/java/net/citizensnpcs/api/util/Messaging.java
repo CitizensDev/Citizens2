@@ -36,6 +36,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 
 public class Messaging {
     private static class DebugFormatter extends Formatter {
@@ -242,8 +243,8 @@ public class Messaging {
 
     public static String stripColor(String raw) {
         raw = ChatColor.stripColor(convertLegacyCodes(raw));
-        if (AUDIENCES != null && MINIMESSAGE != null)
-            return MINIMESSAGE.stripTags(raw);
+        if (MINIMESSAGE != null)
+            return MINIMESSAGE.stripTags(raw, DECORATION_TAGS);
 
         return raw;
     }
@@ -269,6 +270,7 @@ public class Messaging {
     private static final Map<String, String> COLORCODE_CONVERTER = Maps.newHashMap();
     private static boolean DEBUG = false;
     private static Logger DEBUG_LOGGER;
+    private static TagResolver DECORATION_TAGS;
     private static String ERROR_COLOUR = "<red>";
     private static final Pattern ERROR_MATCHER = Pattern.compile("{{", Pattern.LITERAL);
     private static final Pattern HEX_CODE_MATCHER = Pattern
@@ -317,9 +319,13 @@ public class Messaging {
                                             c -> '<' + c.toString() + '>'))
                                     + "|<#[a-f\\d]{6}>",
                             Pattern.CASE_INSENSITIVE);
-            MINIMESSAGE = MiniMessage.builder()
-                    .editTags(t -> t.resolver(TagResolver.resolver("csr", Tag.styling(
-                            s -> Arrays.stream(TextDecoration.values()).forEach(td -> s.decoration(td, false))))))
+            TagResolver citizensResetColorResolver = TagResolver.resolver("csr",
+                    Tag.styling(s -> Arrays.stream(TextDecoration.values()).forEach(td -> s.decoration(td, false))));
+            MINIMESSAGE = MiniMessage.builder().editTags(t -> t.resolver(citizensResetColorResolver)).build();
+            DECORATION_TAGS = TagResolver.builder()
+                    .resolvers(citizensResetColorResolver, StandardTags.clickEvent(), StandardTags.color(),
+                            StandardTags.rainbow(), StandardTags.reset(), StandardTags.gradient(),
+                            StandardTags.transition(), StandardTags.decorations(), StandardTags.font())
                     .build();
         } catch (Throwable t) {
         }
