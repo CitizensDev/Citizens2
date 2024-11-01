@@ -587,10 +587,6 @@ public interface NPC extends Agent, Cloneable {
          * Whether to allow swimming. Boolean.
          */
         SWIM("swim", Boolean.class),
-        /**
-         * Whether to prevent NPC being targeted by hostile mobs.
-         */
-        TARGETABLE("protected-target", Boolean.class),
         TEXT_DISPLAY_COMPONENT("text-display-component", Component.class),
         /**
          * The tracking distance for packets. Defaults to the default tracking distance defined by the server
