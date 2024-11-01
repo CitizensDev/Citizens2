@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-// todo move all usages on targetable metadata to this
 @TraitName("targetable")
 public class TargetableTrait extends Trait {
     private Set<UUID> beTargetedBy;

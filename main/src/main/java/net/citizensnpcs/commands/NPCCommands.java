@@ -3401,12 +3401,9 @@ public class NPCCommands {
             flags = "t",
             permission = "citizens.npc.targetable")
     public void targetable(CommandContext args, CommandSender sender, NPC npc) {
-        boolean targetable = !npc.data().get(NPC.Metadata.TARGETABLE, npc.isProtected());
-        if (args.hasFlag('t')) {
-            npc.data().set(NPC.Metadata.TARGETABLE, targetable);
-        } else {
-            npc.data().setPersistent(NPC.Metadata.TARGETABLE, targetable);
-        }
+        boolean targetable = !npc.getOrAddTrait(TargetableTrait.class).isTargetable();
+        boolean persist = !args.hasFlag('t');
+        npc.getOrAddTrait(TargetableTrait.class).setTargetable(targetable, persist);
         if (targetable && npc.getOrAddTrait(MobType.class).getType() == EntityType.PLAYER
                 && npc.shouldRemoveFromPlayerList()) {
             Messaging.sendTr(sender, Messages.TARGETABLE_PLAYERLIST_WARNING);
@@ -3417,12 +3414,6 @@ public class NPCCommands {
             }
             if (npc.isSpawned()) {
                 NMS.addOrRemoveFromPlayerList(npc.getEntity(), false);
-            }
-        }
-        if (!targetable) {
-            final TargetableTrait trait = npc.getTraitNullable(TargetableTrait.class);
-            if (trait != null) {
-                trait.clearTargets();
             }
         }
         Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());

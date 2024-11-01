@@ -452,7 +452,7 @@ public class EventListen implements Listener {
         final Entity targeter = event.getEntity();
         if (npc != null) {
             final EntityTargetNPCEvent targetNPCEvent = new EntityTargetNPCEvent(event, npc);
-            targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
+            targetNPCEvent.setCancelled(!npc.getOrAddTrait(TargetableTrait.class).isTargetable());
             Bukkit.getPluginManager().callEvent(targetNPCEvent);
             if (targetNPCEvent.isCancelled()) {
                 event.setCancelled(true);
