@@ -460,12 +460,12 @@ public class EventListen implements Listener {
             }
             if (event.isCancelled() || !(targeter instanceof Mob))
                 return;
-            npc.getOrAddTrait(TargetableTrait.class).add(targeter.getUniqueId());
+            npc.getOrAddTrait(TargetableTrait.class).addTargeter(targeter.getUniqueId());
         } else if (targeter instanceof Mob) {
             final NPC prev = plugin.getNPCRegistry().getNPC(((Mob) targeter).getTarget());
             if (prev == null)
                 return;
-            prev.getOrAddTrait(TargetableTrait.class).remove(targeter.getUniqueId());
+            prev.getOrAddTrait(TargetableTrait.class).removeTargeter(targeter.getUniqueId());
         }
     }
 

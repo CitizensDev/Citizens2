@@ -2,7 +2,6 @@ package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.SimpleMetadataStore;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -17,7 +16,7 @@ import java.util.UUID;
 
 @TraitName("targetable")
 public class TargetableTrait extends Trait {
-    private Set<UUID> beTargetedBy;
+    private Set<UUID> targeters;
     @Persist
     private Boolean state;
     private boolean shouldSave;
@@ -33,7 +32,7 @@ public class TargetableTrait extends Trait {
 
     @Override
     public void onDespawn() {
-        clearTargets();
+        clearTargeters();
     }
 
     @Override
@@ -74,7 +73,7 @@ public class TargetableTrait extends Trait {
             this.state = state;
             this.shouldSave = persistent;
             if (!state) {
-                clearTargets();
+                clearTargeters();
             }
         } else {
             if (!shouldSave && persistent) {
@@ -84,23 +83,23 @@ public class TargetableTrait extends Trait {
     }
 
     // Only for internal use
-    public void add(UUID uuid) {
-        if (beTargetedBy == null) {
-            beTargetedBy = new HashSet<>();
+    public void addTargeter(UUID uuid) {
+        if (targeters == null) {
+            targeters = new HashSet<>();
         }
-        beTargetedBy.add(uuid);
+        targeters.add(uuid);
     }
 
     // Only for internal use
-    public void remove(UUID uuid) {
-        if (beTargetedBy != null) {
-            beTargetedBy.remove(uuid);
+    public void removeTargeter(UUID uuid) {
+        if (targeters != null) {
+            targeters.remove(uuid);
         }
     }
 
-    public void clearTargets() {
-        if (beTargetedBy != null) {
-            for (UUID entityUUID : beTargetedBy) {
+    public void clearTargeters() {
+        if (targeters != null) {
+            for (UUID entityUUID : targeters) {
                 final Entity entity = Bukkit.getEntity(entityUUID);
                 if (entity instanceof Mob) {
                     if (entity.isValid()) {
@@ -108,7 +107,7 @@ public class TargetableTrait extends Trait {
                     }
                 }
             }
-            beTargetedBy = null;
+            targeters = null;
         }
     }
 
