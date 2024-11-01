@@ -3393,17 +3393,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "targetable (-t(emporary))",
+            usage = "targetable",
             desc = "",
             modifiers = { "targetable" },
             min = 1,
             max = 1,
-            flags = "t",
             permission = "citizens.npc.targetable")
     public void targetable(CommandContext args, CommandSender sender, NPC npc) {
         boolean targetable = !npc.getOrAddTrait(TargetableTrait.class).isTargetable();
-        boolean persist = !args.hasFlag('t');
-        npc.getOrAddTrait(TargetableTrait.class).setTargetable(targetable, persist);
+        npc.getOrAddTrait(TargetableTrait.class).setTargetable(targetable);
         if (targetable && npc.getOrAddTrait(MobType.class).getType() == EntityType.PLAYER
                 && npc.shouldRemoveFromPlayerList()) {
             Messaging.sendTr(sender, Messages.TARGETABLE_PLAYERLIST_WARNING);

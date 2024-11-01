@@ -121,7 +121,6 @@ public class Settings {
                 "npc.hologram.default-renderer", "display"),
         DEFAULT_LOOK_CLOSE("Enable look close by default", "npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("Default look close range in blocks", "npc.default.look-close.range", 10),
-        DEFAULT_NAME_HOLOGRAM_RENDERER("npc.hologram.default-name-renderer", ""),
         DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT("Default distance between hologram lines", "npc.hologram.default-line-height",
                 0.4D),
         DEFAULT_NPC_LIMIT(

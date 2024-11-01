@@ -138,10 +138,7 @@ public class HologramTrait extends Trait {
 
     private HologramRenderer createNameRenderer() {
         HologramRenderer renderer;
-        String setting = Setting.DEFAULT_NAME_HOLOGRAM_RENDERER.asString();
-        if (setting.isEmpty()) {
-            setting = SpigotUtil.getVersion()[1] <= 8 ? "armorstand" : "areaeffectcloud";
-        }
+        String setting = SpigotUtil.getVersion()[1] <= 8 ? "armorstand" : "areaeffectcloud";
         renderer = createRenderer(setting);
         if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
             HologramRendererCreateEvent event = new HologramRendererCreateEvent(npc, renderer, true);
@@ -961,11 +958,12 @@ public class HologramTrait extends Trait {
     }
 
     private static final Pattern ITEM_MATCHER = Pattern.compile("<item:((?:minecraft:)?[a-zA-Z0-9_ ]*?)(:.*?)?>");
-    private static boolean SUPPORTS_DISPLAY = false;
+    private static boolean SUPPORTS_DISPLAY = true;
     static {
         try {
-            SUPPORTS_DISPLAY = Class.forName("org.bukkit.entity.Display") != null;
-        } catch (Throwable e) {
+            Class.forName("org.bukkit.entity.Display");
+        } catch (ClassNotFoundException e) {
+            SUPPORTS_DISPLAY = false;
         }
     }
 }

@@ -104,7 +104,6 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(ItemFrameTrait.class));
         registerTrait(TraitInfo.create(LookClose.class));
         registerTrait(TraitInfo.create(PaintingTrait.class));
-        registerTrait(TraitInfo.create(TargetableTrait.class));
         registerTrait(TraitInfo.create(MirrorTrait.class).optInToStats());
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());
@@ -141,7 +140,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(SlimeSize.class));
         registerTrait(TraitInfo.create(Spawned.class));
         registerTrait(TraitInfo.create(Text.class));
-        registerTrait(TraitInfo.create(TrackTargetedByTrait.class));
+        registerTrait(TraitInfo.create(TargetableTrait.class));
         registerTrait(TraitInfo.create(Waypoints.class).optInToStats());
         registerTrait(TraitInfo.create(WitherTrait.class));
         registerTrait(TraitInfo.create(WoolColor.class));
