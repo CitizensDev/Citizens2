@@ -98,7 +98,10 @@ public class TargetableTrait extends Trait {
     }
 
     public void clearTargeters() {
-        if (targeters != null) {
+        if (targeters == null) {
+            return;
+        }
+        if (SUPPORTS_GET_ENTITY) {
             for (UUID entityUUID : targeters) {
                 final Entity entity = Bukkit.getEntity(entityUUID);
                 if (entity instanceof Mob) {
@@ -107,8 +110,8 @@ public class TargetableTrait extends Trait {
                     }
                 }
             }
-            targeters = null;
         }
+        targeters = null;
     }
 
     private boolean applyFromLegacyMetadata() {
@@ -123,4 +126,12 @@ public class TargetableTrait extends Trait {
         return false;
     }
 
+    private static boolean SUPPORTS_GET_ENTITY = true;
+    static {
+        try {
+            Bukkit.class.getMethod("getEntity", UUID.class);
+        } catch (NoSuchMethodException e) {
+            SUPPORTS_GET_ENTITY = false;
+        }
+    }
 }
