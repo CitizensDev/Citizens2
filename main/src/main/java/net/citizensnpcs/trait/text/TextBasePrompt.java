@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.Messages;
@@ -94,12 +93,10 @@ public class TextBasePrompt extends StringPrompt {
             text.toggleTalkClose();
         } else if (input.equalsIgnoreCase("range")) {
             try {
-                double range = Math.min(Math.max(0, Double.parseDouble(parts[1])), Setting.MAX_TEXT_RANGE.asDouble());
+                double range = Math.max(0, Double.parseDouble(parts[1]));
                 text.setRange(range);
                 Messaging.sendTr(sender, Messages.TEXT_EDITOR_RANGE_SET, range);
-            } catch (NumberFormatException e) {
-                Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_RANGE);
-            } catch (ArrayIndexOutOfBoundsException e) {
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 Messaging.sendErrorTr(sender, Messages.TEXT_EDITOR_INVALID_RANGE);
             }
         } else if (input.equalsIgnoreCase("item")) {

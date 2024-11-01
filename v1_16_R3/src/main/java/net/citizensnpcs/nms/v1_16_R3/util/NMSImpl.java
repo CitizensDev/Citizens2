@@ -584,11 +584,24 @@ public class NMSImpl implements NMSBridge {
     @Override
     public Location getDestination(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
-        ControllerMove controller = handle instanceof EntityInsentient ? ((EntityInsentient) handle).getControllerMove()
-                : handle instanceof MobAI ? ((MobAI) handle).getMoveControl() : null;
-        if (controller == null || !controller.b())
+        MobAI ai = MobAI.from(handle);
+        if (ai == null)
             return null;
-        return new Location(entity.getWorld(), controller.d(), controller.e(), controller.f());
+        ControllerMove controller = ai.getMoveControl();
+        if (controller.b())
+            return new Location(entity.getWorld(), controller.d(), controller.e(), controller.f());
+        if (isNavigationFinished(ai.getNavigation()))
+            return null;
+        Vec3D vec = ai.getNavigation().k().a(handle);
+        return new Location(entity.getWorld(), vec.x, vec.y, vec.z);
+    }
+
+    @Override
+    public float getForwardBackwardMovement(org.bukkit.entity.Entity entity) {
+        if (!entity.getType().isAlive())
+            return Float.NaN;
+        EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);
+        return handle.aT;
     }
 
     @Override
@@ -601,14 +614,6 @@ public class NMSImpl implements NMSBridge {
         if (!(entity instanceof LivingEntity))
             return entity.getLocation().getYaw();
         return getHandle((LivingEntity) entity).getHeadRotation();
-    }
-
-    @Override
-    public float getForwardBackwardMovement(org.bukkit.entity.Entity entity) {
-        if (!entity.getType().isAlive())
-            return Float.NaN;
-        EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);
-        return handle.aT;
     }
 
     @Override
@@ -837,14 +842,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public float getXZMovement(org.bukkit.entity.Entity entity) {
-        if (!entity.getType().isAlive())
-            return Float.NaN;
-        EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);
-        return handle.aR;
-    }
-
-    @Override
     public Collection<org.bukkit.entity.Player> getViewingPlayers(org.bukkit.entity.Entity entity) {
         WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
         EntityTracker entry = server.getChunkProvider().playerChunkMap.trackedEntities.get(entity.getEntityId());
@@ -854,6 +851,14 @@ public class NMSImpl implements NMSBridge {
     @Override
     public double getWidth(org.bukkit.entity.Entity entity) {
         return entity.getWidth();
+    }
+
+    @Override
+    public float getXZMovement(org.bukkit.entity.Entity entity) {
+        if (!entity.getType().isAlive())
+            return Float.NaN;
+        EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);
+        return handle.aR;
     }
 
     @Override

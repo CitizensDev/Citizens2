@@ -449,37 +449,23 @@ public class EventListen implements Listener {
     public void onEntityTarget(EntityTargetEvent event) {
         final Entity targeted = event.getTarget();
         NPC npc = plugin.getNPCRegistry().getNPC(targeted);
-        final Entity cause = event.getEntity();
+        final Entity targeter = event.getEntity();
         if (npc != null) {
             final EntityTargetNPCEvent targetNPCEvent = new EntityTargetNPCEvent(event, npc);
             targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
             Bukkit.getPluginManager().callEvent(targetNPCEvent);
             if (targetNPCEvent.isCancelled()) {
                 event.setCancelled(true);
-            } else {
-                if (event.isCancelled()) {
-                    return;
-                }
-                if (!(cause instanceof Mob)) {
-                    return;
-                }
-                final TargetableTrait targetableTrait = npc.getOrAddTrait(TargetableTrait.class);
-                targetableTrait.add(cause.getUniqueId());
+                return;
             }
-        } else {
-            if (cause instanceof Mob) {
-                final LivingEntity previousTarget = ((Mob) cause).getTarget();
-                if (previousTarget == null) { // normally it is impossible
-                    return;
-                }
-                final NPC previousAsNPC = plugin.getNPCRegistry().getNPC(previousTarget);
-                if (previousAsNPC != null) {
-                    final TargetableTrait targetableTrait = previousAsNPC.getTraitNullable(TargetableTrait.class);
-                    if (targetableTrait != null) { // maybe not being targeted by something yet
-                        targetableTrait.remove(cause.getUniqueId());
-                    } // or not necessary to handle this
-                }
-            }
+            if (event.isCancelled() || !(targeter instanceof Mob))
+                return;
+            npc.getOrAddTrait(TargetableTrait.class).add(targeter.getUniqueId());
+        } else if (targeter instanceof Mob) {
+            final NPC prev = plugin.getNPCRegistry().getNPC(((Mob) targeter).getTarget());
+            if (prev == null)
+                return;
+            prev.getOrAddTrait(TargetableTrait.class).remove(targeter.getUniqueId());
         }
     }
 
