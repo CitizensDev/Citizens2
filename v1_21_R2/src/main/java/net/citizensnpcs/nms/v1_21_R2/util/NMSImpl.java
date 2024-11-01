@@ -18,6 +18,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.citizensnpcs.api.event.NPCMoveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,6 +39,7 @@ import org.bukkit.craftbukkit.v1_21_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_21_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_21_R2.inventory.CraftInventoryAnvil;
 import org.bukkit.craftbukkit.v1_21_R2.inventory.view.CraftAnvilView;
+import org.bukkit.craftbukkit.v1_21_R2.util.CraftVector;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -387,6 +389,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.scores.PlayerTeam;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings("unchecked")
 public class NMSImpl implements NMSBridge {
@@ -2206,6 +2210,38 @@ public class NMSImpl implements NMSBridge {
                 return ((NumericTag) tag).getAsNumber();
         }
         throw new IllegalArgumentException();
+    }
+
+    // return true if the original movement should be cancelled
+    public static <T extends Entity & NPCHolder> boolean callNPCMoveEvent(T what, double newX, double newY, double newZ) {
+        final NPC npc = what.getNPC();
+        if (npc != null && NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
+            final CraftWorld world = what.level().getWorld();
+            final Vec3 nmsBefore = what.position();
+            if (nmsBefore.x == newX && nmsBefore.y == newY && nmsBefore.z == newZ) {
+                return false; // nothing was changed so act as-is
+            }
+            final Location before = CraftVector.toBukkit(nmsBefore).toLocation(world);
+            final Location after = new Location(world, newX, newY, newZ);
+            if (!before.equals(after)) {
+                final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, before.clone(), after.clone());
+                Bukkit.getPluginManager().callEvent(npcMoveEvent);
+                if (!npcMoveEvent.isCancelled()) {
+                    final Location eventTo = npcMoveEvent.getTo();
+                    if (!after.equals(eventTo)) {
+                        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> what.getBukkitEntity().teleport(eventTo), 1L);
+                        return true;
+                    }
+                } else {
+                    final Location eventFrom = npcMoveEvent.getFrom();
+                    if (!before.equals(eventFrom)) {
+                        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> what.getBukkitEntity().teleport(eventFrom), 1L);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static TreeMap<?, ?> getBehaviorMap(LivingEntity entity) {

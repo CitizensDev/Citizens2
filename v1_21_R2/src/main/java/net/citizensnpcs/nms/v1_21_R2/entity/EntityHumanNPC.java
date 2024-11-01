@@ -348,29 +348,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public void setPos(double d0, double d1, double d2) {
-        if (npc != null) {
-            if (NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
-                final CraftWorld world = serverLevel().getWorld();
-                final Location before = CraftVector.toBukkit(position()).toLocation(world);
-                final Location after = new Location(world, d0, d1, d2);
-                if (!before.equals(after)) {
-                    final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, before.clone(), after.clone());
-                    Bukkit.getPluginManager().callEvent(npcMoveEvent);
-                    if (!npcMoveEvent.isCancelled()) {
-                        final Location eventTo = npcMoveEvent.getTo();
-                        if (!after.equals(eventTo)) {
-                            Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> getBukkitEntity().teleport(eventTo), 1L);
-                            return;
-                        }
-                    } else {
-                        final Location eventFrom = npcMoveEvent.getFrom();
-                        if (!before.equals(eventFrom)) {
-                            Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> getBukkitEntity().teleport(eventFrom), 1L);
-                            return;
-                        }
-                    }
-                }
-            }
+        final boolean cancelled = NMSImpl.callNPCMoveEvent(this, d0, d1, d2);
+        if (cancelled) {
+            return;
         }
         super.setPos(d0, d1, d2);
     }
