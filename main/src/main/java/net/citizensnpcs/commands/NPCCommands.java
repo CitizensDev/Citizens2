@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import net.citizensnpcs.trait.TrackTargetedByTrait;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -166,6 +165,7 @@ import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SlimeSize;
+import net.citizensnpcs.trait.TrackTargetedByTrait;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.shop.StoredShops;
@@ -3420,9 +3420,9 @@ public class NPCCommands {
             }
         }
         if (!targetable) {
-            final TrackTargetedByTrait trackTargetedByTrait = npc.getTraitNullable(TrackTargetedByTrait.class);
-            if (trackTargetedByTrait != null) { // may not be targeted by anything so prevent possible garbages
-                trackTargetedByTrait.clearTargets();
+            final TrackTargetedByTrait trait = npc.getTraitNullable(TrackTargetedByTrait.class);
+            if (trait != null) {
+                trait.clearTargets();
             }
         }
         Messaging.sendTr(sender, targetable ? Messages.TARGETABLE_SET : Messages.TARGETABLE_UNSET, npc.getName());

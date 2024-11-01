@@ -661,11 +661,24 @@ public class NMSImpl implements NMSBridge {
     public Location getDestination(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         MobAI ai = MobAI.from(handle);
-        MoveControl controller = ai != null ? ai.getMoveControl() : null;
-        if (controller == null || !controller.hasWanted())
+        if (ai == null)
             return null;
-        return new Location(entity.getWorld(), controller.getWantedX(), controller.getWantedY(),
-                controller.getWantedZ());
+        MoveControl controller = ai.getMoveControl();
+        if (controller.hasWanted())
+            return new Location(entity.getWorld(), controller.getWantedX(), controller.getWantedY(),
+                    controller.getWantedZ());
+        if (ai.getNavigation().isDone())
+            return null;
+        Vec3 vec = ai.getNavigation().getPath().getNextEntityPos(handle);
+        return new Location(entity.getWorld(), vec.x(), vec.y(), vec.z());
+    }
+
+    @Override
+    public float getForwardBackwardMovement(org.bukkit.entity.Entity entity) {
+        if (!entity.getType().isAlive())
+            return Float.NaN;
+        LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) entity);
+        return handle.zza;
     }
 
     @Override
@@ -678,14 +691,6 @@ public class NMSImpl implements NMSBridge {
         if (!(entity instanceof org.bukkit.entity.LivingEntity))
             return entity.getLocation().getYaw();
         return getHandle((org.bukkit.entity.LivingEntity) entity).getYHeadRot();
-    }
-
-    @Override
-    public float getForwardBackwardMovement(org.bukkit.entity.Entity entity) {
-        if (!entity.getType().isAlive())
-            return Float.NaN;
-        LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) entity);
-        return handle.zza;
     }
 
     @Override
@@ -912,16 +917,16 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public double getWidth(org.bukkit.entity.Entity entity) {
+        return entity.getWidth();
+    }
+
+    @Override
     public float getXZMovement(org.bukkit.entity.Entity entity) {
         if (!entity.getType().isAlive())
             return Float.NaN;
         LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) entity);
         return handle.xxa;
-    }
-
-    @Override
-    public double getWidth(org.bukkit.entity.Entity entity) {
-        return entity.getWidth();
     }
 
     @Override
