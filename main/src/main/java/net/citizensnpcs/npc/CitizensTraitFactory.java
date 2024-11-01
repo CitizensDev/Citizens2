@@ -63,7 +63,7 @@ import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.trait.SleepTrait;
 import net.citizensnpcs.trait.SlimeSize;
 import net.citizensnpcs.trait.SneakTrait;
-import net.citizensnpcs.trait.TrackTargetedByTrait;
+import net.citizensnpcs.trait.TargetableTrait;
 import net.citizensnpcs.trait.VillagerProfession;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
@@ -104,6 +104,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(ItemFrameTrait.class));
         registerTrait(TraitInfo.create(LookClose.class));
         registerTrait(TraitInfo.create(PaintingTrait.class));
+        registerTrait(TraitInfo.create(TargetableTrait.class));
         registerTrait(TraitInfo.create(MirrorTrait.class).optInToStats());
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());

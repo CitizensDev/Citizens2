@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
+import net.citizensnpcs.trait.TargetableTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -116,7 +117,6 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
 import net.citizensnpcs.trait.ShopTrait;
-import net.citizensnpcs.trait.TrackTargetedByTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
@@ -452,7 +452,7 @@ public class EventListen implements Listener {
         final Entity targeter = event.getEntity();
         if (npc != null) {
             final EntityTargetNPCEvent targetNPCEvent = new EntityTargetNPCEvent(event, npc);
-            targetNPCEvent.setCancelled(!npc.data().get(NPC.Metadata.TARGETABLE, !npc.isProtected()));
+            targetNPCEvent.setCancelled(!npc.getOrAddTrait(TargetableTrait.class).isTargetable());
             Bukkit.getPluginManager().callEvent(targetNPCEvent);
             if (targetNPCEvent.isCancelled()) {
                 event.setCancelled(true);
@@ -460,12 +460,12 @@ public class EventListen implements Listener {
             }
             if (event.isCancelled() || !(targeter instanceof Mob))
                 return;
-            npc.getOrAddTrait(TrackTargetedByTrait.class).add(targeter.getUniqueId());
+            npc.getOrAddTrait(TargetableTrait.class).addTargeter(targeter.getUniqueId());
         } else if (targeter instanceof Mob) {
             final NPC prev = plugin.getNPCRegistry().getNPC(((Mob) targeter).getTarget());
             if (prev == null)
                 return;
-            prev.getOrAddTrait(TrackTargetedByTrait.class).remove(targeter.getUniqueId());
+            prev.getOrAddTrait(TargetableTrait.class).removeTargeter(targeter.getUniqueId());
         }
     }
 
