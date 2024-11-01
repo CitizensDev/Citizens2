@@ -474,8 +474,10 @@ public class EventListen implements Listener {
                 }
                 final NPC previousAsNPC = plugin.getNPCRegistry().getNPC(previousTarget);
                 if (previousAsNPC != null) {
-                    final TargetableTrait targetableTrait = previousAsNPC.getOrAddTrait(TargetableTrait.class);
-                    targetableTrait.remove(cause.getUniqueId());
+                    final TargetableTrait targetableTrait = previousAsNPC.getTraitNullable(TargetableTrait.class);
+                    if (targetableTrait != null) { // maybe not being targeted by something yet
+                        targetableTrait.remove(cause.getUniqueId());
+                    } // or not necessary to handle this
                 }
             }
         }
