@@ -1,7 +1,6 @@
 package net.citizensnpcs.trait;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -26,11 +25,6 @@ public class TargetableTrait extends Trait {
     }
 
     @Override
-    public void onAttach() {
-        applyFromLegacyMetadata();
-    }
-
-    @Override
     public void onDespawn() {
         clearTargeters();
     }
@@ -50,14 +44,6 @@ public class TargetableTrait extends Trait {
             if (state != null) {
                 key.setBoolean("state", state);
             }
-        }
-    }
-
-    @Override
-    public void run() {
-        final boolean applied = applyFromLegacyMetadata();
-        if (applied) {
-            // fixme how to decide if we should persist the state? as we don't know its persistence state
         }
     }
 
@@ -112,18 +98,6 @@ public class TargetableTrait extends Trait {
             }
         }
         targeters = null;
-    }
-
-    private boolean applyFromLegacyMetadata() {
-        final boolean hasLegacyMeta = npc.data().has(NPC.Metadata.TARGETABLE);
-        if (hasLegacyMeta) {
-            state = npc.data().get(NPC.Metadata.TARGETABLE);
-            shouldSave = true; // because it is loaded from persistent metadata
-            // then prevent the data from being saved through metadata code, we'll handle this
-            npc.data().remove(NPC.Metadata.TARGETABLE); // fixme is this right?
-            return true;
-        }
-        return false;
     }
 
     private static boolean SUPPORTS_GET_ENTITY = true;
