@@ -10,12 +10,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@TraitName("tracktargetedby")
-public class TrackTargetedByTrait extends Trait {
+@TraitName("targetable")
+public class TargetableTrait extends Trait {
     private Set<UUID> beTargetedBy;
 
-    public TrackTargetedByTrait() {
-        super("tracktargetedby");
+    public TargetableTrait() {
+        super("targetable");
     }
 
     @Override
