@@ -1,5 +1,7 @@
 package net.citizensnpcs.api.trait;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -86,6 +88,7 @@ public final class TraitInfo {
     }
 
     public void registerListener(Plugin plugin) {
+        final MethodHandles.Lookup lookup = MethodHandles.lookup();
         for (Method method : trait.getDeclaredMethods()) {
             TraitEventHandler sel = method.getAnnotation(TraitEventHandler.class);
             if (sel == null)
@@ -120,6 +123,7 @@ public final class TraitInfo {
                     continue;
                 }
                 method.setAccessible(true);
+                final MethodHandle asMethodHandle = lookup.unreflect(method);
                 handler.register(new RegisteredListener(new Listener() {
                 }, (Listener listener, Event event) -> {
                     NPC npc = processor.apply(event);
@@ -129,8 +133,8 @@ public final class TraitInfo {
                     if (instance == null)
                         return;
                     try {
-                        method.invoke(instance, event);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        asMethodHandle.invoke(instance, event);
+                    } catch (Throwable e) {
                         e.printStackTrace();
                     }
                 }, sel.value().priority(), plugin, sel.value().ignoreCancelled()));
