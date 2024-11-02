@@ -26,6 +26,7 @@ import net.minecraft.core.HolderLookup.RegistryLookup;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -220,6 +221,11 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     }
 
     @Override
+    public Registry<EntityType<?>> freeze() {
+        return wrapped.freeze();
+    }
+
+    @Override
     public MappedRegistry<EntityType<?>> get() {
         return wrapped;
     }
@@ -247,6 +253,11 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     }
 
     @Override
+    public Optional<Reference<EntityType<?>>> getHolder(ResourceLocation var0) {
+        return this.wrapped.getHolder(var0);
+    }
+
+    @Override
     public int getId(EntityType key) {
         if (entityIds.containsKey(key))
             return entityIds.get(key);
@@ -270,6 +281,11 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
         if (entities.containsKey(var0))
             return Optional.of(entities.get(var0));
         return this.wrapped.getOptional(var0);
+    }
+
+    @Override
+    public Named<EntityType<?>> getOrCreateTag(TagKey<EntityType<?>> var0) {
+        return this.wrapped.getOrCreateTag(var0);
     }
 
     @Override
@@ -318,18 +334,39 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     }
 
     @Override
+    public ResourceKey<? extends Registry<EntityType<?>>> key() {
+        return wrapped.key();
+    }
+
+    @Override
     public Set<ResourceLocation> keySet() {
         return wrapped.keySet();
     }
 
-    public void put(int entityId, ResourceLocation key, EntityType entityClass) {
+    public void put(int entityId, ResourceLocation key, EntityType<?> entityClass) {
         entities.put(key, entityClass);
         entityIds.put(entityClass, entityId);
     }
 
     @Override
+    public Reference<EntityType<?>> register(ResourceKey<EntityType<?>> key, EntityType<?> type,
+            RegistrationInfo info) {
+        return wrapped.register(key, type, info);
+    }
+
+    @Override
+    public Optional<RegistrationInfo> registrationInfo(ResourceKey<EntityType<?>> key) {
+        return wrapped.registrationInfo(key);
+    }
+
+    @Override
     public Set<ResourceKey<EntityType<?>>> registryKeySet() {
         return wrapped.registryKeySet();
+    }
+
+    @Override
+    public Lifecycle registryLifecycle() {
+        return wrapped.registryLifecycle();
     }
 
     @Override
