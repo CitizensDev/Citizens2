@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -67,7 +68,7 @@ public class TargetableTrait extends Trait {
     }
 
     public void setTargetable(boolean targetable) {
-        if (this.targetable == targetable)
+        if (Boolean.valueOf(targetable).equals(this.targetable))
             return;
         this.targetable = targetable;
         if (!targetable) {
