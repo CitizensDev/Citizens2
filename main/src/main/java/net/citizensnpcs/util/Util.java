@@ -1,5 +1,7 @@
 package net.citizensnpcs.util;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -33,6 +36,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.util.OldEnum;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
@@ -438,8 +442,19 @@ public class Util {
         return name;
     }
 
-    public static String prettyEnum(Enum<?> e) {
-        return e.name().toLowerCase(Locale.ROOT).replace('_', ' ');
+    public static String prettyEnum(Object e) {
+        if (e instanceof Enum) {
+            return ((Enum<?>) e).name().toLowerCase(Locale.ROOT).replace('_', ' ');
+        } else {
+            if (IS_OLD_ENUM.test(e)) {
+                try {
+                    return (String) OLD_ENUM_NAME.invoke(e);
+                } catch (Throwable ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        throw new UnsupportedOperationException("Not an enum-like object");
     }
 
     public static String prettyPrintLocation(Location to) {
@@ -629,6 +644,8 @@ public class Util {
     private static Scoreboard DUMMY_SCOREBOARD;
     private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
     private static boolean SUPPORTS_HAS_EQUIPPABLE = false;
+    private static final Predicate<Object> IS_OLD_ENUM;
+    private static MethodHandle OLD_ENUM_NAME;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {
@@ -647,6 +664,14 @@ public class Util {
         } catch (Exception e) {
             SUPPORTS_BUKKIT_GETENTITY = false;
         }
+        Predicate<Object> isOldEnum;
+        try {
+            OLD_ENUM_NAME = MethodHandles.lookup().unreflect(OldEnum.class.getMethod("name"));
+            isOldEnum = any -> any instanceof OldEnum;
+        } catch (NoClassDefFoundError | NoSuchMethodException | IllegalAccessException e) {
+            isOldEnum = any -> false;
+        }
+        IS_OLD_ENUM = isOldEnum;
         Class<?> floodgateApiHolderClass;
         try {
             floodgateApiHolderClass = Class.forName("org.geysermc.floodgate.api.InstanceHolder");
