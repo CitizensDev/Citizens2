@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
+import net.citizensnpcs.api.trait.TraitEventHandler;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.milkbowl.vault.economy.Economy;
@@ -20,7 +21,7 @@ public class PaymentListener implements Listener {
         this.provider = provider;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @TraitEventHandler(@EventHandler(ignoreCancelled = true))
     public void onPlayerCreateNPC(PlayerCreateNPCEvent event) {
         if (!provider.hasAccount(event.getCreator()) || event.getCreator().hasPermission("citizens.npc.ignore-cost"))
             return;

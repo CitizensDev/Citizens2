@@ -20,6 +20,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitEventHandler;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.util.NMS;
@@ -98,9 +99,9 @@ public class Controllable extends Trait {
         }
     }
 
-    @EventHandler
+    @TraitEventHandler(@EventHandler)
     private void onRightClick(NPCRightClickEvent event) {
-        if (!enabled || !npc.isSpawned() || !event.getNPC().equals(npc))
+        if (!enabled || !npc.isSpawned())
             return;
         controller.rightClickEntity(event);
         event.setDelayedCancellation(true);

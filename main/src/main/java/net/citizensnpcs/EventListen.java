@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
-import net.citizensnpcs.trait.TargetableTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -116,7 +115,7 @@ import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
-import net.citizensnpcs.trait.ShopTrait;
+import net.citizensnpcs.trait.TargetableTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
@@ -373,9 +372,9 @@ public class EventListen implements Listener {
             }
             NPCLeftClickEvent leftClickEvent = new NPCLeftClickEvent(npc, damager);
             Bukkit.getPluginManager().callEvent(leftClickEvent);
-            if (leftClickEvent.isCancelled()) {
+            if (leftClickEvent.isCancelled())
                 return;
-            }
+
             if (npc.hasTrait(CommandTrait.class)) {
                 npc.getTraitNullable(CommandTrait.class).dispatch(damager, CommandTrait.Hand.LEFT);
             }
@@ -655,10 +654,6 @@ public class EventListen implements Listener {
         }
         if (npc.hasTrait(CommandTrait.class)) {
             npc.getTraitNullable(CommandTrait.class).dispatch(player, CommandTrait.Hand.RIGHT);
-            rightClickEvent.setDelayedCancellation(true);
-        }
-        if (npc.hasTrait(ShopTrait.class)) {
-            npc.getTraitNullable(ShopTrait.class).onRightClick(player);
             rightClickEvent.setDelayedCancellation(true);
         }
         if (rightClickEvent.isDelayedCancellation()) {

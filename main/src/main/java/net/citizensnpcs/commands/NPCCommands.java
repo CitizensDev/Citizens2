@@ -156,6 +156,7 @@ import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.ScaledMaxHealthTrait;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.ShopTrait;
@@ -2207,7 +2208,7 @@ public class NPCCommands {
         PaintingTrait trait = npc.getOrAddTrait(PaintingTrait.class);
         if (art != null) {
             trait.setArt(art);
-            Messaging.sendTr(sender, Messages.PAINTING_ART_SET, npc.getName(), Util.prettyEnum(art));
+            Messaging.sendTr(sender, Messages.PAINTING_ART_SET, npc.getName(), art);
             return;
         }
         throw new CommandUsageException();
@@ -2792,6 +2793,19 @@ public class NPCCommands {
         if (head != null) {
             NMS.setHeadYaw(npc.getEntity(), head);
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "scaledmaxhealth [health]",
+            desc = "",
+            modifiers = { "scaledmaxhealth" },
+            min = 1,
+            max = 2,
+            permission = "citizens.npc.scaledmaxhealth")
+    public void scaledhealth(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Double scaled) {
+        npc.getOrAddTrait(ScaledMaxHealthTrait.class).setMaxHealth(scaled);
+        Messaging.sendTr(sender, Messages.SCALED_MAX_HEALTH_SET, scaled);
     }
 
     @Command(

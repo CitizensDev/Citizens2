@@ -25,6 +25,7 @@ import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.gui.PercentageSlotHandler;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitEventHandler;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.util.Util;
 
@@ -41,11 +42,8 @@ public class DropsTrait extends Trait {
         InventoryMenu.createSelfRegistered(new DropsGUI(this)).present(sender);
     }
 
-    @EventHandler
+    @TraitEventHandler(@EventHandler)
     public void onNPCDeath(NPCDeathEvent event) {
-        if (!event.getNPC().equals(npc))
-            return;
-
         Random random = Util.getFastRandom();
         for (ItemDrop drop : drops) {
             if (random.nextDouble() < drop.chance) {

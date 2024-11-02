@@ -22,6 +22,7 @@ import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitEventHandler;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
@@ -142,9 +143,9 @@ public class Text extends Trait implements Runnable, Listener {
         range = key.getDouble("range", Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble());
     }
 
-    @EventHandler
+    @TraitEventHandler(@EventHandler)
     private void onRightClick(NPCRightClickEvent event) {
-        if (!event.getNPC().equals(npc) || text.size() == 0)
+        if (text.size() == 0)
             return;
         String localPattern = "default".equals(itemInHandPattern) ? Setting.TALK_ITEM.asString() : itemInHandPattern;
         if (Util.matchesItemInHand(event.getClicker(), localPattern) && !shouldTalkClose()) {

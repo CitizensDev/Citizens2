@@ -374,6 +374,7 @@ public class Messages {
     public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
     public static final String RESPAWN_DELAY_DESCRIBE = "citizens.commands.npc.respawn.describe";
     public static final String RESPAWN_DELAY_SET = "citizens.commands.npc.respawn.delay-set";
+    public static final String SCALED_MAX_HEALTH_SET = "citizens.commands.npc.scaledmaxhealth.set";
     public static final String SELECTION_PROMPT = "citizens.editors.selection.start-prompt";
     public static final String SELECTION_PROMPT_INVALID_CHOICE = "citizens.conversations.selection.invalid-choice";
     public static final String SHEARED_SET = "citizens.editors.equipment.sheared-set";

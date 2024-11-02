@@ -7,6 +7,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitEventHandler;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.util.NMS;
 
@@ -39,9 +40,9 @@ public class PausePathfindingTrait extends Trait {
         return playerRange;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @TraitEventHandler(@EventHandler(ignoreCancelled = true))
     public void onInteract(NPCRightClickEvent event) {
-        if (lockoutDuration > t || !rightclick || event.getNPC() != npc)
+        if (lockoutDuration > t || !rightclick)
             return;
         pause();
         event.setDelayedCancellation(true);

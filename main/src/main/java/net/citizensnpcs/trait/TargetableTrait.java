@@ -31,9 +31,9 @@ public class TargetableTrait extends Trait {
     }
 
     public void clearTargeters() {
-        if (targeters == null) {
+        if (targeters == null)
             return;
-        }
+
         if (SUPPORTS_GET_ENTITY) {
             for (UUID entityUUID : targeters) {
                 final Entity entity = Bukkit.getEntity(entityUUID);
@@ -48,10 +48,7 @@ public class TargetableTrait extends Trait {
     }
 
     public boolean isTargetable() {
-        if (targetable == null) {
-            return !npc.isProtected();
-        }
-        return targetable;
+        return targetable == null ? !npc.isProtected() : targetable;
     }
 
     @Override
@@ -67,7 +64,7 @@ public class TargetableTrait extends Trait {
     }
 
     public void setTargetable(boolean targetable) {
-        if (this.targetable == targetable)
+        if (Boolean.valueOf(targetable).equals(this.targetable))
             return;
         this.targetable = targetable;
         if (!targetable) {

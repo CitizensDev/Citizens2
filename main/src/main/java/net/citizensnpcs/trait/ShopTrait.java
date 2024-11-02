@@ -37,6 +37,7 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
 import net.citizensnpcs.api.gui.ClickHandler;
 import net.citizensnpcs.api.gui.InputMenus;
@@ -53,6 +54,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.Persistable;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitEventHandler;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
@@ -109,9 +111,12 @@ public class ShopTrait extends Trait {
         shops.deleteShop(getDefaultShop());
     }
 
-    public void onRightClick(Player player) {
+    @TraitEventHandler(@EventHandler)
+    public void onRightClick(NPCRightClickEvent event) {
         if (rightClickShop == null || rightClickShop.isEmpty())
             return;
+        Player player = event.getClicker();
+        event.setDelayedCancellation(true);
 
         String globalViewPermission = Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString();
         if (!globalViewPermission.isEmpty() && !player.hasPermission(globalViewPermission))

@@ -5,7 +5,6 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
 
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -40,9 +39,7 @@ public class WoolColor extends Trait {
 
     @EventHandler
     private void onSheepDyeWool(SheepDyeWoolEvent event) {
-        if (npc.equals(CitizensAPI.getNPCRegistry().getNPC(event.getEntity()))) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(true);
     }
 
     @Override

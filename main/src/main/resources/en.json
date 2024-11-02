@@ -234,6 +234,8 @@
   "citizens.commands.npc.guardian.elder-unset" : "[[{0}]] is no longer an elder guardian.",
   "citizens.commands.npc.help" : "",
   "citizens.commands.npc.hitbox.description" : "Sets the NPC hitbox",
+  "citizens.commands.npc.scaledmaxhealth.set" : "Max health set to [[{0}]].",
+  "citizens.commands.npc.scaledmaxhealth.description" : "Controls the max health of an NPC, can use large numbers.",
   "citizens.commands.npc.hitbox.help" : "",
   "citizens.commands.npc.hitbox.set" : "Hitbox set to [[{0}]].",
   "citizens.commands.npc.hologram.cleared" : "Hologram lines cleared.",
