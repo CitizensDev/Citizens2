@@ -1,12 +1,13 @@
 package net.citizensnpcs.api.event;
 
-import com.google.common.base.Preconditions;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class NPCMoveEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -35,12 +36,14 @@ public class NPCMoveEvent extends Event implements Cancellable {
     }
 
     public void setFrom(Location from) {
-        validateLocation(from);
+        Objects.requireNonNull(from, "from cannot be null");
+        Objects.requireNonNull(from.getWorld(), "from.getWorld() cannot be null");
         this.from = from;
     }
 
     public void setTo(Location to) {
-        validateLocation(to);
+        Objects.requireNonNull(to, "to cannot be null");
+        Objects.requireNonNull(to.getWorld(), "to.getWorld() cannot be null");
         this.to = to;
     }
 
@@ -62,11 +65,6 @@ public class NPCMoveEvent extends Event implements Cancellable {
     @Override
     public void setCancelled(boolean b) {
         this.cancelled = b;
-    }
-
-    private void validateLocation(Location loc) {
-        Preconditions.checkArgument(loc != null, "Cannot use null location!");
-        Preconditions.checkArgument(loc.getWorld() != null, "Cannot use null location with null world!");
     }
 
     @Override
