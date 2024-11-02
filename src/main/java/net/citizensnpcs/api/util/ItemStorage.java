@@ -3,7 +3,6 @@ package net.citizensnpcs.api.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,6 +16,8 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
@@ -72,7 +73,7 @@ public class ItemStorage {
         if (root.keyExists("meta")) {
             List<String> lore = null;
             if (root.keyExists("lore")) {
-                lore = Arrays.asList(Messaging.parseComponents(root.getString("lore")).split("<br>"));
+                lore = Lists.newArrayList(Splitter.on('\n').split(Messaging.parseComponents(root.getString("lore"))));
             }
             String displayName = root.getString("displayname", null);
             deserialiseMeta(root.getRelative("meta"), res, lore, displayName);

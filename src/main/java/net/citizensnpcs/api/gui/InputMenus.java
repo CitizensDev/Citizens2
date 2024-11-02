@@ -12,13 +12,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.Event.Result;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.common.collect.Lists;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.gui.InputMenus.Choice.Type;
 import net.citizensnpcs.api.util.Messaging;
 
@@ -222,6 +227,24 @@ public class InputMenus {
         return new ChoiceInputMenu<>(title, Choice.Type.PICKER, chosen -> {
             callback.accept(chosen.size() > 0 ? chosen.get(0) : null);
         }, choices);
+    }
+
+    public static void runChatStringSetter(InventoryMenu menu, HumanEntity viewer, String description,
+            Consumer<String> callback) {
+        menu.close(viewer);
+        Messaging.send(viewer, description);
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler(ignoreCancelled = true)
+            public void onPlayerChat(AsyncPlayerChatEvent event) {
+                HandlerList.unregisterAll(this);
+                String chat = event.getMessage();
+                event.setCancelled(true);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    callback.accept(chat);
+                    menu.present(viewer);
+                });
+            }
+        }, CitizensAPI.getPlugin());
     }
 
     public static InventoryMenuPage stringSetter(Supplier<String> initialValue, Consumer<String> callback) {
