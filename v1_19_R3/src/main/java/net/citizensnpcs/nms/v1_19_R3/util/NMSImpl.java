@@ -762,10 +762,9 @@ public class NMSImpl implements NMSBridge {
             return DEFAULT_SPEED;
         LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) npc.getEntity());
         if (handle == null) {
+            return DEFAULT_SPEED;
         }
-        return DEFAULT_SPEED;
-        // return (float)
-        // handle.getAttribute(Attributes.d).getValue();
+        return (float) handle.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
     }
 
     @Override

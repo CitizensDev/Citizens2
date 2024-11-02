@@ -598,10 +598,9 @@ public class NMSImpl implements NMSBridge {
             return DEFAULT_SPEED;
         EntityLiving handle = NMSImpl.getHandle((LivingEntity) npc.getEntity());
         if (handle == null) {
+            return DEFAULT_SPEED;
         }
-        return DEFAULT_SPEED;
-        // return (float)
-        // handle.getAttributeInstance(GenericAttributes.d).getValue();
+        return (float) handle.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
     }
 
     @Override

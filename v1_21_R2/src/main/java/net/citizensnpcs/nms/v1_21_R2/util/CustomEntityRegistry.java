@@ -8,10 +8,12 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 
 import net.citizensnpcs.util.NMS;
@@ -20,12 +22,16 @@ import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Holder.Reference;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderOwner;
+import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.IdMap;
 import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.tags.TagLoader.LoadResult;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 
@@ -63,22 +69,32 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
 
     @Override
     public EntityType byId(int var0) {
-        return this.wrapped.byId(var0);
+        return wrapped.byId(var0);
     }
 
     @Override
     public EntityType byIdOrThrow(int var0) {
-        return this.wrapped.byIdOrThrow(var0);
+        return wrapped.byIdOrThrow(var0);
+    }
+
+    @Override
+    public boolean canSerializeIn(HolderOwner<EntityType<?>> owner) {
+        return wrapped.canSerializeIn(owner);
     }
 
     @Override
     public boolean containsKey(ResourceKey<EntityType<?>> var0) {
-        return this.wrapped.containsKey(var0);
+        return wrapped.containsKey(var0);
     }
 
     @Override
     public boolean containsKey(ResourceLocation var0) {
-        return this.wrapped.containsKey(var0);
+        return wrapped.containsKey(var0);
+    }
+
+    @Override
+    public Reference<EntityType<?>> createIntrusiveHolder(EntityType<?> type) {
+        return wrapped.createIntrusiveHolder(type);
     }
 
     @Override
@@ -89,6 +105,11 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     @Override
     public Set<Entry<ResourceKey<EntityType<?>>, EntityType<?>>> entrySet() {
         return wrapped.entrySet();
+    }
+
+    @Override
+    public Registry<EntityType<?>> freeze() {
+        return wrapped.freeze();
     }
 
     @Override
@@ -109,16 +130,24 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     }
 
     @Override
-    public int getId(EntityType key) {
+    public Optional<Named<EntityType<?>>> get(TagKey<EntityType<?>> key) {
+        return wrapped.get(key);
+    }
+
+    @Override
+    public Optional<Reference<EntityType<?>>> getAny() {
+        return wrapped.getAny();
+    }
+
+    @Override
+    public int getId(EntityType<?> key) {
         if (entityIds.containsKey(key))
             return entityIds.get(key);
         return wrapped.getId(key);
     }
 
     @Override
-    public ResourceLocation getKey(EntityType value) {
-        if (entityClasses.containsKey(value))
-            return entityClasses.get(value);
+    public ResourceLocation getKey(EntityType<?> value) {
         return wrapped.getKey(value);
     }
 
@@ -145,6 +174,11 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     }
 
     @Override
+    public Stream<Named<EntityType<?>>> getTags() {
+        return wrapped.getTags();
+    }
+
+    @Override
     public EntityType<?> getValue(ResourceKey<EntityType<?>> key) {
         return wrapped.getValue(key);
     }
@@ -154,6 +188,11 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
         if (entities.containsKey(key))
             return entities.getOrDefault(key, defaultReference).value();
         return wrapped.getValue(key);
+    }
+
+    @Override
+    public Codec<Holder<EntityType<?>>> holderByNameCodec() {
+        return wrapped.holderByNameCodec();
     }
 
     @Override
@@ -167,13 +206,38 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     }
 
     @Override
+    public ResourceKey<? extends Registry<EntityType<?>>> key() {
+        return wrapped.key();
+    }
+
+    @Override
     public Set<ResourceLocation> keySet() {
         return wrapped.keySet();
+    }
+
+    @Override
+    public Stream<Reference<EntityType<?>>> listElements() {
+        return wrapped.listElements();
+    }
+
+    @Override
+    public Stream<Named<EntityType<?>>> listTags() {
+        return wrapped.listTags();
+    }
+
+    @Override
+    public PendingTags<EntityType<?>> prepareTagReload(LoadResult<EntityType<?>> var0) {
+        return wrapped.prepareTagReload(var0);
     }
 
     public void put(int entityId, ResourceLocation key, EntityType entityClass) {
         entities.put(key, entityClass.builtInRegistryHolder());
         entityIds.put(entityClass, entityId);
+    }
+
+    @Override
+    public Optional<RegistrationInfo> registrationInfo(ResourceKey<EntityType<?>> key) {
+        return wrapped.registrationInfo(key);
     }
 
     @Override
@@ -189,6 +253,16 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     @Override
     public int size() {
         return wrapped.size();
+    }
+
+    @Override
+    public String toString() {
+        return wrapped.toString();
+    }
+
+    @Override
+    public Holder<EntityType<?>> wrapAsHolder(EntityType<?> type) {
+        return wrapped.wrapAsHolder(type);
     }
 
     private static final MethodHandle IREGISTRY_LIFECYCLE = NMS.getFirstGetter(MappedRegistry.class, Lifecycle.class);
