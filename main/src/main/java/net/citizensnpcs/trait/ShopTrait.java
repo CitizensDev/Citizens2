@@ -588,40 +588,41 @@ public class ShopTrait extends Trait {
             ctx.getSlot(9 * 4 + 2).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
                     "Set already purchased message, currently:\n",
                     modified.alreadyPurchasedMessage == null ? "Unset" : modified.alreadyPurchasedMessage);
-            ctx.getSlot(9 * 4 + 2).setClickHandler(
-                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.alreadyPurchasedMessage, s -> {
+            ctx.getSlot(9 * 4 + 2).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e.getWhoClicked(),
+                    "Enter the new already purchased message, currently:<br>[[" + modified.alreadyPurchasedMessage,
+                    s -> {
                         modified.alreadyPurchasedMessage = s;
                         ctx.getSlot(9 * 4 + 2).setDescription(modified.alreadyPurchasedMessage);
-                    })));
+                    }));
 
             ctx.getSlot(9 * 3 + 3).setItemStack(
                     new ItemStack(Util.getFallbackMaterial("GREEN_WOOL", "EMERALD", "OAK_SIGN", "SIGN")),
                     "Set successful click message, currently:\n",
                     modified.resultMessage == null ? "Unset" : modified.resultMessage);
-            ctx.getSlot(9 * 3 + 3).setClickHandler(
-                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.resultMessage, s -> {
+            ctx.getSlot(9 * 3 + 3).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e.getWhoClicked(),
+                    "Enter the new successful click message, currently:<br>[[" + modified.resultMessage, s -> {
                         modified.resultMessage = s;
                         ctx.getSlot(9 * 3 + 3).setDescription(modified.resultMessage);
-                    })));
+                    }));
 
             ctx.getSlot(9 * 3 + 6).setItemStack(new ItemStack(Util.getFallbackMaterial("RED_WOOL", "OAK_SIGN", "SIGN")),
                     "Set unsuccessful click message, currently:\n",
                     modified.costMessage == null ? "Unset" : modified.costMessage);
-            ctx.getSlot(9 * 3 + 6).setClickHandler(
-                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.costMessage, s -> {
+            ctx.getSlot(9 * 3 + 6).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e.getWhoClicked(),
+                    "Enter the new unsuccessful click message, currently:<br>[[" + modified.costMessage, s -> {
                         modified.costMessage = s;
                         ctx.getSlot(9 * 3 + 6).setDescription(modified.costMessage);
-                    })));
+                    }));
 
             ctx.getSlot(9 * 3 + 5).setItemStack(new ItemStack(Util.getFallbackMaterial("FEATHER", "OAK_SIGN", "SIGN")),
                     "Set click to confirm message.",
                     "For example, 'click again to buy this item'\nYou can use <cost> or <result> placeholders.\nCurrently:\n"
                             + (modified.clickToConfirmMessage == null ? "Unset" : modified.clickToConfirmMessage));
-            ctx.getSlot(9 * 3 + 5).setClickHandler(
-                    e -> ctx.getMenu().transition(InputMenus.stringSetter(() -> modified.clickToConfirmMessage, s -> {
+            ctx.getSlot(9 * 3 + 5).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e.getWhoClicked(),
+                    "Enter the new click to confirm message, currently:<br>[[" + modified.clickToConfirmMessage, s -> {
                         modified.clickToConfirmMessage = s;
                         ctx.getSlot(9 * 3 + 5).setDescription(modified.clickToConfirmMessage);
-                    })));
+                    }));
 
             ctx.getSlot(9 * 3 + 4).setItemStack(new ItemStack(Material.REDSTONE),
                     "Sell as many times as possible on shift click\n", "Currently: " + modified.maxRepeatsOnShiftClick);
@@ -668,15 +669,16 @@ public class ShopTrait extends Trait {
             if (modified.display == null)
                 return;
 
-            ctx.getMenu()
-                    .transition(InputMenus.stringSetter(() -> modified.display.getItemMeta().hasLore()
+            InputMenus.runChatStringSetter(ctx.getMenu(), event.getWhoClicked(),
+                    "Enter the new item description, currently:<br>[[" + (modified.display.getItemMeta().hasLore()
                             ? Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore())
-                            : "", description -> {
-                                ItemMeta meta = modified.display.getItemMeta();
-                                meta.setLore(Lists
-                                        .newArrayList(Splitter.on('\n').split(Messaging.parseComponents(description))));
-                                modified.display.setItemMeta(meta);
-                            }));
+                            : "Unset"),
+                    description -> {
+                        ItemMeta meta = modified.display.getItemMeta();
+                        meta.setLore(
+                                Lists.newArrayList(Splitter.on('\n').split(Messaging.parseComponents(description))));
+                        modified.display.setItemMeta(meta);
+                    });
         }
 
         @MenuSlot(slot = { 4, 3 }, material = Material.NAME_TAG, amount = 1, title = "<f>Set name")
