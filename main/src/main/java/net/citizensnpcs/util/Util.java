@@ -448,7 +448,7 @@ public class Util {
         } else {
             if (IS_OLD_ENUM.test(e)) {
                 try {
-                    return (String) OLD_ENUM_NAME.invoke(e);
+                    return ((String) OLD_ENUM_NAME.invoke(e)).toLowerCase(Locale.ROOT).replace('_', ' ');
                 } catch (Throwable ex) {
                     throw new RuntimeException(ex);
                 }
