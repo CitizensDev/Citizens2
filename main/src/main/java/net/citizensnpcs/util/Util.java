@@ -197,6 +197,9 @@ public class Util {
     }
 
     public static Scoreboard getDummyScoreboard() {
+        if (DUMMY_SCOREBOARD == null) {
+            DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
+        }
         return DUMMY_SCOREBOARD;
     }
 
@@ -632,10 +635,6 @@ public class Util {
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
 
     static {
-        try {
-            DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
-        } catch (NullPointerException e) {
-        }
         TWO_DIGIT_DECIMAL.setMaximumFractionDigits(2);
         try {
             ItemMeta.class.getMethod("hasEquippable");
