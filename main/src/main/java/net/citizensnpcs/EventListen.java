@@ -1,6 +1,5 @@
 package net.citizensnpcs;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
@@ -216,8 +215,8 @@ public class EventListen implements Listener {
         if (pbeac != null) {
             registerPushEvent(pbeac);
         }
-        if (NMS.PAPER_ENTITY_MOVE_EVENT != null) {
-            registerMoveEvent(NMS.PAPER_ENTITY_MOVE_EVENT);
+        if (PAPER_ENTITY_MOVE_EVENT != null) {
+            registerMoveEvent(PAPER_ENTITY_MOVE_EVENT);
         }
     }
 
@@ -1052,4 +1051,14 @@ public class EventListen implements Listener {
     }
 
     private static boolean SUPPORT_STOP_USE_ITEM = true;
+    private static final Class<?> PAPER_ENTITY_MOVE_EVENT;
+    static {
+        Class<?> paperEntityMoveEventClazz;
+        try {
+            paperEntityMoveEventClazz = Class.forName("io.papermc.paper.event.entity.EntityMoveEvent");
+        } catch (ClassNotFoundException e) {
+            paperEntityMoveEventClazz = null;
+        }
+        PAPER_ENTITY_MOVE_EVENT = paperEntityMoveEventClazz;
+    }
 }

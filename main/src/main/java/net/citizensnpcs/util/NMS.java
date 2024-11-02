@@ -15,6 +15,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.citizensnpcs.EventListen;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -1058,7 +1059,6 @@ public class NMS {
     private static MethodHandle UNSAFE_PUT_LONG;
     private static MethodHandle UNSAFE_PUT_OBJECT;
     private static MethodHandle UNSAFE_STATIC_FIELD_OFFSET;
-    public static final Class<?> PAPER_ENTITY_MOVE_EVENT;
 
     static {
         try {
@@ -1076,13 +1076,6 @@ public class NMS {
         } catch (Exception e) {
             SUPPORTS_FIND_PROFILES_BY_NAME = false;
         }
-        Class<?> paperEntityMoveEventClazz;
-        try {
-            paperEntityMoveEventClazz = Class.forName("io.papermc.paper.event.entity.EntityMoveEvent");
-        } catch (ClassNotFoundException e) {
-            paperEntityMoveEventClazz = null;
-        }
-        PAPER_ENTITY_MOVE_EVENT = paperEntityMoveEventClazz;
         giveReflectiveAccess(Field.class, NMS.class);
         MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers", false);
     }
