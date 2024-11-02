@@ -3,10 +3,12 @@ package net.citizensnpcs.nms.v1_16_R3.util;
 import java.lang.invoke.MethodHandle;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -32,6 +34,11 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
     }
 
     @Override
+    public MinecraftKey a() {
+        return wrapped.a();
+    }
+
+    @Override
     public int a(Object key) {
         if (entityIds.containsKey(key))
             return entityIds.get(key);
@@ -49,13 +56,28 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
     }
 
     @Override
+    public Lifecycle b() {
+        return wrapped.b();
+    }
+
+    @Override
     public Optional c(Object key) {
         return wrapped.c((EntityTypes<?>) key);
     }
 
     @Override
+    public Set<Entry<ResourceKey<EntityTypes<?>>, EntityTypes<?>>> d() {
+        return wrapped.d();
+    }
+
+    @Override
     public Object d(ResourceKey key) {
         return wrapped.d(key);
+    }
+
+    @Override
+    public ResourceKey<? extends IRegistry<EntityTypes<?>>> f() {
+        return wrapped.f();
     }
 
     public EntityTypes findType(Class<?> search) {
@@ -73,6 +95,11 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
     @Override
     public Object fromId(int var0) {
         return this.wrapped.fromId(var0);
+    }
+
+    @Override
+    public Stream<EntityTypes<?>> g() {
+        return wrapped.g();
     }
 
     @Override

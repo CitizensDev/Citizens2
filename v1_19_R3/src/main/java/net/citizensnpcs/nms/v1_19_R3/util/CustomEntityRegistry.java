@@ -317,6 +317,11 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     }
 
     @Override
+    public ResourceKey<? extends Registry<EntityType<?>>> key() {
+        return wrapped.key();
+    }
+
+    @Override
     public Set<ResourceLocation> keySet() {
         return wrapped.keySet();
     }

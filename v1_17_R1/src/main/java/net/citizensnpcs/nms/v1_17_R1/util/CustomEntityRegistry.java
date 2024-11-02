@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -163,6 +164,11 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
     }
 
     @Override
+    public Lifecycle elementsLifecycle() {
+        return wrapped.elementsLifecycle();
+    }
+
+    @Override
     public Set<Object> entrySet() {
         return (Set) wrapped.entrySet();
     }
@@ -243,13 +249,28 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
     }
 
     @Override
+    public ResourceKey<? extends Registry<EntityType<?>>> key() {
+        return wrapped.key();
+    }
+
+    @Override
     public Set<Object> keySet() {
         return (Set) wrapped.keySet();
+    }
+
+    @Override
+    public Lifecycle lifecycle(Object type) {
+        return wrapped.lifecycle((EntityType<?>) type);
     }
 
     public void put(int entityId, ResourceLocation key, EntityType entityClass) {
         entities.put(key, entityClass);
         entityIds.put(entityClass, entityId);
+    }
+
+    @Override
+    public Stream stream() {
+        return wrapped.stream();
     }
 
     private static final MethodHandle IREGISTRY_LIFECYCLE = NMS.getFirstGetter(Registry.class, Lifecycle.class);

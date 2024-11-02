@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -26,6 +27,11 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
     }
 
     @Override
+    public MinecraftKey a() {
+        return wrapped.a();
+    }
+
+    @Override
     public int a(Object key) {
         if (entityIds.containsKey(key))
             return entityIds.get(key);
@@ -35,6 +41,16 @@ public class CustomEntityRegistry extends RegistryBlocks implements Supplier<Reg
     @Override
     public Object a(Random paramRandom) {
         return wrapped.a(paramRandom);
+    }
+
+    @Override
+    public boolean c() {
+        return wrapped.c();
+    }
+
+    @Override
+    public Stream<EntityTypes<?>> d() {
+        return wrapped.d();
     }
 
     public EntityTypes findType(Class<?> search) {

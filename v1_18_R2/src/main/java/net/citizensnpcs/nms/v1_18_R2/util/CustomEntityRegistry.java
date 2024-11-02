@@ -13,10 +13,14 @@ import java.util.stream.Stream;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 
 import net.citizensnpcs.util.NMS;
 import net.minecraft.core.DefaultedRegistry;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Holder.Reference;
+import net.minecraft.core.IdMap;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -153,6 +157,16 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
     }
 
     @Override
+    public IdMap<Holder<EntityType<?>>> asHolderIdMap() {
+        return wrapped.asHolderIdMap();
+    }
+
+    @Override
+    public void bindTags(Map var0) {
+        wrapped.bindTags(var0);
+    }
+
+    @Override
     public Object byId(int var0) {
         return this.wrapped.byId(var0);
     }
@@ -163,6 +177,11 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
     }
 
     @Override
+    public Codec byNameCodec() {
+        return wrapped.byNameCodec();
+    }
+
+    @Override
     public boolean containsKey(ResourceKey var0) {
         return this.wrapped.containsKey(var0);
     }
@@ -170,6 +189,16 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
     @Override
     public boolean containsKey(ResourceLocation var0) {
         return this.wrapped.containsKey(var0);
+    }
+
+    @Override
+    public Reference createIntrusiveHolder(Object type) {
+        return this.wrapped.createIntrusiveHolder((EntityType<?>) type);
+    }
+
+    @Override
+    public Lifecycle elementsLifecycle() {
+        return wrapped.elementsLifecycle();
     }
 
     @Override
@@ -187,6 +216,11 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
         }
         return null;
         */
+    }
+
+    @Override
+    public Registry<EntityType<?>> freeze() {
+        return wrapped.freeze();
     }
 
     @Override
@@ -273,13 +307,33 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
     }
 
     @Override
+    public boolean isKnownTagName(TagKey key) {
+        return wrapped.isKnownTagName(key);
+    }
+
+    @Override
     public Iterator<Object> iterator() {
         return (Iterator) wrapped.iterator();
     }
 
     @Override
+    public ResourceKey<? extends Registry<EntityType<?>>> key() {
+        return wrapped.key();
+    }
+
+    @Override
     public Set<Object> keySet() {
         return (Set) wrapped.keySet();
+    }
+
+    @Override
+    public Lifecycle lifecycle() {
+        return wrapped.lifecycle();
+    }
+
+    @Override
+    public Lifecycle lifecycle(Object type) {
+        return wrapped.lifecycle((EntityType<?>) type);
     }
 
     public void put(int entityId, ResourceLocation key, EntityType entityClass) {
@@ -288,8 +342,18 @@ public class CustomEntityRegistry extends DefaultedRegistry implements Supplier<
     }
 
     @Override
+    public void resetTags() {
+        wrapped.resetTags();
+    }
+
+    @Override
     public int size() {
         return wrapped.size();
+    }
+
+    @Override
+    public Stream<EntityType<?>> stream() {
+        return wrapped.stream();
     }
 
     private static final MethodHandle IREGISTRY_CUSTOM_HOLDER_PROVDER = NMS.getFirstGetter(MappedRegistry.class,
