@@ -3,6 +3,8 @@ package net.citizensnpcs.api.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.bukkit.Bukkit;
@@ -14,13 +16,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
+import com.google.common.base.Joiner;
 import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
 import net.citizensnpcs.api.event.CitizensSerialiseMetaEvent;
 
 public class ItemStorage {
-    private static void deserialiseMeta(DataKey root, ItemStack res) {
+    private static void deserialiseMeta(DataKey root, ItemStack res, List<String> lore, String displayName) {
         if (root.keyExists("encoded-meta")) {
             root = root.getRelative("encoded-meta");
         }
@@ -28,6 +31,12 @@ public class ItemStorage {
         try {
             BukkitObjectInputStream inp = new BukkitObjectInputStream(new ByteArrayInputStream(raw));
             ItemMeta meta = (ItemMeta) inp.readObject();
+            if (lore != null) {
+                meta.setLore(lore);
+            }
+            if (displayName != null) {
+                meta.setDisplayName(displayName);
+            }
             res.setItemMeta(meta);
             Bukkit.getPluginManager().callEvent(new CitizensDeserialiseMetaEvent(root, res));
 
@@ -61,7 +70,12 @@ public class ItemStorage {
             res.getData().setData((byte) root.getInt("mdata"));
         }
         if (root.keyExists("meta")) {
-            deserialiseMeta(root.getRelative("meta"), res);
+            List<String> lore = null;
+            if (root.keyExists("lore")) {
+                lore = Arrays.asList(Messaging.parseComponents(root.getString("lore")).split("<br>"));
+            }
+            String displayName = root.getString("displayname", null);
+            deserialiseMeta(root.getRelative("meta"), res, lore, displayName);
         }
         return res;
     }
@@ -90,6 +104,16 @@ public class ItemStorage {
         }
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
+            if (meta.hasDisplayName()) {
+                key.setString("displayname", meta.getDisplayName());
+            } else {
+                key.removeKey("displayname");
+            }
+            if (meta.hasLore()) {
+                key.setString("lore", Joiner.on("<br>").join(meta.getLore()));
+            } else {
+                key.removeKey("lore");
+            }
             serialiseMeta(key.getRelative("meta"), item.getType(), meta);
         } else {
             key.removeKey("meta");
