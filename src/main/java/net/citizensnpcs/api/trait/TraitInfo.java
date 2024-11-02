@@ -119,6 +119,7 @@ public final class TraitInfo {
                     Messaging.severe("Can't get handlerlist for event " + eventClass);
                     continue;
                 }
+                method.setAccessible(true);
                 handler.register(new RegisteredListener(new Listener() {
                 }, (Listener listener, Event event) -> {
                     NPC npc = processor.apply(event);
