@@ -2212,36 +2212,21 @@ public class NMSImpl implements NMSBridge {
         throw new IllegalArgumentException();
     }
 
-    // return true if the original movement should be cancelled
-    public static <T extends Entity & NPCHolder> boolean callNPCMoveEvent(T what, double newX, double newY, double newZ) {
+    public static <T extends Entity & NPCHolder> void callNPCMoveEvent(T what) {
         final NPC npc = what.getNPC();
         if (npc != null && NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
-            final CraftWorld world = what.level().getWorld();
-            final Vec3 nmsBefore = what.position();
-            if (nmsBefore.x == newX && nmsBefore.y == newY && nmsBefore.z == newZ) {
-                return false; // nothing was changed so act as-is
-            }
-            final Location before = CraftVector.toBukkit(nmsBefore).toLocation(world);
-            final Location after = new Location(world, newX, newY, newZ);
-            if (!before.equals(after)) {
-                final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, before.clone(), after.clone());
-                Bukkit.getPluginManager().callEvent(npcMoveEvent);
-                if (!npcMoveEvent.isCancelled()) {
-                    final Location eventTo = npcMoveEvent.getTo();
-                    if (!after.equals(eventTo)) {
-                        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> what.getBukkitEntity().teleport(eventTo), 1L);
-                        return true;
-                    }
-                } else {
-                    final Location eventFrom = npcMoveEvent.getFrom();
-                    if (!before.equals(eventFrom)) {
-                        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> what.getBukkitEntity().teleport(eventFrom), 1L);
-                        return true;
-                    }
+            if (what.xo != what.getX() || what.yo != what.getY() || what.zo != what.getZ() || what.yRotO != what.getYRot() || what.xRotO != what.getXRot()) {
+                Location from = new Location(what.level().getWorld(), what.xo, what.yo, what.zo, what.yRotO, what.xRotO);
+                Location to = new Location(what.level().getWorld(), what.getX(), what.getY(), what.getZ(), what.getYRot(), what.getXRot());
+                final NPCMoveEvent event = new NPCMoveEvent(npc, from, to.clone());
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    what.absMoveTo(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch());
+                } else if (!to.equals(event.getTo())) {
+                    what.absMoveTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(), event.getTo().getYaw(), event.getTo().getPitch());
                 }
             }
         }
-        return false;
     }
 
     public static TreeMap<?, ?> getBehaviorMap(LivingEntity entity) {

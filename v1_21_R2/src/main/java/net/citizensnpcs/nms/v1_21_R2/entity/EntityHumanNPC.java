@@ -91,6 +91,25 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
     }
 
+    private boolean canCallNPCMoveEvent;
+    @Override
+    public void aiStep() {
+        canCallNPCMoveEvent = true;
+        try {
+            super.aiStep();
+        } finally {
+            canCallNPCMoveEvent = false;
+        }
+    }
+
+    @Override
+    protected void pushEntities() {
+        super.pushEntities();
+        if (canCallNPCMoveEvent) {
+            NMSImpl.callNPCMoveEvent(this);
+        }
+    }
+
     @Override
     public boolean broadcastToPlayer(ServerPlayer player) {
         return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
@@ -344,15 +363,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     public void remove(RemovalReason reason) {
         super.remove(reason);
         getAdvancements().save();
-    }
-
-    @Override
-    public void setPos(double d0, double d1, double d2) {
-        final boolean cancelled = NMSImpl.callNPCMoveEvent(this, d0, d1, d2);
-        if (cancelled) {
-            return;
-        }
-        super.setPos(d0, d1, d2);
     }
 
     @Override
