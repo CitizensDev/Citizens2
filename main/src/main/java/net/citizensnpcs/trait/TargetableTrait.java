@@ -67,7 +67,7 @@ public class TargetableTrait extends Trait {
     }
 
     public void setTargetable(boolean targetable) {
-        if (this.targetable == targetable)
+        if (Boolean.valueOf(targetable).equals(this.targetable))
             return;
         this.targetable = targetable;
         if (!targetable) {
