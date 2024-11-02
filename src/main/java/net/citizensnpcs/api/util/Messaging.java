@@ -123,6 +123,8 @@ public class Messaging {
                     m.group(1) == null ? m.group(2).toLowerCase(Locale.ROOT) : m.group(1).toLowerCase(Locale.ROOT)));
         }
         m.appendTail(sb);
+        if (MINIMESSAGE_COLORCODE_MATCHER == null)
+            return sb.toString();
         return MINIMESSAGE_COLORCODE_MATCHER.matcher(sb.toString()).replaceAll("$0<csr>");
     }
 
@@ -242,11 +244,7 @@ public class Messaging {
     }
 
     public static String stripColor(String raw) {
-        raw = ChatColor.stripColor(convertLegacyCodes(raw));
-        if (MINIMESSAGE != null)
-            return MINIMESSAGE.stripTags(raw, DECORATION_TAGS);
-
-        return raw;
+        return ChatColor.stripColor(convertLegacyCodes(raw)).replace("<csr>", "");
     }
 
     public static String tr(String key, Object... messages) {
