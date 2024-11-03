@@ -343,22 +343,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    public void setYRot(float f) {
-        final boolean cancelled = NMSImpl.callNPCMoveEventWithYaw(this, f);
-        if (!cancelled) {
-            super.setYRot(f);
-        }
-    }
-
-    @Override
-    public void setXRot(float f) {
-        final boolean cancelled = NMSImpl.callNPCMoveEventWithPitch(this, f);
-        if (!cancelled) {
-            super.setXRot(f);
-        }
-    }
-
-    @Override
     public void setSkinFlags(byte flags) {
         getEntityData().set(net.minecraft.world.entity.player.Player.DATA_PLAYER_MODE_CUSTOMISATION, flags);
     }
