@@ -4,14 +4,9 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.util.List;
 
-import net.citizensnpcs.Citizens;
-import net.citizensnpcs.api.event.NPCMoveEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_21_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_21_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R2.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_21_R2.util.CraftVector;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -91,25 +86,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
     }
 
-    private boolean canCallNPCMoveEvent;
-    @Override
-    public void aiStep() {
-        canCallNPCMoveEvent = true;
-        try {
-            super.aiStep();
-        } finally {
-            canCallNPCMoveEvent = false;
-        }
-    }
-
-    @Override
-    protected void pushEntities() {
-        super.pushEntities();
-        if (canCallNPCMoveEvent) {
-            NMSImpl.callNPCMoveEvent(this);
-        }
-    }
-
     @Override
     public boolean broadcastToPlayer(ServerPlayer player) {
         return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
@@ -173,6 +149,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             onGround = false;
         }
         pushEntities();
+        NMSImpl.callNPCMoveEvent(this);
         if (npc.useMinecraftAI()) {
             foodData.tick(this);
         }
