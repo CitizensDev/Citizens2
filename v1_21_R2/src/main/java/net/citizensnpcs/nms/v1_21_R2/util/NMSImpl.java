@@ -2221,7 +2221,8 @@ public class NMSImpl implements NMSBridge {
                 final NPCMoveEvent event = new NPCMoveEvent(npc, from, to.clone());
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) {
-                    what.absMoveTo(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch());
+                    final Location eventFrom = event.getFrom();
+                    what.absMoveTo(eventFrom.getX(), eventFrom.getY(), eventFrom.getZ(), eventFrom.getYaw(), eventFrom.getPitch());
                 } else if (!to.equals(event.getTo())) {
                     what.absMoveTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(), event.getTo().getYaw(), event.getTo().getPitch());
                 }
