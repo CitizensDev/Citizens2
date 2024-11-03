@@ -2243,6 +2243,8 @@ public class NMSImpl implements NMSBridge {
                 } else if (!to.equals(event.getTo())) {
                     what.absMoveTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(), event.getTo().getYaw(), event.getTo().getPitch());
                     return true;
+                } else {
+                    what.yRotO = newYaw;
                 }
             }
         }
@@ -2264,6 +2266,8 @@ public class NMSImpl implements NMSBridge {
                 } else if (!to.equals(event.getTo())) {
                     what.absMoveTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(), event.getTo().getYaw(), event.getTo().getPitch());
                     return true;
+                } else {
+                    what.xRotO = newPitch;
                 }
             }
         }
