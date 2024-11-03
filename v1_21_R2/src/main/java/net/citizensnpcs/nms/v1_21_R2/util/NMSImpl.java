@@ -39,7 +39,6 @@ import org.bukkit.craftbukkit.v1_21_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_21_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_21_R2.inventory.CraftInventoryAnvil;
 import org.bukkit.craftbukkit.v1_21_R2.inventory.view.CraftAnvilView;
-import org.bukkit.craftbukkit.v1_21_R2.util.CraftVector;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Player;
@@ -389,8 +388,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.scores.PlayerTeam;
-
-import javax.annotation.Nullable;
 
 @SuppressWarnings("unchecked")
 public class NMSImpl implements NMSBridge {
@@ -2228,6 +2225,49 @@ public class NMSImpl implements NMSBridge {
                 }
             }
         }
+    }
+
+    // return true if rotation should be cancelled
+    public static <T extends Entity & NPCHolder> boolean callNPCMoveEventWithYaw(T what, float newYaw) {
+        final NPC npc = what.getNPC();
+        if (npc != null || NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
+            if (what.yRotO != newYaw) {
+                Location from = new Location(what.level().getWorld(), what.getX(), what.getY(), what.getZ(), what.yRotO, what.getXRot());
+                Location to = new Location(what.level().getWorld(), what.getX(), what.getY(), what.getZ(), newYaw, what.getXRot());
+                final NPCMoveEvent event = new NPCMoveEvent(npc, from, to.clone());
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    final Location eventFrom = event.getFrom();
+                    what.absMoveTo(eventFrom.getX(), eventFrom.getY(), eventFrom.getZ(), eventFrom.getYaw(), eventFrom.getPitch());
+                    return true;
+                } else if (!to.equals(event.getTo())) {
+                    what.absMoveTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(), event.getTo().getYaw(), event.getTo().getPitch());
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static <T extends Entity & NPCHolder> boolean callNPCMoveEventWithPitch(T what, float newPitch) {
+        final NPC npc = what.getNPC();
+        if (npc != null || NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
+            if (what.xRotO != newPitch) {
+                Location from = new Location(what.level().getWorld(), what.getX(), what.getY(), what.getZ(), what.getYRot(), what.xRotO);
+                Location to = new Location(what.level().getWorld(), what.getX(), what.getY(), what.getZ(), what.getYRot(), newPitch);
+                final NPCMoveEvent event = new NPCMoveEvent(npc, from, to.clone());
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    final Location eventFrom = event.getFrom();
+                    what.absMoveTo(eventFrom.getX(), eventFrom.getY(), eventFrom.getZ(), eventFrom.getYaw(), eventFrom.getPitch());
+                    return true;
+                } else if (!to.equals(event.getTo())) {
+                    what.absMoveTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(), event.getTo().getYaw(), event.getTo().getPitch());
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static TreeMap<?, ?> getBehaviorMap(LivingEntity entity) {
