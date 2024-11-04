@@ -1,5 +1,10 @@
 package net.citizensnpcs.nms.v1_21_R2.entity.nonliving;
 
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.network.ServerPlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_21_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R2.entity.CraftEntity;
@@ -27,6 +32,11 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class TNTPrimedController extends MobEntityController {
     public TNTPrimedController() {
@@ -100,15 +110,31 @@ public class TNTPrimedController extends MobEntityController {
         }
 
         @Override
+        public void setFuse(int i) {
+        }
+
+        @Override
         public Entity teleport(TeleportTransition transition) {
             if (npc == null)
                 return super.teleport(transition);
             return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
+        private final ClientboundSetEntityDataPacket renewFusePacket = new ClientboundSetEntityDataPacket(getId(), FULL_FUSE);
+        private Set<ServerPlayerConnection> seenBy;
+        private int fuseRenewalDelay = 10;
         @Override
         public void tick() {
             if (npc != null) {
+                if (fuseRenewalDelay-- <= 0) {
+                    if (seenBy == null) { // cache it for making this code faster
+                        seenBy = ((ServerLevel) level()).getChunkSource().chunkMap.entityMap.get(getId()).seenBy;
+                    }
+                    for (ServerPlayerConnection connection : seenBy) {
+                        connection.send(renewFusePacket);
+                    }
+                    fuseRenewalDelay = 10;
+                }
                 npc.update();
             } else {
                 super.tick();
@@ -132,5 +158,12 @@ public class TNTPrimedController extends MobEntityController {
         public TNTPrimedNPC(EntityTNTPrimedNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
         }
+    }
+
+    private static final List<SynchedEntityData.DataValue<?>> FULL_FUSE;
+    static {
+        EntityDataAccessor<Integer> fuse = NMS.getStaticObject(PrimedTnt.class, "a");
+        assert fuse != null;
+        FULL_FUSE = Collections.singletonList(SynchedEntityData.DataValue.create(fuse, 80));
     }
 }
