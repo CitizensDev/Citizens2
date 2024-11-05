@@ -16,10 +16,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attributable;
@@ -63,7 +61,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
@@ -133,7 +130,7 @@ public class NMS {
             return;
         if (SUPPORTS_ATTRIBUTABLE && npc.getEntity() instanceof Attributable) {
             AttributeInstance attribute = ((Attributable) npc.getEntity())
-                    .getAttribute(NMS.getRegistryValue(Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"));
+                    .getAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"));
             if (attribute != null) {
                 strength *= 1 - attribute.getValue();
             }
@@ -597,17 +594,6 @@ public class NMS {
 
     public static GameProfile getProfile(SkullMeta meta) {
         return BRIDGE.getProfile(meta);
-    }
-
-    public static <T extends Keyed> T getRegistryValue(Registry<T> registry, String... keyCandidates) {
-        for (String keyCandidate : keyCandidates) {
-            final NamespacedKey key = SpigotUtil.getKey(keyCandidate);
-            final T value = registry.get(key);
-            if (value != null) {
-                return value;
-            }
-        }
-        return null;
     }
 
     public static float getRidingHeightOffset(Entity entity, Entity mount) {
