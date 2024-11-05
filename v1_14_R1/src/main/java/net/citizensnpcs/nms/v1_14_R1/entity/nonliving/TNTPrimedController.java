@@ -111,9 +111,15 @@ public class TNTPrimedController extends MobEntityController {
             return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
         }
 
+        private int fuseRenewalDelay = 9;
         @Override
         public void tick() {
             if (npc != null) {
+                if (fuseRenewalDelay-- <= 0) {
+                    setFuseTicks(Integer.MAX_VALUE - 1);
+                    setFuseTicks(Integer.MAX_VALUE);
+                    fuseRenewalDelay = 9;
+                }
                 npc.update();
             } else {
                 super.tick();

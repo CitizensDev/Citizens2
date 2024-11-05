@@ -107,9 +107,16 @@ public class TNTPrimedController extends MobEntityController {
             return npc == null ? super.save(save) : false;
         }
 
+        private int fuseRenewalDelay = 9; // give client some time to make the animation look vanilla-like
         @Override
         public void tick() {
             if (npc != null) {
+                if (fuseRenewalDelay-- <= 0) {
+                    // DataWatcher refuses to mark dirty if we don't give different values
+                    setFuse(Integer.MAX_VALUE - 1);
+                    setFuse(Integer.MAX_VALUE);
+                    fuseRenewalDelay = 9;
+                }
                 npc.update();
             } else {
                 super.tick();
