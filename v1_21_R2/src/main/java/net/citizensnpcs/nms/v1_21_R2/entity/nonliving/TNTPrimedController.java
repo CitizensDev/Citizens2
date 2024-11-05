@@ -112,8 +112,8 @@ public class TNTPrimedController extends MobEntityController {
             if (npc != null) {
                 if (fuseRenewalDelay-- <= 0) {
                     // DataWatcher refuses to mark dirty if we don't give different values
-                    setFuse(79);
-                    setFuse(80);
+                    setFuse(Integer.MAX_VALUE - 1);
+                    setFuse(Integer.MAX_VALUE);
                     fuseRenewalDelay = 9;
                 }
                 npc.update();
