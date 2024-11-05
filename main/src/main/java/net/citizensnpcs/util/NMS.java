@@ -131,7 +131,7 @@ public class NMS {
             return;
         if (SUPPORTS_ATTRIBUTABLE && npc.getEntity() instanceof Attributable) {
             AttributeInstance attribute = ((Attributable) npc.getEntity())
-                    .getAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey("knockback_resistance")));
+                    .getAttribute(NMS.getRegistryValue(Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"));
             if (attribute != null) {
                 strength *= 1 - attribute.getValue();
             }
@@ -595,6 +595,17 @@ public class NMS {
 
     public static GameProfile getProfile(SkullMeta meta) {
         return BRIDGE.getProfile(meta);
+    }
+
+    public static <T extends Keyed> T getRegistryValue(Registry<T> registry, String... keyCandidates) {
+        for (String keyCandidate : keyCandidates) {
+            final NamespacedKey key = SpigotUtil.getKey(keyCandidate);
+            final T value = registry.get(key);
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
     }
 
     public static float getRidingHeightOffset(Entity entity, Entity mount) {

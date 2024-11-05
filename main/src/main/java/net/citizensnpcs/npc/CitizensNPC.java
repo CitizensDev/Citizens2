@@ -400,7 +400,7 @@ public class CitizensNPC extends AbstractNPC {
 
                     if (type == EntityType.PLAYER || Util.isHorse(type)) {
                         if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class) || !getTrait(AttributeTrait.class)
-                                .hasAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey("step_height")))) {
+                                .hasAttribute(NMS.getRegistryValue(Registry.ATTRIBUTE, "generic.step_height", "step_height"))) {
                             NMS.setStepHeight(entity, 1);
                         }
                     }

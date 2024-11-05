@@ -41,7 +41,7 @@ public class ScaledMaxHealthTrait extends Trait {
     public void onSpawn() {
         if (maxHealth != null && npc.getEntity() instanceof LivingEntity) {
             if (SUPPORTS_ATTRIBUTES) {
-                ((LivingEntity) npc.getEntity()).getAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey("max_health")))
+                ((LivingEntity) npc.getEntity()).getAttribute(NMS.getRegistryValue(Registry.ATTRIBUTE, "generic.max_health", "max_health"))
                         .setBaseValue(Math.min(MAX_VALUE, maxHealth));
             } else {
                 ((LivingEntity) npc.getEntity()).setMaxHealth(maxHealth);
