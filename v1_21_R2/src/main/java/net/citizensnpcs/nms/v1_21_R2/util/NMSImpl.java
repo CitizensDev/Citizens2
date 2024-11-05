@@ -18,6 +18,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.citizensnpcs.api.event.NPCMoveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -2206,6 +2207,24 @@ public class NMSImpl implements NMSBridge {
                 return ((NumericTag) tag).getAsNumber();
         }
         throw new IllegalArgumentException();
+    }
+
+    public static <T extends Entity & NPCHolder> void callNPCMoveEvent(T what) {
+        final NPC npc = what.getNPC();
+        if (npc != null && NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
+            if (what.xo != what.getX() || what.yo != what.getY() || what.zo != what.getZ() || what.yRotO != what.getYRot() || what.xRotO != what.getXRot()) {
+                Location from = new Location(what.level().getWorld(), what.xo, what.yo, what.zo, what.yRotO, what.xRotO);
+                Location to = new Location(what.level().getWorld(), what.getX(), what.getY(), what.getZ(), what.getYRot(), what.getXRot());
+                final NPCMoveEvent event = new NPCMoveEvent(npc, from, to.clone());
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    final Location eventFrom = event.getFrom();
+                    what.absMoveTo(eventFrom.getX(), eventFrom.getY(), eventFrom.getZ(), eventFrom.getYaw(), eventFrom.getPitch());
+                } else if (!to.equals(event.getTo())) {
+                    what.absMoveTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(), event.getTo().getYaw(), event.getTo().getPitch());
+                }
+            }
+        }
     }
 
     public static TreeMap<?, ?> getBehaviorMap(LivingEntity entity) {

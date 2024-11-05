@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
+import net.citizensnpcs.api.event.NPCMoveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -213,6 +214,14 @@ public class EventListen implements Listener {
         }
         if (pbeac != null) {
             registerPushEvent(pbeac);
+        }
+        Class<?> paperEntityMoveEventClazz = null;
+        try {
+            paperEntityMoveEventClazz = Class.forName("io.papermc.paper.event.entity.EntityMoveEvent");
+        } catch (ClassNotFoundException e) {
+        }
+        if (paperEntityMoveEventClazz != null) {
+            registerMoveEvent(paperEntityMoveEventClazz);
         }
     }
 
@@ -933,6 +942,44 @@ public class EventListen implements Listener {
             }, EventPriority.NORMAL, plugin, true));
         } catch (Throwable ex) {
             Messaging.severe("Error registering push event forwarder");
+            ex.printStackTrace();
+        }
+    }
+
+    private void registerMoveEvent(Class<?> clazz) {
+        try {
+            final HandlerList handlers = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
+            final Method getEntity = clazz.getMethod("getEntity");
+            final Method getFrom = clazz.getMethod("getFrom");
+            final Method getTo = clazz.getMethod("getTo");
+            handlers.register(new RegisteredListener(new Listener() {
+            }, (listener, event) -> {
+                if (NPCMoveEvent.getHandlerList().getRegisteredListeners().length == 0 || event.getClass() != clazz)
+                    return;
+                try {
+                    final Entity entity = (Entity) getEntity.invoke(event);
+                    if (!(entity instanceof NPCHolder))
+                        return;
+                    final NPC npc = ((NPCHolder) entity).getNPC();
+                    final Location from = (Location) getFrom.invoke(event);
+                    final Location to = (Location) getTo.invoke(event);
+                    final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, from, to.clone());
+                    Bukkit.getPluginManager().callEvent(npcMoveEvent);
+                    if (!npcMoveEvent.isCancelled()) {
+                        final Location eventTo = npcMoveEvent.getTo();
+                        if (!to.equals(eventTo)) {
+                            Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventTo), 1L);
+                        }
+                    } else {
+                        final Location eventFrom = npcMoveEvent.getFrom();
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventFrom), 1L);
+                    }
+                } catch (Throwable ex) {
+                    ex.printStackTrace();
+                }
+            }, EventPriority.NORMAL, plugin, true));
+        } catch (Throwable ex) {
+            Messaging.severe("Error registering move event forwarder");
             ex.printStackTrace();
         }
     }
