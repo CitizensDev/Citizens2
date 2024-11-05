@@ -110,30 +110,21 @@ public class TNTPrimedController extends MobEntityController {
         }
 
         @Override
-        public void setFuse(int i) {
-        }
-
-        @Override
         public Entity teleport(TeleportTransition transition) {
             if (npc == null)
                 return super.teleport(transition);
             return NMSImpl.teleportAcrossWorld(this, transition);
         }
 
-        private final ClientboundSetEntityDataPacket renewFusePacket = new ClientboundSetEntityDataPacket(getId(), FULL_FUSE);
-        private Set<ServerPlayerConnection> seenBy;
-        private int fuseRenewalDelay = 10;
+        private int fuseRenewalDelay = 9; // give client some time to make the animation look vanilla-like
         @Override
         public void tick() {
             if (npc != null) {
                 if (fuseRenewalDelay-- <= 0) {
-                    if (seenBy == null) { // cache it for making this code faster
-                        seenBy = ((ServerLevel) level()).getChunkSource().chunkMap.entityMap.get(getId()).seenBy;
-                    }
-                    for (ServerPlayerConnection connection : seenBy) {
-                        connection.send(renewFusePacket);
-                    }
-                    fuseRenewalDelay = 10;
+                    // DataWatcher refuses to mark dirty if we don't give different values
+                    setFuse(79);
+                    setFuse(80);
+                    fuseRenewalDelay = 9;
                 }
                 npc.update();
             } else {
@@ -158,12 +149,5 @@ public class TNTPrimedController extends MobEntityController {
         public TNTPrimedNPC(EntityTNTPrimedNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
         }
-    }
-
-    private static final List<SynchedEntityData.DataValue<?>> FULL_FUSE;
-    static {
-        EntityDataAccessor<Integer> fuse = NMS.getStaticObject(PrimedTnt.class, "a");
-        assert fuse != null;
-        FULL_FUSE = Collections.singletonList(SynchedEntityData.DataValue.create(fuse, 80));
     }
 }
