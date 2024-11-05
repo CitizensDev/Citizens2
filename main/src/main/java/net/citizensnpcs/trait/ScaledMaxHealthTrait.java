@@ -2,6 +2,7 @@ package net.citizensnpcs.trait;
 
 import java.math.BigDecimal;
 
+import net.citizensnpcs.util.NMS;
 import org.bukkit.Registry;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
