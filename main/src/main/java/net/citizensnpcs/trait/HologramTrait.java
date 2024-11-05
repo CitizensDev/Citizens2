@@ -916,7 +916,7 @@ public class HologramTrait extends Trait {
             }
             if (SpigotUtil.getVersion()[1] >= 21 && base.getEntity() instanceof LivingEntity) {
                 AttributeInstance inst = ((LivingEntity) base.getEntity())
-                        .getAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey("scale")));
+                        .getAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
                 if (inst != null) {
                     Transformation tf = disp.getTransformation();
                     tf.getScale().set(inst.getValue());

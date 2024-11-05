@@ -45,7 +45,6 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.AttributeTrait;
@@ -400,7 +399,7 @@ public class CitizensNPC extends AbstractNPC {
 
                     if (type == EntityType.PLAYER || Util.isHorse(type)) {
                         if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class) || !getTrait(AttributeTrait.class)
-                                .hasAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey("step_height")))) {
+                                .hasAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.step_height", "step_height"))) {
                             NMS.setStepHeight(entity, 1);
                         }
                     }

@@ -18,8 +18,11 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -250,6 +253,17 @@ public class Util {
 
     public static Random getFastRandom() {
         return new XORShiftRNG();
+    }
+
+    public static <T extends Keyed> T getRegistryValue(Registry<T> registry, String... keyCandidates) {
+        for (String keyCandidate : keyCandidates) {
+            final NamespacedKey key = SpigotUtil.getKey(keyCandidate);
+            final T value = registry.get(key);
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
     }
 
     public static String getTeamName(UUID id) {
