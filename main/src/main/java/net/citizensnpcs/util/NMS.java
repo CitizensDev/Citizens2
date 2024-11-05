@@ -15,7 +15,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import net.citizensnpcs.EventListen;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
