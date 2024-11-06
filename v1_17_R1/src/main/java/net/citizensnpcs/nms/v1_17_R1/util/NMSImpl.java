@@ -2041,8 +2041,8 @@ public class NMSImpl implements NMSBridge {
         final NPC npc = what.getNPC();
         if (npc != null && NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
             if (what.xo != what.getX() || what.yo != what.getY() || what.zo != what.getZ() || what.yRotO != what.getYRot() || what.xRotO != what.getXRot()) {
-                Location from = new Location(what.level().getWorld(), what.xo, what.yo, what.zo, what.yRotO, what.xRotO);
-                Location to = new Location(what.level().getWorld(), what.getX(), what.getY(), what.getZ(), what.getYRot(), what.getXRot());
+                Location from = new Location(what.level.getWorld(), what.xo, what.yo, what.zo, what.yRotO, what.xRotO);
+                Location to = new Location(what.level.getWorld(), what.getX(), what.getY(), what.getZ(), what.getYRot(), what.getXRot());
                 final NPCMoveEvent event = new NPCMoveEvent(npc, from, to.clone());
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) {
