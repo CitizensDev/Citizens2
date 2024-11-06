@@ -42,6 +42,7 @@ public class TNTPrimedController extends MobEntityController {
         public EntityTNTPrimedNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+            this.fuseTicks = Integer.MAX_VALUE;
         }
 
         @Override
