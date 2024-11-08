@@ -318,6 +318,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         ai.getMoveControl().a();
         ai.getJumpControl().b();
         collideNearby();
+        NMSImpl.callNPCMoveEvent(this);
     }
 
     @Override

@@ -279,6 +279,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
         updateAI();
         cs();
+        NMSImpl.callNPCMoveEvent(this);
         if (npc.useMinecraftAI()) {
             foodData.a(this);
         }

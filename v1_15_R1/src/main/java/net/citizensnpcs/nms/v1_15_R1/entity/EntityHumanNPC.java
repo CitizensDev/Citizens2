@@ -344,6 +344,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
         updateAI();
         collideNearby();
+        NMSImpl.callNPCMoveEvent(this);
     }
 
     public void setMoveDestination(double x, double y, double z, double speed) {
