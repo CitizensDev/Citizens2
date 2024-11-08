@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v1_8_R3.entity.nonliving;
 
+import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateEntityNBT;
+import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
@@ -40,6 +42,7 @@ public class TNTPrimedController extends MobEntityController {
         public EntityTNTPrimedNPC(World world, NPC npc) {
             super(world);
             this.npc = (CitizensNPC) npc;
+            this.fuseTicks = Integer.MAX_VALUE;
         }
 
         @Override
@@ -93,9 +96,16 @@ public class TNTPrimedController extends MobEntityController {
             return npc;
         }
 
+        private int fuseRenewalDelay = 9;
         @Override
         public void t_() {
             if (npc != null) {
+                if (fuseRenewalDelay-- <= 0) {
+                    final NBTTagCompound nbtTagCompound = new NBTTagCompound();
+                    e(nbtTagCompound); // dump the entity NBT so let client update it as we don't have DataWatcher for fuse in this MC version
+                    ((WorldServer) getWorld()).getTracker().a(this, new PacketPlayOutUpdateEntityNBT(getId(), nbtTagCompound));
+                    fuseRenewalDelay = 9;
+                }
                 npc.update();
             } else {
                 super.t_();

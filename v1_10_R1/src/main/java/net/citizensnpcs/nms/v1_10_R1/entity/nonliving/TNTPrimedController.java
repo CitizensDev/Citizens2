@@ -93,9 +93,15 @@ public class TNTPrimedController extends MobEntityController {
             return npc;
         }
 
+        private int fuseRenewalDelay = 9;
         @Override
         public void m() {
             if (npc != null) {
+                if (fuseRenewalDelay-- <= 0) {
+                    setFuseTicks(Integer.MAX_VALUE - 1);
+                    setFuseTicks(Integer.MAX_VALUE);
+                    fuseRenewalDelay = 9;
+                }
                 npc.update();
             } else {
                 super.m();
