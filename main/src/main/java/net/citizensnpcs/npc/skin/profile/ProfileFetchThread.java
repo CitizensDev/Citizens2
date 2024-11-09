@@ -248,8 +248,8 @@ class ProfileFetchThread implements Runnable {
         String message = e.getMessage();
         String cause = e.getCause() != null ? e.getCause().getMessage() : null;
 
-        return message != null && message.contains("too many requests")
-                || cause != null && cause.contains("too many requests");
+        return message != null && (message.contains("403 Forbidden") || message.contains("too many requests"))
+                || cause != null && (cause.contains("403 Forbidden") || cause.contains("too many requests"));
     }
 
     private static void sendResult(ProfileFetchHandler handler, ProfileRequest request) {
