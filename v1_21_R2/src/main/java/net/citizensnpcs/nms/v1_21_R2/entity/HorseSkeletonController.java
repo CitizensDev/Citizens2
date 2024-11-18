@@ -40,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class HorseSkeletonController extends MobEntityController {
     public HorseSkeletonController() {
-        super(EntityHorseSkeletonNPC.class, EntityType.SKELETON);
+        super(EntityHorseSkeletonNPC.class, EntityType.SKELETON_HORSE);
     }
 
     @Override
