@@ -34,7 +34,7 @@ public class StoredShops {
     }
 
     public NPCShop getGlobalShop(String name) {
-        return globalShops.computeIfAbsent(name, NPCShop::new);
+        return globalShops.get(name);
     }
 
     public NPCShop getShop(String name) {
