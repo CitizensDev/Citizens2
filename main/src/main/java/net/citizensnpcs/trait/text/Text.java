@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
@@ -211,7 +212,10 @@ public class Text extends Trait implements Runnable, Listener {
         }
         if (speechBubbles) {
             HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
-            trait.addTemporaryLine(Placeholders.replace(text.get(index), player, npc), speechBubbleDuration);
+            String replaced = Placeholders.replace(text.get(index), player, npc);
+            for (String line : NEWLINE_PATTERN.split(replaced)) {
+                trait.addTemporaryLine(line, speechBubbleDuration);
+            }
         }
         if (sendTextToChat) {
             npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
@@ -325,5 +329,6 @@ public class Text extends Trait implements Runnable, Listener {
         return speechBubbles;
     }
 
+    private static final Pattern NEWLINE_PATTERN = Pattern.compile("<br>|\\n");
     private static final Random RANDOM = Util.getFastRandom();
 }
