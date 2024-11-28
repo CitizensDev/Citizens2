@@ -141,6 +141,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             moveOnCurrentHeading();
         }
         tickAI();
+        tryCheckInsideBlocks();
         detectEquipmentUpdates();
         noPhysics = isSpectator();
         if (isSpectator()) {
