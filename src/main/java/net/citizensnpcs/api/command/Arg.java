@@ -39,21 +39,22 @@ public @interface Arg {
         }
 
         public static abstract class OptionalEnumCompletions implements CompletionsProvider {
-            private Class<? extends Enum<?>> clazz;
+            private Collection<String> completions = Collections.emptyList();
 
+            @SuppressWarnings("unchecked")
             public OptionalEnumCompletions() {
                 try {
-                    clazz = (Class<? extends Enum<?>>) Class.forName(getEnumClassName());
+                    Class<? extends Enum<?>> clazz = (Class<? extends Enum<?>>) Class.forName(getEnumClassName());
+                    if (clazz.getEnumConstants() != null) {
+                        completions = Lists.transform(Arrays.asList(clazz.getEnumConstants()), Enum::name);
+                    }
                 } catch (ClassNotFoundException e) {
-                    clazz = null;
                 }
             }
 
             @Override
             public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
-                if (clazz == null)
-                    return Collections.emptyList();
-                return Lists.transform(Arrays.asList(clazz.getEnumConstants()), Enum::name);
+                return completions;
             }
 
             public abstract String getEnumClassName();

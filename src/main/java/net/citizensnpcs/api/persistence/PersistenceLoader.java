@@ -351,6 +351,8 @@ public class PersistenceLoader {
                     }
                 } else if (type == UUID.class) {
                     key = UUID.fromString(String.valueOf(key));
+                } else if (SpigotUtil.isRegistryKeyed(type)) {
+                    key = Bukkit.getRegistry((Class<? extends Keyed>) type).get(SpigotUtil.getKey(String.valueOf(key)));
                 } else if (type.isEnum()) {
                     key = Enum.valueOf((Class<? extends Enum>) type, String.valueOf(key));
                 } else

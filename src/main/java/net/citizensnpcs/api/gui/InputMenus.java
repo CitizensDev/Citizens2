@@ -240,7 +240,11 @@ public class InputMenus {
                 String chat = event.getMessage();
                 event.setCancelled(true);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-                    callback.accept(chat);
+                    if (chat.equals("\"\"") || chat.equals("''") || chat.equals("null")) {
+                        callback.accept("");
+                    } else {
+                        callback.accept(chat);
+                    }
                     menu.present(viewer);
                 });
             }
