@@ -264,7 +264,8 @@ public class CitizensNPC extends AbstractNPC {
         if (destination == null) {
             NMS.cancelMoveDestination(getEntity());
         } else {
-            NMS.setDestination(getEntity(), destination.getX(), destination.getY(), destination.getZ(), 1);
+            NMS.setDestination(getEntity(), destination.getX(), destination.getY(), destination.getZ(),
+                    getNavigator().getDefaultParameters().speedModifier());
         }
     }
 
@@ -398,8 +399,9 @@ public class CitizensNPC extends AbstractNPC {
                     entity.setRemoveWhenFarAway(false);
 
                     if (type == EntityType.PLAYER || Util.isHorse(type)) {
-                        if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class) || !getTrait(AttributeTrait.class)
-                                .hasAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.step_height", "step_height"))) {
+                        if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class)
+                                || !getTrait(AttributeTrait.class).hasAttribute(Util
+                                        .getRegistryValue(Registry.ATTRIBUTE, "generic.step_height", "step_height"))) {
                             NMS.setStepHeight(entity, 1);
                         }
                     }

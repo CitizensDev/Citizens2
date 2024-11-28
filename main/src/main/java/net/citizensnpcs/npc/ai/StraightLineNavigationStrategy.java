@@ -115,7 +115,7 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             }
         } else if (npc.getEntity() instanceof LivingEntity) {
             NMS.setDestination(npc.getEntity(), destVector.getX(), destVector.getY(), destVector.getZ(),
-                    params.speed());
+                    params.speedModifier());
         } else {
             Vector dir = destVector.subtract(currLoc.toVector()).normalize().multiply(0.2);
             Block in = currLoc.getBlock();
