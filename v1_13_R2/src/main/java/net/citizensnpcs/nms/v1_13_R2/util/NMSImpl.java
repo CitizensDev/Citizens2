@@ -646,14 +646,14 @@ public class NMSImpl implements NMSBridge {
                 Iterables.transform(dest,
                         input -> new PathPoint(input.getBlockX(), input.getBlockY(), input.getBlockZ())),
                 PathPoint.class));
-        return getTargetNavigator(entity, params, input -> input.a(path, params.speed()));
+        return getTargetNavigator(entity, params, input -> input.a(path, params.speedModifier()));
     }
 
     @Override
     public MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final Location dest,
             final NavigatorParameters params) {
         return getTargetNavigator(entity, params,
-                input -> input.a(dest.getX(), dest.getY(), dest.getZ(), params.speed()));
+                input -> input.a(dest.getX(), dest.getY(), dest.getZ(), params.speedModifier()));
     }
 
     private MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final NavigatorParameters params,
@@ -716,7 +716,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public boolean update() {
-                if (params.speed() != lastSpeed) {
+                if (params.speedModifier() != lastSpeed) {
                     Entity handle = getHandle(entity);
                     float oldWidth = handle.width;
                     if (handle instanceof EntityHorse) {
@@ -727,12 +727,12 @@ public class NMSImpl implements NMSBridge {
                     }
                     handle.width = oldWidth; // minecraft requires that an entity fit onto both blocks if width >= 1f,
                                              // but we'd prefer to make it just fit on 1 so hack around it a bit.
-                    lastSpeed = params.speed();
+                    lastSpeed = params.speedModifier();
                 }
                 if (params.debug() && !NMSImpl.isNavigationFinished(navigation)) {
                     Util.sendBlockChanges(getBlocks(entity, navigation), Material.DANDELION);
                 }
-                navigation.a(params.speed());
+                navigation.a(params.speedModifier());
                 return NMSImpl.isNavigationFinished(navigation);
             }
         };
@@ -1657,7 +1657,7 @@ public class NMSImpl implements NMSBridge {
             Location location = parameters.entityTargetLocationMapper().apply(target);
             if (location == null)
                 throw new IllegalStateException("mapper should not return null");
-            navigation.a(location.getX(), location.getY(), location.getZ(), parameters.speed());
+            navigation.a(location.getX(), location.getY(), location.getZ(), parameters.speedModifier());
         }
 
         @Override

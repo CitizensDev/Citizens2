@@ -370,7 +370,7 @@ public class ShopTrait extends Trait {
         @Persist
         private int timesPurchasable = 0;
 
-        public List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
+        private List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
             List<Transaction> pending = Lists.newArrayList();
             for (NPCShopAction action : actions) {
                 Transaction take = func.apply(action);
@@ -402,11 +402,11 @@ public class ShopTrait extends Trait {
             }
         }
 
-        public void changeCost(Function<NPCShopAction, Boolean> filter, NPCShopAction cost) {
+        private void changeCost(Function<NPCShopAction, Boolean> filter, NPCShopAction cost) {
             changeAction(this.cost, filter, cost);
         }
 
-        public void changeResult(Function<NPCShopAction, Boolean> filter, NPCShopAction result) {
+        private void changeResult(Function<NPCShopAction, Boolean> filter, NPCShopAction result) {
             changeAction(this.result, filter, result);
         }
 
@@ -426,6 +426,10 @@ public class ShopTrait extends Trait {
             } catch (CloneNotSupportedException e) {
                 throw new Error(e);
             }
+        }
+
+        public List<NPCShopAction> getCost() {
+            return cost;
         }
 
         public ItemStack getDisplayItem(Player player) {
@@ -457,6 +461,10 @@ public class ShopTrait extends Trait {
             return stack;
         }
 
+        public List<NPCShopAction> getResult() {
+            return result;
+        }
+
         @Override
         public void load(DataKey key) {
             if (key.keyExists("message")) {
@@ -469,7 +477,7 @@ public class ShopTrait extends Trait {
             }
         }
 
-        public void onClick(NPCShop shop, Player player, InventoryMultiplexer inventory, boolean shiftClick,
+        private void onClick(NPCShop shop, Player player, InventoryMultiplexer inventory, boolean shiftClick,
                 boolean secondClick) {
             // TODO: InventoryMultiplexer could be lifted up to transact in apply(), which would be cleaner.
             // if this is done, it should probably refresh after every transaction application
@@ -675,8 +683,12 @@ public class ShopTrait extends Trait {
                             : "Unset"),
                     description -> {
                         ItemMeta meta = modified.display.getItemMeta();
-                        meta.setLore(
-                                Lists.newArrayList(Splitter.on('\n').split(Messaging.parseComponents(description))));
+                        if (description.isEmpty()) {
+                            meta.setLore(Lists.newArrayList());
+                        } else {
+                            meta.setLore(Lists
+                                    .newArrayList(Splitter.on('\n').split(Messaging.parseComponents(description))));
+                        }
                         modified.display.setItemMeta(meta);
                     });
         }
