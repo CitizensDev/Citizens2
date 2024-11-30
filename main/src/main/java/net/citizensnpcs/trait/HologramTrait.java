@@ -716,7 +716,7 @@ public class HologramTrait extends Trait {
 
         @Override
         public void updateText(NPC npc, String text) {
-            this.text = Placeholders.replace(text, null, npc);
+            this.text = text;
         }
     }
 
@@ -778,7 +778,7 @@ public class HologramTrait extends Trait {
 
         @Override
         public void updateText(NPC npc, String text) {
-            this.text = Placeholders.replace(text, null, npc);
+            this.text = text;
         }
     }
 
@@ -844,7 +844,7 @@ public class HologramTrait extends Trait {
         }
 
         protected void spawnHologram(NPC npc, Vector3d offset) {
-            hologram = createNPC(npc.getEntity(), text, offset);
+            hologram = createNPC(npc.getEntity(), Placeholders.replace(text, null, npc), offset);
             if (!hologram.hasTrait(ClickRedirectTrait.class)) {
                 hologram.addTrait(new ClickRedirectTrait(npc));
             }
@@ -863,12 +863,12 @@ public class HologramTrait extends Trait {
 
         @Override
         public void updateText(NPC npc, String raw) {
-            this.text = Placeholders.replace(raw, null, npc);
+            this.text = raw;
             if (hologram == null)
                 return;
-            hologram.setName(text);
-            if (!Placeholders.containsPlaceholders(raw)) {
-                hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, Messaging.stripColor(raw).length() > 0);
+            hologram.setName(Placeholders.replace(text, null, npc));
+            if (!Placeholders.containsPlaceholders(text)) {
+                hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, Messaging.stripColor(text).length() > 0);
             }
         }
     }
@@ -936,10 +936,11 @@ public class HologramTrait extends Trait {
 
         @Override
         public void updateText(NPC npc, String raw) {
-            this.text = Placeholders.replace(raw, null, npc);
+            this.text = raw;
             if (hologram == null)
                 return;
-            hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(text));
+            hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT,
+                    Messaging.minecraftComponentFromRawMessage(Placeholders.replace(text, null, npc)));
         }
     }
 
