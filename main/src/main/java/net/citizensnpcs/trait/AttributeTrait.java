@@ -41,7 +41,7 @@ public class AttributeTrait extends Trait {
                 continue;
             }
             final AttributeInstance attributeInstance = le.getAttribute(key);
-            if (attributeInstance == null) { // not applicable anymore so ignore // todo should we remove?
+            if (attributeInstance == null) { // not applicable anymore so ignore // todo should we remove the entry if we reach there?
                 continue;
             }
             attributeInstance.setBaseValue(entry.getValue());
