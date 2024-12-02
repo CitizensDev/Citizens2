@@ -30,6 +30,7 @@ import org.bukkit.Registry;
 import org.bukkit.Rotation;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
@@ -422,13 +423,18 @@ public class NPCCommands {
     public void attribute(CommandContext args, CommandSender sender, NPC npc,
             @Arg(value = 1, completionsProvider = OptionalAttributeCompletions.class) String attribute,
             @Arg(2) Double value) {
-
+        final Attribute attr = Registry.ATTRIBUTE.get(SpigotUtil.getKey(attribute));
+        if (attr == null) {
+            // todo an translation key is necessary here
+            sender.sendMessage("Attribute not found");
+            return;
+        }
         AttributeTrait trait = npc.getOrAddTrait(AttributeTrait.class);
         if (value == null) {
-            trait.setDefaultAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey(attribute)));
+            trait.setDefaultAttribute(attr);
             Messaging.sendTr(sender, Messages.ATTRIBUTE_RESET, attribute);
         } else {
-            trait.setAttributeValue(Registry.ATTRIBUTE.get(SpigotUtil.getKey(attribute)), value);
+            trait.setAttributeValue(attr, value);
             Messaging.sendTr(sender, Messages.ATTRIBUTE_SET, attribute, value);
         }
     }

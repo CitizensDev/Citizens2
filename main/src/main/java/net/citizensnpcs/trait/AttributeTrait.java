@@ -35,7 +35,16 @@ public class AttributeTrait extends Trait {
             return;
         LivingEntity le = (LivingEntity) npc.getEntity();
         for (Map.Entry<Attribute, Double> entry : attributes.entrySet()) {
-            le.getAttribute(entry.getKey()).setBaseValue(entry.getValue());
+            final Attribute key = entry.getKey();
+            if (key == null) {
+                // todo should we log an error there?
+                continue;
+            }
+            final AttributeInstance attributeInstance = le.getAttribute(key);
+            if (attributeInstance == null) { // not applicable anymore so ignore // todo should we remove?
+                continue;
+            }
+            attributeInstance.setBaseValue(entry.getValue());
         }
     }
 
