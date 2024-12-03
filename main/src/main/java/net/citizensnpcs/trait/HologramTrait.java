@@ -866,7 +866,13 @@ public class HologramTrait extends Trait {
             this.text = raw;
             if (hologram == null)
                 return;
-            hologram.setName(Placeholders.replace(text, null, npc));
+            final String updatedName = Placeholders.replace(text, null, npc);
+            if (hologram.isSpawned()) {
+                final Entity hologramEntity = hologram.getEntity();
+                hologramEntity.setCustomName(null);
+                // Use underlying Bukkit API to suppress rename event
+                hologramEntity.setCustomName(updatedName);
+            }
             if (!Placeholders.containsPlaceholders(text)) {
                 hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, Messaging.stripColor(text).length() > 0);
             }
