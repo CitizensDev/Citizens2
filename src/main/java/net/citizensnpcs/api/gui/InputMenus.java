@@ -15,6 +15,7 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
@@ -229,8 +230,10 @@ public class InputMenus {
         }, choices);
     }
 
-    public static void runChatStringSetter(InventoryMenu menu, HumanEntity viewer, String description,
+    public static void runChatStringSetter(InventoryMenu menu, InventoryClickEvent event, String description,
             Consumer<String> callback) {
+        event.setCancelled(true);
+        HumanEntity viewer = event.getWhoClicked();
         menu.close(viewer);
         Messaging.send(viewer, description);
         Bukkit.getPluginManager().registerEvents(new Listener() {
