@@ -866,8 +866,8 @@ public class HologramTrait extends Trait {
             this.text = raw;
             if (hologram == null)
                 return;
-            final String updatedName = Placeholders.replace(text, null, npc);
             if (hologram.isSpawned()) {
+                final String updatedName = Placeholders.replace(text, null, npc);
                 final Entity hologramEntity = hologram.getEntity();
                 hologramEntity.setCustomName(null);
                 // Use underlying Bukkit API to suppress rename event
