@@ -533,7 +533,7 @@ public class HologramTrait extends Trait {
 
         public void setText(String text) {
             this.text = text == null ? "" : text;
-            if (ITEM_MATCHER.matcher(text).find() && !(renderer instanceof ItemRenderer)) {
+            if (ITEM_MATCHER.matcher(this.text).find() && !(renderer instanceof ItemRenderer)) {
                 renderer.destroy();
                 mb = 0.21;
                 mt = 0.07;
