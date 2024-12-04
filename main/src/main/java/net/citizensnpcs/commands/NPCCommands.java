@@ -6,6 +6,8 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -3003,6 +3005,12 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.SITTING_SET, npc.getName(), Util.prettyPrintLocation(at));
     }
 
+    private boolean isInDirectory(File file, File directory) {
+        Path filePath = Paths.get(file.toURI()).normalize();
+        Path directoryPath = Paths.get(directory.toURI()).normalize();
+        return filePath.startsWith(directoryPath);
+    }
+
     @Command(
             aliases = { "npc" },
             usage = "skin (-e(xport) -c(lear) -l(atest) -s(kull) -b(edrock)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
@@ -3029,8 +3037,10 @@ public class NPCCommands {
             File skin = file == null ? new File(skinsFolder, npc.getUniqueId().toString() + ".png")
                     : new File(skinsFolder, file);
 
-            if (!skin.getParentFile().equals(skinsFolder) || !skin.getName().endsWith(".png"))
+            if (!isInDirectory(skin, skinsFolder) || !skin.getName().endsWith(".png"))
                 throw new CommandException(Messages.INVALID_SKIN_FILE, file);
+
+            skin.getParentFile().mkdirs();
 
             try {
                 JSONObject data = (JSONObject) new JSONParser()
@@ -3060,7 +3070,7 @@ public class NPCCommands {
                         File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
                         File skin = new File(skinsFolder, Placeholders.replace(file, sender, npc));
                         if (!skin.exists() || !skin.isFile() || skin.isHidden()
-                                || !skin.getParentFile().equals(skinsFolder)) {
+                                || !isInDirectory(skin, skinsFolder)) {
                             Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
                                     () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
                             return;
