@@ -868,8 +868,8 @@ public class HologramTrait extends Trait {
                 return;
             if (hologram.isSpawned()) {
                 final String updatedName = Placeholders.replace(text, null, npc);
-                boolean needUpdate = !hologram.getName().equals(updatedName);
                 hologram.setName(updatedName);
+                boolean needUpdate = !hologram.getName().equals(updatedName);
                 if (needUpdate) {
                     hologram.updateCustomName();
                 }
