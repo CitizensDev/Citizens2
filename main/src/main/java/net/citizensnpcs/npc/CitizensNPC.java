@@ -548,13 +548,17 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
-    private void updateCustomName() {
-        if (getEntity() == null)
+    @Override
+    public void updateCustomName() {
+        final Entity entity = getEntity();
+        if (entity == null)
             return;
         if (coloredNameComponentCache != null) {
-            NMS.setCustomName(getEntity(), coloredNameComponentCache, coloredNameStringCache);
+            NMS.setCustomName(entity, null, null);
+            NMS.setCustomName(entity, coloredNameComponentCache, coloredNameStringCache);
         } else {
-            getEntity().setCustomName(getFullName());
+            entity.setCustomName(null);
+            entity.setCustomName(getFullName());
         }
     }
 
