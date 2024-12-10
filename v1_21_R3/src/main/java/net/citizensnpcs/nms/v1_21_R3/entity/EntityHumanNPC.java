@@ -268,7 +268,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.invulnerableTime = 0;
+        setClientLoaded(true);
         setSkinFlags((byte) 0xFF);
     }
 

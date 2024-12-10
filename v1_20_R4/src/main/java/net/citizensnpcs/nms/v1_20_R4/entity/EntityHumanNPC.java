@@ -60,13 +60,11 @@ import net.minecraft.world.phys.Vec3;
 
 public class EntityHumanNPC extends ServerPlayer implements NPCHolder, SkinnableEntity, ForwardingMobAI {
     private PlayerAdvancements advancements;
-
     private MobAI ai;
     private int jumpTicks = 0;
     private final CitizensNPC npc;
     private boolean setBukkitEntity;
     private final SkinPacketTracker skinTracker;
-
     private EmptyServerStatsCounter statsCache;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, ServerLevel world, GameProfile gameProfile,
@@ -269,7 +267,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.invulnerableTime = 0;
         setSkinFlags((byte) 0xFF);
     }
 

@@ -241,7 +241,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             conn.setPacketListener(playerConnection);
         } catch (IOException e) {
         }
-        invulnerableTicks = 0;
         setSkinFlags((byte) 0xFF);
     }
 

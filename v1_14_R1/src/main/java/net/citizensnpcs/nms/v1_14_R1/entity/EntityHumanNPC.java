@@ -269,7 +269,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         controllerJump = new PlayerControllerJump(this);
         controllerMove = new PlayerControllerMove(this);
         navigation = new PlayerNavigation(this, world);
-        invulnerableTicks = 0;
         setSkinFlags((byte) 0xFF);
     }
 
