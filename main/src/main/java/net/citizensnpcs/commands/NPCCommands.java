@@ -30,6 +30,7 @@ import org.bukkit.Registry;
 import org.bukkit.Rotation;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
@@ -425,10 +426,10 @@ public class NPCCommands {
 
         AttributeTrait trait = npc.getOrAddTrait(AttributeTrait.class);
         if (value == null) {
-            trait.setDefaultAttribute(Registry.ATTRIBUTE.get(SpigotUtil.getKey(attribute)));
+            trait.setDefaultAttribute(Util.getAttribute(attribute));
             Messaging.sendTr(sender, Messages.ATTRIBUTE_RESET, attribute);
         } else {
-            trait.setAttributeValue(Registry.ATTRIBUTE.get(SpigotUtil.getKey(attribute)), value);
+            trait.setAttributeValue(Util.getAttribute(attribute), value);
             Messaging.sendTr(sender, Messages.ATTRIBUTE_SET, attribute, value);
         }
     }
@@ -3755,10 +3756,10 @@ public class NPCCommands {
                 trait.isTamed(), trait.getCollarColor().name());
     }
 
-    public static class OptionalAttributeCompletions extends OptionalEnumCompletions {
+    public static class OptionalAttributeCompletions implements Arg.CompletionsProvider {
         @Override
-        public String getEnumClassName() {
-            return "org.bukkit.attribute.Attribute";
+        public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
+            return Arrays.stream(Attribute.values()).map(attr -> attr.getKey().toString()).collect(Collectors.toList());
         }
     }
 
