@@ -423,7 +423,7 @@ public class NPCCommands {
     public void attribute(CommandContext args, CommandSender sender, NPC npc,
             @Arg(value = 1, completionsProvider = OptionalAttributeCompletions.class) String attribute,
             @Arg(2) Double value) {
-        final Attribute attr = Registry.ATTRIBUTE.get(SpigotUtil.getKey(attribute));
+        final Attribute attr = Util.getAttribute(attribute);
         if (attr == null) {
             // todo an translation key is necessary here
             sender.sendMessage("Attribute not found");
@@ -3761,10 +3761,10 @@ public class NPCCommands {
                 trait.isTamed(), trait.getCollarColor().name());
     }
 
-    public static class OptionalAttributeCompletions extends OptionalEnumCompletions {
+    public static class OptionalAttributeCompletions implements Arg.CompletionsProvider {
         @Override
-        public String getEnumClassName() {
-            return "org.bukkit.attribute.Attribute";
+        public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
+            return Arrays.stream(Attribute.values()).map(attr -> attr.getKey().toString()).collect(Collectors.toList());
         }
     }
 

@@ -596,7 +596,7 @@ public class ShopTrait extends Trait {
             ctx.getSlot(9 * 4 + 2).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
                     "Set already purchased message, currently:\n",
                     modified.alreadyPurchasedMessage == null ? "Unset" : modified.alreadyPurchasedMessage);
-            ctx.getSlot(9 * 4 + 2).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e.getWhoClicked(),
+            ctx.getSlot(9 * 4 + 2).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e,
                     "Enter the new already purchased message, currently:<br>[[" + modified.alreadyPurchasedMessage,
                     s -> {
                         modified.alreadyPurchasedMessage = s;
@@ -607,7 +607,7 @@ public class ShopTrait extends Trait {
                     new ItemStack(Util.getFallbackMaterial("GREEN_WOOL", "EMERALD", "OAK_SIGN", "SIGN")),
                     "Set successful click message, currently:\n",
                     modified.resultMessage == null ? "Unset" : modified.resultMessage);
-            ctx.getSlot(9 * 3 + 3).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e.getWhoClicked(),
+            ctx.getSlot(9 * 3 + 3).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e,
                     "Enter the new successful click message, currently:<br>[[" + modified.resultMessage, s -> {
                         modified.resultMessage = s;
                         ctx.getSlot(9 * 3 + 3).setDescription(modified.resultMessage);
@@ -616,7 +616,7 @@ public class ShopTrait extends Trait {
             ctx.getSlot(9 * 3 + 6).setItemStack(new ItemStack(Util.getFallbackMaterial("RED_WOOL", "OAK_SIGN", "SIGN")),
                     "Set unsuccessful click message, currently:\n",
                     modified.costMessage == null ? "Unset" : modified.costMessage);
-            ctx.getSlot(9 * 3 + 6).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e.getWhoClicked(),
+            ctx.getSlot(9 * 3 + 6).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e,
                     "Enter the new unsuccessful click message, currently:<br>[[" + modified.costMessage, s -> {
                         modified.costMessage = s;
                         ctx.getSlot(9 * 3 + 6).setDescription(modified.costMessage);
@@ -626,7 +626,7 @@ public class ShopTrait extends Trait {
                     "Set click to confirm message.",
                     "For example, 'click again to buy this item'\nYou can use <cost> or <result> placeholders.\nCurrently:\n"
                             + (modified.clickToConfirmMessage == null ? "Unset" : modified.clickToConfirmMessage));
-            ctx.getSlot(9 * 3 + 5).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e.getWhoClicked(),
+            ctx.getSlot(9 * 3 + 5).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e,
                     "Enter the new click to confirm message, currently:<br>[[" + modified.clickToConfirmMessage, s -> {
                         modified.clickToConfirmMessage = s;
                         ctx.getSlot(9 * 3 + 5).setDescription(modified.clickToConfirmMessage);
@@ -677,7 +677,7 @@ public class ShopTrait extends Trait {
             if (modified.display == null)
                 return;
 
-            InputMenus.runChatStringSetter(ctx.getMenu(), event.getWhoClicked(),
+            InputMenus.runChatStringSetter(ctx.getMenu(), event,
                     "Enter the new item description, currently:<br>[[" + (modified.display.getItemMeta().hasLore()
                             ? Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore())
                             : "Unset"),

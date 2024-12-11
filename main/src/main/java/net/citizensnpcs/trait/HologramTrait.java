@@ -533,7 +533,7 @@ public class HologramTrait extends Trait {
 
         public void setText(String text) {
             this.text = text == null ? "" : text;
-            if (ITEM_MATCHER.matcher(text).find() && !(renderer instanceof ItemRenderer)) {
+            if (ITEM_MATCHER.matcher(this.text).find() && !(renderer instanceof ItemRenderer)) {
                 renderer.destroy();
                 mb = 0.21;
                 mt = 0.07;
@@ -866,7 +866,13 @@ public class HologramTrait extends Trait {
             this.text = raw;
             if (hologram == null)
                 return;
-            hologram.setName(Placeholders.replace(text, null, npc));
+            if (hologram.isSpawned()) {
+                final String updatedName = Placeholders.replace(text, null, npc);
+                final Entity hologramEntity = hologram.getEntity();
+                hologramEntity.setCustomName(null);
+                // Use underlying Bukkit API to suppress rename event
+                hologramEntity.setCustomName(updatedName);
+            }
             if (!Placeholders.containsPlaceholders(text)) {
                 hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, Messaging.stripColor(text).length() > 0);
             }
