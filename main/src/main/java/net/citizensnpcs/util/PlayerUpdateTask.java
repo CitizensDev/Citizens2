@@ -54,8 +54,9 @@ public class PlayerUpdateTask extends BukkitRunnable {
                     }
                 }
                 NPC old = ((NPCHolder) rm.entity).getNPC();
-                Messaging.severe(old == next ? "Player registered twice"
-                        : "Player registered twice with different NPC instances", rm.entity.getUniqueId());
+                if (old != next) {
+                    Messaging.severe("Player registered twice with different NPC instances", rm.entity.getUniqueId());
+                }
                 rm.entity.remove();
             }
             if (next.hasTrait(PacketNPC.class)) {
