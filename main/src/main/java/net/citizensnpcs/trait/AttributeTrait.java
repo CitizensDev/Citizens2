@@ -2,6 +2,9 @@ package net.citizensnpcs.trait;
 
 import java.util.Map;
 
+import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.Util;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
@@ -30,12 +33,31 @@ public class AttributeTrait extends Trait {
     }
 
     @Override
+    public void load(DataKey key) throws NPCLoadException {
+        for (Map.Entry<String, Object> entry : key.getValuesDeep().entrySet()) {
+            final String rawAttributeName = entry.getKey();
+            final Attribute attribute = Util.getAttribute(rawAttributeName);
+            if (attribute != null) {
+                final Object rawValue = entry.getValue();
+                if (rawValue instanceof Double) {
+                    attributes.put(attribute, (Double) rawValue);
+                }
+            }
+        }
+    }
+
+    @Override
     public void onSpawn() {
         if (!(npc.getEntity() instanceof LivingEntity))
             return;
         LivingEntity le = (LivingEntity) npc.getEntity();
         for (Map.Entry<Attribute, Double> entry : attributes.entrySet()) {
-            le.getAttribute(entry.getKey()).setBaseValue(entry.getValue());
+            final Attribute key = entry.getKey();
+            final AttributeInstance attributeInstance = le.getAttribute(key);
+            if (attributeInstance == null) { // not applicable anymore so ignore
+                continue;
+            }
+            attributeInstance.setBaseValue(entry.getValue());
         }
     }
 

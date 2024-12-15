@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -264,6 +265,20 @@ public class Util {
             }
         }
         return null;
+    }
+
+    public static Attribute getAttribute(String... keyCandidates) {
+        for (String keyCandidate : keyCandidates) {
+            boolean isFullUpperCase = keyCandidate.toUpperCase(Locale.ENGLISH).equals(keyCandidate);
+            if (isFullUpperCase) { // we assume it is an enum key
+                try {
+                    // Just imagine we're still on older API (1.21.3-, exclusive)
+                    // noinspection deprecation
+                    return Attribute.valueOf(keyCandidate);
+                } catch (IllegalArgumentException ignored) {} // huh, not?
+            }
+        }
+        return getRegistryValue(Registry.ATTRIBUTE, keyCandidates);
     }
 
     public static String getTeamName(UUID id) {
