@@ -2,18 +2,18 @@ package net.citizensnpcs.trait;
 
 import java.util.Map;
 
-import net.citizensnpcs.api.exception.NPCLoadException;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.util.Util;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
 
 import com.google.common.collect.Maps;
 
+import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.Util;
 
 @TraitName("attributetrait")
 public class AttributeTrait extends Trait {
@@ -34,16 +34,12 @@ public class AttributeTrait extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        for (Map.Entry<String, Object> entry : key.getValuesDeep().entrySet()) {
-            final String rawAttributeName = entry.getKey();
-            final Attribute attribute = Util.getAttribute(rawAttributeName);
-            if (attribute != null) {
-                final Object rawValue = entry.getValue();
-                if (rawValue instanceof Double) {
-                    attributes.put(attribute, (Double) rawValue);
-                }
+        for (DataKey subkey : key.getRelative("attributes").getSubKeys()) {
+            if (Util.getAttribute(subkey.name()) == null) {
+                key.removeKey("attributes." + subkey.name());
             }
         }
+        attributes.remove(null);
     }
 
     @Override
@@ -54,9 +50,9 @@ public class AttributeTrait extends Trait {
         for (Map.Entry<Attribute, Double> entry : attributes.entrySet()) {
             final Attribute key = entry.getKey();
             final AttributeInstance attributeInstance = le.getAttribute(key);
-            if (attributeInstance == null) { // not applicable anymore so ignore
+            if (attributeInstance == null)
                 continue;
-            }
+
             attributeInstance.setBaseValue(entry.getValue());
         }
     }

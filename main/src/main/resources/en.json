@@ -55,6 +55,7 @@
   "citizens.commands.npc.allay.dancing-unset" : "[[{0}]] is no longer dancing.",
   "citizens.commands.npc.allay.description" : "Sets allay modifiers",
   "citizens.commands.npc.allay.help" : "",
+  "citizens.commands.npc.attribute.not-found" : "[[{0}]] is not a valid attribute.",
   "citizens.commands.npc.armadillo.state-set": "State set to [[{0}]]",
   "citizens.commands.npc.anchor.added" : "Anchor added.",
   "citizens.commands.npc.anchor.already-exists" : "The anchor [[{0}]] already exists.",

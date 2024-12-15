@@ -189,6 +189,17 @@ public class Util {
         NMS.look(entity, to, headOnly, immediate);
     }
 
+    public static Attribute getAttribute(String attribute) {
+        if (!SpigotUtil.isRegistryKeyed(Attribute.class)) {
+            try {
+                return Attribute.valueOf(attribute.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException ignore) {
+                return null;
+            }
+        }
+        return getRegistryValue(Registry.ATTRIBUTE, attribute);
+    }
+
     public static Location getCenterLocation(Block block) {
         Location bloc = block.getLocation();
         Location center = new Location(bloc.getWorld(), bloc.getBlockX() + 0.5, bloc.getBlockY(),
@@ -260,25 +271,11 @@ public class Util {
         for (String keyCandidate : keyCandidates) {
             final NamespacedKey key = SpigotUtil.getKey(keyCandidate);
             final T value = registry.get(key);
-            if (value != null) {
+            if (value != null)
                 return value;
-            }
+
         }
         return null;
-    }
-
-    public static Attribute getAttribute(String... keyCandidates) {
-        for (String keyCandidate : keyCandidates) {
-            boolean isFullUpperCase = keyCandidate.toUpperCase(Locale.ENGLISH).equals(keyCandidate);
-            if (isFullUpperCase) { // we assume it is an enum key
-                try {
-                    // Just imagine we're still on older API (1.21.3-, exclusive)
-                    // noinspection deprecation
-                    return Attribute.valueOf(keyCandidate);
-                } catch (IllegalArgumentException ignored) {} // huh, not?
-            }
-        }
-        return getRegistryValue(Registry.ATTRIBUTE, keyCandidates);
     }
 
     public static String getTeamName(UUID id) {

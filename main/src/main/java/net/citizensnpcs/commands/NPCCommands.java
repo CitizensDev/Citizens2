@@ -26,7 +26,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Registry;
 import org.bukkit.Rotation;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -425,8 +424,7 @@ public class NPCCommands {
             @Arg(2) Double value) {
         final Attribute attr = Util.getAttribute(attribute);
         if (attr == null) {
-            // todo an translation key is necessary here
-            sender.sendMessage("Attribute not found");
+            Messaging.sendErrorTr(sender, Messages.ATTRIBUTE_NOT_FOUND, attribute);
             return;
         }
         AttributeTrait trait = npc.getOrAddTrait(AttributeTrait.class);

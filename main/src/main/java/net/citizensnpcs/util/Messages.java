@@ -20,6 +20,7 @@ public class Messages {
     public static final String ANIMATION_ADDED = "citizens.editors.waypoints.triggers.animation.added";
     public static final String ANIMATION_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.animation.prompt";
     public static final String ARMADILLO_STATE_SET = "citizens.commands.npc.armadillo.state-set";
+    public static final String ATTRIBUTE_NOT_FOUND = "citizens.commands.npc.attribute.not-found";
     public static final String ATTRIBUTE_RESET = "citizens.commands.npc.attribute.reset";
     public static final String ATTRIBUTE_SET = "citizens.commands.npc.attribute.set";
     public static final String AVAILABLE_WAYPOINT_PROVIDERS = "citizens.waypoints.available-providers-header";
