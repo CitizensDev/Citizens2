@@ -75,6 +75,8 @@ public class HologramTrait extends Trait {
     private final NPCRegistry registry = CitizensAPI.getTemporaryNPCRegistry();
     private int t;
     @Persist
+    private boolean textShadow = true;
+    @Persist
     private int viewRange = -1;
 
     public HologramTrait() {
@@ -226,6 +228,10 @@ public class HologramTrait extends Trait {
         reloadLineHolograms();
     }
 
+    public boolean isDefaultTextShadow() {
+        return textShadow;
+    }
+
     @Override
     public void load(DataKey root) {
         clear();
@@ -236,6 +242,9 @@ public class HologramTrait extends Trait {
             line.mb = key.keyExists("margin.bottom") ? key.getDouble("margin.bottom") : 0.0;
             if (key.keyExists("backgroundcolor")) {
                 line.setBackgroundColor(Color.fromARGB(key.getInt("backgroundcolor")));
+            }
+            if (key.keyExists("textshadow")) {
+                line.setTextShadow(key.getBoolean("textshadow"));
             }
             lines.add(line);
         }
@@ -355,6 +364,7 @@ public class HologramTrait extends Trait {
             } else {
                 root.removeKey("lines." + i + ".backgroundcolor");
             }
+            root.setBoolean("lines." + i + ".textshadow", line.shadow);
             root.setString("lines." + i + ".text", line.text);
             root.setDouble("lines." + i + ".margin.top", line.mt);
             root.setDouble("lines." + i + ".margin.bottom", line.mb);
@@ -375,6 +385,10 @@ public class HologramTrait extends Trait {
             }
         }
         reloadLineHolograms();
+    }
+
+    public void setDefaultTextShadow(boolean shadow) {
+        this.textShadow = shadow;
     }
 
     /**
@@ -422,6 +436,11 @@ public class HologramTrait extends Trait {
         } else if (type.equalsIgnoreCase("bottom")) {
             lines.get(idx).mb = margin;
         }
+        reloadLineHolograms();
+    }
+
+    public void setTextShadow(int idx, boolean shadow) {
+        lines.get(idx).setTextShadow(shadow);
         reloadLineHolograms();
     }
 
@@ -490,6 +509,7 @@ public class HologramTrait extends Trait {
         double mb, mt;
         boolean persist;
         HologramRenderer renderer;
+        boolean shadow = textShadow;
         String text;
         int ticks;
 
@@ -540,6 +560,14 @@ public class HologramTrait extends Trait {
                 renderer = new ItemRenderer();
             }
             renderer.updateText(npc, text);
+        }
+
+        public void setTextShadow(boolean shadow) {
+            this.shadow = shadow;
+            if (!shadow) {
+                renderer = new TextDisplayRenderer();
+            }
+            renderer.setTextShadow(shadow);
         }
     }
 
@@ -610,6 +638,9 @@ public class HologramTrait extends Trait {
         void render(NPC parent, Vector3d offset);
 
         default void setBackgroundColor(Color color) {
+        }
+
+        default void setTextShadow(boolean shadow) {
         }
 
         /**
@@ -893,12 +924,9 @@ public class HologramTrait extends Trait {
 
     public static class TextDisplayRenderer extends SingleEntityHologramRenderer {
         private Color color;
+        private boolean shadow;
 
         public TextDisplayRenderer() {
-        }
-
-        public TextDisplayRenderer(Color color) {
-            this.color = color;
         }
 
         @Override
@@ -918,6 +946,7 @@ public class HologramTrait extends Trait {
             if (color != null) {
                 disp.setBackgroundColor(color);
             }
+            disp.setShadowed(shadow);
             if (SpigotUtil.getVersion()[1] >= 21 && base.getEntity() instanceof LivingEntity) {
                 AttributeInstance inst = ((LivingEntity) base.getEntity())
                         .getAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
@@ -963,7 +992,9 @@ public class HologramTrait extends Trait {
     }
 
     private static final Pattern ITEM_MATCHER = Pattern.compile("<item:((?:minecraft:)?[a-zA-Z0-9_ ]*?)(:.*?)?>");
+
     private static boolean SUPPORTS_DISPLAY = true;
+
     static {
         try {
             Class.forName("org.bukkit.entity.Display");

@@ -16,7 +16,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.citizensnpcs.api.event.NPCMoveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -73,6 +72,7 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.event.NPCMoveEvent;
 import net.citizensnpcs.api.gui.ForwardingInventory;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
@@ -1867,6 +1867,28 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    public static <T extends Entity & NPCHolder> void callNPCMoveEvent(T what) {
+        final NPC npc = what.getNPC();
+        if (npc != null && NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
+            if (what.xo != what.getX() || what.yo != what.getY() || what.zo != what.getZ()
+                    || what.yRotO != what.getYRot() || what.xRotO != what.getXRot()) {
+                Location from = new Location(what.level.getWorld(), what.xo, what.yo, what.zo, what.yRotO, what.xRotO);
+                Location to = new Location(what.level.getWorld(), what.getX(), what.getY(), what.getZ(), what.getYRot(),
+                        what.getXRot());
+                final NPCMoveEvent event = new NPCMoveEvent(npc, from, to.clone());
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    final Location eventFrom = event.getFrom();
+                    what.absMoveTo(eventFrom.getX(), eventFrom.getY(), eventFrom.getZ(), eventFrom.getYaw(),
+                            eventFrom.getPitch());
+                } else if (!to.equals(event.getTo())) {
+                    what.absMoveTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(),
+                            event.getTo().getYaw(), event.getTo().getPitch());
+                }
+            }
+        }
+    }
+
     public static void checkAndUpdateHeight(LivingEntity living, EntityDataAccessor<?> datawatcherobject,
             Consumer<EntityDataAccessor<?>> cb) {
         EntityDimensions size;
@@ -2037,24 +2059,6 @@ public class NMSImpl implements NMSBridge {
         entity.calculateEntityAnimation(entity, entity instanceof net.minecraft.world.entity.animal.FlyingAnimal);
     }
 
-    public static <T extends Entity & NPCHolder> void callNPCMoveEvent(T what) {
-        final NPC npc = what.getNPC();
-        if (npc != null && NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
-            if (what.xo != what.getX() || what.yo != what.getY() || what.zo != what.getZ() || what.yRotO != what.getYRot() || what.xRotO != what.getXRot()) {
-                Location from = new Location(what.level.getWorld(), what.xo, what.yo, what.zo, what.yRotO, what.xRotO);
-                Location to = new Location(what.level.getWorld(), what.getX(), what.getY(), what.getZ(), what.getYRot(), what.getXRot());
-                final NPCMoveEvent event = new NPCMoveEvent(npc, from, to.clone());
-                Bukkit.getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
-                    final Location eventFrom = event.getFrom();
-                    what.absMoveTo(eventFrom.getX(), eventFrom.getY(), eventFrom.getZ(), eventFrom.getYaw(), eventFrom.getPitch());
-                } else if (!to.equals(event.getTo())) {
-                    what.absMoveTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(), event.getTo().getYaw(), event.getTo().getPitch());
-                }
-            }
-        }
-    }
-
     public static TreeMap<?, ?> getBehaviorMap(LivingEntity entity) {
         try {
             return (TreeMap<?, ?>) BEHAVIOR_MAP.invoke(entity.getBrain());
@@ -2135,11 +2139,10 @@ public class NMSImpl implements NMSBridge {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
             return;
-        Material mat = Material.getMaterial(npc.data().get(NPC.Metadata.MINECART_ITEM, ""));
-        int data = npc.data().get(NPC.Metadata.MINECART_ITEM_DATA, 0); // TODO: migration for this
         int offset = npc.data().get(NPC.Metadata.MINECART_OFFSET, 0);
-        minecart.setCustomDisplay(mat != null);
-        if (mat != null) {
+        minecart.setCustomDisplay(npc.getItemProvider().get() != null);
+        if (npc.getItemProvider().get() != null) {
+            Material mat = npc.getItemProvider().get().getType();
             minecart.setDisplayBlockState(Registry.BLOCK.byId(mat.getId()).defaultBlockState());
         }
         minecart.setDisplayOffset(offset);

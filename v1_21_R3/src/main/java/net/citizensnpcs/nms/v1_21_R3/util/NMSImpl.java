@@ -2339,11 +2339,10 @@ public class NMSImpl implements NMSBridge {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
             return;
-        Material mat = Material.getMaterial(npc.data().get(NPC.Metadata.MINECART_ITEM, ""), false);
-        int data = npc.data().get(NPC.Metadata.MINECART_ITEM_DATA, 0); // TODO: migration for this
         int offset = npc.data().get(NPC.Metadata.MINECART_OFFSET, 0);
-        minecart.setCustomDisplay(mat != null);
-        if (mat != null) {
+        minecart.setCustomDisplay(npc.getItemProvider().get() != null);
+        if (npc.getItemProvider().get() != null) {
+            Material mat = npc.getItemProvider().get().getType();
             minecart.setDisplayBlockState(BuiltInRegistries.BLOCK.byId(mat.getId()).defaultBlockState());
         }
         minecart.setDisplayOffset(offset);

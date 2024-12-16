@@ -18,7 +18,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.citizensnpcs.api.event.NPCMoveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -79,6 +78,7 @@ import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
+import net.citizensnpcs.api.event.NPCMoveEvent;
 import net.citizensnpcs.api.gui.ForwardingInventory;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
@@ -1708,16 +1708,21 @@ public class NMSImpl implements NMSBridge {
     public static <T extends Entity & NPCHolder> void callNPCMoveEvent(T what) {
         final NPC npc = what.getNPC();
         if (npc != null && NPCMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
-            if (what.lastX != what.locX || what.lastY != what.locY || what.lastZ != what.locZ || what.lastYaw != what.yaw || what.lastPitch != what.pitch) {
-                Location from = new Location(what.world.getWorld(), what.lastX, what.lastY, what.lastZ, what.lastYaw, what.lastPitch);
-                Location to = new Location (what.world.getWorld(), what.locX, what.locY, what.locZ, what.yaw, what.pitch);
+            if (what.lastX != what.locX || what.lastY != what.locY || what.lastZ != what.locZ
+                    || what.lastYaw != what.yaw || what.lastPitch != what.pitch) {
+                Location from = new Location(what.world.getWorld(), what.lastX, what.lastY, what.lastZ, what.lastYaw,
+                        what.lastPitch);
+                Location to = new Location(what.world.getWorld(), what.locX, what.locY, what.locZ, what.yaw,
+                        what.pitch);
                 final NPCMoveEvent event = new NPCMoveEvent(npc, from, to.clone());
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) {
                     final Location eventFrom = event.getFrom();
-                    what.setLocation(eventFrom.getX(), eventFrom.getY(), eventFrom.getZ(), eventFrom.getYaw(), eventFrom.getPitch());
+                    what.setLocation(eventFrom.getX(), eventFrom.getY(), eventFrom.getZ(), eventFrom.getYaw(),
+                            eventFrom.getPitch());
                 } else if (!to.equals(event.getTo())) {
-                    what.setLocation(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(), event.getTo().getYaw(), event.getTo().getPitch());
+                    what.setLocation(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ(),
+                            event.getTo().getYaw(), event.getTo().getPitch());
                 }
             }
         }
@@ -2025,11 +2030,10 @@ public class NMSImpl implements NMSBridge {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
             return;
-        Material mat = Material.getMaterial(npc.data().get(NPC.Metadata.MINECART_ITEM, ""));
-        int data = npc.data().get(NPC.Metadata.MINECART_ITEM_DATA, 0); // TODO: migration for this
         int offset = npc.data().get(NPC.Metadata.MINECART_OFFSET, 0);
-        minecart.a(mat != null);
-        if (mat != null) {
+        minecart.a(npc.getItemProvider().get() != null);
+        if (npc.getItemProvider().get() != null) {
+            Material mat = npc.getItemProvider().get().getType();
             minecart.setDisplayBlock(Block.getByCombinedId(mat.getId()).getBlock().getBlockData());
         }
         minecart.setDisplayBlockOffset(offset);

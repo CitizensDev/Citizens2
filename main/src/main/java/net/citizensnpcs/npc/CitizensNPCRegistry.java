@@ -82,9 +82,9 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public NPC createNPCUsingItem(EntityType type, String name, ItemStack item) {
         NPC npc = createNPC(type, name);
         if (type.name().equals("OMINOUS_ITEM_SPAWNER") || type.name().equals("DROPPED_ITEM")
-                || type.name().equals("ITEM") || type == EntityType.FALLING_BLOCK || type == EntityType.ITEM_FRAME
-                || type.name().equals("GLOW_ITEM_FRAME") || type.name().equals("ITEM_DISPLAY")
-                || type.name().equals("BLOCK_DISPLAY")) {
+                || type.name().contains("MINECART") || type.name().equals("ITEM") || type == EntityType.FALLING_BLOCK
+                || type == EntityType.ITEM_FRAME || type.name().equals("GLOW_ITEM_FRAME")
+                || type.name().equals("ITEM_DISPLAY") || type.name().equals("BLOCK_DISPLAY")) {
             npc.data().set(NPC.Metadata.ITEM_AMOUNT, item.getAmount());
             npc.data().set(NPC.Metadata.ITEM_ID, item.getType().name());
             npc.data().set(NPC.Metadata.ITEM_DATA, item.getData().getData());

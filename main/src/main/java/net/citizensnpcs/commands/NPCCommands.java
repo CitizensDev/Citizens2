@@ -1281,7 +1281,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] | insert [line #] [text] | set [line #] [text] | remove [line #] | bgcolor [line #] (red,green,blue(,alpha)) | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
+            usage = "hologram add [text] | insert [line #] [text] | set [line #] [text] | remove [line #] | textshadow [line #] | bgcolor [line #] (red,green,blue(,alpha)) | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
             desc = "",
             modifiers = { "hologram" },
             min = 1,
@@ -1290,8 +1290,8 @@ public class NPCCommands {
     public void hologram(CommandContext args, CommandSender sender, NPC npc,
             @Arg(
                     value = 1,
-                    completions = { "add", "insert", "set", "bgcolor", "remove", "clear", "lineheight", "viewrange",
-                            "margintop", "marginbottom" }) String action,
+                    completions = { "add", "insert", "set", "bgcolor", "textshadow", "remove", "clear", "lineheight",
+                            "viewrange", "margintop", "marginbottom" }) String action,
             @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion)
             throws CommandException {
         HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
@@ -1331,6 +1331,21 @@ public class NPCCommands {
                     throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
                 trait.setBackgroundColor(idx, Util.parseColor(args.getString(3)));
                 Messaging.sendTr(sender, Messages.HOLOGRAM_BACKGROUND_COLOR_SET, idx, args.getString(3));
+            }
+        } else if (action.equalsIgnoreCase("textshadow")) {
+            if (args.argsLength() == 3) {
+                trait.setDefaultTextShadow(!trait.isDefaultTextShadow());
+                Messaging.sendTr(sender, trait.isDefaultTextShadow() ? Messages.HOLOGRAM_DEFAULT_SHADOW_SET
+                        : Messages.HOLOGRAM_DEFAULT_SHADOW_UNSET, npc.getName());
+            } else {
+                int idx = args.getString(2).equals("bottom") ? 0
+                        : args.getString(2).equals("top") ? trait.getLines().size() - 1
+                                : Math.max(0, args.getInteger(2));
+                if (idx >= trait.getLines().size())
+                    throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+                trait.setTextShadow(idx, Boolean.parseBoolean(args.getString(3)));
+                Messaging.sendTr(sender, Boolean.parseBoolean(args.getString(3)) ? Messages.HOLOGRAM_SHADOW_SET
+                        : Messages.HOLOGRAM_SHADOW_UNSET, idx);
             }
         } else if (action.equalsIgnoreCase("viewrange")) {
             if (args.argsLength() == 2)
@@ -1566,9 +1581,9 @@ public class NPCCommands {
             throws CommandException {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
         if (!type.name().equals("OMINOUS_ITEM_SPAWNER") && !type.name().contains("ITEM_FRAME")
-                && !type.name().contains("ITEM_DISPLAY") && !type.name().contains("BLOCK_DISPLAY")
-                && !type.name().equals("DROPPED_ITEM") && !type.name().equals("ITEM")
-                && type != EntityType.FALLING_BLOCK)
+                && !type.name().contains("MINECART") && !type.name().contains("ITEM_DISPLAY")
+                && !type.name().contains("BLOCK_DISPLAY") && !type.name().equals("DROPPED_ITEM")
+                && !type.name().equals("ITEM") && type != EntityType.FALLING_BLOCK)
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
         ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand() : new ItemStack(mat, 1);
         if (modify != null) {
@@ -1908,7 +1923,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "minecart (--item item_name(:data)) (--offset offset)",
+            usage = "minecart (--offset offset)",
             desc = "",
             modifiers = { "minecart" },
             min = 1,
@@ -1920,24 +1935,10 @@ public class NPCCommands {
             throws CommandException {
         if (!npc.getOrAddTrait(MobType.class).getType().name().contains("MINECRAFT"))
             throw new CommandUsageException();
-        if (item != null) {
-            int data = 0;
-            if (item.contains(":")) {
-                int dataIndex = item.indexOf(':');
-                data = Integer.parseInt(item.substring(dataIndex + 1));
-                item = item.substring(0, dataIndex);
-            }
-            Material material = Material.matchMaterial(item);
-            if (material == null)
-                throw new CommandException();
-            npc.data().setPersistent(NPC.Metadata.MINECART_ITEM, material.name());
-            npc.data().setPersistent(NPC.Metadata.MINECART_ITEM_DATA, data);
-        }
         if (args.hasValueFlag("offset")) {
             npc.data().setPersistent(NPC.Metadata.MINECART_OFFSET, args.getFlagInteger("offset"));
         }
-        Messaging.sendTr(sender, Messages.MINECART_SET, npc.data().get(NPC.Metadata.MINECART_ITEM, ""),
-                npc.data().get(NPC.Metadata.MINECART_ITEM_DATA, 0), npc.data().get(NPC.Metadata.MINECART_OFFSET, 0));
+        Messaging.sendTr(sender, Messages.MINECART_SET, npc.getName(), npc.data().get(NPC.Metadata.MINECART_OFFSET, 0));
     }
 
     @Command(
