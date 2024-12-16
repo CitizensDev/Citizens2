@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
@@ -20,11 +21,15 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 public class SpigotUtil {
+
     /**
      * Spigot has changed InventoryViews to be an abstract class instead of an interface necessitating an abstraction
      * over the existing API to avoid java runtime errors. This class is subject to change as required.
@@ -250,6 +255,33 @@ public class SpigotUtil {
             raw = "PT" + raw;
         }
         return Duration.parse(raw);
+    }
+
+    public static ItemStack parseItemStack(ItemStack base, String item) {
+        if (base == null || base.getType() == Material.AIR) {
+            base = new ItemStack(Material.STONE, 1);
+        }
+        String[] parts = Iterables.toArray(Splitter.on(',').split(item.split("\\{", 2)[0]), String.class);
+        if (parts.length == 0)
+            return base;
+        base.setType(Material.matchMaterial(parts[0]));
+        if (parts.length > 1) {
+            base.setAmount(Ints.tryParse(parts[1]));
+        }
+        if (parts.length > 2) {
+            Integer durability = Ints.tryParse(parts[2]);
+            base.setDurability(durability.shortValue());
+        }
+        if (item.contains("{")) {
+            parts = Iterables.toArray(Splitter.on('{').limit(2).split(item), String.class);
+            String meta = parts.length > 1 ? parts[1] : parts[0];
+            try {
+                Bukkit.getUnsafe().modifyItemStack(base, base.getType().getKey() + "{" + meta);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+        return base;
     }
 
     private static ChronoUnit toChronoUnit(TimeUnit tu) {

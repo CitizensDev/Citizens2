@@ -202,7 +202,7 @@ public class CommandManager implements TabCompleter {
                 } else if (desiredType == Location.class) {
                     val = CommandContext.parseLocation(context.getSenderLocation(), val.toString());
                 } else if (desiredType == ItemStack.class) {
-                    val = CommandContext.parseItemStack(val.toString());
+                    val = SpigotUtil.parseItemStack(null, val.toString());
                 } else if (desiredType == UUID.class) {
                     val = UUID.fromString(val.toString());
                 } else if (desiredType == Duration.class) {

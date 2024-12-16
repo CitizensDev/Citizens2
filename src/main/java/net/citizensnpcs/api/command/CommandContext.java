@@ -26,12 +26,10 @@ import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.joml.Quaternionf;
@@ -358,13 +356,6 @@ public class CommandContext {
             factor = 20 * 60 * 60 * 24;
         }
         return (int) Math.ceil(Double.parseDouble(dur.substring(0, dur.length() - 1)) * factor);
-    }
-
-    public static ItemStack parseItemStack(String raw) {
-        List<String> parts = LOCATION_SPLITTER.splitToList(raw);
-        Material mat = Material.matchMaterial(parts.get(0));
-        int amount = parts.size() > 1 ? Integer.parseInt(parts.get(1)) : 1;
-        return new ItemStack(mat, amount);
     }
 
     public static Location parseLocation(Location currentLocation, String flag) throws CommandException {
