@@ -170,6 +170,8 @@ import net.citizensnpcs.trait.TargetableTrait;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.shop.StoredShops;
+import net.citizensnpcs.trait.waypoint.WanderWaypointProvider;
+import net.citizensnpcs.trait.waypoint.WaypointProvider;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Anchor;
 import net.citizensnpcs.util.Messages;
@@ -842,7 +844,7 @@ public class NPCCommands {
             registry = temporaryRegistry;
         }
         if (item != null) {
-            ItemStack stack = Util.parseItemStack(null, item);
+            ItemStack stack = SpigotUtil.parseItemStack(null, item);
             npc = registry.createNPCUsingItem(type, name, stack);
         } else {
             npc = registry.createNPC(type, name);
@@ -1570,7 +1572,7 @@ public class NPCCommands {
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
         ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand() : new ItemStack(mat, 1);
         if (modify != null) {
-            stack = Util.parseItemStack(stack, modify);
+            stack = SpigotUtil.parseItemStack(stack, modify);
         }
         if (mat == null && !args.hasFlag('h'))
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
@@ -3659,19 +3661,39 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "wander",
+            usage = "wander (add x y z world)",
             desc = "",
             modifiers = { "wander" },
             min = 1,
-            max = 1,
+            max = 6,
             permission = "citizens.npc.wander")
-    public void wander(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
+    public void wander(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String command)
+            throws CommandException {
         Waypoints trait = npc.getOrAddTrait(Waypoints.class);
-        if (sender instanceof Player && Editor.hasEditor((Player) sender)) {
-            Editor.leave((Player) sender);
+        if (args.argsLength() == 1) {
+            if (sender instanceof Player && Editor.hasEditor((Player) sender)) {
+                Editor.leave((Player) sender);
+            }
+            trait.setWaypointProvider(trait.getCurrentProviderName().equals("wander") ? "linear" : "wander");
+            Messaging.sendTr(sender, Messages.WAYPOINT_PROVIDER_SET, trait.getCurrentProviderName());
+        } else if (command.equals("add")) {
+            if (args.argsLength() < 5)
+                throw new CommandUsageException();
+
+            WaypointProvider provider = trait.getCurrentProvider();
+            if (!(provider instanceof WanderWaypointProvider)) {
+                trait.setWaypointProvider("wander");
+                provider = trait.getCurrentProvider();
+            }
+            World world = args.argsLength() > 5 ? Bukkit.getWorld(args.getString(5))
+                    : npc.getStoredLocation().getWorld();
+            if (world == null)
+                throw new CommandException(Messages.WORLD_NOT_FOUND);
+
+            Location loc = new Location(world, args.getInteger(2), args.getInteger(3), args.getInteger(4));
+            ((WanderWaypointProvider) provider).addRegionCentre(loc);
+            Messaging.sendTr(sender, Messages.WAYPOINT_ADDED, Util.prettyPrintLocation(loc));
         }
-        trait.setWaypointProvider(trait.getCurrentProviderName().equals("wander") ? "linear" : "wander");
-        Messaging.sendTr(sender, Messages.WAYPOINT_PROVIDER_SET, trait.getCurrentProviderName());
     }
 
     @Command(

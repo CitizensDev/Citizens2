@@ -12,5 +12,18 @@
   "citizens.commands.id-not-found" : "Δεν μπόρεσα να βρώ κανένα NPC με αναγνωριστικό [[{0}]].",
   "citizens.commands.invalid.class" : "Μη έγκυρη κλάση εξωτερικών εντολών.",
   "citizens.commands.invalid-mobtype" : "Το [[{0}]]  δεν είναι έγκυρος τύπος mob.",
-  "citizens.commands.invalid-number" : "Αυτό δεν είναι ένας έγκυρος αριθμός."
+  "citizens.commands.invalid-number" : "Αυτό δεν είναι ένας έγκυρος αριθμός.",
+  "citizens.commands.npc.activationrange.description" : "Ρυθμίζει το εύρος ενεργοποίησης.",
+  "citizens.commands.npc.activationrange.set" : "Το εύρος ενεργοποίησης ορίστηκε σε [[{0}]].",
+  "citizens.commands.npc.age.cannot-be-aged" : "Ο τύπος mob {0} δεν μπορεί να μεγαλώσει ηλικιακά.",
+  "citizens.commands.npc.age.description" : "Ορίστε την ηλικία ενός NPC.",
+  "citizens.commands.npc.age.help" : "Μπορεί να χρησιμοποιηθεί μόνο σε οντότητες που μπορούν να γίνουν μωρά. Χρησιμοποιήστε τη σημαία [[-l]] για να κλειδώσετε την ηλικία με την πάροδο του χρόνου (σημείωση: ενδέχεται να απαιτούνται επανεγγραφές για να το δείτε).",
+  "citizens.commands.npc.age.invalid-age" : "Μη έγκυρη ηλικία. Οι ηλικίες που ισχύουν είναι ενήλικας, μωρό, αριθμός μεταξύ -24000 και 0\n",
+  "citizens.commands.npc.age.locked" : "Η ηλικία κλειδώθηκε.",
+  "citizens.commands.npc.age.set" : "Το [[{0}]] είναι τώρα [[{1}]].",
+  "citizens.commands.npc.age.set-adult" : "Ο [[{0}]] είναι πλέον ενήλικας.",
+  "citizens.commands.npc.age.set-baby" : "Ο [[{0}]] είναι πλέον μωρό.",
+  "citizens.commands.npc.age.unlocked" : "Η ηλικία ξεκλειδώθηκε.",
+  "citizens.commands.npc.aggressive.description" : "Ορίζει την επιθετική κατάσταση της οντότητας",
+  "citizens.commands.npc.ai.description" : "Ρυθμίζει εάν το NPC πρέπει να χρησιμοποιεί  vanilla AI"
 }
