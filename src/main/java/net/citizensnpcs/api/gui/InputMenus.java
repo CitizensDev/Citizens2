@@ -239,6 +239,8 @@ public class InputMenus {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true)
             public void onPlayerChat(AsyncPlayerChatEvent event) {
+                if (!event.getPlayer().equals(viewer))
+                    return;
                 HandlerList.unregisterAll(this);
                 String chat = event.getMessage();
                 event.setCancelled(true);

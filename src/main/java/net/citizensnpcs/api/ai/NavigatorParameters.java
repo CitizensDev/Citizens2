@@ -27,6 +27,7 @@ public class NavigatorParameters implements Cloneable {
     private double destinationTeleportMargin = -1;
     private double distanceMargin = 2F;
     private List<BlockExaminer> examiners = Lists.newArrayList();
+    private int fallDistance = -1;
     private Function<Navigator, Location> lookAtFunction;
     private Function<Entity, Location> mapper;
     private double pathDistanceMargin = 1F;
@@ -319,6 +320,15 @@ public class NavigatorParameters implements Cloneable {
      */
     public BlockExaminer[] examiners() {
         return examiners.toArray(new BlockExaminer[examiners.size()]);
+    }
+
+    public int fallDistance() {
+        return fallDistance;
+    }
+
+    public NavigatorParameters fallDistance(int distance) {
+        this.fallDistance = distance;
+        return this;
     }
 
     public boolean hasExaminer(Class<? extends BlockExaminer> clazz) {

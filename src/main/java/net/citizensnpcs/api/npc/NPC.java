@@ -531,7 +531,6 @@ public interface NPC extends Agent, Cloneable {
          * The packet update delay in ticks. Defaults to setting value.
          */
         PACKET_UPDATE_DELAY("packet-update-delay", Integer.class),
-        PATHFINDER_FALL_DISTANCE("pathfinder-fall-distance", Double.class),
         /**
          * Whether to open doors while pathfinding.
          */
