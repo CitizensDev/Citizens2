@@ -2300,7 +2300,7 @@ public class NPCCommands {
             output += " " + Messaging.tr(Messages.PATHFINDING_OPTIONS_USE_NEW_FINDER, npc.getName(), useNewFinder);
         }
         if (fallingDistance != null) {
-            npc.data().set(NPC.Metadata.PATHFINDER_FALL_DISTANCE, fallingDistance);
+            npc.getNavigator().getDefaultParameters().fallDistance(fallingDistance);
             output += " "
                     + Messaging.tr(Messages.PATHFINDING_OPTIONS_FALLING_DISTANCE_SET, npc.getName(), fallingDistance);
         }

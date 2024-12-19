@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -686,8 +687,8 @@ public class ShopTrait extends Trait {
                         if (description.isEmpty()) {
                             meta.setLore(Lists.newArrayList());
                         } else {
-                            meta.setLore(Lists
-                                    .newArrayList(Splitter.on('\n').split(Messaging.parseComponents(description))));
+                            meta.setLore(Splitter.on("<br>").splitToStream(description)
+                                    .map(s -> Messaging.parseComponents(s)).collect(Collectors.toList()));
                         }
                         modified.display.setItemMeta(meta);
                     });

@@ -60,7 +60,8 @@ public class CitizensNavigator implements Navigator, Runnable {
             .stationaryTicks(Setting.DEFAULT_STATIONARY_DURATION.asTicks()).stuckAction(TeleportStuckAction.INSTANCE)
             .examiner(new MinecraftBlockExaminer()).useNewPathfinder(Setting.USE_NEW_PATHFINDER.asBoolean())
             .straightLineTargetingDistance(Setting.DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE.asFloat())
-            .destinationTeleportMargin(Setting.DEFAULT_DESTINATION_TELEPORT_MARGIN.asDouble());
+            .destinationTeleportMargin(Setting.DEFAULT_DESTINATION_TELEPORT_MARGIN.asDouble())
+            .fallDistance(Setting.PATHFINDER_FALL_DISTANCE.asInt());
     private PathStrategy executing;
     private int lastX, lastY, lastZ;
     private NavigatorParameters localParams = defaultParams;
@@ -174,6 +175,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (root.keyExists("updatepathrate")) {
             defaultParams.updatePathRate(root.getInt("updatepathrate"));
         }
+        if (root.keyExists("falldistance")) {
+            defaultParams.fallDistance(root.getInt("falldistance"));
+        }
         defaultParams.speedModifier((float) root.getDouble("speedmodifier", 1F));
         defaultParams.avoidWater(root.getBoolean("avoidwater"));
         if (!root.getBoolean("usedefaultstuckaction") && defaultParams.stuckAction() == TeleportStuckAction.INSTANCE) {
@@ -268,6 +272,11 @@ public class CitizensNavigator implements Navigator, Runnable {
         } else {
             root.removeKey("updatepathrate");
         }
+        if (defaultParams.fallDistance() != Setting.PATHFINDER_FALL_DISTANCE.asTicks()) {
+            root.setInt("falldistance", defaultParams.fallDistance());
+        } else {
+            root.removeKey("falldistance");
+        }
         if (defaultParams.useNewPathfinder() != Setting.USE_NEW_PATHFINDER.asBoolean()) {
             root.setBoolean("usenewpathfinder", defaultParams.useNewPathfinder());
         } else {
@@ -334,8 +343,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             stopNavigating(CancelReason.REPLACE);
         }
         localParams = defaultParams.clone();
-        int fallDistance = npc.data().get(NPC.Metadata.PATHFINDER_FALL_DISTANCE,
-                Setting.PATHFINDER_FALL_DISTANCE.asInt());
+        int fallDistance = localParams.fallDistance();
         if (fallDistance != -1) {
             localParams.examiner(new FallingExaminer(fallDistance));
         }

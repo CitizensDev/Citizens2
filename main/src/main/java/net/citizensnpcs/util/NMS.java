@@ -48,7 +48,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
 
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
@@ -256,10 +255,8 @@ public class NMS {
     }
 
     public static int getFallDistance(NPC npc, int def) {
-        return npc == null ? def
-                : npc.data().get(NPC.Metadata.PATHFINDER_FALL_DISTANCE,
-                        Setting.PATHFINDER_FALL_DISTANCE.asInt() != -1 ? Setting.PATHFINDER_FALL_DISTANCE.asInt()
-                                : def);
+        return npc == null || npc.getNavigator().getLocalParameters().fallDistance() == -1 ? def
+                : npc.getNavigator().getLocalParameters().fallDistance();
     }
 
     public static Field getField(Class<?> clazz, String field) {
