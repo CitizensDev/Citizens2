@@ -63,6 +63,8 @@ public interface NMSBridge {
 
     public void cancelMoveDestination(Entity entity);
 
+    public boolean canNavigateTo(Entity entity, Location dest, NavigatorParameters params);
+
     public default Iterable<Object> createBundlePacket(List<Object> packets) {
         return packets;
     }
@@ -95,11 +97,11 @@ public interface NMSBridge {
 
     public Location getDestination(Entity entity);
 
+    public float getForwardBackwardMovement(Entity entity);
+
     public GameProfileRepository getGameProfileRepository();
 
     public float getHeadYaw(Entity entity);
-
-    public float getForwardBackwardMovement(Entity entity);
 
     public EntityPacketTracker getPacketTracker(Entity entity);
 
@@ -129,13 +131,13 @@ public interface NMSBridge {
 
     public Entity getVehicle(Entity entity);
 
-    public float getXZMovement(Entity entity);
-
     public default Collection<Player> getViewingPlayers(Entity entity) {
         return entity.getTrackedBy();
     }
 
     public double getWidth(Entity entity);
+
+    public float getXZMovement(Entity entity);
 
     public float getYaw(Entity entity);
 

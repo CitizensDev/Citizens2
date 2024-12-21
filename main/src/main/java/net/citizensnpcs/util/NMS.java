@@ -154,6 +154,10 @@ public class NMS {
         BRIDGE.cancelMoveDestination(entity);
     }
 
+    public static boolean canNavigateTo(Entity entity, Location dest, NavigatorParameters params) {
+        return BRIDGE.canNavigateTo(entity, dest, params);
+    }
+
     public static void clearCustomNBT(ItemMeta meta) {
         if (CUSTOM_NBT_TAG_MISSING)
             return;

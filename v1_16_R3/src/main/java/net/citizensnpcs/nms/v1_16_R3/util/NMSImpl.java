@@ -440,6 +440,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public boolean canNavigateTo(final org.bukkit.entity.Entity entity, final Location dest,
+            final NavigatorParameters params) {
+        final NavigationAbstract navigation = getNavigation(entity);
+        return navigation.a(dest.getX(), dest.getY(), dest.getZ(), 1) != null;
+    }
+
+    @Override
     public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity, PacketAggregator agg) {
         Entity handle = getHandle(entity);
         Set<EntityPlayer> linked = Sets.newIdentityHashSet();

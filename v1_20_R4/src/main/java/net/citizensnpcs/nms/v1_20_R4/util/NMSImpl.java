@@ -508,6 +508,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public boolean canNavigateTo(final org.bukkit.entity.Entity entity, final Location dest,
+            final NavigatorParameters params) {
+        final PathNavigation navigation = getNavigation(entity);
+        return navigation.createPath(BlockPos.containing(dest.getX(), dest.getY(), dest.getZ()), 1) != null;
+    }
+
+    @Override
     @SuppressWarnings("rawtypes")
     public Iterable<Object> createBundlePacket(List source) {
         return source.isEmpty() ? ImmutableList.of() : ImmutableList.of(new ClientboundBundlePacket(source));

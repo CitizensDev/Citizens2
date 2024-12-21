@@ -348,6 +348,13 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public boolean canNavigateTo(final org.bukkit.entity.Entity entity, final Location dest,
+            final NavigatorParameters params) {
+        final NavigationAbstract navigation = getNavigation(entity);
+        return navigation.a(dest.getX(), dest.getY(), dest.getZ()) != null;
+    }
+
+    @Override
     public EntityPacketTracker createPacketTracker(org.bukkit.entity.Entity entity, PacketAggregator agg) {
         Entity handle = getHandle(entity);
         // TODO: configuration / use minecraft defaults for this

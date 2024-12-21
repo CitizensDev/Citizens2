@@ -41,7 +41,6 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.npc.ai.AStarNavigationStrategy.AStarPlanner;
-import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.util.NMS;
@@ -104,8 +103,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             planner.tick(Setting.MAXIMUM_ASTAR_ITERATIONS.asInt(), Setting.MAXIMUM_ASTAR_ITERATIONS.asInt());
             return planner.plan != null;
         } else {
-            MCNavigator nav = NMS.getTargetNavigator(npc.getEntity(), dest, params);
-            return nav.getCancelReason() == null;
+            return NMS.canNavigateTo(npc.getEntity(), dest, params);
         }
     }
 
