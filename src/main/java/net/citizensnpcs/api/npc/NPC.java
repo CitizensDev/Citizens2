@@ -578,7 +578,7 @@ public interface NPC extends Agent, Cloneable {
          * Whether to allow swimming. Boolean.
          */
         SWIM("swim", Boolean.class),
-        TEXT_DISPLAY_COMPONENT("text-display-component", Component.class),
+        TEXT_DISPLAY_COMPONENT("text-display-component", TypeToken.of(Component.class), false),
         /**
          * The tracking distance for packets. Defaults to the default tracking distance defined by the server
          */
@@ -605,15 +605,25 @@ public interface NPC extends Agent, Cloneable {
         WATER_SPEED_MODIFIER("water-speed-modifier", Double.class);
 
         private final String key;
+        private final boolean strict;
         private final TypeToken<?> type;
 
         Metadata(String key, Class<?> type) {
-            this(key, TypeToken.of(type));
+            this(key, TypeToken.of(type), true);
         }
 
         Metadata(String key, TypeToken<?> type) {
+            this(key, type, true);
+        }
+
+        Metadata(String key, TypeToken<?> type, boolean strict) {
             this.key = key;
             this.type = type;
+            this.strict = strict;
+        }
+
+        public boolean accepts(Class<? extends Object> clazz) {
+            return !strict || type.isSupertypeOf(clazz);
         }
 
         public String getKey() {

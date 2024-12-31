@@ -111,7 +111,7 @@ public class SimpleMetadataStore implements MetadataStore {
         if (data == null) {
             this.remove(key);
         } else {
-            if (!key.getType().isSupertypeOf(data.getClass()))
+            if (!key.accepts(data.getClass()))
                 throw new IllegalArgumentException("data must be subtype of " + key.getType());
             this.npcMetadata.put(key, new MetadataObject(data, false));
         }
@@ -133,7 +133,7 @@ public class SimpleMetadataStore implements MetadataStore {
         if (data == null) {
             this.remove(key);
         } else {
-            if (!key.getType().isSupertypeOf(data.getClass()))
+            if (!key.accepts(data.getClass()))
                 throw new IllegalArgumentException("data must be subtype of " + key.getType());
             if (!key.getType().isPrimitive())
                 throw new IllegalArgumentException("data is not primitive");

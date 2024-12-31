@@ -335,7 +335,7 @@ public abstract class AbstractNPC implements NPC {
             return;
         }
         Set<String> loading = Sets.newHashSet(Splitter.on(',').split(traitNames));
-        for (String key : PRIVILEGED_TRAITS) {
+        for (String key : PRIORITY_TRAITS) {
             DataKey privilegedKey = root.getRelative("traits." + key);
             if (privilegedKey.keyExists()) {
                 loadTraitFromKey(privilegedKey);
@@ -554,5 +554,5 @@ public abstract class AbstractNPC implements NPC {
         return data().get(NPC.Metadata.USE_MINECRAFT_AI, false);
     }
 
-    private static final String[] PRIVILEGED_TRAITS = { "location", "type" };
+    private static final String[] PRIORITY_TRAITS = { "location", "type" };
 }
