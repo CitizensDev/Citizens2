@@ -17,7 +17,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.AxisAlignedBB;
-import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.ControllerLook;
 import net.minecraft.server.v1_13_R2.ControllerMove;
 import net.minecraft.server.v1_13_R2.DamageSource;
@@ -29,7 +28,6 @@ import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.EnumDifficulty;
 import net.minecraft.server.v1_13_R2.EnumPistonReaction;
 import net.minecraft.server.v1_13_R2.FluidType;
-import net.minecraft.server.v1_13_R2.IBlockData;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.SoundEffect;
 import net.minecraft.server.v1_13_R2.Tag;
@@ -69,13 +67,6 @@ public class PhantomController extends MobEntityController {
         }
 
         @Override
-        protected void a(double d0, boolean flag, IBlockData block, BlockPosition blockposition) {
-            if (npc == null || !npc.isFlyable()) {
-                super.a(d0, flag, block, blockposition);
-            }
-        }
-
-        @Override
         public void a(Entity entity, float strength, double dx, double dz) {
             NMS.callKnockbackEvent(npc, strength, dx, dz, evt -> super.a(entity, (float) evt.getStrength(),
                     evt.getKnockbackVector().getX(), evt.getKnockbackVector().getZ()));
@@ -84,15 +75,6 @@ public class PhantomController extends MobEntityController {
         @Override
         public boolean a(EntityPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
-        }
-
-        @Override
-        public void a(float f, float f1, float f2) {
-            if (npc == null || !npc.isFlyable()) {
-                super.a(f, f1, f2);
-            } else {
-                NMSImpl.flyingMoveLogic(this, f, f1, f2);
-            }
         }
 
         @Override
@@ -114,13 +96,6 @@ public class PhantomController extends MobEntityController {
         @Override
         public int bn() {
             return NMS.getFallDistance(npc, super.bn());
-        }
-
-        @Override
-        public void c(float f, float f1) {
-            if (npc == null || !npc.isFlyable()) {
-                super.c(f, f1);
-            }
         }
 
         @Override
@@ -240,14 +215,6 @@ public class PhantomController extends MobEntityController {
             if (npc != null && resetDifficulty) {
                 this.world.getWorldData().setDifficulty(EnumDifficulty.PEACEFUL);
             }
-        }
-
-        @Override
-        public boolean z_() {
-            if (npc == null || !npc.isFlyable())
-                return super.z_();
-            else
-                return false;
         }
 
         private static final MethodHandle MOVEMENT_TICK = NMS.getMethodHandle(EntityPhantom.class, "k", false);

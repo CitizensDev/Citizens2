@@ -17,7 +17,6 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_16_R3.AxisAlignedBB;
-import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ControllerLook;
 import net.minecraft.server.v1_16_R3.ControllerMove;
 import net.minecraft.server.v1_16_R3.DamageSource;
@@ -30,7 +29,6 @@ import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.EnumPistonReaction;
 import net.minecraft.server.v1_16_R3.FluidType;
-import net.minecraft.server.v1_16_R3.IBlockData;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.SoundEffect;
 import net.minecraft.server.v1_16_R3.Tag;
@@ -85,13 +83,6 @@ public class PhantomController extends MobEntityController {
         }
 
         @Override
-        protected void a(double d0, boolean flag, IBlockData block, BlockPosition blockposition) {
-            if (npc == null || !npc.isFlyable()) {
-                super.a(d0, flag, block, blockposition);
-            }
-        }
-
-        @Override
         public boolean a(EntityPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.a(player));
         }
@@ -112,13 +103,6 @@ public class PhantomController extends MobEntityController {
                 setMot(old);
             }
             return res;
-        }
-
-        @Override
-        public boolean b(float f, float f1) {
-            if (npc == null || !npc.isFlyable())
-                return super.b(f, f1);
-            return false;
         }
 
         @Override
@@ -161,15 +145,6 @@ public class PhantomController extends MobEntityController {
         }
 
         @Override
-        public void g(Vec3D vec3d) {
-            if (npc == null || !npc.isFlyable()) {
-                super.g(vec3d);
-            } else {
-                NMSImpl.flyingMoveLogic(this, vec3d);
-            }
-        }
-
-        @Override
         public CraftEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new PhantomNPC(this));
@@ -208,14 +183,6 @@ public class PhantomController extends MobEntityController {
             if (vector != null) {
                 super.i(vector.getX(), vector.getY(), vector.getZ());
             }
-        }
-
-        @Override
-        public boolean isClimbing() {
-            if (npc == null || !npc.isFlyable())
-                return super.isClimbing();
-            else
-                return false;
         }
 
         @Override
