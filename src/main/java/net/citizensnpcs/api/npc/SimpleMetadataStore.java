@@ -51,9 +51,7 @@ public class SimpleMetadataStore implements MetadataStore {
     @Override
     public <T> T get(String key, T def) {
         T t = get(key);
-        if (t == null)
-            return def;
-        return t;
+        return t == null ? def : t;
     }
 
     @Override
@@ -75,9 +73,9 @@ public class SimpleMetadataStore implements MetadataStore {
         for (DataKey sub : key.getSubKeys()) {
             NPC.Metadata meta = Metadata.byKey(sub.name());
             if (meta != null) {
-                setPersistent(meta, sub.getRaw(""));
+                npcMetadata.put(meta, new MetadataObject(sub.getRaw(""), true));
             } else {
-                setPersistent(sub.name(), sub.getRaw(""));
+                metadata.put(sub.name(), new MetadataObject(sub.getRaw(""), true));
             }
         }
     }
@@ -113,6 +111,8 @@ public class SimpleMetadataStore implements MetadataStore {
         if (data == null) {
             this.remove(key);
         } else {
+            if (!key.getType().isSupertypeOf(data.getClass()))
+                throw new IllegalArgumentException("data must be subtype of " + key.getType());
             this.npcMetadata.put(key, new MetadataObject(data, false));
         }
     }
@@ -133,13 +133,15 @@ public class SimpleMetadataStore implements MetadataStore {
         if (data == null) {
             this.remove(key);
         } else {
-            this.checkPrimitive(data);
+            if (!key.getType().isSupertypeOf(data.getClass()))
+                throw new IllegalArgumentException("data must be subtype of " + key.getType());
+            if (!key.getType().isPrimitive())
+                throw new IllegalArgumentException("data is not primitive");
             this.npcMetadata.put(key, new MetadataObject(data, true));
         }
     }
 
     @Override
-
     public void setPersistent(String key, Object data) {
         Objects.requireNonNull(key, "key cannot be null");
         if (data == null) {
@@ -151,7 +153,6 @@ public class SimpleMetadataStore implements MetadataStore {
     }
 
     @Override
-
     public int size() {
         return this.metadata.size() + this.npcMetadata.size();
     }

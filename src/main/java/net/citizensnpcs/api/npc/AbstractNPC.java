@@ -18,6 +18,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -329,6 +330,10 @@ public abstract class AbstractNPC implements NPC {
         metadata.loadFrom(root.getRelative("metadata"));
 
         String traitNames = root.getString("traitnames");
+        if (traitNames.isEmpty()) {
+            Messaging.severe("Corrupted savedata (empty trait names) for NPC", this);
+            return;
+        }
         Set<String> loading = Sets.newHashSet(Splitter.on(',').split(traitNames));
         for (String key : PRIVILEGED_TRAITS) {
             DataKey privilegedKey = root.getRelative("traits." + key);
@@ -403,26 +408,28 @@ public abstract class AbstractNPC implements NPC {
         } else {
             root.removeKey("itemprovider");
         }
-        // Save all existing traits
-        StringBuilder traitNames = new StringBuilder();
+        Set<String> traitNames = Sets.newHashSet();
         for (Trait trait : traits.values()) {
+            removedTraits.remove(trait.getName());
+            traitNames.add(trait.getName());
+
             DataKey traitKey = root.getRelative("traits." + trait.getName());
-            trait.save(traitKey);
             try {
-                PersistenceLoader.save(trait, traitKey);
+                trait.save(traitKey);
             } catch (Throwable t) {
-                Messaging.log("PersistenceLoader failed for", trait);
+                Messaging.severe("Saving trait", trait, "failed for NPC", this);
                 t.printStackTrace();
                 continue;
             }
-            removedTraits.remove(trait.getName());
-            traitNames.append(trait.getName() + ",");
+            try {
+                PersistenceLoader.save(trait, traitKey);
+            } catch (Throwable t) {
+                Messaging.severe("PersistenceLoader failed saving trait", trait, "for NPC", this);
+                t.printStackTrace();
+                continue;
+            }
         }
-        if (traitNames.length() > 0) {
-            root.setString("traitnames", traitNames.substring(0, traitNames.length() - 1));
-        } else {
-            root.setString("traitnames", "");
-        }
+        root.setString("traitnames", Joiner.on(',').join(traitNames));
         for (String name : removedTraits) {
             root.removeKey("traits." + name);
         }
