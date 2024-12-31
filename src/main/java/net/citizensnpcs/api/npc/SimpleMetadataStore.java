@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Primitives;
 
 import net.citizensnpcs.api.npc.NPC.Metadata;
 import net.citizensnpcs.api.util.DataKey;
@@ -135,7 +136,7 @@ public class SimpleMetadataStore implements MetadataStore {
         } else {
             if (!key.accepts(data.getClass()))
                 throw new IllegalArgumentException("data must be subtype of " + key.getType());
-            if (!key.getType().isPrimitive())
+            if (!key.getType().isPrimitive() && !Primitives.isWrapperType(key.getType().getRawType()))
                 throw new IllegalArgumentException("data is not primitive");
             this.npcMetadata.put(key, new MetadataObject(data, true));
         }
