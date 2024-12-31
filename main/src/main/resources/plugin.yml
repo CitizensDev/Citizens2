@@ -50,408 +50,551 @@ permissions:
       citizens.npc.command.ignoreerrors.nused: true
       citizens.npc.command.ignoreerrors.cooldown: true
       citizens.npc.command.ignoreerrors.globalcooldown: true 
-  citizens.admin: {default: op}
-  citizens.admin.avoid-limits: {default: op}
-  citizens.admin.remove.all: {default: op}
-  citizens.citizens.help: {default: op}
-  citizens.help: {default: op}
-  citizens.npc.age: {default: op}
-  citizens.npc.anchor: {default: op}
-  citizens.npc.behaviour: {default: op}
-  citizens.npc.controllable: {default: op}
-  citizens.npc.controllable.areaeffectcloud: {default: op}
-  citizens.npc.controllable.armorstand: {default: op}
-  citizens.npc.controllable.arrow: {default: op}
-  citizens.npc.controllable.bat: {default: op}
-  citizens.npc.controllable.blaze: {default: op}
-  citizens.npc.controllable.boat: {default: op}
-  citizens.npc.controllable.cavespider: {default: op}
-  citizens.npc.controllable.chicken: {default: op}
-  citizens.npc.controllable.complexpart: {default: op}
-  citizens.npc.controllable.cow: {default: op}
-  citizens.npc.controllable.creeper: {default: op}
-  citizens.npc.controllable.donkey: {default: op}
-  citizens.npc.controllable.dragonfireball: {default: op}
-  citizens.npc.controllable.droppeditem: {default: op}
-  citizens.npc.controllable.egg: {default: op}
-  citizens.npc.controllable.elderguardian: {default: op}
-  citizens.npc.controllable.endercrystal: {default: op}
-  citizens.npc.controllable.enderdragon: {default: op}
-  citizens.npc.controllable.enderman: {default: op}
-  citizens.npc.controllable.endermite: {default: op}
-  citizens.npc.controllable.enderpearl: {default: op}
-  citizens.npc.controllable.endersignal: {default: op}
-  citizens.npc.controllable.evoker: {default: op}
-  citizens.npc.controllable.evokerfangs: {default: op}
-  citizens.npc.controllable.experienceorb: {default: op}
-  citizens.npc.controllable.fallingblock: {default: op}
-  citizens.npc.controllable.fireball: {default: op}
-  citizens.npc.controllable.firework: {default: op}
-  citizens.npc.controllable.fishinghook: {default: op}
-  citizens.npc.controllable.ghast: {default: op}
-  citizens.npc.controllable.giant: {default: op}
-  citizens.npc.controllable.guardian: {default: op}
-  citizens.npc.controllable.horse: {default: op}
-  citizens.npc.controllable.husk: {default: op}
-  citizens.npc.controllable.illusioner: {default: op}
-  citizens.npc.controllable.irongolem: {default: op}
-  citizens.npc.controllable.itemframe: {default: op}
-  citizens.npc.controllable.leashhitch: {default: op}
-  citizens.npc.controllable.lightning: {default: op}
-  citizens.npc.controllable.lingeringpotion: {default: op}
-  citizens.npc.controllable.llama: {default: op}
-  citizens.npc.controllable.llamaspit: {default: op}
-  citizens.npc.controllable.magmacube: {default: op}
-  citizens.npc.controllable.minecart: {default: op}
-  citizens.npc.controllable.minecartchest: {default: op}
-  citizens.npc.controllable.minecartcommand: {default: op}
-  citizens.npc.controllable.minecartfurnace: {default: op}
-  citizens.npc.controllable.minecarthopper: {default: op}
-  citizens.npc.controllable.minecartmobspawner: {default: op}
-  citizens.npc.controllable.minecarttnt: {default: op}
-  citizens.npc.controllable.mule: {default: op}
-  citizens.npc.controllable.mushroomcow: {default: op}
-  citizens.npc.controllable.ocelot: {default: op}
-  citizens.npc.controllable.painting: {default: op}
-  citizens.npc.controllable.parrot: {default: op}
-  citizens.npc.controllable.pig: {default: op}
-  citizens.npc.controllable.pigzombie: {default: op}
-  citizens.npc.controllable.player: {default: op}
-  citizens.npc.controllable.polarbear: {default: op}
-  citizens.npc.controllable.primedtnt: {default: op}
-  citizens.npc.controllable.rabbit: {default: op}
-  citizens.npc.controllable.sheep: {default: op}
-  citizens.npc.controllable.shulker: {default: op}
-  citizens.npc.controllable.shulkerbullet: {default: op}
-  citizens.npc.controllable.silverfish: {default: op}
-  citizens.npc.controllable.skeleton: {default: op}
-  citizens.npc.controllable.skeletonhorse: {default: op}
-  citizens.npc.controllable.slime: {default: op}
-  citizens.npc.controllable.smallfireball: {default: op}
-  citizens.npc.controllable.snowball: {default: op}
-  citizens.npc.controllable.snowman: {default: op}
-  citizens.npc.controllable.spectralarrow: {default: op}
-  citizens.npc.controllable.spider: {default: op}
-  citizens.npc.controllable.splashpotion: {default: op}
-  citizens.npc.controllable.squid: {default: op}
-  citizens.npc.controllable.stray: {default: op}
-  citizens.npc.controllable.thrownexpbottle: {default: op}
-  citizens.npc.controllable.tippedarrow: {default: op}
-  citizens.npc.controllable.unknown: {default: op}
-  citizens.npc.controllable.vex: {default: op}
-  citizens.npc.controllable.villager: {default: op}
-  citizens.npc.controllable.vindicator: {default: op}
-  citizens.npc.controllable.weather: {default: op}
-  citizens.npc.controllable.witch: {default: op}
-  citizens.npc.controllable.wither: {default: op}
-  citizens.npc.controllable.witherskeleton: {default: op}
-  citizens.npc.controllable.witherskull: {default: op}
-  citizens.npc.controllable.wolf: {default: op}
-  citizens.npc.controllable.zombie: {default: op}
-  citizens.npc.controllable.zombiehorse: {default: op}
-  citizens.npc.controllable.zombievillager: {default: op}
-  citizens.npc.copy: {default: op}
-  citizens.npc.create: {default: op}
-  citizens.npc.create.areaeffectcloud: {default: op}
-  citizens.npc.create.armorstand: {default: op}
-  citizens.npc.create.arrow: {default: op}
-  citizens.npc.create.bat: {default: op}
-  citizens.npc.create.blaze: {default: op}
-  citizens.npc.create.boat: {default: op}
-  citizens.npc.create.cavespider: {default: op}
-  citizens.npc.create.chicken: {default: op}
-  citizens.npc.create.complexpart: {default: op}
-  citizens.npc.create.cow: {default: op}
-  citizens.npc.create.creeper: {default: op}
-  citizens.npc.create.donkey: {default: op}
-  citizens.npc.create.dragonfireball: {default: op}
-  citizens.npc.create.droppeditem: {default: op}
-  citizens.npc.create.egg: {default: op}
-  citizens.npc.create.elderguardian: {default: op}
-  citizens.npc.create.endercrystal: {default: op}
-  citizens.npc.create.enderdragon: {default: op}
-  citizens.npc.create.enderman: {default: op}
-  citizens.npc.create.endermite: {default: op}
-  citizens.npc.create.enderpearl: {default: op}
-  citizens.npc.create.endersignal: {default: op}
-  citizens.npc.create.evoker: {default: op}
-  citizens.npc.create.evokerfangs: {default: op}
-  citizens.npc.create.experienceorb: {default: op}
-  citizens.npc.create.fallingblock: {default: op}
-  citizens.npc.create.fireball: {default: op}
-  citizens.npc.create.firework: {default: op}
-  citizens.npc.create.fishinghook: {default: op}
-  citizens.npc.create.ghast: {default: op}
-  citizens.npc.create.giant: {default: op}
-  citizens.npc.create.guardian: {default: op}
-  citizens.npc.create.horse: {default: op}
-  citizens.npc.create.husk: {default: op}
-  citizens.npc.create.illusioner: {default: op}
-  citizens.npc.create.irongolem: {default: op}
-  citizens.npc.create.itemframe: {default: op}
-  citizens.npc.create.leashhitch: {default: op}
-  citizens.npc.create.lightning: {default: op}
-  citizens.npc.create.lingeringpotion: {default: op}
-  citizens.npc.create.llama: {default: op}
-  citizens.npc.create.llamaspit: {default: op}
-  citizens.npc.create.magmacube: {default: op}
-  citizens.npc.create.minecart: {default: op}
-  citizens.npc.create.minecartchest: {default: op}
-  citizens.npc.create.minecartcommand: {default: op}
-  citizens.npc.create.minecartfurnace: {default: op}
-  citizens.npc.create.minecarthopper: {default: op}
-  citizens.npc.create.minecartmobspawner: {default: op}
-  citizens.npc.create.minecarttnt: {default: op}
-  citizens.npc.create.mule: {default: op}
-  citizens.npc.create.mushroomcow: {default: op}
-  citizens.npc.create.ocelot: {default: op}
-  citizens.npc.create.painting: {default: op}
-  citizens.npc.create.parrot: {default: op}
-  citizens.npc.create.pig: {default: op}
-  citizens.npc.create.pigzombie: {default: op}
-  citizens.npc.create.player: {default: op}
-  citizens.npc.create.polarbear: {default: op}
-  citizens.npc.create.primedtnt: {default: op}
-  citizens.npc.create.rabbit: {default: op}
-  citizens.npc.create.sheep: {default: op}
-  citizens.npc.create.shulker: {default: op}
-  citizens.npc.create.shulkerbullet: {default: op}
-  citizens.npc.create.silverfish: {default: op}
-  citizens.npc.create.skeleton: {default: op}
-  citizens.npc.create.skeletonhorse: {default: op}
-  citizens.npc.create.slime: {default: op}
-  citizens.npc.create.smallfireball: {default: op}
-  citizens.npc.create.snowball: {default: op}
-  citizens.npc.create.snowman: {default: op}
-  citizens.npc.create.spectralarrow: {default: op}
-  citizens.npc.create.spider: {default: op}
-  citizens.npc.create.splashpotion: {default: op}
-  citizens.npc.create.squid: {default: op}
-  citizens.npc.create.stray: {default: op}
-  citizens.npc.create.thrownexpbottle: {default: op}
-  citizens.npc.create.tippedarrow: {default: op}
-  citizens.npc.create.unknown: {default: op}
-  citizens.npc.create.vex: {default: op}
-  citizens.npc.create.villager: {default: op}
-  citizens.npc.create.vindicator: {default: op}
-  citizens.npc.create.weather: {default: op}
-  citizens.npc.create.witch: {default: op}
-  citizens.npc.create.wither: {default: op}
-  citizens.npc.create.witherskeleton: {default: op}
-  citizens.npc.create.witherskull: {default: op}
-  citizens.npc.create.wolf: {default: op}
-  citizens.npc.create.zombie: {default: op}
-  citizens.npc.create.zombiehorse: {default: op}
-  citizens.npc.create.zombievillager: {default: op}
-  citizens.npc.despawn: {default: op}
-  citizens.npc.edit.copier: {default: op}
-  citizens.npc.edit.equip: {default: op}
-  citizens.npc.edit.path: {default: op}
-  citizens.npc.edit.text: {default: op}
-  citizens.npc.gravity: {default: op}
-  citizens.npc.gamemode: {default: op}
-  citizens.npc.help: {default: op}
-  citizens.npc.horse: {default: op}
-  citizens.npc.ignore-cost: {default: op}
-  citizens.npc.info: {default: op}
-  citizens.npc.leashable: {default: op}
-  citizens.npc.limit.1: {default: false}
-  citizens.npc.limit.2: {default: false}
-  citizens.npc.limit.3: {default: false}
-  citizens.npc.limit.4: {default: false}
-  citizens.npc.limit.5: {default: false}
-  citizens.npc.limit.6: {default: false}
-  citizens.npc.limit.7: {default: false}
-  citizens.npc.limit.8: {default: false}
-  citizens.npc.limit.9: {default: false}
-  citizens.npc.limit.10: {default: false}
-  citizens.npc.limit.11: {default: false}
-  citizens.npc.limit.12: {default: false}
-  citizens.npc.limit.13: {default: false}
-  citizens.npc.limit.14: {default: false}
-  citizens.npc.limit.15: {default: false}
-  citizens.npc.limit.16: {default: false}
-  citizens.npc.limit.17: {default: false}
-  citizens.npc.limit.18: {default: false}
-  citizens.npc.limit.19: {default: false}
-  citizens.npc.limit.20: {default: false}
-  citizens.npc.limit.21: {default: false}
-  citizens.npc.limit.22: {default: false}
-  citizens.npc.limit.23: {default: false}
-  citizens.npc.limit.24: {default: false}
-  citizens.npc.limit.25: {default: false}
-  citizens.npc.limit.26: {default: false}
-  citizens.npc.limit.27: {default: false}
-  citizens.npc.limit.28: {default: false}
-  citizens.npc.limit.29: {default: false}
-  citizens.npc.limit.30: {default: false}
-  citizens.npc.limit.31: {default: false}
-  citizens.npc.limit.32: {default: false}
-  citizens.npc.limit.33: {default: false}
-  citizens.npc.limit.34: {default: false}
-  citizens.npc.limit.35: {default: false}
-  citizens.npc.limit.36: {default: false}
-  citizens.npc.limit.37: {default: false}
-  citizens.npc.limit.38: {default: false}
-  citizens.npc.limit.39: {default: false}
-  citizens.npc.limit.40: {default: false}
-  citizens.npc.limit.41: {default: false}
-  citizens.npc.limit.42: {default: false}
-  citizens.npc.limit.43: {default: false}
-  citizens.npc.limit.44: {default: false}
-  citizens.npc.limit.45: {default: false}
-  citizens.npc.limit.46: {default: false}
-  citizens.npc.limit.47: {default: false}
-  citizens.npc.limit.48: {default: false}
-  citizens.npc.limit.49: {default: false}
-  citizens.npc.limit.50: {default: false}
-  citizens.npc.limit.51: {default: false}
-  citizens.npc.limit.52: {default: false}
-  citizens.npc.limit.53: {default: false}
-  citizens.npc.limit.54: {default: false}
-  citizens.npc.limit.55: {default: false}
-  citizens.npc.limit.56: {default: false}
-  citizens.npc.limit.57: {default: false}
-  citizens.npc.limit.58: {default: false}
-  citizens.npc.limit.59: {default: false}
-  citizens.npc.limit.60: {default: false}
-  citizens.npc.limit.61: {default: false}
-  citizens.npc.limit.62: {default: false}
-  citizens.npc.limit.63: {default: false}
-  citizens.npc.limit.64: {default: false}
-  citizens.npc.limit.65: {default: false}
-  citizens.npc.limit.66: {default: false}
-  citizens.npc.limit.67: {default: false}
-  citizens.npc.limit.68: {default: false}
-  citizens.npc.limit.69: {default: false}
-  citizens.npc.limit.70: {default: false}
-  citizens.npc.limit.71: {default: false}
-  citizens.npc.limit.72: {default: false}
-  citizens.npc.limit.73: {default: false}
-  citizens.npc.limit.74: {default: false}
-  citizens.npc.limit.75: {default: false}
-  citizens.npc.limit.76: {default: false}
-  citizens.npc.limit.77: {default: false}
-  citizens.npc.limit.78: {default: false}
-  citizens.npc.limit.79: {default: false}
-  citizens.npc.limit.80: {default: false}
-  citizens.npc.limit.81: {default: false}
-  citizens.npc.limit.82: {default: false}
-  citizens.npc.limit.83: {default: false}
-  citizens.npc.limit.84: {default: false}
-  citizens.npc.limit.85: {default: false}
-  citizens.npc.limit.86: {default: false}
-  citizens.npc.limit.87: {default: false}
-  citizens.npc.limit.88: {default: false}
-  citizens.npc.limit.89: {default: false}
-  citizens.npc.limit.90: {default: false}
-  citizens.npc.limit.91: {default: false}
-  citizens.npc.limit.92: {default: false}
-  citizens.npc.limit.93: {default: false}
-  citizens.npc.limit.94: {default: false}
-  citizens.npc.limit.95: {default: false}
-  citizens.npc.limit.96: {default: false}
-  citizens.npc.limit.97: {default: false}
-  citizens.npc.limit.98: {default: false}
-  citizens.npc.limit.99: {default: false}
-  citizens.npc.limit.100: {default: false}
-  citizens.npc.list: {default: op}
-  citizens.npc.lookclose: {default: op}
-  citizens.npc.moveto: {default: op}
-  citizens.npc.name: {default: op}
-  citizens.npc.ocelot: {default: op}
-  citizens.npc.owner: {default: op}
-  citizens.npc.path: {default: op}
-  citizens.npc.pathfindingrange: {default: op}
-  citizens.npc.pathfindingoptions: {default: op}
-  citizens.npc.playerlist: {default: op}
-  citizens.npc.pose: {default: op}
-  citizens.npc.power: {default: op}
-  citizens.npc.profession: {default: op}
-  citizens.npc.remove: {default: op}
-  citizens.npc.rename: {default: op}
-  citizens.npc.respawn: {default: op}
-  citizens.npc.select: {default: op}
-  citizens.npc.size: {default: op}
-  citizens.npc.skeletontype: {default: op}
-  citizens.npc.sound: {default: op}
-  citizens.npc.spawn: {default: op}
-  citizens.npc.speak: {default: op}
-  citizens.npc.speed: {default: op}
-  citizens.npc.swim: {default: op}
-  citizens.npc.talk: {default: true}
-  citizens.npc.targetable: {default: op}
-  citizens.npc.tp: {default: op}
-  citizens.npc.tphere: {default: op}
-  citizens.npc.tphere.multiworld: {default: op}
-  citizens.npc.tpto: {default: op}
-  citizens.npc.trait-configure: {default: op}
-  citizens.npc.trait-configure.age: {default: op}
-  citizens.npc.trait-configure.anchors: {default: op}
-  citizens.npc.trait-configure.controllable: {default: op}
-  citizens.npc.trait-configure.equipment: {default: op}
-  citizens.npc.trait-configure.gravity: {default: op}
-  citizens.npc.trait-configure.horsemodifiers: {default: op}
-  citizens.npc.trait-configure.inventory: {default: op}
-  citizens.npc.trait-configure.location: {default: op}
-  citizens.npc.trait-configure.lookclose: {default: op}
-  citizens.npc.trait-configure.ocelotmodifiers: {default: op}
-  citizens.npc.trait-configure.owner: {default: op}
-  citizens.npc.trait-configure.poses: {default: op}
-  citizens.npc.trait-configure.powered: {default: op}
-  citizens.npc.trait-configure.profession: {default: op}
-  citizens.npc.trait-configure.saddle: {default: op}
-  citizens.npc.trait-configure.sheared: {default: op}
-  citizens.npc.trait-configure.skeletontype: {default: op}
-  citizens.npc.trait-configure.slimesize: {default: op}
-  citizens.npc.trait-configure.spawned: {default: op}
-  citizens.npc.trait-configure.speech: {default: op}
-  citizens.npc.trait-configure.text: {default: op}
-  citizens.npc.trait-configure.type: {default: op}
-  citizens.npc.trait-configure.waypoints: {default: op}
-  citizens.npc.trait-configure.wolfmodifiers: {default: op}
-  citizens.npc.trait-configure.woolcolor: {default: op}
-  citizens.npc.trait-configure.zombiemodifier: {default: op}
-  citizens.npc.trait: {default: op}
-  citizens.npc.trait.age: {default: op}
-  citizens.npc.trait.anchors: {default: op}
-  citizens.npc.trait.controllable: {default: op}
-  citizens.npc.trait.equipment: {default: op}
-  citizens.npc.trait.gravity: {default: op}
-  citizens.npc.trait.horsemodifiers: {default: op}
-  citizens.npc.trait.inventory: {default: op}
-  citizens.npc.trait.location: {default: op}
-  citizens.npc.trait.lookclose: {default: op}
-  citizens.npc.trait.ocelotmodifiers: {default: op}
-  citizens.npc.trait.owner: {default: op}
-  citizens.npc.trait.poses: {default: op}
-  citizens.npc.trait.powered: {default: op}
-  citizens.npc.trait.profession: {default: op}
-  citizens.npc.trait.saddle: {default: op}
-  citizens.npc.trait.sheared: {default: op}
-  citizens.npc.trait.skeletontype: {default: op}
-  citizens.npc.trait.slimesize: {default: op}
-  citizens.npc.trait.spawned: {default: op}
-  citizens.npc.trait.speech: {default: op}
-  citizens.npc.trait.text: {default: op}
-  citizens.npc.trait.type: {default: op}
-  citizens.npc.trait.waypoints: {default: op}
-  citizens.npc.trait.wolfmodifiers: {default: op}
-  citizens.npc.trait.woolcolor: {default: op}
-  citizens.npc.trait.zombiemodifier: {default: op}
-  citizens.npc.type: {default: op}
-  citizens.npc.vulnerable: {default: op}
-  citizens.npc.wolf: {default: op}
-  citizens.npc.zombiemodifier: {default: op}
-  citizens.script.compile: {default: op}
-  citizens.script.help: {default: op}
-  citizens.templates.apply: {default: op}
-  citizens.templates.create: {default: op}
-  citizens.templates.help: {default: op}
-  citizens.trait.help: {default: op}
-  citizens.waypoints.disableteleport: {default: op}
-  citizens.waypoints.help: {default: op}
-  citizens.waypoints.provider: {default: op}
+
+  citizens.citizens.help: {default:op}
+  citizens.admin: {default:op}
+  citizens.npc.help: {default:op}
+  citizens.npc.info: {default:op}
+  citizens.npc.activationrange: {default:op}
+  citizens.npc.age: {default:op}
+  citizens.npc.aggressive: {default:op}
+  citizens.npc.ai: {default:op}
+  citizens.npc.allay: {default:op}
+  citizens.npc.anchor: {default:op}
+  citizens.npc.areaeffectcloud: {default:op}
+  citizens.npc.armadillo: {default:op}
+  citizens.npc.armorstand: {default:op}
+  citizens.npc.attribute: {default:op}
+  citizens.npc.axolotl: {default:op}
+  citizens.npc.bat: {default:op}
+  citizens.npc.bee: {default:op}
+  citizens.npc.boat: {default:op}
+  citizens.npc.breakblock: {default:op}
+  citizens.npc.camel: {default:op}
+  citizens.npc.cat: {default:op}
+  citizens.npc.chunkload: {default:op}
+  citizens.npc.collidable: {default:op}
+  citizens.npc.command: {default:op}
+  citizens.npc.configgui: {default:op}
+  citizens.npc.edit.copier: {default:op}
+  citizens.npc.copy: {default:op}
+  citizens.npc.create: {default:op}
+  citizens.npc.debug: {default:op}
+  citizens.npc.deselect: {default:op}
+  citizens.npc.despawn: {default:op}
+  citizens.npc.display: {default:op}
+  citizens.npc.drops: {default:op}
+  citizens.npc.endercrystal: {default:op}
+  citizens.npc.enderdragon: {default:op}
+  citizens.npc.enderman: {default:op}
+  citizens.npc.entitypose: {default:op}
+  citizens.npc.edit.equip: {default:op}
+  citizens.npc.flyable: {default:op}
+  citizens.npc.follow: {default:op}
+  citizens.npc.forcefield: {default:op}
+  citizens.npc.fox: {default:op}
+  citizens.npc.frog: {default:op}
+  citizens.npc.gamemode: {default:op}
+  citizens.npc.glowing: {default:op}
+  citizens.npc.goat: {default:op}
+  citizens.npc.gravity: {default:op}
+  citizens.npc.hitbox: {default:op}
+  citizens.npc.hologram: {default:op}
+  citizens.npc.home: {default:op}
+  citizens.npc.horse: {default:op}
+  citizens.npc.hurt: {default:op}
+  citizens.npc.id: {default:op}
+  citizens.npc.inventory: {default:op}
+  citizens.npc.item: {default:op}
+  citizens.npc.itemframe: {default:op}
+  citizens.npc.jump: {default:op}
+  citizens.npc.knockback: {default:op}
+  citizens.npc.leashable: {default:op}
+  citizens.npc.list: {default:op}
+  citizens.npc.llama: {default:op}
+  citizens.npc.lookclose: {default:op}
+  citizens.npc.metadata: {default:op}
+  citizens.npc.minecart: {default:op}
+  citizens.npc.mirror: {default:op}
+  citizens.npc.model: {default:op}
+  citizens.npc.model.animate: {default:op}
+  citizens.npc.mount: {default:op}
+  citizens.npc.moveto: {default:op}
+  citizens.npc.mushroomcow: {default:op}
+  citizens.npc.name: {default:op}
+  citizens.npc.ocelot: {default:op}
+  citizens.npc.owner: {default:op}
+  citizens.npc.packet: {default:op}
+  citizens.npc.painting: {default:op}
+  citizens.npc.panda: {default:op}
+  citizens.npc.panimate: {default:op}
+  citizens.npc.parrot: {default:op}
+  citizens.npc.passive: {default:op}
+  citizens.npc.edit.path: {default:op}
+  citizens.npc.pathfindingoptions: {default:op}
+  citizens.npc.pathto: {default:op}
+  citizens.npc.pausepathfinding: {default:op}
+  citizens.npc.phantom: {default:op}
+  citizens.npc.pickupitems: {default:op}
+  citizens.npc.piglin: {default:op}
+  citizens.npc.playerfilter: {default:op}
+  citizens.npc.playerlist: {default:op}
+  citizens.npc.playsound: {default:op}
+  citizens.npc.polarbear: {default:op}
+  citizens.npc.pose: {default:op}
+  citizens.npc.powered: {default:op}
+  citizens.npc.pufferfish: {default:op}
+  citizens.npc.rabbittype: {default:op}
+  citizens.npc.rename: {default:op}
+  citizens.npc.respawn: {default:op}
+  citizens.npc.rotate: {default:op}
+  citizens.npc.scaledmaxhealth: {default:op}
+  citizens.npc.select: {default:op}
+  citizens.npc.setequipment: {default:op}
+  citizens.npc.sheep: {default:op}
+  citizens.npc.shop: {default:op}
+  citizens.npc.shulker: {default:op}
+  citizens.npc.sitting: {default:op}
+  citizens.npc.skin: {default:op}
+  citizens.npc.skinlayers: {default:op}
+  citizens.npc.slimesize: {default:op}
+  citizens.npc.sniffer: {default:op}
+  citizens.npc.snowman: {default:op}
+  citizens.npc.sound: {default:op}
+  citizens.npc.spawn: {default:op}
+  citizens.npc.speak: {default:op}
+  citizens.npc.speed: {default:op}
+  citizens.npc.spellcaster: {default:op}
+  citizens.npc.swim: {default:op}
+  citizens.npc.target: {default:op}
+  citizens.npc.targetable: {default:op}
+  citizens.npc.edit.text: {default:op}
+  citizens.npc.textdisplay: {default:op}
+  citizens.npc.tp: {default:op}
+  citizens.npc.tphere: {default:op}
+  citizens.npc.tpto: {default:op}
+  citizens.npc.trackingrange: {default:op}
+  citizens.npc.tropicalfish: {default:op}
+  citizens.npc.type: {default:op}
+  citizens.npc.undo: {default:op}
+  citizens.npc.useitem: {default:op}
+  citizens.npc.villager: {default:op}
+  citizens.npc.vulnerable: {default:op}
+  citizens.npc.wander: {default:op}
+  citizens.npc.warden: {default:op}
+  citizens.npc.wither: {default:op}
+  citizens.npc.wolf: {default:op}
+  citizens.template.help: {default:op}
+  citizens.templates.apply: {default:op}
+  citizens.templates.generate: {default:op}
+  citizens.templates.list: {default:op}
+  citizens.trait.help: {default:op}
+  citizens.npc.trait: {default:op}
+  citizens.waypoints.help: {default:op}
+  citizens.waypoints.add: {default:op}
+  citizens.waypoints.disableteleport: {default:op}
+  citizens.waypoints.hpa: {default:op}
+  citizens.waypoints.provider: {default:op}
+  citizens.waypoints.remove: {default:op}
+  citizens.npc.create.item: {default:op}
+  citizens.npc.controllable.item: {default:op}
+  citizens.npc.create.experience_orb: {default:op}
+  citizens.npc.controllable.experience_orb: {default:op}
+  citizens.npc.create.area_effect_cloud: {default:op}
+  citizens.npc.controllable.area_effect_cloud: {default:op}
+  citizens.npc.create.elder_guardian: {default:op}
+  citizens.npc.controllable.elder_guardian: {default:op}
+  citizens.npc.create.wither_skeleton: {default:op}
+  citizens.npc.controllable.wither_skeleton: {default:op}
+  citizens.npc.create.stray: {default:op}
+  citizens.npc.controllable.stray: {default:op}
+  citizens.npc.create.egg: {default:op}
+  citizens.npc.controllable.egg: {default:op}
+  citizens.npc.create.leash_knot: {default:op}
+  citizens.npc.controllable.leash_knot: {default:op}
+  citizens.npc.create.painting: {default:op}
+  citizens.npc.controllable.painting: {default:op}
+  citizens.npc.create.arrow: {default:op}
+  citizens.npc.controllable.arrow: {default:op}
+  citizens.npc.create.snowball: {default:op}
+  citizens.npc.controllable.snowball: {default:op}
+  citizens.npc.create.fireball: {default:op}
+  citizens.npc.controllable.fireball: {default:op}
+  citizens.npc.create.small_fireball: {default:op}
+  citizens.npc.controllable.small_fireball: {default:op}
+  citizens.npc.create.ender_pearl: {default:op}
+  citizens.npc.controllable.ender_pearl: {default:op}
+  citizens.npc.create.eye_of_ender: {default:op}
+  citizens.npc.controllable.eye_of_ender: {default:op}
+  citizens.npc.create.potion: {default:op}
+  citizens.npc.controllable.potion: {default:op}
+  citizens.npc.create.experience_bottle: {default:op}
+  citizens.npc.controllable.experience_bottle: {default:op}
+  citizens.npc.create.item_frame: {default:op}
+  citizens.npc.controllable.item_frame: {default:op}
+  citizens.npc.create.wither_skull: {default:op}
+  citizens.npc.controllable.wither_skull: {default:op}
+  citizens.npc.create.tnt: {default:op}
+  citizens.npc.controllable.tnt: {default:op}
+  citizens.npc.create.falling_block: {default:op}
+  citizens.npc.controllable.falling_block: {default:op}
+  citizens.npc.create.firework_rocket: {default:op}
+  citizens.npc.controllable.firework_rocket: {default:op}
+  citizens.npc.create.husk: {default:op}
+  citizens.npc.controllable.husk: {default:op}
+  citizens.npc.create.spectral_arrow: {default:op}
+  citizens.npc.controllable.spectral_arrow: {default:op}
+  citizens.npc.create.shulker_bullet: {default:op}
+  citizens.npc.controllable.shulker_bullet: {default:op}
+  citizens.npc.create.dragon_fireball: {default:op}
+  citizens.npc.controllable.dragon_fireball: {default:op}
+  citizens.npc.create.zombie_villager: {default:op}
+  citizens.npc.controllable.zombie_villager: {default:op}
+  citizens.npc.create.skeleton_horse: {default:op}
+  citizens.npc.controllable.skeleton_horse: {default:op}
+  citizens.npc.create.zombie_horse: {default:op}
+  citizens.npc.controllable.zombie_horse: {default:op}
+  citizens.npc.create.armor_stand: {default:op}
+  citizens.npc.controllable.armor_stand: {default:op}
+  citizens.npc.create.donkey: {default:op}
+  citizens.npc.controllable.donkey: {default:op}
+  citizens.npc.create.mule: {default:op}
+  citizens.npc.controllable.mule: {default:op}
+  citizens.npc.create.evoker_fangs: {default:op}
+  citizens.npc.controllable.evoker_fangs: {default:op}
+  citizens.npc.create.evoker: {default:op}
+  citizens.npc.controllable.evoker: {default:op}
+  citizens.npc.create.vex: {default:op}
+  citizens.npc.controllable.vex: {default:op}
+  citizens.npc.create.vindicator: {default:op}
+  citizens.npc.controllable.vindicator: {default:op}
+  citizens.npc.create.illusioner: {default:op}
+  citizens.npc.controllable.illusioner: {default:op}
+  citizens.npc.create.command_block_minecart: {default:op}
+  citizens.npc.controllable.command_block_minecart: {default:op}
+  citizens.npc.create.minecart: {default:op}
+  citizens.npc.controllable.minecart: {default:op}
+  citizens.npc.create.chest_minecart: {default:op}
+  citizens.npc.controllable.chest_minecart: {default:op}
+  citizens.npc.create.furnace_minecart: {default:op}
+  citizens.npc.controllable.furnace_minecart: {default:op}
+  citizens.npc.create.tnt_minecart: {default:op}
+  citizens.npc.controllable.tnt_minecart: {default:op}
+  citizens.npc.create.hopper_minecart: {default:op}
+  citizens.npc.controllable.hopper_minecart: {default:op}
+  citizens.npc.create.spawner_minecart: {default:op}
+  citizens.npc.controllable.spawner_minecart: {default:op}
+  citizens.npc.create.creeper: {default:op}
+  citizens.npc.controllable.creeper: {default:op}
+  citizens.npc.create.skeleton: {default:op}
+  citizens.npc.controllable.skeleton: {default:op}
+  citizens.npc.create.spider: {default:op}
+  citizens.npc.controllable.spider: {default:op}
+  citizens.npc.create.giant: {default:op}
+  citizens.npc.controllable.giant: {default:op}
+  citizens.npc.create.zombie: {default:op}
+  citizens.npc.controllable.zombie: {default:op}
+  citizens.npc.create.slime: {default:op}
+  citizens.npc.controllable.slime: {default:op}
+  citizens.npc.create.ghast: {default:op}
+  citizens.npc.controllable.ghast: {default:op}
+  citizens.npc.create.zombified_piglin: {default:op}
+  citizens.npc.controllable.zombified_piglin: {default:op}
+  citizens.npc.create.enderman: {default:op}
+  citizens.npc.controllable.enderman: {default:op}
+  citizens.npc.create.cave_spider: {default:op}
+  citizens.npc.controllable.cave_spider: {default:op}
+  citizens.npc.create.silverfish: {default:op}
+  citizens.npc.controllable.silverfish: {default:op}
+  citizens.npc.create.blaze: {default:op}
+  citizens.npc.controllable.blaze: {default:op}
+  citizens.npc.create.magma_cube: {default:op}
+  citizens.npc.controllable.magma_cube: {default:op}
+  citizens.npc.create.ender_dragon: {default:op}
+  citizens.npc.controllable.ender_dragon: {default:op}
+  citizens.npc.create.wither: {default:op}
+  citizens.npc.controllable.wither: {default:op}
+  citizens.npc.create.bat: {default:op}
+  citizens.npc.controllable.bat: {default:op}
+  citizens.npc.create.witch: {default:op}
+  citizens.npc.controllable.witch: {default:op}
+  citizens.npc.create.endermite: {default:op}
+  citizens.npc.controllable.endermite: {default:op}
+  citizens.npc.create.guardian: {default:op}
+  citizens.npc.controllable.guardian: {default:op}
+  citizens.npc.create.shulker: {default:op}
+  citizens.npc.controllable.shulker: {default:op}
+  citizens.npc.create.pig: {default:op}
+  citizens.npc.controllable.pig: {default:op}
+  citizens.npc.create.sheep: {default:op}
+  citizens.npc.controllable.sheep: {default:op}
+  citizens.npc.create.cow: {default:op}
+  citizens.npc.controllable.cow: {default:op}
+  citizens.npc.create.chicken: {default:op}
+  citizens.npc.controllable.chicken: {default:op}
+  citizens.npc.create.squid: {default:op}
+  citizens.npc.controllable.squid: {default:op}
+  citizens.npc.create.wolf: {default:op}
+  citizens.npc.controllable.wolf: {default:op}
+  citizens.npc.create.mooshroom: {default:op}
+  citizens.npc.controllable.mooshroom: {default:op}
+  citizens.npc.create.snow_golem: {default:op}
+  citizens.npc.controllable.snow_golem: {default:op}
+  citizens.npc.create.ocelot: {default:op}
+  citizens.npc.controllable.ocelot: {default:op}
+  citizens.npc.create.iron_golem: {default:op}
+  citizens.npc.controllable.iron_golem: {default:op}
+  citizens.npc.create.horse: {default:op}
+  citizens.npc.controllable.horse: {default:op}
+  citizens.npc.create.rabbit: {default:op}
+  citizens.npc.controllable.rabbit: {default:op}
+  citizens.npc.create.polar_bear: {default:op}
+  citizens.npc.controllable.polar_bear: {default:op}
+  citizens.npc.create.llama: {default:op}
+  citizens.npc.controllable.llama: {default:op}
+  citizens.npc.create.llama_spit: {default:op}
+  citizens.npc.controllable.llama_spit: {default:op}
+  citizens.npc.create.parrot: {default:op}
+  citizens.npc.controllable.parrot: {default:op}
+  citizens.npc.create.villager: {default:op}
+  citizens.npc.controllable.villager: {default:op}
+  citizens.npc.create.end_crystal: {default:op}
+  citizens.npc.controllable.end_crystal: {default:op}
+  citizens.npc.create.turtle: {default:op}
+  citizens.npc.controllable.turtle: {default:op}
+  citizens.npc.create.phantom: {default:op}
+  citizens.npc.controllable.phantom: {default:op}
+  citizens.npc.create.trident: {default:op}
+  citizens.npc.controllable.trident: {default:op}
+  citizens.npc.create.cod: {default:op}
+  citizens.npc.controllable.cod: {default:op}
+  citizens.npc.create.salmon: {default:op}
+  citizens.npc.controllable.salmon: {default:op}
+  citizens.npc.create.pufferfish: {default:op}
+  citizens.npc.controllable.pufferfish: {default:op}
+  citizens.npc.create.tropical_fish: {default:op}
+  citizens.npc.controllable.tropical_fish: {default:op}
+  citizens.npc.create.drowned: {default:op}
+  citizens.npc.controllable.drowned: {default:op}
+  citizens.npc.create.dolphin: {default:op}
+  citizens.npc.controllable.dolphin: {default:op}
+  citizens.npc.create.cat: {default:op}
+  citizens.npc.controllable.cat: {default:op}
+  citizens.npc.create.panda: {default:op}
+  citizens.npc.controllable.panda: {default:op}
+  citizens.npc.create.pillager: {default:op}
+  citizens.npc.controllable.pillager: {default:op}
+  citizens.npc.create.ravager: {default:op}
+  citizens.npc.controllable.ravager: {default:op}
+  citizens.npc.create.trader_llama: {default:op}
+  citizens.npc.controllable.trader_llama: {default:op}
+  citizens.npc.create.wandering_trader: {default:op}
+  citizens.npc.controllable.wandering_trader: {default:op}
+  citizens.npc.create.fox: {default:op}
+  citizens.npc.controllable.fox: {default:op}
+  citizens.npc.create.bee: {default:op}
+  citizens.npc.controllable.bee: {default:op}
+  citizens.npc.create.hoglin: {default:op}
+  citizens.npc.controllable.hoglin: {default:op}
+  citizens.npc.create.piglin: {default:op}
+  citizens.npc.controllable.piglin: {default:op}
+  citizens.npc.create.strider: {default:op}
+  citizens.npc.controllable.strider: {default:op}
+  citizens.npc.create.zoglin: {default:op}
+  citizens.npc.controllable.zoglin: {default:op}
+  citizens.npc.create.piglin_brute: {default:op}
+  citizens.npc.controllable.piglin_brute: {default:op}
+  citizens.npc.create.axolotl: {default:op}
+  citizens.npc.controllable.axolotl: {default:op}
+  citizens.npc.create.glow_item_frame: {default:op}
+  citizens.npc.controllable.glow_item_frame: {default:op}
+  citizens.npc.create.glow_squid: {default:op}
+  citizens.npc.controllable.glow_squid: {default:op}
+  citizens.npc.create.goat: {default:op}
+  citizens.npc.controllable.goat: {default:op}
+  citizens.npc.create.marker: {default:op}
+  citizens.npc.controllable.marker: {default:op}
+  citizens.npc.create.allay: {default:op}
+  citizens.npc.controllable.allay: {default:op}
+  citizens.npc.create.frog: {default:op}
+  citizens.npc.controllable.frog: {default:op}
+  citizens.npc.create.tadpole: {default:op}
+  citizens.npc.controllable.tadpole: {default:op}
+  citizens.npc.create.warden: {default:op}
+  citizens.npc.controllable.warden: {default:op}
+  citizens.npc.create.camel: {default:op}
+  citizens.npc.controllable.camel: {default:op}
+  citizens.npc.create.block_display: {default:op}
+  citizens.npc.controllable.block_display: {default:op}
+  citizens.npc.create.interaction: {default:op}
+  citizens.npc.controllable.interaction: {default:op}
+  citizens.npc.create.item_display: {default:op}
+  citizens.npc.controllable.item_display: {default:op}
+  citizens.npc.create.sniffer: {default:op}
+  citizens.npc.controllable.sniffer: {default:op}
+  citizens.npc.create.text_display: {default:op}
+  citizens.npc.controllable.text_display: {default:op}
+  citizens.npc.create.breeze: {default:op}
+  citizens.npc.controllable.breeze: {default:op}
+  citizens.npc.create.wind_charge: {default:op}
+  citizens.npc.controllable.wind_charge: {default:op}
+  citizens.npc.create.breeze_wind_charge: {default:op}
+  citizens.npc.controllable.breeze_wind_charge: {default:op}
+  citizens.npc.create.armadillo: {default:op}
+  citizens.npc.controllable.armadillo: {default:op}
+  citizens.npc.create.bogged: {default:op}
+  citizens.npc.controllable.bogged: {default:op}
+  citizens.npc.create.ominous_item_spawner: {default:op}
+  citizens.npc.controllable.ominous_item_spawner: {default:op}
+  citizens.npc.create.acacia_boat: {default:op}
+  citizens.npc.controllable.acacia_boat: {default:op}
+  citizens.npc.create.acacia_chest_boat: {default:op}
+  citizens.npc.controllable.acacia_chest_boat: {default:op}
+  citizens.npc.create.bamboo_raft: {default:op}
+  citizens.npc.controllable.bamboo_raft: {default:op}
+  citizens.npc.create.bamboo_chest_raft: {default:op}
+  citizens.npc.controllable.bamboo_chest_raft: {default:op}
+  citizens.npc.create.birch_boat: {default:op}
+  citizens.npc.controllable.birch_boat: {default:op}
+  citizens.npc.create.birch_chest_boat: {default:op}
+  citizens.npc.controllable.birch_chest_boat: {default:op}
+  citizens.npc.create.cherry_boat: {default:op}
+  citizens.npc.controllable.cherry_boat: {default:op}
+  citizens.npc.create.cherry_chest_boat: {default:op}
+  citizens.npc.controllable.cherry_chest_boat: {default:op}
+  citizens.npc.create.dark_oak_boat: {default:op}
+  citizens.npc.controllable.dark_oak_boat: {default:op}
+  citizens.npc.create.dark_oak_chest_boat: {default:op}
+  citizens.npc.controllable.dark_oak_chest_boat: {default:op}
+  citizens.npc.create.jungle_boat: {default:op}
+  citizens.npc.controllable.jungle_boat: {default:op}
+  citizens.npc.create.jungle_chest_boat: {default:op}
+  citizens.npc.controllable.jungle_chest_boat: {default:op}
+  citizens.npc.create.mangrove_boat: {default:op}
+  citizens.npc.controllable.mangrove_boat: {default:op}
+  citizens.npc.create.mangrove_chest_boat: {default:op}
+  citizens.npc.controllable.mangrove_chest_boat: {default:op}
+  citizens.npc.create.oak_boat: {default:op}
+  citizens.npc.controllable.oak_boat: {default:op}
+  citizens.npc.create.oak_chest_boat: {default:op}
+  citizens.npc.controllable.oak_chest_boat: {default:op}
+  citizens.npc.create.pale_oak_boat: {default:op}
+  citizens.npc.controllable.pale_oak_boat: {default:op}
+  citizens.npc.create.pale_oak_chest_boat: {default:op}
+  citizens.npc.controllable.pale_oak_chest_boat: {default:op}
+  citizens.npc.create.spruce_boat: {default:op}
+  citizens.npc.controllable.spruce_boat: {default:op}
+  citizens.npc.create.spruce_chest_boat: {default:op}
+  citizens.npc.controllable.spruce_chest_boat: {default:op}
+  citizens.npc.create.creaking: {default:op}
+  citizens.npc.controllable.creaking: {default:op}
+  citizens.npc.create.fishing_bobber: {default:op}
+  citizens.npc.controllable.fishing_bobber: {default:op}
+  citizens.npc.create.lightning_bolt: {default:op}
+  citizens.npc.controllable.lightning_bolt: {default:op}
+  citizens.npc.create.player: {default:op}
+  citizens.npc.controllable.player: {default:op}
+  citizens.npc.limit.1: {default:false}
+  citizens.npc.limit.2: {default:false}
+  citizens.npc.limit.3: {default:false}
+  citizens.npc.limit.4: {default:false}
+  citizens.npc.limit.5: {default:false}
+  citizens.npc.limit.6: {default:false}
+  citizens.npc.limit.7: {default:false}
+  citizens.npc.limit.8: {default:false}
+  citizens.npc.limit.9: {default:false}
+  citizens.npc.limit.10: {default:false}
+  citizens.npc.limit.11: {default:false}
+  citizens.npc.limit.12: {default:false}
+  citizens.npc.limit.13: {default:false}
+  citizens.npc.limit.14: {default:false}
+  citizens.npc.limit.15: {default:false}
+  citizens.npc.limit.16: {default:false}
+  citizens.npc.limit.17: {default:false}
+  citizens.npc.limit.18: {default:false}
+  citizens.npc.limit.19: {default:false}
+  citizens.npc.limit.20: {default:false}
+  citizens.npc.limit.21: {default:false}
+  citizens.npc.limit.22: {default:false}
+  citizens.npc.limit.23: {default:false}
+  citizens.npc.limit.24: {default:false}
+  citizens.npc.limit.25: {default:false}
+  citizens.npc.limit.26: {default:false}
+  citizens.npc.limit.27: {default:false}
+  citizens.npc.limit.28: {default:false}
+  citizens.npc.limit.29: {default:false}
+  citizens.npc.limit.30: {default:false}
+  citizens.npc.limit.31: {default:false}
+  citizens.npc.limit.32: {default:false}
+  citizens.npc.limit.33: {default:false}
+  citizens.npc.limit.34: {default:false}
+  citizens.npc.limit.35: {default:false}
+  citizens.npc.limit.36: {default:false}
+  citizens.npc.limit.37: {default:false}
+  citizens.npc.limit.38: {default:false}
+  citizens.npc.limit.39: {default:false}
+  citizens.npc.limit.40: {default:false}
+  citizens.npc.limit.41: {default:false}
+  citizens.npc.limit.42: {default:false}
+  citizens.npc.limit.43: {default:false}
+  citizens.npc.limit.44: {default:false}
+  citizens.npc.limit.45: {default:false}
+  citizens.npc.limit.46: {default:false}
+  citizens.npc.limit.47: {default:false}
+  citizens.npc.limit.48: {default:false}
+  citizens.npc.limit.49: {default:false}
+  citizens.npc.limit.50: {default:false}
+  citizens.npc.limit.51: {default:false}
+  citizens.npc.limit.52: {default:false}
+  citizens.npc.limit.53: {default:false}
+  citizens.npc.limit.54: {default:false}
+  citizens.npc.limit.55: {default:false}
+  citizens.npc.limit.56: {default:false}
+  citizens.npc.limit.57: {default:false}
+  citizens.npc.limit.58: {default:false}
+  citizens.npc.limit.59: {default:false}
+  citizens.npc.limit.60: {default:false}
+  citizens.npc.limit.61: {default:false}
+  citizens.npc.limit.62: {default:false}
+  citizens.npc.limit.63: {default:false}
+  citizens.npc.limit.64: {default:false}
+  citizens.npc.limit.65: {default:false}
+  citizens.npc.limit.66: {default:false}
+  citizens.npc.limit.67: {default:false}
+  citizens.npc.limit.68: {default:false}
+  citizens.npc.limit.69: {default:false}
+  citizens.npc.limit.70: {default:false}
+  citizens.npc.limit.71: {default:false}
+  citizens.npc.limit.72: {default:false}
+  citizens.npc.limit.73: {default:false}
+  citizens.npc.limit.74: {default:false}
+  citizens.npc.limit.75: {default:false}
+  citizens.npc.limit.76: {default:false}
+  citizens.npc.limit.77: {default:false}
+  citizens.npc.limit.78: {default:false}
+  citizens.npc.limit.79: {default:false}
+  citizens.npc.limit.80: {default:false}
+  citizens.npc.limit.81: {default:false}
+  citizens.npc.limit.82: {default:false}
+  citizens.npc.limit.83: {default:false}
+  citizens.npc.limit.84: {default:false}
+  citizens.npc.limit.85: {default:false}
+  citizens.npc.limit.86: {default:false}
+  citizens.npc.limit.87: {default:false}
+  citizens.npc.limit.88: {default:false}
+  citizens.npc.limit.89: {default:false}
+  citizens.npc.limit.90: {default:false}
+  citizens.npc.limit.91: {default:false}
+  citizens.npc.limit.92: {default:false}
+  citizens.npc.limit.93: {default:false}
+  citizens.npc.limit.94: {default:false}
+  citizens.npc.limit.95: {default:false}
+  citizens.npc.limit.96: {default:false}
+  citizens.npc.limit.97: {default:false}
+  citizens.npc.limit.98: {default:false}
+  citizens.npc.limit.99: {default:false}
+  citizens.npc.limit.100: {default:false}
+
 # -------------------------------------------- #
 # ALIAS
 # -------------------------------------------- #
