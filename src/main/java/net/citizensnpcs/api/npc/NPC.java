@@ -448,7 +448,7 @@ public interface NPC extends Agent, Cloneable {
         AMBIENT_SOUND("ambient-sound", String.class),
         @SuppressWarnings("serial")
         BOUNDING_BOX_FUNCTION("bounding-box-function", new TypeToken<Supplier<BoundingBox>>() {
-        }),
+        }, false),
         /**
          * Whether the NPC is collidable with Players or not.
          */
@@ -506,7 +506,7 @@ public interface NPC extends Agent, Cloneable {
         ITEM_ID("item-type-id", String.class),
         @SuppressWarnings("serial")
         JUMP_POWER_SUPPLIER("jump-power-supplier", new TypeToken<Function<NPC, Float>>() {
-        }),
+        }, false),
         /**
          * Whether to keep chunk loaded.
          */
