@@ -112,6 +112,8 @@ public class CitizensNPC extends AbstractNPC {
         if (getEntity() instanceof SkinnableEntity) {
             ((SkinnableEntity) getEntity()).getSkinTracker().onRemoveNPC();
         }
+        getEntity().removeMetadata("NPC", CitizensAPI.getPlugin());
+        getEntity().removeMetadata("NPC-ID", CitizensAPI.getPlugin());
         if (reason == DespawnReason.DEATH) {
             entityController.die();
         } else {
