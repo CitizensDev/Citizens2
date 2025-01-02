@@ -101,8 +101,18 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public int aE() {
+        return NMS.getFallDistance(npc, super.aE());
+    }
+
+    @Override
     public boolean aL() {
         return npc == null ? super.aL() : npc.isPushableByFluids();
+    }
+
+    @Override
+    public float bE() {
+        return NMS.getJumpPower(npc, super.bE());
     }
 
     @Override

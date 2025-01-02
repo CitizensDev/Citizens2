@@ -50,6 +50,7 @@ import net.minecraft.server.v1_13_R2.EntityHuman;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.EnumGamemode;
 import net.minecraft.server.v1_13_R2.EnumItemSlot;
+import net.minecraft.server.v1_13_R2.EnumPistonReaction;
 import net.minecraft.server.v1_13_R2.EnumProtocolDirection;
 import net.minecraft.server.v1_13_R2.GenericAttributes;
 import net.minecraft.server.v1_13_R2.IBlockData;
@@ -122,10 +123,20 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public int bn() {
+        return NMS.getFallDistance(npc, super.bn());
+    }
+
+    @Override
     public void c(float f, float f1) {
         if (npc == null || !npc.isFlyable()) {
             super.c(f, f1);
         }
+    }
+
+    @Override
+    public float cG() {
+        return NMS.getJumpPower(npc, super.cG());
     }
 
     @Override
@@ -229,6 +240,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             return new ChatComponentText("");
         return npc != null ? (IChatBaseComponent) Messaging.minecraftComponentFromRawMessage(npc.getRawName())
                 : super.getPlayerListName();
+    }
+
+    @Override
+    public EnumPistonReaction getPushReaction() {
+        return Util.callPistonPushEvent(npc) ? EnumPistonReaction.IGNORE : super.getPushReaction();
     }
 
     @Override

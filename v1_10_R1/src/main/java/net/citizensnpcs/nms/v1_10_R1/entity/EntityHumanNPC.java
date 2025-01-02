@@ -106,6 +106,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public int aY() {
+        return NMS.getFallDistance(npc, super.aY());
+    }
+
+    @Override
     public boolean bg() {
         return npc == null ? super.bg() : npc.isPushableByFluids();
     }
@@ -118,6 +123,11 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
     @Override
     protected SoundEffect bW() {
         return NMSImpl.getSoundEffect(npc, super.bW(), NPC.Metadata.HURT_SOUND);
+    }
+
+    @Override
+    public float ck() {
+        return NMS.getJumpPower(npc, super.ck());
     }
 
     @Override

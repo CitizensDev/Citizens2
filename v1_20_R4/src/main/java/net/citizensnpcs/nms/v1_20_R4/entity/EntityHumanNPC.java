@@ -55,6 +55,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -210,8 +211,23 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public float getJumpPower() {
+        return NMS.getJumpPower(npc, super.getJumpPower());
+    }
+
+    @Override
+    public int getMaxFallDistance() {
+        return NMS.getFallDistance(npc, super.getMaxFallDistance());
+    }
+
+    @Override
     public NPC getNPC() {
         return npc;
+    }
+
+    @Override
+    public PushReaction getPistonPushReaction() {
+        return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
     }
 
     @Override
