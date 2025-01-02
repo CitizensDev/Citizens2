@@ -149,6 +149,9 @@ public class ItemAction extends NPCShopAction {
     }
 
     private boolean matches(ItemStack a, ItemStack b) {
+        if (Messaging.isDebugging()) {
+            Messaging.debug("Shop filter: comparing " + NMS.getComponentMap(a) + " to " + NMS.getComponentMap(b));
+        }
         if (a.getType() != b.getType() || metaFilter.size() > 0 && !metaMatches(a, b, metaFilter))
             return false;
 
@@ -162,7 +165,6 @@ public class ItemAction extends NPCShopAction {
     private boolean metaMatches(ItemStack needle, ItemStack haystack, List<String> meta) {
         Map<String, Object> source = NMS.getComponentMap(needle);
         Map<String, Object> compare = NMS.getComponentMap(haystack);
-        Messaging.idebug(() -> "Shop filter: comparing " + source + " to " + compare);
         for (String nbt : meta) {
             String[] parts = nbt.split("\\.");
             Object acc = source;
