@@ -58,7 +58,7 @@ public class Template {
         for (DataKey sub : key.getSubKeys()) {
             if (sub.name().equals("on_spawn")) {
                 template.addAction(new CommandEventAction(NPCSpawnEvent.class,
-                        new CommandListExecutor((List<String>) key.getRaw(""))));
+                        new CommandListExecutor((List<String>) sub.getRaw(""))));
             }
         }
     }
