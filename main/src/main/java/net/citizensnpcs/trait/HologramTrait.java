@@ -140,7 +140,8 @@ public class HologramTrait extends Trait {
 
     private HologramRenderer createNameRenderer() {
         HologramRenderer renderer;
-        String setting = SpigotUtil.getVersion()[1] <= 8 ? "armorstand" : "areaeffectcloud";
+        // String setting = SpigotUtil.getVersion()[1] <= 8 ? "armorstand" : "areaeffectcloud";
+        String setting = "armorstand_vehicle";
         renderer = createRenderer(setting);
         if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
             HologramRendererCreateEvent event = new HologramRendererCreateEvent(npc, renderer, true);
@@ -941,7 +942,6 @@ public class HologramTrait extends Trait {
         public void render0(NPC base, Vector3d offset) {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
             disp.setInterpolationDelay(0);
-            disp.setInterpolationDuration(0);
             disp.setBillboard(Billboard.CENTER);
             if (color != null) {
                 disp.setBackgroundColor(color);
