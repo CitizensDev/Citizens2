@@ -1,8 +1,14 @@
 package net.citizensnpcs.api.npc;
 
+import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.entity.EntityType;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
@@ -18,6 +24,20 @@ public class SimpleNPCDataStore implements NPCDataStore {
     @Override
     public void clearData(NPC npc) {
         root.getKey("npc").removeKey(Integer.toString(npc.getId()));
+    }
+
+    @Override
+    public void clearTraitData(Iterable<String> traitNames) {
+        for (DataKey key : root.getKey("npc").getSubKeys()) {
+            Set<String> storedNames = Splitter.on(',').splitToStream(key.getString("traitnames"))
+                    .collect(Collectors.toSet());
+            for (String trait : traitNames) {
+                trait = trait.toLowerCase(Locale.ROOT);
+                key.removeKey("traits." + trait);
+                storedNames.remove(trait);
+            }
+            key.setString("traitnames", Joiner.on(',').join(storedNames));
+        }
     }
 
     @Override
@@ -122,5 +142,6 @@ public class SimpleNPCDataStore implements NPCDataStore {
     }
 
     private static final String LOAD_NAME_NOT_FOUND = "citizens.notifications.npc-name-not-found";
+
     private static final String LOAD_UNKNOWN_NPC_TYPE = "citizens.notifications.unknown-npc-type";
 }

@@ -261,7 +261,10 @@ public class SpigotUtil {
         if (base == null || base.getType() == Material.AIR) {
             base = new ItemStack(Material.STONE, 1);
         }
-        String[] parts = Iterables.toArray(Splitter.on(',').split(item.split("\\{", 2)[0]), String.class);
+        if (item.contains("["))
+            return Bukkit.getItemFactory().createItemStack(item);
+
+        String[] parts = Iterables.toArray(Splitter.on(',').split(item), String.class);
         if (parts.length == 0)
             return base;
         base.setType(Material.matchMaterial(parts[0]));
@@ -271,15 +274,6 @@ public class SpigotUtil {
         if (parts.length > 2) {
             Integer durability = Ints.tryParse(parts[2]);
             base.setDurability(durability.shortValue());
-        }
-        if (item.contains("{")) {
-            parts = Iterables.toArray(Splitter.on('{').limit(2).split(item), String.class);
-            String meta = parts.length > 1 ? parts[1] : parts[0];
-            try {
-                Bukkit.getUnsafe().modifyItemStack(base, base.getType().getKey() + "{" + meta);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
         }
         return base;
     }

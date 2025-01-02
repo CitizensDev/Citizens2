@@ -8,6 +8,10 @@ public class MemoryNPCDataStore implements NPCDataStore {
     }
 
     @Override
+    public void clearTraitData(Iterable<String> traitNames) {
+    }
+
+    @Override
     public int createUniqueNPCId(NPCRegistry registry) {
         return lastID++;
     }

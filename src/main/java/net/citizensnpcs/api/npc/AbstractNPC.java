@@ -51,6 +51,7 @@ import net.citizensnpcs.api.util.RemoveReason;
 import net.citizensnpcs.api.util.SpigotUtil;
 
 public abstract class AbstractNPC implements NPC {
+    private final List<String> clearSaveData = Lists.newArrayList();
     protected Object coloredNameComponentCache;
     protected String coloredNameStringCache;
     private final GoalController goalController = new SimpleGoalController();
@@ -70,7 +71,6 @@ public abstract class AbstractNPC implements NPC {
     private final MetadataStore metadata = new SimpleMetadataStore();
     private String name;
     private final NPCRegistry registry;
-    private final List<String> removedTraits = Lists.newArrayList();
     private final List<Runnable> runnables = Lists.newArrayList();
     private final SpeechController speechController = context -> {
         context.setTalker(getEntity());
@@ -376,7 +376,7 @@ public abstract class AbstractNPC implements NPC {
         Trait trait = traits.remove(traitClass);
         if (trait != null) {
             Bukkit.getPluginManager().callEvent(new NPCRemoveTraitEvent(this, trait));
-            removedTraits.add(trait.getName());
+            clearSaveData.add("traits." + trait.getName());
             if (trait.isRunImplemented()) {
                 runnables.remove(trait);
             }
@@ -410,7 +410,7 @@ public abstract class AbstractNPC implements NPC {
         }
         Set<String> traitNames = Sets.newHashSet();
         for (Trait trait : traits.values()) {
-            removedTraits.remove(trait.getName());
+            clearSaveData.remove("traits." + trait.getName());
             traitNames.add(trait.getName());
 
             DataKey traitKey = root.getRelative("traits." + trait.getName());
@@ -430,10 +430,10 @@ public abstract class AbstractNPC implements NPC {
             }
         }
         root.setString("traitnames", Joiner.on(',').join(traitNames));
-        for (String name : removedTraits) {
-            root.removeKey("traits." + name);
+        for (String name : clearSaveData) {
+            root.removeKey(name);
         }
-        removedTraits.clear();
+        clearSaveData.clear();
     }
 
     @Override

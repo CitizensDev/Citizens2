@@ -10,6 +10,11 @@ public interface NPCDataStore {
     void clearData(NPC npc);
 
     /**
+     * Clears all trait data from all NPCs from the given list of names.
+     */
+    void clearTraitData(Iterable<String> traitNames);
+
+    /**
      * @param registry
      *            The registry for the unique ID.
      * @return An ID for a new NPC to identify them uniquely

@@ -363,7 +363,8 @@ public interface NPC extends Agent, Cloneable {
     public void setItemProvider(Supplier<ItemStack> supplier);
 
     /**
-     * Set the target movement destination location to walk towards using Minecraft movement. Should be set every tick.
+     * Set the destination location to walk towards in a straight line using Minecraft movement. Should be called every
+     * tick.
      *
      * @param destination
      *            The destination {@link Location}
