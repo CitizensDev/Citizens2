@@ -189,6 +189,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return commands;
     }
 
+    public NPCDataStore getDefaultNPCDataStore() {
+        return saves;
+    }
+
     @Override
     public net.citizensnpcs.api.npc.NPCSelector getDefaultNPCSelector() {
         return selector;

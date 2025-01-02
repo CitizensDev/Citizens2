@@ -715,9 +715,9 @@ public class HologramTrait extends Trait {
         protected NPC createNPC(Entity base, String name, Vector3d offset) {
             Matcher itemMatcher = ITEM_MATCHER.matcher(name);
             itemMatcher.find();
-            Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
+            Material material = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
-            ItemStack itemStack = new ItemStack(item, 1);
+            ItemStack itemStack = new ItemStack(material, 1);
             NPC npc = registry().createNPCUsingItem(EntityType.ITEM_DISPLAY, "", itemStack);
             npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
@@ -728,8 +728,8 @@ public class HologramTrait extends Trait {
                         return npc;
                     }
                 }
-                Bukkit.getUnsafe().modifyItemStack(itemStack, modify);
-                npc.setItemProvider(() -> itemStack.clone());
+                ItemStack stack = Bukkit.getItemFactory().createItemStack(material + "[" + modify + "]");
+                npc.setItemProvider(() -> stack.clone());
             }
             return npc;
         }
@@ -760,9 +760,9 @@ public class HologramTrait extends Trait {
             mount.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
             Matcher itemMatcher = ITEM_MATCHER.matcher(name);
             itemMatcher.find();
-            Material item = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
+            Material material = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
                     : Material.matchMaterial(itemMatcher.group(1));
-            ItemStack itemStack = new ItemStack(item, 1);
+            ItemStack itemStack = new ItemStack(material, 1);
             itemNPC = registry().createNPCUsingItem(Util.getFallbackEntityType("ITEM", "DROPPED_ITEM"), "", itemStack);
             itemNPC.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             if (itemMatcher.group(2) != null) {
@@ -776,8 +776,8 @@ public class HologramTrait extends Trait {
                     }
                 }
                 if (matched == null) {
-                    Bukkit.getUnsafe().modifyItemStack(itemStack, modify);
-                    itemNPC.setItemProvider(() -> itemStack.clone());
+                    ItemStack stack = Bukkit.getItemFactory().createItemStack(material + "[" + modify + "]");
+                    itemNPC.setItemProvider(() -> stack.clone());
                 }
             }
             itemNPC.spawn(base.getLocation());
@@ -992,7 +992,6 @@ public class HologramTrait extends Trait {
     }
 
     private static final Pattern ITEM_MATCHER = Pattern.compile("<item:((?:minecraft:)?[a-zA-Z0-9_ ]*?)(:.*?)?>");
-
     private static boolean SUPPORTS_DISPLAY = true;
 
     static {

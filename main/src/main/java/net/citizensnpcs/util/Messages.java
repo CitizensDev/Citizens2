@@ -446,6 +446,7 @@ public class Messages {
     public static final String TPTO_ENTITY_NOT_FOUND = "citizens.commands.npc.tpto.to-not-found";
     public static final String TPTO_SUCCESS = "citizens.commands.npc.tpto.success";
     public static final String TRACKING_RANGE_SET = "citizens.commands.npc.trackingrange.set";
+    public static final String TRAIT_DATA_CLEARED = "citizens.commands.trait.clearsaves.cleared";
     public static final String TRAIT_LOAD_FAILED = "citizens.notifications.trait-load-failed";
     public static final String TRAIT_ONSPAWN_FAILED = "citizens.notifications.trait-onspawn-failed";
     public static final String TRAITS_ADDED = "citizens.commands.trait.added";

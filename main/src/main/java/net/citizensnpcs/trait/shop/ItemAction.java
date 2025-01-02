@@ -150,7 +150,8 @@ public class ItemAction extends NPCShopAction {
 
     private boolean matches(ItemStack a, ItemStack b) {
         if (Messaging.isDebugging()) {
-            Messaging.debug("Shop filter: comparing " + NMS.getComponentMap(a) + " to " + NMS.getComponentMap(b));
+            Messaging.debug("Shop filter: comparing " + NMS.getComponentMap(a) + " to " + NMS.getComponentMap(b) + " ("
+                    + metaFilter + ")");
         }
         if (a.getType() != b.getType() || metaFilter.size() > 0 && !metaMatches(a, b, metaFilter))
             return false;
