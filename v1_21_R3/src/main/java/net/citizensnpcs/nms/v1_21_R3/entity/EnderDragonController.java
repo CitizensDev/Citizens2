@@ -23,6 +23,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.boss.enderdragon.DragonFlightHistory.Sample;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
@@ -65,73 +66,75 @@ public class EnderDragonController extends MobEntityController {
 
         @Override
         public void aiStep() {
-            if (npc != null) {
-                NMSImpl.updateMinecraftAIState(npc, this);
-                npc.update();
-
-            }
-            if (npc != null && !npc.useMinecraftAI()) {
-                if (isDeadOrDying()) {
-                    setHealth(0F);
-                    return;
-                }
-                flightHistory.record(getY(), getYRot());
-
-                float[][] pos = NMS.calculateDragonPositions(getYRot(),
-                        new double[][] { toa(flightHistory.get(0, 1F)), toa(flightHistory.get(5, 1F)),
-                                toa(flightHistory.get(10, 1F)), toa(flightHistory.get(12, 1F)),
-                                toa(flightHistory.get(14, 1F)), toa(flightHistory.get(16, 1F)) });
-                for (int j = 0; j < subEntities.length; ++j) {
-                    Vec3 vec3 = new Vec3(this.subEntities[j].getX(), this.subEntities[j].getY(),
-                            this.subEntities[j].getZ());
-                    subEntities[j].setPos(this.getX() + pos[j][0], this.getY() + pos[j][1], this.getZ() + pos[j][2]);
-                    subEntities[j].xo = subEntities[j].xOld = vec3.x;
-                    subEntities[j].yo = subEntities[j].yOld = vec3.y;
-                    subEntities[j].zo = subEntities[j].zOld = vec3.z;
-                }
-                if (getFirstPassenger() != null) {
-                    setYRot(getFirstPassenger().getBukkitYaw() - 180);
-                }
-                Vec3 mot = getDeltaMovement();
-                if (mot.x != 0 || mot.y != 0 || mot.z != 0) {
-                    mot = mot.multiply(0.98, 0.91, 0.98);
-                    if (getFirstPassenger() == null) {
-                        setYRot(Util.getYawFromVelocity(getBukkitEntity(), mot.x, mot.z));
-                    }
-                    setPos(getX() + mot.x, getY() + mot.y, getZ() + mot.z);
-                    setDeltaMovement(mot);
-                }
-                if (npc.hasTrait(EnderDragonTrait.class) && npc.getOrAddTrait(EnderDragonTrait.class).isDestroyWalls()
-                        && NMSImpl.ENDERDRAGON_CHECK_WALLS != null) {
-                    for (int i = 0; i < 3; i++) {
-                        try {
-                            this.inWall |= (boolean) NMSImpl.ENDERDRAGON_CHECK_WALLS.invoke(this,
-                                    subEntities[i].getBoundingBox());
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
-                    try {
-                        NMSImpl.ENDERDRAGON_KNOCKBACK.invoke(this, this.level(),
-                                this.level().getEntities(this,
-                                        subEntities[6].getBoundingBox().inflate(4.0, 2.0, 4.0).move(0.0, -2.0, 0.0),
-                                        EntitySelector.NO_CREATIVE_OR_SPECTATOR));
-                        NMSImpl.ENDERDRAGON_KNOCKBACK.invoke(this, this.level(),
-                                this.level().getEntities(this,
-                                        subEntities[7].getBoundingBox().inflate(4.0, 2.0, 4.0).move(0.0, -2.0, 0.0),
-                                        EntitySelector.NO_CREATIVE_OR_SPECTATOR));
-                        NMSImpl.ENDERDRAGON_HURT.invoke(this, this.level(), this.level().getEntities(this,
-                                subEntities[0].getBoundingBox().inflate(1.0), EntitySelector.NO_CREATIVE_OR_SPECTATOR));
-                        NMSImpl.ENDERDRAGON_HURT.invoke(this, this.level(), this.level().getEntities(this,
-                                subEntities[1].getBoundingBox().inflate(1.0), EntitySelector.NO_CREATIVE_OR_SPECTATOR));
-                    } catch (Throwable t) {
-                        t.printStackTrace();
-                    }
-                }
-            } else {
+            if (npc == null) {
                 super.aiStep();
+                return;
+            }
+            NMSImpl.updateMinecraftAIState(npc, this);
+            npc.update();
+
+            if (npc.useMinecraftAI()) {
+                super.aiStep();
+                return;
+            }
+            if (isDeadOrDying()) {
+                setHealth(0F);
+                return;
+            }
+            flightHistory.record(getY(), getYRot());
+
+            float[][] pos = NMS.calculateDragonPositions(getYRot(),
+                    new double[][] { toa(flightHistory.get(0, 1F)), toa(flightHistory.get(5, 1F)),
+                            toa(flightHistory.get(10, 1F)), toa(flightHistory.get(12, 1F)),
+                            toa(flightHistory.get(14, 1F)), toa(flightHistory.get(16, 1F)) });
+            for (int j = 0; j < subEntities.length; ++j) {
+                Vec3 vec3 = new Vec3(this.subEntities[j].getX(), this.subEntities[j].getY(),
+                        this.subEntities[j].getZ());
+                subEntities[j].setPos(this.getX() + pos[j][0], this.getY() + pos[j][1], this.getZ() + pos[j][2]);
+                subEntities[j].xo = subEntities[j].xOld = vec3.x;
+                subEntities[j].yo = subEntities[j].yOld = vec3.y;
+                subEntities[j].zo = subEntities[j].zOld = vec3.z;
+            }
+            if (getFirstPassenger() != null) {
+                setYRot(getFirstPassenger().getBukkitYaw() - 180);
+            }
+            Vec3 mot = getDeltaMovement();
+            if (mot.x != 0 || mot.y != 0 || mot.z != 0) {
+                if (getFirstPassenger() == null) {
+                    setYRot(Util.getYawFromVelocity(getBukkitEntity(), mot.x, mot.z));
+                }
+                move(MoverType.SELF, mot);
+                mot = mot.multiply(0.98, 0.91, 0.98);
+                setDeltaMovement(mot);
+            }
+            if (NMSImpl.ENDERDRAGON_CHECK_WALLS != null && npc.hasTrait(EnderDragonTrait.class)
+                    && npc.getOrAddTrait(EnderDragonTrait.class).isDestroyWalls()) {
+                for (int i = 0; i < 3; i++) {
+                    try {
+                        this.inWall |= (boolean) NMSImpl.ENDERDRAGON_CHECK_WALLS.invoke(this,
+                                subEntities[i].getBoundingBox());
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if (npc.data().get(NPC.Metadata.COLLIDABLE, false)) {
+                try {
+                    NMSImpl.ENDERDRAGON_KNOCKBACK.invoke(this, this.level(),
+                            this.level().getEntities(this,
+                                    subEntities[6].getBoundingBox().inflate(4.0, 2.0, 4.0).move(0.0, -2.0, 0.0),
+                                    EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+                    NMSImpl.ENDERDRAGON_KNOCKBACK.invoke(this, this.level(),
+                            this.level().getEntities(this,
+                                    subEntities[7].getBoundingBox().inflate(4.0, 2.0, 4.0).move(0.0, -2.0, 0.0),
+                                    EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+                    NMSImpl.ENDERDRAGON_HURT.invoke(this, this.level(), this.level().getEntities(this,
+                            subEntities[0].getBoundingBox().inflate(1.0), EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+                    NMSImpl.ENDERDRAGON_HURT.invoke(this, this.level(), this.level().getEntities(this,
+                            subEntities[1].getBoundingBox().inflate(1.0), EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
             }
         }
 
