@@ -213,7 +213,6 @@ import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_13_R2.AttributeInstance;
 import net.minecraft.server.v1_13_R2.AxisAlignedBB;
-import net.minecraft.server.v1_13_R2.Block;
 import net.minecraft.server.v1_13_R2.BlockPosition;
 import net.minecraft.server.v1_13_R2.BossBattleServer;
 import net.minecraft.server.v1_13_R2.ChatComponentText;
@@ -2032,7 +2031,6 @@ public class NMSImpl implements NMSBridge {
         return navigation.p();
     }
 
-    @SuppressWarnings("deprecation")
     public static void minecartItemLogic(EntityMinecartAbstract minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
@@ -2041,7 +2039,7 @@ public class NMSImpl implements NMSBridge {
         minecart.a(npc.getItemProvider().get() != null);
         if (npc.getItemProvider().get() != null) {
             Material mat = npc.getItemProvider().get().getType();
-            minecart.setDisplayBlock(Block.getByCombinedId(mat.getId()).getBlock().getBlockData());
+            minecart.setDisplayBlock(IRegistry.BLOCK.get(MinecraftKey.a(mat.getKey().toString())).getBlockData());
         }
         minecart.setDisplayBlockOffset(offset);
     }

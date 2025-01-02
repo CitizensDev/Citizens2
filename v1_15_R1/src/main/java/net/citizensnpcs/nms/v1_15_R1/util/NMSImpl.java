@@ -225,7 +225,6 @@ import net.citizensnpcs.util.Util;
 import net.minecraft.server.v1_15_R1.AttributeInstance;
 import net.minecraft.server.v1_15_R1.AxisAlignedBB;
 import net.minecraft.server.v1_15_R1.BehaviorController;
-import net.minecraft.server.v1_15_R1.Block;
 import net.minecraft.server.v1_15_R1.BlockAccessAir;
 import net.minecraft.server.v1_15_R1.BlockPosition;
 import net.minecraft.server.v1_15_R1.BossBattleServer;
@@ -2159,7 +2158,7 @@ public class NMSImpl implements NMSBridge {
         minecart.a(npc.getItemProvider().get() != null);
         if (npc.getItemProvider().get() != null) {
             Material mat = npc.getItemProvider().get().getType();
-            minecart.setDisplayBlock(Block.getByCombinedId(mat.getId()).getBlock().getBlockData());
+            minecart.setDisplayBlock(IRegistry.BLOCK.get(MinecraftKey.a(mat.getKey().toString())).getBlockData());
         }
         minecart.setDisplayBlockOffset(offset);
     }

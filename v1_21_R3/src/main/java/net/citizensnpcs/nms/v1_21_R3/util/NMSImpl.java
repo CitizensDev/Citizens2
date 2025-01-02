@@ -2341,7 +2341,6 @@ public class NMSImpl implements NMSBridge {
         return NMS.isLeashed(npc, isLeashed, () -> entity.dropLeash());
     }
 
-    @SuppressWarnings("deprecation")
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
@@ -2350,7 +2349,8 @@ public class NMSImpl implements NMSBridge {
         minecart.setCustomDisplay(npc.getItemProvider().get() != null);
         if (npc.getItemProvider().get() != null) {
             Material mat = npc.getItemProvider().get().getType();
-            minecart.setDisplayBlockState(BuiltInRegistries.BLOCK.byId(mat.getId()).defaultBlockState());
+            minecart.setDisplayBlockState(BuiltInRegistries.BLOCK
+                    .getValue(ResourceLocation.parse(mat.getKey().toString())).defaultBlockState());
         }
         minecart.setDisplayOffset(offset);
     }
