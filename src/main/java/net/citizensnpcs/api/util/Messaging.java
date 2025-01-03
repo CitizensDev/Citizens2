@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -34,6 +35,8 @@ import net.kyori.adventure.platform.bukkit.MinecraftComponentSerializer;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.internal.parser.Token;
+import net.kyori.adventure.text.minimessage.internal.parser.TokenParser;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
@@ -244,7 +247,40 @@ public class Messaging {
     }
 
     public static String stripColor(String raw) {
-        return ChatColor.stripColor(convertLegacyCodes(raw)).replace("<csr>", "");
+        String converted = convertLegacyCodes(raw);
+        if (DECORATION_TAGS != null) {
+            converted = stripTags(converted, DECORATION_TAGS);
+        }
+        return ChatColor.stripColor(converted).replace("<csr>", "");
+    }
+
+    private static String stripTags(String text, TagResolver resolver) {
+        StringBuilder sb = new StringBuilder();
+        final List<Token> root = TokenParser.tokenize(text, true);
+        for (final Token token : root) {
+            switch (token.type()) {
+                case TEXT:
+                    sb.append(text, token.startIndex(), token.endIndex());
+                    break;
+                case OPEN_TAG:
+                case CLOSE_TAG:
+                case OPEN_CLOSE_TAG:
+                    if (token.childTokens().isEmpty()) {
+                        sb.append(text, token.startIndex(), token.endIndex());
+                        continue;
+                    }
+                    if (resolver.has(TokenParser.TagProvider
+                            .sanitizePlaceholderName(token.childTokens().get(0).get(text).toString()))) {
+                        continue;
+                    } else {
+                        sb.append(text, token.startIndex(), token.endIndex());
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported token type " + token.type());
+            }
+        }
+        return sb.toString();
     }
 
     public static String tr(String key, Object... messages) {
