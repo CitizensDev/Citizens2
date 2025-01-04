@@ -56,38 +56,41 @@ public class CommandContext {
         this.rawArgs = new String[args.length];
         System.arraycopy(args, 0, rawArgs, 0, args.length);
 
+        boolean[] isquoted = new boolean[args.length];
         int i = 1;
         for (; i < args.length; i++) {
             // initial pass for quotes
             args[i] = args[i].trim();
-            if (args[i].length() == 0) {
-                // Ignore this
+            if (args[i].length() == 0)
                 continue;
-            } else if (args[i].charAt(0) == '{') {
+
+            if (args[i].charAt(0) == '{') {
                 String json = args[i];
                 for (int inner = i + 1; inner < args.length; inner++) {
-                    if (CharMatcher.is('{').countIn(json) - CharMatcher.is('}').countIn(json) == 0) {
+                    if (CharMatcher.is('{').countIn(json) - CharMatcher.is('}').countIn(json) == 0)
                         break;
-                    }
+
                     json += " " + args[inner];
                     args[inner] = "";
                 }
                 args[i] = json;
             } else if (args[i].charAt(0) == '\'' || args[i].charAt(0) == '"' || args[i].charAt(0) == '`') {
                 char quote = args[i].charAt(0);
-                String quoted = args[i].substring(1); // remove initial quote
+                String quoted = args[i].substring(1);
                 if (quoted.length() > 0 && quoted.charAt(quoted.length() - 1) == quote) {
                     args[i] = quoted.substring(0, quoted.length() - 1);
+                    isquoted[i] = true;
                     continue;
                 }
                 for (int inner = i + 1; inner < args.length; inner++) {
-                    if (args[inner].isEmpty()) {
+                    if (args[inner].isEmpty())
                         continue;
-                    }
+
                     String test = args[inner].trim();
                     quoted += " " + test;
                     if (test.charAt(test.length() - 1) == quote) {
                         args[i] = quoted.substring(0, quoted.length() - 1);
+                        isquoted[i] = true;
                         // remove ending quote
                         for (int j = i + 1; j <= inner; ++j) {
                             args[j] = ""; // collapse previous
@@ -100,9 +103,9 @@ public class CommandContext {
         for (i = 1; i < args.length; ++i) {
             // second pass for flags
             int length = args[i].length();
-            if (length == 0) {
+            if (length == 0 || isquoted[i])
                 continue;
-            }
+
             if (i + 1 < args.length && length > 2 && VALUE_FLAG.matcher(args[i]).matches()) {
                 int inner = i + 1;
                 while (args[inner].length() == 0) {
@@ -129,9 +132,9 @@ public class CommandContext {
         List<String> copied = Lists.newArrayList();
         for (String arg : args) {
             arg = arg.trim();
-            if (arg == null || arg.isEmpty()) {
+            if (arg == null || arg.isEmpty())
                 continue;
-            }
+
             copied.add(arg.trim());
         }
         this.args = copied.toArray(new String[copied.size()]);
