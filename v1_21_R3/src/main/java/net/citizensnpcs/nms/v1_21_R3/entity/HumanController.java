@@ -1,4 +1,6 @@
-package net.citizensnpcs.nms.v1_21_R3.entity; import java.util.UUID;
+package net.citizensnpcs.nms.v1_21_R3.entity;
+
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,6 +13,7 @@ import com.mojang.authlib.GameProfile;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v1_21_R3.util.NMSImpl;
 import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.trait.ScoreboardTrait;
@@ -43,6 +46,13 @@ public class HumanController extends AbstractEntityController {
         Skin skin = handle.getSkinTracker().getSkin();
         if (skin != null) {
             skin.apply(handle);
+        }
+        if (NMSImpl.MOONRISE_IS_REAL_PLAYER != null) {
+            try {
+                NMSImpl.MOONRISE_IS_REAL_PLAYER.invoke(handle, !npc.shouldRemoveFromPlayerList());
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
             if (getBukkitEntity() == null || !getBukkitEntity().isValid()

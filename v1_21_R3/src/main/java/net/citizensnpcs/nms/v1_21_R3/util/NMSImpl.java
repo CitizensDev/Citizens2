@@ -2707,9 +2707,12 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "cj");
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
+
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
             AttributeSupplier.class);
     private static final MethodHandle AVAILABLE_BEHAVIORS_BY_PRIORITY = NMS.getGetter(Brain.class, "f");
@@ -2757,6 +2760,7 @@ public class NMSImpl implements NMSBridge {
     private static MethodHandle META_COMPOUND_TAG;
     private static final MethodHandle MINECRAFT_CLIENT = NMS.getFirstGetter(YggdrasilMinecraftSessionService.class,
             MinecraftClient.class);
+    public static final MethodHandle MOONRISE_IS_REAL_PLAYER = NMS.getSetter(ServerPlayer.class, "isRealPlayer", false);
     private static final MethodHandle MOVE_CONTROLLER_OPERATION = NMS.getSetter(MoveControl.class, "k");
     private static final MethodHandle NAVIGATION_CREATE_PATHFINDER = NMS
             .getFirstMethodHandleWithReturnType(PathNavigation.class, true, PathFinder.class, int.class);
