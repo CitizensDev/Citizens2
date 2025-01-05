@@ -28,6 +28,8 @@ public class HorseModifiers extends Trait {
     private ItemStack saddle = null;
     @Persist("style")
     private Style style = Style.NONE;
+    @Persist("tamed")
+    private boolean tamed;
 
     public HorseModifiers() {
         super("horsemodifiers");
@@ -53,6 +55,10 @@ public class HorseModifiers extends Trait {
      */
     public Style getStyle() {
         return style;
+    }
+
+    public boolean isTamed() {
+        return tamed;
     }
 
     @Override
@@ -101,6 +107,11 @@ public class HorseModifiers extends Trait {
         updateModifiers();
     }
 
+    public void setTamed(boolean tamed) {
+        this.tamed = tamed;
+        updateModifiers();
+    }
+
     private void updateModifiers() {
         if (npc.getEntity() instanceof Horse) {
             Horse horse = (Horse) npc.getEntity();
@@ -115,7 +126,6 @@ public class HorseModifiers extends Trait {
     }
 
     private static boolean SUPPORTS_CARRYING_CHEST;
-
     static {
         try {
             if (NMS.getMethodHandle(Class.forName("org.bukkit.entity.ChestedHorse"), "setCarryingChest", false,

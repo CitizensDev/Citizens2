@@ -194,6 +194,8 @@ public class Messages {
     public static final String HORSE_COLOR_SET = "citizens.commands.npc.horse.color-set";
     public static final String HORSE_DESCRIBE = "citizens.commands.npc.horse.describe";
     public static final String HORSE_STYLE_SET = "citizens.commands.npc.horse.style-set";
+    public static final String HORSE_TAMED_SET = "citizens.commands.npc.horse.tamed-set";
+    public static final String HORSE_TAMED_UNSET = "citizens.commands.npc.horse.tamed-unset";
     public static final String INVALID_AGE = "citizens.commands.npc.age.invalid-age";
     public static final String INVALID_ANCHOR_NAME = "citizens.commands.npc.anchor.invalid-name";
     public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";

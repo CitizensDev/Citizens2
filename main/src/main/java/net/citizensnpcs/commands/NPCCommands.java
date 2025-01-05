@@ -113,6 +113,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
+import net.citizensnpcs.commands.TemplateCommands.TemplateCompletions;
 import net.citizensnpcs.commands.gui.NPCConfigurator;
 import net.citizensnpcs.commands.history.CommandHistory;
 import net.citizensnpcs.commands.history.CreateNPCHistoryItem;
@@ -811,7 +812,8 @@ public class NPCCommands {
             @Flag(value = "type", defValue = "PLAYER") EntityType type, @Flag("trait") String traits,
             @Flag(value = "nameplate", completions = { "true", "false", "hover" }) String nameplate,
             @Flag("temporaryduration") Duration temporaryDuration, @Flag("item") String item,
-            @Flag("template") String templateName, @Flag("registry") String registryName) throws CommandException {
+            @Flag(value = "template", completionsProvider = TemplateCompletions.class) String templateName,
+            @Flag("registry") String registryName) throws CommandException {
         String name = args.getJoinedStrings(1).trim();
         if (args.hasValueFlag("type")) {
             if (type == null)
@@ -1284,7 +1286,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] | insert [line #] [text] | set [line #] [text] | remove [line #] | textshadow [line #] | bgcolor [line #] (red,green,blue(,alpha)) | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
+            usage = "hologram add [text] (--duration [duration]) | insert [line #] [text] | set [line #] [text] | remove [line #] | textshadow [line #] | bgcolor [line #] (red,green,blue(,alpha)) | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
             desc = "",
             modifiers = { "hologram" },
             min = 1,
@@ -1295,8 +1297,8 @@ public class NPCCommands {
                     value = 1,
                     completions = { "add", "insert", "set", "bgcolor", "textshadow", "remove", "clear", "lineheight",
                             "viewrange", "margintop", "marginbottom" }) String action,
-            @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion)
-            throws CommandException {
+            @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion,
+            @Flag("duration") Duration duration) throws CommandException {
         HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
         if (args.argsLength() == 1) {
             String output = Messaging.tr(Messages.HOLOGRAM_DESCRIBE_HEADER, npc.getName());
@@ -1360,7 +1362,11 @@ public class NPCCommands {
             if (args.argsLength() == 2)
                 throw new CommandException(Messages.HOLOGRAM_TEXT_MISSING);
 
-            trait.addLine(args.getJoinedStrings(2));
+            if (duration != null) {
+                trait.addTemporaryLine(args.getJoinedStrings(2), Util.toTicks(duration));
+            } else {
+                trait.addLine(args.getJoinedStrings(2));
+            }
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_ADD, args.getJoinedStrings(2));
         } else if (action.equalsIgnoreCase("insert")) {
             if (args.argsLength() == 2)
@@ -1475,12 +1481,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "horse|donkey|mule (--color color) (--type type) (--style style) (-cb)",
+            usage = "horse|donkey|mule (--color color) (--type type) (--style style) (-cbt)",
             desc = "",
             modifiers = { "horse", "donkey", "mule" },
             min = 1,
             max = 1,
-            flags = "cb",
+            flags = "cbt",
             permission = "citizens.npc.horse")
     @Requirements(selected = true, ownership = true)
     public void horse(CommandContext args, CommandSender sender, NPC npc,
@@ -1497,6 +1503,11 @@ public class NPCCommands {
         } else if (args.hasFlag('b')) {
             horse.setCarryingChest(false);
             output += Messaging.tr(Messages.HORSE_CHEST_UNSET) + " ";
+        }
+        if (args.hasFlag('t')) {
+            horse.setTamed(!horse.isTamed());
+            output += Messaging.tr(horse.isTamed() ? Messages.HORSE_TAMED_SET : Messages.HORSE_TAMED_UNSET,
+                    npc.getName()) + " ";
         }
         if (type == EntityType.HORSE && (args.hasValueFlag("color") || args.hasValueFlag("colour"))) {
             if (color == null) {
@@ -1568,6 +1579,16 @@ public class NPCCommands {
             sender = player;
         }
         npc.getOrAddTrait(Inventory.class).openInventory((Player) sender);
+    }
+
+    private boolean isInDirectory(File file, File directory) {
+        try {
+            Path filePath = Paths.get(file.toURI()).toRealPath().normalize();
+            Path directoryPath = Paths.get(directory.toURI()).toRealPath().normalize();
+            return filePath.startsWith(directoryPath);
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Command(
@@ -3013,16 +3034,6 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.SITTING_SET, npc.getName(), Util.prettyPrintLocation(at));
     }
 
-    private boolean isInDirectory(File file, File directory) {
-        try {
-            Path filePath = Paths.get(file.toURI()).toRealPath().normalize();
-            Path directoryPath = Paths.get(directory.toURI()).toRealPath().normalize();
-            return filePath.startsWith(directoryPath);
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
     @Command(
             aliases = { "npc" },
             usage = "skin (-e(xport) -c(lear) -l(atest) -s(kull) -b(edrock)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
@@ -3052,8 +3063,6 @@ public class NPCCommands {
             if (!isInDirectory(skin, skinsFolder) || !skin.getName().endsWith(".png"))
                 throw new CommandException(Messages.INVALID_SKIN_FILE, file);
 
-            skin.getParentFile().mkdirs();
-
             try {
                 JSONObject data = (JSONObject) new JSONParser()
                         .parse(new String(BaseEncoding.base64().decode(trait.getTexture())));
@@ -3081,8 +3090,7 @@ public class NPCCommands {
                     if (file != null) {
                         File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
                         File skin = new File(skinsFolder, Placeholders.replace(file, sender, npc));
-                        if (!skin.exists() || !skin.isFile() || skin.isHidden()
-                                || !isInDirectory(skin, skinsFolder)) {
+                        if (!skin.exists() || !skin.isFile() || skin.isHidden() || !isInDirectory(skin, skinsFolder)) {
                             Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
                                     () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
                             return;

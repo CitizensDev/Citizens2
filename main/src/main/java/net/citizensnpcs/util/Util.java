@@ -487,9 +487,7 @@ public class Util {
         } finally {
             if (op) {
                 if (!wasOp) {
-                    // Disk I/O operation caused by Player#setOp(boolean)
-                    // is not necessary here because changes on permission
-                    // are not actually saved
+                    // Avoid a disk I/O operation in Player#setOp(boolean)
                     NMS.setOpWithoutSaving(clicker, false);
                 }
             }

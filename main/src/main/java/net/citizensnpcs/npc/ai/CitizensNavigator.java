@@ -341,15 +341,18 @@ public class CitizensNavigator implements Navigator, Runnable {
             stopNavigating(CancelReason.REPLACE);
         }
         localParams = defaultParams.clone();
-        int fallDistance = localParams.fallDistance();
-        if (fallDistance != -1) {
-            localParams.examiner(new FallingExaminer(fallDistance));
-        }
-        if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
-            localParams.examiner(new DoorExaminer());
-        }
-        if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {
-            localParams.examiner(new BoundingBoxExaminer(npc.getEntity()));
+
+        if (localParams.useNewPathfinder()) {
+            int fallDistance = localParams.fallDistance();
+            if (fallDistance != -1) {
+                localParams.examiner(new FallingExaminer(fallDistance));
+            }
+            if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
+                localParams.examiner(new DoorExaminer());
+            }
+            if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {
+                localParams.examiner(new BoundingBoxExaminer(npc.getEntity()));
+            }
         }
         updatePathfindingRange();
         executing = strategy.apply(localParams);

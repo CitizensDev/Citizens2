@@ -27,6 +27,8 @@
   "citizens.commands.npc.age.help" : "Can only be used on entities that can become babies. Use the [[-l]] flag to lock age over time (note: relogs may be required to see this).",
   "citizens.commands.npc.age.invalid-age" : "Invalid age. Valid ages are adult, baby, number between -24000 and 0",
   "citizens.commands.npc.age.locked" : "Age locked.",
+  "citizens.commands.npc.horse.tamed-set" : "[{{0}] is now tamed.",
+  "citizens.commands.npc.horse.tamed-unset" : "[{{0}] is no longer tamed.",
   "citizens.commands.npc.bat.awake-set" : "[[{0}]] is now awake.",
   "citizens.commands.npc.bat.awake-unset" : "[[{0}]] is no longer awake.",
   "citizens.commands.npc.bat.description" : "Set bat modifiers",
