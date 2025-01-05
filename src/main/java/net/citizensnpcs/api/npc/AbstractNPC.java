@@ -241,7 +241,7 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public String getName() { 
+    public String getName() {
         return Messaging.stripColor(coloredNameStringCache);
     }
 

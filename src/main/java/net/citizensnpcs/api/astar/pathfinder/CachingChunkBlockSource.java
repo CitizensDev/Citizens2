@@ -5,6 +5,7 @@ import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
 import com.google.common.collect.Maps;
 
@@ -51,12 +52,7 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
             return getCollisionBox(chunk, x & 15, y, z & 15);
         if (!SUPPORT_BOUNDING_BOX)
             return null;
-        try {
-            return BoundingBox.convert(world.getBlockAt(x, y, z).getBoundingBox());
-        } catch (NoSuchMethodError e) {
-            SUPPORT_BOUNDING_BOX = false;
-            return null;
-        }
+        return BoundingBox.convert(world.getBlockAt(x, y, z).getBoundingBox());
     }
 
     protected abstract BoundingBox getCollisionBox(T chunk, int x, int y, int z);
@@ -69,8 +65,8 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
             return Material.AIR;
         T chunk = getSpecific(x, z);
         if (chunk != null)
-            return getType(chunk, x & 15, y, z & 15);
-        return world.getBlockAt(x, y, z).getType();
+            return getType(chunk, x >> 4, y, z >> 4);
+        return SUPPORT_GET_TYPE ? world.getType(x, y, z) : world.getBlockAt(x, y, z).getType();
     }
 
     @SuppressWarnings("unchecked")
@@ -131,4 +127,17 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
     }
 
     private static boolean SUPPORT_BOUNDING_BOX = true;
+    private static boolean SUPPORT_GET_TYPE = true;
+    static {
+        try {
+            Class.forName("org.bukkit.RegionAccessor").getMethod("getType", int.class, int.class, int.class);
+        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+            SUPPORT_GET_TYPE = false;
+        }
+        try {
+            Block.class.getMethod("getBoundingBox");
+        } catch (NoSuchMethodException | SecurityException e) {
+            SUPPORT_BOUNDING_BOX = false;
+        }
+    }
 }

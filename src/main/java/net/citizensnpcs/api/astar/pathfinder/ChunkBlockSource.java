@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
 import net.citizensnpcs.api.util.BoundingBox;
 
@@ -25,12 +26,7 @@ public class ChunkBlockSource extends CachingChunkBlockSource<Chunk> {
     protected BoundingBox getCollisionBox(Chunk chunk, int x, int y, int z) {
         if (!SUPPORT_BOUNDING_BOX)
             return null;
-        try {
-            return BoundingBox.convert(world.getBlockAt(x, y, z).getBoundingBox());
-        } catch (NoSuchMethodError e) {
-            SUPPORT_BOUNDING_BOX = false;
-            return null;
-        }
+        return BoundingBox.convert(world.getBlockAt(x, y, z).getBoundingBox());
     }
 
     @Override
@@ -40,8 +36,21 @@ public class ChunkBlockSource extends CachingChunkBlockSource<Chunk> {
 
     @Override
     protected Material getType(Chunk chunk, int x, int y, int z) {
-        return chunk.getBlock(x, y, z).getType();
+        return SUPPORT_GET_TYPE ? world.getType(x << 4, y, z << 4) : chunk.getBlock(x, y, z).getType();
     }
 
     private static boolean SUPPORT_BOUNDING_BOX = true;
+    private static boolean SUPPORT_GET_TYPE = true;
+    static {
+        try {
+            Class.forName("org.bukkit.RegionAccessor").getMethod("getType", int.class, int.class, int.class);
+        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+            SUPPORT_GET_TYPE = false;
+        }
+        try {
+            Block.class.getMethod("getBoundingBox");
+        } catch (NoSuchMethodException | SecurityException e) {
+            SUPPORT_BOUNDING_BOX = false;
+        }
+    }
 }

@@ -69,10 +69,10 @@ public class DoorExaminer implements BlockExaminer {
                 state.update();
             }
             if (SUPPORTS_SOUNDS) {
+                Material type = point.getType();
                 try {
-                    Sound sound = MinecraftBlockExaminer.isDoor(point.getType())
-                            ? point.getType() == Material.IRON_DOOR ? Sound.BLOCK_IRON_DOOR_CLOSE
-                                    : Sound.BLOCK_WOODEN_DOOR_CLOSE
+                    Sound sound = MinecraftBlockExaminer.isDoor(type)
+                            ? type == Material.IRON_DOOR ? Sound.BLOCK_IRON_DOOR_CLOSE : Sound.BLOCK_WOODEN_DOOR_CLOSE
                             : Sound.BLOCK_FENCE_GATE_CLOSE;
                     point.getWorld().playSound(point.getLocation(), sound, 2, 1);
                 } catch (Exception ex) {
@@ -104,12 +104,12 @@ public class DoorExaminer implements BlockExaminer {
             }.runTaskTimer(CitizensAPI.getPlugin(), 3, 1);
         }
 
-        private void open(NPC npc, Block point) {
+        private void open(NPC npc, Block point, Material type) {
             if (SpigotUtil.isUsing1_13API()) {
                 Openable open = (Openable) point.getBlockData();
                 if (open.isOpen())
                     return;
-                Cancellable event = MinecraftBlockExaminer.isDoor(point.getType()) ? new NPCOpenDoorEvent(npc, point)
+                Cancellable event = MinecraftBlockExaminer.isDoor(type) ? new NPCOpenDoorEvent(npc, point)
                         : new NPCOpenGateEvent(npc, point);
                 Bukkit.getPluginManager().callEvent((Event) event);
                 if (event.isCancelled())
@@ -123,7 +123,7 @@ public class DoorExaminer implements BlockExaminer {
                 org.bukkit.material.Openable open = (org.bukkit.material.Openable) state.getData();
                 if (open.isOpen())
                     return;
-                Cancellable event = MinecraftBlockExaminer.isDoor(point.getType()) ? new NPCOpenDoorEvent(npc, point)
+                Cancellable event = MinecraftBlockExaminer.isDoor(type) ? new NPCOpenDoorEvent(npc, point)
                         : new NPCOpenGateEvent(npc, point);
                 Bukkit.getPluginManager().callEvent((Event) event);
                 if (event.isCancelled())
@@ -134,9 +134,8 @@ public class DoorExaminer implements BlockExaminer {
             }
             if (SUPPORTS_SOUNDS) {
                 try {
-                    Sound sound = MinecraftBlockExaminer.isDoor(point.getType())
-                            ? point.getType() == Material.IRON_DOOR ? Sound.BLOCK_IRON_DOOR_OPEN
-                                    : Sound.BLOCK_WOODEN_DOOR_OPEN
+                    Sound sound = MinecraftBlockExaminer.isDoor(type)
+                            ? type == Material.IRON_DOOR ? Sound.BLOCK_IRON_DOOR_OPEN : Sound.BLOCK_WOODEN_DOOR_OPEN
                             : Sound.BLOCK_FENCE_GATE_OPEN;
                     point.getWorld().playSound(point.getLocation(), sound, 2, 1);
                 } catch (Exception ex) {
@@ -149,12 +148,11 @@ public class DoorExaminer implements BlockExaminer {
 
         @Override
         public void run(NPC npc, Block point, List<Block> path, int index) {
-            if (opened
-                    || !MinecraftBlockExaminer.isDoor(point.getType())
-                            && !MinecraftBlockExaminer.isGate(point.getType())
+            Material type = point.getType();
+            if (opened || !MinecraftBlockExaminer.isDoor(type) && !MinecraftBlockExaminer.isGate(type)
                     || npc.getStoredLocation().distance(point.getLocation().add(0.5, 0, 0.5)) > 2.5)
                 return;
-            open(npc, point);
+            open(npc, point, type);
             opened = true;
         }
 
