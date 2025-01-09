@@ -1927,8 +1927,8 @@ public class NMSImpl implements NMSBridge {
         if (npc == null)
             return;
         int offset = npc.data().get(NPC.Metadata.MINECART_OFFSET, 0);
-        minecart.a(npc.getItemProvider().get() != null);
-        if (npc.getItemProvider().get() != null) {
+        minecart.a(npc.data().has(NPC.Metadata.ITEM_ID));
+        if (npc.data().has(NPC.Metadata.ITEM_ID)) {
             Material mat = npc.getItemProvider().get().getType();
             minecart.setDisplayBlock(Block.getById(mat.getId()).fromLegacyData(0));
         }

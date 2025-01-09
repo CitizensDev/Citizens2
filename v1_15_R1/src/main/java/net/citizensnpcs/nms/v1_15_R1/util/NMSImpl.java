@@ -2149,14 +2149,13 @@ public class NMSImpl implements NMSBridge {
         return navigation.m();
     }
 
-    @SuppressWarnings("deprecation")
     public static void minecartItemLogic(EntityMinecartAbstract minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
         if (npc == null)
             return;
         int offset = npc.data().get(NPC.Metadata.MINECART_OFFSET, 0);
-        minecart.a(npc.getItemProvider().get() != null);
-        if (npc.getItemProvider().get() != null) {
+        minecart.a(npc.data().has(NPC.Metadata.ITEM_ID));
+        if (npc.data().has(NPC.Metadata.ITEM_ID)) {
             Material mat = npc.getItemProvider().get().getType();
             minecart.setDisplayBlock(IRegistry.BLOCK.get(MinecraftKey.a(mat.getKey().toString())).getBlockData());
         }
