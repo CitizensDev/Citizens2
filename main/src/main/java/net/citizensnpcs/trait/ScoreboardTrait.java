@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -134,12 +135,9 @@ public class ScoreboardTrait extends Trait {
     public void onSpawn() {
         changed = true;
         if (SUPPORT_TAGS) {
-            try {
-                npc.getEntity().getScoreboardTags().clear();
-                npc.getEntity().getScoreboardTags().addAll(tags);
-            } catch (NoSuchMethodError e) {
-                SUPPORT_TAGS = false;
-            }
+            tags.add("CITIZENS_NPC");
+            npc.getEntity().getScoreboardTags().clear();
+            npc.getEntity().getScoreboardTags().addAll(tags);
         }
     }
 
@@ -153,12 +151,8 @@ public class ScoreboardTrait extends Trait {
 
     public void update() {
         if (SUPPORT_TAGS) {
-            try {
-                if (!npc.getEntity().getScoreboardTags().equals(tags)) {
-                    tags = Sets.newHashSet(npc.getEntity().getScoreboardTags());
-                }
-            } catch (NoSuchMethodError e) {
-                SUPPORT_TAGS = false;
+            if (!npc.getEntity().getScoreboardTags().equals(tags)) {
+                tags = Sets.newHashSet(npc.getEntity().getScoreboardTags());
             }
         }
         String forceVisible = npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString();
@@ -183,17 +177,11 @@ public class ScoreboardTrait extends Trait {
                     : npc.getUniqueId().toString();
         }
         if (SUPPORT_TEAM_SETOPTION) {
-            try {
-                OptionStatus visibility = nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER;
-                if (visibility != team.getOption(Option.NAME_TAG_VISIBILITY)) {
-                    changed = true;
-                }
-                team.setOption(Option.NAME_TAG_VISIBILITY, visibility);
-            } catch (NoSuchMethodError e) {
-                SUPPORT_TEAM_SETOPTION = false;
-            } catch (NoClassDefFoundError e) {
-                SUPPORT_TEAM_SETOPTION = false;
+            OptionStatus visibility = nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER;
+            if (visibility != team.getOption(Option.NAME_TAG_VISIBILITY)) {
+                changed = true;
             }
+            team.setOption(Option.NAME_TAG_VISIBILITY, visibility);
         } else {
             NMS.setTeamNameTagVisible(team, nameVisibility);
         }
@@ -213,19 +201,12 @@ public class ScoreboardTrait extends Trait {
             }
         }
         if (color != null) {
-            if (SUPPORT_GLOWING_COLOR && SpigotUtil.getMinecraftPackage().contains("1_12_R1")) {
-                SUPPORT_GLOWING_COLOR = false;
-            }
             if (SUPPORT_GLOWING_COLOR) {
-                try {
-                    if (team.getColor() == null || previousGlowingColor == null
-                            || previousGlowingColor != null && color != previousGlowingColor) {
-                        team.setColor(color);
-                        previousGlowingColor = color;
-                        changed = true;
-                    }
-                } catch (NoSuchMethodError err) {
-                    SUPPORT_GLOWING_COLOR = false;
+                if (team.getColor() == null || previousGlowingColor == null
+                        || previousGlowingColor != null && color != previousGlowingColor) {
+                    team.setColor(color);
+                    previousGlowingColor = color;
+                    changed = true;
                 }
             } else if (team.getPrefix() == null || team.getPrefix().length() == 0 || previousGlowingColor == null
                     || previousGlowingColor != null && !team.getPrefix().equals(previousGlowingColor.toString())) {
@@ -251,7 +232,28 @@ public class ScoreboardTrait extends Trait {
     }
 
     private static boolean SUPPORT_COLLIDABLE_SETOPTION = true;
-    private static boolean SUPPORT_GLOWING_COLOR = true;
-    private static boolean SUPPORT_TAGS = true;
+    private static boolean SUPPORT_GLOWING_COLOR = false;
+    private static boolean SUPPORT_TAGS = false;
     private static boolean SUPPORT_TEAM_SETOPTION = true;
+    static {
+        try {
+            Entity.class.getDeclaredMethod("getScoreboardTags");
+            SUPPORT_TAGS = true;
+        } catch (NoSuchMethodException | SecurityException e) {
+        }
+        try {
+            Team.class.getDeclaredMethod("getColor");
+            if (!SpigotUtil.getMinecraftPackage().contains("1_12_R1")) {
+                SUPPORT_GLOWING_COLOR = true;
+            }
+        } catch (NoSuchMethodException | SecurityException e) {
+        }
+        try {
+            OptionStatus status;
+        } catch (NoSuchMethodError e) {
+            SUPPORT_TEAM_SETOPTION = false;
+        } catch (NoClassDefFoundError e) {
+            SUPPORT_TEAM_SETOPTION = false;
+        }
+    }
 }
