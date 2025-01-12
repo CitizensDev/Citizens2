@@ -488,7 +488,7 @@ public interface NPC extends Agent, Cloneable {
          * Whether the NPC is currently glowing.
          */
         GLOWING("glowing", Boolean.class),
-        HOLOGRAM_RENDERER("hologram-renderer", Object.class),
+        HOLOGRAM_RENDERER("hologram-renderer", TypeToken.of(Object.class), false),
         /**
          * The Minecraft sound to play when hurt.
          */

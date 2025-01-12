@@ -57,12 +57,11 @@ public abstract class AbstractNPC implements NPC {
     private final GoalController goalController = new SimpleGoalController();
     private final int id;
     private Supplier<ItemStack> itemProvider = () -> {
-        Material id = Material.STONE;
+        Material id = data().has(NPC.Metadata.ITEM_ID)
+                ? Material.getMaterial(data().<String> get(NPC.Metadata.ITEM_ID), false)
+                : null;
         int data = data().get(NPC.Metadata.ITEM_DATA, data().get("falling-block-data", 0));
-        if (data().has(NPC.Metadata.ITEM_ID)) {
-            id = Material.getMaterial(data().<String> get(NPC.Metadata.ITEM_ID), false);
-        }
-        if (id == Material.AIR) {
+        if (id == Material.AIR || id == null) {
             id = Material.STONE;
             Messaging.severe(getId(), "invalid Material: converted to stone");
         }
