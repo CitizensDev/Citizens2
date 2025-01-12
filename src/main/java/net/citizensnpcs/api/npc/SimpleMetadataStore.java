@@ -136,7 +136,8 @@ public class SimpleMetadataStore implements MetadataStore {
         } else {
             if (!key.accepts(data.getClass()))
                 throw new IllegalArgumentException("data must be subtype of " + key.getType());
-            if (!key.getType().isPrimitive() && !Primitives.isWrapperType(key.getType().getRawType()))
+            if (key.getType().getRawType() != String.class && !key.getType().isPrimitive()
+                    && !Primitives.isWrapperType(key.getType().getRawType()))
                 throw new IllegalArgumentException(key + " data is not primitive, got: " + data);
             this.npcMetadata.put(key, new MetadataObject(data, true));
         }
