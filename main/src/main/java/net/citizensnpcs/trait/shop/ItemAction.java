@@ -149,9 +149,17 @@ public class ItemAction extends NPCShopAction {
     }
 
     private boolean matches(ItemStack a, ItemStack b) {
+        if (metaFilter.size() > 0 || compareSimilarity) {
+            // work around an API bug: display name can be a string or a Component.
+            // even if the content is the same, isSimilar will not be true if the type differs.
+            // to fix this, go through a serialisation step to force the display name to Component.
+            // assumes that b is the Minecraft supplied item stack and a is the Citizens itemstack which has already
+            // been through deserialisation
+            b = b.clone();
+            b.setItemMeta(b.getItemMeta());
+        }
         if (Messaging.isDebugging()) {
-            Messaging.debug("Shop filter: comparing " + NMS.getComponentMap(a) + " to " + NMS.getComponentMap(b) + " ("
-                    + metaFilter + ")");
+            Messaging.debug("Shop filter: comparing " + a + " to " + b + " (" + metaFilter + ") " + a.isSimilar(b));
         }
         if (a.getType() != b.getType() || metaFilter.size() > 0 && !metaMatches(a, b, metaFilter))
             return false;
@@ -196,10 +204,10 @@ public class ItemAction extends NPCShopAction {
     }
 
     private void sanityCheck() {
-        if (metaFilter.size() > 0) {
-            for (ItemStack item : items) {
-                metaMatches(item, item, metaFilter);
-            }
+        if (metaFilter.size() == 0)
+            return;
+        for (ItemStack item : items) {
+            metaMatches(item, item, metaFilter);
         }
     }
 
@@ -265,7 +273,7 @@ public class ItemAction extends NPCShopAction {
         if (SpigotUtil.isUsing1_13API())
             return toMatch.getItemMeta() instanceof Damageable && ((Damageable) toMatch.getItemMeta()).getDamage() != 0;
 
-        return toMatch.getDurability() == toMatch.getType().getMaxDurability();
+        return toMatch.getType().getMaxDurability() != 0 && toMatch.getDurability() != 0;
     }
 
     @Menu(title = "Item editor", dimensions = { 4, 9 })
