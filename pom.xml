@@ -40,6 +40,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>api</module>
                 <module>main</module> 
                 <module>v1_19_R3</module>
                 <module>v1_20_R4</module>
@@ -50,6 +51,7 @@
         <profile>
             <id>full</id> 
             <modules>
+                <module>api</module>
                 <module>main</module>
                 <module>v1_8_R3</module>
                 <module>v1_10_R1</module>
@@ -70,6 +72,7 @@
         <profile>
             <id>dev</id>
             <modules>
+                <module>api</module>
                 <module>main</module>
                 <module>v1_21_R3</module>
                 <module>dist</module>
