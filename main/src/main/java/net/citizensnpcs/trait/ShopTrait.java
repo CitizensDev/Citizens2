@@ -1037,6 +1037,7 @@ public class ShopTrait extends Trait {
             Inventory syntheticInventory = Bukkit.createInventory(null, 9);
             syntheticInventory.setItem(0, evt.getClickedInventory().getItem(0));
             syntheticInventory.setItem(1, evt.getClickedInventory().getItem(1));
+
             InventoryMultiplexer multiplexer = new InventoryMultiplexer(player.getInventory(), syntheticInventory);
             trades.get(selectedTrade).onClick(shop, player, multiplexer, evt.getClick().isShiftClick(),
                     lastClickedTrade == selectedTrade);

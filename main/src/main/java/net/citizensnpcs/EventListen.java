@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
-import net.citizensnpcs.api.event.NPCMoveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -95,6 +94,7 @@ import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCKnockbackEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
+import net.citizensnpcs.api.event.NPCMoveEvent;
 import net.citizensnpcs.api.event.NPCPushEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -913,39 +913,6 @@ public class EventListen implements Listener {
         }
     }
 
-    private void registerPushEvent(Class<?> clazz) {
-        try {
-            HandlerList handlers = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
-            Method getEntity = clazz.getMethod("getEntity");
-            Method getPushedBy = clazz.getMethod("getPushedBy");
-            Method getAcceleration = clazz.getMethod("getAcceleration");
-            handlers.register(new RegisteredListener(new Listener() {
-            }, (listener, event) -> {
-                if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0 || event.getClass() != clazz)
-                    return;
-                try {
-                    Entity entity = (Entity) getEntity.invoke(event);
-                    if (!(entity instanceof NPCHolder))
-                        return;
-                    NPC npc = ((NPCHolder) entity).getNPC();
-                    Entity pushedBy = (Entity) getPushedBy.invoke(event);
-                    Vector vector = (Vector) getAcceleration.invoke(event);
-                    NPCPushEvent push = new NPCPushEvent(npc, vector, pushedBy);
-                    if (pushedBy == null && !npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
-                        push.setCancelled(true);
-                    }
-                    Bukkit.getPluginManager().callEvent(push);
-                    ((Cancellable) event).setCancelled(push.isCancelled());
-                } catch (Throwable ex) {
-                    ex.printStackTrace();
-                }
-            }, EventPriority.NORMAL, plugin, true));
-        } catch (Throwable ex) {
-            Messaging.severe("Error registering push event forwarder");
-            ex.printStackTrace();
-        }
-    }
-
     private void registerMoveEvent(Class<?> clazz) {
         try {
             final HandlerList handlers = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
@@ -980,6 +947,39 @@ public class EventListen implements Listener {
             }, EventPriority.NORMAL, plugin, true));
         } catch (Throwable ex) {
             Messaging.severe("Error registering move event forwarder");
+            ex.printStackTrace();
+        }
+    }
+
+    private void registerPushEvent(Class<?> clazz) {
+        try {
+            HandlerList handlers = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
+            Method getEntity = clazz.getMethod("getEntity");
+            Method getPushedBy = clazz.getMethod("getPushedBy");
+            Method getAcceleration = clazz.getMethod("getAcceleration");
+            handlers.register(new RegisteredListener(new Listener() {
+            }, (listener, event) -> {
+                if (NPCPushEvent.getHandlerList().getRegisteredListeners().length == 0 || event.getClass() != clazz)
+                    return;
+                try {
+                    Entity entity = (Entity) getEntity.invoke(event);
+                    if (!(entity instanceof NPCHolder))
+                        return;
+                    NPC npc = ((NPCHolder) entity).getNPC();
+                    Entity pushedBy = (Entity) getPushedBy.invoke(event);
+                    Vector vector = (Vector) getAcceleration.invoke(event);
+                    NPCPushEvent push = new NPCPushEvent(npc, vector, pushedBy);
+                    if (pushedBy == null && !npc.data().get(NPC.Metadata.COLLIDABLE, !npc.isProtected())) {
+                        push.setCancelled(true);
+                    }
+                    Bukkit.getPluginManager().callEvent(push);
+                    ((Cancellable) event).setCancelled(push.isCancelled());
+                } catch (Throwable ex) {
+                    ex.printStackTrace();
+                }
+            }, EventPriority.NORMAL, plugin, true));
+        } catch (Throwable ex) {
+            Messaging.severe("Error registering push event forwarder");
             ex.printStackTrace();
         }
     }

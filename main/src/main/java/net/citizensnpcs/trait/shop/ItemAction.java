@@ -155,7 +155,6 @@ public class ItemAction extends NPCShopAction {
             // to fix this, go through a serialisation step to force the display name to Component.
             // assumes that b is the Minecraft supplied item stack and a is the Citizens itemstack which has already
             // been through deserialisation
-            b = b.clone();
             b.setItemMeta(b.getItemMeta());
         }
         if (Messaging.isDebugging()) {
