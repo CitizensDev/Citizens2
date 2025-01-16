@@ -150,11 +150,10 @@ public class ItemAction extends NPCShopAction {
 
     private boolean matches(ItemStack a, ItemStack b) {
         if (metaFilter.size() > 0 || compareSimilarity) {
-            // work around an API bug: display name can be a string or a Component.
-            // even if the content is the same, isSimilar will not be true if the type differs.
-            // to fix this, go through a serialisation step to force the display name to Component.
-            // assumes that b is the Minecraft supplied item stack and a is the Citizens itemstack which has already
-            // been through deserialisation
+            // work around a Vanilla/Spigot bug: display name can be a Component with single string element or a
+            // Component with sibling text. even if the content is the same, isSimilar will treat these as separate.
+            // to fix this, go through a normalisation step. XXX: assumes that b is the Minecraft supplied item stack
+            // and a has already been normalised.
             b.setItemMeta(b.getItemMeta());
         }
         if (Messaging.isDebugging()) {
