@@ -128,10 +128,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
         super.baseTick();
         boolean navigating = npc.getNavigator().isNavigating() || ai.getMoveControl().hasWanted();
-        if (!navigating && getBukkitEntity() != null
+        CraftPlayer craftPlayer = getBukkitEntity();
+        if (!navigating && craftPlayer != null
                 && (!npc.hasTrait(Gravity.class) || npc.getOrAddTrait(Gravity.class).hasGravity())
-                && Util.isLoaded(getBukkitEntity().getLocation())
-                && (!npc.isProtected() || SpigotUtil.checkYSafe(getY(), getBukkitEntity().getWorld()))) {
+                && Util.isLoaded(craftPlayer.getLocation())
+                && (!npc.isProtected() || SpigotUtil.checkYSafe(getY(), craftPlayer.getWorld()))) {
             moveWithFallDamage(Vec3.ZERO);
         }
         Vec3 mot = getDeltaMovement();
