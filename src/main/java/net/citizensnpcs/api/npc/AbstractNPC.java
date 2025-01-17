@@ -335,9 +335,9 @@ public abstract class AbstractNPC implements NPC {
         }
         Set<String> loading = Sets.newHashSet(Splitter.on(',').split(traitNames));
         for (String key : PRIORITY_TRAITS) {
-            DataKey privilegedKey = root.getRelative("traits." + key);
-            if (privilegedKey.keyExists()) {
-                loadTraitFromKey(privilegedKey);
+            DataKey pkey = root.getRelative("traits." + key);
+            if (pkey.keyExists()) {
+                loadTraitFromKey(pkey);
                 loading.remove(key);
             }
         }
