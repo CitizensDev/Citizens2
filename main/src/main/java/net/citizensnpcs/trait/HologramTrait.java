@@ -329,11 +329,11 @@ public class HologramTrait extends Trait {
             lastEntityBbHeight = NMS.getBoundingBoxHeight(npc.getEntity());
         }
         if (nameLine != null) {
-            if (updatePosition || nameLine.renderer.getEntities().size() == 0) {
-                nameLine.render(offset);
-            }
             if (updateName) {
                 nameLine.setText(npc.getRawName());
+            }
+            if (updatePosition || nameLine.renderer.getEntities().size() == 0) {
+                nameLine.render(offset);
             }
         }
         for (int i = 0; i < lines.size(); i++) {
@@ -545,10 +545,11 @@ public class HologramTrait extends Trait {
         }
 
         public void setBackgroundColor(Color color) {
+            this.backgroundColor = color;
             if (color != null) {
                 renderer = new TextDisplayRenderer();
+                renderer.updateText(npc, text);
             }
-            this.backgroundColor = color;
             renderer.setBackgroundColor(color);
         }
 
@@ -567,6 +568,7 @@ public class HologramTrait extends Trait {
             this.shadow = shadow;
             if (!shadow) {
                 renderer = new TextDisplayRenderer();
+                renderer.updateText(npc, text);
             }
             renderer.setTextShadow(shadow);
         }
