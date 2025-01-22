@@ -109,7 +109,7 @@ public class ScoreboardTrait extends Trait {
             }
             return;
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+        Runnable cleanup = () -> {
             if (npc.isSpawned())
                 return;
             try {
@@ -123,7 +123,13 @@ public class ScoreboardTrait extends Trait {
             } else {
                 team.removeEntry(name);
             }
-        }, reason == DespawnReason.DEATH && npc.getEntity() instanceof LivingEntity ? 20 : 2);
+        };
+        if (reason == DespawnReason.REMOVAL) {
+            cleanup.run();
+        } else {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), cleanup,
+                    reason == DespawnReason.DEATH && npc.getEntity() instanceof LivingEntity ? 20 : 2);
+        }
     }
 
     @Override
