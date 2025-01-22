@@ -36,7 +36,7 @@ public class ChunkBlockSource extends CachingChunkBlockSource<Chunk> {
 
     @Override
     protected Material getType(Chunk chunk, int x, int y, int z) {
-        return SUPPORT_GET_TYPE ? world.getType(x << 4, y, z << 4) : chunk.getBlock(x, y, z).getType();
+        return SUPPORT_GET_TYPE ? world.getType(x, y, z) : chunk.getBlock(x & 15, y, z & 15).getType();
     }
 
     private static boolean SUPPORT_BOUNDING_BOX = true;

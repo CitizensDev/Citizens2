@@ -33,6 +33,6 @@ public class ChunkSnapshotBlockSource extends CachingChunkBlockSource<ChunkSnaps
 
     @Override
     protected Material getType(ChunkSnapshot chunk, int x, int y, int z) {
-        return chunk.getBlockType(x, y, z);
+        return chunk.getBlockType(x & 15, y, z & 15);
     }
 }

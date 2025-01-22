@@ -65,7 +65,7 @@ public abstract class CachingChunkBlockSource<T> extends BlockSource {
             return Material.AIR;
         T chunk = getSpecific(x, z);
         if (chunk != null)
-            return getType(chunk, x >> 4, y, z >> 4);
+            return getType(chunk, x, y, z);
         return SUPPORT_GET_TYPE ? world.getType(x, y, z) : world.getBlockAt(x, y, z).getType();
     }
 
