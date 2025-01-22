@@ -394,6 +394,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public void save(DataKey root) {
+        Messaging.idebug(() -> "Saving " + this);
         if (!metadata.get(NPC.Metadata.SHOULD_SAVE, true))
             return;
 
