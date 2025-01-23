@@ -24,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.PushReaction;
@@ -35,7 +36,8 @@ public class EggController extends AbstractEntityController {
     @Override
     protected org.bukkit.entity.Entity createEntity(Location at, NPC npc) {
         ServerLevel ws = ((CraftWorld) at.getWorld()).getHandle();
-        final EntityEggNPC handle = new EntityEggNPC(ws, npc, at.getX(), at.getY(), at.getZ(), null);
+        final EntityEggNPC handle = new EntityEggNPC(ws, npc, at.getX(), at.getY(), at.getZ(),
+                new ItemStack(Items.EGG));
         return handle.getBukkitEntity();
     }
 
