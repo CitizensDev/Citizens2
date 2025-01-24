@@ -47,7 +47,8 @@ public enum PlayerAnimation {
     }
 
     public void play(Player from, int radius) {
-        play(from, () -> Lists.newArrayList(CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(from, radius)));
+        play(from,
+                () -> Lists.newArrayList(CitizensAPI.getLocationLookup().getNearbyPlayers(from.getLocation(), radius)));
     }
 
     public void play(Player player, Iterable<Player> to) {
