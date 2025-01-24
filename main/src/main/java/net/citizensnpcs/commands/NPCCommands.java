@@ -1165,7 +1165,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "forcefield --width [width] --height [height] --strength [strength] --vertical_strength [vertical strength]",
+            usage = "forcefield --width [width] --height [height] --strength [strength] --vertical-strength [vertical strength]",
             desc = "",
             modifiers = { "forcefield" },
             min = 1,
@@ -1173,7 +1173,7 @@ public class NPCCommands {
             permission = "citizens.npc.forcefield")
     public void forcefield(CommandContext args, CommandSender sender, NPC npc, @Flag("width") Double width,
             @Flag("height") Double height, @Flag("strength") Double strength,
-            @Flag("vertical_strength") Double verticalStrength) throws CommandException {
+            @Flag("vertical-strength") Double verticalStrength) throws CommandException {
         ForcefieldTrait trait = npc.getOrAddTrait(ForcefieldTrait.class);
         String output = "";
         if (width != null) {
