@@ -114,7 +114,9 @@ public abstract class AbstractNPC implements NPC {
         Class<? extends Trait> clazz = trait.getClass();
         Trait replaced = traits.get(clazz);
 
-        Bukkit.getPluginManager().registerEvents(trait, CitizensAPI.getPlugin());
+        if (CitizensAPI.getPlugin().isEnabled()) {
+            Bukkit.getPluginManager().registerEvents(trait, CitizensAPI.getPlugin());
+        }
         traits.put(clazz, trait);
         if (isSpawned()) {
             trait.onSpawn();
