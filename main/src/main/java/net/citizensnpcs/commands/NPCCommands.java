@@ -2,7 +2,6 @@ package net.citizensnpcs.commands;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -1582,13 +1581,9 @@ public class NPCCommands {
     }
 
     private boolean isInDirectory(File file, File directory) {
-        try {
-            Path filePath = Paths.get(file.toURI()).toRealPath().normalize();
-            Path directoryPath = Paths.get(directory.toURI()).toRealPath().normalize();
-            return filePath.startsWith(directoryPath);
-        } catch (IOException e) {
-            return false;
-        }
+        Path filePath = Paths.get(file.toURI()).toAbsolutePath().normalize();
+        Path directoryPath = Paths.get(directory.toURI()).toAbsolutePath().normalize();
+        return filePath.startsWith(directoryPath);
     }
 
     @Command(
@@ -3059,9 +3054,8 @@ public class NPCCommands {
             File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
             File skin = file == null ? new File(skinsFolder, npc.getUniqueId().toString() + ".png")
                     : new File(skinsFolder, file);
-
             if (!isInDirectory(skin, skinsFolder) || !skin.getName().endsWith(".png"))
-                throw new CommandException(Messages.INVALID_SKIN_FILE, file);
+                throw new CommandException(Messages.INVALID_SKIN_FILE, skin.getName());
 
             try {
                 JSONObject data = (JSONObject) new JSONParser()
