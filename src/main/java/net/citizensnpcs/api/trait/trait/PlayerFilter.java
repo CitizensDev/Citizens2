@@ -1,12 +1,10 @@
 package net.citizensnpcs.api.trait.trait;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -60,7 +58,8 @@ public class PlayerFilter extends Trait {
 
                     break;
                 case ALLOWLIST:
-                    if ((players != null && !players.contains(p.getUniqueId())) || (groups != null && !PermissionUtil.inGroup(groups, p)))
+                    if ((players != null && !players.contains(p.getUniqueId()))
+                            || (groups != null && !PermissionUtil.inGroup(groups, p)))
                         return true;
 
                     break;
@@ -180,8 +179,8 @@ public class PlayerFilter extends Trait {
      * that should no longer view the NPC.
      */
     public void recalculate() {
-        Collection<NPC> npcs = children.stream().map(u -> CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(u))
-                .filter(n -> n != null).collect(Collectors.toList());
+        NPC[] npcs = children.stream().map(u -> CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(u))
+                .filter(n -> n != null).toArray(NPC[]::new);
         for (Iterator<UUID> itr = viewingPlayers.iterator(); itr.hasNext();) {
             UUID uuid = itr.next();
             Player player = Bukkit.getPlayer(uuid);
