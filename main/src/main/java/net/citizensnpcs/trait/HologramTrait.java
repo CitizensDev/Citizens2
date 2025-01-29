@@ -454,7 +454,7 @@ public class HologramTrait extends Trait {
         private boolean rendered;
 
         @Override
-        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+        protected NPC createNPC(NPC base, String name, Vector3d offset) {
             NPC npc = registry().createNPC(EntityType.AREA_EFFECT_CLOUD, name);
             rendered = false;
             return npc;
@@ -476,9 +476,9 @@ public class HologramTrait extends Trait {
 
     public static class ArmorstandRenderer extends SingleEntityHologramRenderer {
         @Override
-        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+        protected NPC createNPC(NPC base, String name, Vector3d offset) {
             NPC npc = registry().createNPC(EntityType.ARMOR_STAND, name);
-            npc.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
+            npc.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(base);
             return npc;
         }
 
@@ -491,9 +491,9 @@ public class HologramTrait extends Trait {
 
     public static class ArmorstandVehicleRenderer extends SingleEntityHologramRenderer {
         @Override
-        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+        protected NPC createNPC(NPC base, String name, Vector3d offset) {
             NPC npc = registry().createNPC(EntityType.ARMOR_STAND, name);
-            npc.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(npc);
+            npc.getOrAddTrait(ArmorStandTrait.class).setAsHelperEntityWithName(base);
             return npc;
         }
 
@@ -692,7 +692,7 @@ public class HologramTrait extends Trait {
         private Vector3d lastOffset;
 
         @Override
-        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+        protected NPC createNPC(NPC base, String name, Vector3d offset) {
             lastOffset = new Vector3d(offset);
             return registry().createNPC(EntityType.INTERACTION, name);
         }
@@ -715,7 +715,7 @@ public class HologramTrait extends Trait {
 
     public static class ItemDisplayRenderer extends SingleEntityHologramRenderer {
         @Override
-        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+        protected NPC createNPC(NPC base, String name, Vector3d offset) {
             Matcher itemMatcher = ITEM_MATCHER.matcher(name);
             itemMatcher.find();
             Material material = SpigotUtil.isUsing1_13API() ? Material.matchMaterial(itemMatcher.group(1), false)
@@ -758,7 +758,7 @@ public class HologramTrait extends Trait {
         private NPC itemNPC;
 
         @Override
-        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+        protected NPC createNPC(NPC base, String name, Vector3d offset) {
             NPC mount = registry().createNPC(EntityType.ARMOR_STAND, "");
             mount.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
             Matcher itemMatcher = ITEM_MATCHER.matcher(name);
@@ -783,7 +783,7 @@ public class HologramTrait extends Trait {
                     itemNPC.setItemProvider(() -> stack.clone());
                 }
             }
-            itemNPC.spawn(base.getLocation());
+            itemNPC.spawn(base.getStoredLocation());
             itemNPC.getOrAddTrait(MountTrait.class).setMountedOn(mount.getUniqueId());
             return mount;
         }
@@ -827,7 +827,7 @@ public class HologramTrait extends Trait {
         protected String text;
         private int viewRange = -1;
 
-        protected abstract NPC createNPC(Entity base, String text, Vector3d offset);
+        protected abstract NPC createNPC(NPC base, String text, Vector3d offset);
 
         @Override
         public void destroy() {
@@ -878,7 +878,7 @@ public class HologramTrait extends Trait {
         }
 
         protected void spawnHologram(NPC npc, Vector3d offset) {
-            hologram = createNPC(npc.getEntity(), Placeholders.replace(text, null, npc), offset);
+            hologram = createNPC(npc, Placeholders.replace(text, null, npc), offset);
             if (!hologram.hasTrait(ClickRedirectTrait.class)) {
                 hologram.addTrait(new ClickRedirectTrait(npc));
             }
@@ -933,7 +933,7 @@ public class HologramTrait extends Trait {
         }
 
         @Override
-        protected NPC createNPC(Entity base, String name, Vector3d offset) {
+        protected NPC createNPC(NPC base, String name, Vector3d offset) {
             NPC hologram = registry().createNPC(EntityType.TEXT_DISPLAY, "");
             hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));

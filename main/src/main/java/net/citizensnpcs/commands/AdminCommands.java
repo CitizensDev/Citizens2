@@ -32,6 +32,7 @@ public class AdminCommands {
         Messaging.send(sender, "     <yellow>-- <green>Author: fullwall");
         Messaging.send(sender, "     <yellow>-- <green><click:open_url:" + plugin.getDescription().getWebsite()
                 + "><hover:show_text:Citizens website including wiki><u>Website</hover></click> <click:open_url:https://discord.gg/Q6pZGSR><hover:show_text:Citizens Support Discord><u>Support</hover></click>");
+
     }
 
     @Command(

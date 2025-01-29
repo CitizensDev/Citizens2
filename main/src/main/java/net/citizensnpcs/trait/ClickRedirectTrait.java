@@ -17,32 +17,37 @@ import net.citizensnpcs.api.util.DataKey;
  */
 @TraitName("clickredirecttrait")
 public class ClickRedirectTrait extends Trait {
-    private NPC redirectNPC;
+    private NPC redirectTo;
 
     public ClickRedirectTrait() {
         super("clickredirecttrait");
     }
 
-    public ClickRedirectTrait(NPC npc) {
+    public ClickRedirectTrait(NPC redirectTo) {
         this();
-        redirectNPC = npc;
-        if (redirectNPC != null && redirectNPC.hasTrait(PlayerFilter.class)) {
-            redirectNPC.getOrAddTrait(PlayerFilter.class).addChildNPC(npc);
-        }
+        this.redirectTo = redirectTo;
     }
 
-    public NPC getRedirectNPC() {
-        return redirectNPC;
+    public NPC getRedirectToNPC() {
+        return redirectTo;
+    }
+
+    @Override
+    public void linkToNPC(NPC npc) {
+        super.linkToNPC(npc);
+        if (redirectTo != null && redirectTo.hasTrait(PlayerFilter.class)) {
+            redirectTo.getOrAddTrait(PlayerFilter.class).addChildNPC(npc);
+        }
     }
 
     @Override
     public void load(DataKey key) {
-        redirectNPC = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(UUID.fromString(key.getString("uuid")));
+        redirectTo = CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(UUID.fromString(key.getString("uuid")));
     }
 
     @EventHandler
     public void onTraitAdd(NPCAddTraitEvent event) {
-        if (event.getNPC() == redirectNPC && event.getTrait() instanceof PlayerFilter) {
+        if (event.getNPC() == redirectTo && event.getTrait() instanceof PlayerFilter) {
             ((PlayerFilter) event.getTrait()).addChildNPC(npc);
         }
     }
@@ -50,8 +55,8 @@ public class ClickRedirectTrait extends Trait {
     @Override
     public void save(DataKey key) {
         key.removeKey("uuid");
-        if (redirectNPC == null)
+        if (redirectTo == null)
             return;
-        key.setString("uuid", redirectNPC.getUniqueId().toString());
+        key.setString("uuid", redirectTo.getUniqueId().toString());
     }
 }

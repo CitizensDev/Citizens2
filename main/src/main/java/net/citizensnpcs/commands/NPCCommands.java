@@ -787,9 +787,9 @@ public class NPCCommands {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             event.getNPC().destroy();
-            String reason = "Couldn't create NPC.";
+            String reason = "Couldn't create NPC";
             if (!event.getCancelReason().isEmpty()) {
-                reason += " Reason: " + event.getCancelReason();
+                reason += ": [[" + event.getCancelReason();
             }
             throw new CommandException(reason);
         }
@@ -2871,7 +2871,7 @@ public class NPCCommands {
                 if (res != null && registry.isNPC(res.getHitEntity())) {
                     NPC hit = registry.getNPC(res.getHitEntity());
                     if (hit.hasTrait(ClickRedirectTrait.class)) {
-                        hit = hit.getTraitNullable(ClickRedirectTrait.class).getRedirectNPC();
+                        hit = hit.getTraitNullable(ClickRedirectTrait.class).getRedirectToNPC();
                     }
                     callback.run(hit);
                     return;
@@ -2883,7 +2883,7 @@ public class NPCCommands {
                     o2.getEntity().getLocation().distanceSquared(location)));
             for (NPC test : search) {
                 if (test.hasTrait(ClickRedirectTrait.class)) {
-                    test = test.getTraitNullable(ClickRedirectTrait.class).getRedirectNPC();
+                    test = test.getTraitNullable(ClickRedirectTrait.class).getRedirectToNPC();
                 }
                 callback.run(test);
                 break;

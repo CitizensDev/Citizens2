@@ -124,7 +124,7 @@ public class ScoreboardTrait extends Trait {
                 team.removeEntry(name);
             }
         };
-        if (reason == DespawnReason.REMOVAL) {
+        if (reason == DespawnReason.REMOVAL || reason == DespawnReason.RELOAD) {
             cleanup.run();
         } else {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), cleanup,

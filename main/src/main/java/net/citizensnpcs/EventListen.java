@@ -375,7 +375,7 @@ public class EventListen implements Listener {
             Player damager = (Player) damageEvent.getDamager();
 
             if (npc.hasTrait(ClickRedirectTrait.class)) {
-                npc = npc.getTraitNullable(ClickRedirectTrait.class).getRedirectNPC();
+                npc = npc.getTraitNullable(ClickRedirectTrait.class).getRedirectToNPC();
                 if (npc == null)
                     return;
             }
@@ -586,7 +586,7 @@ public class EventListen implements Listener {
         }
         ClickRedirectTrait crt = npc.getTraitNullable(ClickRedirectTrait.class);
         if (crt != null) {
-            npc = crt.getRedirectNPC();
+            npc = crt.getRedirectToNPC();
         }
         pf = npc.getTraitNullable(PlayerFilter.class);
         if (pf != null) {
@@ -648,7 +648,7 @@ public class EventListen implements Listener {
             return;
 
         ClickRedirectTrait crt = npc.getTraitNullable(ClickRedirectTrait.class);
-        if (crt != null && (npc = crt.getRedirectNPC()) == null)
+        if (crt != null && (npc = crt.getRedirectToNPC()) == null)
             return;
 
         Player player = event.getPlayer();
