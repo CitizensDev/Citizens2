@@ -69,7 +69,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.command.Arg;
-import net.citizensnpcs.api.command.Arg.CompletionsProvider.OptionalEnumCompletions;
+import net.citizensnpcs.api.command.Arg.CompletionsProvider.OptionalKeyedCompletions;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandMessages;
@@ -3799,17 +3799,9 @@ public class NPCCommands {
                 trait.isTamed(), trait.getCollarColor().name());
     }
 
-    public static class OptionalAttributeCompletions implements Arg.CompletionsProvider {
-        @Override
-        public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
-            return Arrays.stream(Attribute.values()).map(attr -> attr.getKey().toString()).collect(Collectors.toList());
-        }
-    }
-
-    public static class OptionalBoatTypeCompletions extends OptionalEnumCompletions {
-        @Override
-        public String getEnumClassName() {
-            return "org.bukkit.entity.Boat.Type";
+    public static class OptionalAttributeCompletions extends OptionalKeyedCompletions {
+        public OptionalAttributeCompletions() {
+            super("org.bukkit.attribute.Attribute");
         }
     }
 

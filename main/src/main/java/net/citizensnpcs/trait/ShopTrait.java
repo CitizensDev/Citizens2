@@ -679,7 +679,7 @@ public class ShopTrait extends Trait {
                 return;
 
             InputMenus.runChatStringSetter(ctx.getMenu(), event,
-                    "Enter the new item description, currently:<br>[[" + (modified.display.getItemMeta().hasLore()
+                    "Type the new item description, currently:<br>[[" + (modified.display.getItemMeta().hasLore()
                             ? Joiner.on("<br>").skipNulls().join(modified.display.getItemMeta().getLore())
                             : "Unset"),
                     description -> {
