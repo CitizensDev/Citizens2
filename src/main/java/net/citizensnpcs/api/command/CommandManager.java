@@ -30,6 +30,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
@@ -784,7 +785,7 @@ public class CommandManager implements TabCompleter {
                 return Arrays.asList(completions);
             if (SpigotUtil.isRegistryKeyed(paramType)) {
                 return Bukkit.getRegistry((Class<? extends Keyed>) paramType).stream().map(Keyed::getKey)
-                        .map(Object::toString).collect(Collectors.toList());
+                        .map(NamespacedKey::getKey).collect(Collectors.toList());
             } else if (Enum.class.isAssignableFrom(paramType)) {
                 Enum[] constants = (Enum[]) paramType.getEnumConstants();
                 return Lists.transform(Arrays.asList(constants), Enum::name);

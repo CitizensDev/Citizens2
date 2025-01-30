@@ -7,13 +7,17 @@ import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.command.CommandSender;
 
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.PARAMETER })
@@ -38,17 +42,25 @@ public @interface Arg {
             }
         }
 
-        public static abstract class OptionalEnumCompletions implements CompletionsProvider {
+        public static class OptionalKeyedCompletions implements CompletionsProvider {
             private Collection<String> completions = Collections.emptyList();
 
             @SuppressWarnings("unchecked")
-            public OptionalEnumCompletions() {
+            public OptionalKeyedCompletions(String className) {
                 try {
-                    Class<? extends Enum<?>> clazz = (Class<? extends Enum<?>>) Class.forName(getEnumClassName());
-                    if (clazz.getEnumConstants() != null) {
-                        completions = Lists.transform(Arrays.asList(clazz.getEnumConstants()), Enum::name);
+                    Class<?> clazz = Class.forName(className);
+                    if (SpigotUtil.isRegistryKeyed(clazz)) {
+                        Class<? extends Keyed> cast = (Class<? extends Keyed>) clazz;
+                        completions = Bukkit.getRegistry(cast).stream().map(k -> k.getKey().getKey())
+                                .collect(Collectors.toList());
+                    } else {
+                        Class<? extends Enum<?>> eclazz = (Class<? extends Enum<?>>) clazz;
+                        if (eclazz.getEnumConstants() != null) {
+                            completions = Lists.transform(Arrays.asList(eclazz.getEnumConstants()), Enum::name);
+                        }
                     }
                 } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -56,8 +68,6 @@ public @interface Arg {
             public Collection<String> getCompletions(CommandContext args, CommandSender sender, NPC npc) {
                 return completions;
             }
-
-            public abstract String getEnumClassName();
         }
     }
 
