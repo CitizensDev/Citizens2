@@ -60,7 +60,6 @@ public @interface Arg {
                         }
                     }
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
                 }
             }
 
