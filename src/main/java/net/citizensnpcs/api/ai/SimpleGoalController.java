@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
-import net.citizensnpcs.api.ai.tree.ForwardingBehaviorGoalAdapter;
 
 /**
  * A simple {@link GoalController} implementation that stores goals as a {@link ArrayList}. It works with both
@@ -21,7 +20,7 @@ public class SimpleGoalController implements GoalController {
     private int executingPriority = -1;
     private Goal executingRootGoal;
     private boolean hasPrioritisableGoal;
-    private volatile boolean paused;
+    private boolean paused;
     private final List<GoalEntry> possibleGoals = Lists.newArrayList();
     private final GoalSelector selector = new SimpleGoalSelector();
 
@@ -54,31 +53,7 @@ public class SimpleGoalController implements GoalController {
     @Override
     public void addPrioritisableGoal(final PrioritisableGoal goal) {
         Objects.requireNonNull(goal, "goal cannot be null");
-        possibleGoals.add(new GoalEntry() {
-            @Override
-            public int compareTo(GoalEntry o) {
-                int priority = getPriority();
-                return o.getPriority() > priority ? 1 : o.getPriority() < priority ? -1 : 0;
-            }
-
-            @Override
-            public Behavior getBehavior() {
-                return goal instanceof Behavior ? (Behavior) goal
-                        : goal instanceof ForwardingBehaviorGoalAdapter
-                                ? ((ForwardingBehaviorGoalAdapter) goal).getWrapped()
-                                : null;
-            }
-
-            @Override
-            public Goal getGoal() {
-                return goal;
-            }
-
-            @Override
-            public int getPriority() {
-                return goal.getPriority();
-            }
-        });
+        possibleGoals.add(new SimpleGoalEntry(goal, () -> goal.getPriority()));
         hasPrioritisableGoal = true;
     }
 
@@ -155,24 +130,21 @@ public class SimpleGoalController implements GoalController {
         Objects.requireNonNull(goal, "goal cannot be null");
         for (int j = 0; j < possibleGoals.size(); ++j) {
             Goal test = possibleGoals.get(j).getGoal();
-            if (!test.equals(goal)) {
+            if (!test.equals(goal))
                 continue;
-            }
+
             possibleGoals.remove(j--);
             if (test == executingRootGoal) {
                 finishCurrentGoalExecution();
             }
         }
         if (goal instanceof PrioritisableGoal) {
-            boolean foundOther = false;
+            hasPrioritisableGoal = false;
             for (GoalEntry test : possibleGoals) {
                 if (test.getGoal() instanceof PrioritisableGoal) {
-                    foundOther = true;
+                    hasPrioritisableGoal = true;
                     break;
                 }
-            }
-            if (!foundOther) {
-                hasPrioritisableGoal = false;
             }
         }
     }
@@ -212,38 +184,32 @@ public class SimpleGoalController implements GoalController {
         if (hasPrioritisableGoal) {
             Collections.sort(possibleGoals);
         }
-        for (int i = possibleGoals.size() - 1; i >= 0; --i) {
-            GoalEntry entry = possibleGoals.get(i);
+        for (int hi = possibleGoals.size() - 1; hi >= 0; --hi) {
+            GoalEntry entry = possibleGoals.get(hi);
             if (searchPriority > entry.getPriority())
                 return;
-            if (entry.getGoal() == executingRootGoal || !entry.getGoal().shouldExecute(selector)) {
+
+            if (entry.getGoal() == executingRootGoal || !entry.getGoal().shouldExecute(selector))
                 continue;
-            }
-            if (i == 0) {
+
+            if (hi == 0) {
                 setupExecution(entry);
                 return;
             }
-            for (int j = i - 1; j >= 0; --j) {
-                GoalEntry next = possibleGoals.get(j);
-                boolean unequalPriorities = next.getPriority() != entry.getPriority();
-                if (unequalPriorities || j == 0) {
-                    if (unequalPriorities) {
-                        j++; // we want the previous entry where entry.priority
-                    }
-                    // == next.priority
-                    int ran = (int) Math.floor(Math.random() * (i - j + 1) + j);
-                    if (ran >= possibleGoals.size() || ran < 0) {
-                        setupExecution(entry);
-                        break;
-                    }
-                    GoalEntry selected = possibleGoals.get(ran);
-                    if (selected.getPriority() != entry.getPriority()) {
-                        setupExecution(entry);
-                        break;
-                    }
-                    setupExecution(selected);
-                    break;
+            // select the goal if it has a higher priority than other goals. need to check for goals with equal priority
+            // and pick one randomly if so
+            for (int lo = hi - 1; lo >= 0; --lo) {
+                GoalEntry next = possibleGoals.get(lo);
+                if (next.getPriority() == entry.getPriority() && lo != 0)
+                    continue;
+
+                if (next.getPriority() != entry.getPriority()) {
+                    lo++;
                 }
+                int randomSamePriorityIndex = (int) (Math.random() * ((hi + 1) - lo) + lo);
+                setupExecution(possibleGoals.get(randomSamePriorityIndex));
+                break;
+
             }
             return;
         }

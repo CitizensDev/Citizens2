@@ -19,11 +19,28 @@ public class SimpleGoalControllerTest {
     }
 
     @Test
+    public void priority() {
+        ImmediateFinish one = new ImmediateFinish();
+        ImmediateFinish two = new ImmediateFinish();
+        ImmediateFinish three = new ImmediateFinish();
+        controller.addGoal(one, 1);
+        controller.addGoal(two, 2);
+        controller.addGoal(three, 3);
+
+        controller.run();
+        assertThat(one.counter, is(0));
+        assertThat(two.counter, is(0));
+        assertThat(three.counter, not(0));
+    }
+
+    @Test
     public void random() {
         ImmediateFinish one = new ImmediateFinish();
         ImmediateFinish two = new ImmediateFinish();
-        controller.addGoal(one, 1);
-        controller.addGoal(two, 1);
+        controller.addGoal(new ImmediateFinish(), 2);
+        controller.addGoal(new ImmediateFinish(), 1);
+        controller.addGoal(one, 2);
+        controller.addGoal(two, 2);
 
         for (int i = 0; i < 100; i++) {
             controller.run();

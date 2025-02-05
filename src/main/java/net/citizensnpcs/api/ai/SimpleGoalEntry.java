@@ -1,23 +1,28 @@
 package net.citizensnpcs.api.ai;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import net.citizensnpcs.api.ai.GoalController.GoalEntry;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.ForwardingBehaviorGoalAdapter;
 
 public class SimpleGoalEntry implements GoalEntry {
-    final Goal goal;
-    final int priority;
+    private final Goal goal;
+    private final Supplier<Integer> priority;
 
     public SimpleGoalEntry(Goal goal, int priority) {
+        this(goal, () -> priority);
+    }
+
+    public SimpleGoalEntry(Goal goal, Supplier<Integer> priority) {
         this.goal = goal;
         this.priority = priority;
     }
 
     @Override
     public int compareTo(GoalEntry o) {
-        return o.getPriority() > priority ? 1 : o.getPriority() < priority ? -1 : 0;
+        return Integer.compare(getPriority(), o.getPriority());
     }
 
     @Override
@@ -46,12 +51,12 @@ public class SimpleGoalEntry implements GoalEntry {
 
     @Override
     public int getPriority() {
-        return priority;
+        return priority.get();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
-        return prime * (prime + (goal == null ? 0 : goal.hashCode())) + priority;
+        return prime * (prime + (goal == null ? 0 : goal.hashCode())) + priority.get();
     }
 }
