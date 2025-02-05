@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -23,7 +24,6 @@ import com.google.common.collect.Lists;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.CitizensDisableEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 
@@ -118,8 +118,10 @@ public class Placeholders implements Listener {
     }
 
     @EventHandler
-    private static void onCitizensDisable(CitizensDisableEvent event) {
-        PLACEHOLDERS.clear();
+    private static void onCitizensDisable(PluginDisableEvent event) {
+        if (event.getPlugin().getName().equals("Citizens")) {
+            PLACEHOLDERS.clear();
+        }
     }
 
     public static void registerNPCPlaceholder(Pattern regex, PlaceholderFunction func) {
