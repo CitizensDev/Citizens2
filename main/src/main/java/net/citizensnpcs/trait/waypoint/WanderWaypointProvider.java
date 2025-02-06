@@ -274,7 +274,7 @@ public class WanderWaypointProvider implements WaypointProvider {
         }
         Iterator<GoalEntry> itr = npc.getDefaultGoalController().iterator();
         while (itr.hasNext()) {
-            if (itr.next() instanceof WanderGoal) {
+            if (itr.next().getGoal() instanceof WanderGoal) {
                 itr.remove();
             }
         }
