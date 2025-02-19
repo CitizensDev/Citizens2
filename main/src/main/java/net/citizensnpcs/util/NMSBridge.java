@@ -282,11 +282,10 @@ public interface NMSBridge {
     public void setSitting(Tameable tameable, boolean sitting);
 
     public default void setSneaking(Entity entity, boolean sneaking) {
-        if (entity instanceof NPCHolder) {
-            ((NPCHolder) entity).getNPC().getOrAddTrait(SneakTrait.class).setSneaking(sneaking);
-        } else if (entity instanceof Player) {
+        if (entity instanceof Player) {
             ((Player) entity).setSneaking(sneaking);
         }
+        // Removed SneakTrait call because it causes StackOverflowError
     }
 
     public default void setSnifferState(Entity entity, SnifferState state) {
