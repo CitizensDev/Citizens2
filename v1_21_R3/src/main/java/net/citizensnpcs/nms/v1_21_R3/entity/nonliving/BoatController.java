@@ -10,6 +10,7 @@ import org.bukkit.craftbukkit.v1_21_R3.entity.CraftBoat;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftEntity;
 import org.bukkit.entity.Player;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.nms.v1_21_R3.util.ForwardingNPCHolder;
@@ -22,6 +23,7 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
@@ -295,27 +297,32 @@ public class BoatController extends AbstractEntityController {
 
         @Override
         public void tick() {
-            if (npc != null) {
-                baseTick();
-                if (getControllingPassenger() instanceof NPCHolder
-                        && ((NPCHolder) getControllingPassenger()).getNPC().getNavigator().isNavigating()) {
-                    setDeltaMovement(getControllingPassenger().getDeltaMovement().multiply(20, 0, 20));
-                }
-                npc.update();
-                if (getHurtTime() > 0) {
-                    setHurtTime(getHurtTime() - 1);
-                }
-                if (getDamage() > 0.0F) {
-                    setDamage(getDamage() - 1.0F);
-                }
-                lastStatus = status;
-                status = getStatus();
-                floatBoat();
-                move(MoverType.SELF, getDeltaMovement());
-                applyEffectsFromBlocks();
-            } else {
+            if (npc == null) {
                 super.tick();
+                return;
             }
+            baseTick();
+            if (entityData.isDirty()) {
+                for (Player p : CitizensAPI.getLocationLookup().getNearbyPlayers(getBukkitEntity().getLocation(), 64)) {
+                    NMSImpl.sendPacket(p, new ClientboundSetEntityDataPacket(this.getId(), entityData.packDirty()));
+                }
+            }
+            if (getControllingPassenger() instanceof NPCHolder
+                    && ((NPCHolder) getControllingPassenger()).getNPC().getNavigator().isNavigating()) {
+                setDeltaMovement(getControllingPassenger().getDeltaMovement().multiply(20, 0, 20));
+            }
+            npc.update();
+            if (getHurtTime() > 0) {
+                setHurtTime(getHurtTime() - 1);
+            }
+            if (getDamage() > 0.0F) {
+                setDamage(getDamage() - 1.0F);
+            }
+            lastStatus = status;
+            status = getStatus();
+            floatBoat();
+            move(MoverType.SELF, getDeltaMovement());
+            applyEffectsFromBlocks();
         }
 
         @Override

@@ -2627,6 +2627,11 @@ public class NMSImpl implements NMSBridge {
 
     public static void setSize(Entity entity, boolean justCreated) {
         try {
+            if (entity instanceof LivingEntity) {
+                AttributeMap map = ((LivingEntity) entity).getAttributes();
+                if (map.hasAttribute(Attributes.SCALE) && Math.abs(map.getValue(Attributes.SCALE) - 1) > 0.01)
+                    return;
+            }
             EntityDimensions entitysize = (EntityDimensions) SIZE_FIELD_GETTER.invoke(entity);
             Pose entitypose = entity.getPose();
             EntityDimensions entitysize1 = entity.getDimensions(entitypose);
