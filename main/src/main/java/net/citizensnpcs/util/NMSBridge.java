@@ -41,10 +41,8 @@ import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
-import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.EntityPoseTrait.EntityPose;
 import net.citizensnpcs.trait.MirrorTrait;
-import net.citizensnpcs.trait.SneakTrait;
 import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
@@ -282,9 +280,7 @@ public interface NMSBridge {
     public void setSitting(Tameable tameable, boolean sitting);
 
     public default void setSneaking(Entity entity, boolean sneaking) {
-        if (entity instanceof NPCHolder) {
-            ((NPCHolder) entity).getNPC().getOrAddTrait(SneakTrait.class).setSneaking(sneaking);
-        } else if (entity instanceof Player) {
+        if (entity instanceof Player) {
             ((Player) entity).setSneaking(sneaking);
         }
     }
