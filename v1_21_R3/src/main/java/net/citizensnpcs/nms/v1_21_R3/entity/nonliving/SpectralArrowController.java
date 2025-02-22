@@ -34,8 +34,8 @@ public class SpectralArrowController extends MobEntityController {
     }
 
     @Override
-    public Arrow getBukkitEntity() {
-        return (Arrow) super.getBukkitEntity();
+    public org.bukkit.entity.SpectralArrow getBukkitEntity() {
+        return (org.bukkit.entity.SpectralArrow) super.getBukkitEntity();
     }
 
     public static class EntitySpectralArrowNPC extends SpectralArrow implements NPCHolder {
