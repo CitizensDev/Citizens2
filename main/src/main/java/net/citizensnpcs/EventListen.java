@@ -531,7 +531,9 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onNPCLinkToPlayer(NPCLinkToPlayerEvent event) {
         NPC npc = event.getNPC();
-        NMS.markPoseDirty(npc.getEntity());
+        if (npc.isSpawned()) {
+            NMS.markPoseDirty(npc.getEntity());
+        }
         if (npc.getEntity() instanceof SkinnableEntity) {
             SkinnableEntity skinnable = (SkinnableEntity) npc.getEntity();
             if (skinnable.getSkinTracker().getSkin() != null) {
