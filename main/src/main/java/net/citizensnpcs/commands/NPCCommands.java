@@ -539,7 +539,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command (add [command] | remove [id|all] | permissions [permissions] (duration) | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command (add [command] | execute [player UUID] [hand] | remove [id|all] | permissions [permissions] (duration) | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
             desc = "",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -554,8 +554,8 @@ public class NPCCommands {
             @Flag(value = "delay", defValue = "0") Duration delay,
             @Arg(
                     value = 1,
-                    completions = { "add", "remove", "permissions", "persistsequence", "sequential", "cycle", "random",
-                            "forgetplayer", "hideerrors", "errormsg", "clearerror", "expcost", "itemcost",
+                    completions = { "add", "execute", "remove", "permissions", "persistsequence", "sequential", "cycle",
+                            "random", "forgetplayer", "hideerrors", "errormsg", "clearerror", "expcost", "itemcost",
                             "cost" }) String action)
             throws CommandException {
         CommandTrait commands = npc.getOrAddTrait(CommandTrait.class);
@@ -590,6 +590,25 @@ public class NPCCommands {
             } catch (NumberFormatException ex) {
                 throw new CommandException(CommandMessages.INVALID_NUMBER);
             }
+        } else if (action.equalsIgnoreCase("execute")) {
+            if (args.argsLength() < 4)
+                throw new CommandUsageException();
+            Player player = null;
+            try {
+                UUID uuid = UUID.fromString(args.getString(2));
+                player = Bukkit.getPlayer(uuid);
+            } catch (IllegalArgumentException ex) {
+                player = Bukkit.getPlayer(args.getString(2));
+            }
+            if (player == null)
+                throw new CommandException(Messages.NPC_COMMAND_PLAYER_NOT_VALID, args.getString(2));
+
+            CommandTrait.Hand hand = Util.matchEnum(CommandTrait.Hand.values(), args.getString(3));
+            if (hand == null)
+                throw new CommandException(Messages.NPC_COMMAND_INVALID_HAND,
+                        Util.listValuesPretty(CommandTrait.Hand.values()));
+
+            commands.dispatch(player, hand);
         } else if (action.equalsIgnoreCase("forgetplayer")) {
             if (args.argsLength() < 3) {
                 commands.clearPlayerHistory(null);
