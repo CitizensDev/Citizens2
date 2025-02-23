@@ -33,6 +33,8 @@ public class PlayerFilter extends Trait {
     @Persist
     private Mode mode = Mode.DENYLIST;
     @Persist
+    private Set<String> permissions = null;
+    @Persist
     private Set<UUID> players = null;
     private BiConsumer<Player, Entity> viewFunction;
     private final Set<UUID> viewingPlayers = Sets.newHashSet();
@@ -53,13 +55,15 @@ public class PlayerFilter extends Trait {
             switch (mode) {
                 case DENYLIST:
                     if (players != null && players.contains(p.getUniqueId())
-                            || groups != null && PermissionUtil.inGroup(groups, p) == true)
+                            || groups != null && PermissionUtil.inGroup(groups, p) == true
+                            || permissions != null && PermissionUtil.hasPermission(permissions, p))
                         return true;
 
                     break;
                 case ALLOWLIST:
-                    if ((players != null && !players.contains(p.getUniqueId()))
-                            || (groups != null && !PermissionUtil.inGroup(groups, p)))
+                    if (players != null && !players.contains(p.getUniqueId())
+                            || groups != null && !PermissionUtil.inGroup(groups, p)
+                            || permissions != null && !PermissionUtil.hasPermission(permissions, p))
                         return true;
 
                     break;
@@ -75,7 +79,7 @@ public class PlayerFilter extends Trait {
     }
 
     /**
-     * Hides the NPC from the given permissions group
+     * Manages NPC hiding using the given permissions group
      */
     public void addGroup(String group) {
         if (groups == null) {
@@ -86,7 +90,18 @@ public class PlayerFilter extends Trait {
     }
 
     /**
-     * Hides the NPC from the given Player UUID.
+     * Manages NPC hiding using the given permission
+     */
+    public void addPermission(String permission) {
+        if (permissions == null) {
+            permissions = Sets.newHashSet();
+        }
+        permissions.add(permission);
+        recalculate();
+    }
+
+    /**
+     * Manages NPC hiding from the provided UUID
      *
      * @param uuid
      */
@@ -113,6 +128,7 @@ public class PlayerFilter extends Trait {
     public void clear() {
         players = null;
         groups = null;
+        permissions = null;
     }
 
     public double getApplyRange() {
@@ -128,6 +144,13 @@ public class PlayerFilter extends Trait {
 
     private Set<UUID> getInverseSet() {
         return mode == Mode.ALLOWLIST ? viewingPlayers : hiddenPlayers;
+    }
+
+    /**
+     * Implementation detail: may change in the future.
+     */
+    public Set<String> getPermissions() {
+        return permissions;
     }
 
     /**
@@ -219,6 +242,16 @@ public class PlayerFilter extends Trait {
     public void removeGroup(String group) {
         if (groups != null) {
             groups.remove(group);
+        }
+        recalculate();
+    }
+
+    /**
+     * Unhides the given permission
+     */
+    public void removePermission(String permission) {
+        if (permissions != null) {
+            permissions.remove(permission);
         }
         recalculate();
     }
