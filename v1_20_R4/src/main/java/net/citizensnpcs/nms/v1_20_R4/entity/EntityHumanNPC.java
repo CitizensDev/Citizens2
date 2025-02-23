@@ -125,6 +125,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             super.doTick();
             return;
         }
+        NMSImpl.callNPCMoveEvent(this);
         super.baseTick();
         boolean navigating = npc.getNavigator().isNavigating() || ai.getMoveControl().hasWanted();
         if (!navigating && getBukkitEntity() != null
@@ -150,7 +151,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             onGround = false;
         }
         pushEntities();
-        NMSImpl.callNPCMoveEvent(this);
         if (npc.useMinecraftAI()) {
             foodData.tick(this);
         }

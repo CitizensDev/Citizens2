@@ -333,6 +333,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             super.playerTick();
             return;
         }
+        NMSImpl.callNPCMoveEvent(this);
         cA();
         boolean navigating = npc.getNavigator().isNavigating();
         if (!navigating && getBukkitEntity() != null
@@ -352,7 +353,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         }
         updateAI();
         ct();
-        NMSImpl.callNPCMoveEvent(this);
         if (npc.useMinecraftAI()) {
             foodData.a(this);
         }
