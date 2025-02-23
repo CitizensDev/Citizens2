@@ -312,6 +312,7 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
             super.playerTick();
             return;
         }
+        NMSImpl.callNPCMoveEvent(this);
         entityBaseTick();
         boolean navigating = npc.getNavigator().isNavigating() || ai.getMoveControl().b();
         if (!navigating && getBukkitEntity() != null
@@ -333,7 +334,6 @@ public class EntityHumanNPC extends EntityPlayer implements NPCHolder, Skinnable
         ai.getMoveControl().a();
         ai.getJumpControl().b();
         collideNearby();
-        NMSImpl.callNPCMoveEvent(this);
     }
 
     @Override
