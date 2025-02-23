@@ -47,6 +47,26 @@ public class NPCMoveEvent extends Event implements Cancellable {
         this.to = to;
     }
 
+    public boolean hasChangedPosition() {
+        return hasExplicitlyChangedPosition() || !from.getWorld().equals(to.getWorld());
+    }
+
+    public boolean hasExplicitlyChangedPosition() {
+        return from.getX() != to.getX() || from.getY() != to.getY() || from.getZ() != to.getZ();
+    }
+
+    public boolean hasChangedBlock() {
+        return hasExplicitlyChangedBlock() || !from.getWorld().equals(to.getWorld());
+    }
+
+    public boolean hasExplicitlyChangedBlock() {
+        return from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY() || from.getBlockZ() != to.getBlockZ();
+    }
+
+    public boolean hasChangedRotation() {
+        return from.getPitch() != to.getPitch() || from.getYaw() != to.getYaw();
+    }
+
     @NotNull
     @Override
     public HandlerList getHandlers() {
