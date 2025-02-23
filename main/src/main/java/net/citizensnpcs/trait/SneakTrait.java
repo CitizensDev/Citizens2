@@ -26,9 +26,7 @@ public class SneakTrait extends Trait {
 
     @Override
     public void onAttach() {
-        if (npc.isSpawned()) {
-            sneaking = NMS.isSneaking(npc.getEntity());
-        }
+        apply();
     }
 
     @Override

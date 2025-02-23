@@ -364,6 +364,8 @@ public class Messages {
     public static final String PLAYERFILTER_EMPTY_SET = "citizens.commands.npc.playerfilter.emptied";
     public static final String PLAYERFILTER_GROUP_ADDED = "citizens.commands.npc.playerfilter.group-added";
     public static final String PLAYERFILTER_GROUP_REMOVED = "citizens.commands.npc.playerfilter.group-removed";
+    public static final String PLAYERFILTER_PERMISSION_ADDED = "citizens.commands.npc.playerfilter.permission-added";
+    public static final String PLAYERFILTER_PERMISSION_REMOVED = "citizens.commands.npc.playerfilter.permission-removed";
     public static final String PLAYERFILTER_PLAYER_ADDED = "citizens.commands.npc.playerfilter.added";
     public static final String PLAYERFILTER_PLAYER_REMOVED = "citizens.commands.npc.playerfilter.removed";
     public static final String POLAR_BEAR_REARING = "citizens.commands.npc.polarbear.rearing-set";

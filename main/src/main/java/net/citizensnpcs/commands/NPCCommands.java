@@ -2434,7 +2434,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "playerfilter -a(llowlist) -e(mpty) -d(enylist) --add [uuid] --remove [uuid] --addgroup [group] --removegroup [group] -c(lear) --applywithin [blocks range]",
+            usage = "playerfilter -a(llowlist) -e(mpty) -d(enylist) --add [uuid] --remove [uuid] --addpermission [permission] --removepermission [permission] --addgroup [group] --removegroup [group] -c(lear) --applywithin [blocks range]",
             desc = "",
             modifiers = { "playerfilter" },
             min = 1,
@@ -2443,6 +2443,7 @@ public class NPCCommands {
             permission = "citizens.npc.playerfilter")
     public void playerfilter(CommandContext args, CommandSender sender, NPC npc, @Flag("add") UUID add,
             @Flag("remove") UUID remove, @Flag("removegroup") String removegroup, @Flag("addgroup") String addgroup,
+            @Flag("addpermission") String addpermission, @Flag("removepermission") String removepermission,
             @Flag("applywithin") Double applyRange) {
         PlayerFilter trait = npc.getOrAddTrait(PlayerFilter.class);
         if (add != null) {
@@ -2460,6 +2461,14 @@ public class NPCCommands {
         if (removegroup != null) {
             trait.removeGroup(removegroup);
             Messaging.sendTr(sender, Messages.PLAYERFILTER_GROUP_REMOVED, removegroup, npc.getName());
+        }
+        if (addpermission != null) {
+            trait.addPermission(addpermission);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_PERMISSION_ADDED, addpermission, npc.getName());
+        }
+        if (removepermission != null) {
+            trait.removePermission(removepermission);
+            Messaging.sendTr(sender, Messages.PLAYERFILTER_PERMISSION_REMOVED, removepermission, npc.getName());
         }
         if (applyRange != null) {
             trait.setApplyRange(applyRange);

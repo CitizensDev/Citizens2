@@ -36,7 +36,7 @@ import net.citizensnpcs.api.LocationLookup;
 import net.citizensnpcs.api.NMSHelper;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.command.CommandManager;
-import net.citizensnpcs.api.command.Injector; 
+import net.citizensnpcs.api.command.Injector;
 import net.citizensnpcs.api.event.CitizensEnableEvent;
 import net.citizensnpcs.api.event.CitizensPreReloadEvent;
 import net.citizensnpcs.api.event.CitizensReloadEvent;
