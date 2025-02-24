@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -29,6 +30,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -262,6 +264,10 @@ public class CommandContext {
             base = ((Player) sender).getLocation();
         } else if (sender instanceof BlockCommandSender) {
             base = ((BlockCommandSender) sender).getBlock().getLocation();
+        }
+        if (hasValueFlag("entitylocation")) {
+            Entity entity = Bukkit.getEntity(UUID.fromString(getFlag("entitylocation")));
+            return location = entity.getLocation();
         }
         if (hasValueFlag("location"))
             return location = parseLocation(base, getFlag("location"));
