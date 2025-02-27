@@ -315,6 +315,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public void onEnable() {
         PhTreeHelper.enablePooling(false);
+        PhTreeHelper.ARRAY_POOLING_POOL_SIZE = 0;
+        PhTreeHelper.ARRAY_POOLING_MAX_ARRAY_SIZE = 0;
         PhTreeHelper.MAX_OBJECT_POOL_SIZE = 0;
 
         CitizensAPI.setImplementation(this);
