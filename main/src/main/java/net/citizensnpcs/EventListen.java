@@ -107,6 +107,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
@@ -285,14 +286,16 @@ public class EventListen implements Listener {
                 new double[] { (event.getChunk().getX() << 4) - 0.5, 0, (event.getChunk().getZ() << 4) - 0.5 },
                 new double[] { (event.getChunk().getX() + 1 << 4) + 0.5, 256,
                         (event.getChunk().getZ() + 1 << 4) + 0.5 }));
-        for (Entity entity : event.getChunk().getEntities()) {
-            NPC npc = plugin.getNPCRegistry().getNPC(entity);
-            // XXX npc#isSpawned() checks valid status which is now inconsistent on chunk unload
-            // between different server software so check for npc.getEntity() == null instead.
-            if (npc == null || npc.getEntity() == null || toDespawn.contains(npc))
-                continue;
+        if (SpigotUtil.getVersion()[1] < 21) {
+            for (Entity entity : event.getChunk().getEntities()) {
+                NPC npc = plugin.getNPCRegistry().getNPC(entity);
+                // XXX npc#isSpawned() checks valid status which is now inconsistent on chunk unload
+                // between different server software so check for npc.getEntity() == null instead.
+                if (npc == null || npc.getEntity() == null || toDespawn.contains(npc))
+                    continue;
 
-            toDespawn.add(npc);
+                toDespawn.add(npc);
+            }
         }
         if (toDespawn.isEmpty())
             return;
