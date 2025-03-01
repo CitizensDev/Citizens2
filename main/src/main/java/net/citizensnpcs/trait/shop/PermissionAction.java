@@ -150,6 +150,11 @@ public class PermissionAction extends NPCShopAction {
         private Boolean supported;
 
         @Override
+        public boolean canUse(HumanEntity entity) {
+            return entity.hasPermission("citizens.npc.shop.editor.actions.edit-permission");
+        }
+
+        @Override
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
             return new PermissionActionEditor(previous == null ? new PermissionAction() : (PermissionAction) previous,
                     callback);

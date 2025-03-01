@@ -169,6 +169,7 @@ permissions:
   citizens.templates.list: {default:op}
   citizens.trait.help: {default:op}
   citizens.npc.trait: {default:op}
+  citizens.npc.trait.clearsaves: {default:op}
   citizens.waypoints.help: {default:op}
   citizens.waypoints.add: {default:op}
   citizens.waypoints.disableteleport: {default:op}
@@ -585,6 +586,18 @@ permissions:
   citizens.npc.command.ignoreerrors.itemcost: {default:false}
   citizens.npc.command.ignoreerrors.cooldown: {default:false}
   citizens.npc.command.ignoreerrors.globalcooldown: {default:false}
+  citizens.npc.shop.editor.set-shop-type: {default:op}
+  citizens.npc.shop.editor.show-on-right-click: {default:op}
+  citizens.npc.shop.editor.actions.edit-item: {default:op}
+  citizens.npc.shop.editor.actions.edit-open-shop: {default:op}
+  citizens.npc.shop.editor.actions.edit-money: {default:op}
+  citizens.npc.shop.editor.actions.edit-exp: {default:op}
+  citizens.npc.shop.editor.actions.edit-command: {default:op}
+  citizens.npc.trait.*:
+    default: op
+    children:
+      citizens.npc.trait: true
+      citizens.npc.trait.clearsaves: true
   citizens.waypoints.*:
     default: op
     children:
@@ -1127,6 +1140,13 @@ permissions:
       citizens.npc.setequipment: true
       citizens.npc.sheep: true
       citizens.npc.shop: true
+      citizens.npc.shop.editor.actions.edit-command: true
+      citizens.npc.shop.editor.actions.edit-exp: true
+      citizens.npc.shop.editor.actions.edit-item: true
+      citizens.npc.shop.editor.actions.edit-money: true
+      citizens.npc.shop.editor.actions.edit-open-shop: true
+      citizens.npc.shop.editor.set-shop-type: true
+      citizens.npc.shop.editor.show-on-right-click: true
       citizens.npc.shulker: true
       citizens.npc.sitting: true
       citizens.npc.skin: true
@@ -1149,6 +1169,7 @@ permissions:
       citizens.npc.tpto: true
       citizens.npc.trackingrange: true
       citizens.npc.trait: true
+      citizens.npc.trait.clearsaves: true
       citizens.npc.tropicalfish: true
       citizens.npc.type: true
       citizens.npc.undo: true
@@ -1674,6 +1695,13 @@ permissions:
       citizens.npc.setequipment: true
       citizens.npc.sheep: true
       citizens.npc.shop: true
+      citizens.npc.shop.editor.actions.edit-command: true
+      citizens.npc.shop.editor.actions.edit-exp: true
+      citizens.npc.shop.editor.actions.edit-item: true
+      citizens.npc.shop.editor.actions.edit-money: true
+      citizens.npc.shop.editor.actions.edit-open-shop: true
+      citizens.npc.shop.editor.set-shop-type: true
+      citizens.npc.shop.editor.show-on-right-click: true
       citizens.npc.shulker: true
       citizens.npc.sitting: true
       citizens.npc.skin: true
@@ -1696,6 +1724,7 @@ permissions:
       citizens.npc.tpto: true
       citizens.npc.trackingrange: true
       citizens.npc.trait: true
+      citizens.npc.trait.clearsaves: true
       citizens.npc.tropicalfish: true
       citizens.npc.type: true
       citizens.npc.undo: true
@@ -1717,6 +1746,14 @@ permissions:
       citizens.waypoints.hpa: true
       citizens.waypoints.provider: true
       citizens.waypoints.remove: true
+  citizens.npc.shop.editor.actions.*:
+    default: op
+    children:
+      citizens.npc.shop.editor.actions.edit-command: true
+      citizens.npc.shop.editor.actions.edit-exp: true
+      citizens.npc.shop.editor.actions.edit-item: true
+      citizens.npc.shop.editor.actions.edit-money: true
+      citizens.npc.shop.editor.actions.edit-open-shop: true
   citizens.npc.command.*:
     default: op
     children:
@@ -2001,6 +2038,16 @@ permissions:
       citizens.npc.create.zombie_horse: true
       citizens.npc.create.zombie_villager: true
       citizens.npc.create.zombified_piglin: true
+  citizens.npc.shop.editor.*:
+    default: op
+    children:
+      citizens.npc.shop.editor.actions.edit-command: true
+      citizens.npc.shop.editor.actions.edit-exp: true
+      citizens.npc.shop.editor.actions.edit-item: true
+      citizens.npc.shop.editor.actions.edit-money: true
+      citizens.npc.shop.editor.actions.edit-open-shop: true
+      citizens.npc.shop.editor.set-shop-type: true
+      citizens.npc.shop.editor.show-on-right-click: true
   citizens.npc.controllable.*:
     default: op
     children:
@@ -2153,3 +2200,14 @@ permissions:
       citizens.npc.controllable.zombie_horse: true
       citizens.npc.controllable.zombie_villager: true
       citizens.npc.controllable.zombified_piglin: true
+  citizens.npc.shop.*:
+    default: op
+    children:
+      citizens.npc.shop: true
+      citizens.npc.shop.editor.actions.edit-command: true
+      citizens.npc.shop.editor.actions.edit-exp: true
+      citizens.npc.shop.editor.actions.edit-item: true
+      citizens.npc.shop.editor.actions.edit-money: true
+      citizens.npc.shop.editor.actions.edit-open-shop: true
+      citizens.npc.shop.editor.set-shop-type: true
+      citizens.npc.shop.editor.show-on-right-click: true

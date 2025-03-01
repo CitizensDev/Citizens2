@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -44,6 +45,8 @@ public abstract class NPCShopAction implements Cloneable {
     }
 
     public static interface GUI {
+        public boolean canUse(HumanEntity entity);
+
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback);
 
         public ItemStack createMenuItem(NPCShopAction previous);

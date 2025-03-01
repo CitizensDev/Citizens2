@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -61,6 +62,11 @@ public class OpenShopAction extends NPCShopAction {
     }
 
     public static class OpenShopActionGUI implements GUI {
+        @Override
+        public boolean canUse(HumanEntity entity) {
+            return entity.hasPermission("citizens.npc.shop.editor.actions.edit-open-shop");
+        }
+
         @Override
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
             OpenShopAction action = previous == null ? new OpenShopAction() : (OpenShopAction) previous;

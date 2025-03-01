@@ -152,6 +152,11 @@ public class CommandAction extends NPCShopAction {
 
     public static class CommandActionGUI implements GUI {
         @Override
+        public boolean canUse(HumanEntity entity) {
+            return entity.hasPermission("citizens.npc.shop.editor.actions.edit-command");
+        }
+
+        @Override
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
             return new CommandActionEditor(previous == null ? new CommandAction() : (CommandAction) previous, callback);
         }

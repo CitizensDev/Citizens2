@@ -38,6 +38,7 @@ import com.google.common.collect.Maps;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.command.CommandMessages;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.gui.CitizensInventoryClickEvent;
 import net.citizensnpcs.api.gui.ClickHandler;
@@ -673,14 +674,30 @@ public class ShopTrait extends Trait {
                 NPCShopAction oldCost = modified.cost.stream().filter(template::manages).findFirst().orElse(null);
                 costItems.getSlots().get(pos)
                         .setItemStack(editTitle(template.createMenuItem(oldCost), title -> title + " Cost"));
-                costItems.getSlots().get(pos).setClickHandler(event -> ctx.getMenu().transition(
-                        template.createEditor(oldCost, cost -> modified.changeCost(template::manages, cost))));
+                costItems.getSlots().get(pos).setClickHandler(event -> {
+                    if (!event.getWhoClicked().hasPermission("citizens.admin")
+                            && !template.canUse(event.getWhoClicked())) {
+                        event.setCancelled(true);
+                        Messaging.sendTr(event.getWhoClicked(), CommandMessages.NO_PERMISSION);
+                        return;
+                    }
+                    ctx.getMenu().transition(
+                            template.createEditor(oldCost, cost -> modified.changeCost(template::manages, cost)));
+                });
 
                 NPCShopAction oldResult = modified.result.stream().filter(template::manages).findFirst().orElse(null);
                 actionItems.getSlots().get(pos)
                         .setItemStack(editTitle(template.createMenuItem(oldResult), title -> title + " Result"));
-                actionItems.getSlots().get(pos).setClickHandler(event -> ctx.getMenu().transition(
-                        template.createEditor(oldResult, result -> modified.changeResult(template::manages, result))));
+                actionItems.getSlots().get(pos).setClickHandler(event -> {
+                    if (!event.getWhoClicked().hasPermission("citizens.admin")
+                            && !template.canUse(event.getWhoClicked())) {
+                        event.setCancelled(true);
+                        Messaging.sendTr(event.getWhoClicked(), CommandMessages.NO_PERMISSION);
+                        return;
+                    }
+                    ctx.getMenu().transition(template.createEditor(oldResult,
+                            result -> modified.changeResult(template::manages, result)));
+                });
 
                 pos++;
             }
@@ -888,6 +905,12 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 0, 8 }, material = Material.CHEST, amount = 1, title = "<f>Set shop type")
         public void onSetInventoryType(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            if (!event.getWhoClicked().hasPermission("citizens.admin")
+                    && !event.getWhoClicked().hasPermission("citizens.npc.shop.editor.set-shop-type")) {
+                event.setCancelled(true);
+                Messaging.sendTr(event.getWhoClicked(), CommandMessages.NO_PERMISSION);
+                return;
+            }
             ctx.getMenu().transition(InputMenus.picker("Set shop type",
                     (Choice<ShopType> choice) -> shop.setShopType(choice.getValue()),
                     Choice.of(ShopType.DEFAULT, Material.CHEST, "Default (5x9 chest)",
@@ -910,6 +933,12 @@ public class ShopTrait extends Trait {
 
         @MenuSlot(slot = { 0, 6 }, compatMaterial = { "COMMAND_BLOCK", "COMMAND" }, amount = 1)
         public void onToggleRightClick(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            if (!event.getWhoClicked().hasPermission("citizens.admin")
+                    && !event.getWhoClicked().hasPermission("citizens.npc.shop.editor.show-on-right-click")) {
+                event.setCancelled(true);
+                Messaging.sendTr(event.getWhoClicked(), CommandMessages.NO_PERMISSION);
+                return;
+            }
             event.setCancelled(true);
             if (trait == null)
                 return;

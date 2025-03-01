@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -101,6 +102,11 @@ public class MoneyAction extends NPCShopAction {
             } catch (ClassNotFoundException e) {
                 supported = false;
             }
+        }
+
+        @Override
+        public boolean canUse(HumanEntity entity) {
+            return entity.hasPermission("citizens.npc.shop.editor.actions.edit-money");
         }
 
         @Override

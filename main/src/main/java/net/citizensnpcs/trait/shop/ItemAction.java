@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
@@ -50,7 +49,7 @@ public class ItemAction extends NPCShopAction {
     }
 
     public ItemAction(List<ItemStack> items) {
-        this.items = items;
+        setItems(items);
     }
 
     @Override
@@ -71,9 +70,6 @@ public class ItemAction extends NPCShopAction {
 
     @Override
     public int getMaxRepeats(Entity entity, InventoryMultiplexer im) {
-        if (!(entity instanceof InventoryHolder))
-            return 0;
-
         ItemStack[] inventory = im.getInventory();
         List<Integer> req = items.stream().map(ItemStack::getAmount).collect(Collectors.toList());
         List<Integer> has = items.stream().map(i -> 0).collect(Collectors.toList());
@@ -132,8 +128,6 @@ public class ItemAction extends NPCShopAction {
 
     @Override
     public Transaction grant(Entity entity, InventoryMultiplexer im, int repeats) {
-        if (!(entity instanceof InventoryHolder))
-            return Transaction.fail();
         return Transaction.create(() -> {
             ItemStack[] inventory = im.getInventory();
             int free = 0;
@@ -201,7 +195,8 @@ public class ItemAction extends NPCShopAction {
         return true;
     }
 
-    private void sanityCheck() {
+    private void setItems(List<ItemStack> items) {
+        this.items = items;
         if (metaFilter.size() == 0)
             return;
         for (ItemStack item : items) {
@@ -219,9 +214,6 @@ public class ItemAction extends NPCShopAction {
 
     @Override
     public Transaction take(Entity entity, InventoryMultiplexer im, int repeats) {
-        if (!(entity instanceof InventoryHolder))
-            return Transaction.fail();
-
         return Transaction.create(() -> takeItems(im.getInventory(), repeats, false),
                 () -> im.transact(inventory -> takeItems(inventory, repeats, true)),
                 () -> im.transact(inventory -> giveItems(inventory, repeats)));
@@ -327,13 +319,17 @@ public class ItemAction extends NPCShopAction {
                     items.add(ctx.getSlot(i).getCurrentItem().clone());
                 }
             }
-            base.items = items;
-            base.sanityCheck();
+            base.setItems(items);
             callback.accept(items.isEmpty() ? null : base);
         }
     }
 
     public static class ItemActionGUI implements GUI {
+        @Override
+        public boolean canUse(HumanEntity entity) {
+            return entity.hasPermission("citizens.npc.shop.editor.actions.edit-item");
+        }
+
         @Override
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
             return new ItemActionEditor(previous == null ? new ItemAction() : (ItemAction) previous, callback);
