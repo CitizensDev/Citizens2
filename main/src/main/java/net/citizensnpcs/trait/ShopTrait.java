@@ -549,8 +549,18 @@ public class ShopTrait extends Trait {
             this.display = itemstack == null ? null : itemstack.clone();
             if (this.display == null)
                 return;
-            if (!defaultLore.isEmpty() && !display.hasItemMeta() || !display.getItemMeta().hasLore()) {
-                display.getItemMeta().setLore(defaultLore);
+            if (!defaultLore.isEmpty()) {
+                List<String> output = Lists.newArrayList();
+                ItemMeta meta = display.getItemMeta();
+                for (String lore : defaultLore) {
+                    if (lore.trim().equals("<itemlore>")) {
+                        output.addAll(meta.getLore());
+                    } else {
+                        output.add(lore);
+                    }
+                }
+                meta.setLore(output);
+                display.setItemMeta(meta);
             }
         }
 
