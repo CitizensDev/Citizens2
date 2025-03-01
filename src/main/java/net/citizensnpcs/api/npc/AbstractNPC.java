@@ -336,7 +336,7 @@ public abstract class AbstractNPC implements NPC {
             Messaging.severe("Corrupted savedata (empty trait names) for NPC", this);
             return;
         }
-        Set<String> loading = Sets.newHashSet(Splitter.on(',').split(traitNames));
+        Set<String> loading = Sets.newHashSet(Splitter.on(',').omitEmptyStrings().split(traitNames));
         for (String key : PRIORITY_TRAITS) {
             DataKey pkey = root.getRelative("traits." + key);
             if (pkey.keyExists()) {
@@ -410,7 +410,7 @@ public abstract class AbstractNPC implements NPC {
         } else {
             root.removeKey("itemprovider");
         }
-        Set<String> traitNames = Splitter.on(',').splitToStream(root.getString("traitnames"))
+        Set<String> traitNames = Splitter.on(',').omitEmptyStrings().splitToStream(root.getString("traitnames"))
                 .collect(Collectors.toSet());
         for (Trait trait : traits.values()) {
             clearSaveData.remove("traits." + trait.getName());
