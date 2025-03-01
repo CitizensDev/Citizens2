@@ -173,7 +173,7 @@ public class Messaging {
     }
 
     public static List<String> parseComponentsList(String raw) {
-        return Splitter.on("<br>").splitToStream(raw).map(s -> parseComponents(s)).collect(Collectors.toList());
+        return CHAT_NEWLINE_SPLITTER.splitToStream(raw).map(s -> parseComponents(s)).collect(Collectors.toList());
     }
 
     private static String prettify(String message) {
