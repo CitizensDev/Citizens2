@@ -275,7 +275,7 @@ public class ShopTrait extends Trait {
                         }
                         display = new NPCShopItem();
                         if (evt.getCursor() != null) {
-                            display.display = evt.getCursor().clone();
+                            display.setDisplayItem(evt.getCursor());
                         }
                     }
                     ctx.clearSlots();
@@ -461,7 +461,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-            
+
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
@@ -546,7 +546,9 @@ public class ShopTrait extends Trait {
         }
 
         public void setDisplayItem(ItemStack itemstack) {
-            this.display = itemstack.clone();
+            this.display = itemstack == null ? null : itemstack.clone();
+            if (this.display == null)
+                return;
             if (!defaultLore.isEmpty() && !display.hasItemMeta() || !display.getItemMeta().hasLore()) {
                 display.getItemMeta().setLore(defaultLore);
             }
@@ -719,10 +721,10 @@ public class ShopTrait extends Trait {
             event.setCancelled(true);
             if (event.getCursor() != null) {
                 event.setCurrentItem(event.getCursor());
-                modified.display = event.getCursor().clone();
+                modified.setDisplayItem(event.getCursor());
             } else {
                 event.setCurrentItem(null);
-                modified.display = null;
+                modified.setDisplayItem(null);
             }
         }
 
