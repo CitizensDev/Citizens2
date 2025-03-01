@@ -286,7 +286,7 @@ public class EventListen implements Listener {
                 new double[] { (event.getChunk().getX() << 4) - 0.5, 0, (event.getChunk().getZ() << 4) - 0.5 },
                 new double[] { (event.getChunk().getX() + 1 << 4) + 0.5, 256,
                         (event.getChunk().getZ() + 1 << 4) + 0.5 }));
-        if (SpigotUtil.getVersion()[1] < 21 || event.getChunk().isEntitiesLoaded()) {
+        if (SpigotUtil.getVersion()[1] < 21) {
             for (Entity entity : event.getChunk().getEntities()) {
                 NPC npc = plugin.getNPCRegistry().getNPC(entity);
                 // XXX npc#isSpawned() checks valid status which is now inconsistent on chunk unload
