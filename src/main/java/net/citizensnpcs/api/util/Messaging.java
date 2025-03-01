@@ -17,6 +17,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -169,6 +170,10 @@ public class Messaging {
             return BukkitComponentSerializer.legacy().serialize(MINIMESSAGE.deserialize(convertLegacyCodes(raw)));
 
         return convertLegacyCodes(raw);
+    }
+
+    public static List<String> parseComponentsList(String raw) {
+        return Splitter.on("<br>").splitToStream(raw).map(s -> parseComponents(s)).collect(Collectors.toList());
     }
 
     private static String prettify(String message) {
