@@ -5,8 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -18,7 +16,6 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.io.BaseEncoding;
 
 import net.citizensnpcs.api.event.CitizensDeserialiseMetaEvent;
@@ -74,8 +71,7 @@ public class ItemStorage {
         if (root.keyExists("meta")) {
             List<String> lore = null;
             if (root.keyExists("lore")) {
-                lore = Splitter.on(CHAT_NEWLINE).splitToStream(root.getString("lore"))
-                        .map(s -> Messaging.parseComponents(s)).collect(Collectors.toList());
+                lore = Messaging.parseComponentsList(root.getString("lore"));
             }
             String displayName = root.getString("displayname", null);
             deserialiseMeta(root.getRelative("meta"), res, lore, displayName);
@@ -149,8 +145,6 @@ public class ItemStorage {
         Bukkit.getPluginManager().callEvent(new CitizensSerialiseMetaEvent(key, meta));
         return;
     }
-
-    private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|\\n", Pattern.MULTILINE);
 
     private static boolean SUPPORT_REGISTRY = true;
     static {

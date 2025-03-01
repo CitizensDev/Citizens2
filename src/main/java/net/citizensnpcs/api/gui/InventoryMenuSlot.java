@@ -136,7 +136,7 @@ public class InventoryMenuSlot {
     public void setDescription(String description) {
         ItemStack item = inventory.getItem(index);
         ItemMeta meta = item.getItemMeta();
-        List<String> list = Arrays.asList(Messaging.parseComponents(description).split("\\n|\n|<br>"));
+        List<String> list = Messaging.parseComponentsList(description);
         meta.setDisplayName(ChatColor.RESET + list.get(0));
         meta.setLore(list.subList(1, list.size()));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
