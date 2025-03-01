@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -409,7 +410,8 @@ public abstract class AbstractNPC implements NPC {
         } else {
             root.removeKey("itemprovider");
         }
-        Set<String> traitNames = Sets.newHashSet();
+        Set<String> traitNames = Splitter.on(',').splitToStream(root.getString("traitnames"))
+                .collect(Collectors.toSet());
         for (Trait trait : traits.values()) {
             clearSaveData.remove("traits." + trait.getName());
             traitNames.add(trait.getName());
@@ -430,10 +432,13 @@ public abstract class AbstractNPC implements NPC {
                 continue;
             }
         }
-        root.setString("traitnames", Joiner.on(',').join(traitNames));
-        for (String name : clearSaveData) {
-            root.removeKey(name);
+        for (String clear : clearSaveData) {
+            if (clear.startsWith("traits.")) {
+                traitNames.remove(clear.replace("traits.", ""));
+            }
+            root.removeKey(clear);
         }
+        root.setString("traitnames", Joiner.on(',').join(traitNames));
         clearSaveData.clear();
     }
 

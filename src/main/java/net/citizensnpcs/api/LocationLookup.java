@@ -47,6 +47,28 @@ public class LocationLookup extends BukkitRunnable {
         this.sourceRegistry = sourceRegistry;
     }
 
+    public Iterable<Player> filterToVisiblePlayers(Entity base, Iterable<Player> players) {
+        Player player = base instanceof Player ? (Player) base : null;
+        return Iterables.filter(players, other -> {
+            boolean canSee = true;
+            if (SUPPORTS_ENTITY_CANSEE) {
+                try {
+                    canSee = other.canSee(base);
+                } catch (NoSuchMethodError t) {
+                    SUPPORTS_ENTITY_CANSEE = false;
+                    if (player != null) {
+                        canSee = other.canSee(player);
+                    }
+                }
+            } else if (player != null) {
+                canSee = other.canSee(player);
+            }
+            return other.getWorld() == base.getWorld() && canSee
+                    && !other.hasPotionEffect(PotionEffectType.INVISIBILITY)
+                    && other.getGameMode() != GameMode.SPECTATOR;
+        });
+    }
+
     public PerPlayerMetadata<?> getMetadata(String key) {
         return metadata.get(key);
     }
@@ -93,28 +115,6 @@ public class LocationLookup extends BukkitRunnable {
 
     public Iterable<Player> getNearbyVisiblePlayers(Entity base, double[] min, double[] max) {
         return filterToVisiblePlayers(base, getNearbyPlayers(base.getWorld(), min, max));
-    }
-
-    public Iterable<Player> filterToVisiblePlayers(Entity base, Iterable<Player> players) {
-        Player player = base instanceof Player ? (Player) base : null;
-        return Iterables.filter(players, other -> {
-            boolean canSee = true;
-            if (SUPPORTS_ENTITY_CANSEE) {
-                try {
-                    canSee = other.canSee(base);
-                } catch (NoSuchMethodError t) {
-                    SUPPORTS_ENTITY_CANSEE = false;
-                    if (player != null) {
-                        canSee = other.canSee(player);
-                    }
-                }
-            } else if (player != null) {
-                canSee = other.canSee(player);
-            }
-            return other.getWorld() == base.getWorld() && canSee
-                    && !other.hasPotionEffect(PotionEffectType.INVISIBILITY)
-                    && other.getGameMode() != GameMode.SPECTATOR;
-        });
     }
 
     public Iterable<Player> getNearbyVisiblePlayers(Entity base, Location location, double range) {
