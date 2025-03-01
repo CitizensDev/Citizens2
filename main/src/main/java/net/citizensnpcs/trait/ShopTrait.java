@@ -372,13 +372,13 @@ public class ShopTrait extends Trait {
             alreadyPurchasedMessage = !defaultSettings.getString("already-purchased-message", "").isEmpty()
                     ? Messaging.parseComponents(defaultSettings.getString("already-purchased-message"))
                     : null;
-            clickToConfirmMessage = !defaultSettings.getString("click-to-confirm-message").isEmpty()
+            clickToConfirmMessage = !defaultSettings.getString("click-to-confirm-message", "").isEmpty()
                     ? Messaging.parseComponents(defaultSettings.getString("click-to-confirm-message", ""))
                     : null;
-            costMessage = !defaultSettings.getString("cost-message").isEmpty()
+            costMessage = !defaultSettings.getString("cost-message", "").isEmpty()
                     ? Messaging.parseComponents(defaultSettings.getString("cost-message"))
                     : null;
-            resultMessage = !defaultSettings.getString("result-message").isEmpty()
+            resultMessage = !defaultSettings.getString("result-message", "").isEmpty()
                     ? Messaging.parseComponents(defaultSettings.getString("result-message"))
                     : null;
             maxRepeatsOnShiftClick = defaultSettings.getBoolean("max-repeats-on-shift-click", false);
@@ -467,7 +467,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-            
+
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
