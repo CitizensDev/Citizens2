@@ -546,6 +546,8 @@
   "citizens.commands.trait.add.description" : "向 NPC 添加特征",
   "citizens.commands.trait.added" : "已成功添加 {0}.",
   "citizens.commands.traitc.*.description" : "配置一个特征",
+  "citizens.commands.trait.clearsaves.cleared" : "已从 NPC 存档中移除 [[{0}]].",
+  "citizens.commands.trait.clearsaves.description" : "从 NPC 存档中移除特定特征的信息",
   "citizens.commands.traitc.missing" : "找不到特征.",
   "citizens.commands.traitc.not-configurable" : "该特征是不可配置的.",
   "citizens.commands.traitc.not-on-npc" : "没有这个特征.",

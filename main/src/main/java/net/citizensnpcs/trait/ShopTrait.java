@@ -7,12 +7,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -31,7 +31,6 @@ import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -53,12 +52,10 @@ import net.citizensnpcs.api.gui.MenuPattern;
 import net.citizensnpcs.api.gui.MenuSlot;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.persistence.Persistable;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitEventHandler;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.trait.shop.CommandAction;
@@ -164,9 +161,7 @@ public class ShopTrait extends Trait {
         }
 
         public void display(Player sender) {
-            if (viewPermission != null && !sender.hasPermission(viewPermission)
-                    || !Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString().isEmpty()
-                            && !sender.hasPermission(Setting.SHOP_GLOBAL_VIEW_PERMISSION.asString()))
+            if (!canView(sender))
                 return;
 
             if (pages.size() == 0) {
@@ -349,7 +344,7 @@ public class ShopTrait extends Trait {
         }
     }
 
-    public static class NPCShopItem implements Cloneable, Persistable {
+    public static class NPCShopItem implements Cloneable {
         @Persist
         private String alreadyPurchasedMessage;
         @Persist
@@ -358,6 +353,7 @@ public class ShopTrait extends Trait {
         private List<NPCShopAction> cost = Lists.newArrayList();
         @Persist
         private String costMessage;
+        private List<String> defaultLore;
         @Persist
         private ItemStack display;
         @Persist
@@ -370,6 +366,21 @@ public class ShopTrait extends Trait {
         private String resultMessage;
         @Persist
         private int timesPurchasable = 0;
+
+        public NPCShopItem() {
+            ConfigurationSection defaultSettings = Setting.SHOP_DEFAULT_ITEM_SETTINGS.asSection();
+            alreadyPurchasedMessage = Messaging
+                    .parseComponents(defaultSettings.getString("already-purchased-message", ""));
+            clickToConfirmMessage = Messaging
+                    .parseComponents(defaultSettings.getString("click-to-confirm-message", ""));
+            costMessage = Messaging.parseComponents(defaultSettings.getString("cost-message", ""));
+            resultMessage = Messaging.parseComponents(defaultSettings.getString("result-message", ""));
+            maxRepeatsOnShiftClick = defaultSettings.getBoolean("max-repeats-on-shift-click", false);
+            timesPurchasable = defaultSettings.getInt("times-purchasable", 0);
+            if (!defaultSettings.getString("lore", "").isEmpty()) {
+                defaultLore = Messaging.parseComponentsList(defaultSettings.getString("lore"));
+            }
+        }
 
         private List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
             List<Transaction> pending = Lists.newArrayList();
@@ -467,18 +478,6 @@ public class ShopTrait extends Trait {
             return result;
         }
 
-        @Override
-        public void load(DataKey key) {
-            if (key.keyExists("message")) {
-                resultMessage = key.getString("message");
-                key.removeKey("message");
-            }
-            if (key.keyExists("clickMessage")) {
-                resultMessage = key.getString("clickMessage");
-                key.removeKey("clickMessage");
-            }
-        }
-
         private void onClick(NPCShop shop, Player player, InventoryMultiplexer inventory, boolean shiftClick,
                 boolean secondClick) {
             // TODO: InventoryMultiplexer could be lifted up to transact in apply(), which would be cleaner.
@@ -546,8 +545,11 @@ public class ShopTrait extends Trait {
             return sb.toString();
         }
 
-        @Override
-        public void save(DataKey key) {
+        public void setDisplayItem(ItemStack itemstack) {
+            this.display = itemstack.clone();
+            if (!defaultLore.isEmpty() && !display.hasItemMeta() || !display.getItemMeta().hasLore()) {
+                display.getItemMeta().setLore(defaultLore);
+            }
         }
 
         private static final Pattern PLACEHOLDER_REGEX = Pattern.compile("<(cost|result|times_purchasable)>",
@@ -693,8 +695,7 @@ public class ShopTrait extends Trait {
                         if (description.isEmpty()) {
                             meta.setLore(Lists.newArrayList());
                         } else {
-                            meta.setLore(Splitter.on("<br>").splitToStream(description)
-                                    .map(s -> Messaging.parseComponents(s)).collect(Collectors.toList()));
+                            meta.setLore(Messaging.parseComponentsList(description));
                         }
                         modified.display.setItemMeta(meta);
                     });
