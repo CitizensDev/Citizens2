@@ -369,12 +369,18 @@ public class ShopTrait extends Trait {
 
         public NPCShopItem() {
             ConfigurationSection defaultSettings = Setting.SHOP_DEFAULT_ITEM_SETTINGS.asSection();
-            alreadyPurchasedMessage = Messaging
-                    .parseComponents(defaultSettings.getString("already-purchased-message", ""));
-            clickToConfirmMessage = Messaging
-                    .parseComponents(defaultSettings.getString("click-to-confirm-message", ""));
-            costMessage = Messaging.parseComponents(defaultSettings.getString("cost-message", ""));
-            resultMessage = Messaging.parseComponents(defaultSettings.getString("result-message", ""));
+            alreadyPurchasedMessage = !defaultSettings.getString("already-purchased-message", "").isEmpty()
+                    ? Messaging.parseComponents(defaultSettings.getString("already-purchased-message"))
+                    : null;
+            clickToConfirmMessage = !defaultSettings.getString("click-to-confirm-message").isEmpty()
+                    ? Messaging.parseComponents(defaultSettings.getString("click-to-confirm-message", ""))
+                    : null;
+            costMessage = !defaultSettings.getString("cost-message").isEmpty()
+                    ? Messaging.parseComponents(defaultSettings.getString("cost-message"))
+                    : null;
+            resultMessage = !defaultSettings.getString("result-message").isEmpty()
+                    ? Messaging.parseComponents(defaultSettings.getString("result-message"))
+                    : null;
             maxRepeatsOnShiftClick = defaultSettings.getBoolean("max-repeats-on-shift-click", false);
             timesPurchasable = defaultSettings.getInt("times-purchasable", 0);
             if (!defaultSettings.getString("lore", "").isEmpty()) {
@@ -461,7 +467,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-
+            
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
