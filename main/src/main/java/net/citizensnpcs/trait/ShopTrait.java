@@ -31,6 +31,7 @@ import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -353,7 +354,7 @@ public class ShopTrait extends Trait {
         private List<NPCShopAction> cost = Lists.newArrayList();
         @Persist
         private String costMessage;
-        private List<String> defaultLore;
+        private List<String> defaultLore = ImmutableList.of();
         @Persist
         private ItemStack display;
         @Persist
@@ -467,7 +468,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-
+            
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
