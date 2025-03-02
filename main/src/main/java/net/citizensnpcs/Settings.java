@@ -65,8 +65,9 @@ public class Settings {
         if (!Setting.DEBUG_FILE.asString().isEmpty()) {
             file = new File(CitizensAPI.getPlugin().getDataFolder(), Setting.DEBUG_FILE.asString());
         }
-        Messaging.configure(file, Setting.DEBUG_MODE.asBoolean(), Setting.MESSAGE_COLOUR.asString(),
-                Setting.HIGHLIGHT_COLOUR.asString(), Setting.ERROR_COLOUR.asString());
+        Messaging.configure(file, Setting.DEBUG_MODE.asBoolean(), Setting.RESET_FORMATTING_ON_COLOR_CHANGE.asBoolean(),
+                Setting.MESSAGE_COLOUR.asString(), Setting.HIGHLIGHT_COLOUR.asString(),
+                Setting.ERROR_COLOUR.asString());
     }
 
     public enum Setting {
@@ -270,6 +271,9 @@ public class Settings {
         PLAYER_TELEPORT_DELAY("npc.delay-player-teleport-ticks", "npc.delay-player-teleport", -1),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("Whether to remove NPCs from the Java list of players",
                 "npc.player.remove-from-list", true),
+        RESET_FORMATTING_ON_COLOR_CHANGE(
+                "Whether to reset formatting on color change.<br>Emulates old color code behavior.",
+                "general.reset-formatting-on-color-change", true),
         RESET_YAW_ON_SPAWN(
                 "Whether to reset NPC yaw on spawn<br>Currently this is implemented by an arm swing animation due to Minecraft limitations",
                 "npc.default.reset-yaw-on-spawn", true),
