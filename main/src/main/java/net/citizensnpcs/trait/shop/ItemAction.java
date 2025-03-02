@@ -25,6 +25,7 @@ import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
+import net.citizensnpcs.trait.ShopTrait.NPCShopStorage;
 import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -50,6 +51,18 @@ public class ItemAction extends NPCShopAction {
 
     public ItemAction(List<ItemStack> items) {
         setItems(items);
+    }
+
+    private Boolean canAccept(InventoryMultiplexer im, int repeats) {
+        ItemStack[] inventory = im.getInventory();
+        int free = 0;
+        for (ItemStack stack : inventory) {
+            if (stack == null || stack.getType() == Material.AIR) {
+                free++;
+                continue;
+            }
+        }
+        return free >= items.size() * repeats;
     }
 
     @Override
@@ -127,18 +140,9 @@ public class ItemAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(Entity entity, InventoryMultiplexer im, int repeats) {
-        return Transaction.create(() -> {
-            ItemStack[] inventory = im.getInventory();
-            int free = 0;
-            for (ItemStack stack : inventory) {
-                if (stack == null || stack.getType() == Material.AIR) {
-                    free++;
-                    continue;
-                }
-            }
-            return free >= items.size() * repeats;
-        }, () -> im.transact(inventory -> giveItems(inventory, repeats)),
+    public Transaction grant(NPCShopStorage storage, Entity entity, InventoryMultiplexer im, int repeats) {
+        return Transaction.create(() -> canAccept(im, repeats),
+                () -> im.transact(inventory -> giveItems(inventory, repeats)),
                 () -> im.transact(inventory -> takeItems(inventory, repeats, true)));
     }
 
@@ -213,7 +217,7 @@ public class ItemAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction take(Entity entity, InventoryMultiplexer im, int repeats) {
+    public Transaction take(NPCShopStorage storage, Entity entity, InventoryMultiplexer im, int repeats) {
         return Transaction.create(() -> takeItems(im.getInventory(), repeats, false),
                 () -> im.transact(inventory -> takeItems(inventory, repeats, true)),
                 () -> im.transact(inventory -> giveItems(inventory, repeats)));

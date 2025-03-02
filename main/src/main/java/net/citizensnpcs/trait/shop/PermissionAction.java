@@ -18,6 +18,7 @@ import net.citizensnpcs.api.gui.Menu;
 import net.citizensnpcs.api.gui.MenuContext;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.trait.ShopTrait.NPCShopStorage;
 import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.Util;
 import net.milkbowl.vault.permission.Permission;
@@ -52,7 +53,7 @@ public class PermissionAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(Entity entity, InventoryMultiplexer inventory, int repeats) {
+    public Transaction grant(NPCShopStorage storage, Entity entity, InventoryMultiplexer inventory, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;
@@ -69,7 +70,7 @@ public class PermissionAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction take(Entity entity, InventoryMultiplexer inventory, int repeats) {
+    public Transaction take(NPCShopStorage storage, Entity entity, InventoryMultiplexer inventory, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;

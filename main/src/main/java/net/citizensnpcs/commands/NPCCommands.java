@@ -974,12 +974,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "debug -p(aths) -n(avigation)",
+            usage = "debug -p(aths) -n(avigation) -i(tem in hand)",
             desc = "",
             modifiers = { "debug" },
             min = 1,
             max = 1,
-            flags = "pn",
+            flags = "pni",
             permission = "citizens.npc.debug")
     @Requirements(ownership = true, selected = true)
     public void debug(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
@@ -996,6 +996,11 @@ public class NPCCommands {
                     + npc.getNavigator().getDefaultParameters().speed() + "]]<br>";
             output += "Stuck action [[" + npc.getNavigator().getDefaultParameters().stuckAction() + "]]<br>";
             Messaging.send(sender, output);
+        } else if (args.hasFlag('i')) {
+            if (!(sender instanceof Player))
+                throw new CommandException(CommandMessages.MUST_BE_INGAME);
+
+            Messaging.send(sender, NMS.getComponentMap(((Player) sender).getItemInHand()));
         }
     }
 
