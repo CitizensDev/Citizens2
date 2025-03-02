@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -7,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,6 +37,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Ints;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -878,15 +881,17 @@ public class ShopTrait extends Trait {
         private static final HandlerList HANDLERS = new HandlerList();
     }
 
-    @Menu(title = "NPC Shop Editor", type = InventoryType.CHEST, dimensions = { 1, 9 })
+    @Menu(title = "NPC Shop Editor", type = InventoryType.CHEST, dimensions = { 2, 9 })
     public static class NPCShopSettings extends InventoryMenuPage {
         private MenuContext ctx;
         private final NPCShop shop;
+        private final NPCShopStorage storage;
         private final ShopTrait trait;
 
         public NPCShopSettings(ShopTrait trait, NPCShop shop) {
             this.trait = trait;
             this.shop = shop;
+            this.storage = trait.storage != null ? trait.storage : shop.storage;
         }
 
         @Override
@@ -959,6 +964,11 @@ public class ShopTrait extends Trait {
             ctx.getSlot(6)
                     .setDescription("<f>Show shop on right click<br>" + shop.getName().equals(trait.rightClickShop));
         }
+
+        @MenuSlot(slot = { 1, 1 }, material = Material.ENDER_CHEST, amount = 1, title = "<f>View inventory")
+        public void onViewItemStorage(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            ctx.getMenu().transition(storage.createInventoryViewer(event.getWhoClicked()));
+        }
     }
 
     public static class NPCShopStorage {
@@ -966,6 +976,16 @@ public class ShopTrait extends Trait {
         private List<ItemStack> inventory = Lists.newArrayList();
         @Persist
         private int inventorySizeLimit = -1;
+        @Persist
+        private boolean unlimited = true;
+
+        public boolean canAdd(int n) {
+            return inventorySizeLimit == -1 || inventory.size() + n < inventorySizeLimit;
+        }
+
+        public InventoryMenuPage createInventoryViewer(HumanEntity whoClicked) {
+            return new InventoryViewer(this);
+        }
 
         public ItemStack[] getInventory() {
             return inventory.toArray(new ItemStack[inventory.size()]);
@@ -975,14 +995,85 @@ public class ShopTrait extends Trait {
             return inventorySizeLimit;
         }
 
+        public boolean isUnlimited() {
+            return unlimited;
+        }
+
+        public void setInventory(List<ItemStack> items) {
+            this.inventory = items;
+        }
+
         public void setInventorySizeLimit(int limit) {
             this.inventorySizeLimit = limit;
         }
 
+        public void setUnlimited(boolean res) {
+            this.unlimited = res;
+        }
+
         public void transact(Consumer<ItemStack[]> action) {
-            ItemStack[] items = inventory.toArray(new ItemStack[inventory.size()]);
+            transact(action, 0);
+        }
+
+        public void transact(Consumer<ItemStack[]> action, int additional) {
+            if (isUnlimited())
+                return;
+            ItemStack[] items = inventory.toArray(new ItemStack[inventory.size() + additional]);
             action.accept(items);
-            inventory = Lists.newArrayList(items);
+            inventory = Arrays.stream(items).filter(i -> i != null && i.getAmount() > 0 && i.getType() != Material.AIR)
+                    .collect(Collectors.toList());
+        }
+
+        @Menu(title = "Item storage", dimensions = { 4, 9 })
+        public static class InventoryViewer extends InventoryMenuPage {
+            private MenuContext ctx;
+            private NPCShopStorage storage;
+
+            public InventoryViewer() {
+            }
+
+            public InventoryViewer(NPCShopStorage storage) {
+                this.storage = storage;
+            }
+
+            @Override
+            public void initialise(MenuContext ctx) {
+                this.ctx = ctx;
+                for (int i = 0; i < 3 * 9; i++) {
+                    InventoryMenuSlot slot = ctx.getSlot(i);
+                    slot.clear();
+                    slot.setClickHandler(evt -> evt.setCancelled(false));
+                    if (i >= storage.inventory.size())
+                        break;
+                    slot.setItemStack(storage.inventory.get(i).clone());
+                }
+                ctx.getSlot(3 * 9 + 1).setItemStack(new ItemStack(Material.BEACON), "Unlimited<br>",
+                        storage.isUnlimited() ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
+                ctx.getSlot(3 * 9 + 1)
+                        .addClickHandler(InputMenus.toggler(res -> storage.setUnlimited(res), storage.isUnlimited()));
+                ctx.getSlot(3 * 9 + 2).setItemStack(
+                        new ItemStack(Util.getFallbackMaterial("COMPARATOR", "REDSTONE_COMPARATOR")),
+                        "Inventory size limit", storage.getInventorySizeLimit() == -1 ? ChatColor.GREEN + "Unlimited"
+                                : ChatColor.YELLOW + "" + storage.getInventorySizeLimit());
+                ctx.getSlot(3 * 9 + 2).addClickHandler(evt -> ctx.getMenu().transition(
+                        InputMenus.filteredStringSetter(() -> Integer.toString(storage.getInventorySizeLimit()), s -> {
+                            if (Ints.tryParse(s) == null)
+                                return false;
+                            storage.setInventorySizeLimit(Ints.tryParse(s));
+                            return true;
+                        })));
+            }
+
+            @Override
+            public void onClose(HumanEntity player) {
+                List<ItemStack> items = Lists.newArrayList();
+                for (int i = 0; i < 3 * 9; i++) {
+                    if (ctx.getSlot(i).getCurrentItem() != null) {
+                        items.add(ctx.getSlot(i).getCurrentItem().clone());
+                    }
+                }
+                storage.setInventory(items);
+            }
         }
     }
 

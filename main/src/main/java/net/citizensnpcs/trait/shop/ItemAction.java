@@ -141,9 +141,14 @@ public class ItemAction extends NPCShopAction {
 
     @Override
     public Transaction grant(NPCShopStorage storage, Entity entity, InventoryMultiplexer im, int repeats) {
-        return Transaction.create(() -> canAccept(im, repeats),
-                () -> im.transact(inventory -> giveItems(inventory, repeats)),
-                () -> im.transact(inventory -> takeItems(inventory, repeats, true)));
+        return Transaction.create(() -> (storage.isUnlimited() || takeItems(storage.getInventory(), repeats, false))
+                && canAccept(im, repeats), () -> {
+                    storage.transact(inventory -> takeItems(inventory, repeats, true));
+                    im.transact(inventory -> giveItems(inventory, repeats));
+                }, () -> {
+                    storage.transact(inventory -> giveItems(inventory, repeats), items.size() * repeats);
+                    im.transact(inventory -> takeItems(inventory, repeats, true));
+                });
     }
 
     private boolean matches(ItemStack a, ItemStack b) {
@@ -218,9 +223,14 @@ public class ItemAction extends NPCShopAction {
 
     @Override
     public Transaction take(NPCShopStorage storage, Entity entity, InventoryMultiplexer im, int repeats) {
-        return Transaction.create(() -> takeItems(im.getInventory(), repeats, false),
-                () -> im.transact(inventory -> takeItems(inventory, repeats, true)),
-                () -> im.transact(inventory -> giveItems(inventory, repeats)));
+        return Transaction.create(() -> (storage.isUnlimited() || storage.canAdd(items.size() * repeats))
+                && takeItems(im.getInventory(), repeats, false), () -> {
+                    storage.transact(inventory -> giveItems(inventory, repeats), items.size() * repeats);
+                    im.transact(inventory -> takeItems(inventory, repeats, true));
+                }, () -> {
+                    storage.transact(inventory -> takeItems(inventory, repeats, true));
+                    im.transact(inventory -> giveItems(inventory, repeats));
+                });
     }
 
     private boolean takeItems(ItemStack[] contents, int repeats, boolean modify) {
