@@ -65,11 +65,12 @@ public class Messaging {
         }
     }
 
-    public static void configure(File debugFile, boolean debug, String messageColour, String highlightColour,
-            String errorColour) {
+    public static void configure(File debugFile, boolean debug, boolean resetFormattingOnColorChange,
+            String messageColour, String highlightColour, String errorColour) {
+        RESET_FORMATTING_ON_COLOR_CHANGE = resetFormattingOnColorChange;
         DEBUG = debug;
         MESSAGE_COLOUR = messageColour.replace("<a>", "<green>");
-        HIGHLIGHT_COLOUR = highlightColour.replace("<e>", "yellow").replace("<yellow>", "yellow");
+        HIGHLIGHT_COLOUR = highlightColour.replace("<e>", "<yellow>");
         ERROR_COLOUR = errorColour.replace("<c>", "<red>");
 
         if (Bukkit.getLogger() != null) {
@@ -127,7 +128,7 @@ public class Messaging {
                     m.group(1) == null ? m.group(2).toLowerCase(Locale.ROOT) : m.group(1).toLowerCase(Locale.ROOT)));
         }
         m.appendTail(sb);
-        if (MINIMESSAGE_COLORCODE_MATCHER == null)
+        if (!RESET_FORMATTING_ON_COLOR_CHANGE || MINIMESSAGE_COLORCODE_MATCHER == null)
             return sb.toString();
         return MINIMESSAGE_COLORCODE_MATCHER.matcher(sb.toString()).replaceAll("$0<csr>");
     }
@@ -193,7 +194,7 @@ public class Messaging {
             }
         }
         message = CHAT_NEWLINE.matcher(message).replaceAll("<reset><br>]]");
-        message = HIGHLIGHT_MATCHER.matcher(message).replaceAll("<" + HIGHLIGHT_COLOUR + ">");
+        message = HIGHLIGHT_MATCHER.matcher(message).replaceAll(HIGHLIGHT_COLOUR);
         message = ERROR_MATCHER.matcher(message).replaceAll(ERROR_COLOUR);
         return message.replace("]]", MESSAGE_COLOUR);
     }
@@ -317,7 +318,7 @@ public class Messaging {
     private static final Pattern HEX_MATCHER = Pattern.compile(
             "&x&([0-9a-f])&([0-9a-f])&([0-9a-f])&([0-9a-f])&([0-9a-f])&([0-9a-f])".replace('&', ChatColor.COLOR_CHAR),
             Pattern.CASE_INSENSITIVE);
-    private static String HIGHLIGHT_COLOUR = "yellow";
+    private static String HIGHLIGHT_COLOUR = "<yellow>";
     private static final Pattern HIGHLIGHT_MATCHER = Pattern.compile("[[", Pattern.LITERAL);
     private static final Pattern LEGACY_COLORCODE_MATCHER = Pattern
             .compile(ChatColor.COLOR_CHAR + "([0-9a-r])|<([0-9a-f])>", Pattern.CASE_INSENSITIVE);
@@ -325,6 +326,7 @@ public class Messaging {
     private static String MESSAGE_COLOUR = "<green>";
     private static MiniMessage MINIMESSAGE;
     private static Pattern MINIMESSAGE_COLORCODE_MATCHER;
+    private static boolean RESET_FORMATTING_ON_COLOR_CHANGE = true;
     private static final Joiner SPACE = Joiner.on(" ").useForNull("null");
     private static final Pattern TRANSLATION_MATCHER = Pattern.compile("^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+\\.[a-zA-Z0-9.]+");
     static {
