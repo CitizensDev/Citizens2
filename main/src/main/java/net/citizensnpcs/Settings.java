@@ -200,7 +200,7 @@ public class Settings {
         ERROR_COLOUR("general.color-scheme.message-error", "<red>"),
         FOLLOW_ACROSS_WORLDS("Whether /npc follow will teleport across worlds to follow its target",
                 "npc.follow.teleport-across-worlds", false),
-        HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "yellow"),
+        HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<yellow>"),
         HOLOGRAM_ALWAYS_UPDATE_POSITION("Whether to always update the hologram position every tick",
                 "npc.hologram.always-update-position", false),
         HOLOGRAM_UPDATE_RATE("How often to update hologram names (including placeholders)",
@@ -273,7 +273,7 @@ public class Settings {
                 "npc.player.remove-from-list", true),
         RESET_FORMATTING_ON_COLOR_CHANGE(
                 "Whether to reset formatting on color change.<br>Emulates old color code behavior.",
-                "general.reset-formatting-on-color-change", true),
+                "general.reset-formatting-on-color-change", false),
         RESET_YAW_ON_SPAWN(
                 "Whether to reset NPC yaw on spawn<br>Currently this is implemented by an arm swing animation due to Minecraft limitations",
                 "npc.default.reset-yaw-on-spawn", true),
