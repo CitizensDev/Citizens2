@@ -71,6 +71,9 @@ public class Messaging {
         DEBUG = debug;
         MESSAGE_COLOUR = messageColour.replace("<a>", "<green>");
         HIGHLIGHT_COLOUR = highlightColour.replace("<e>", "<yellow>");
+        if (HIGHLIGHT_COLOUR.equals("yellow")) {
+            HIGHLIGHT_COLOUR = "<yellow>";
+        }
         ERROR_COLOUR = errorColour.replace("<c>", "<red>");
 
         if (Bukkit.getLogger() != null) {
