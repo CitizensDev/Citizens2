@@ -55,17 +55,21 @@ public class MoneyAction extends NPCShopAction {
         Player player = (Player) entity;
         double amount = money * repeats;
 
-        return Transaction.create(() -> true, () -> {
+        return Transaction.create(() -> storage.isUnlimited() || storage.getBalance() - amount >= 0, () -> {
             EconomyResponse response = economy.depositPlayer(player, amount);
             if (response != null
                     && (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED)) {
                 Messaging.severe("Failed to deposit", amount, "to", player, "in NPC shop:", response.errorMessage);
+            } else {
+                storage.setBalance(storage.getBalance() - amount);
             }
         }, () -> {
             EconomyResponse response = economy.withdrawPlayer(player, amount);
             if (response != null
                     && (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED)) {
                 Messaging.severe("Failed to withdraw", amount, "from", player, "in NPC shop:", response.errorMessage);
+            } else {
+                storage.setBalance(storage.getBalance() + amount);
             }
         });
     }
@@ -84,12 +88,16 @@ public class MoneyAction extends NPCShopAction {
             if (response != null
                     && (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED)) {
                 Messaging.severe("Failed to withdraw", amount, "from", player, "in NPC shop:", response.errorMessage);
+            } else {
+                storage.setBalance(storage.getBalance() + amount);
             }
         }, () -> {
             EconomyResponse response = economy.depositPlayer(player, amount);
             if (response != null
                     && (response.type == ResponseType.FAILURE || response.type == ResponseType.NOT_IMPLEMENTED)) {
                 Messaging.severe("Failed to deposit", amount, "to", player, "in NPC shop:", response.errorMessage);
+            } else {
+                storage.setBalance(storage.getBalance() - amount);
             }
         });
     }

@@ -37,6 +37,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
 import net.citizensnpcs.Settings.Setting;
@@ -82,6 +83,8 @@ import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.util.InventoryMultiplexer;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 
 /**
  * Shop trait for NPC GUI shops.
@@ -480,7 +483,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-
+            
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
@@ -904,6 +907,53 @@ public class ShopTrait extends Trait {
                 ctx.getSlot(6).setDescription(
                         "<f>Show shop on right click<br>" + shop.getName().equals(trait.rightClickShop));
             }
+            boolean economySupported = false;
+            try {
+                if (Bukkit.getServicesManager().getRegistration(Economy.class).getProvider() != null) {
+                    economySupported = true;
+                }
+            } catch (Throwable t) {
+            }
+            if (economySupported) {
+                ctx.getSlot(1 * 9 + 3).setItemStack(new ItemStack(Material.EMERALD, 1));
+                ctx.getSlot(1 * 9 + 3).setDescription(
+                        "<f>Shop balance: " + storage.getBalance() + "<br>Click to deposit<br>Shift click to withdraw");
+            }
+        }
+
+        @MenuSlot
+        public void onEditBalance(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
+            Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
+            double balance = economy.getBalance((Player) event.getWhoClicked());
+            if (event.isShiftClick()) {
+                ctx.getMenu().transition(InputMenus
+                        .filteredStringSetter("Withdraw amount (max: " + storage.getBalance() + ")", () -> "", s -> {
+                            Double amount = Doubles.tryParse(s);
+                            if (amount == null)
+                                return false;
+                            if (amount < 0 || amount > storage.getBalance())
+                                return false;
+                            EconomyResponse response = economy.depositPlayer((Player) event.getWhoClicked(), amount);
+                            if (!response.transactionSuccess())
+                                return false;
+                            storage.setBalance(storage.getBalance() - amount);
+                            return true;
+                        }));
+            } else {
+                ctx.getMenu().transition(
+                        InputMenus.filteredStringSetter("Deposit amount (max: " + balance + ")", () -> "", s -> {
+                            Double amount = Doubles.tryParse(s);
+                            if (amount == null)
+                                return false;
+                            if (amount < 0)
+                                return false;
+                            EconomyResponse response = economy.withdrawPlayer((Player) event.getWhoClicked(), amount);
+                            if (!response.transactionSuccess())
+                                return false;
+                            storage.setBalance(storage.getBalance() + amount);
+                            return true;
+                        }));
+            }
         }
 
         @MenuSlot(slot = { 0, 2 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
@@ -973,6 +1023,8 @@ public class ShopTrait extends Trait {
 
     public static class NPCShopStorage {
         @Persist
+        private double balance;
+        @Persist
         private List<ItemStack> inventory = Lists.newArrayList();
         @Persist
         private int inventorySizeLimit = -1;
@@ -987,6 +1039,10 @@ public class ShopTrait extends Trait {
             return new InventoryViewer(this);
         }
 
+        public double getBalance() {
+            return balance;
+        }
+
         public ItemStack[] getInventory() {
             return inventory.toArray(new ItemStack[inventory.size()]);
         }
@@ -997,6 +1053,12 @@ public class ShopTrait extends Trait {
 
         public boolean isUnlimited() {
             return unlimited;
+        }
+
+        public void setBalance(double amount) {
+            if (isUnlimited())
+                return;
+            this.balance = amount;
         }
 
         public void setInventory(List<ItemStack> items) {
