@@ -176,8 +176,10 @@ public class InputMenus {
         @MenuSlot(slot = { 0, 0 }, material = Material.PAPER, amount = 1)
         private InventoryMenuSlot from;
         private final Supplier<String> initialValue;
+        private final String title;
 
-        public StringInputMenu(Supplier<String> initialValue, Function<String, Boolean> callback) {
+        public StringInputMenu(String title, Supplier<String> initialValue, Function<String, Boolean> callback) {
+            this.title = title;
             this.initialValue = initialValue;
             this.callback = callback;
         }
@@ -191,6 +193,7 @@ public class InputMenus {
         @Override
         public void initialise(MenuContext ctx) {
             this.ctx = ctx;
+            ctx.setTitle(title);
             ItemStack item = from.getCurrentItem();
             ItemMeta meta = item.getItemMeta();
             String name = initialValue.get();
@@ -217,9 +220,14 @@ public class InputMenus {
         return new BooleanSlotHandler(transformer, initialValue);
     }
 
+    public static InventoryMenuPage filteredStringSetter(String title, Supplier<String> initialValue,
+            Function<String, Boolean> callback) {
+        return new StringInputMenu(title, initialValue, callback);
+    }
+
     public static InventoryMenuPage filteredStringSetter(Supplier<String> initialValue,
             Function<String, Boolean> callback) {
-        return new StringInputMenu(initialValue, callback);
+        return filteredStringSetter("", initialValue, callback);
     }
 
     @SuppressWarnings("unchecked")
@@ -256,11 +264,16 @@ public class InputMenus {
         }, CitizensAPI.getPlugin());
     }
 
-    public static InventoryMenuPage stringSetter(Supplier<String> initialValue, Consumer<String> callback) {
-        return new StringInputMenu(initialValue, s -> {
+    public static InventoryMenuPage stringSetter(String title, Supplier<String> initialValue,
+            Consumer<String> callback) {
+        return new StringInputMenu(title, initialValue, s -> {
             callback.accept(s);
             return true;
         });
+    }
+
+    public static InventoryMenuPage stringSetter(Supplier<String> initialValue, Consumer<String> callback) {
+        return stringSetter("", initialValue, callback);
     }
 
     @SuppressWarnings("unchecked")

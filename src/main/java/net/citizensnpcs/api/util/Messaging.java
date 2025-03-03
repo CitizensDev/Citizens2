@@ -85,7 +85,7 @@ public class Messaging {
                 if (MinecraftComponentSerializer.isSupported()) {
                     AUDIENCES = BukkitAudiences.create(CitizensAPI.getPlugin());
                 } else {
-                    Messaging.log("Unable to load Adventure, chat components will not work");
+                    Messaging.severe("Unable to load Adventure, chat components will not work");
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
