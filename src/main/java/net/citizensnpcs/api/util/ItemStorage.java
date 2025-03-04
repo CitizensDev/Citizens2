@@ -70,10 +70,12 @@ public class ItemStorage {
         }
         if (root.keyExists("meta")) {
             List<String> lore = null;
-            if (root.keyExists("lore")) {
-                lore = Messaging.parseComponentsList(root.getString("lore"));
+            String displayName = null;
+            if (root.keyExists("editable_components") && root.getBoolean("editable_components.edited", false)) {
+                lore = Messaging.parseComponentsList(root.getString("editable_components.lore"));
+                displayName = root.getString("editable_components.display_name");
+                root.setBoolean("editable_components.edited", false);
             }
-            String displayName = root.getString("displayname", null);
             deserialiseMeta(root.getRelative("meta"), res, lore, displayName);
         }
         return res;
@@ -103,15 +105,19 @@ public class ItemStorage {
         }
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
+            key.removeKey("displayname");
+            key.removeKey("lore");
             if (meta.hasDisplayName()) {
-                key.setString("displayname", meta.getDisplayName());
+                key.setString("editable_components.display_name", meta.getDisplayName());
+                key.setBoolean("editable_components.edited", false);
             } else {
-                key.removeKey("displayname");
+                key.removeKey("editable_components.display_name");
             }
             if (meta.hasLore()) {
-                key.setString("lore", Joiner.on("<br>").join(meta.getLore()));
+                key.setString("editable_components.lore", Joiner.on("<br>").join(meta.getLore()));
+                key.setBoolean("editable_components.edited", false);
             } else {
-                key.removeKey("lore");
+                key.removeKey("editable_components.lore");
             }
             serialiseMeta(key.getRelative("meta"), item.getType(), meta);
         } else {
