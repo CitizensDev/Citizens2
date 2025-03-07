@@ -483,7 +483,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-            
+
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
@@ -921,39 +921,51 @@ public class ShopTrait extends Trait {
             }
         }
 
-        @MenuSlot
+        @MenuSlot(slot = { 1, 3 })
         public void onEditBalance(InventoryMenuSlot slot, CitizensInventoryClickEvent event) {
-            Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
-            double balance = economy.getBalance((Player) event.getWhoClicked());
-            if (event.isShiftClick()) {
-                ctx.getMenu().transition(InputMenus
-                        .filteredStringSetter("Withdraw amount (max: " + storage.getBalance() + ")", () -> "", s -> {
-                            Double amount = Doubles.tryParse(s);
-                            if (amount == null)
-                                return false;
-                            if (amount < 0 || amount > storage.getBalance())
-                                return false;
-                            EconomyResponse response = economy.depositPlayer((Player) event.getWhoClicked(), amount);
-                            if (!response.transactionSuccess())
-                                return false;
-                            storage.setBalance(storage.getBalance() - amount);
-                            return true;
-                        }));
-            } else {
-                ctx.getMenu().transition(
-                        InputMenus.filteredStringSetter("Deposit amount (max: " + balance + ")", () -> "", s -> {
-                            Double amount = Doubles.tryParse(s);
-                            if (amount == null)
-                                return false;
-                            if (amount < 0)
-                                return false;
-                            EconomyResponse response = economy.withdrawPlayer((Player) event.getWhoClicked(), amount);
-                            if (!response.transactionSuccess())
-                                return false;
-                            storage.setBalance(storage.getBalance() + amount);
-                            return true;
-                        }));
+            try {
+                if (Bukkit.getServicesManager().getRegistration(Economy.class).getProvider() == null)
+                    return;
+            } catch (Throwable t) {
+                return;
             }
+            new Object() {
+                {
+                    Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
+                    double balance = economy.getBalance((Player) event.getWhoClicked());
+                    if (event.isShiftClick()) {
+                        ctx.getMenu().transition(InputMenus.filteredStringSetter(
+                                "Withdraw amount (max: " + storage.getBalance() + ")", () -> "", s -> {
+                                    Double amount = Doubles.tryParse(s);
+                                    if (amount == null)
+                                        return false;
+                                    if (amount < 0 || amount > storage.getBalance())
+                                        return false;
+                                    EconomyResponse response = economy.depositPlayer((Player) event.getWhoClicked(),
+                                            amount);
+                                    if (!response.transactionSuccess())
+                                        return false;
+                                    storage.setBalance(storage.getBalance() - amount);
+                                    return true;
+                                }));
+                    } else {
+                        ctx.getMenu().transition(InputMenus
+                                .filteredStringSetter("Deposit amount (max: " + balance + ")", () -> "", s -> {
+                                    Double amount = Doubles.tryParse(s);
+                                    if (amount == null)
+                                        return false;
+                                    if (amount < 0)
+                                        return false;
+                                    EconomyResponse response = economy.withdrawPlayer((Player) event.getWhoClicked(),
+                                            amount);
+                                    if (!response.transactionSuccess())
+                                        return false;
+                                    storage.setBalance(storage.getBalance() + amount);
+                                    return true;
+                                }));
+                    }
+                }
+            };
         }
 
         @MenuSlot(slot = { 0, 2 }, material = Material.FEATHER, amount = 1, title = "<f>Edit shop items")
@@ -1239,7 +1251,7 @@ public class ShopTrait extends Trait {
                         ItemAction ia = (ItemAction) action;
                         for (ItemStack stack : ia.items) {
                             stack = stack.clone();
-                            if (!ia.compareSimilarity && ia.metaFilter.size() > 0) {
+                            if (ia.metaFilter.size() > 0) {
                                 // Minecraft implements its own trade selection logic on the client
                                 // Clear the custom component part of the itemstack since we will check it later anyway
                                 ItemMeta im = stack.getItemMeta();

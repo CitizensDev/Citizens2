@@ -34,8 +34,6 @@ import net.kyori.adventure.text.Component;
 
 public class ItemAction extends NPCShopAction {
     @Persist
-    public boolean compareSimilarity = true;
-    @Persist
     public List<ItemStack> items = Lists.newArrayList();
     @Persist
     public List<String> metaFilter = Lists.newArrayList();
@@ -152,7 +150,7 @@ public class ItemAction extends NPCShopAction {
     }
 
     private boolean matches(ItemStack a, ItemStack b) {
-        if (metaFilter.size() > 0 || compareSimilarity) {
+        if (metaFilter.size() > 0) {
             // work around a Vanilla/Spigot bug: display name can be a Component with single string element or a
             // Component with sibling text. even if the content is the same, isSimilar will treat these as separate.
             // to fix this, go through a normalisation step. XXX: assumes that b is the Minecraft supplied item stack
@@ -165,7 +163,7 @@ public class ItemAction extends NPCShopAction {
         if (a.getType() != b.getType() || metaFilter.size() > 0 && !metaMatches(a, b, metaFilter))
             return false;
 
-        if (compareSimilarity && !a.isSimilar(b))
+        if (metaFilter.size() == 0 && !a.isSimilar(b))
             return false;
 
         return true;
@@ -312,14 +310,9 @@ public class ItemAction extends NPCShopAction {
                     base.requireUndamaged ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
             ctx.getSlot(3 * 9 + 1)
                     .addClickHandler(InputMenus.toggler(res -> base.requireUndamaged = res, base.requireUndamaged));
-            ctx.getSlot(3 * 9 + 2).setItemStack(
-                    new ItemStack(Util.getFallbackMaterial("COMPARATOR", "REDSTONE_COMPARATOR")),
-                    "Compare item similarity", base.compareSimilarity ? ChatColor.GREEN + "On" : ChatColor.RED + "Off");
-            ctx.getSlot(3 * 9 + 2)
-                    .addClickHandler(InputMenus.toggler(res -> base.compareSimilarity = res, base.compareSimilarity));
-            ctx.getSlot(3 * 9 + 3).setItemStack(new ItemStack(Material.BOOK), "Component comparison filter",
+            ctx.getSlot(3 * 9 + 2).setItemStack(new ItemStack(Material.BOOK), "Component comparison filter",
                     Joiner.on("\n").join(base.metaFilter));
-            ctx.getSlot(3 * 9 + 3)
+            ctx.getSlot(3 * 9 + 2)
                     .addClickHandler(event -> ctx.getMenu()
                             .transition(InputMenus.stringSetter(() -> Joiner.on(',').join(base.metaFilter),
                                     res -> base.metaFilter = res == null ? null : Arrays.asList(res.split(",")))));
