@@ -11,6 +11,7 @@ import net.citizensnpcs.api.ai.AttackStrategy;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.PathStrategy;
+import net.citizensnpcs.api.ai.PathfinderType;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
@@ -20,7 +21,7 @@ import net.citizensnpcs.util.NMS;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private final boolean aggro;
-    private int attackTicks;
+    private int attackDelay;
     private CancelReason cancelReason;
     private final Entity handle;
     private final NPC npc;
@@ -35,13 +36,14 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         handle = npc.getEntity();
         this.target = target;
         TargetNavigator nms = NMS.getTargetNavigator(npc.getEntity(), target, params);
-        targetNavigator = nms != null && !params.useNewPathfinder() ? nms : new AStarTargeter();
+        targetNavigator = nms != null && params.pathfinderType() == PathfinderType.MINECRAFT ? nms
+                : new AStarTargeter();
         this.aggro = aggro;
     }
 
     private boolean canAttack() {
         BoundingBox handleBB = NMS.getBoundingBox(handle), targetBB = NMS.getBoundingBox(target);
-        return attackTicks <= 0 && handleBB.maxY > targetBB.minY && handleBB.minY < targetBB.maxY
+        return attackDelay <= 0 && handleBB.maxY > targetBB.minY && handleBB.minY < targetBB.maxY
                 && distance() <= parameters.attackRange() && ((LivingEntity) handle).hasLineOfSight(target);
     }
 
@@ -131,10 +133,10 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
                     && strategy != parameters.defaultAttackStrategy()) {
                 parameters.defaultAttackStrategy().handle((LivingEntity) handle, (LivingEntity) getTarget());
             }
-            attackTicks = parameters.attackDelayTicks();
+            attackDelay = parameters.attackDelayTicks();
         }
-        if (attackTicks > 0) {
-            attackTicks--;
+        if (attackDelay > 0) {
+            attackDelay--;
         }
         return false;
     }

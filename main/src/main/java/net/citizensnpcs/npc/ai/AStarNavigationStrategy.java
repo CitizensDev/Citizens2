@@ -30,12 +30,12 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class AStarNavigationStrategy extends AbstractPathStrategy {
+    private Location current;
     private final Location destination;
     private final NPC npc;
     private final NavigatorParameters params;
     private Path plan;
     private AStarPlanner planner;
-    private Vector vector;
 
     public AStarNavigationStrategy(NPC npc, Iterable<Vector> path, NavigatorParameters params) {
         super(TargetType.LOCATION);
@@ -56,7 +56,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     @Override
     public Location getCurrentDestination() {
-        return vector != null ? vector.toLocation(npc.getEntity().getWorld()) : destination.clone();
+        return current != null ? current : destination.clone();
     }
 
     @Override
@@ -90,13 +90,13 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         if (getCancelReason() != null || plan == null || plan.isComplete())
             return true;
-        if (vector == null) {
-            vector = plan.getCurrentVector();
-        }
         Location loc = npc.getEntity().getLocation();
-        Location dest = Util.getCenterLocation(vector.toLocation(loc.getWorld()).getBlock());
+        if (current == null) {
+            current = plan.getCurrentVector().toLocation(loc.getWorld());
+        }
+        Location dest = plan.isFinalEntry() ? current : Util.getCenterLocation(current.getBlock());
         /* Proper door movement - gets stuck on corners at times
-
+        
         Block block = loc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
          if (MinecraftBlockExaminer.isDoor(block.getType())) {
            Door door = (Door) block.getState().getData();
@@ -114,7 +114,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             plan.update(npc);
             if (plan.isComplete())
                 return true;
-            vector = plan.getCurrentVector();
+            current = null;
             return false;
         }
         if (params.debug()) {
