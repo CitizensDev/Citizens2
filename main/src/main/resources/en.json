@@ -426,7 +426,7 @@
   "citizens.commands.npc.pathopt.open-doors-unset" : "[[{0}]] will no longer try to open doors.",
   "citizens.commands.npc.pathopt.path-distance-margin-set" : "[[{0}]]''s pathfinding path distance margin set to [[{1}]].",
   "citizens.commands.npc.pathopt.stationary-ticks-set" : "[[{0}]]''s maximum stationary ticks set to [[{1}]].",
-  "citizens.commands.npc.pathopt.use-new-finder" : "[[{0}]]''s use new finder set to [[{1}]].", 
+  "citizens.commands.npc.pathopt.pathfinder-type-set" : "[[{0}]]''s pathfinder type set to [[{1}]].", 
   "citizens.commands.npc.pathto.description" : "Starts pathfinding to a certain location",
   "citizens.commands.npc.pathto.help" : "",
   "citizens.commands.npc.pausepathfinding.lockout-duration-set" : "[[{0}]] will now wait for [[{1}]] ticks before pausing again.",

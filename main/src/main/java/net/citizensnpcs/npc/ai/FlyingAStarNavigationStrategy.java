@@ -26,6 +26,7 @@ import net.citizensnpcs.api.astar.pathfinder.Path;
 import net.citizensnpcs.api.astar.pathfinder.VectorGoal;
 import net.citizensnpcs.api.astar.pathfinder.VectorNode;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
@@ -146,21 +147,18 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
             npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
                     0);
         }
-        if (npc.getEntity().getType() == EntityType.PLAYER) {
+        if (npc.getEntity().getType() == EntityType.PLAYER && SpigotUtil.getVersion()[1] > 8) {
             ItemStack stack = ((Player) npc.getEntity()).getInventory().getChestplate();
-            try {
-                if (stack != null && stack.getType() == Material.ELYTRA
-                        && !MinecraftBlockExaminer.canStandOn(current.getBlock().getRelative(BlockFace.DOWN))) {
-                    PlayerAnimation.START_ELYTRA.play((Player) npc.getEntity());
-                }
-            } catch (Exception ex) {
-                // 1.8 compatibility
+            if (stack != null && stack.getType() == Material.ELYTRA
+                    && !MinecraftBlockExaminer.canStandOn(current.getBlock().getRelative(BlockFace.DOWN))) {
+                PlayerAnimation.START_ELYTRA.play((Player) npc.getEntity());
             }
         }
-        Vector centeredDest = new Vector(vector.getX() + 0.5D, vector.getY() + 0.1D, vector.getZ() + 0.5D);
-        double d0 = centeredDest.getX() - current.getX();
-        double d1 = centeredDest.getY() - current.getY();
-        double d2 = centeredDest.getZ() - current.getZ();
+        Vector dest = plan.isFinalEntry() ? vector
+                : new Vector(vector.getX() + 0.5D, vector.getY() + 0.1D, vector.getZ() + 0.5D);
+        double d0 = dest.getX() - current.getX();
+        double d1 = dest.getY() - current.getY();
+        double d2 = dest.getZ() - current.getZ();
 
         Vector velocity = npc.getEntity().getVelocity();
         double motX = velocity.getX(), motY = velocity.getY(), motZ = velocity.getZ();
@@ -173,7 +171,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
 
         if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
             NMS.setVerticalMovement(npc.getEntity(), 0.5);
-            Util.faceLocation(npc.getEntity(), centeredDest.toLocation(npc.getEntity().getWorld()));
+            Util.faceLocation(npc.getEntity(), dest.toLocation(npc.getEntity().getWorld()));
         }
         plan.run(npc);
         return false;

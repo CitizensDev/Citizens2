@@ -62,10 +62,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
+import com.google.common.primitives.Ints;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.ai.PathfinderType;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.command.Arg;
@@ -987,7 +989,7 @@ public class NPCCommands {
             npc.getNavigator().getDefaultParameters().debug(!npc.getNavigator().getDefaultParameters().debug());
             Messaging.send(sender, "Path debugging set to " + npc.getNavigator().getDefaultParameters().debug());
         } else if (args.hasFlag('n')) {
-            String output = "Use new finder [[" + npc.getNavigator().getDefaultParameters().useNewPathfinder();
+            String output = "Pathfinder type [[" + npc.getNavigator().getDefaultParameters().pathfinderType();
             output += "]] distance margin [[" + npc.getNavigator().getDefaultParameters().distanceMargin()
                     + "]] (path margin [[" + npc.getNavigator().getDefaultParameters().pathDistanceMargin() + "]])<br>";
             output += "Teleport if below " + npc.getNavigator().getDefaultParameters().destinationTeleportMargin()
@@ -2281,7 +2283,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathopt --avoid-water|aw [true|false] --open-doors [true|false] --path-range [range] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --use-new-finder [true|false] --falling-distance [distance]",
+            usage = "pathopt --avoid-water|aw [true|false] --open-doors [true|false] --path-range [range] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --pathfinder-type [CITIZENS|MINECRAFT] --falling-distance [distance]",
             desc = "",
             modifiers = { "pathopt", "po", "patho" },
             min = 1,
@@ -2291,7 +2293,7 @@ public class NPCCommands {
             @Flag("avoid-water") Boolean avoidwater, @Flag("open-doors") Boolean opendoors,
             @Flag("stationary-ticks") Integer stationaryTicks, @Flag("distance-margin") Double distanceMargin,
             @Flag("path-distance-margin") Double pathDistanceMargin, @Flag("attack-range") Double attackRange,
-            @Flag("use-new-finder") Boolean useNewFinder, @Flag("falling-distance") Integer fallingDistance)
+            @Flag("falling-distance") Integer fallingDistance, @Flag("pathfinder-type") PathfinderType pathfinderType)
             throws CommandException {
         String output = "";
         if (avoidwater != null) {
@@ -2338,9 +2340,9 @@ public class NPCCommands {
             npc.getNavigator().getDefaultParameters().attackRange(attackRange);
             output += " " + Messaging.tr(Messages.PATHFINDING_OPTIONS_ATTACK_RANGE_SET, npc.getName(), attackRange);
         }
-        if (useNewFinder != null) {
-            npc.getNavigator().getDefaultParameters().useNewPathfinder(useNewFinder);
-            output += " " + Messaging.tr(Messages.PATHFINDING_OPTIONS_USE_NEW_FINDER, npc.getName(), useNewFinder);
+        if (pathfinderType != null) {
+            npc.getNavigator().getDefaultParameters().pathfinderType(pathfinderType);
+            output += " " + Messaging.tr(Messages.PATHFINDING_OPTIONS_PATHFINDER_TYPE, npc.getName(), pathfinderType);
         }
         if (fallingDistance != null) {
             npc.getNavigator().getDefaultParameters().fallDistance(fallingDistance);
@@ -3383,7 +3385,7 @@ public class NPCCommands {
 
         Player playerRecipient = null;
         if (target != null) {
-            if (target.matches("\\d+")) {
+            if (Ints.tryParse(target) != null) {
                 NPC targetNPC = CitizensAPI.getNPCRegistry().getById(Integer.parseInt(args.getFlag("target")));
                 if (targetNPC != null) {
                     context.addRecipient(targetNPC.getEntity());

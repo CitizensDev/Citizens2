@@ -346,8 +346,8 @@ public class Messages {
     public static final String PATHFINDING_OPTIONS_OPEN_DOORS_SET = "citizens.commands.npc.pathopt.open-doors-set";
     public static final String PATHFINDING_OPTIONS_OPEN_DOORS_UNSET = "citizens.commands.npc.pathopt.avoid-water-set";
     public static final String PATHFINDING_OPTIONS_PATH_DISTANCE_MARGIN_SET = "citizens.commands.npc.pathopt.path-distance-margin-set";
+    public static final String PATHFINDING_OPTIONS_PATHFINDER_TYPE = "citizens.commands.npc.pathopt.pathfinder-type-set";
     public static final String PATHFINDING_OPTIONS_STATIONARY_TICKS_SET = "citizens.commands.npc.pathopt.stationary-ticks-set";
-    public static final String PATHFINDING_OPTIONS_USE_NEW_FINDER = "citizens.commands.npc.pathopt.use-new-finder";
     public static final String PATHFINDING_RANGE_SET = "citizens.commands.npc.pathfindingrange.set";
     public static final String PAUSEPATHFINDING_LOCKOUT_DURATION_SET = "citizens.commands.npc.pausepathfinding.lockout-duration-set";
     public static final String PAUSEPATHFINDING_RANGE_SET = "citizens.commands.npc.pausepathfinding.pause-range-set";

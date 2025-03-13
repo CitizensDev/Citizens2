@@ -266,6 +266,8 @@ public class Settings {
         PATHFINDER_FALL_DISTANCE(
                 "The default allowed maximum fall distance when pathfinding, set to -1 to use the default value",
                 "npc.pathfinding.allowed-fall-distance", -1),
+        PATHFINDER_TYPE("The pathfinder type.<br>Valid options are: CITIZENS or MINECRAFT.",
+                "npc.pathfinding.pathfinder-type", "MINECRAFT"),
         PLACEHOLDER_SKIN_UPDATE_FREQUENCY("How often to update skin placeholders",
                 "npc.skins.placeholder-update-frequency-ticks", "npc.skins.placeholder-update-frequency", "5m"),
         PLAYER_TELEPORT_DELAY("npc.delay-player-teleport-ticks", "npc.delay-player-teleport", -1),
@@ -300,9 +302,6 @@ public class Settings {
         TALK_ITEM("The item filter to talk with", "npc.text.talk-item", "*"),
         USE_BOAT_CONTROLS("Whether to change vehicle direction with movement instead of strafe controls",
                 "npc.controllable.use-boat-controls", true),
-        USE_NEW_PATHFINDER(
-                "Whether to use the Citizens pathfinder instead of the Minecraft pathfinder<br>Much more flexible, but may have different performance to Minecraft's pathfinder",
-                "npc.pathfinding.use-new-finder", false),
         USE_SCOREBOARD_TEAMS("npc.defaults.enable-scoreboard-teams", "npc.default.enable-scoreboard-teams", true),
         WARN_ON_RELOAD("general.reload-warning-enabled", true);
 
