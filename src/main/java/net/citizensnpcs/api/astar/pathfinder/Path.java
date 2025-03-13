@@ -67,6 +67,10 @@ public class Path implements Plan {
         return index >= path.length;
     }
 
+    public boolean isFinalEntry() {
+        return index == path.length - 1;
+    }
+
     public void run(NPC npc) {
         path[index].run(npc);
     }
