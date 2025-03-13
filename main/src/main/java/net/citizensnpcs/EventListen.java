@@ -76,6 +76,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.event.CitizensPreReloadEvent;
@@ -783,6 +784,11 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onProjectileHit(ProjectileHitEvent event) {
+        NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getHitEntity());
+        if (npc != null && npc.isProtected() && event.getEntityType().name().contains("WIND_CHARGE")) {
+            event.setCancelled(true);
+            return;
+        }
         if (!(event.getEntity() instanceof FishHook))
             return;
         NMS.removeHookIfNecessary((FishHook) event.getEntity());
