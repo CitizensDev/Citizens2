@@ -29,7 +29,6 @@ import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 public class SpigotUtil {
-
     /**
      * Spigot has changed InventoryViews to be an abstract class instead of an interface necessitating an abstraction
      * over the existing API to avoid java runtime errors. This class is subject to change as required.

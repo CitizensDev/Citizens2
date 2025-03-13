@@ -31,6 +31,7 @@ public class NavigatorParameters implements Cloneable {
     private Function<Navigator, Location> lookAtFunction;
     private Function<Entity, Location> mapper;
     private double pathDistanceMargin = 1F;
+    private PathfinderType pathfinderType;
     private float range;
     private List<Runnable> runCallbacks = Lists.newArrayList();
     private float speedModifier = 1F;
@@ -38,7 +39,6 @@ public class NavigatorParameters implements Cloneable {
     private float straightLineTargetingDistance;
     private StuckAction stuckAction;
     private int updatePathRate;
-    private boolean useNewPathfinder;
 
     /**
      * Adds a {@link Runnable} callback that will be called every tick while the path is running.
@@ -71,9 +71,8 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets the delay between attacks. When attacking a target using an aggressive target strategy, the NPC waits for a
-     * certain number of ticks between attacks to avoid spamming damage to the target. This determines the number of
-     * ticks to wait.
+     * Sets the delay in ticks between attacks. When attacking a target using an aggressive target strategy, the NPC
+     * waits for a certain number of ticks between attacks to avoid repeatedly damaging the target.
      *
      * @param ticks
      *            The new number of ticks to wait between attacks
@@ -93,8 +92,8 @@ public class NavigatorParameters implements Cloneable {
 
     /**
      * When using aggressive NPC navigation, the NPC will wait until close enough to the target before attempting to use
-     * the {@link #attackStrategy()}. This parameter determines the range in blocks squared before the target will be
-     * valid to attack.
+     * the {@link #attackStrategy()}. This parameter determines the range in blocks before the target will be valid to
+     * attack.
      *
      * @param range
      *            The new attack range, in blocks
@@ -386,6 +385,26 @@ public class NavigatorParameters implements Cloneable {
         return this;
     }
 
+    public PathfinderType pathfinderType() {
+        return pathfinderType;
+    }
+
+    /**
+     * Sets whether or not to use an A* pathfinder defined in {@link AStarMachine} for pathfinding.
+     *
+     * If this is set to MINECRAFT, then the Minecraft pathfinder will be used, which may or may not be more consistent.
+     *
+     * Note that certain API features will not be possible if this is set to MINECRAFT - for example,
+     * {@link #examiner(BlockExaminer)}.
+     *
+     * @param type
+     *            The new pathfinder type
+     */
+    public NavigatorParameters pathfinderType(PathfinderType type) {
+        pathfinderType = type;
+        return this;
+    }
+
     /**
      * @return The pathfinding range of the navigator in blocks.
      * @see #range(float)
@@ -554,8 +573,9 @@ public class NavigatorParameters implements Cloneable {
      * @see #useNewPathfinder(boolean)
      * @return Whether to use the new pathfinder
      */
+    @Deprecated
     public boolean useNewPathfinder() {
-        return useNewPathfinder;
+        return pathfinderType() == PathfinderType.CITIZENS;
     }
 
     /**
@@ -569,8 +589,13 @@ public class NavigatorParameters implements Cloneable {
      * @param use
      *            Whether to use the A* pathfinder
      */
+    @Deprecated
     public NavigatorParameters useNewPathfinder(boolean use) {
-        useNewPathfinder = use;
+        if (use) {
+            pathfinderType(PathfinderType.CITIZENS);
+        } else {
+            pathfinderType(PathfinderType.MINECRAFT);
+        }
         return this;
     }
 

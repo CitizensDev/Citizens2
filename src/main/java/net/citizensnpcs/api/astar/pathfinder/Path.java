@@ -29,11 +29,7 @@ public class Path implements Plan {
                 PathEntry.class);
     }
 
-    Path(Iterable<VectorNode> unfiltered) {
-        this.path = cull(unfiltered);
-    }
-
-    private PathEntry[] cull(Iterable<VectorNode> unfiltered) {
+    Path(Iterable<VectorNode> unfiltered, Vector goal) {
         // possibly expose cullability in an API
         List<PathEntry> path = Lists.newArrayList();
         for (VectorNode node : unfiltered) {
@@ -41,7 +37,15 @@ public class Path implements Plan {
                 path.add(new PathEntry(vector, node.callbacks));
             }
         }
-        return path.toArray(new PathEntry[path.size()]);
+        PathEntry goalEntry = new PathEntry(goal, path.get(path.size() - 1).callbacks);
+        Vector last = path.get(path.size() - 1).vector;
+        if (last.getBlockX() == goal.getBlockX() && last.getBlockY() == goal.getBlockY()
+                && last.getBlockZ() == goal.getBlockZ()) {
+            path.set(path.size() - 1, goalEntry);
+        } else {
+            path.add(goalEntry);
+        }
+        this.path = path.toArray(new PathEntry[path.size()]);
     }
 
     public List<Block> getBlocks(World world) {
