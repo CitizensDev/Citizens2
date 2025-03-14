@@ -621,7 +621,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 }
             }
             if (!getNavigator().isNavigating()) {
-                getNavigator().setTarget(currentDestination.getLocation());
+                getNavigator().setTarget(Util.getCenterLocation(currentDestination.getLocation().getBlock()));
             }
             double margin = getNavigator().getLocalParameters().distanceMargin();
             getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {

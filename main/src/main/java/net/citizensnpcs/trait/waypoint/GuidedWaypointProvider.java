@@ -353,7 +353,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 return;
 
             Waypoint current = plan.getCurrentWaypoint();
-            npc.getNavigator().setTarget(current.getLocation());
+            npc.getNavigator().setTarget(Util.getCenterLocation(current.getLocation().getBlock()));
             npc.getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
                 if (plan != null) {
                     plan.update(npc);
