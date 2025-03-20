@@ -114,7 +114,9 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
                     && npc.getOrAddTrait(Owner.class).isOwnedBy(player)) {
                 player.removeMetadata("selected", plugin);
                 select(player, npc);
-                Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), npc);
+                if (!Setting.SELECTION_MESSAGE.asString().isEmpty()) {
+                    Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), npc);
+                }
                 event.setDelayedCancellation(true);
             }
         }
