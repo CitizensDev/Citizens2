@@ -38,7 +38,7 @@ public class CitizensPlaceholders extends PlaceholderExpansion {
         if (player == null || !player.isOnline())
             return null;
 
-        NPC selected = selector.getSelected((CommandSender) player);
+        NPC selected = selector.getSelected(player.getPlayer());
         switch (params) {
             case "citizens_selected_npc_name":
                 return selected == null ? "" : selected.getFullName();
