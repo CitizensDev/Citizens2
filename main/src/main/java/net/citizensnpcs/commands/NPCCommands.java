@@ -2887,7 +2887,9 @@ public class NPCCommands {
             if (npc != null && toSelect.getId() == npc.getId())
                 throw new CommandException(Messages.NPC_ALREADY_SELECTED);
             selector.select(sender, toSelect);
-            Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
+            if (!Setting.SELECTION_MESSAGE.asString().isEmpty()) {
+                Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
+            }
         };
 
         NPCRegistry registry = registryName != null ? CitizensAPI.getNamedNPCRegistry(registryName)
