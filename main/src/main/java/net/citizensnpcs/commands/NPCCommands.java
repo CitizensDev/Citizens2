@@ -2888,7 +2888,7 @@ public class NPCCommands {
                 throw new CommandException(Messages.NPC_ALREADY_SELECTED);
             selector.select(sender, toSelect);
             if (!Setting.SELECTION_MESSAGE.asString().isEmpty()) {
-                Messaging.sendWithNPC(player, Setting.SELECTION_MESSAGE.asString(), toSelect);
+                Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
             }
         };
 
