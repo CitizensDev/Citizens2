@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.citizensnpcs.api.CitizensAPI;
@@ -25,7 +24,7 @@ public class CitizensPlaceholders extends PlaceholderExpansion {
 
     @Override
     public String getIdentifier() {
-        return "citizensplaceholder";
+        return "citizens";
     }
 
     @Override
@@ -40,13 +39,13 @@ public class CitizensPlaceholders extends PlaceholderExpansion {
 
         NPC selected = selector.getSelected(player.getPlayer());
         switch (params) {
-            case "citizens_selected_npc_name":
+            case "selected_npc_name":
                 return selected == null ? "" : selected.getFullName();
-            case "citizens_selected_npc_id":
+            case "selected_npc_id":
                 return selected == null ? "" : Integer.toString(selected.getId());
-            case "citizens_selected_npc_uuid":
+            case "selected_npc_uuid":
                 return selected == null ? "" : selected.getUniqueId().toString();
-            case "citizens_nearest_npc_id":
+            case "nearest_npc_id":
                 Location location = player.getPlayer().getLocation();
 
                 Optional<NPC> closestNPC = player.getPlayer().getNearbyEntities(25, 25, 25).stream()
