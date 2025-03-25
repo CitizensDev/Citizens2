@@ -370,6 +370,7 @@ public class ShopTrait extends Trait {
         @Persist
         private String costMessage;
         private List<String> defaultLore = ImmutableList.of();
+        private String defaultName;
         @Persist
         private ItemStack display;
         @Persist
@@ -401,6 +402,9 @@ public class ShopTrait extends Trait {
             timesPurchasable = defaultSettings.getInt("times-purchasable", 0);
             if (!defaultSettings.getString("lore", "").isEmpty()) {
                 defaultLore = Messaging.parseComponentsList(defaultSettings.getString("lore"));
+            }
+            if (!defaultSettings.getString("name", "").isEmpty()) {
+                defaultName = Messaging.parseComponents(defaultSettings.getString(""));
             }
         }
 
@@ -571,6 +575,11 @@ public class ShopTrait extends Trait {
             this.display = itemstack == null ? null : itemstack.clone();
             if (this.display == null)
                 return;
+            if (defaultName != null) {
+                ItemMeta meta = display.getItemMeta();
+                meta.setDisplayName(defaultName.replace("<itemname>", meta.getItemName()));
+                display.setItemMeta(meta);
+            }
             if (!defaultLore.isEmpty()) {
                 List<String> output = Lists.newArrayList();
                 ItemMeta meta = display.getItemMeta();

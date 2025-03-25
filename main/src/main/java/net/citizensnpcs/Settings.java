@@ -288,7 +288,7 @@ public class Settings {
         SERVER_OWNS_NPCS("Whether the server owns NPCs rather than individual players", "npc.server-ownership", false),
         SHOP_DEFAULT_ITEM_SETTINGS("npc.shops.default-item",
                 Maps.asMap(
-                        Sets.newHashSet("times-purchasable", "max-repeats-on-shift-click", "result-message",
+                        Sets.newHashSet("times-purchasable", "max-repeats-on-shift-click", "result-message", "name",
                                 "cost-message", "lore", "already-purchased-message", "click-to-confirm-message"),
                         s -> "")),
         SHOP_GLOBAL_VIEW_PERMISSION(
