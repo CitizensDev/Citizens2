@@ -603,7 +603,7 @@ public interface NPC extends Agent, Cloneable {
         /**
          * Speed modifier in water, percentage.
          */
-        WATER_SPEED_MODIFIER("water-speed-modifier", Double.class);
+        WATER_SPEED_MODIFIER("water-speed-modifier", Float.class);
 
         private final String key;
         private final boolean strict;
