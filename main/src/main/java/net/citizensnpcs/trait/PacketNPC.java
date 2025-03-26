@@ -112,7 +112,6 @@ public class PacketNPC extends Trait {
         public boolean spawn(Location at) {
             NMS.setLocationDirectly(base.getBukkitEntity(), at);
             PlayerUpdateTask.registerPlayer(getBukkitEntity());
-            System.out.println("SPAWN");
             return true;
         }
     }

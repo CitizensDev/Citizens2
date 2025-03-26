@@ -40,6 +40,14 @@ public interface EntityPacketTracker extends Runnable {
             }
         }
 
+        public void send(Object packet, List<UUID> ignoring) {
+            for (PlayerConnection conn : connections) {
+                if (ignoring.contains(conn.uuid))
+                    continue;
+                conn.conn.accept(packet);
+            }
+        }
+
         public void startBundling() {
             packets = Lists.newArrayList();
         }
