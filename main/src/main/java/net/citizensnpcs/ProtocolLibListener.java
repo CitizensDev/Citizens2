@@ -13,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
@@ -98,18 +97,23 @@ public class ProtocolLibListener implements Listener {
                 if (npc == null)
                     return;
                 MirrorTrait mirror = npc.getTraitNullable(MirrorTrait.class);
-                if (mirror != null && mirror.isMirroringEquipment() && mirror.isMirroring(event.getPlayer())) {
+                if (mirror != null && mirror.getEquipmentFunction() != null && mirror.isMirroring(event.getPlayer())) {
                     StructureModifier<List<Pair<EnumWrappers.ItemSlot, ItemStack>>> modifier = event.getPacket()
                             .getLists(BukkitConverters.getPairConverter(EnumWrappers.getItemSlotConverter(),
                                     BukkitConverters.getItemStackConverter()));
                     List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipment = Lists.newArrayList();
-                    PlayerInventory pi = event.getPlayer().getInventory();
-                    equipment.add(new Pair<>(ItemSlot.CHEST, pi.getChestplate()));
-                    equipment.add(new Pair<>(ItemSlot.FEET, pi.getBoots()));
-                    equipment.add(new Pair<>(ItemSlot.HEAD, pi.getHelmet()));
-                    equipment.add(new Pair<>(ItemSlot.LEGS, pi.getLeggings()));
-                    equipment.add(new Pair<>(ItemSlot.MAINHAND, pi.getItemInHand()));
-                    equipment.add(new Pair<>(ItemSlot.OFFHAND, pi.getItemInOffHand()));
+                    equipment.add(new Pair<>(ItemSlot.CHEST,
+                            mirror.getEquipmentFunction().apply(event.getPlayer(), EquipmentSlot.CHESTPLATE)));
+                    equipment.add(new Pair<>(ItemSlot.FEET,
+                            mirror.getEquipmentFunction().apply(event.getPlayer(), EquipmentSlot.BOOTS)));
+                    equipment.add(new Pair<>(ItemSlot.HEAD,
+                            mirror.getEquipmentFunction().apply(event.getPlayer(), EquipmentSlot.HELMET)));
+                    equipment.add(new Pair<>(ItemSlot.LEGS,
+                            mirror.getEquipmentFunction().apply(event.getPlayer(), EquipmentSlot.LEGGINGS)));
+                    equipment.add(new Pair<>(ItemSlot.MAINHAND,
+                            mirror.getEquipmentFunction().apply(event.getPlayer(), EquipmentSlot.HAND)));
+                    equipment.add(new Pair<>(ItemSlot.OFFHAND,
+                            mirror.getEquipmentFunction().apply(event.getPlayer(), EquipmentSlot.OFF_HAND)));
                     modifier.write(0, equipment);
                     return;
                 }
