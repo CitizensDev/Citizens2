@@ -467,6 +467,7 @@ public class Messages {
     public static final String UNKNOWN_NPC_REGISTRY = "citizens.commands.errors.unknown-registry";
     public static final String UNKNOWN_PLAYER_ANIMATION = "citizens.commands.npc.panimate.unknown-animation";
     public static final String USING_MINECRAFT_AI = "citizens.commands.npc.ai.started";
+    public static final String VEX_CHARGING_SET = "citizens.commands.npc.vex.charging-set";
     public static final String VILLAGER_LEVEL_SET = "citizens.commands.npc.villager.level-set";
     public static final String VILLAGER_TYPE_SET = "citizens.commands.npc.villager.type-set";
     public static final String VULNERABLE_SET = "citizens.commands.npc.vulnerable.set";

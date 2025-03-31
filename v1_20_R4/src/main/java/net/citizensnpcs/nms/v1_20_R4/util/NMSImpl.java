@@ -253,6 +253,7 @@ import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.trait.versioned.SpellcasterTrait;
 import net.citizensnpcs.trait.versioned.TextDisplayTrait;
 import net.citizensnpcs.trait.versioned.TropicalFishTrait;
+import net.citizensnpcs.trait.versioned.VexTrait;
 import net.citizensnpcs.trait.versioned.VillagerTrait;
 import net.citizensnpcs.trait.versioned.WardenTrait;
 import net.citizensnpcs.util.EntityPacketTracker;
@@ -1005,6 +1006,7 @@ public class NMSImpl implements NMSBridge {
         registerTraitWithCommand(manager, PufferFishTrait.class);
         registerTraitWithCommand(manager, SpellcasterTrait.class);
         registerTraitWithCommand(manager, ShulkerTrait.class);
+        registerTraitWithCommand(manager, VexTrait.class);
         registerTraitWithCommand(manager, SnowmanTrait.class);
         registerTraitWithCommand(manager, TropicalFishTrait.class);
         registerTraitWithCommand(manager, TextDisplayTrait.class);
