@@ -265,15 +265,20 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "aggressive [true|false]",
+            usage = "aggressive [true|false] (-t(emporary))",
             desc = "",
+            flags = "t",
             modifiers = { "aggressive" },
             min = 1,
             max = 2,
             permission = "citizens.npc.aggressive")
     public void aggressive(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Boolean aggressive) {
         boolean aggro = aggressive != null ? aggressive : !npc.data().get(NPC.Metadata.AGGRESSIVE, false);
-        npc.data().set(NPC.Metadata.AGGRESSIVE, aggro);
+        if (args.hasFlag('t')) {
+            npc.data().set(NPC.Metadata.AGGRESSIVE, aggressive);
+        } else {
+            npc.data().setPersistent(NPC.Metadata.AGGRESSIVE, aggro);
+        }
         NMS.setAggressive(npc.getEntity(), aggro);
     }
 

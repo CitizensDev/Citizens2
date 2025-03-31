@@ -560,11 +560,16 @@ public class ShopTrait extends Trait {
                 if (matcher.group(1).equalsIgnoreCase("times_purchasable")) {
                     matcher.appendReplacement(sb, Integer.toString(timesPurchasable));
                 } else {
-                    matcher.appendReplacement(sb,
-                            Joiner.on(", ")
-                                    .join(Iterables.transform(matcher.group(1).equalsIgnoreCase("cost") ? cost : result,
-                                            NPCShopAction::describe))
-                                    .replace("$", "\\$").replace("{", "\\{"));
+                    if ((matcher.group(1).equalsIgnoreCase("cost") ? cost : result).isEmpty()) {
+                        matcher.appendReplacement(sb, "");
+                    } else {
+                        matcher.appendReplacement(sb,
+                                Joiner.on(", ")
+                                        .join(Iterables.transform(
+                                                matcher.group(1).equalsIgnoreCase("cost") ? cost : result,
+                                                NPCShopAction::describe))
+                                        .replace("$", "\\$").replace("{", "\\{"));
+                    }
                 }
             }
             matcher.appendTail(sb);
