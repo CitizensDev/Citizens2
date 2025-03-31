@@ -389,6 +389,10 @@ public class SkinUpdateTracker {
         }
 
         boolean shouldUpdate(Player player) {
+            if (SUPPORTS_WORLD_LOADED && !location.isWorldLoaded()) {
+                hardReset(player);
+                return true;
+            }
             Location currentLoc = player.getLocation();
 
             // make sure player is in same world
@@ -437,4 +441,12 @@ public class SkinUpdateTracker {
 
     private static float FIELD_OF_VIEW = 70F;
     private static int MOVEMENT_SKIN_UPDATE_DISTANCE = 25;
+    private static boolean SUPPORTS_WORLD_LOADED = false;
+    static {
+        try {
+            Location.class.getMethod("isWorldLoaded");
+            SUPPORTS_WORLD_LOADED = true;
+        } catch (NoSuchMethodException | SecurityException e) {
+        }
+    }
 }
