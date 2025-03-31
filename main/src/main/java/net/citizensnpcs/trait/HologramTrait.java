@@ -547,6 +547,9 @@ public class HologramTrait extends Trait {
         public void setBackgroundColor(Color color) {
             this.backgroundColor = color;
             if (color != null) {
+                if (renderer != null) {
+                    renderer.destroy();
+                }
                 renderer = new TextDisplayRenderer();
                 renderer.updateText(npc, text);
             }
@@ -567,6 +570,9 @@ public class HologramTrait extends Trait {
         public void setTextShadow(boolean shadow) {
             this.shadow = shadow;
             if (!shadow) {
+                if (renderer != null) {
+                    renderer.destroy();
+                }
                 renderer = new TextDisplayRenderer();
                 renderer.updateText(npc, text);
             }
