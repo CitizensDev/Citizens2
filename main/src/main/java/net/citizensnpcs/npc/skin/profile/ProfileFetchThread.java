@@ -1,9 +1,7 @@
 package net.citizensnpcs.npc.skin.profile;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,7 +32,7 @@ import net.citizensnpcs.util.Util;
  * @see ProfileFetcher
  */
 class ProfileFetchThread implements Runnable {
-    private final Deque<ProfileRequest> queue = new ArrayDeque<>();
+    private final List<ProfileRequest> queue = new ArrayList<>();
     private final Map<String, ProfileRequest> requested = new HashMap<>(40);
     private final Object sync = new Object(); // sync for queue & requested fields
 
@@ -204,9 +202,12 @@ class ProfileFetchThread implements Runnable {
         synchronized (sync) {
             if (queue.isEmpty())
                 return;
-
-            requests = new ArrayList<>(queue);
-            queue.clear();
+            requests = new ArrayList<>(10);
+            for (int i = 0; i < 30; i++) {
+                if (queue.isEmpty())
+                    break;
+                requests.add(queue.remove(queue.size() - 1));
+            }
         }
         try {
             fetchRequests(requests);

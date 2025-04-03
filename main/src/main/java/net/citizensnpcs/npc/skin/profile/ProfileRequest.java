@@ -67,6 +67,25 @@ public class ProfileRequest {
         handlers.addLast(handler);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        ProfileRequest other = (ProfileRequest) obj;
+        if (playerName == null) {
+            if (other.playerName != null) {
+                return false;
+            }
+        } else if (!playerName.equals(other.playerName)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Get the name of the player the requested profile belongs to.
      */
@@ -90,6 +109,11 @@ public class ProfileRequest {
      */
     public ProfileFetchResult getResult() {
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 + ((playerName == null) ? 0 : playerName.hashCode());
     }
 
     /**
