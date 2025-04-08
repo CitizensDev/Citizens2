@@ -598,13 +598,17 @@ public class CitizensNPC extends AbstractNPC {
         if (!SUPPORT_USE_ITEM)
             return;
 
+        if (data().has("citizens-was-using-item")) {
+            PlayerAnimation.STOP_USE_ITEM.play(player, 64);
+            data().remove("citizens-was-using-item");
+        }
         try {
             if (useItem) {
-                PlayerAnimation.STOP_USE_ITEM.play(player, 64);
                 PlayerAnimation.START_USE_MAINHAND_ITEM.play(player, 64);
+                data().set("citizens-was-using-item", true);
             } else if (offhand) {
-                PlayerAnimation.STOP_USE_ITEM.play(player, 64);
                 PlayerAnimation.START_USE_OFFHAND_ITEM.play(player, 64);
+                data().set("citizens-was-using-item", true);
             }
         } catch (UnsupportedOperationException ex) {
             SUPPORT_USE_ITEM = false;
