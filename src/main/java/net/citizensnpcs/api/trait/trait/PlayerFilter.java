@@ -47,7 +47,7 @@ public class PlayerFilter extends Trait {
         this();
         this.filter = p -> {
             if (applyRange != -1 && npc.isSpawned()) {
-                if (p.getLocation().getWorld() != npc.getEntity().getLocation().getWorld())
+                if (p.getWorld() != npc.getEntity().getWorld())
                     return false;
                 if (p.getLocation().distance(npc.getEntity().getLocation()) > applyRange)
                     return false;

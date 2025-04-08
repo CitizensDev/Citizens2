@@ -24,7 +24,9 @@ public class GroupNPCFlock implements NPCFlock {
     public Collection<NPC> getNearby(final NPC npc) {
         if (radius < 0)
             return npcs;
-        return npcs.stream().filter(input -> input.getStoredLocation().distance(npc.getStoredLocation()) < radius)
+        return npcs.stream()
+                .filter(input -> npc.getStoredLocation().getWorld() == input.getStoredLocation().getWorld()
+                        && input.getStoredLocation().distance(npc.getStoredLocation()) < radius)
                 .collect(Collectors.<NPC> toList());
     }
 

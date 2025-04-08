@@ -110,6 +110,9 @@ public class WanderGoal extends BehaviorGoalAdapter implements Listener {
             if (!npc.getNavigator().isNavigating())
                 return BehaviorStatus.SUCCESS;
         } else {
+            if (target.getWorld() != npc.getEntity().getWorld())
+                return BehaviorStatus.SUCCESS;
+
             if (npc.getEntity().getLocation().distance(target) >= 0.1) {
                 npc.setMoveDestination(target);
             } else
