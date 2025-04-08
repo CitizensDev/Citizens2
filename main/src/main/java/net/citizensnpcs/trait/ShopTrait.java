@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -487,7 +488,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-
+            
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
@@ -1293,8 +1294,13 @@ public class ShopTrait extends Trait {
 
         @EventHandler
         public void onInventoryClick(InventoryClickEvent evt) {
-            if (!evt.getView().equals(view) || evt.getSlotType() != SlotType.RESULT)
+            try {
+                if (!GET_VIEW.invoke(evt).equals(view) || evt.getSlotType() != SlotType.RESULT)
+                    return;
+            } catch (Throwable e) {
+                e.printStackTrace();
                 return;
+            }
             evt.setCancelled(true);
             if (selectedTrade == -1)
                 return;
@@ -1326,11 +1332,20 @@ public class ShopTrait extends Trait {
 
         @EventHandler
         public void onTradeSelect(TradeSelectEvent evt) {
-            if (!evt.getView().equals(view))
+            try {
+                if (!TRADE_SELECT_GET_VIEW.invoke(evt).equals(view))
+                    return;
+            } catch (Throwable e) {
+                e.printStackTrace();
                 return;
+            }
             selectedTrade = evt.getIndex();
             lastClickedTrade = -1;
         }
+
+        private static final MethodHandle GET_VIEW = NMS.getMethodHandle(InventoryClickEvent.class, "getView", true);
+        private static final MethodHandle TRADE_SELECT_GET_VIEW = NMS.getMethodHandle(TradeSelectEvent.class, "getView",
+                true);
     }
 
     public enum ShopType {
