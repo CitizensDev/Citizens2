@@ -231,6 +231,8 @@
   "citizens.commands.npc.horse.invalid-style" : "指定的马匹样式无效, 有效的样式是: [[{0}]].",
   "citizens.commands.npc.horse.invalid-type" : "指定的马匹类型无效, 有效的类型是: [[{0}]].",
   "citizens.commands.npc.horse.style-set" : "这匹马的样式已设置为 [[{0}]].",
+  "citizens.commands.npc.horse.tamed-set" : "[[{0}]] 现在是被驯服状态.",
+  "citizens.commands.npc.horse.tamed-unset" : "[[{0}]] 现在不再是被驯服状态.",
   "citizens.commands.npc.hurt.description" : "向 NPC 施加伤害",
   "citizens.commands.npc.hurt.not-damageable" : "NPC 类型 [[{0}]] 不会受伤.",
   "citizens.commands.npc.hurt.protected" : "NPC 受保护且不会受伤. <click:run_command:/npc vulnerable>[[<u>点击以取消保护</click>",
