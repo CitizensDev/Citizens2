@@ -24,6 +24,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.inventory.TradeSelectEvent;
@@ -488,7 +489,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-            
+
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
@@ -1333,7 +1334,7 @@ public class ShopTrait extends Trait {
         @EventHandler
         public void onTradeSelect(TradeSelectEvent evt) {
             try {
-                if (!TRADE_SELECT_GET_VIEW.invoke(evt).equals(view))
+                if (!GET_VIEW.invoke(evt).equals(view))
                     return;
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -1343,9 +1344,7 @@ public class ShopTrait extends Trait {
             lastClickedTrade = -1;
         }
 
-        private static final MethodHandle GET_VIEW = NMS.getMethodHandle(InventoryClickEvent.class, "getView", true);
-        private static final MethodHandle TRADE_SELECT_GET_VIEW = NMS.getMethodHandle(TradeSelectEvent.class, "getView",
-                true);
+        private static final MethodHandle GET_VIEW = NMS.getMethodHandle(InventoryEvent.class, "getView", true);
     }
 
     public enum ShopType {
