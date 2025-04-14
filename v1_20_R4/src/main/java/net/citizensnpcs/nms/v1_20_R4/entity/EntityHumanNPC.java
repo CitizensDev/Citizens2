@@ -383,7 +383,15 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         if (npc == null)
             return;
 
-        detectEquipmentUpdatesPublic();
+        if (NMSImpl.PAPER_LIVING_ENTITY_DETECT_EQUIPMENT_UPDATES != null) {
+            try {
+                NMSImpl.PAPER_LIVING_ENTITY_DETECT_EQUIPMENT_UPDATES.invoke(this);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else {
+            detectEquipmentUpdatesPublic();
+        }
         float scale = this.getScale();
         if (scale != this.appliedScale) {
             appliedScale = scale;

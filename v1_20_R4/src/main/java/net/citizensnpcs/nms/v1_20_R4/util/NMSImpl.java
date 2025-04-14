@@ -393,7 +393,6 @@ public class NMSImpl implements NMSBridge {
         getHandle(entity).activatedTick = MinecraftServer.currentTick;
     }
 
-    @SuppressWarnings("resource")
     @Override
     public boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
         int viewDistance = -1;
@@ -2703,6 +2702,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "cj");
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
@@ -2762,6 +2762,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle NAVIGATION_PATHFINDER = NMS.getFirstFinalSetter(PathNavigation.class,
             PathFinder.class);
     private static final MethodHandle NAVIGATION_WORLD_FIELD = NMS.getFirstSetter(PathNavigation.class, Level.class);
+    public static final MethodHandle PAPER_LIVING_ENTITY_DETECT_EQUIPMENT_UPDATES = NMS
+            .getMethodHandle(LivingEntity.class, "detectEquipmentUpdates", false);
     // Player.mobCounts: workaround for an issue which suppresses mobs being spawn near NPC players on Paper. Need to
     // check for every update.
     public static final MethodHandle PAPER_PLAYER_MOB_COUNTS = NMS.getGetter(ServerPlayer.class, "mobCounts", false);
