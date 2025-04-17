@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import org.bukkit.Rotation;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,6 +22,8 @@ public class ItemFrameTrait extends Trait {
     private Rotation rotation = Rotation.NONE;
     @Persist
     private boolean visible = true;
+    @Persist
+    private BlockFace facing = BlockFace.NORTH;
 
     public ItemFrameTrait() {
         super("itemframe");
@@ -38,6 +41,10 @@ public class ItemFrameTrait extends Trait {
         return rotation;
     }
 
+    public BlockFace getFacing() {
+        return facing;
+    }
+
     public boolean isVisible() {
         return visible;
     }
@@ -51,6 +58,9 @@ public class ItemFrameTrait extends Trait {
             }
             if (item != null) {
                 frame.setItem(item);
+            }
+            if (facing != null) {
+                frame.setFacingDirection(facing);
             }
             if (fixed != null) {
                 frame.setFixed(fixed);
@@ -78,6 +88,11 @@ public class ItemFrameTrait extends Trait {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+        onSpawn();
+    }
+
+    public void setFacing(BlockFace face) {
+        this.facing = face;
         onSpawn();
     }
 }

@@ -1653,7 +1653,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "itemframe --visible [true|false] --fixed [true|false] --rotation [rotation] --item [item]",
+            usage = "itemframe --visible [true|false] --fixed [true|false] --rotation [rotation] --item [item] --face [face]",
             desc = "",
             modifiers = { "itemframe" },
             min = 1,
@@ -1662,7 +1662,8 @@ public class NPCCommands {
             permission = "citizens.npc.itemframe")
     @Requirements(ownership = true, selected = true, types = EntityType.ITEM_FRAME)
     public void itemframe(CommandContext args, CommandSender sender, NPC npc, @Flag("visible") Boolean visible,
-            @Flag("fixed") Boolean fixed, @Flag("rotation") Rotation rotation, @Flag("item") ItemStack item)
+            @Flag("fixed") Boolean fixed, @Flag("rotation") Rotation rotation, @Flag("item") ItemStack item,
+            @Flag("face") BlockFace face)
             throws CommandException {
         ItemFrameTrait ift = npc.getOrAddTrait(ItemFrameTrait.class);
         String msg = "";
@@ -1681,6 +1682,10 @@ public class NPCCommands {
         if (rotation != null) {
             ift.setRotation(rotation);
             msg += " " + Messaging.tr(Messages.ITEMFRAME_ROTATION_SET, rotation);
+        }
+        if (face != null) {
+            ift.setFacing(face);
+            msg += " " + Messaging.tr(Messages.ITEMFRAME_BLOCKFACE_SET, face);
         }
         if (msg.isEmpty())
             throw new CommandUsageException();
