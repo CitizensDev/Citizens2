@@ -232,6 +232,7 @@ public class Messages {
     public static final String ITEMFRAME_FIXED_SET = "citizens.commands.npc.itemframe.fixed-set";
     public static final String ITEMFRAME_ITEM_SET = "citizens.commands.npc.itemframe.item-set";
     public static final String ITEMFRAME_ROTATION_SET = "citizens.commands.npc.itemframe.rotation-set";
+    public static final String ITEMFRAME_BLOCKFACE_SET = "citizens.commands.npc.itemframe.blockface-set";
     public static final String ITEMFRAME_VISIBLE_SET = "citizens.commands.npc.itemframe.visible-set";
     public static final String KNOCKBACK_SET = "citizens.commands.npc.knockback.set";
     public static final String KNOCKBACK_UNSET = "citizens.commands.npc.knockback.unset";

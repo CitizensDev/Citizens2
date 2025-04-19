@@ -299,6 +299,7 @@
   "citizens.commands.npc.itemframe.fixed-set" : "Fixed (whether the item can be rotated) set to [[{0}]]",
   "citizens.commands.npc.itemframe.item-set" : "Item set to [[{0}]]",
   "citizens.commands.npc.itemframe.rotation-set" : "Rotation set to [[{0}]]",
+  "citizens.commands.npc.itemframe.blockface-set" : "BlockFace set to [[{0}]]",
   "citizens.commands.npc.itemframe.visible-set" : "Visible set to [[{0}]]",
   "citizens.commands.npc.jump.description": "Makes the NPC jump",
   "citizens.commands.npc.jump.help" : "",
