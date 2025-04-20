@@ -138,6 +138,11 @@ public class WanderWaypointProvider implements WaypointProvider {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
                         Object region = null;
                         String regionId = message.replace("worldguardregion", "").trim();
+                        if (regionId.isEmpty()) {
+                            setWorldGuardRegion(null);
+                            Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_SET, "");
+                            return;
+                        }
                         try {
                             RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer()
                                     .get(BukkitAdapter.adapt(npc.getStoredLocation().getWorld()));
@@ -150,7 +155,7 @@ public class WanderWaypointProvider implements WaypointProvider {
                             return;
                         }
                         setWorldGuardRegion(regionId);
-                        Messaging.sendErrorTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_SET, regionId);
+                        Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_WORLDGUARD_REGION_SET, regionId);
                     });
                 } else if (message.startsWith("pathfind")) {
                     event.setCancelled(true);
