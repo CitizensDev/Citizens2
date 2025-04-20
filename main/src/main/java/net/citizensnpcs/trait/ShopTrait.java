@@ -376,7 +376,11 @@ public class ShopTrait extends Trait {
         @Persist
         private ItemStack display;
         @Persist
+        private int globalTimesPurchasable;
+        @Persist
         private boolean maxRepeatsOnShiftClick;
+        @Persist
+        private int npurchases;
         @Persist(keyType = UUID.class)
         private final Map<UUID, Integer> purchases = Maps.newHashMap();
         @Persist
@@ -384,7 +388,7 @@ public class ShopTrait extends Trait {
         @Persist
         private String resultMessage;
         @Persist
-        private int timesPurchasable = 0;
+        private int timesPurchasable;
 
         public NPCShopItem() {
             ConfigurationSection defaultSettings = Setting.SHOP_DEFAULT_ITEM_SETTINGS.asSection();
@@ -402,6 +406,7 @@ public class ShopTrait extends Trait {
                     : null;
             maxRepeatsOnShiftClick = defaultSettings.getBoolean("max-repeats-on-shift-click", false);
             timesPurchasable = defaultSettings.getInt("times-purchasable", 0);
+            globalTimesPurchasable = defaultSettings.getInt("global-times-purchasable", 0);
             if (!defaultSettings.getString("lore", "").isEmpty()) {
                 defaultLore = Messaging.parseComponentsList(defaultSettings.getString("lore"));
             }
@@ -510,7 +515,10 @@ public class ShopTrait extends Trait {
                 boolean shiftClick, boolean secondClick) {
             // TODO: InventoryMultiplexer could be lifted up to transact in apply(), which would be cleaner.
             // if this is done, it should probably refresh after every transaction application
-            if (timesPurchasable > 0 && purchases.getOrDefault(player.getUniqueId(), 0) == timesPurchasable) {
+            if (globalTimesPurchasable > 0 && npurchases >= globalTimesPurchasable) {
+                return;
+            }
+            if (timesPurchasable > 0 && purchases.getOrDefault(player.getUniqueId(), 0) >= timesPurchasable) {
                 if (alreadyPurchasedMessage != null) {
                     Messaging.sendColorless(player, placeholders(alreadyPurchasedMessage, player));
                 }
@@ -548,6 +556,9 @@ public class ShopTrait extends Trait {
             }
             if (timesPurchasable > 0) {
                 purchases.put(player.getUniqueId(), purchases.getOrDefault(player.getUniqueId(), 0) + 1);
+            }
+            if (globalTimesPurchasable > 0) {
+                npurchases++;
             }
             if (NPCShopPurchaseEvent.HANDLERS.getRegisteredListeners().length > 0) {
                 Bukkit.getPluginManager().callEvent(new NPCShopPurchaseEvent(player, shop, this));
@@ -642,7 +653,16 @@ public class ShopTrait extends Trait {
             if (modified.display != null) {
                 ctx.getSlot(9 * 4 + 4).setItemStack(modified.getDisplayItem(null));
             }
-            ctx.getSlot(9 * 3 + 2).setItemStack(new ItemStack(Material.EGG), "Only purchasable once per player",
+            ctx.getSlot(9 * 5 + 2).setItemStack(new ItemStack(Material.EGG), "Global number of purchases limit",
+                    "Times purchasable: " + modified.globalTimesPurchasable
+                            + (modified.globalTimesPurchasable == 0 ? " (no limit)" : ""));
+            ctx.getSlot(9 * 5 + 2).setClickHandler(e -> ctx.getMenu()
+                    .transition(InputMenus.stringSetter(() -> String.valueOf(modified.globalTimesPurchasable), s -> {
+                        modified.globalTimesPurchasable = Integer.parseInt(s);
+                        ctx.getSlot(9 * 4 + 2).setDescription("Times purchasable: " + modified.globalTimesPurchasable
+                                + (modified.globalTimesPurchasable == 0 ? " (no limit)" : ""));
+                    })));
+            ctx.getSlot(9 * 3 + 2).setItemStack(new ItemStack(Material.EGG), "Number of purchases limit per player",
                     "Times purchasable: " + modified.timesPurchasable
                             + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
             ctx.getSlot(9 * 3 + 2).setClickHandler(e -> ctx.getMenu()
