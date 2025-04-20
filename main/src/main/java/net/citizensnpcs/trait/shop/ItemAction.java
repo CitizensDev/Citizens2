@@ -89,18 +89,11 @@ public class ItemAction extends NPCShopAction {
             if (toMatch == null || toMatch.getType() == Material.AIR || tooDamaged(toMatch))
                 continue;
 
-            toMatch = toMatch.clone();
             for (int j = 0; j < items.size(); j++) {
                 if (!matches(items.get(j), toMatch))
                     continue;
-
-                int remaining = req.get(j);
-                int taken = toMatch.getAmount() > remaining ? remaining : toMatch.getAmount();
-                has.set(j, has.get(j) + taken);
-                if (toMatch.getAmount() - taken <= 0)
-                    break;
-
-                toMatch.setAmount(toMatch.getAmount() - taken);
+                has.set(j, has.get(j) + toMatch.getAmount());
+                break;
             }
         }
         return IntStream.range(0, req.size()).map(i -> req.get(i) == 0 ? 0 : has.get(i) / req.get(i)).reduce(Math::min)
