@@ -296,12 +296,7 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
-    public boolean spawn(Location at) {
-        return spawn(at, SpawnReason.PLUGIN);
-    }
-
-    @Override
-    public boolean spawn(Location at, SpawnReason reason) {
+    public boolean spawn(Location at, SpawnReason reason, Consumer<Entity> callback) {
         Objects.requireNonNull(at, "location cannot be null");
         Objects.requireNonNull(reason, "reason cannot be null");
         if (getEntity() != null) {
@@ -424,6 +419,9 @@ public class CitizensNPC extends AbstractNPC {
 
                 Messaging.debug("Spawned", CitizensNPC.this, "SpawnReason." + reason);
                 cancel.run();
+                if (callback != null) {
+                    callback.accept(getEntity());
+                }
             }
         };
         if (getEntity() != null && getEntity().isValid()) {

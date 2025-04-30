@@ -480,5 +480,5 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         }
     }
 
-    private static AStarMachine<GuidedNode, GuidedPlan> ASTAR = AStarMachine.createWithDefaultStorage();
+    private static final AStarMachine<GuidedNode, GuidedPlan> ASTAR = AStarMachine.createWithDefaultStorage();
 }

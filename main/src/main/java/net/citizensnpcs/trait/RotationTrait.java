@@ -253,6 +253,14 @@ public class RotationTrait extends Trait {
             }
         }
 
+        public String describe() {
+            if (immediate)
+                return "immediately moves to target rotation";
+
+            return "rotates" + (headOnly ? " head " : "") + "to target moving [[" + maxPitchPerTick
+                    + "]] degrees in pitch and [[" + maxYawPerTick + "]] degrees in yaw per tick";
+        }
+
         public RotationParams filter(Function<Player, Boolean> filter) {
             this.filter = filter;
             return this;
@@ -330,17 +338,17 @@ public class RotationTrait extends Trait {
             return Util.clamp(out, pitchRange[0], pitchRange[1], 360);
         }
 
-        private float rotateTowards(float target, float current, float maxRotPerTick) {
-            float diff = Util.clamp(current - target);
-            return target + clamp(diff, -maxRotPerTick, maxRotPerTick);
-        }
-
         /*
          *  public Vector3 SuperSmoothVector3Lerp( Vector3 pastPosition, Vector3 pastTargetPosition, Vector3 targetPosition, float time, float speed ){
          Vector3 f = pastPosition - pastTargetPosition + (targetPosition - pastTargetPosition) / (speed * time);
          return targetPosition - (targetPosition - pastTargetPosition) / (speed*time) + f * Mathf.Exp(-speed*time);
          }
          */
+
+        private float rotateTowards(float target, float current, float maxRotPerTick) {
+            float diff = Util.clamp(current - target);
+            return target + clamp(diff, -maxRotPerTick, maxRotPerTick);
+        }
 
         @Override
         public void save(DataKey key) {

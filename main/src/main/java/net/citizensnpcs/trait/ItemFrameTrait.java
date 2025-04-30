@@ -15,18 +15,23 @@ import net.citizensnpcs.api.trait.TraitName;
 @TraitName("itemframe")
 public class ItemFrameTrait extends Trait {
     @Persist
+    private BlockFace facing = BlockFace.NORTH;
+    @Persist
     private Boolean fixed;
     @Persist
     private ItemStack item;
     @Persist
     private Rotation rotation = Rotation.NONE;
+
     @Persist
     private boolean visible = true;
-    @Persist
-    private BlockFace facing = BlockFace.NORTH;
 
     public ItemFrameTrait() {
         super("itemframe");
+    }
+
+    public BlockFace getFacing() {
+        return facing;
     }
 
     public Boolean getFixed() {
@@ -39,10 +44,6 @@ public class ItemFrameTrait extends Trait {
 
     public Rotation getRotation() {
         return rotation;
-    }
-
-    public BlockFace getFacing() {
-        return facing;
     }
 
     public boolean isVisible() {
@@ -71,6 +72,11 @@ public class ItemFrameTrait extends Trait {
         }
     }
 
+    public void setFacing(BlockFace face) {
+        this.facing = face;
+        onSpawn();
+    }
+
     public void setFixed(boolean fixed) {
         this.fixed = fixed;
         onSpawn();
@@ -88,11 +94,6 @@ public class ItemFrameTrait extends Trait {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
-        onSpawn();
-    }
-
-    public void setFacing(BlockFace face) {
-        this.facing = face;
         onSpawn();
     }
 }

@@ -653,23 +653,23 @@ public class ShopTrait extends Trait {
             if (modified.display != null) {
                 ctx.getSlot(9 * 4 + 4).setItemStack(modified.getDisplayItem(null));
             }
-            ctx.getSlot(9 * 5 + 2).setItemStack(new ItemStack(Material.EGG), "Global number of purchases limit",
-                    "Times purchasable: " + modified.globalTimesPurchasable
-                            + (modified.globalTimesPurchasable == 0 ? " (no limit)" : ""));
-            ctx.getSlot(9 * 5 + 2).setClickHandler(e -> ctx.getMenu()
-                    .transition(InputMenus.stringSetter(() -> String.valueOf(modified.globalTimesPurchasable), s -> {
-                        modified.globalTimesPurchasable = Integer.parseInt(s);
-                        ctx.getSlot(9 * 4 + 2).setDescription("Times purchasable: " + modified.globalTimesPurchasable
-                                + (modified.globalTimesPurchasable == 0 ? " (no limit)" : ""));
-                    })));
-            ctx.getSlot(9 * 3 + 2).setItemStack(new ItemStack(Material.EGG), "Number of purchases limit per player",
+            ctx.getSlot(9 * 3 + 6).setItemStack(new ItemStack(Material.EGG), "Number of purchases limit per player",
                     "Times purchasable: " + modified.timesPurchasable
                             + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
-            ctx.getSlot(9 * 3 + 2).setClickHandler(e -> ctx.getMenu()
+            ctx.getSlot(9 * 3 + 6).setClickHandler(e -> ctx.getMenu()
                     .transition(InputMenus.stringSetter(() -> String.valueOf(modified.timesPurchasable), s -> {
                         modified.timesPurchasable = Integer.parseInt(s);
                         ctx.getSlot(9 * 4 + 2).setDescription("Times purchasable: " + modified.timesPurchasable
                                 + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
+                    })));
+            ctx.getSlot(9 * 4 + 6).setItemStack(new ItemStack(Material.EGG), "Global number of purchases limit",
+                    "Times purchasable: " + modified.globalTimesPurchasable
+                            + (modified.globalTimesPurchasable == 0 ? " (no limit)" : ""));
+            ctx.getSlot(9 * 4 + 6).setClickHandler(e -> ctx.getMenu()
+                    .transition(InputMenus.stringSetter(() -> String.valueOf(modified.globalTimesPurchasable), s -> {
+                        modified.globalTimesPurchasable = Integer.parseInt(s);
+                        ctx.getSlot(9 * 4 + 2).setDescription("Times purchasable: " + modified.globalTimesPurchasable
+                                + (modified.globalTimesPurchasable == 0 ? " (no limit)" : ""));
                     })));
 
             ctx.getSlot(9 * 4 + 2).setItemStack(new ItemStack(Util.getFallbackMaterial("OAK_SIGN", "SIGN")),
@@ -692,10 +692,10 @@ public class ShopTrait extends Trait {
                         ctx.getSlot(9 * 3 + 3).setDescription(modified.resultMessage);
                     }));
 
-            ctx.getSlot(9 * 3 + 6).setItemStack(new ItemStack(Util.getFallbackMaterial("RED_WOOL", "OAK_SIGN", "SIGN")),
+            ctx.getSlot(9 * 3 + 2).setItemStack(new ItemStack(Util.getFallbackMaterial("RED_WOOL", "OAK_SIGN", "SIGN")),
                     "Set unsuccessful click message, currently:\n",
                     modified.costMessage == null ? "Unset" : modified.costMessage);
-            ctx.getSlot(9 * 3 + 6).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e,
+            ctx.getSlot(9 * 3 + 2).setClickHandler(e -> InputMenus.runChatStringSetter(ctx.getMenu(), e,
                     "Enter the new unsuccessful click message, currently:<br>[[" + modified.costMessage, s -> {
                         modified.costMessage = s;
                         ctx.getSlot(9 * 3 + 6).setDescription(modified.costMessage);

@@ -229,10 +229,10 @@ public class Messages {
     public static final String INVALID_TROPICALFISH_PATTERN = "citizens.commands.npc.tropicalfish.invalid-pattern";
     public static final String INVALID_VILLAGER_TYPE = "citizens.commands.npc.villager.invalid-type";
     public static final String ITEM_SET = "citizens.commands.npc.item.item-set";
+    public static final String ITEMFRAME_BLOCKFACE_SET = "citizens.commands.npc.itemframe.blockface-set";
     public static final String ITEMFRAME_FIXED_SET = "citizens.commands.npc.itemframe.fixed-set";
     public static final String ITEMFRAME_ITEM_SET = "citizens.commands.npc.itemframe.item-set";
     public static final String ITEMFRAME_ROTATION_SET = "citizens.commands.npc.itemframe.rotation-set";
-    public static final String ITEMFRAME_BLOCKFACE_SET = "citizens.commands.npc.itemframe.blockface-set";
     public static final String ITEMFRAME_VISIBLE_SET = "citizens.commands.npc.itemframe.visible-set";
     public static final String KNOCKBACK_SET = "citizens.commands.npc.knockback.set";
     public static final String KNOCKBACK_UNSET = "citizens.commands.npc.knockback.unset";
@@ -386,6 +386,7 @@ public class Messages {
     public static final String REMOVED_FROM_PLAYERLIST = "citizens.commands.npc.playerlist.removed";
     public static final String RESPAWN_DELAY_DESCRIBE = "citizens.commands.npc.respawn.describe";
     public static final String RESPAWN_DELAY_SET = "citizens.commands.npc.respawn.delay-set";
+    public static final String ROTATIONSETTINGS_DESCRIBE = "citizens.commands.npc.rotationsettings.describe";
     public static final String SCALED_MAX_HEALTH_SET = "citizens.commands.npc.scaledmaxhealth.set";
     public static final String SELECTION_PROMPT = "citizens.editors.selection.start-prompt";
     public static final String SELECTION_PROMPT_INVALID_CHOICE = "citizens.conversations.selection.invalid-choice";

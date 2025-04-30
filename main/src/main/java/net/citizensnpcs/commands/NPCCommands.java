@@ -72,6 +72,7 @@ import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.command.Arg;
 import net.citizensnpcs.api.command.Arg.CompletionsProvider.OptionalKeyedCompletions;
+import net.citizensnpcs.api.command.Arg.FloatArrayFlagValidator;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.CommandMessages;
@@ -161,6 +162,7 @@ import net.citizensnpcs.trait.Poses;
 import net.citizensnpcs.trait.Powered;
 import net.citizensnpcs.trait.RabbitType;
 import net.citizensnpcs.trait.RotationTrait;
+import net.citizensnpcs.trait.RotationTrait.RotationParams;
 import net.citizensnpcs.trait.ScaledMaxHealthTrait;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SheepTrait;
@@ -1663,8 +1665,7 @@ public class NPCCommands {
     @Requirements(ownership = true, selected = true, types = EntityType.ITEM_FRAME)
     public void itemframe(CommandContext args, CommandSender sender, NPC npc, @Flag("visible") Boolean visible,
             @Flag("fixed") Boolean fixed, @Flag("rotation") Rotation rotation, @Flag("item") ItemStack item,
-            @Flag("face") BlockFace face)
-            throws CommandException {
+            @Flag("face") BlockFace face) throws CommandException {
         ItemFrameTrait ift = npc.getOrAddTrait(ItemFrameTrait.class);
         String msg = "";
         if (visible != null) {
@@ -1679,13 +1680,13 @@ public class NPCCommands {
             ift.setItem(item);
             msg += " " + Messaging.tr(Messages.ITEMFRAME_ITEM_SET, item);
         }
-        if (rotation != null) {
-            ift.setRotation(rotation);
-            msg += " " + Messaging.tr(Messages.ITEMFRAME_ROTATION_SET, rotation);
-        }
         if (face != null) {
             ift.setFacing(face);
             msg += " " + Messaging.tr(Messages.ITEMFRAME_BLOCKFACE_SET, face);
+        }
+        if (rotation != null) {
+            ift.setRotation(rotation);
+            msg += " " + Messaging.tr(Messages.ITEMFRAME_ROTATION_SET, rotation);
         }
         if (msg.isEmpty())
             throw new CommandUsageException();
@@ -2864,6 +2865,46 @@ public class NPCCommands {
         if (head != null) {
             NMS.setHeadYaw(npc.getEntity(), head);
         }
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "rotationsettings [linear|immediate] (--link_body) (--head_only) (--max_pitch_per_tick) (--max_yaw_per_tick) (--pitch_range) (--yaw_range)",
+            desc = "",
+            modifiers = { "rotationsettings" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.rotationsettings")
+    public void rotationsettings(CommandContext args, CommandSender sender, NPC npc,
+            @Arg(value = 1, completions = { "linear", "immediate" }) String type, @Flag("link_body") Boolean linkBody,
+            @Flag("head_only") Boolean headOnly, @Flag("max_pitch_per_tick") Float maxPitchPerTick,
+            @Flag("max_yaw_per_tick") Float maxYawPerTick,
+            @Flag(value = "pitch_range", validator = FloatArrayFlagValidator.class) float[] pitchRange,
+            @Flag(value = "yaw_range", validator = FloatArrayFlagValidator.class) float[] yawRange)
+            throws CommandException {
+        if (!"linear".equalsIgnoreCase(type) && !"immediate".equalsIgnoreCase(type))
+            throw new CommandUsageException();
+        RotationParams params = npc.getOrAddTrait(RotationTrait.class).getGlobalParameters();
+        params.immediate("immediate".equalsIgnoreCase(type));
+        if (linkBody != null) {
+            params.linkedBody(linkBody);
+        }
+        if (headOnly != null) {
+            params.headOnly(headOnly);
+        }
+        if (maxPitchPerTick != null) {
+            params.maxPitchPerTick(maxPitchPerTick);
+        }
+        if (maxYawPerTick != null) {
+            params.maxYawPerTick(maxYawPerTick);
+        }
+        if (pitchRange != null) {
+            params.pitchRange(pitchRange);
+        }
+        if (yawRange != null) {
+            params.yawRange(yawRange);
+        }
+        Messaging.sendTr(sender, Messages.ROTATIONSETTINGS_DESCRIBE, params.describe());
     }
 
     @Command(

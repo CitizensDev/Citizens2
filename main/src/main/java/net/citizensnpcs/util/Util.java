@@ -262,7 +262,7 @@ public class Util {
     }
 
     public static Random getFastRandom() {
-        return new XORShiftRNG();
+        return RANDOM;
     }
 
     public static <T extends Keyed> T getRegistryValue(Registry<T> registry, String... keyCandidates) {
@@ -626,10 +626,10 @@ public class Util {
 
     private static String BEDROCK_NAME_PREFIX = ".";
     private static Scoreboard DUMMY_SCOREBOARD;
+    private static final Random RANDOM = new XORShiftRNG();
     private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
     private static boolean SUPPORTS_HAS_EQUIPPABLE = false;
     private static final DecimalFormat TWO_DIGIT_DECIMAL = new DecimalFormat();
-
     static {
         TWO_DIGIT_DECIMAL.setMaximumFractionDigits(2);
         try {
