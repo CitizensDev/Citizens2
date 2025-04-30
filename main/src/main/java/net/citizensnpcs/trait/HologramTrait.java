@@ -334,6 +334,7 @@ public class HologramTrait extends Trait {
             }
             if (updatePosition || nameLine.renderer.getEntities().size() == 0) {
                 nameLine.render(offset);
+                nameLine.renderer.getEntities().forEach(e -> NMS.setSneaking(e, NMS.isSneaking(npc.getEntity())));
             }
         }
         for (int i = 0; i < lines.size(); i++) {
