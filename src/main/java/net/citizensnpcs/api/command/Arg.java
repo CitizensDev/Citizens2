@@ -7,12 +7,14 @@ import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.command.CommandSender;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.command.exception.CommandException;
@@ -24,11 +26,17 @@ import net.citizensnpcs.api.util.SpigotUtil;
 public @interface Arg {
     String[] completions() default {};
 
-    Class<? extends CompletionsProvider> completionsProvider() default CompletionsProvider.Identity.class;
+    Class<? extends CompletionsProvider> completionsProvider()
 
-    String defValue() default "";
+    default CompletionsProvider.Identity.class;
 
-    Class<? extends FlagValidator<?>> validator() default FlagValidator.Identity.class;
+    String defValue()
+
+    default "";
+
+    Class<? extends FlagValidator<?>> validator()
+
+    default FlagValidator.Identity.class;
 
     int value();
 
@@ -79,6 +87,20 @@ public @interface Arg {
                     throws CommandException {
                 return input;
             }
+        }
+    }
+
+    public static class FloatArrayFlagValidator implements FlagValidator<float[]> {
+        @Override
+        public float[] validate(CommandContext args, CommandSender sender, NPC npc, String input)
+                throws CommandException {
+            List<Float> list = Splitter.on(',').splitToStream(input).map(s -> Float.parseFloat(s))
+                    .collect(Collectors.toList());
+            float[] arr = new float[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                arr[i] = list.get(i);
+            }
+            return arr;
         }
     }
 }

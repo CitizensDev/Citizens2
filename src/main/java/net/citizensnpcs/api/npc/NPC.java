@@ -1,9 +1,11 @@
 package net.citizensnpcs.api.npc;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -23,10 +25,12 @@ import net.citizensnpcs.api.ai.speech.SpeechController;
 import net.citizensnpcs.api.astar.Agent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
+import net.citizensnpcs.api.event.NPCRemoveByCommandSenderEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
+import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.DataKey;
 import net.kyori.adventure.text.Component;
@@ -81,7 +85,9 @@ public interface NPC extends Agent, Cloneable {
      *
      * @return Whether this NPC was able to despawn
      */
-    public boolean despawn();
+    default boolean despawn() {
+        return despawn(DespawnReason.PLUGIN);
+    }
 
     /**
      * Despawns this NPC.
@@ -103,7 +109,10 @@ public interface NPC extends Agent, Cloneable {
      * @param source
      *            The source of the removal
      */
-    public void destroy(CommandSender source);
+    default void destroy(CommandSender source) {
+        Bukkit.getPluginManager().callEvent(new NPCRemoveByCommandSenderEvent(this, source));
+        destroy();
+    }
 
     /**
      * Faces a given {@link Location} if the NPC is spawned.
@@ -264,7 +273,9 @@ public interface NPC extends Agent, Cloneable {
      *
      * @return Whether this NPC is flyable
      */
-    public boolean isFlyable();
+    default boolean isFlyable() {
+        return data().get(NPC.Metadata.FLYABLE, false);
+    }
 
     /**
      * Returns whether the given player can see the NPC (i.e. receive packets about it).
@@ -273,7 +284,10 @@ public interface NPC extends Agent, Cloneable {
      *            The player to check
      * @return Whether the NPC is hidden from the player
      */
-    public boolean isHiddenFrom(Player player);
+    default boolean isHiddenFrom(Player player) {
+        PlayerFilter filter = getTraitNullable(PlayerFilter.class);
+        return filter != null ? filter.isHidden(player) : false;
+    }
 
     /**
      * Gets whether this NPC is protected from damage, movement and other events that players and mobs use to change the
@@ -281,14 +295,18 @@ public interface NPC extends Agent, Cloneable {
      *
      * @return Whether this NPC is protected
      */
-    public boolean isProtected();
+    default boolean isProtected() {
+        return data().get(NPC.Metadata.DEFAULT_PROTECTED, true);
+    }
 
     /**
      * Gets whether this NPC is pushable by fluids.
      *
      * @return Whether this NPC is pushable by fluids
      */
-    public boolean isPushableByFluids();
+    default boolean isPushableByFluids() {
+        return data().get(NPC.Metadata.FLUID_PUSHABLE, !isProtected());
+    }
 
     /**
      * Gets whether this NPC is currently spawned.
@@ -335,7 +353,9 @@ public interface NPC extends Agent, Cloneable {
      * @param use
      *            Whether to use a hologram
      */
-    public void setAlwaysUseNameHologram(boolean use);
+    default void setAlwaysUseNameHologram(boolean use) {
+        data().setPersistent(NPC.Metadata.ALWAYS_USE_NAME_HOLOGRAM, use);
+    }
 
     /**
      * Sets the {@link EntityType} of this NPC. The NPC will respawned if currently spawned, or will remain despawned
@@ -352,7 +372,9 @@ public interface NPC extends Agent, Cloneable {
      *
      * @param flyable
      */
-    public void setFlyable(boolean flyable);
+    default void setFlyable(boolean flyable) {
+        data().setPersistent(NPC.Metadata.FLYABLE, flyable);
+    }
 
     /**
      * For item-type NPCs, set a {@link Supplier} of the {@link ItemStack} to use when spawning the NPC.
@@ -386,7 +408,9 @@ public interface NPC extends Agent, Cloneable {
      * @param isProtected
      *            Whether the NPC should be protected
      */
-    public void setProtected(boolean isProtected);
+    default void setProtected(boolean isProtected) {
+        data().setPersistent(NPC.Metadata.DEFAULT_PROTECTED, isProtected);
+    }
 
     public void setSneaking(boolean sneaking);
 
@@ -394,7 +418,9 @@ public interface NPC extends Agent, Cloneable {
      * Set the NPC to use Minecraft AI where possible. Note that the NPC may not always behave exactly like a Minecraft
      * mob would because of additional Citizens APIs.
      */
-    public void setUseMinecraftAI(boolean use);
+    default void setUseMinecraftAI(boolean use) {
+        data().setPersistent(NPC.Metadata.USE_MINECRAFT_AI, use);
+    }
 
     boolean shouldRemoveFromPlayerList();
 
@@ -410,7 +436,9 @@ public interface NPC extends Agent, Cloneable {
      *            Location to spawn this NPC
      * @return Whether this NPC was able to spawn at the location
      */
-    public boolean spawn(Location location);
+    default boolean spawn(Location location) {
+        return spawn(location, SpawnReason.PLUGIN);
+    }
 
     /**
      * Attempts to spawn this NPC.
@@ -421,7 +449,22 @@ public interface NPC extends Agent, Cloneable {
      *            Reason for spawning
      * @return Whether this NPC was able to spawn at the location
      */
-    public boolean spawn(Location location, SpawnReason reason);
+    default boolean spawn(Location location, SpawnReason reason) {
+        return spawn(location, SpawnReason.PLUGIN, null);
+    }
+
+    /**
+     * Attempts to spawn this NPC.
+     *
+     * @param location
+     *            Location to spawn this NPC
+     * @param reason
+     *            Reason for spawning
+     * @param callback
+     *            The callback to run once entity is spawned
+     * @return Whether this NPC was able to spawn at the location
+     */
+    public boolean spawn(Location at, SpawnReason reason, Consumer<Entity> callback);
 
     /**
      * An alternative to <code>npc.getEntity().getLocation()</code> that teleports passengers as well.
@@ -436,7 +479,9 @@ public interface NPC extends Agent, Cloneable {
     /**
      * Whether the NPC is currently set to use Minecraft AI. Defaults to false.
      */
-    public boolean useMinecraftAI();
+    default boolean useMinecraftAI() {
+        return data().get(NPC.Metadata.USE_MINECRAFT_AI, false);
+    }
 
     public enum Metadata {
         /** The activation range. Integer, defaults to the server's configured activation range. */

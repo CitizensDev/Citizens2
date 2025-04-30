@@ -11,10 +11,8 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -34,7 +32,6 @@ import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCAddTraitEvent;
 import net.citizensnpcs.api.event.NPCCloneEvent;
-import net.citizensnpcs.api.event.NPCRemoveByCommandSenderEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRemoveTraitEvent;
 import net.citizensnpcs.api.event.NPCRenameEvent;
@@ -42,7 +39,6 @@ import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
-import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 import net.citizensnpcs.api.util.MemoryDataKey;
@@ -152,12 +148,7 @@ public abstract class AbstractNPC implements NPC {
 
     @Override
     public MetadataStore data() {
-        return this.metadata;
-    }
-
-    @Override
-    public boolean despawn() {
-        return despawn(DespawnReason.PLUGIN);
+        return metadata;
     }
 
     @Override
@@ -171,12 +162,6 @@ public abstract class AbstractNPC implements NPC {
         traits.clear();
         goalController.clear();
         registry.deregister(this);
-    }
-
-    @Override
-    public void destroy(CommandSender source) {
-        Bukkit.getPluginManager().callEvent(new NPCRemoveByCommandSenderEvent(this, source));
-        destroy();
     }
 
     @Override
@@ -302,27 +287,6 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public boolean isFlyable() {
-        return data().get(NPC.Metadata.FLYABLE, false);
-    }
-
-    @Override
-    public boolean isHiddenFrom(Player player) {
-        PlayerFilter filter = getTraitNullable(PlayerFilter.class);
-        return filter != null ? filter.isHidden(player) : false;
-    }
-
-    @Override
-    public boolean isProtected() {
-        return data().get(NPC.Metadata.DEFAULT_PROTECTED, true);
-    }
-
-    @Override
-    public boolean isPushableByFluids() {
-        return data().get(NPC.Metadata.FLUID_PUSHABLE, !isProtected());
-    }
-
-    @Override
     public void load(final DataKey root) {
         setNameInternal(root.getString("name"));
         if (root.keyExists("itemprovider")) {
@@ -443,16 +407,6 @@ public abstract class AbstractNPC implements NPC {
     }
 
     @Override
-    public void setAlwaysUseNameHologram(boolean use) {
-        data().setPersistent(NPC.Metadata.ALWAYS_USE_NAME_HOLOGRAM, use);
-    }
-
-    @Override
-    public void setFlyable(boolean flyable) {
-        data().setPersistent(NPC.Metadata.FLYABLE, flyable);
-    }
-
-    @Override
     public void setItemProvider(Supplier<ItemStack> provider) {
         this.itemProvider = provider;
         ItemStack stack = provider.get();
@@ -488,16 +442,6 @@ public abstract class AbstractNPC implements NPC {
         this.name = name;
         coloredNameComponentCache = Messaging.minecraftComponentFromRawMessage(this.name);
         coloredNameStringCache = Messaging.parseComponents(this.name);
-    }
-
-    @Override
-    public void setProtected(boolean isProtected) {
-        data().setPersistent(NPC.Metadata.DEFAULT_PROTECTED, isProtected);
-    }
-
-    @Override
-    public void setUseMinecraftAI(boolean use) {
-        data().setPersistent(NPC.Metadata.USE_MINECRAFT_AI, use);
     }
 
     private void teleport(final Entity entity, Location location, int delay, TeleportCause cause) {
@@ -544,11 +488,6 @@ public abstract class AbstractNPC implements NPC {
         if (isSpawned()) {
             goalController.run();
         }
-    }
-
-    @Override
-    public boolean useMinecraftAI() {
-        return data().get(NPC.Metadata.USE_MINECRAFT_AI, false);
     }
 
     private static final String[] PRIORITY_TRAITS = { "location", "type" };
