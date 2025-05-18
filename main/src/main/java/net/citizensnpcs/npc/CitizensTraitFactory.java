@@ -106,8 +106,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(Inventory.class));
         registerTrait(TraitInfo.create(ItemFrameTrait.class));
         registerTrait(TraitInfo.create(LookClose.class).optInToStats());
-        registerTrait(TraitInfo.create(PaintingTrait.class));
-        registerTrait(TraitInfo.create(PotionEffectsTrait.class));
+        registerTrait(TraitInfo.create(PaintingTrait.class)); 
         registerTrait(TraitInfo.create(MirrorTrait.class).optInToStats());
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());
