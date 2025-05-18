@@ -418,8 +418,6 @@ public class EventListen implements Listener {
         Bukkit.getPluginManager().callEvent(new NPCDeathEvent(npc, event));
         npc.despawn(DespawnReason.DEATH);
 
-        event.getEntity().removeMetadata("NPC", CitizensAPI.getPlugin());
-        event.getEntity().removeMetadata("NPC-ID", CitizensAPI.getPlugin());
         int delay = npc.data().get(NPC.Metadata.RESPAWN_DELAY, -1);
         if (delay < 0)
             return;
@@ -639,8 +637,6 @@ public class EventListen implements Listener {
         if (npc.requiresNameHologram() && event.getDeathMessage() != null) {
             event.setDeathMessage(event.getDeathMessage().replace(event.getEntity().getName(), npc.getFullName()));
         }
-        event.getEntity().removeMetadata("NPC", CitizensAPI.getPlugin());
-        event.getEntity().removeMetadata("NPC-ID", CitizensAPI.getPlugin());
     }
 
     @EventHandler(ignoreCancelled = true)

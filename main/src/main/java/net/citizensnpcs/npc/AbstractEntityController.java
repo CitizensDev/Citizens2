@@ -4,7 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -18,12 +20,18 @@ public abstract class AbstractEntityController implements EntityController {
     @Override
     public void create(Location at, NPC npc) {
         bukkitEntity = createEntity(at, npc);
+        bukkitEntity.setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+        bukkitEntity.setMetadata("NPC-ID", new FixedMetadataValue(CitizensAPI.getPlugin(), npc.getId()));
     }
 
     protected abstract Entity createEntity(Location at, NPC npc);
 
     @Override
     public void die() {
+        if (bukkitEntity == null)
+            return;
+        bukkitEntity.removeMetadata("NPC", CitizensAPI.getPlugin());
+        bukkitEntity.removeMetadata("NPC-ID", CitizensAPI.getPlugin());
         bukkitEntity = null;
     }
 
@@ -42,6 +50,8 @@ public abstract class AbstractEntityController implements EntityController {
         } else {
             bukkitEntity.remove();
         }
+        bukkitEntity.removeMetadata("NPC", CitizensAPI.getPlugin());
+        bukkitEntity.removeMetadata("NPC-ID", CitizensAPI.getPlugin());
         bukkitEntity = null;
     }
 
