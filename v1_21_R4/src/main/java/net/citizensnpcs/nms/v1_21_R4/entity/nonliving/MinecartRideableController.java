@@ -33,8 +33,8 @@ public class MinecartRideableController extends MobEntityController {
     }
 
     @Override
-    public org.bukkit.entity.Minecart getBukkitEntity() {
-        return (org.bukkit.entity.Minecart) super.getBukkitEntity();
+    public org.bukkit.entity.minecart.RideableMinecart getBukkitEntity() {
+        return (org.bukkit.entity.minecart.RideableMinecart) super.getBukkitEntity();
     }
 
     public static class EntityMinecartRideableNPC extends Minecart implements NPCHolder {

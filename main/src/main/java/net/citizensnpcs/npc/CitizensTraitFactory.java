@@ -71,6 +71,7 @@ import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.WoolColor;
 import net.citizensnpcs.trait.text.Text;
+import net.citizensnpcs.trait.versioned.PotionEffectsTrait;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.NMS;
@@ -106,6 +107,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(ItemFrameTrait.class));
         registerTrait(TraitInfo.create(LookClose.class).optInToStats());
         registerTrait(TraitInfo.create(PaintingTrait.class));
+        registerTrait(TraitInfo.create(PotionEffectsTrait.class));
         registerTrait(TraitInfo.create(MirrorTrait.class).optInToStats());
         registerTrait(TraitInfo.create(MountTrait.class));
         registerTrait(TraitInfo.create(MobType.class).asDefaultTrait());

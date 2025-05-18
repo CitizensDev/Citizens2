@@ -377,6 +377,8 @@ public class Messages {
     public static final String POSE_ALREADY_EXISTS = "citizens.commands.npc.pose.already-exists";
     public static final String POSE_MISSING = "citizens.commands.npc.pose.missing";
     public static final String POSE_REMOVED = "citizens.commands.npc.pose.removed";
+    public static final String POTION_EFFECT_ADDED = "citizens.commands.npc.potioneffects.effect-added";
+    public static final String POTION_EFFECT_REMOVED = "citizens.commands.npc.potioneffects.effect-removed";
     public static final String POWERED_SET = "citizens.commands.npc.powered.set";
     public static final String POWERED_STOPPED = "citizens.commands.npc.powered.stopped";
     public static final String PROFESSION_SET = "citizens.commands.npc.profession.set";
