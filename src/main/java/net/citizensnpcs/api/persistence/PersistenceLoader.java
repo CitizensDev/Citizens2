@@ -19,6 +19,7 @@ import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.joml.Quaternionfc;
@@ -669,6 +670,7 @@ public class PersistenceLoader {
             Class.forName("org.bukkit.Keyed");
             SUPPORTS_KEYED = true;
             registerPersistDelegate(NamespacedKey.class, NamespacedKeyPersister.class);
+            registerPersistDelegate(PotionEffect.class, PotionEffectPersister.class);
         } catch (ClassNotFoundException e) {
         }
     }
