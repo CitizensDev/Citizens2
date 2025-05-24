@@ -237,6 +237,8 @@ public class Settings {
         NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN(
                 "The global cooldown before a command can be used again, must be in seconds",
                 "npc.commands.global-delay-seconds", "npc.commands.global-cooldown", "1s"),
+        NPC_COMMAND_GLOBAL_MAXIMUM_TIMES_USED_MESSAGE("npc.commands.error-messages.global-maximum-times-used",
+                "You have reached the maximum number of uses ({0})."),
         NPC_COMMAND_MAXIMUM_TIMES_USED_MESSAGE("npc.commands.error-messages.maximum-times-used",
                 "You have reached the maximum number of uses ({0})."),
         NPC_COMMAND_MISSING_ITEM_MESSAGE("npc.commands.error-messages.missing-item", "Missing {1} {0}"),

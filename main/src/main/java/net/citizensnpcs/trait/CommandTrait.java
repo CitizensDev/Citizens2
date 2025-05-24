@@ -73,6 +73,8 @@ public class CommandTrait extends Trait {
     private int experienceCost = -1;
     @Persist(valueType = Long.class)
     private final Map<String, Long> globalCooldowns = Maps.newHashMap();
+    @Persist(valueType = Integer.class)
+    private final Map<String, Integer> globalUses = Maps.newHashMap();
     @Persist
     private boolean hideErrorMessages;
     @Persist
@@ -266,6 +268,9 @@ public class CommandTrait extends Trait {
         if (command.n > 0) {
             output += "[" + StringHelper.wrap(command.n) + " uses]";
         }
+        if (command.gn > 0) {
+            output += "[" + StringHelper.wrap(command.gn) + " global uses]";
+        }
         if (command.op) {
             output += " -o";
         }
@@ -435,7 +440,7 @@ public class CommandTrait extends Trait {
         Collection<NPCCommand> commands = this.commands.values();
         for (Iterator<PlayerNPCCommand> itr = playerTracking.values().iterator(); itr.hasNext();) {
             PlayerNPCCommand playerCommand = itr.next();
-            playerCommand.prune(globalCooldowns, commands);
+            playerCommand.pruneCooldowns(globalCooldowns, commands);
             if (playerCommand.lastUsed.isEmpty() && playerCommand.nUsed.isEmpty()
                     && (!persistSequence || playerCommand.lastUsedId == -1)) {
                 itr.remove();
@@ -498,6 +503,7 @@ public class CommandTrait extends Trait {
     }
 
     public enum CommandTraitError {
+        GLOBAL_MAXIMUM_TIMES_USED(Setting.NPC_COMMAND_GLOBAL_MAXIMUM_TIMES_USED_MESSAGE),
         MAXIMUM_TIMES_USED(Setting.NPC_COMMAND_MAXIMUM_TIMES_USED_MESSAGE),
         MISSING_EXPERIENCE(Setting.NPC_COMMAND_NOT_ENOUGH_EXPERIENCE_MESSAGE),
         MISSING_ITEM(Setting.NPC_COMMAND_MISSING_ITEM_MESSAGE),
@@ -596,6 +602,7 @@ public class CommandTrait extends Trait {
         int delay;
         int experienceCost = -1;
         int globalCooldown;
+        int gn;
         Hand hand;
         int id;
         List<ItemStack> itemCost;
@@ -607,7 +614,7 @@ public class CommandTrait extends Trait {
         boolean player;
 
         public NPCCommand(int id, String command, Hand hand, boolean player, boolean op, int cooldown,
-                List<String> perms, int n, int delay, int globalCooldown, double cost, int experienceCost,
+                List<String> perms, int n, int gn, int delay, int globalCooldown, double cost, int experienceCost,
                 List<ItemStack> itemCost, boolean npc) {
             this.id = id;
             this.command = command;
@@ -616,6 +623,7 @@ public class CommandTrait extends Trait {
             this.op = op;
             this.cooldown = cooldown;
             this.perms = perms;
+            this.gn = gn;
             this.n = n;
             this.delay = delay;
             this.globalCooldown = globalCooldown;
@@ -646,6 +654,7 @@ public class CommandTrait extends Trait {
         int delay;
         int experienceCost = -1;
         int globalCooldown;
+        int gn = -1;
         Hand hand;
         List<ItemStack> itemCost = Lists.newArrayList();
         int n = -1;
@@ -670,7 +679,7 @@ public class CommandTrait extends Trait {
         }
 
         private NPCCommand build(int id) {
-            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, delay, globalCooldown, cost,
+            return new NPCCommand(id, command, hand, player, op, cooldown, perms, n, gn, delay, globalCooldown, cost,
                     experienceCost, itemCost, npc);
         }
 
@@ -709,6 +718,11 @@ public class CommandTrait extends Trait {
 
         public NPCCommandBuilder globalCooldown(int cooldown) {
             globalCooldown = cooldown;
+            return this;
+        }
+
+        public NPCCommandBuilder globalN(int n) {
+            this.gn = n;
             return this;
         }
 
@@ -757,7 +771,7 @@ public class CommandTrait extends Trait {
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
                     Hand.valueOf(root.getString("hand")), Boolean.parseBoolean(root.getString("player")),
                     Boolean.parseBoolean(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
-                    root.getInt("delay"), root.getInt("globalcooldown"), cost, exp, items,
+                    root.getInt("gn"), root.getInt("delay"), root.getInt("globalcooldown"), cost, exp, items,
                     Boolean.parseBoolean(root.getString("npc")));
         }
 
@@ -771,6 +785,7 @@ public class CommandTrait extends Trait {
             root.setInt("cooldown", instance.cooldown);
             root.setInt("globalcooldown", instance.globalCooldown);
             root.setInt("n", instance.n);
+            root.setInt("gn", instance.gn);
             root.setInt("delay", instance.delay);
             for (int i = 0; i < instance.perms.size(); i++) {
                 root.setString("permissions." + i, instance.perms.get(i));
@@ -844,17 +859,20 @@ public class CommandTrait extends Trait {
             if (command.n > 0) {
                 nUsed.put(commandKey, timesUsed + 1);
             }
+            if (command.gn > 0) {
+                trait.globalUses.put(commandKey, trait.globalUses.getOrDefault(commandKey, 0) + 1);
+            }
             lastUsedId = command.id;
             lastUsedHand = hand;
             return true;
         }
 
-        public void prune(Map<String, Long> globalCooldowns, Collection<NPCCommand> commands) {
+        public void pruneCooldowns(Map<String, Long> globalCooldowns, Collection<NPCCommand> commands) {
             long currentTimeSec = System.currentTimeMillis() / 1000;
-            Set<String> commandKeys = Sets.newHashSet();
+            Set<String> encodedCommandKeys = Sets.newHashSet();
             for (NPCCommand command : commands) {
                 String commandKey = command.getEncodedKey();
-                commandKeys.add(commandKey);
+                encodedCommandKeys.add(commandKey);
                 Number number = lastUsed.get(commandKey);
                 if (number != null && number.longValue() + (command.cooldown != 0 ? command.cooldown
                         : Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds()) < currentTimeSec) {
@@ -868,22 +886,15 @@ public class CommandTrait extends Trait {
                 }
             }
             Set<String> diff = Sets.newHashSet(lastUsed.keySet());
-            diff.removeAll(commandKeys);
+            diff.removeAll(encodedCommandKeys);
             for (String key : diff) {
                 lastUsed.remove(key);
                 nUsed.remove(key);
             }
-            if (globalCooldowns != null) {
-                diff = Sets.newHashSet(globalCooldowns.keySet());
-                diff.removeAll(commandKeys);
-                for (String key : diff) {
-                    globalCooldowns.remove(key);
-                }
-            }
         }
 
         public static boolean requiresTracking(NPCCommand command) {
-            return command.globalCooldown > 0 || command.cooldown > 0 || command.n > 0
+            return command.globalCooldown > 0 || command.cooldown > 0 || command.n > 0 || command.gn > 0
                     || command.perms != null && command.perms.size() > 0
                     || Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds() > 0;
         }

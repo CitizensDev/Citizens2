@@ -548,7 +548,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command (add [command] | execute [player UUID] [hand] | remove [id|all] | permissions [permissions] (duration) | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses]",
+            usage = "command (add [command] | execute [player UUID] [hand] | remove [id|all] | permissions [permissions] (duration) | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses] --gn [max # of global uses]",
             desc = "",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -560,7 +560,7 @@ public class NPCCommands {
             @Flag(value = "expcost", defValue = "-1") Integer experienceCost,
             @Flag(value = "cooldown", defValue = "0") Duration cooldown,
             @Flag(value = "gcooldown", defValue = "0") Duration gcooldown, @Flag(value = "n", defValue = "-1") int n,
-            @Flag(value = "delay", defValue = "0") Duration delay,
+            @Flag(value = "gn", defValue = "-1") int gn, @Flag(value = "delay", defValue = "0") Duration delay,
             @Arg(
                     value = 1,
                     completions = { "add", "execute", "remove", "permissions", "persistsequence", "sequential", "cycle",
@@ -593,8 +593,8 @@ public class NPCCommands {
             try {
                 int id = commands.addCommand(new NPCCommandBuilder(command, hand).addPerms(perms)
                         .player(args.hasFlag('p') || args.hasFlag('o')).op(args.hasFlag('o')).cooldown(cooldown)
-                        .cost(cost).experienceCost(experienceCost).globalCooldown(gcooldown).n(n).delay(delay)
-                        .npc(args.hasFlag('n')));
+                        .cost(cost).experienceCost(experienceCost).globalCooldown(gcooldown).n(n).globalN(gn)
+                        .delay(delay).npc(args.hasFlag('n')));
                 Messaging.sendTr(sender, Messages.COMMAND_ADDED, command, id);
             } catch (NumberFormatException ex) {
                 throw new CommandException(CommandMessages.INVALID_NUMBER);
