@@ -12,17 +12,22 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.event.NPCEvent;
+import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.Trait;
+import net.citizensnpcs.api.trait.TraitEventHandler;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
@@ -71,6 +76,15 @@ public class Equipment extends Trait {
     }
 
     /**
+     * Get all of an NPC's cosmetic equipment.
+     *
+     * @return An array of an NPC's cosmetic equipment
+     */
+    public ItemStack[] getCosmeticEquipment() {
+        return cosmetic;
+    }
+
+    /**
      * Get all of an NPC's equipment.
      *
      * @return An array of an NPC's equipment
@@ -115,6 +129,25 @@ public class Equipment extends Trait {
     public void onAttach() {
         npc.scheduleUpdate(NPCUpdate.PACKET);
         run();
+    }
+
+    @TraitEventHandler(@EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR))
+    private void onSeenByPlayer(NPCSeenByPlayerEvent event) {
+        for (ItemStack stack : equipment) {
+            if (stack != null && stack.getType() != Material.AIR)
+                return;
+
+        }
+        boolean hasCosmetic = false;
+        for (ItemStack stack : cosmetic) {
+            if (stack != null && stack.getType() != Material.AIR) {
+                hasCosmetic = true;
+                break;
+            }
+        }
+        if (!hasCosmetic)
+            return;
+        event.getPlayer().sendEquipmentChange((LivingEntity) npc.getEntity(), EMPTY_EQUIPMENT_MAP);
     }
 
     @Override
@@ -354,6 +387,8 @@ public class Equipment extends Trait {
         private static final HandlerList handlers = new HandlerList();
     }
 
+    private static final Map<org.bukkit.inventory.EquipmentSlot, ItemStack> EMPTY_EQUIPMENT_MAP = ImmutableMap
+            .of(org.bukkit.inventory.EquipmentSlot.HAND, new ItemStack(Material.AIR, 1));
     private static boolean SUPPORT_BODY = false;
     private static boolean SUPPORT_OFFHAND = true;
     static {
