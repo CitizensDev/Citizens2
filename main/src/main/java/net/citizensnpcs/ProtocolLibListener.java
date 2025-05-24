@@ -370,8 +370,7 @@ public class ProtocolLibListener implements Listener {
         }
         if (event.getNPC().hasTrait(MirrorTrait.class)
                 && event.getNPC().getOrAddTrait(MobType.class).getType() == EntityType.PLAYER) {
-            mirrorTraits.put(event.getNPC().getEntity().getUniqueId(),
-                    event.getNPC().getTraitNullable(MirrorTrait.class));
+            mirrorTraits.put(event.getNPC().getEntity().getUniqueId(), event.getNPC().getTraitNullable(MirrorTrait.class));
         }
     }
 

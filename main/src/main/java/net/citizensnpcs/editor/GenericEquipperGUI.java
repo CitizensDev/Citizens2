@@ -90,6 +90,9 @@ public class GenericEquipperGUI extends InventoryMenuPage {
                 event.setCurrentItem(Util.createItem(Util.getFallbackMaterial("BARRIER", "FIRE"), "No cosmetic",
                         "Click to enable cosmetic for this equipment"));
                 npc.getOrAddTrait(Equipment.class).setCosmetic(slot, null);
+            } else if (event.getCurrentItem() != null) {
+                npc.getOrAddTrait(Equipment.class).setCosmetic(slot, new ItemStack(Material.AIR, 1));
+                return;
             }
             event.setResult(Result.DENY);
             return;
