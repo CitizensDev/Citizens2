@@ -857,7 +857,7 @@ public class NPCCommands {
             throw new CommandException();
 
         if (!sender.hasPermission("citizens.npc.create.*") && !sender.hasPermission("citizens.npc.createall")
-                && !sender.hasPermission("citizens.npc.create." + Util.prettyEnum(type)))
+                && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase(Locale.ROOT)))
             throw new NoPermissionsException();
 
         if ((at != null || registryName != null || traits != null || templateName != null)
