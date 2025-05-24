@@ -121,12 +121,14 @@ permissions:
   citizens.npc.playsound: {default:op}
   citizens.npc.polarbear: {default:op}
   citizens.npc.pose: {default:op}
+  citizens.npc.potioneffect: {default:op}
   citizens.npc.powered: {default:op}
   citizens.npc.pufferfish: {default:op}
   citizens.npc.rabbittype: {default:op}
   citizens.npc.rename: {default:op}
   citizens.npc.respawn: {default:op}
   citizens.npc.rotate: {default:op}
+  citizens.npc.rotationsettings: {default:op}
   citizens.npc.scaledmaxhealth: {default:op}
   citizens.npc.select: {default:op}
   citizens.npc.setequipment: {default:op}
@@ -157,6 +159,7 @@ permissions:
   citizens.npc.type: {default:op}
   citizens.npc.undo: {default:op}
   citizens.npc.useitem: {default:op}
+  citizens.npc.vex: {default:op}
   citizens.npc.villager: {default:op}
   citizens.npc.vulnerable: {default:op}
   citizens.npc.wander: {default:op}
@@ -206,8 +209,10 @@ permissions:
   citizens.npc.controllable.ender_pearl: {default:op}
   citizens.npc.create.eye_of_ender: {default:op}
   citizens.npc.controllable.eye_of_ender: {default:op}
-  citizens.npc.create.potion: {default:op}
-  citizens.npc.controllable.potion: {default:op}
+  citizens.npc.create.splash_potion: {default:op}
+  citizens.npc.controllable.splash_potion: {default:op}
+  citizens.npc.create.lingering_potion: {default:op}
+  citizens.npc.controllable.lingering_potion: {default:op}
   citizens.npc.create.experience_bottle: {default:op}
   citizens.npc.controllable.experience_bottle: {default:op}
   citizens.npc.create.item_frame: {default:op}
@@ -736,6 +741,7 @@ permissions:
       citizens.npc.controllable.jungle_chest_boat: true
       citizens.npc.controllable.leash_knot: true
       citizens.npc.controllable.lightning_bolt: true
+      citizens.npc.controllable.lingering_potion: true
       citizens.npc.controllable.llama: true
       citizens.npc.controllable.llama_spit: true
       citizens.npc.controllable.magma_cube: true
@@ -761,7 +767,6 @@ permissions:
       citizens.npc.controllable.pillager: true
       citizens.npc.controllable.player: true
       citizens.npc.controllable.polar_bear: true
-      citizens.npc.controllable.potion: true
       citizens.npc.controllable.pufferfish: true
       citizens.npc.controllable.rabbit: true
       citizens.npc.controllable.ravager: true
@@ -780,6 +785,7 @@ permissions:
       citizens.npc.controllable.spawner_minecart: true
       citizens.npc.controllable.spectral_arrow: true
       citizens.npc.controllable.spider: true
+      citizens.npc.controllable.splash_potion: true
       citizens.npc.controllable.spruce_boat: true
       citizens.npc.controllable.spruce_chest_boat: true
       citizens.npc.controllable.squid: true
@@ -887,6 +893,7 @@ permissions:
       citizens.npc.create.jungle_chest_boat: true
       citizens.npc.create.leash_knot: true
       citizens.npc.create.lightning_bolt: true
+      citizens.npc.create.lingering_potion: true
       citizens.npc.create.llama: true
       citizens.npc.create.llama_spit: true
       citizens.npc.create.magma_cube: true
@@ -912,7 +919,6 @@ permissions:
       citizens.npc.create.pillager: true
       citizens.npc.create.player: true
       citizens.npc.create.polar_bear: true
-      citizens.npc.create.potion: true
       citizens.npc.create.pufferfish: true
       citizens.npc.create.rabbit: true
       citizens.npc.create.ravager: true
@@ -931,6 +937,7 @@ permissions:
       citizens.npc.create.spawner_minecart: true
       citizens.npc.create.spectral_arrow: true
       citizens.npc.create.spider: true
+      citizens.npc.create.splash_potion: true
       citizens.npc.create.spruce_boat: true
       citizens.npc.create.spruce_chest_boat: true
       citizens.npc.create.squid: true
@@ -1129,12 +1136,14 @@ permissions:
       citizens.npc.playsound: true
       citizens.npc.polarbear: true
       citizens.npc.pose: true
+      citizens.npc.potioneffect: true
       citizens.npc.powered: true
       citizens.npc.pufferfish: true
       citizens.npc.rabbittype: true
       citizens.npc.rename: true
       citizens.npc.respawn: true
       citizens.npc.rotate: true
+      citizens.npc.rotationsettings: true
       citizens.npc.scaledmaxhealth: true
       citizens.npc.select: true
       citizens.npc.setequipment: true
@@ -1174,6 +1183,7 @@ permissions:
       citizens.npc.type: true
       citizens.npc.undo: true
       citizens.npc.useitem: true
+      citizens.npc.vex: true
       citizens.npc.villager: true
       citizens.npc.vulnerable: true
       citizens.npc.wander: true
@@ -1291,6 +1301,7 @@ permissions:
       citizens.npc.controllable.jungle_chest_boat: true
       citizens.npc.controllable.leash_knot: true
       citizens.npc.controllable.lightning_bolt: true
+      citizens.npc.controllable.lingering_potion: true
       citizens.npc.controllable.llama: true
       citizens.npc.controllable.llama_spit: true
       citizens.npc.controllable.magma_cube: true
@@ -1316,7 +1327,6 @@ permissions:
       citizens.npc.controllable.pillager: true
       citizens.npc.controllable.player: true
       citizens.npc.controllable.polar_bear: true
-      citizens.npc.controllable.potion: true
       citizens.npc.controllable.pufferfish: true
       citizens.npc.controllable.rabbit: true
       citizens.npc.controllable.ravager: true
@@ -1335,6 +1345,7 @@ permissions:
       citizens.npc.controllable.spawner_minecart: true
       citizens.npc.controllable.spectral_arrow: true
       citizens.npc.controllable.spider: true
+      citizens.npc.controllable.splash_potion: true
       citizens.npc.controllable.spruce_boat: true
       citizens.npc.controllable.spruce_chest_boat: true
       citizens.npc.controllable.squid: true
@@ -1442,6 +1453,7 @@ permissions:
       citizens.npc.create.jungle_chest_boat: true
       citizens.npc.create.leash_knot: true
       citizens.npc.create.lightning_bolt: true
+      citizens.npc.create.lingering_potion: true
       citizens.npc.create.llama: true
       citizens.npc.create.llama_spit: true
       citizens.npc.create.magma_cube: true
@@ -1467,7 +1479,6 @@ permissions:
       citizens.npc.create.pillager: true
       citizens.npc.create.player: true
       citizens.npc.create.polar_bear: true
-      citizens.npc.create.potion: true
       citizens.npc.create.pufferfish: true
       citizens.npc.create.rabbit: true
       citizens.npc.create.ravager: true
@@ -1486,6 +1497,7 @@ permissions:
       citizens.npc.create.spawner_minecart: true
       citizens.npc.create.spectral_arrow: true
       citizens.npc.create.spider: true
+      citizens.npc.create.splash_potion: true
       citizens.npc.create.spruce_boat: true
       citizens.npc.create.spruce_chest_boat: true
       citizens.npc.create.squid: true
@@ -1684,12 +1696,14 @@ permissions:
       citizens.npc.playsound: true
       citizens.npc.polarbear: true
       citizens.npc.pose: true
+      citizens.npc.potioneffect: true
       citizens.npc.powered: true
       citizens.npc.pufferfish: true
       citizens.npc.rabbittype: true
       citizens.npc.rename: true
       citizens.npc.respawn: true
       citizens.npc.rotate: true
+      citizens.npc.rotationsettings: true
       citizens.npc.scaledmaxhealth: true
       citizens.npc.select: true
       citizens.npc.setequipment: true
@@ -1729,6 +1743,7 @@ permissions:
       citizens.npc.type: true
       citizens.npc.undo: true
       citizens.npc.useitem: true
+      citizens.npc.vex: true
       citizens.npc.villager: true
       citizens.npc.vulnerable: true
       citizens.npc.wander: true
@@ -1965,6 +1980,7 @@ permissions:
       citizens.npc.create.jungle_chest_boat: true
       citizens.npc.create.leash_knot: true
       citizens.npc.create.lightning_bolt: true
+      citizens.npc.create.lingering_potion: true
       citizens.npc.create.llama: true
       citizens.npc.create.llama_spit: true
       citizens.npc.create.magma_cube: true
@@ -1990,7 +2006,6 @@ permissions:
       citizens.npc.create.pillager: true
       citizens.npc.create.player: true
       citizens.npc.create.polar_bear: true
-      citizens.npc.create.potion: true
       citizens.npc.create.pufferfish: true
       citizens.npc.create.rabbit: true
       citizens.npc.create.ravager: true
@@ -2009,6 +2024,7 @@ permissions:
       citizens.npc.create.spawner_minecart: true
       citizens.npc.create.spectral_arrow: true
       citizens.npc.create.spider: true
+      citizens.npc.create.splash_potion: true
       citizens.npc.create.spruce_boat: true
       citizens.npc.create.spruce_chest_boat: true
       citizens.npc.create.squid: true
@@ -2127,6 +2143,7 @@ permissions:
       citizens.npc.controllable.jungle_chest_boat: true
       citizens.npc.controllable.leash_knot: true
       citizens.npc.controllable.lightning_bolt: true
+      citizens.npc.controllable.lingering_potion: true
       citizens.npc.controllable.llama: true
       citizens.npc.controllable.llama_spit: true
       citizens.npc.controllable.magma_cube: true
@@ -2152,7 +2169,6 @@ permissions:
       citizens.npc.controllable.pillager: true
       citizens.npc.controllable.player: true
       citizens.npc.controllable.polar_bear: true
-      citizens.npc.controllable.potion: true
       citizens.npc.controllable.pufferfish: true
       citizens.npc.controllable.rabbit: true
       citizens.npc.controllable.ravager: true
@@ -2171,6 +2187,7 @@ permissions:
       citizens.npc.controllable.spawner_minecart: true
       citizens.npc.controllable.spectral_arrow: true
       citizens.npc.controllable.spider: true
+      citizens.npc.controllable.splash_potion: true
       citizens.npc.controllable.spruce_boat: true
       citizens.npc.controllable.spruce_chest_boat: true
       citizens.npc.controllable.squid: true
