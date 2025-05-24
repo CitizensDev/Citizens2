@@ -381,9 +381,11 @@ public class HologramTrait extends Trait {
     public void setDefaultBackgroundColor(Color color) {
         this.defaultBackgroundColor = color;
         for (HologramLine line : lines) {
-            line.setBackgroundColor(color);
+            if (line.backgroundColor == null) {
+                line.setBackgroundColor(color);
+            }
         }
-        if (nameLine != null) {
+        if (nameLine != null && nameLine.backgroundColor == null) {
             nameLine.setBackgroundColor(color);
         }
         reloadLineHolograms();
