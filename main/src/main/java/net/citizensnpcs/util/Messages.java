@@ -243,11 +243,8 @@ public class Messages {
     public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_SET = "citizens.editors.waypoints.linear.cycle-set";
     public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET = "citizens.editors.waypoints.linear.cycle-unset";
     public static final String LINEAR_WAYPOINT_EDITOR_END = "citizens.editors.waypoints.linear.end";
-    public static final String LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS = "citizens.editors.waypoints.linear.not-showing-markers";
     public static final String LINEAR_WAYPOINT_EDITOR_RANGE_EXCEEDED = "citizens.editors.waypoints.linear.range-exceeded";
     public static final String LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT = "citizens.editors.waypoints.linear.removed-waypoint";
-    public static final String LINEAR_WAYPOINT_EDITOR_SELECTED_WAYPOINT = "citizens.editors.waypoints.linear.selected-waypoint";
-    public static final String LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS = "citizens.editors.waypoints.linear.showing-markers";
     public static final String LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED = "citizens.editors.waypoints.linear.waypoints-cleared";
     public static final String LINKEDBODY_SET = "citizens.commands.npc.lookclose.linkedbody-set";
     public static final String LINKEDBODY_UNSET = "citizens.commands.npc.lookclose.linkedbody-unset";
@@ -490,6 +487,9 @@ public class Messages {
     public static final String WARDEN_ANGER_ADDED = "citizens.commands.npc.warden.anger-added";
     public static final String WARDEN_POSE_SET = "citizens.commands.npc.warden.pose-set";
     public static final String WAYPOINT_ADDED = "citizens.commands.waypoints.add.waypoint-added";
+    public static final String WAYPOINT_EDITOR_NOT_SHOWING_MARKERS = "citizens.editors.waypoints.linear.not-showing-markers";
+    public static final String WAYPOINT_EDITOR_SELECTED_WAYPOINT = "citizens.editors.waypoints.linear.selected-waypoint";
+    public static final String WAYPOINT_EDITOR_SHOWING_MARKERS = "citizens.editors.waypoints.linear.showing-markers";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.waypoints.set-provider";
     public static final String WAYPOINT_REMOVED = "citizens.commands.waypoints.waypoint-removed";
     public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";

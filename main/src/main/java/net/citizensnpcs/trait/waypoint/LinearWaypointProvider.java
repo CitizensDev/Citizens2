@@ -444,7 +444,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 return;
             }
             selectedWaypoint = waypoints.get(slot);
-            Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_SELECTED_WAYPOINT,
+            Messaging.sendTr(player, Messages.WAYPOINT_EDITOR_SELECTED_WAYPOINT,
                     formatLoc(selectedWaypoint.getLocation()));
         }
 
@@ -472,10 +472,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             showingMarkers = !showingMarkers;
             if (showingMarkers) {
                 createWaypointMarkers();
-                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_SHOWING_MARKERS);
+                Messaging.sendTr(player, Messages.WAYPOINT_EDITOR_SHOWING_MARKERS);
             } else {
                 markers.destroyMarkers();
-                Messaging.sendTr(player, Messages.LINEAR_WAYPOINT_EDITOR_NOT_SHOWING_MARKERS);
+                Messaging.sendTr(player, Messages.WAYPOINT_EDITOR_NOT_SHOWING_MARKERS);
             }
         }
     }
