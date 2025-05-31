@@ -1313,6 +1313,19 @@ public class ShopTrait extends Trait {
             view = player.openMerchant(merchant, true);
         }
 
+        private int detectSelectedTrade(ItemStack item) {
+            List<Integer> dupes = Lists.newArrayList();
+            for (Map.Entry<Integer, NPCShopItem> entry : trades.entrySet()) {
+                ItemStack result = entry.getValue().getDisplayItem(player).clone();
+                if (!item.isSimilar(result))
+                    continue;
+                dupes.add(entry.getKey());
+            }
+            if (dupes.size() == 1)
+                return dupes.get(0);
+            return -1;
+        }
+
         @EventHandler
         public void onInventoryClick(InventoryClickEvent evt) {
             try {
@@ -1323,6 +1336,13 @@ public class ShopTrait extends Trait {
                 return;
             }
             evt.setCancelled(true);
+            if (evt.getCurrentItem() != null && evt.getCurrentItem().getType() != Material.AIR) {
+                int detected = detectSelectedTrade(evt.getCurrentItem());
+                if (detected != -1 && detected != selectedTrade) {
+                    selectedTrade = detected;
+                    lastClickedTrade = -1;
+                }
+            }
             if (selectedTrade == -1)
                 return;
             if (!trades.containsKey(selectedTrade)) {

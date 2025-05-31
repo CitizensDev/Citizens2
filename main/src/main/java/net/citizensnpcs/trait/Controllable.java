@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 import org.bukkit.Location;
@@ -372,7 +373,8 @@ public class Controllable extends Trait {
             }
             return;
         }
-        if (!player.hasPermission("citizens.npc.controllable." + Util.prettyEnum(npc.getEntity().getType()))
+        if (!player
+                .hasPermission("citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase(Locale.ROOT))
                 || !player.hasPermission("citizens.npc.controllable")
                 || npc.getOrAddTrait(Controllable.class).ownerRequired
                         && !npc.getOrAddTrait(Owner.class).isOwnedBy(player))

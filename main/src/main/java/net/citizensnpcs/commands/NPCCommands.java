@@ -760,8 +760,8 @@ public class NPCCommands {
             flags = "mo")
     public void controllable(CommandContext args, CommandSender sender, NPC npc,
             @Flag("controls") BuiltInControls controls, @Flag("enabled") Boolean enabled) throws CommandException {
-        if ((npc.isSpawned()
-                && !sender.hasPermission("citizens.npc.controllable." + Util.prettyEnum(npc.getEntity().getType())))
+        if ((npc.isSpawned() && !sender.hasPermission(
+                "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase(Locale.ROOT)))
                 || !sender.hasPermission("citizens.npc.controllable"))
             throw new NoPermissionsException();
         if (!npc.hasTrait(Controllable.class) && enabled == null) {
