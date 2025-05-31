@@ -18,5 +18,10 @@ public class CommandException extends Exception {
         super(t);
     }
 
+    @Override
+    public Throwable fillInStackTrace() {
+        return this;
+    }
+
     private static final long serialVersionUID = 870638193072101739L;
 }
