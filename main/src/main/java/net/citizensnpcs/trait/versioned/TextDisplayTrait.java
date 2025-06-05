@@ -37,6 +37,30 @@ public class TextDisplayTrait extends Trait {
         super("textdisplaytrait");
     }
 
+    public TextAlignment getAlignment() {
+        return alignment;
+    }
+
+    public Color getBackgroundColor() {
+        return bgcolor;
+    }
+
+    public Integer getLineWidth() {
+        return lineWidth;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public Boolean isSeeThrough() {
+        return seeThrough;
+    }
+
+    public Boolean isShadowed() {
+        return shadowed;
+    }
+
     @Override
     public void onSpawn() {
         TextDisplay display = (TextDisplay) npc.getEntity();

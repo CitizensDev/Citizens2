@@ -3060,9 +3060,12 @@ public class NPCCommands {
         NPCShop shop = npc != null ? npc.getOrAddTrait(ShopTrait.class).getDefaultShop() : null;
         if (args.argsLength() >= 3) {
             shop = shops.getShop(args.getString(2));
+            if (shop == null && action.equalsIgnoreCase("edit")) {
+                shop = shops.addNamedShop(args.getString(2));
+            }
         }
         if (shop == null)
-            throw new CommandUsageException();
+            throw new CommandException(Messages.SHOP_NOT_FOUND, args.getString(2));
 
         if (action.equalsIgnoreCase("delete")) {
             if (!shop.canEdit(npc, sender))

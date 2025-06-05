@@ -24,6 +24,10 @@ public class StoredShops {
         this.storage = storage;
     }
 
+    public NPCShop addNamedShop(String string) {
+        return globalShops.computeIfAbsent(string, s -> new NPCShop(s));
+    }
+
     public void deleteShop(NPCShop shop) {
         if (Messaging.isDebugging()) {
             Messaging.debug("Deleting shop", shop.getName());

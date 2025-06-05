@@ -379,7 +379,7 @@ public class HologramTrait extends Trait {
     }
 
     public void setDefaultBackgroundColor(Color color) {
-        this.defaultBackgroundColor = color;
+        defaultBackgroundColor = color;
         for (HologramLine line : lines) {
             if (line.backgroundColor == null) {
                 line.setBackgroundColor(color);
@@ -692,6 +692,10 @@ public class HologramTrait extends Trait {
         public void setRenderer(HologramRenderer renderer) {
             Objects.requireNonNull(renderer);
             this.renderer = renderer;
+        }
+
+        public static HandlerList getHandlerList() {
+            return handlers;
         }
 
         private static final HandlerList handlers = new HandlerList();

@@ -494,7 +494,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-
+            
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
@@ -915,6 +915,10 @@ public class ShopTrait extends Trait {
 
         public NPCShop getShop() {
             return shop;
+        }
+
+        public static HandlerList getHandlerList() {
+            return HANDLERS;
         }
 
         private static final HandlerList HANDLERS = new HandlerList();

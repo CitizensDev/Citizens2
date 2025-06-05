@@ -26,6 +26,7 @@
   "citizens.commands.trait.clearsaves.cleared": "Cleared [[{0}]] from saves.",
   "citizens.commands.trait.clearsaves.description": "Clears trait information from saves",
   "citizens.commands.trait.clearsaves.help": "",
+  "citizens.commands.npc.shop.shop-not-found" : "Shop [[{0}]] not found.",
   "citizens.commands.npc.rotationsettings.describe" : "Rotation settings are now: [[{0}]]",
   "citizens.commands.npc.rotationsettings.description" : "Edit NPC rotation settings",
   "citizens.commands.npc.rotationsettings.help" : "Controls various head and body rotation settings for the NPC.<br>Currently NPCs look using simple Minecraft-style rotation where the head/body move a certain amount of degrees per tick towards the target<br>Accepts the following flags:<br>[[--link_body]]: whether the head and body rotation should be linked directly<br>[[--head_only]]: whether only the head should <br>[[--max_yaw_per_tick]]: how many degrees to change yaw per tick (defaults to 40)<br>[[--max_pitch_per_tick]]: how many degrees to change pitch per tick (defaults to 10)<br>[[--pitch_range]]: the range of possible pitches to take (defaults to -180,180)<br>[[--yaw_range]]: the range of possible yaws to take (defaults to -180,180)",
