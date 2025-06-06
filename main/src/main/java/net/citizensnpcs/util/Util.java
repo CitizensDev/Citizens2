@@ -367,6 +367,12 @@ public class Util {
         }
     }
 
+    public static <T extends Keyed> String listValuesPretty(Class<T> values) {
+        return "<yellow>" + Joiner.on("<green>, <yellow>")
+                .join(Bukkit.getRegistry(values).stream().map(k -> k.getKey().getKey()).iterator()).replace('_', ' ')
+                .toLowerCase(Locale.ROOT);
+    }
+
     public static String listValuesPretty(Object[] values) {
         return "<yellow>" + Joiner.on("<green>, <yellow>").join(values).replace('_', ' ').toLowerCase(Locale.ROOT);
     }

@@ -142,7 +142,9 @@ public class BossBarTrait extends Trait {
                     LivingEntity entity = (LivingEntity) npc.getEntity();
                     double maxHealth = entity.getMaxHealth();
                     if (SUPPORT_ATTRIBUTES) {
-                        maxHealth = entity.getAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.max_health", "max_health"))
+                        maxHealth = entity
+                                .getAttribute(
+                                        Util.getRegistryValue(Registry.ATTRIBUTE, "generic.max_health", "max_health"))
                                 .getValue();
                     }
                     bar.setProgress(entity.getHealth() / maxHealth);
