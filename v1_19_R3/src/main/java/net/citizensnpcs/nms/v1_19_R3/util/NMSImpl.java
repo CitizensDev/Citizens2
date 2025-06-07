@@ -8,12 +8,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -2278,9 +2278,9 @@ public class NMSImpl implements NMSBridge {
         entity.calculateEntityAnimation(entity instanceof net.minecraft.world.entity.animal.FlyingAnimal);
     }
 
-    public static TreeMap<?, ?> getBehaviorMap(LivingEntity entity) {
+    public static Map<?, ?> getBehaviorMap(LivingEntity entity) {
         try {
-            return (TreeMap<?, ?>) BEHAVIOR_TREE_MAP.invoke(entity.getBrain());
+            return (Map<?, ?>) BEHAVIOR_TREE_MAP.invoke(entity.getBrain());
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -2601,15 +2601,15 @@ public class NMSImpl implements NMSBridge {
         if (npc.useMinecraftAI()) {
             restoreGoals(npc, entity.goalSelector, entity.targetSelector);
             if (npc.data().has("behavior-map")) {
-                TreeMap behavior = npc.data().get("behavior-map");
+                Map behavior = npc.data().get("behavior-map");
                 getBehaviorMap(entity).putAll(behavior);
                 npc.data().remove("behavior-map");
             }
         } else {
             clearGoals(npc, entity.goalSelector, entity.targetSelector);
-            TreeMap behaviorMap = getBehaviorMap(entity);
+            Map behaviorMap = getBehaviorMap(entity);
             if (behaviorMap.size() > 0) {
-                npc.data().set("behavior-map", new TreeMap(behaviorMap));
+                npc.data().set("behavior-map", new HashMap(behaviorMap));
                 behaviorMap.clear();
             }
         }
