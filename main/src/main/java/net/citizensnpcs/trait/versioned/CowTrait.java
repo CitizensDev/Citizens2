@@ -19,7 +19,6 @@ import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 
 @TraitName("cowtrait")
 public class CowTrait extends Trait {
