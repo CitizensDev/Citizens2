@@ -67,7 +67,7 @@ public class CowTrait extends Trait {
             if (variant == null)
                 throw new CommandException(Messages.INVALID_PIG_VARIANT, Util.listValuesPretty(Cow.Variant.class));
             trait.setVariant(variant);
-            output += Messaging.tr(Messages.PIG_VARIANT_SET, variant.getKeyOrNull().getKey());
+            output += Messaging.tr(Messages.PIG_VARIANT_SET, variant.getKey().getKey());
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
