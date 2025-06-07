@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.versioned;
 
+import net.citizensnpcs.util.NMS;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.EntityType;
@@ -17,8 +18,17 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+
 @TraitName("cowtrait")
 public class CowTrait extends Trait {
+    private static final MethodHandle COW_VARIANT_SETTER;
+
+    static {
+        COW_VARIANT_SETTER = NMS.getMethodHandle(Cow.class, "setVariant", true, Cow.Variant.class);
+    }
+
     @Persist
     private Cow.Variant variant;
 
@@ -34,7 +44,12 @@ public class CowTrait extends Trait {
     public void run() {
         if (variant != null && npc.getEntity() instanceof Cow) {
             Cow cow = (Cow) npc.getEntity();
-            cow.setVariant(variant);
+            try {
+                COW_VARIANT_SETTER.invoke(cow, variant);
+            } catch (Throwable e) {
+                Messaging.severe("Failed to set cow variant");
+                e.printStackTrace();
+            }
         }
     }
 
