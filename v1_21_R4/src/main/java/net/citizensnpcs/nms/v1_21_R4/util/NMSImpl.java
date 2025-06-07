@@ -2257,9 +2257,9 @@ public class NMSImpl implements NMSBridge {
         throw new IllegalArgumentException();
     }
 
-    public static TreeMap<?, ?> getBehaviorMap(LivingEntity entity) {
+    public static Map<?, ?> getBehaviorMap(LivingEntity entity) {
         try {
-            return (TreeMap<?, ?>) AVAILABLE_BEHAVIORS_BY_PRIORITY.invoke(entity.getBrain());
+            return (Map<?, ?>) AVAILABLE_BEHAVIORS_BY_PRIORITY.invoke(entity.getBrain());
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -2725,7 +2725,7 @@ public class NMSImpl implements NMSBridge {
             }
         } else {
             clearGoals(npc, entity.goalSelector, entity.targetSelector);
-            TreeMap behaviorMap = getBehaviorMap(entity);
+            Map behaviorMap = getBehaviorMap(entity);
             if (behaviorMap.size() > 0) {
                 npc.data().set("behavior-map", new TreeMap(behaviorMap));
                 behaviorMap.clear();
