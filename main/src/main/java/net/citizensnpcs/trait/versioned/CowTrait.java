@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait.versioned;
 
-import net.citizensnpcs.util.NMS;
+import java.lang.invoke.MethodHandle;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.EntityType;
@@ -16,18 +17,11 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
-
-import java.lang.invoke.MethodHandle;
 
 @TraitName("cowtrait")
 public class CowTrait extends Trait {
-    private static final MethodHandle COW_VARIANT_SETTER;
-
-    static {
-        COW_VARIANT_SETTER = NMS.getMethodHandle(Cow.class, "setVariant", true, Cow.Variant.class);
-    }
-
     @Persist
     private Cow.Variant variant;
 
@@ -65,7 +59,7 @@ public class CowTrait extends Trait {
             max = 1,
             permission = "citizens.npc.cow")
     @Requirements(selected = true, ownership = true, types = EntityType.COW)
-    public static void pig(CommandContext args, CommandSender sender, NPC npc, @Flag("variant") Cow.Variant variant)
+    public static void cow(CommandContext args, CommandSender sender, NPC npc, @Flag("variant") Cow.Variant variant)
             throws CommandException {
         CowTrait trait = npc.getOrAddTrait(CowTrait.class);
         String output = "";
@@ -73,10 +67,20 @@ public class CowTrait extends Trait {
             if (variant == null)
                 throw new CommandException(Messages.INVALID_PIG_VARIANT, Util.listValuesPretty(Cow.Variant.class));
             trait.setVariant(variant);
-            output += Messaging.tr(Messages.PIG_VARIANT_SET, variant);
+            output += Messaging.tr(Messages.PIG_VARIANT_SET, variant.getKeyOrNull().getKey());
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
+        }
+    }
+
+    private static MethodHandle COW_VARIANT_SETTER;
+    static {
+        try {
+            COW_VARIANT_SETTER = NMS.getMethodHandle(Class.forName("org.bukkit.entity.Cow"), "setVariant", true,
+                    Cow.Variant.class);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

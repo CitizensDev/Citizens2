@@ -51,15 +51,15 @@ public class ChickenTrait extends Trait {
             max = 1,
             permission = "citizens.npc.chicken")
     @Requirements(selected = true, ownership = true, types = EntityType.CHICKEN)
-    public static void pig(CommandContext args, CommandSender sender, NPC npc, @Flag("variant") Chicken.Variant variant)
-            throws CommandException {
+    public static void chicken(CommandContext args, CommandSender sender, NPC npc,
+            @Flag("variant") Chicken.Variant variant) throws CommandException {
         ChickenTrait trait = npc.getOrAddTrait(ChickenTrait.class);
         String output = "";
         if (args.hasValueFlag("variant")) {
             if (variant == null)
                 throw new CommandException(Messages.INVALID_PIG_VARIANT, Util.listValuesPretty(Chicken.Variant.class));
             trait.setVariant(variant);
-            output += Messaging.tr(Messages.PIG_VARIANT_SET, variant);
+            output += Messaging.tr(Messages.PIG_VARIANT_SET, variant.getKeyOrNull().getKey());
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);

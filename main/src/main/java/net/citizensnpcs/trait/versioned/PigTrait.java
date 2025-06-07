@@ -59,7 +59,7 @@ public class PigTrait extends Trait {
             if (variant == null)
                 throw new CommandException(Messages.INVALID_PIG_VARIANT, Util.listValuesPretty(Pig.Variant.class));
             trait.setVariant(variant);
-            output += Messaging.tr(Messages.PIG_VARIANT_SET, variant);
+            output += Messaging.tr(Messages.PIG_VARIANT_SET, variant.getKeyOrNull().getKey());
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
