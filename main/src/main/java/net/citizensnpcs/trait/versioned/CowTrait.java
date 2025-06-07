@@ -25,7 +25,23 @@ public class CowTrait extends Trait {
     private static final MethodHandle COW_VARIANT_SETTER;
 
     static {
-        COW_VARIANT_SETTER = NMS.getMethodHandle(Cow.class, "setVariant", true, Cow.Variant.class);
+        COW_VARIANT_SETTER = getCowVariantSetter();
+    }
+
+    private static MethodHandle getCowVariantSetter() {
+        try {
+            return NMS.getMethodHandle(Class.forName("org.bukkit.entity.Cow"), "setVariant", true, Cow.Variant.class);
+        } catch (ClassNotFoundException e) {
+            Messaging.severe("Cannot find org.bukkit.entity.Cow");
+            e.printStackTrace();
+            sneakyThrow(e);
+            return null; // actually we should never reach here
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <E extends Throwable> void sneakyThrow(Throwable e) throws E {
+        throw (E) e;
     }
 
     @Persist
