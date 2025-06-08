@@ -208,6 +208,10 @@ public class ShopTrait extends Trait {
             return pages.get(page);
         }
 
+        public List<NPCShopPage> getPages() {
+            return pages;
+        }
+
         public String getRequiredPermission() {
             return viewPermission;
         }
