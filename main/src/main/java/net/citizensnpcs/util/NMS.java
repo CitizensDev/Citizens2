@@ -41,6 +41,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
+import org.slf4j.helpers.NOPLogger;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -48,6 +49,7 @@ import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
+import com.mojang.authlib.minecraft.client.MinecraftClient;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -1073,5 +1075,11 @@ public class NMS {
         }
         giveReflectiveAccess(Field.class, NMS.class);
         MODIFIERS_FIELD = NMS.getField(Field.class, "modifiers", false);
+
+        try {
+            NMS.getFinalSetter(MinecraftClient.class, "LOGGER").invoke(NOPLogger.NOP_LOGGER);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 }
