@@ -53,6 +53,11 @@
             <version>${craftbukkit.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>net.byteflux</groupId>
+            <artifactId>libby-bukkit</artifactId>
+            <version>1.1.5</version>
         </dependency>
         <dependency>
             <groupId>it.unimi.dsi</groupId>
@@ -209,12 +214,13 @@
                                     </includes>
                                 </filter>
                             </filters>
-                            <!--
                             <relocations>
+                            <!--
                                 <relocation>
                                     <pattern>it.unimi.dsi</pattern>
                                     <shadedPattern>clib.fastutil</shadedPattern>
                                 </relocation>
+                             -->
                                 <relocation>
                                     <pattern>net.kyori</pattern>
                                     <shadedPattern>clib.net.kyori</shadedPattern>
@@ -224,7 +230,6 @@
                                     <shadedPattern>clib.net.byteflux.libby</shadedPattern>
                                 </relocation>
                             </relocations>
-                             -->
                         </configuration>
                     </execution>
                 </executions>

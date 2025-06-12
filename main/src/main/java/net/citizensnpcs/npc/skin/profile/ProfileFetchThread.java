@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -49,7 +50,7 @@ class ProfileFetchThread implements Runnable {
      *
      * @see ProfileFetcher#fetch
      */
-    void fetch(String name, @Nullable ProfileFetchHandler handler) {
+    void fetch(String name, @Nullable Consumer<ProfileRequest> handler) {
         Objects.requireNonNull(name);
 
         name = name.toLowerCase(Locale.ROOT);
@@ -76,7 +77,7 @@ class ProfileFetchThread implements Runnable {
         }
     }
 
-    public void fetchForced(String name, ProfileFetchHandler handler) {
+    public void fetchForced(String name, Consumer<ProfileRequest> handler) {
         Objects.requireNonNull(name);
 
         name = name.toLowerCase(Locale.ROOT);
@@ -219,7 +220,7 @@ class ProfileFetchThread implements Runnable {
         }
     }
 
-    private static void addHandler(ProfileRequest request, ProfileFetchHandler handler) {
+    private static void addHandler(ProfileRequest request, Consumer<ProfileRequest> handler) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> request.addHandler(handler), 1);
     }
 
@@ -253,7 +254,7 @@ class ProfileFetchThread implements Runnable {
                 || cause != null && (cause.contains("403 Forbidden") || cause.contains("too many requests"));
     }
 
-    private static void sendResult(ProfileFetchHandler handler, ProfileRequest request) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> handler.onResult(request), 1);
+    private static void sendResult(Consumer<ProfileRequest> handler, ProfileRequest request) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> handler.accept(request), 1);
     }
 }

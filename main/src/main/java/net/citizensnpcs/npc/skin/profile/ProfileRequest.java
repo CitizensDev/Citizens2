@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.skin.profile;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -20,7 +21,7 @@ import net.citizensnpcs.api.CitizensAPI;
  * </p>
  */
 public class ProfileRequest {
-    private Deque<ProfileFetchHandler> handlers;
+    private Deque<Consumer<ProfileRequest>> handlers;
     private final String playerName;
     private GameProfile profile;
     private volatile ProfileFetchResult result = ProfileFetchResult.PENDING;
@@ -34,7 +35,7 @@ public class ProfileRequest {
      *            Optional handler to handle the result for the profile. Handler always invoked from the main thread.
      */
 
-    public ProfileRequest(String playerName, ProfileFetchHandler handler) {
+    public ProfileRequest(String playerName, Consumer<ProfileRequest> handler) {
         Objects.requireNonNull(playerName);
 
         this.playerName = playerName;
@@ -54,11 +55,11 @@ public class ProfileRequest {
      * @param handler
      *            The result handler.
      */
-    public void addHandler(ProfileFetchHandler handler) {
+    public void addHandler(Consumer<ProfileRequest> handler) {
         Objects.requireNonNull(handler);
 
         if (result != ProfileFetchResult.PENDING) {
-            handler.onResult(this);
+            handler.accept(this);
             return;
         }
         if (handlers == null) {
@@ -139,7 +140,7 @@ public class ProfileRequest {
                 return;
 
             while (!handlers.isEmpty()) {
-                handlers.removeFirst().onResult(ProfileRequest.this);
+                handlers.removeFirst().accept(ProfileRequest.this);
             }
             handlers = null;
         });

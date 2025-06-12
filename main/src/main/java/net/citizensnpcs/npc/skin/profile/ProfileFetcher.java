@@ -1,8 +1,7 @@
 package net.citizensnpcs.npc.skin.profile;
 
 import java.util.Objects;
-
-import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
@@ -26,7 +25,7 @@ public class ProfileFetcher {
      * @param handler
      *            Optional handler to handle the result. Handler always invoked from the main thread.
      */
-    public static void fetch(String name, @Nullable ProfileFetchHandler handler) {
+    public static void fetch(String name, Consumer<ProfileRequest> handler) {
         Objects.requireNonNull(name);
 
         if (PROFILE_THREAD == null) {
@@ -35,7 +34,7 @@ public class ProfileFetcher {
         PROFILE_THREAD.fetch(name, handler);
     }
 
-    public static void fetchForced(String name, ProfileFetchHandler handler) {
+    public static void fetchForced(String name, Consumer<ProfileRequest> handler) {
         Objects.requireNonNull(name);
 
         if (PROFILE_THREAD == null) {
