@@ -43,6 +43,7 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
@@ -560,14 +561,6 @@ public class NMS {
         return null;
     }
 
-    private static Collection<Player> getNearbyPlayers(Entity from) {
-        return getNearbyPlayers(from, from.getLocation(), 64);
-    }
-
-    private static Collection<Player> getNearbyPlayers(Entity from, Location location, double radius) {
-        return Lists.newArrayList(CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(from, location, radius));
-    }
-
     public static EntityPacketTracker getPacketTracker(Entity entity) {
         if (entity == null)
             return null;
@@ -824,13 +817,16 @@ public class NMS {
     }
 
     public static void sendPositionUpdateNearby(Entity from, boolean position) {
-        sendPositionUpdate(from, getNearbyPlayers(from), position, NMS.getYaw(from), from.getLocation().getPitch(),
-                NMS.getHeadYaw(from));
+        sendPositionUpdateNearby(from, position, NMS.getYaw(from), from.getLocation().getPitch(), NMS.getHeadYaw(from));
     }
 
     public static void sendPositionUpdateNearby(Entity from, boolean position, Float bodyYaw, Float pitch,
             Float headYaw) {
-        sendPositionUpdate(from, getNearbyPlayers(from), position, bodyYaw, pitch, headYaw);
+        sendPositionUpdate(from,
+                Lists.newArrayList(
+                        Iterables.filter(CitizensAPI.getLocationLookup().getNearbyPlayers(from.getLocation(), 64),
+                                p -> !p.equals(from))),
+                position, bodyYaw, pitch, headYaw);
     }
 
     public static boolean sendTabListAdd(Player recipient, Player listPlayer) {

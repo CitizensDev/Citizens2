@@ -1448,7 +1448,7 @@ public class NMSImpl implements NMSBridge {
         PerPlayerMetadata<Long> meta = CitizensAPI.getLocationLookup().registerMetadata("sleeping", null);
         if (sleep) {
             List<Player> nearbyPlayers = Lists.newArrayList(
-                    Iterables.filter(CitizensAPI.getLocationLookup().getNearbyVisiblePlayers(entity, 64), p -> {
+                    Iterables.filter(CitizensAPI.getLocationLookup().getNearbyPlayers(entity.getLocation(), 64), p -> {
                         Long time = meta.getMarker(p.getUniqueId(), entity.getUniqueId().toString());
                         if (time == null || Math.abs(System.currentTimeMillis() - time) > 5000)
                             return true;

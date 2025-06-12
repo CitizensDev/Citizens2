@@ -927,11 +927,7 @@ public class NPCCommands {
             spawnLoc = at;
             spawnLoc.getChunk().load();
         }
-        if (spawnLoc == null) {
-            npc.destroy();
-            throw new CommandException(Messages.INVALID_SPAWN_LOCATION);
-        }
-        if (args.hasFlag('c')) {
+        if (args.hasFlag('c') && spawnLoc != null) {
             spawnLoc = Util.getCenterLocation(spawnLoc.getBlock());
         }
         if (traits != null) {
@@ -973,7 +969,7 @@ public class NPCCommands {
             }
             msg += " with templates " + builder.toString();
         }
-        if (!args.hasFlag('u')) {
+        if (!args.hasFlag('u') && spawnLoc != null) {
             npc.spawn(spawnLoc, SpawnReason.CREATE);
         }
         selector.select(sender, npc);

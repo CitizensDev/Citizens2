@@ -223,7 +223,6 @@ public class Messages {
     public static final String INVALID_SHULKER_COLOR = "citizens.commands.npc.shulker.invalid-color";
     public static final String INVALID_SKIN_FILE = "citizens.commands.npc.skin.invalid-file";
     public static final String INVALID_SOUND = "citizens.commands.npc.sound.invalid-sound";
-    public static final String INVALID_SPAWN_LOCATION = "citizens.commands.npc.create.invalid-location";
     public static final String INVALID_SPEECH_BUBBLES_DURATION = "citizens.commands.npc.text.invalid-speech-bubbles-duration";
     public static final String INVALID_TRIGGER_TELEPORT_FORMAT = "citizens.editors.waypoints.triggers.teleport.invalid-format";
     public static final String INVALID_TROPICALFISH_COLOR = "citizens.commands.npc.tropicalfish.invalid-color";
@@ -337,7 +336,6 @@ public class Messages {
     public static final String PARROT_VARIANT_SET = "citizens.commands.npc.parrot.variant-set";
     public static final String PASSIVE_SET = "citizens.commands.npc.passive.set";
     public static final String PASSIVE_UNSET = "citizens.commands.npc.passive.unset";
-    public static final String PIG_VARIANT_SET = "citizens.commands.npc.pig.variant-set";
     public static final String PATHFINDING_OPTIONS_ATTACK_RANGE_SET = "citizens.commands.npc.pathopt.attack-range-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_SET = "citizens.commands.npc.pathopt.avoid-water-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_UNSET = "citizens.commands.npc.pathopt.avoid-water-unset";
@@ -357,6 +355,7 @@ public class Messages {
     public static final String PHANTOM_STATE_SET = "citizens.commands.npc.phantom.phantom-set";
     public static final String PICKUP_ITEMS_SET = "citizens.commands.npc.pickupitems.set";
     public static final String PICKUP_ITEMS_UNSET = "citizens.commands.npc.pickupitems.unset";
+    public static final String PIG_VARIANT_SET = "citizens.commands.npc.pig.variant-set";
     public static final String PIGLIN_DANCING_SET = "citizens.commands.npc.piglin.dancing-set";
     public static final String PIGLIN_DANCING_UNSET = "citizens.commands.npc.piglin.dancing-unset";
     public static final String PLAYERFILTER_ALLOWLIST_SET = "citizens.commands.npc.playerfilter.allowlist-set";

@@ -2226,7 +2226,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void sendPacketsNearby(Player from, Location location, Packet<?>... packets) {
-        NMSImpl.sendPacketsNearby(from, location, Arrays.asList(packets), 64);
+        sendPacketsNearby(from, location, Arrays.asList(packets), 64);
     }
 
     public static void setAttribute(EntityLiving entity, AttributeBase attribute, double value) {
