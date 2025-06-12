@@ -217,14 +217,14 @@ public class InventoryMenu implements Listener, Runnable {
         if (!isOurInventory(clicked))
             return;
 
-        switch (event.getAction().name()) {
-            case "COLLECT_TO_CURSOR":
-            case "DROP_ONE_SLOT":
-            case "DROP_ALL_SLOT":
+        switch (event.getAction()) {
+            case COLLECT_TO_CURSOR:
+            case DROP_ONE_SLOT:
+            case DROP_ALL_SLOT:
                 event.setCancelled(true);
-            case "DROP_ONE_CURSOR":
-            case "DROP_ALL_CURSOR":
-            case "UNKNOWN":
+            case DROP_ONE_CURSOR:
+            case DROP_ALL_CURSOR:
+            case UNKNOWN:
                 return;
             default:
                 break;

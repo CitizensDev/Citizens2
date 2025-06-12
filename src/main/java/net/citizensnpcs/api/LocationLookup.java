@@ -47,7 +47,7 @@ public class LocationLookup extends BukkitRunnable {
         this.sourceRegistry = sourceRegistry;
     }
 
-    public Iterable<Player> filterToVisiblePlayers(Entity base, Iterable<Player> players) {
+    private Iterable<Player> filterToVisiblePlayers(Entity base, Iterable<Player> players) {
         Player player = base instanceof Player ? (Player) base : null;
         return Iterables.filter(players, other -> {
             boolean canSee = true;
