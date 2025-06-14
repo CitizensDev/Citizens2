@@ -94,6 +94,10 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     public void run() {
         if (interaction == null)
             return;
+        if (!interaction.isSpawned()) {
+            interaction.spawn(npc.getEntity().getLocation());
+            return;
+        }
         EntityDim dim = getAdjustedDimensions();
         interaction.teleport(npc.getEntity().getLocation(), TeleportCause.PLUGIN);
         Interaction box = ((Interaction) interaction.getEntity());
