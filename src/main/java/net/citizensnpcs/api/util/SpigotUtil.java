@@ -175,7 +175,7 @@ public class SpigotUtil {
                 versionChecker = s -> Class.forName("net.citizensnpcs.nms." + s + ".util.NMSImpl");
             }
             String revision = null;
-            for (int i = 1; i <= 4; i++) {
+            for (int i = 1; i <= 6; i++) {
                 try {
                     versionChecker.accept(versionString + i);
                     revision = versionString + i;
