@@ -1327,7 +1327,7 @@ public class NPCCommands {
                             "viewrange", "margintop", "marginbottom" }) String action,
             @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion,
             @Flag("duration") Duration duration) throws CommandException {
-        HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
+                HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
         if (args.argsLength() == 1) {
             String output = Messaging.tr(Messages.HOLOGRAM_DESCRIBE_HEADER, npc.getName());
             List<String> lines = trait.getLines();
@@ -1353,7 +1353,10 @@ public class NPCCommands {
             trait.setLine(idx, args.getJoinedStrings(3));
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_SET, idx, args.getJoinedStrings(3));
         } else if (action.equalsIgnoreCase("bgcolor")) {
-            if (args.argsLength() == 3) {
+            if (args.argsLength() == 2) {
+                trait.setDefaultBackgroundColor(null);
+                Messaging.sendTr(sender, Messages.HOLOGRAM_DEFAULT_BACKGROUND_COLOR_SET, "empty");
+            } else if (args.argsLength() == 3) {
                 trait.setDefaultBackgroundColor(Util.parseColor(args.getString(2)));
                 Messaging.sendTr(sender, Messages.HOLOGRAM_DEFAULT_BACKGROUND_COLOR_SET, args.getString(2));
             } else {
@@ -1366,7 +1369,7 @@ public class NPCCommands {
                 Messaging.sendTr(sender, Messages.HOLOGRAM_BACKGROUND_COLOR_SET, idx, args.getString(3));
             }
         } else if (action.equalsIgnoreCase("textshadow")) {
-            if (args.argsLength() == 3) {
+            if (args.argsLength() == 2) {
                 trait.setDefaultTextShadow(!trait.isDefaultTextShadow());
                 Messaging.sendTr(sender, trait.isDefaultTextShadow() ? Messages.HOLOGRAM_DEFAULT_SHADOW_SET
                         : Messages.HOLOGRAM_DEFAULT_SHADOW_UNSET, npc.getName());
