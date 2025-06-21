@@ -118,6 +118,7 @@ import net.citizensnpcs.nms.v1_21_R5.entity.GlowSquidController;
 import net.citizensnpcs.nms.v1_21_R5.entity.GoatController;
 import net.citizensnpcs.nms.v1_21_R5.entity.GuardianController;
 import net.citizensnpcs.nms.v1_21_R5.entity.GuardianElderController;
+import net.citizensnpcs.nms.v1_21_R5.entity.HappyGhastController;
 import net.citizensnpcs.nms.v1_21_R5.entity.HoglinController;
 import net.citizensnpcs.nms.v1_21_R5.entity.HorseController;
 import net.citizensnpcs.nms.v1_21_R5.entity.HorseDonkeyController;
@@ -1077,6 +1078,7 @@ public class NMSImpl implements NMSBridge {
         EntityControllers.setEntityControllerForType(EntityType.GLOW_SQUID, GlowSquidController.class);
         EntityControllers.setEntityControllerForType(EntityType.GOAT, GoatController.class);
         EntityControllers.setEntityControllerForType(EntityType.GUARDIAN, GuardianController.class);
+        EntityControllers.setEntityControllerForType(EntityType.HAPPY_GHAST, HappyGhastController.class);
         EntityControllers.setEntityControllerForType(EntityType.HOGLIN, HoglinController.class);
         EntityControllers.setEntityControllerForType(EntityType.HOPPER_MINECART, MinecartHopperController.class);
         EntityControllers.setEntityControllerForType(EntityType.HORSE, HorseController.class);
@@ -2742,7 +2744,7 @@ public class NMSImpl implements NMSBridge {
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
             EntityType.SILVERFISH, EntityType.SHULKER, EntityType.ENDERMITE, EntityType.ENDER_DRAGON, EntityType.BAT,
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
-            EntityType.SHULKER, EntityType.PHANTOM);
+            EntityType.HAPPY_GHAST, EntityType.SHULKER, EntityType.PHANTOM);
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);
