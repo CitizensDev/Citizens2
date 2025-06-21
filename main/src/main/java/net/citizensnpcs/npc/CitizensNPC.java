@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Registry;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -399,8 +400,13 @@ public class CitizensNPC extends AbstractNPC {
                     }
                     if (type == EntityType.PLAYER) {
                         PlayerUpdateTask.registerPlayer(getEntity());
-                    } else if (data().has(NPC.Metadata.AGGRESSIVE)) {
-                        NMS.setAggressive(entity, data().<Boolean> get(NPC.Metadata.AGGRESSIVE));
+                        if (SUPPORT_ATTRIBUTES
+                                && Util.getRegistryValue(Registry.ATTRIBUTE, "waypoint_transmit_range") != null) {
+                            AttributeTrait attr = getOrAddTrait(AttributeTrait.class);
+                            if (!attr.hasAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE)) {
+                                attr.setAttributeValue(Attribute.WAYPOINT_TRANSMIT_RANGE, 0);
+                            }
+                        }
                     }
                     entity.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
                             Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks()));
@@ -503,6 +509,9 @@ public class CitizensNPC extends AbstractNPC {
             }
             if (SUPPORT_SILENT && data().has(NPC.Metadata.SILENT)) {
                 getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.Metadata.SILENT).toString()));
+            }
+            if (data().has(NPC.Metadata.AGGRESSIVE)) {
+                NMS.setAggressive(getEntity(), data().<Boolean> get(NPC.Metadata.AGGRESSIVE));
             }
             boolean isLiving = getEntity() instanceof LivingEntity;
             if (isUpdating(NPCUpdate.PACKET)) {
