@@ -10,13 +10,13 @@
     <properties>
         <BUILD_NUMBER>Unknown</BUILD_NUMBER>
         <CITIZENS_VERSION>2.0.39</CITIZENS_VERSION>
-        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
-        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-jar-plugin.version>3.4.1</maven-jar-plugin.version>
-        <maven-shade-plugin.version>3.5.2</maven-shade-plugin.version>
-        <special-source-plugin.version>2.0.3</special-source-plugin.version>
+        <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
+        <special-source-plugin.version>2.0.4</special-source-plugin.version>
     </properties>
     <distributionManagement>
         <repository>
