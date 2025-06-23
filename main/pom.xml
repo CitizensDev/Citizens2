@@ -111,7 +111,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.22.0</version>
+            <version>4.23.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -138,7 +138,7 @@
         <url>https://github.com/CitizensDev/Citizens2/tree/master/</url>
     </scm>
     <build>
-        <defaultGoal>clean package install javadoc:javadoc</defaultGoal>
+        <defaultGoal>clean package install javadoc:javadoc javadoc:jar</defaultGoal>
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
             <resource>
