@@ -169,6 +169,35 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                      <id>attach-javadoc</id>
+                      <goals>
+                        <goal>javadoc</goal>
+                        <goal>jar</goal>
+                      </goals>
+                      <phase>package</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>11</source>
+                    <author>false</author>
+                    <failOnError>false</failOnError>
+                    <doclint>none</doclint>
+                    <links>
+                        <link>https://hub.spigotmc.org/javadocs/spigot</link>
+                    </links>
+                    <includeDependencySources>true</includeDependencySources>
+                    <dependencySourceIncludes>
+                        <dependencySourceInclude>net.citizensnpcs:citizensapi</dependencySourceInclude>
+                    </dependencySourceIncludes>
+                    <excludePackageNames>net.citizensnpcs.commands</excludePackageNames>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>${maven-deploy-plugin.version}</version>
                 <executions>
@@ -233,35 +262,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-                <executions>
-                    <execution>
-                      <id>attach-javadoc</id>
-                      <goals>
-                        <goal>javadoc</goal>
-                        <goal>jar</goal>
-                      </goals>
-                      <phase>deploy</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <source>11</source>
-                    <author>false</author>
-                    <failOnError>false</failOnError>
-                    <doclint>none</doclint>
-                    <links>
-                        <link>https://hub.spigotmc.org/javadocs/spigot</link>
-                    </links>
-                    <includeDependencySources>true</includeDependencySources>
-                    <dependencySourceIncludes>
-                        <dependencySourceInclude>net.citizensnpcs:citizensapi</dependencySourceInclude>
-                    </dependencySourceIncludes>
-                    <excludePackageNames>net.citizensnpcs.commands</excludePackageNames>
-                </configuration>
             </plugin>
         </plugins>
     </build>
