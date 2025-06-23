@@ -85,7 +85,8 @@ public class Messaging {
                 if (MinecraftComponentSerializer.isSupported()) {
                     AUDIENCES = BukkitAudiences.create(CitizensAPI.getPlugin());
                 } else {
-                    Messaging.severe("Unable to load Adventure, chat components will not work");
+                    Messaging.severe(
+                            "Unable to load Adventure, colors will not work. Typically this means that adventure-platform needs to be updated by Paper team.");
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
