@@ -9,10 +9,12 @@ import java.util.stream.IntStream;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -156,9 +158,20 @@ public class ItemAction extends NPCShopAction {
         if (a.getType() != b.getType() || metaFilter.size() > 0 && !metaMatches(a, b, metaFilter))
             return false;
 
-        if (metaFilter.size() == 0 && !a.isSimilar(b))
-            return false;
+        if (metaFilter.size() == 0) {
+            a = a.clone();
+            b = b.clone();
+            // remove common footgun - repair_cost is often added but minecraft ignores it in similarity comparisons
+            ItemMeta meta = a.getItemMeta();
+            meta.getPersistentDataContainer().remove(new NamespacedKey("minecraft", "repair_cost"));
+            a.setItemMeta(meta);
 
+            meta = b.getItemMeta();
+            meta.getPersistentDataContainer().remove(new NamespacedKey("minecraft", "repair_cost"));
+            b.setItemMeta(meta);
+            if (!a.isSimilar(b))
+                return false;
+        }
         return true;
     }
 
