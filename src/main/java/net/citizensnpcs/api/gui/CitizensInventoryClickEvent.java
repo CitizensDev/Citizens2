@@ -40,6 +40,11 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
         return event.getCursor() == null ? new ItemStack(Material.AIR, 0) : event.getCursor();
     }
 
+    @Override
+    public Result getResult() {
+        return event.getResult();
+    }
+
     private ItemStack getResult(InventoryClickEvent event, int pickupAmount) {
         ItemStack stack = event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR
                 ? event.getCursor().clone()
@@ -69,7 +74,6 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
                 break;
             default:
                 event.setCancelled(true);
-                event.setResult(Result.DENY);
                 return null;
         }
         return stack;
@@ -81,6 +85,11 @@ public class CitizensInventoryClickEvent extends InventoryClickEvent {
 
     public ItemStack getResultItemNonNull() {
         return result == null ? new ItemStack(Material.AIR, 0) : result;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return event.isCancelled();
     }
 
     @Override

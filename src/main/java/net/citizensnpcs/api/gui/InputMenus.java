@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -46,7 +45,7 @@ public class InputMenus {
         public void accept(CitizensInventoryClickEvent event) {
             value = !value;
             event.setCurrentItemDescription(transformer.apply(value));
-            event.setResult(Result.DENY);
+            event.setCancelled(true);
         }
     }
 

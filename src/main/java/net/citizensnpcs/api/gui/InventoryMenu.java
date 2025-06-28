@@ -19,7 +19,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -66,7 +65,6 @@ public class InventoryMenu implements Listener, Runnable {
     private boolean closingViews;
     private boolean delayViewerChanges;
     private PageContext page;
-    private int pickupAmount = -1;
     private final Deque<PageContext> stack = Queues.newArrayDeque();
     private boolean transitioning;
     private Collection<InventoryViewAPI> views = Lists.newArrayList();
@@ -134,9 +132,7 @@ public class InventoryMenu implements Listener, Runnable {
     }
 
     private InventoryMenuTransition createTransition(int pos, MenuTransition transitionInfo) {
-        InventoryMenuSlot slot = page.ctx.getSlot(pos);
-        InventoryMenuTransition transition = new InventoryMenuTransition(slot, transitionInfo.value());
-        return transition;
+        return new InventoryMenuTransition(page.ctx.getSlot(pos), transitionInfo.value());
     }
 
     private int getInventorySize(InventoryType type, int[] dim) {
@@ -232,24 +228,26 @@ public class InventoryMenu implements Listener, Runnable {
         if (event.getSlot() < 0)
             return;
 
-        InventoryMenuSlot slot = page.ctx.getSlot(event.getSlot());
-        CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(event, pickupAmount);
+        handleClick0(new CitizensInventoryClickEvent(event, -1));
+    }
+
+    private void handleClick0(CitizensInventoryClickEvent ev) {
+        InventoryMenuSlot slot = page.ctx.getSlot(ev.getSlot());
         PageContext pg = page;
         slot.onClick(ev);
-        pickupAmount = -1;
-        pg.page.onClick(slot, event);
+        pg.page.onClick(slot, ev);
 
         if (pg != page) {
             // transitioned during event
-            event.setCancelled(true);
+            ev.setCancelled(true);
         }
-        if (event.isCancelled())
+        if (ev.isCancelled())
             return;
 
         for (InventoryMenuTransition transition : page.transitions) {
             Class<? extends InventoryMenuPage> next = transition.accept(slot);
             if (next != null) {
-                event.setCancelled(true);
+                ev.setCancelled(true);
                 transition(next);
                 break;
             }
@@ -264,31 +262,27 @@ public class InventoryMenu implements Listener, Runnable {
         ItemStack[] contents = dest.getContents();
         PageContext pg = page;
         for (int i = 0; i < contents.length; i++) {
-            if (pg != page) {
+            if (pg != page)
                 break;
-            }
+
             if (contents[i] == null || contents[i].getType() == Material.AIR) {
                 merging.setAmount(amount);
                 if (toNPC) {
                     event.getView().setCursor(merging);
                 }
-                InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
-                        toNPC ? i : event.getRawSlot(), event.getClick(),
-                        toNPC ? InventoryAction.PLACE_ALL : InventoryAction.PICKUP_ALL);
-                onInventoryClick(e);
+                CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(
+                        new InventoryClickEvent(event.getView(), event.getSlotType(), toNPC ? i : event.getRawSlot(),
+                                event.getClick(), toNPC ? InventoryAction.PLACE_ALL : InventoryAction.PICKUP_ALL),
+                        -1);
+                handleClick0(ev);
                 if (toNPC) {
                     event.getView().setCursor(null);
                 }
-                if (!e.isCancelled()) {
+                if (!ev.isCancelled()) {
                     dest.setItem(i, merging);
                     event.setCurrentItem(null);
-                    break;
                 }
-                // TODO: figure out a better way to communicate from click handlers to here that the shift-click was
-                // "accepted" with different item handling behavior and that processing should stop
-                if (dest.getItem(i) != null && dest.getItem(i).isSimilar(merging)) {
-                    break;
-                }
+                break;
             } else if (contents[i].isSimilar(event.getCurrentItem())) {
                 ItemStack stack = contents[i].clone();
                 merging.setAmount(Math.min(amount, stack.getType().getMaxStackSize() - stack.getAmount()));
@@ -299,22 +293,24 @@ public class InventoryMenu implements Listener, Runnable {
                 } else {
                     action = amount - merging.getAmount() <= 0 ? InventoryAction.PICKUP_ALL
                             : InventoryAction.PICKUP_SOME;
-                    pickupAmount = merging.getAmount();
                 }
-                InventoryClickEvent e = new InventoryClickEvent(event.getView(), event.getSlotType(),
-                        toNPC ? i : event.getRawSlot(), event.getClick(), action);
-                onInventoryClick(e);
+                CitizensInventoryClickEvent ev = new CitizensInventoryClickEvent(
+                        new InventoryClickEvent(event.getView(), event.getSlotType(), toNPC ? i : event.getRawSlot(),
+                                event.getClick(), action),
+                        toNPC ? -1 : merging.getAmount());
+                handleClick0(ev);
                 if (toNPC) {
                     event.getView().setCursor(null);
                 }
-                if (!e.isCancelled()) {
+                if (!ev.isCancelled()) {
                     stack.setAmount(stack.getAmount() + merging.getAmount());
                     dest.setItem(i, stack);
                     amount -= merging.getAmount();
                     event.getCurrentItem().setAmount(amount);
-                    if (amount <= 0) {
+                    if (amount <= 0)
                         break;
-                    }
+                } else {
+                    break;
                 }
             }
         }
@@ -535,7 +531,6 @@ public class InventoryMenu implements Listener, Runnable {
                     }
                 } else {
                     event.setCancelled(true);
-                    event.setResult(Result.DENY);
                     return;
                 }
             });

@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
@@ -121,7 +120,6 @@ public class InventoryMenuSlot {
         if (actionFilter == null && handlers.isEmpty()
                 || actionFilter != null && !actionFilter.contains(event.getAction())) {
             event.setCancelled(true);
-            event.setResult(Result.DENY);
         }
         for (Consumer<CitizensInventoryClickEvent> runnable : Lists.newArrayList(handlers)) {
             runnable.accept(event);

@@ -3,8 +3,6 @@ package net.citizensnpcs.api.gui;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.bukkit.event.Event.Result;
-
 public class PercentageSlotHandler implements Consumer<CitizensInventoryClickEvent> {
     private int percentage;
     private final Function<Integer, String> transformer;
@@ -31,6 +29,6 @@ public class PercentageSlotHandler implements Consumer<CitizensInventoryClickEve
             percentage = 100;
         }
         event.setCurrentItemDescription(transformer.apply(percentage));
-        event.setResult(Result.DENY);
+        event.setCancelled(true);
     }
 }
