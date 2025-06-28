@@ -21,14 +21,20 @@ import com.google.common.primitives.Ints;
 public class YamlStorage implements Storage {
     private final FileConfiguration config;
     private final File file;
+    private final boolean transformLists;
 
     public YamlStorage(File file) {
         this(file, null);
     }
 
     public YamlStorage(File file, String header) {
+        this(file, header, false);
+    }
+
+    public YamlStorage(File file, String header, boolean transformLists) {
         config = new YamlConfiguration();
         tryIncreaseMaxCodepoints(config);
+        this.transformLists = transformLists;
         this.file = file;
         if (!file.exists()) {
             create();
@@ -73,6 +79,9 @@ public class YamlStorage implements Storage {
     public boolean load() {
         try {
             config.load(file);
+            if (transformLists) {
+                transformListsToMapsInConfig(config);
+            }
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -86,7 +95,15 @@ public class YamlStorage implements Storage {
             Files.createParentDirs(file);
             File temporaryFile = File.createTempFile(file.getName(), null, file.getParentFile());
             temporaryFile.deleteOnExit();
-            config.save(temporaryFile);
+            FileConfiguration save = config;
+            if (transformLists) {
+                save = new YamlConfiguration();
+                for (String key : config.getKeys(false)) {
+                    save.set(key, config.get(key));
+                }
+                transformMapsToListsInConfig(save);
+            }
+            save.save(temporaryFile);
             file.delete();
             temporaryFile.renameTo(file);
             temporaryFile.delete();
