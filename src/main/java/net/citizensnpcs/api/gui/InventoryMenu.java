@@ -282,7 +282,9 @@ public class InventoryMenu implements Listener, Runnable {
                     dest.setItem(i, merging);
                     event.setCurrentItem(null);
                 }
-                break;
+                if (!toNPC)
+                    break;
+
             } else if (contents[i].isSimilar(event.getCurrentItem())) {
                 ItemStack stack = contents[i].clone();
                 merging.setAmount(Math.min(amount, stack.getType().getMaxStackSize() - stack.getAmount()));
@@ -309,7 +311,7 @@ public class InventoryMenu implements Listener, Runnable {
                     event.getCurrentItem().setAmount(amount);
                     if (amount <= 0)
                         break;
-                } else {
+                } else if (!toNPC) {
                     break;
                 }
             }
