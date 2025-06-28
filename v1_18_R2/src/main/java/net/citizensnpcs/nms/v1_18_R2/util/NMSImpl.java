@@ -517,7 +517,7 @@ public class NMSImpl implements NMSBridge {
 
             @Override
             public void unlinkAll(Consumer<Player> callback) {
-                handle.remove(RemovalReason.KILLED);
+                handle.remove(RemovalReason.DISCARDED);
                 for (ServerPlayerConnection link : Lists.newArrayList(linked)) {
                     Player entity = link.getPlayer().getBukkitEntity();
                     unlink(entity);
@@ -1233,7 +1233,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void remove(org.bukkit.entity.Entity entity) {
-        NMSImpl.getHandle(entity).remove(RemovalReason.KILLED);
+        NMSImpl.getHandle(entity).remove(RemovalReason.DISCARDED);
     }
 
     @Override
