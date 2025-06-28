@@ -86,7 +86,7 @@ public class Messaging {
                     AUDIENCES = BukkitAudiences.create(CitizensAPI.getPlugin());
                 } else {
                     Messaging.severe(
-                            "Unable to load Adventure, colors will not work. Typically this means that adventure-platform needs to be updated by Paper team.");
+                            "Unable to load Adventure, colors will not work. Typically this means that adventure-platform-bukkit needs to be updated which can take a few weeks.");
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
