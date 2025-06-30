@@ -115,8 +115,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
         super.die(damagesource);
         Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
-            ((ServerLevel) level()).removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
-            ((ServerLevel) level()).getChunkSource().removeEntity(EntityHumanNPC.this);
+            level().removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
+            level().getChunkSource().removeEntity(EntityHumanNPC.this);
         }, 15); // give enough time for death and smoke animation
     }
 
@@ -281,7 +281,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         try {
             EmptyConnection conn = new EmptyConnection(PacketFlow.CLIENTBOUND);
             connection = new EmptyPacketListener(minecraftServer, conn, this,
-                    new CommonListenerCookie(getProfile(), 0, clientInfo, false));
+                    CommonListenerCookie.createInitial(getProfile(), false));
+            // paper now inserts a brand name field
         } catch (IOException e) {
             e.printStackTrace();
         }
