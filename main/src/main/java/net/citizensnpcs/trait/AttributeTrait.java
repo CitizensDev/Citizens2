@@ -62,7 +62,7 @@ public class AttributeTrait extends Trait {
         onSpawn();
     }
 
-    public void setDefaultAttribute(Attribute attribute) {
+    public void resetToDefaultValue(Attribute attribute) {
         attributes.remove(attribute);
         if (!(npc.getEntity() instanceof LivingEntity))
             return;

@@ -310,13 +310,13 @@ public class Util {
 
     public static boolean isAlwaysFlyable(EntityType type) {
         if (type.name().equals("VEX") || type.name().equals("PARROT") || type.name().equals("ALLAY")
-                || type.name().equals("BEE") || type.name().equals("PHANTOM") || type.name().equals("BREEZE"))
+                || type.name().contains("GHAST") || type.name().equals("BEE") || type.name().equals("PHANTOM")
+                || type.name().equals("BREEZE"))
             return true;
         switch (type) {
             case BAT:
             case BLAZE:
             case ENDER_DRAGON:
-            case GHAST:
             case WITHER:
                 return true;
             default:

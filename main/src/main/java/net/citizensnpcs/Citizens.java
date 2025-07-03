@@ -286,7 +286,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private void loadAdventure() {
         LibraryManager lib = new BukkitLibraryManager(this);
         lib.addMavenCentral();
-        lib.setLogLevel(LogLevel.WARN);
+        lib.setLogLevel(LogLevel.INFO);
         // Unfortunately, transitive dependency management is not supported in this library.
 
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-minimessage")

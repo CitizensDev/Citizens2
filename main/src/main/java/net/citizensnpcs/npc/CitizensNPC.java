@@ -101,7 +101,7 @@ public class CitizensNPC extends AbstractNPC {
             data().remove("selectors");
         }
         if (getEntity() instanceof Player) {
-            PlayerUpdateTask.deregisterPlayer(getEntity());
+            PlayerUpdateTask.deregister(getEntity());
         }
         navigator.onDespawn();
         for (Trait trait : new ArrayList<>(traits.values())) {
@@ -181,7 +181,7 @@ public class CitizensNPC extends AbstractNPC {
         super.load(root);
 
         CurrentLocation spawnLocation = getOrAddTrait(CurrentLocation.class);
-        if (getOrAddTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
+        if (getOrAddTrait(Spawned.class).shouldSpawn()) {
             if (spawnLocation.getLocation() != null) {
                 spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
             } else {
@@ -399,7 +399,7 @@ public class CitizensNPC extends AbstractNPC {
                         }
                     }
                     if (type == EntityType.PLAYER) {
-                        PlayerUpdateTask.registerPlayer(getEntity());
+                        PlayerUpdateTask.register(getEntity());
                         if (SUPPORT_ATTRIBUTES
                                 && Util.getRegistryValue(Registry.ATTRIBUTE, "waypoint_transmit_range") != null) {
                             AttributeTrait attr = getOrAddTrait(AttributeTrait.class);

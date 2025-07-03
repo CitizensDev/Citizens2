@@ -283,7 +283,7 @@ public class ShopTrait extends Trait {
                             shopPage.setItem(idx, null);
                             slot.setItemStack(null);
                         }
-                        evt.setCursor(display.getDisplayItem(null));
+                        evt.getView().setCursor(display.getDisplayItem(null));
                         evt.setCancelled(true);
                         return;
                     }
@@ -498,7 +498,7 @@ public class ShopTrait extends Trait {
                          lore.add(r.describe());
                      }
                  });
-            
+
                  if (timesPurchasable > 0) {
                      lore.add("Times purchasable: " + timesPurchasable);
                  }
@@ -519,9 +519,9 @@ public class ShopTrait extends Trait {
                 boolean shiftClick, boolean secondClick) {
             // TODO: InventoryMultiplexer could be lifted up to transact in apply(), which would be cleaner.
             // if this is done, it should probably refresh after every transaction application
-            if (globalTimesPurchasable > 0 && npurchases >= globalTimesPurchasable) {
+            if (globalTimesPurchasable > 0 && npurchases >= globalTimesPurchasable)
                 return;
-            }
+
             if (timesPurchasable > 0 && purchases.getOrDefault(player.getUniqueId(), 0) >= timesPurchasable) {
                 if (alreadyPurchasedMessage != null) {
                     Messaging.sendColorless(player, placeholders(alreadyPurchasedMessage, player));
@@ -657,6 +657,13 @@ public class ShopTrait extends Trait {
             if (modified.display != null) {
                 ctx.getSlot(9 * 4 + 4).setItemStack(modified.getDisplayItem(null));
             }
+            ctx.getSlot(9 * 4 + 7).setItemStack(new ItemStack(Material.APPLE), "Reset purchase history",
+                    modified.purchases.size() + " purchases");
+            ctx.getSlot(9 * 4 + 7).setClickHandler(e -> {
+                modified.purchases.clear();
+                ctx.getSlot(9 * 4 + 7).setDescription(modified.purchases.size() + " purchases");
+            });
+
             ctx.getSlot(9 * 3 + 6).setItemStack(new ItemStack(Material.EGG), "Number of purchases limit per player",
                     "Times purchasable: " + modified.timesPurchasable
                             + (modified.timesPurchasable == 0 ? " (no limit)" : ""));
@@ -950,6 +957,7 @@ public class ShopTrait extends Trait {
             if (trait != null) {
                 ctx.getSlot(6).setDescription(
                         "<f>Show shop on right click<br>" + shop.getName().equals(trait.rightClickShop));
+                ctx.getSlot(8).setDescription("<f>Set shop type<br>" + shop.getShopType());
             }
             boolean economySupported = false;
             try {

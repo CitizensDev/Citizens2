@@ -86,7 +86,7 @@ public class PacketNPC extends Trait {
             base.die();
             if (!spawned)
                 return;
-            PlayerUpdateTask.deregisterPlayer(getBukkitEntity());
+            PlayerUpdateTask.deregister(getBukkitEntity());
             PerPlayerMetadata<Boolean> ppm = CitizensAPI.getLocationLookup().registerMetadata("packetnpc", null);
             packetTracker.unlinkAll(player -> ppm.remove(player.getUniqueId(), npc.getUniqueId().toString()));
             spawned = false;
@@ -101,7 +101,7 @@ public class PacketNPC extends Trait {
         public void remove() {
             if (!spawned)
                 return;
-            PlayerUpdateTask.deregisterPlayer(getBukkitEntity());
+            PlayerUpdateTask.deregister(getBukkitEntity());
             PerPlayerMetadata<Boolean> ppm = CitizensAPI.getLocationLookup().registerMetadata("packetnpc", null);
             packetTracker.unlinkAll(player -> ppm.remove(player.getUniqueId(), npc.getUniqueId().toString()));
             base.remove();
@@ -111,7 +111,7 @@ public class PacketNPC extends Trait {
         @Override
         public boolean spawn(Location at) {
             NMS.setLocationDirectly(base.getBukkitEntity(), at);
-            PlayerUpdateTask.registerPlayer(getBukkitEntity());
+            PlayerUpdateTask.register(getBukkitEntity());
             return true;
         }
     }

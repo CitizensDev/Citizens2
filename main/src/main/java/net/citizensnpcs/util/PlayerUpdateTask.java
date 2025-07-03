@@ -88,12 +88,12 @@ public class PlayerUpdateTask extends BukkitRunnable {
         }
     }
 
-    public static void deregisterPlayer(org.bukkit.entity.Entity entity) {
+    public static void deregister(org.bukkit.entity.Entity entity) {
         PLAYERS_PENDING_ADD.remove(entity);
         PLAYERS_PENDING_REMOVE.add(entity);
     }
 
-    public static void registerPlayer(org.bukkit.entity.Entity entity) {
+    public static void register(org.bukkit.entity.Entity entity) {
         PLAYERS_PENDING_REMOVE.remove(entity);
         PLAYERS_PENDING_ADD.add(entity);
     }

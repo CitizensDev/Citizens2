@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 import org.bukkit.Art;
@@ -52,7 +53,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.RayTraceResult;
-import org.bukkit.util.Vector;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -436,14 +436,14 @@ public class NPCCommands {
     public void attribute(CommandContext args, CommandSender sender, NPC npc,
             @Arg(value = 1, completionsProvider = OptionalAttributeCompletions.class) String attribute,
             @Arg(2) Double value) {
-        final Attribute attr = Util.getAttribute(attribute);
+        Attribute attr = Util.getAttribute(attribute);
         if (attr == null) {
             Messaging.sendErrorTr(sender, Messages.ATTRIBUTE_NOT_FOUND, attribute);
             return;
         }
         AttributeTrait trait = npc.getOrAddTrait(AttributeTrait.class);
         if (value == null) {
-            trait.setDefaultAttribute(attr);
+            trait.resetToDefaultValue(attr);
             Messaging.sendTr(sender, Messages.ATTRIBUTE_RESET, attribute);
         } else {
             trait.setAttributeValue(attr, value);
@@ -1132,13 +1132,12 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.flyable")
-    @Requirements(
-            selected = true,
-            ownership = true,
-            excludedTypes = { EntityType.BAT, EntityType.BLAZE, EntityType.ENDER_DRAGON, EntityType.GHAST,
-                    EntityType.WITHER })
+    @Requirements(selected = true, ownership = true)
     public void flyable(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Boolean explicit)
             throws CommandException {
+        if (Util.isAlwaysFlyable(npc.getOrAddTrait(MobType.class).getType()))
+            throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE,
+                    Util.prettyEnum(npc.getOrAddTrait(MobType.class).getType())));
         boolean flyable = explicit != null ? explicit : !npc.isFlyable();
         npc.setFlyable(flyable);
         flyable = npc.isFlyable(); // may not have applied, eg bats are always flyable
@@ -1327,7 +1326,7 @@ public class NPCCommands {
                             "viewrange", "margintop", "marginbottom" }) String action,
             @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion,
             @Flag("duration") Duration duration) throws CommandException {
-                HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
+        HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
         if (args.argsLength() == 1) {
             String output = Messaging.tr(Messages.HOLOGRAM_DESCRIBE_HEADER, npc.getName());
             List<String> lines = trait.getLines();
@@ -1620,15 +1619,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "item (item) (metadata) (-h(and))",
+            usage = "item [item] (-h(and))",
             desc = "",
             modifiers = { "item", },
             min = 1,
-            max = 3,
+            max = 2,
             flags = "h",
             permission = "citizens.npc.item")
     @Requirements(selected = true, ownership = true)
-    public void item(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Material mat, @Arg(2) String modify)
+    public void item(CommandContext args, CommandSender sender, NPC npc, @Arg(1) ItemStack item)
             throws CommandException {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
         if (!type.name().equals("OMINOUS_ITEM_SPAWNER") && !type.name().contains("ITEM_FRAME")
@@ -1636,11 +1635,8 @@ public class NPCCommands {
                 && !type.name().contains("BLOCK_DISPLAY") && !type.name().equals("DROPPED_ITEM")
                 && !type.name().equals("ITEM") && type != EntityType.FALLING_BLOCK)
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
-        ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand() : new ItemStack(mat, 1);
-        if (modify != null) {
-            stack = SpigotUtil.parseItemStack(stack, modify);
-        }
-        if (mat == null && !args.hasFlag('h'))
+        ItemStack stack = args.hasFlag('h') ? ((Player) sender).getItemInHand() : item;
+        if (item == null && !args.hasFlag('h'))
             throw new CommandException(Messages.UNKNOWN_MATERIAL);
         ItemStack fstack = stack;
         npc.setItemProvider(() -> fstack.clone());
@@ -3064,7 +3060,7 @@ public class NPCCommands {
             }
         }
         if (shop == null)
-            throw new CommandException(Messages.SHOP_NOT_FOUND, args.getString(2));
+            throw new CommandException(Messages.SHOP_NOT_FOUND, args.argsLength() >= 3 ? args.getString(2) : "");
 
         if (action.equalsIgnoreCase("delete")) {
             if (!shop.canEdit(npc, sender))

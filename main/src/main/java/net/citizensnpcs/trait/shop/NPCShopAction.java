@@ -63,7 +63,7 @@ public abstract class NPCShopAction implements Cloneable {
         private final Runnable rollback;
 
         public Transaction(Supplier<Boolean> isPossible, Runnable execute, Runnable rollback) {
-            possible = isPossible;
+            this.possible = isPossible;
             this.execute = execute;
             this.rollback = rollback;
         }
