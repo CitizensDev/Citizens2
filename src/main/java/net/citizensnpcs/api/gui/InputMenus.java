@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -44,6 +45,9 @@ public class InputMenus {
         @Override
         public void accept(CitizensInventoryClickEvent event) {
             value = !value;
+            for (HumanEntity entity : event.getViewers()) {
+                entity.getWorld().playSound(entity, Sound.UI_BUTTON_CLICK, 1, 0);
+            }
             event.setCurrentItemDescription(transformer.apply(value));
             event.setCancelled(true);
         }
