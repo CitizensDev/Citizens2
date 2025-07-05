@@ -233,6 +233,22 @@ public class PersistenceLoaderTest {
     }
 
     @Test
+    public void testYamlLists() throws IOException {
+        YamlStorage ys = new YamlStorage(File.createTempFile("citizens_test2", null), null, true);
+        DataKey r = ys.getKey("");
+        r.setBoolean("list2.a", true);
+        r.setBoolean("list.0.v", true);
+        r.setBoolean("list.0.v1", true);
+        r.setBoolean("list.1.v", true);
+        r.setBoolean("list.2.v", true);
+        r.setBoolean("list.2.v3.p.0", true);
+        ys.save();
+        ys.load();
+        r = ys.getKey("");
+        assertThat(r.getBoolean("list.2.v3.p.0"), is(true));
+    }
+
+    @Test
     public void usesSpecificCollectionClass() {
         root.setInt("list.0", 5);
         root.setInt("set.0", 5);
@@ -245,7 +261,6 @@ public class PersistenceLoaderTest {
     public void valuesDeep() {
         root.setString("blah.basr", "test");
         Map<String, Object> values = root.getRelative("blah").getValuesDeep();
-        System.out.println(values);
         assertThat(values.get("basr"), is("test"));
     }
 
