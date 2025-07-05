@@ -198,6 +198,9 @@ public class Settings {
                 "Entities are no longer spawned until the chunks are loaded from disk<br>Wait for chunk loading for one second by default, increase if your disk is slow",
                 "general.entity-spawn-wait-ticks", "general.wait-for-entity-spawn", "1s"),
         ERROR_COLOUR("general.color-scheme.message-error", "<red>"),
+        EXPERIMENTAL_LIST_STORAGE(
+                "Whether to store lists as YAML lists in save files.<br>Experimental due to risk of data loss but makes the YAML files easier to edit.",
+                "general.experimental-list-storage", false),
         FOLLOW_ACROSS_WORLDS("Whether /npc follow will teleport across worlds to follow its target",
                 "npc.follow.teleport-across-worlds", false),
         HIGHLIGHT_COLOUR("general.color-scheme.message-highlight", "<yellow>"),

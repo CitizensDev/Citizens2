@@ -164,7 +164,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private NPCDataStore createStorage(File folder) {
-        Storage saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
+        Storage saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage",
+                Setting.EXPERIMENTAL_LIST_STORAGE.asBoolean());
         if (!saves.load())
             return null;
 
@@ -387,7 +388,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         }
         saves = createStorage(getDataFolder());
-        shops = new StoredShops(new YamlStorage(new File(getDataFolder(), "shops.yml")));
+        shops = new StoredShops(new YamlStorage(new File(getDataFolder(), "shops.yml"), "Citizens NPC Shops",
+                Setting.EXPERIMENTAL_LIST_STORAGE.asBoolean()));
         if (saves == null || !shops.loadFromDisk()) {
             Messaging.severeTr(Messages.FAILED_LOAD_SAVES);
             Bukkit.getPluginManager().disablePlugin(this);
@@ -448,7 +450,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         // Register command classes
         commands.register(AdminCommands.class);
         commands.register(EditorCommands.class);
-        commands.register(NPCCommands.class);
+        commands.register(NPCCommands.class); 
         commands.register(TemplateCommands.class);
         commands.register(TraitCommands.class);
         commands.register(WaypointCommands.class);
