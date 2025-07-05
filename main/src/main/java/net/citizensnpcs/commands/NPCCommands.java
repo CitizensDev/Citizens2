@@ -888,10 +888,10 @@ public class NPCCommands {
             npc.getOrAddTrait(Age.class).setAge(-24000);
         }
         if (args.hasFlag('s')) {
-            npc.data().set(NPC.Metadata.SILENT, true);
+            npc.data().setPersistent(NPC.Metadata.SILENT, true);
         }
         if (nameplate != null) {
-            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE,
+            npc.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE,
                     nameplate.equalsIgnoreCase("hover") ? nameplate.toLowerCase() : Boolean.parseBoolean(nameplate));
         }
         if (!Setting.SERVER_OWNS_NPCS.asBoolean()) {
