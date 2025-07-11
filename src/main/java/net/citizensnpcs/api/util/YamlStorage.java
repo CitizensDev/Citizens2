@@ -119,24 +119,24 @@ public class YamlStorage implements Storage {
     }
 
     private void transformListsToMapsInConfig(ConfigurationSection root) {
-        List<ConfigurationSection> list = Lists.newArrayList(root);
-        while (list.size() > 0) {
-            ConfigurationSection section = list.remove(list.size() - 1);
+        List<ConfigurationSection> queue = Lists.newArrayList(root);
+        while (queue.size() > 0) {
+            ConfigurationSection section = queue.remove(queue.size() - 1);
             for (String key : section.getKeys(false)) {
                 Object value = section.get(key);
                 if (value instanceof Collection) {
-                    ConfigurationSection listified = section.createSection(key);
+                    ConfigurationSection synthetic = section.createSection(key);
                     int i = 0;
                     for (Iterator<?> itr = ((Collection<?>) value).iterator(); itr.hasNext();) {
                         Object next = itr.next();
                         if (next instanceof Map) {
-                            list.add(listified.createSection(Integer.toString(i++), (Map<?, ?>) next));
+                            queue.add(synthetic.createSection(Integer.toString(i++), (Map<?, ?>) next));
                         } else {
-                            listified.set(Integer.toString(i++), next);
+                            synthetic.set(Integer.toString(i++), next);
                         }
                     }
                 } else if (value instanceof ConfigurationSection) {
-                    list.add((ConfigurationSection) value);
+                    queue.add((ConfigurationSection) value);
                 }
             }
         }
