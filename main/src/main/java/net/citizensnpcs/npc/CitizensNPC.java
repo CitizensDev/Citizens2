@@ -52,6 +52,7 @@ import net.citizensnpcs.trait.AttributeTrait;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
+import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
 import net.citizensnpcs.trait.PacketNPC;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SitTrait;
@@ -272,8 +273,11 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     protected void setNameInternal(String name) {
         super.setNameInternal(name);
-        if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
-            addTrait(HologramTrait.class);
+        if (requiresNameHologram()) {
+            HologramRenderer hr = getOrAddTrait(HologramTrait.class).getNameRenderer();
+            if (hr != null) {
+                hr.updateText(this, getRawName());
+            }
         }
         updateCustomName();
     }
