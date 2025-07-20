@@ -708,6 +708,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public float getMovementSpeed(org.bukkit.entity.Entity entity) {
+        if (entity == null || !(entity instanceof org.bukkit.entity.LivingEntity))
+            return DEFAULT_SPEED;
+        LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) entity);
+        if (handle == null)
+            return DEFAULT_SPEED;
+
+        return (float) handle.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
+    }
+
+    @Override
     public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
         ServerLevel server = (ServerLevel) getHandle(entity).level();
         TrackedEntity tracked = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
@@ -785,17 +796,6 @@ public class NMSImpl implements NMSBridge {
     public org.bukkit.entity.Entity getSource(BlockCommandSender sender) {
         Entity source = ((CraftBlockCommandSender) sender).getWrapper().getEntity();
         return source != null ? source.getBukkitEntity() : null;
-    }
-
-    @Override
-    public float getSpeedFor(NPC npc) {
-        if (!npc.isSpawned() || !(npc.getEntity() instanceof org.bukkit.entity.LivingEntity))
-            return DEFAULT_SPEED;
-        LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) npc.getEntity());
-        if (handle == null) {
-            return DEFAULT_SPEED;
-        }
-        return (float) handle.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
     }
 
     @Override
@@ -1443,6 +1443,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sendComponent(Player player, Object component) {
+        ((ServerPlayer) getHandle(player)).sendSystemMessage((Component) component);
+    }
+
+    @Override
     public void sendPositionUpdate(org.bukkit.entity.Entity from, Collection<Player> to, boolean position,
             Float bodyYaw, Float pitch, Float headYaw) {
         List<Packet<?>> toSend = getPositionUpdate(from, position, bodyYaw, pitch, headYaw);
@@ -2017,19 +2022,19 @@ public class NMSImpl implements NMSBridge {
     public void updatePathfindingRange(NPC npc, float pathfindingRange) {
         if (!npc.isSpawned() || !npc.getEntity().getType().isAlive())
             return;
-        LivingEntity en = getHandle((org.bukkit.entity.LivingEntity) npc.getEntity());
-        if (en instanceof MobAI) {
-            ((MobAI) en).updatePathfindingRange(pathfindingRange);
+        LivingEntity handle = getHandle((org.bukkit.entity.LivingEntity) npc.getEntity());
+        if (handle instanceof MobAI) {
+            ((MobAI) handle).updatePathfindingRange(pathfindingRange);
             return;
         }
         if (NAVIGATION_PATHFINDER == null)
             return;
-        PathNavigation navigation = ((Mob) en).getNavigation();
-        AttributeInstance inst = en.getAttribute(Attributes.FOLLOW_RANGE);
+        PathNavigation navigation = ((Mob) handle).getNavigation();
+        AttributeInstance inst = handle.getAttribute(Attributes.FOLLOW_RANGE);
         inst.setBaseValue(pathfindingRange);
-        int mc = Mth.floor(en.getAttributeBaseValue(Attributes.FOLLOW_RANGE) * 16.0D);
+        int exploreRange = Mth.floor(handle.getAttributeBaseValue(Attributes.FOLLOW_RANGE) * 16.0D);
         try {
-            NAVIGATION_PATHFINDER.invoke(navigation, NAVIGATION_CREATE_PATHFINDER.invoke(navigation, mc));
+            NAVIGATION_PATHFINDER.invoke(navigation, NAVIGATION_CREATE_PATHFINDER.invoke(navigation, exploreRange));
         } catch (Throwable e) {
             e.printStackTrace();
         }

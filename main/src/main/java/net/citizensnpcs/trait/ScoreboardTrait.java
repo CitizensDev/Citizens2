@@ -52,6 +52,7 @@ public class ScoreboardTrait extends Trait {
                     continue;
 
                 NMS.sendTeamPacket(event.getPlayer(), team, 0);
+
                 meta.set(event.getPlayer().getUniqueId(), team.getName(), true);
             }
         });
@@ -231,6 +232,7 @@ public class ScoreboardTrait extends Trait {
                 NMS.sendTeamPacket(player, team, 2);
             } else {
                 NMS.sendTeamPacket(player, team, 0);
+
                 metadata.set(player.getUniqueId(), team.getName(), true);
             }
         }

@@ -612,6 +612,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public float getMovementSpeed(org.bukkit.entity.Entity entity) {
+        if (entity == null || !(entity instanceof LivingEntity))
+            return DEFAULT_SPEED;
+        EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);
+        if (handle == null) {
+            return DEFAULT_SPEED;
+        }
+        return (float) handle.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
+    }
+
+    @Override
     public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
         WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
         EntityTracker entry = server.getChunkProvider().playerChunkMap.trackedEntities.get(entity.getEntityId());
@@ -682,17 +693,6 @@ public class NMSImpl implements NMSBridge {
     public org.bukkit.entity.Entity getSource(BlockCommandSender sender) {
         Entity source = ((CraftBlockCommandSender) sender).getWrapper().getEntity();
         return source != null ? source.getBukkitEntity() : null;
-    }
-
-    @Override
-    public float getSpeedFor(NPC npc) {
-        if (!npc.isSpawned() || !(npc.getEntity() instanceof LivingEntity))
-            return DEFAULT_SPEED;
-        EntityLiving handle = NMSImpl.getHandle((LivingEntity) npc.getEntity());
-        if (handle == null) {
-            return DEFAULT_SPEED;
-        }
-        return (float) handle.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
     }
 
     @Override
@@ -1235,6 +1235,11 @@ public class NMSImpl implements NMSBridge {
         entry.a();
         PlayerlistTracker replace = new PlayerlistTracker(server.getChunkProvider().playerChunkMap, entry);
         server.getChunkProvider().playerChunkMap.trackedEntities.put(entity.getEntityId(), replace);
+    }
+
+    @Override
+    public void sendComponent(Player player, Object component) {
+        getHandle(player).sendMessage((IChatBaseComponent) component);
     }
 
     @Override

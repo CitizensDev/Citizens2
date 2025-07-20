@@ -450,7 +450,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         // Register command classes
         commands.register(AdminCommands.class);
         commands.register(EditorCommands.class);
-        commands.register(NPCCommands.class); 
+        commands.register(NPCCommands.class);
         commands.register(TemplateCommands.class);
         commands.register(TraitCommands.class);
         commands.register(WaypointCommands.class);

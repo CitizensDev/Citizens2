@@ -195,6 +195,7 @@ import net.minecraft.server.v1_8_R3.EntityTrackerEntry;
 import net.minecraft.server.v1_8_R3.EntityTypes;
 import net.minecraft.server.v1_8_R3.EntityWither;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.IInventory;
 import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.MathHelper;
@@ -460,6 +461,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public float getMovementSpeed(org.bukkit.entity.Entity entity) {
+        if (entity == null || !(entity instanceof LivingEntity))
+            return DEFAULT_SPEED;
+        EntityLiving handle = NMSImpl.getHandle((LivingEntity) entity);
+        if (handle == null) {
+            return DEFAULT_SPEED;
+        }
+        return (float) handle.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
+    }
+
+    @Override
     public EntityPacketTracker getPacketTracker(org.bukkit.entity.Entity entity) {
         WorldServer server = (WorldServer) NMSImpl.getHandle(entity).getWorld();
         EntityTrackerEntry entry = server.getTracker().trackedEntities.get(entity.getEntityId());
@@ -533,17 +545,6 @@ public class NMSImpl implements NMSBridge {
     public org.bukkit.entity.Entity getSource(BlockCommandSender sender) {
         Entity source = ((CraftBlockCommandSender) sender).getTileEntity().f();
         return source != null ? source.getBukkitEntity() : null;
-    }
-
-    @Override
-    public float getSpeedFor(NPC npc) {
-        if (!npc.isSpawned() || !(npc.getEntity() instanceof LivingEntity))
-            return DEFAULT_SPEED;
-        EntityLiving handle = NMSImpl.getHandle((LivingEntity) npc.getEntity());
-        if (handle == null) {
-            return DEFAULT_SPEED;
-        }
-        return (float) handle.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
     }
 
     @Override
@@ -1010,6 +1011,11 @@ public class NMSImpl implements NMSBridge {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void sendComponent(Player player, Object component) {
+        getHandle(player).sendMessage((IChatBaseComponent) component);
     }
 
     @Override

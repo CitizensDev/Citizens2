@@ -563,6 +563,10 @@ public class NMS {
         return null;
     }
 
+    public static float getMovementSpeed(Entity entity) {
+        return BRIDGE.getMovementSpeed(entity);
+    }
+
     public static EntityPacketTracker getPacketTracker(Entity entity) {
         if (entity == null)
             return null;
@@ -634,10 +638,6 @@ public class NMS {
 
     public static Entity getSource(BlockCommandSender sender) {
         return BRIDGE.getSource(sender);
-    }
-
-    public static float getSpeedFor(NPC npc) {
-        return BRIDGE.getSpeedFor(npc);
     }
 
     public static <T> T getStaticObject(Class<?> clazz, String name) {
@@ -807,6 +807,10 @@ public class NMS {
 
     public static void replaceTracker(Entity entity) {
         BRIDGE.replaceTrackerEntry(entity);
+    }
+
+    public static void sendComponent(Player player, Object component) {
+        BRIDGE.sendComponent(player, component);
     }
 
     public static void sendPositionUpdate(Entity from, Collection<Player> to, boolean position) {

@@ -25,7 +25,7 @@ public class EntityMarkers<T> {
     private EntityType type;
 
     public EntityMarkers() {
-        this(DEFAULT_ENTITY_TYPE);
+        this(Util.getFallbackEntityType("SHULKER_BULLET", "LEASH_KNOT", "LEASH_HITCH"));
     }
 
     public EntityMarkers(EntityType type) {
@@ -77,8 +77,4 @@ public class EntityMarkers<T> {
         npc.spawn(at.clone().add(0.5, 0, 0.5), SpawnReason.CREATE);
         return npc.getEntity();
     }
-
-    private static final EntityType DEFAULT_ENTITY_TYPE = Util.getFallbackEntityType("SHULKER_BULLET", "LEASH_KNOT",
-            "LEASH_HITCH");
-
 }

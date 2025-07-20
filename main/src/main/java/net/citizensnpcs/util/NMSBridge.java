@@ -101,6 +101,8 @@ public interface NMSBridge {
 
     public float getHeadYaw(Entity entity);
 
+    public float getMovementSpeed(Entity entity);
+
     public EntityPacketTracker getPacketTracker(Entity entity);
 
     public List<Entity> getPassengers(Entity entity);
@@ -116,8 +118,6 @@ public interface NMSBridge {
     public String getSoundPath(Sound flag) throws CommandException;
 
     public Entity getSource(BlockCommandSender sender);
-
-    public float getSpeedFor(NPC npc);
 
     public float getStepHeight(Entity entity);
 
@@ -194,6 +194,8 @@ public interface NMSBridge {
     public void removeHookIfNecessary(FishHook entity);
 
     public void replaceTrackerEntry(Entity entity);
+
+    public void sendComponent(Player player, Object component);
 
     public void sendPositionUpdate(Entity from, Collection<Player> to, boolean position, Float bodyYaw, Float pitch,
             Float headYaw);

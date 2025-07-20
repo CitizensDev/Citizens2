@@ -23,6 +23,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class Settings {
@@ -66,8 +67,8 @@ public class Settings {
             file = new File(CitizensAPI.getPlugin().getDataFolder(), Setting.DEBUG_FILE.asString());
         }
         Messaging.configure(file, Setting.DEBUG_MODE.asBoolean(), Setting.RESET_FORMATTING_ON_COLOR_CHANGE.asBoolean(),
-                Setting.MESSAGE_COLOUR.asString(), Setting.HIGHLIGHT_COLOUR.asString(),
-                Setting.ERROR_COLOUR.asString());
+                Setting.MESSAGE_COLOUR.asString(), Setting.HIGHLIGHT_COLOUR.asString(), Setting.ERROR_COLOUR.asString(),
+                NMS::sendComponent);
     }
 
     public enum Setting {

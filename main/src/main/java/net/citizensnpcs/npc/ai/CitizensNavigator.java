@@ -121,9 +121,7 @@ public class CitizensNavigator implements Navigator, Runnable {
 
     @Override
     public NavigatorParameters getLocalParameters() {
-        if (!isNavigating())
-            return defaultParams;
-        return localParams;
+        return isNavigating() ? localParams : defaultParams;
     }
 
     @Override
@@ -190,9 +188,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     public void onSpawn() {
-        if (defaultParams.baseSpeed() == UNINITIALISED_SPEED) {
-            defaultParams.baseSpeed(NMS.getSpeedFor(npc));
-        }
+        defaultParams.baseSpeed(NMS.getMovementSpeed(npc.getEntity()));
         updatePathfindingRange();
     }
 
@@ -551,7 +547,7 @@ public class CitizensNavigator implements Navigator, Runnable {
     }
 
     private static boolean SUPPORT_CHUNK_TICKETS = true;
-    private static final int UNINITIALISED_SPEED = Integer.MIN_VALUE;
+    private static final float UNINITIALISED_SPEED = 0.3f;
     static {
         try {
             Chunk.class.getMethod("removePluginChunkTicket", Plugin.class);

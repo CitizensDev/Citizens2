@@ -315,11 +315,11 @@ public class HologramTrait extends Trait {
                 || lastLoc.getWorld() != npcLoc.getWorld() || lastLoc.distance(npcLoc) >= 0.001
                 || lastNameplateVisible != nameplateVisible
                 || Math.abs(lastEntityBbHeight - NMS.getBoundingBoxHeight(npc.getEntity())) >= 0.05;
-        boolean updateName = false;
+        boolean updateText = false;
 
         if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
             t = 0;
-            updateName = true;
+            updateText = true;
         }
         lastNameplateVisible = nameplateVisible;
 
@@ -328,7 +328,7 @@ public class HologramTrait extends Trait {
             lastEntityBbHeight = NMS.getBoundingBoxHeight(npc.getEntity());
         }
         if (nameLine != null) {
-            if (updateName) {
+            if (updateText) {
                 nameLine.setText(npc.getRawName());
             }
             if (updatePosition || nameLine.renderer.getEntities().size() == 0) {
@@ -347,7 +347,7 @@ public class HologramTrait extends Trait {
                 offset.y = getHeight(i);
                 line.render(offset);
             }
-            if (updateName) {
+            if (updateText) {
                 line.setText(line.text);
             }
         }
