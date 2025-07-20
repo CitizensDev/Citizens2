@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -65,7 +67,8 @@ public class Messaging {
     }
 
     public static void configure(File debugFile, boolean debug, boolean resetFormattingOnColorChange,
-            String messageColour, String highlightColour, String errorColour) {
+            String messageColour, String highlightColour, String errorColour,
+            BiConsumer<Player, Object> messageSender) {
         RESET_FORMATTING_ON_COLOR_CHANGE = resetFormattingOnColorChange;
         DEBUG = debug;
         MESSAGE_COLOUR = messageColour.replace("<a>", "<green>");
@@ -80,6 +83,7 @@ public class Messaging {
             DEBUG_LOGGER = LOGGER;
         }
         if (CitizensAPI.getPlugin() != null) {
+            MESSAGE_SENDER = messageSender;
             try {
                 if (TemporaryMinecraftComponentSerializer.isSupported()) {
                     AUDIENCES = BukkitAudiences.create(CitizensAPI.getPlugin());
@@ -220,14 +224,18 @@ public class Messaging {
     }
 
     private static void sendMessageTo(CommandSender sender, String rawMessage, boolean messageColor) {
+        Player player = sender instanceof Player ? (Player) sender : null;
         for (String message : CHAT_NEWLINE_SPLITTER.split(rawMessage)) {
             if (messageColor) {
                 message = prettify(message);
             }
-            if (AUDIENCES != null) {
-                AUDIENCES.sender(sender).sendMessage(MINIMESSAGE.deserialize(convertLegacyCodes(message)));
+            message = convertLegacyCodes(message);
+            if (MESSAGE_SENDER != null && player != null) {
+                MESSAGE_SENDER.accept(player, minecraftComponentFromRawMessage(message));
+            } else if (AUDIENCES != null) {
+                AUDIENCES.sender(sender).sendMessage(MINIMESSAGE.deserialize(message));
             } else {
-                sender.sendMessage(convertLegacyCodes(rawMessage));
+                sender.sendMessage(message);
             }
         }
     }
@@ -309,6 +317,7 @@ public class Messaging {
     }
 
     private static BukkitAudiences AUDIENCES;
+
     private static final Pattern CHAT_NEWLINE = Pattern.compile("<br>|\\n", Pattern.MULTILINE);
     private static final Splitter CHAT_NEWLINE_SPLITTER = Splitter.on(CHAT_NEWLINE);
     private static final Map<String, String> COLORCODE_CONVERTER = Maps.newHashMap();
@@ -328,6 +337,7 @@ public class Messaging {
             .compile(ChatColor.COLOR_CHAR + "([0-9a-r])|<([0-9a-f])>", Pattern.CASE_INSENSITIVE);
     private static Logger LOGGER = Logger.getLogger("Citizens");
     private static String MESSAGE_COLOUR = "<green>";
+    private static BiConsumer<Player, Object> MESSAGE_SENDER;
     private static MiniMessage MINIMESSAGE;
     private static Pattern MINIMESSAGE_COLORCODE_MATCHER;
     private static boolean RESET_FORMATTING_ON_COLOR_CHANGE = true;
@@ -373,6 +383,7 @@ public class Messaging {
                             StandardTags.transition(), StandardTags.decorations(), StandardTags.font())
                     .build();
         } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 }

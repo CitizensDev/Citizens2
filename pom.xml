@@ -8,7 +8,7 @@
     <name>CitizensAPI</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <bukkit.version>1.21.7-R0.1-SNAPSHOT</bukkit.version>
+        <bukkit.version>1.21.8-R0.1-SNAPSHOT</bukkit.version>
         <placeholderapi.version>2.11.5</placeholderapi.version> 
         <worldguard.version>7.0.9</worldguard.version>
         <build.number>Unknown</build.number>
