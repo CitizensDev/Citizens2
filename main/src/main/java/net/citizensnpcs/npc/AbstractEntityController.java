@@ -20,8 +20,10 @@ public abstract class AbstractEntityController implements EntityController {
     @Override
     public void create(Location at, NPC npc) {
         bukkitEntity = createEntity(at, npc);
-        bukkitEntity.setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
-        bukkitEntity.setMetadata("NPC-ID", new FixedMetadataValue(CitizensAPI.getPlugin(), npc.getId()));
+        if (npc != null) {
+            bukkitEntity.setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
+            bukkitEntity.setMetadata("NPC-ID", new FixedMetadataValue(CitizensAPI.getPlugin(), npc.getId()));
+        }
     }
 
     protected abstract Entity createEntity(Location at, NPC npc);

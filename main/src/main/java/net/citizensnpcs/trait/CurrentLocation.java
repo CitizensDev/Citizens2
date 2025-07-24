@@ -1,7 +1,10 @@
 package net.citizensnpcs.trait;
 
+import java.util.UUID;
+
 import org.bukkit.Location;
 
+import net.citizensnpcs.api.persistence.LocationPersister.LazilyLoadedLocation;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -29,6 +32,11 @@ public class CurrentLocation extends Trait {
 
     public Location getLocation() {
         return location.getWorld() == null ? null : location.clone();
+    }
+
+    public UUID getWorldUUID() {
+        return location instanceof LazilyLoadedLocation ? ((LazilyLoadedLocation) location).getWorldUUID()
+                : location.getWorld().getUID();
     }
 
     @Override

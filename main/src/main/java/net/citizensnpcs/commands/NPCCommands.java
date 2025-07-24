@@ -842,6 +842,7 @@ public class NPCCommands {
             @Flag(value = "template", completionsProvider = TemplateCompletions.class) String templateName,
             @Flag("registry") String registryName) throws CommandException {
         String name = args.getJoinedStrings(1).trim();
+
         if (args.hasValueFlag("type")) {
             if (type == null)
                 throw new CommandException(Messaging.tr(Messages.NPC_CREATE_INVALID_MOBTYPE, args.getFlag("type")));
