@@ -2,6 +2,7 @@ package net.citizensnpcs.api.persistence;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,12 +13,18 @@ import net.citizensnpcs.api.util.DataKey;
 public class LocationPersister implements Persister<Location> {
     @Override
     public Location create(DataKey root) {
-        if (!root.keyExists("world"))
+        if (!root.keyExists("world") && !root.keyExists("worldid"))
             return null;
-        World world = Bukkit.getWorld(root.getString("world"));
+        World world;
+        if (root.keyExists("world")) {
+            world = Bukkit.getWorld(root.getString("world"));
+            root.removeKey("world");
+        } else {
+            world = Bukkit.getWorld(UUID.fromString(root.getString("worldid")));
+        }
         double x = root.getDouble("x"), y = root.getDouble("y"), z = root.getDouble("z");
         float yaw = normalise(root.getDouble("yaw")), pitch = normalise(root.getDouble("pitch"));
-        return world == null ? new LazilyLoadedLocation(root.getString("world"), x, y, z, yaw, pitch)
+        return world == null ? new LazilyLoadedLocation(UUID.fromString(root.getString("worldid")), x, y, z, yaw, pitch)
                 : new Location(world, x, y, z, yaw, pitch);
     }
 
@@ -36,7 +43,7 @@ public class LocationPersister implements Persister<Location> {
     @Override
     public void save(Location location, DataKey root) {
         if (location.getWorld() != null) {
-            root.setString("world", location.getWorld().getName());
+            root.setString("worldid", location.getWorld().getUID().toString());
         }
         root.setDouble("x", round(location.getX()));
         root.setDouble("y", round(location.getY()));
@@ -46,19 +53,23 @@ public class LocationPersister implements Persister<Location> {
     }
 
     public static class LazilyLoadedLocation extends Location {
-        private final String worldName;
+        private final UUID worldID;
 
-        public LazilyLoadedLocation(String world, double x, double y, double z, float yaw, float pitch) {
+        public LazilyLoadedLocation(UUID world, double x, double y, double z, float yaw, float pitch) {
             super(null, x, y, z, yaw, pitch);
-            this.worldName = world;
+            this.worldID = world;
         }
 
         @Override
         public World getWorld() {
             if (super.getWorld() == null) {
-                super.setWorld(Bukkit.getWorld(worldName));
+                super.setWorld(Bukkit.getWorld(worldID));
             }
             return super.getWorld();
+        }
+
+        public UUID getWorldUUID() {
+            return worldID;
         }
     }
 }
