@@ -34,6 +34,10 @@ public class CurrentLocation extends Trait {
         return location.getWorld() == null ? null : location.clone();
     }
 
+    public Location getLocationNonNull() {
+        return location.clone();
+    }
+
     public UUID getWorldUUID() {
         return location instanceof LazilyLoadedLocation ? ((LazilyLoadedLocation) location).getWorldUUID()
                 : location.getWorld().getUID();
