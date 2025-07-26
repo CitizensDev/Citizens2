@@ -28,6 +28,8 @@ public class PlayerUpdateTask extends BukkitRunnable {
         super.cancel();
         uuids.clear();
         players.clear();
+        PLAYERS_PENDING_ADD.clear();
+        PLAYERS_PENDING_REMOVE.clear();
     }
 
     @Override
