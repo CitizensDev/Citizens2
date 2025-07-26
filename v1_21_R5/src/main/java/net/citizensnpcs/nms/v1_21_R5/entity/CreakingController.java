@@ -60,11 +60,17 @@ public class CreakingController extends MobEntityController {
         public EntityCreakingNPC(EntityType<? extends Creaking> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+            setIsActive(true);
         }
 
         @Override
         public boolean broadcastToPlayer(ServerPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
+        }
+
+        @Override
+        public boolean canMove() {
+            return npc == null || !npc.isProtected() ? super.canMove() : true;
         }
 
         @Override
