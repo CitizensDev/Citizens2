@@ -61,7 +61,6 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.event.world.EntitiesUnloadEvent;
-import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredListener;
@@ -857,17 +856,6 @@ public class EventListen implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onWorldLoad(WorldLoadEvent event) {
-        for (ChunkCoord chunk : toRespawn.keySet()) {
-            if (!chunk.worldUUID.equals(event.getWorld().getUID())
-                    || !event.getWorld().isChunkLoaded(chunk.x, chunk.z)) {
-                continue;
-            }
-            respawnAllFromCoord(chunk, event);
-        }
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
         for (NPC npc : getAllNPCs()) {
@@ -876,7 +864,7 @@ public class EventListen implements Listener {
 
             boolean despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
             if (event.isCancelled() || !despawned) {
-                for (ChunkCoord coord : toRespawn.keySet()) {
+                for (ChunkCoord coord : Lists.newArrayList(toRespawn.keySet())) {
                     if (event.getWorld().getUID().equals(coord.worldUUID)) {
                         respawnAllFromCoord(coord, event);
                     }
