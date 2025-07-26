@@ -39,7 +39,8 @@ public class CurrentLocation extends Trait {
     }
 
     public UUID getWorldUUID() {
-        return location instanceof LazilyLoadedLocation ? ((LazilyLoadedLocation) location).getWorldUUID()
+        return location.getWorld() == null && location instanceof LazilyLoadedLocation
+                ? ((LazilyLoadedLocation) location).getWorldUUID()
                 : location.getWorld().getUID();
     }
 
