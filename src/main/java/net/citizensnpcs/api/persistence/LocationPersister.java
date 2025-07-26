@@ -16,15 +16,20 @@ public class LocationPersister implements Persister<Location> {
         if (!root.keyExists("world") && !root.keyExists("worldid"))
             return null;
         World world;
+        UUID worldUUID = null;
+        String worldName;
         if (root.keyExists("world")) {
             world = Bukkit.getWorld(root.getString("world"));
+            worldName = root.getString("world");
             root.removeKey("world");
         } else {
-            world = Bukkit.getWorld(UUID.fromString(root.getString("worldid")));
+            worldName = null;
+            worldUUID = UUID.fromString(root.getString("worldid"));
+            world = Bukkit.getWorld(worldUUID);
         }
         double x = root.getDouble("x"), y = root.getDouble("y"), z = root.getDouble("z");
         float yaw = normalise(root.getDouble("yaw")), pitch = normalise(root.getDouble("pitch"));
-        return world == null ? new LazilyLoadedLocation(UUID.fromString(root.getString("worldid")), x, y, z, yaw, pitch)
+        return world == null ? new LazilyLoadedLocation(worldUUID, worldName, x, y, z, yaw, pitch)
                 : new Location(world, x, y, z, yaw, pitch);
     }
 
@@ -53,17 +58,23 @@ public class LocationPersister implements Persister<Location> {
     }
 
     public static class LazilyLoadedLocation extends Location {
-        private final UUID worldID;
+        private UUID worldID;
+        private final String worldName;
 
-        public LazilyLoadedLocation(UUID world, double x, double y, double z, float yaw, float pitch) {
+        public LazilyLoadedLocation(UUID world, String worldName, double x, double y, double z, float yaw,
+                float pitch) {
             super(null, x, y, z, yaw, pitch);
             this.worldID = world;
+            this.worldName = worldName;
         }
 
         @Override
         public World getWorld() {
             if (super.getWorld() == null) {
-                super.setWorld(Bukkit.getWorld(worldID));
+                super.setWorld(worldName != null ? Bukkit.getWorld(worldName) : Bukkit.getWorld(worldID));
+                if (worldID == null && super.getWorld() != null) {
+                    worldID = super.getWorld().getUID();
+                }
             }
             return super.getWorld();
         }
