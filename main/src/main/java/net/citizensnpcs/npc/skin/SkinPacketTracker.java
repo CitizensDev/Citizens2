@@ -2,12 +2,14 @@ package net.citizensnpcs.npc.skin;
 
 import java.util.Objects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.util.NMS;
 
 /**
  * Handles and synchronizes add and remove packets for Player type NPC's in order to properly apply the NPC skin.
@@ -95,5 +97,10 @@ public class SkinPacketTracker {
             return;
 
         skin.apply(entity);
+        if (NMS.sendTabListAdd(player, entity.getBukkitEntity())) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    () -> NMS.sendTabListRemove(player, entity.getBukkitEntity()),
+                    Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
+        }
     }
 }
