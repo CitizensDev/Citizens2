@@ -182,7 +182,7 @@ public class CitizensNPC extends AbstractNPC {
             CurrentLocation current = getOrAddTrait(CurrentLocation.class);
             if (current.getLocation() != null) {
                 spawn(current.getLocation(), SpawnReason.RESPAWN);
-            } else {
+            } else if (current.getWorldUUID() != null) {
                 Bukkit.getPluginManager()
                         .callEvent(new NPCNeedsRespawnEvent(this,
                                 new ChunkCoord(current.getWorldUUID(), current.getLocationNonNull().getBlockX() >> 4,
