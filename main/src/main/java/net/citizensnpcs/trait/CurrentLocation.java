@@ -9,6 +9,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.NMS;
 
 /**
@@ -30,12 +31,12 @@ public class CurrentLocation extends Trait {
         return bodyYaw;
     }
 
-    public Location getLocation() {
-        return location.getWorld() == null ? null : location.clone();
+    public ChunkCoord getChunkCoord() {
+        return new ChunkCoord(getWorldUUID(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
     }
 
-    public Location getLocationNonNull() {
-        return location.clone();
+    public Location getLocation() {
+        return location.getWorld() == null ? null : location.clone();
     }
 
     public UUID getWorldUUID() {
@@ -45,9 +46,7 @@ public class CurrentLocation extends Trait {
             }
             return null;
         }
-        return location.getWorld() == null && location instanceof LazilyLoadedLocation
-                ? ((LazilyLoadedLocation) location).getWorldUUID()
-                : location.getWorld().getUID();
+        return location.getWorld().getUID();
     }
 
     @Override
