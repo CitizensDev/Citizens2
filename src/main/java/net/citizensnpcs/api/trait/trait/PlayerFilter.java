@@ -104,6 +104,7 @@ public class PlayerFilter extends Trait {
      * Manages NPC hiding from the provided UUID
      *
      * @param uuid
+     *            A {@link Player}'s UUID.
      */
     public void addPlayer(UUID uuid) {
         if (players == null) {

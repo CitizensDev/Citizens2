@@ -52,7 +52,7 @@ public class Equipment extends Trait {
     /**
      * Get an NPC's equipment from the given slot.
      *
-     * @param slot
+     * @param eslot
      *            Slot where the equipment is located
      * @return ItemStack from the given equipment slot
      */
@@ -236,7 +236,7 @@ public class Equipment extends Trait {
     /**
      * Set the armor from the given slot as the given item.
      *
-     * @param slot
+     * @param eslot
      *            Equipment slot
      * @param item
      *            Item to set the armor as

@@ -13,7 +13,7 @@ import net.citizensnpcs.api.util.RemoveReason;
 /**
  * Represents a Trait linked to an {@link NPC} that can be loaded and saved. This will be kept persisted inside a
  * {@link NPC} across server restarts. Traits must be registered in Citizens' {@link TraitFactory}.
- *
+ * <p>
  * All traits should have a default constructor with no arguments for persistence purposes.
  */
 public abstract class Trait implements Listener, Runnable {

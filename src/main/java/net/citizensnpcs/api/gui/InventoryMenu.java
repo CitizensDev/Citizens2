@@ -43,20 +43,20 @@ import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
  * A container class for Inventory GUIs. Expects {@link #onInventoryClick(InventoryClickEvent)} and
  * {@link #onInventoryClose(InventoryCloseEvent)} to be called by the user (or registered with the event listener
  * system). Optionally, {@link #run()} can also be called every tick.
- *
+ * <p>
  * Inventory GUIs are defined as a stack of {@link InventoryMenuPage}s, each of which represents a distinct inventory
  * that is transitioned between using either code or user clicks using the {@link InventoryMenuTransition} class. Each
  * {@link InventoryMenuPage} should define a {@link Menu} annotation at the class level.
- *
+ * <p>
  * Each page has a number of {@link InventoryMenuSlot}s which define attributes such as default slot item,
  * interactibility, etc.
- *
+ * <p>
  * You can define sets of slots and transitions using {@link InventoryMenuPattern}.
- *
+ * <p>
  * For each concrete class of slot/transition/pattern there is a corresponding annotation that is defined.
  * {@link InventoryMenuPage}s can either annotate specific instances of these concrete classes which will be injected at
  * runtime or simply place them at the method/class level.
- *
+ * <p>
  * Instances of global/contextual variables can be injected dynamically via {@link InjectContext} which sources
  * variables from the {@link MenuContext}.
  */
