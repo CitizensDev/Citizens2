@@ -13,6 +13,7 @@ public interface WaypointProvider extends Persistable {
      * @param sender
      *            The player to link the editor with
      * @param args
+     *            the {@link CommandContext}, or arguments, to be parsed.
      * @return The editor
      */
     public WaypointEditor createEditor(CommandSender sender, CommandContext args);

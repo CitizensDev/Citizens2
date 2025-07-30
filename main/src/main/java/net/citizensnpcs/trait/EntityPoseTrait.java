@@ -55,10 +55,10 @@ public class EntityPoseTrait extends Trait {
             this.id = id;
         }
 
-        @Deprecated
         /**
-         * Internal minecraft ID
+         * @return Internal minecraft ID
          */
+        @Deprecated
         public int id() {
             return id;
         }

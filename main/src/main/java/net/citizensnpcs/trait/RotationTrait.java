@@ -462,7 +462,9 @@ public class RotationTrait extends Trait {
          * Rotate to have the given yaw and pitch
          *
          * @param yaw
+         *            Side-to-side rotation along the y-axis
          * @param pitch
+         *            Up-and-down rotation perpendicular to the y-axis
          */
         public void rotateToHave(float yaw, float pitch) {
             t = 0;

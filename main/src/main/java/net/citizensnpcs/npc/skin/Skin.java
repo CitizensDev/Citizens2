@@ -46,7 +46,6 @@ public class Skin {
      *
      * @param skinName
      *            The name of the player the skin belongs to.
-     * @param forceUpdate
      */
     Skin(String skinName) {
         this.skinName = skinName.toLowerCase(Locale.ROOT);

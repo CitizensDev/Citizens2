@@ -29,7 +29,7 @@ import net.citizensnpcs.util.Util;
 
 /**
  * Persists the controllable status for /npc controllable
- *
+ * <p>
  * A controllable {@link NPC} can be mounted by a {@link Player} using right click or /npc mount and moved around using
  * e.g. arrow keys.
  */
