@@ -43,9 +43,6 @@ public class SkinUpdateTracker {
 
     /**
      * Constructor.
-     *
-     * @param registries
-     *            Map of other registries.
      */
     public SkinUpdateTracker() {
         updater.runTaskTimer(CitizensAPI.getPlugin(), 1, 1);

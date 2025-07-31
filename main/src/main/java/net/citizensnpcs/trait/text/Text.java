@@ -251,6 +251,7 @@ public class Text extends Trait implements Runnable, Listener {
      * Set the range in blocks before text will be sent.
      *
      * @param range
+     *            Range blocks (or meters)
      */
     public void setRange(double range) {
         this.range = range;
