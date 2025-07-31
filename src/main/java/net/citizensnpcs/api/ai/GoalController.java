@@ -6,9 +6,9 @@ import net.citizensnpcs.api.ai.tree.Behavior;
 /**
  * Represents a collection of goals that are prioritised and executed, allowing behaviour trees via a
  * {@link GoalSelector} or by implementing {@link Behavior}.
- *
+ * <p>
  * In general, using {@link Behavior} is preferred due to mapping more closely to traditional behavior trees.
- *
+ * <p>
  * The highest priority {@link Goal} that returns true in {@link Goal#shouldExecute(GoalSelector)} is executed. Any
  * existing goals with a lower priority are replaced via {@link Goal#reset()}.
  */
@@ -35,10 +35,13 @@ public interface GoalController extends Runnable, Iterable<GoalEntry> {
     void addGoal(Goal goal, int priority);
 
     /**
-     * Registers a goal which can reprioritise itself dynamically every tick. Implementation note: this may slow down
-     * individual goal controller ticks as the list must be sorted every tick.
+     * Registers a goal which can re-prioritise itself dynamically every tick.
+     * <p>
+     * Implementation note: This may slow down individual goal controller ticks,
+     * as the list must be sorted every tick.
      *
      * @param goal
+     *            A new {@link PrioritisableGoal}
      */
     void addPrioritisableGoal(PrioritisableGoal goal);
 

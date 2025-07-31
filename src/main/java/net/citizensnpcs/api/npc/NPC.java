@@ -371,6 +371,7 @@ public interface NPC extends Agent, Cloneable {
      * entities only - it will generally have no effect on mob types that were originally flyable.
      *
      * @param flyable
+     *            Should the NPC be flyable?
      */
     default void setFlyable(boolean flyable) {
         data().setPersistent(NPC.Metadata.FLYABLE, flyable);
@@ -456,7 +457,7 @@ public interface NPC extends Agent, Cloneable {
     /**
      * Attempts to spawn this NPC.
      *
-     * @param location
+     * @param at
      *            Location to spawn this NPC
      * @param reason
      *            Reason for spawning

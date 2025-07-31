@@ -136,6 +136,7 @@ public interface Navigator {
      * Sets the current navigation to the specified strategy.
      *
      * @param strategy
+     *            New navigation strategy
      */
     void setTarget(Function<NavigatorParameters, PathStrategy> strategy);
 

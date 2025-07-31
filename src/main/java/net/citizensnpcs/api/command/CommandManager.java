@@ -84,7 +84,7 @@ public class CommandManager implements TabCompleter {
      *
      * Attempt to execute a command using the root {@link Command} given. A list of method arguments may be used when
      * calling the command handler method.
-     *
+     * <p>
      * A command handler method should follow the form <code>command(CommandContext args, CommandSender sender)</code>
      * where {@link CommandSender} can be replaced with {@link Player} to only accept players. The method parameters
      * must include the method args given, if any.
@@ -501,7 +501,7 @@ public class CommandManager implements TabCompleter {
 
     /**
      * Registers an {@link CommandAnnotationProcessor} that can process annotations before a command is executed.
-     *
+     * <p>
      * Methods with the {@link Command} annotation will have the rest of their annotations scanned and stored if there
      * is a matching {@link CommandAnnotationProcessor}. Annotations that do not have a processor are discarded. The
      * scanning method uses annotations from the declaring class as a base before narrowing using the method's

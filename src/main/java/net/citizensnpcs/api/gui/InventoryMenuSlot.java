@@ -155,9 +155,10 @@ public class InventoryMenuSlot {
     }
 
     /**
-     * Manually set the {@link ItemStack} for this slot
+     * Manually set the {@link ItemStack} for this slot.
      *
      * @param stack
+     *            An overriding {@link ItemStack}
      */
     public void setItemStack(ItemStack stack) {
         inventory.setItem(index, stack);

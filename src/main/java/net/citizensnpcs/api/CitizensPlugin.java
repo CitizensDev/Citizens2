@@ -35,9 +35,7 @@ public interface CitizensPlugin extends Plugin {
     public NPCSelector getDefaultNPCSelector();
 
     /**
-     * Gets the Citizens {@link LocationLookup}
-     *
-     * @return
+     * @return Citizen's {@link LocationLookup}
      */
     public LocationLookup getLocationLookup();
 

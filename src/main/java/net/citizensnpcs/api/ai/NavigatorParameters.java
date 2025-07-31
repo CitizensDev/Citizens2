@@ -259,7 +259,7 @@ public class NavigatorParameters implements Cloneable {
     /**
      * Returns the distance margin or leeway that the {@link Navigator} will be able to stop from the target
      * destination. The margin will be measured against the block distance.
-     *
+     * <p>
      * For example: if the distance margin were 2, then the {@link Navigator} could stop moving towards the target when
      * it is 2 blocks away from it.
      *
@@ -390,10 +390,10 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets whether or not to use an A* pathfinder defined in {@link AStarMachine} for pathfinding.
-     *
+     * Sets whether to use an A* pathfinder defined in {@link AStarMachine} for pathfinding.
+     * <p>
      * If this is set to MINECRAFT, then the Minecraft pathfinder will be used, which may or may not be more consistent.
-     *
+     * <p>
      * Note that certain API features will not be possible if this is set to MINECRAFT - for example,
      * {@link #examiner(BlockExaminer)}.
      *
@@ -579,10 +579,10 @@ public class NavigatorParameters implements Cloneable {
     }
 
     /**
-     * Sets whether or not to use an A* pathfinder defined in {@link AStarMachine} for pathfinding.
-     *
+     * Sets whether to use an A* pathfinder defined in {@link AStarMachine} for pathfinding.
+     * <p>
      * If this is set to false, then the Minecraft pathfinder will be used, which may or may not be more consistent.
-     *
+     * <p>
      * Note that certain API features will not be possible if this is set to false - this includes
      * {@link #examiner(BlockExaminer)} and {@link #distanceMargin(double)}.
      *

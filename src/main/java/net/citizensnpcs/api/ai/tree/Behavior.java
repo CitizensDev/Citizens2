@@ -5,13 +5,13 @@ import net.citizensnpcs.api.ai.Goal;
 /**
  * The base class for the second iteration of the {@link Goal} API, which can be made backwards compatible by extending
  * {@link BehaviorGoalAdapter}.
- *
+ * <p>
  * A behavior is a common term for the parts of a <em>behavior tree</em>, which is a simple directed acyclic graph (DAG)
  * for AI. It is a simple state machine using {@link BehaviorStatus}.
- *
+ * <p>
  * Nodes are executed in a top-down fashion through the tree. For legacy reasons, the tree is executed as a number of
  * <em>executing nodes</em> which are transitioned between using the {@link BehaviorStatus} they return.
- *
+ * <p>
  * New child nodes are selected to become <em>executing nodes</em> based on {@link Behavior#shouldExecute()}. The
  * selection behavior can vary, e.g. running a list of nodes using {@link Sequence} or choosing from children nodes
  * using {@link Selector}. The executing nodes are repeatedly {@link Behavior#run()} until the return result changes

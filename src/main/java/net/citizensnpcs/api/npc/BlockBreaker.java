@@ -12,9 +12,9 @@ import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 /**
  * A {@link Runnable} task that will break a block over time just as a normal Minecraft {@link Player} would. Should be
  * run every tick until completed.
- *
+ * <p>
  * This class also implements the {@link Behavior} interface for ease of use.
- *
+ * <p>
  * Due to NMS constraints, this is currently implemented inside Citizens2.
  */
 public abstract class BlockBreaker extends BehaviorGoalAdapter {
