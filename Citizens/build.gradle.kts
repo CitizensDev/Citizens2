@@ -74,7 +74,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             groupId = project.group.toString()
-            artifactId = "citizens"
+            artifactId = "citizens-parent"
             version = project.version.toString()
             artifact(tasks.named("sourcesJar").get())
             artifact(tasks.named("javadocJar").get())
