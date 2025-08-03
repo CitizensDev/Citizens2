@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -2605,17 +2604,24 @@ public class NMSImpl implements NMSBridge {
             return;
         if (npc.useMinecraftAI()) {
             restoreGoals(npc, entity.goalSelector, entity.targetSelector);
-            if (npc.data().has("behavior-map")) {
-                Map behavior = npc.data().get("behavior-map");
-                getBehaviorMap(entity).putAll(behavior);
-                npc.data().remove("behavior-map");
+            if (npc.data().has("brain")) {
+                try {
+                    BRAIN_SETTER.invoke(entity, npc.data().get("brain"));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                npc.data().remove("brain");
             }
         } else {
             clearGoals(npc, entity.goalSelector, entity.targetSelector);
             Map behaviorMap = getBehaviorMap(entity);
-            if (behaviorMap.size() > 0) {
-                npc.data().set("behavior-map", new HashMap(behaviorMap));
-                behaviorMap.clear();
+            if (!npc.data().has("brain") || behaviorMap.size() > 0) {
+                npc.data().set("brain", entity.getBrain());
+                try {
+                    BRAIN_SETTER.invoke(entity, entity.getBrain().copyWithoutBehaviors());
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -2630,6 +2636,7 @@ public class NMSImpl implements NMSBridge {
             EntityType.SLIME, EntityType.DOLPHIN, EntityType.MAGMA_CUBE, EntityType.HORSE, EntityType.GHAST,
             EntityType.SHULKER, EntityType.PHANTOM);
     private static final MethodHandle BEHAVIOR_TREE_MAP = NMS.getGetter(Brain.class, "f");
+    private static final MethodHandle BRAIN_SETTER = NMS.getFirstSetter(LivingEntity.class, Brain.class);
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);

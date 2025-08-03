@@ -87,6 +87,11 @@ public class CreakingController extends MobEntityController {
         }
 
         @Override
+        public boolean checkCanMove() {
+            return npc == null || npc.useMinecraftAI() ? super.canMove() : true;
+        }
+
+        @Override
         public void checkDespawn() {
             if (npc == null) {
                 super.checkDespawn();
@@ -106,9 +111,6 @@ public class CreakingController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
-                if (!npc.useMinecraftAI() && isActive()) {
-                    setIsActive(false);
-                }
             }
         }
 
