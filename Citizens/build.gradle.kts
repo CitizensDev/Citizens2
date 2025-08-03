@@ -15,13 +15,15 @@ repositories {
 
 dependencies {
     api(project(":API"))
-    compileOnly(libs.spigot.api)
+    compileOnly(libs.spigot)
     compileOnly(libs.placeholder.api)
     compileOnly(libs.worldguard.bukkit)
     compileOnly(libs.vault.api)
     compileOnly(libs.phtree)
     compileOnly(libs.adventure.text.minimessage)
     compileOnly(libs.adventure.platform.bukkit)
+    compileOnly(libs.protocol.lib)
+    implementation(libs.libby.bukkit)
 
     // Tests
     testImplementation(libs.junit.jupiter)
@@ -44,6 +46,7 @@ tasks.named<Test>("test") {
 // Javadocs & Sources
 
 tasks.withType<Jar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(sourceSets.main.get().allSource)
 }
 

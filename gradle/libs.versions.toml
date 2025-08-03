@@ -3,20 +3,25 @@
 
 [versions]
 junit-jupiter = "5.12.1"
-bukkit-api-version = "1.21.8-R0.1-SNAPSHOT"
+server-version = "1.21.8-R0.1-SNAPSHOT"
 placeholder-api = "2.11.5"
 worldguard-bukkit = "7.0.9"
 vault-api = "1.7"
 phtree = "2.8.2"
 adventure-text-minimessage = "4.23.0"
 adventure-platform-bukkit = "4.4.0"
+protocol-lib = "5.3.0"
+libby-bukkit = "1.1.5"
 
 [libraries]
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
-spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "bukkit-api-version"}
+spigot = { module = "org.spigotmc:spigot", version.ref = "server-version"}
+spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "server-version"}
 placeholder-api = { module = "me.clip:placeholderapi", version.ref = "placeholder-api" }
 worldguard-bukkit = { module = "com.sk89q.worldguard:worldguard-bukkit", version.ref = "worldguard-bukkit" }
 vault-api = { module = "com.github.MilkBowl:VaultAPI", version.ref = "vault-api" }
 phtree = { module = "ch.ethz.globis.phtree:phtree", version.ref = "phtree" }
 adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure-text-minimessage" }
 adventure-platform-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform-bukkit" }
+protocol-lib = { module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocol-lib" }
+libby-bukkit = { module = "net.byteflux:libby-bukkit", version.ref = "libby-bukkit" }
