@@ -1,0 +1,89 @@
+name: Bug Report
+description: Use this form to report a bug with Citizens.
+
+body:
+  - type: 'markdown'
+    attributes:
+      value: |-
+        ## DO NOT IGNORE
+        Please fill out all required fields the way they are described as.
+        **Not following the issue form will get it closed automatically!**
+        
+        ----
+        
+        ### Section 1) Version Infos
+        Include the outputs of `/version` and `/version Citizens` in the respective fields.
+  - type: 'textarea'
+    attributes:
+      label: '`/version` output'
+      description: 'Include the **complete** output of the `/version` command here.'
+      placeholder: 'This server is running ...'
+      render: txt
+    validations:
+      required: true
+  - type: 'textarea'
+    attributes:
+      label: '`/version Citizens` output'
+      description: 'Include the **complete** output of the `/version Citizens` command here.'
+      placeholder: 'Citizens Version ...'
+      render: txt
+    validations:
+      required: true
+  - type: 'markdown'
+    attributes:
+      value: |-
+        ----
+        
+        ### Section 2) Log and Configuration files
+        Provide your server's latest log file, the configuration file (`config.yml`) and the `saves.yml` file of Citizens.
+  - type: 'input'
+    attributes:
+      label: 'Log file'
+      description: 'Upload your server''s latest.log to https://paste.denizenscript.com/New/Log and paste the generated URL in the field below.'
+      placeholder: 'https://paste.denizenscript.com/View/...'
+    validations:
+      required: true
+  - type: 'input'
+    attributes:
+      label: 'config.yml'
+      description: 'Upload the config.yml to https://paste.denizenscript.com/New/Log and paste the generated URL in the field below.'
+      placeholder: 'https://paste.denizenscript.com/View/...'
+    validations:
+      required: true
+  - type: 'input'
+    attributes:
+      label: 'saves.yml'
+      description: 'Upload the saves.yml of Citizens to https://paste.denizenscript.com/New/Log and paste the generated URL in the field below.'
+      placeholder: 'https://paste.denizenscript.com/View/...'
+    validations:
+      required: true
+  - type: 'markdown'
+    attributes:
+      value: |-
+        ----
+        
+        ### Section 3) Performance Report
+        **This section is only required when having Performance issues!**
+        
+        Include a report from a profiler such as Spark [[Download](https://www.spigotmc.org/resources/57242/)].
+        Spigot Timings alone are NOT allowed, but can be included alongside another profiler report.
+  - type: 'input'
+    attributes:
+      label: 'Profiler report'
+      description: 'Post the Report from a profiler such as Spark here.'
+      placeholder: 'https://spark.lucko.me/...'
+  - type: 'markdown'
+    attributes:
+      value: |-
+        ----
+        
+        ### Section 4) Information
+        Give a detailed explanation about your current issue.
+        When possible, include steps to reproduce it reliably.
+  - type: 'textarea'
+    attributes:
+      label: 'Description'
+      description: 'Give a detailed description of the issue you encounter.'
+      placeholder: 'When doing ... does Citizens do ...'
+    validations:
+      required: true

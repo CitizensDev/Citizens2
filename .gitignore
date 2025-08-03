@@ -1,0 +1,14 @@
+# Project files
+.settings/
+.idea/
+.classpath
+.project
+*.iml
+
+# Build files
+target/
+bin/
+dependency-reduced-pom.xml
+*.jardesc
+*.lnk
+*.bbmodel
