@@ -47,7 +47,6 @@ tasks.named<Test>("test") {
 
 tasks.withType<Jar> {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(sourceSets.main.get().allSource)
 }
 
 tasks.register<Jar>("sourcesJar") {

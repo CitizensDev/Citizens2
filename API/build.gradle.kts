@@ -42,10 +42,6 @@ tasks.named<Test>("test") {
 
 // Javadocs & Sources
 
-tasks.withType<Jar> {
-    from(sourceSets.main.get().allSource)
-}
-
 tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
