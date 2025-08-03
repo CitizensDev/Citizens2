@@ -1,9 +1,0 @@
-/bin
-/target
-.classpath
-.project
-/.settings
-CitizensAPI.jar
-*.lnk
-.idea/
-*.iml
