@@ -106,6 +106,9 @@ public class CreakingController extends MobEntityController {
             if (npc != null) {
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
+                if (!npc.useMinecraftAI() && isActive()) {
+                    setIsActive(false);
+                }
             }
         }
 
