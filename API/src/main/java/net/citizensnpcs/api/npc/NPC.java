@@ -367,7 +367,7 @@ public interface NPC extends Agent, Cloneable {
     public void setBukkitEntityType(EntityType type);
 
     /**
-     * Sets whether this NPC is <tt>flyable</tt> or not. Note that this is intended for normally <em>ground-based</em>
+     * Sets whether this NPC is {@code flyable} or not. Note that this is intended for normally <em>ground-based</em>
      * entities only - it will generally have no effect on mob types that were originally flyable.
      *
      * @param flyable

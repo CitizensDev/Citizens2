@@ -1,12 +1,5 @@
 package net.citizensnpcs.api.persistence;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -21,13 +14,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Horse;
-import org.junit.Before;
-import org.junit.Test;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.YamlStorage;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PersistenceLoaderTest {
     private DataKey root;
@@ -37,12 +32,12 @@ public class PersistenceLoaderTest {
     @Test
     public void canAccessPrivateMembers() {
         root.setInt("integer", 5);
-        assertThat(PersistenceLoader.load(SaveLoadTest.class, root).integer, is(5));
+        assertEquals(5, PersistenceLoader.load(SaveLoadTest.class, root).integer);
     }
 
     @Test
     public void defaultsRemainUntouched() {
-        assertThat(PersistenceLoader.load(HorseColorTest.class, root).color, is(Horse.Color.CREAMY));
+        assertEquals(Horse.Color.CREAMY, PersistenceLoader.load(HorseColorTest.class, root).color);
     }
 
     @Test
@@ -50,24 +45,24 @@ public class PersistenceLoaderTest {
         root.setDouble("array.0", -10.0);
         root.setDouble("array.1", 0.0);
         root.setDouble("array.2", 360.0);
-        assertThat(PersistenceLoader.load(SaveLoadTest.class, root).array, is(new float[] { -10.0F, 0.0F, 360.0F }));
+        assertArrayEquals(new float[] { -10.0F, 0.0F, 360.0F }, PersistenceLoader.load(SaveLoadTest.class, root).array);
     }
 
     @Test
     public void getRelativeEmpty() {
         root.setString("blah.basr", "PLAYER");
-        assertThat(root.getRelative("blah.basr").getString(""), is("PLAYER"));
+        assertEquals("PLAYER", root.getRelative("blah.basr").getString(""));
     }
 
     @Test
     public void getRoot() {
         root.setString("blah.basr", "test");
-        assertThat(root.getRelative("blah").getFromRoot("").getString("blah.basr"), is("test"));
+        assertEquals("test", root.getRelative("blah").getFromRoot("").getString("blah.basr"));
     }
 
     @Test
     public void illegalCollectionClass() {
-        assertThat(PersistenceLoader.load(IllegalCollectionClassTest.class, root), is(nullValue()));
+        assertNull(PersistenceLoader.load(IllegalCollectionClassTest.class, root));
     }
 
     @Test
@@ -79,10 +74,10 @@ public class PersistenceLoaderTest {
         }
         CollectionTest test = PersistenceLoader.load(CollectionTest.class, root);
         for (int i = 0; i < 6; i++) {
-            assertThat(test.list.get(i), is(i));
-            assertThat(test.set.contains(i), is(true));
-            assertThat(test.map.containsKey(Integer.toString(i)), is(true));
-            assertThat(test.map.get(Integer.toString(i)), is(i));
+            assertEquals(i, test.list.get(i));
+            assertTrue(test.set.contains(i));
+            assertTrue(test.map.containsKey(Integer.toString(i)));
+            assertEquals(i, test.map.get(Integer.toString(i)));
         }
     }
 
@@ -119,24 +114,43 @@ public class PersistenceLoaderTest {
     @Test
     public void mapReify() {
         root.setInt("enabled.test.integer", 5);
-        assertThat(PersistenceLoader.load(TestMapReify.class, root).enabled.get("test").key, is("test"));
-        assertThat(PersistenceLoader.load(TestMapReify.class, root).enabled.get("test").integer, is(5));
+        assertEquals("test",PersistenceLoader.load(TestMapReify.class, root).enabled.get("test").key);
+        assertEquals(5, PersistenceLoader.load(TestMapReify.class, root).enabled.get("test").integer);
     }
 
     @Test
     public void processesRequiredCorrectly() {
-        assertThat(PersistenceLoader.load(RequiredTest.class, root), is(nullValue()));
+        assertNull(PersistenceLoader.load(RequiredTest.class, root));
     }
 
     @Test
     public void saveLoadCycle() throws Exception {
         SaveLoadTest test = new SaveLoadTest();
         PersistenceLoader.save(test, root);
-        PersistenceLoader.load(test, root);
         SaveLoadTest newInstance = new SaveLoadTest();
+        PersistenceLoader.load(newInstance, root);
+
         for (Field field : test.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            assertThat(field.get(test), is(field.get(newInstance)));
+
+            Object expectedValue = field.get(test);
+            Object actualValue = field.get(newInstance);
+
+            // Check if the field is a float array
+            if (field.getType().isArray() && field.getType().getComponentType() == float.class) {
+                float[] expectedFloatArray = (float[]) expectedValue;
+                float[] actualFloatArray = (float[]) actualValue;
+                float delta = 0.001f;
+                assertArrayEquals(expectedFloatArray, actualFloatArray, delta,
+                        "Field " + field.getName() + " (float array) mismatch");
+            } else if (field.getType().isArray()) {
+                // If it's another type of array (e.g., int[], Object[]), use assertArrayEquals
+                assertArrayEquals((Object[]) expectedValue, (Object[]) actualValue,
+                        "Field " + field.getName() + " (array) mismatch");
+            } else {
+                // For non-array fields, use standard assertEquals
+                assertEquals(expectedValue, actualValue, "Field " + field.getName() + " mismatch");
+            }
         }
     }
 
@@ -147,10 +161,10 @@ public class PersistenceLoaderTest {
         PersistenceLoader.save(test, root);
         test.uuid = null;
         PersistenceLoader.save(test, root);
-        assertThat(root.keyExists("uuid"), is(false));
+        assertFalse(root.keyExists("uuid"));
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         root = new MemoryDataKey();
         try {
@@ -167,23 +181,23 @@ public class PersistenceLoaderTest {
         StaticPersistenceTest.cba = "b";
         StaticPersistenceTest.MAP.put("test", "value");
         PersistenceLoader.save(new StaticPersistenceTest(), root);
-        assertThat(root.getString("test2"), equalTo("b"));
-        assertThat(root.getString("map.test"), equalTo("value"));
-        assertThat(root.getString("global.test.abc"), equalTo("a"));
+        assertEquals("b", root.getString("test2"));
+        assertEquals("value", root.getString("map.test"));
+        assertEquals("a", root.getString("global.test.abc"));
         root.setString("global.test.abc", "test");
         root.setString("test2", "test");
         root.setString("map.test", "value2");
         PersistenceLoader.load(StaticPersistenceTest.class, root);
-        assertThat(StaticPersistenceTest.MAP.get("test"), equalTo("value2"));
+        assertEquals("value2", StaticPersistenceTest.MAP.get("test"));
         PersistenceLoader.load(StaticPersistenceTest.class, root);
-        assertThat(StaticPersistenceTest.cba, equalTo("test"));
+        assertEquals("test", StaticPersistenceTest.cba);
         PersistenceLoader.load(StaticPersistenceTest.class, root);
-        assertThat(StaticPersistenceTest.abc, equalTo("test"));
+        assertEquals("test", StaticPersistenceTest.abc);
     }
 
     @Test
     public void testCustomConstructorPersister() {
-        assertThat(PersistenceLoader.load(CustomConstructor.class, root), notNullValue());
+        assertNotNull(PersistenceLoader.load(CustomConstructor.class, root));
     }
 
     @Test
@@ -191,7 +205,7 @@ public class PersistenceLoaderTest {
         ListTest load = new ListTest();
         yamlRoot.setRaw("test", Arrays.asList("one", "two", "three"));
         PersistenceLoader.load(load, yamlRoot);
-        assertThat(load.test, equalTo(Arrays.asList("one", "two", "three")));
+        assertEquals(Arrays.asList("one", "two", "three"), load.test);
     }
 
     @Test
@@ -199,7 +213,7 @@ public class PersistenceLoaderTest {
         root.setBoolean("enabled.trig1", true);
         TestMap stored = PersistenceLoader.load(TestMap.class, root);
         PersistenceLoader.save(stored, root);
-        assertThat(PersistenceLoader.load(TestMap.class, root).enabled.get("trig1"), equalTo(true));
+        assertTrue(PersistenceLoader.load(TestMap.class, root).enabled.get("trig1"));
     }
 
     @Test
@@ -245,7 +259,7 @@ public class PersistenceLoaderTest {
         ys.save();
         ys.load();
         r = ys.getKey("");
-        assertThat(r.getBoolean("list.2.v3.p.0"), is(true));
+        assertTrue(r.getBoolean("list.2.v3.p.0"));
     }
 
     @Test
@@ -253,15 +267,15 @@ public class PersistenceLoaderTest {
         root.setInt("list.0", 5);
         root.setInt("set.0", 5);
         SpecificCollectionClassTest instance = PersistenceLoader.load(SpecificCollectionClassTest.class, root);
-        assertEquals(instance.list.getClass(), LinkedList.class);
-        assertEquals(instance.set.getClass(), LinkedHashSet.class);
+        assertEquals(LinkedList.class, instance.list.getClass());
+        assertEquals(LinkedHashSet.class, instance.set.getClass());
     }
 
     @Test
     public void valuesDeep() {
         root.setString("blah.basr", "test");
         Map<String, Object> values = root.getRelative("blah").getValuesDeep();
-        assertThat(values.get("basr"), is("test"));
+        assertEquals("test", values.get("basr"));
     }
 
     public static class CollectionTest {

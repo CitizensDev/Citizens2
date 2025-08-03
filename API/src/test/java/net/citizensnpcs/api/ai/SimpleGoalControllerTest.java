@@ -1,11 +1,9 @@
 package net.citizensnpcs.api.ai;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleGoalControllerTest {
     GoalController controller;
@@ -15,7 +13,7 @@ public class SimpleGoalControllerTest {
         controller.addGoal(new FinishAndRemove(), 1);
         controller.run();
         controller.run();
-        assertThat(controller.iterator().hasNext(), is(false));
+        assertFalse(controller.iterator().hasNext());
     }
 
     @Test
@@ -28,9 +26,9 @@ public class SimpleGoalControllerTest {
         controller.addGoal(three, 3);
 
         controller.run();
-        assertThat(one.counter, is(0));
-        assertThat(two.counter, is(0));
-        assertThat(three.counter, not(0));
+        assertEquals(0, one.counter);
+        assertEquals(0, two.counter);
+        assertNotEquals(0, three.counter);
     }
 
     @Test
@@ -45,11 +43,11 @@ public class SimpleGoalControllerTest {
         for (int i = 0; i < 100; i++) {
             controller.run();
         }
-        assertThat(one.counter, not(0));
-        assertThat(two.counter, not(0));
+        assertNotEquals(0, one.counter);
+        assertNotEquals(0, two.counter);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         controller = new SimpleGoalController();
     }

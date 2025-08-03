@@ -159,7 +159,7 @@ public class AStarMachine<N extends AStarNode, P extends Plan> {
     }
 
     /**
-     * Creates an AStarMachine that uses the given {@link Supplier <AStarStorage>} to create {@link AStarStorage}
+     * Creates an AStarMachine that uses the given {@link Supplier<AStarStorage>} to create {@link AStarStorage}
      * instances.
      *
      * @param storageSupplier

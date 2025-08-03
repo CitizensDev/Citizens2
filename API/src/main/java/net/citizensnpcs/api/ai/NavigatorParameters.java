@@ -460,7 +460,7 @@ public class NavigatorParameters implements Cloneable {
      * @see #speedModifier()
      * @param speed
      *            The new movement speed
-     * @deprecated @see {@link #baseSpeed(float)}
+     * @deprecated see {@link #baseSpeed(float)}
      */
     @Deprecated
     public NavigatorParameters speed(float speed) {

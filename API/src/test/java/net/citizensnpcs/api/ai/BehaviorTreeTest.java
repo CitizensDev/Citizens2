@@ -1,19 +1,16 @@
 package net.citizensnpcs.api.ai;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.function.Function;
-
-import org.junit.Before;
-import org.junit.Test;
 
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.ai.tree.Selector;
 import net.citizensnpcs.api.ai.tree.Sequence;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class BehaviorTreeTest {
     private GoalController test;
@@ -36,12 +33,12 @@ public class BehaviorTreeTest {
         }).retryChildren().build();
         test.addGoal(p, 1);
         test.run();
-        assertThat("Reset count first", goal.resetCount, is(1));
-        assertThat("Run count first", goal.runCount, is(1));
-        assertThat("Should execute count first", goal.shouldExecuteCount, is(1));
-        assertThat("Reset count second", goal2.resetCount, is(1));
-        assertThat("Run count second", goal2.runCount, is(1));
-        assertThat("Should execute count second", goal2.shouldExecuteCount, is(1));
+        assertEquals(1, goal.resetCount, "Reset count first");
+        assertEquals(1, goal.runCount, "Run count first");
+        assertEquals(1, goal.shouldExecuteCount, "Should execute count first");
+        assertEquals(1, goal2.resetCount, "Reset count second");
+        assertEquals(1, goal2.runCount, "Run count second");
+        assertEquals(1, goal2.shouldExecuteCount, "Should execute count second");
     }
 
     @Test
@@ -52,15 +49,15 @@ public class BehaviorTreeTest {
         test.addGoal(p, 1);
         test.run();
         test.run();
-        assertThat("Reset count", goal.resetCount, is(2));
-        assertThat("Run count", goal.runCount, is(2));
-        assertThat("Should execute count", goal.shouldExecuteCount, is(2));
-        assertThat("Reset count2", goal2.resetCount, is(0));
-        assertThat("Run count2", goal2.runCount, is(0));
-        assertThat("Should execute count2", goal2.shouldExecuteCount, is(0));
+        assertEquals(2, goal.resetCount, "Reset count");
+        assertEquals(2, goal.runCount, "Run count");
+        assertEquals(2, goal.shouldExecuteCount, "Should execute count");
+        assertEquals(0, goal2.resetCount, "Reset count2");
+        assertEquals(0, goal2.runCount, "Run count2");
+        assertEquals(0, goal2.shouldExecuteCount, "Should execute count2");
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         test = new SimpleGoalController();
     }
@@ -71,9 +68,9 @@ public class BehaviorTreeTest {
         Selector p = Selector.selecting(goal).build();
         test.addGoal(p, 1);
         test.run();
-        assertThat("Reset count", goal.resetCount, is(1));
-        assertThat("Run count", goal.runCount, is(1));
-        assertThat("Should execute count", goal.shouldExecuteCount, is(1));
+        assertEquals(1, goal.resetCount, "Reset count");
+        assertEquals(1, goal.runCount, "Run count");
+        assertEquals(1, goal.shouldExecuteCount, "Should execute count");
     }
 
     @Test
@@ -82,9 +79,9 @@ public class BehaviorTreeTest {
         Sequence p = Sequence.createSequence(goal);
         test.addGoal(p, 1);
         test.run();
-        assertThat("Reset count", goal.resetCount, is(1));
-        assertThat("Run count", goal.runCount, is(1));
-        assertThat("Should execute count", goal.shouldExecuteCount, is(1));
+        assertEquals(1, goal.resetCount, "Reset count");
+        assertEquals(1, goal.runCount, "Run count");
+        assertEquals(1, goal.shouldExecuteCount, "Should execute count");
     }
 
     private static class CountedBehavior extends BehaviorGoalAdapter {
