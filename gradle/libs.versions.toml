@@ -11,7 +11,7 @@ phtree = "2.8.2"
 adventure-text-minimessage = "4.23.0"
 adventure-platform-bukkit = "4.4.0"
 protocol-lib = "5.3.0"
-libby-bukkit = "1.1.5"
+libby = "1.1.5"
 
 [libraries]
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
@@ -24,4 +24,4 @@ phtree = { module = "ch.ethz.globis.phtree:phtree", version.ref = "phtree" }
 adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure-text-minimessage" }
 adventure-platform-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform-bukkit" }
 protocol-lib = { module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocol-lib" }
-libby-bukkit = { module = "net.byteflux:libby-bukkit", version.ref = "libby-bukkit" }
+libby = { module = "net.byteflux:libby-bukkit", version.ref = "libby" }

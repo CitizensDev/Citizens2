@@ -1,85 +1,59 @@
-description = "Citizens"
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.kotlin.dsl.*
+import org.gradle.api.artifacts.Configuration
 
 plugins {
-    `java-library`
-    `maven-publish`
-}
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://maven.enginehub.org/repo/")
-    maven("https://jitpack.io")
+    id("java-library")
+    id("com.gradleup.shadow") version "9.0.0-rc3"
 }
 
 dependencies {
+    // Local API module
     api(project(":API"))
+
+    // Compile Only
     compileOnly(libs.spigot)
+    // Don't use libs.spigot.api, unless you want to keep the commented section below up to date.
+
+    compileOnly(libs.vault.api)
+    compileOnly(libs.protocol.lib)
+    compileOnly(libs.phtree)
     compileOnly(libs.placeholder.api)
     compileOnly(libs.worldguard.bukkit)
-    compileOnly(libs.vault.api)
-    compileOnly(libs.phtree)
-    compileOnly(libs.adventure.text.minimessage)
-    compileOnly(libs.adventure.platform.bukkit)
-    compileOnly(libs.protocol.lib)
-    implementation(libs.libby.bukkit)
 
-    // Tests
-    testImplementation(libs.junit.jupiter)
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation(libs.spigot.api)
-    testImplementation(libs.adventure.text.minimessage)
-    testImplementation(libs.adventure.platform.bukkit)
+    //Only use if you just want to depend on spigot-api, instead of the full server
+    //Here be dragons
+    // compileOnly("com.mojang:authlib:6.0.58")
+    // compileOnly("it.unimi.dsi:fastutil:8.5.16")
+    // compileOnly("org.apache.logging.log4j:log4j-core:2.23.1")
+    // compileOnly("io.netty:netty-all:4.1.122.Final")
+    // compileOnly("org.slf4j:slf4j-api:2.0.13")
+
+    // Shade
+    implementation(libs.libby)
+    implementation(libs.adventure.platform.bukkit)
+    implementation(libs.adventure.text.minimessage)
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+val shadowDependencies: Configuration by configurations.creating {
+    extendsFrom(configurations.runtimeClasspath.get())
 }
 
-tasks.named<Test>("test") {
-    useJUnitPlatform()
-}
+tasks.named<ShadowJar>("shadowJar") {
+    configurations = listOf(shadowDependencies)
 
-// Javadocs & Sources
+    // Explicitly add the project's own classes to the ShadowJar
+    from(sourceSets.main.get().output)
 
-tasks.withType<Jar> {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
+    // Set the output directory to the parent project's build/libs folder
+    archiveFileName.set("Citizens.jar")
+    destinationDirectory.set(layout.projectDirectory.dir("../build/libs"))
 
-tasks.register<Jar>("sourcesJar") {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-tasks.register<Jar>("javadocJar") {
-    archiveClassifier.set("javadoc")
-    from(tasks.javadoc.get().destinationDir)
-    dependsOn(tasks.javadoc)
-}
-
-tasks.withType<Javadoc> {
-    options.apply {
-        isFailOnError = false
-        (this as CoreJavadocOptions).addStringOption("link", "https://hub.spigotmc.org/javadocs/spigot")
-        this.addStringOption("link", "https://jd.advntr.dev/platform/bukkit/4.4.1/")
-        this.addStringOption("link", "https://jd.advntr.dev/api/4.24.0/")
-        this.addStringOption("Xdoclint:none", "-quiet")
-    }
-}
-
-// Publishing
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-            groupId = project.group.toString()
-            artifactId = "citizens-main"
-            version = project.version.toString()
-            artifact(tasks.named("sourcesJar").get())
-            artifact(tasks.named("javadocJar").get())
+    // Dynamically relocate all dependencies from the resolved configuration
+    shadowDependencies.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
+        val group = artifact.moduleVersion.id.group
+        if (group != "net.citizensnpcs" && !group.startsWith("org.jetbrains.kotlin")) {
+            relocate(group, "net.citizensnpcs.libs.$group")
         }
     }
 }

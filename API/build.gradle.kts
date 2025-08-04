@@ -5,22 +5,14 @@ plugins {
     `maven-publish`
 }
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://maven.enginehub.org/repo/")
-    maven("https://jitpack.io")
-}
-
 dependencies {
     compileOnly(libs.spigot.api)
     compileOnly(libs.placeholder.api)
     compileOnly(libs.worldguard.bukkit)
     compileOnly(libs.vault.api)
     compileOnly(libs.phtree)
-    compileOnly(libs.adventure.text.minimessage)
-    compileOnly(libs.adventure.platform.bukkit)
+    implementation(libs.adventure.text.minimessage)
+    implementation(libs.adventure.platform.bukkit)
 
     // Tests
     testImplementation(libs.junit.jupiter)
