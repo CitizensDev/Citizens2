@@ -3,7 +3,8 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.api.artifacts.Configuration
 
 plugins {
-    id("java-library")
+    `java-library`
+    `maven-publish`
     id("com.gradleup.shadow") version "9.0.0-rc3"
 }
 
@@ -13,26 +14,13 @@ dependencies {
     implementation(project(":Citizens"))
 
     // Compile Only
-    compileOnly(libs.spigot) {
-        artifact {
-            classifier = "remapped-mojang"
-        }
-    }
-    // Don't use libs.spigot.api, unless you want to keep the commented section below up to date.
+    compileOnly(libs.spigot) { artifact { classifier = "remapped-mojang" } }
 
     compileOnly(libs.vault.api)
     compileOnly(libs.protocol.lib)
     compileOnly(libs.phtree)
     compileOnly(libs.placeholder.api)
     compileOnly(libs.worldguard.bukkit)
-
-    //Only use if you just want to depend on spigot-api, instead of the full server
-    //Here be dragons
-    // compileOnly("com.mojang:authlib:6.0.58")
-    // compileOnly("it.unimi.dsi:fastutil:8.5.16")
-    // compileOnly("org.apache.logging.log4j:log4j-core:2.23.1")
-    // compileOnly("io.netty:netty-all:4.1.122.Final")
-    // compileOnly("org.slf4j:slf4j-api:2.0.13")
 
     // Shade
     implementation(libs.libby)
@@ -59,6 +47,43 @@ tasks.named<ShadowJar>("shadowJar") {
         val group = artifact.moduleVersion.id.group
         if (group != "net.citizensnpcs" && !group.startsWith("org.jetbrains.kotlin")) {
             relocate(group, "net.citizensnpcs.libs.$group")
+        }
+    }
+}
+
+// Javadocs & Sources
+
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
+tasks.register<Jar>("javadocJar") {
+    archiveClassifier.set("javadoc")
+    from(tasks.javadoc.get().destinationDir)
+    dependsOn(tasks.javadoc)
+}
+
+tasks.withType<Javadoc> {
+    options.apply {
+        isFailOnError = false
+        (this as CoreJavadocOptions).addStringOption("link", "https://hub.spigotmc.org/javadocs/spigot")
+        this.addStringOption("link", "https://jd.advntr.dev/platform/bukkit/4.4.1/")
+        this.addStringOption("link", "https://jd.advntr.dev/api/4.24.0/")
+        this.addStringOption("Xdoclint:none", "-quiet")
+    }
+}
+
+// Publishing
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            groupId = project.group.toString()
+            artifactId = "citizens-v1_25_R5"
+            version = project.version.toString()
+            artifact(tasks.named("sourcesJar").get())
+            artifact(tasks.named("javadocJar").get())
         }
     }
 }
