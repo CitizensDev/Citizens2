@@ -1,6 +1,6 @@
 rootProject.name = "Citizens3"
 include("API")
-include("Citizens")
+include("MAIN")
 include("v1_21_R5")
 
 pluginManagement {

@@ -11,7 +11,7 @@ plugins {
 dependencies {
     // Local API module
     api(project(":API"))
-    implementation(project(":Citizens"))
+    implementation(project(":MAIN"))
 
     // Compile Only
     compileOnly(libs.spigot) { artifact { classifier = "remapped-mojang" } }
