@@ -1,6 +1,5 @@
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.kotlin.dsl.*
-import org.gradle.api.plugins.JavaPluginExtension
 
 description = "Citizens Parent"
 
@@ -24,6 +23,7 @@ subprojects {
     apply(plugin = "java-library")
     configure<JavaPluginExtension> {
         toolchain {
+            // Defines common language level for API and MAIN
             languageVersion = JavaLanguageVersion.of(17)
         }
     }

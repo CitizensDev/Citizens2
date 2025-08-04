@@ -3,6 +3,7 @@ include("API")
 include("MAIN")
 include("v1_21_R5")
 include("v1_20_R4")
+include("v1_19_R3")
 
 pluginManagement {
     repositories {
