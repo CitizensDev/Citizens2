@@ -14,7 +14,11 @@ dependencies {
     implementation(project(":MAIN"))
 
     // Compile Only
-    compileOnly(libs.spigot) { artifact { classifier = "remapped-mojang" } }
+    compileOnly("org.spigotmc:spigot:1.21.8-R0.1-SNAPSHOT") {
+        artifact {
+            classifier = "remapped-mojang"
+        }
+    }
 
     compileOnly(libs.vault.api)
     compileOnly(libs.protocol.lib)
@@ -28,6 +32,12 @@ dependencies {
     implementation(libs.adventure.text.minimessage)
 }
 
+configure<JavaPluginExtension> {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
 val shadowDependencies: Configuration by configurations.creating {
     extendsFrom(configurations.runtimeClasspath.get())
 }
@@ -39,7 +49,7 @@ tasks.named<ShadowJar>("shadowJar") {
     from(sourceSets.main.get().output)
 
     // Set the output directory to the parent project's build/libs folder
-    archiveFileName.set("Citizens-${project.version}.jar")
+    archiveFileName.set("Citizens-${project.name}-${project.version}.jar")
     destinationDirectory.set(layout.projectDirectory.dir("../build/libs"))
 
     // Dynamically relocate all dependencies from the resolved configuration
@@ -80,7 +90,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             groupId = project.group.toString()
-            artifactId = "citizens-v1_25_R5"
+            artifactId = "citizens-${project.name}"
             version = project.version.toString()
             artifact(tasks.named("sourcesJar").get())
             artifact(tasks.named("javadocJar").get())

@@ -2,6 +2,7 @@ rootProject.name = "Citizens3"
 include("API")
 include("MAIN")
 include("v1_21_R5")
+include("v1_20_R4")
 
 pluginManagement {
     repositories {
@@ -13,5 +14,5 @@ pluginManagement {
 
 plugins {
     // Apply the foojay-resolver plugin to allow automatic download of JDKs
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }

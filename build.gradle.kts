@@ -24,7 +24,7 @@ subprojects {
     apply(plugin = "java-library")
     configure<JavaPluginExtension> {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21))
+            languageVersion = JavaLanguageVersion.of(17)
         }
     }
 }

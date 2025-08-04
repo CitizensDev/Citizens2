@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.kotlin.dsl.*
 import org.gradle.api.artifacts.Configuration
 
 plugins {
@@ -10,10 +11,14 @@ plugins {
 dependencies {
     // Local API module
     api(project(":API"))
+    implementation(project(":MAIN"))
 
     // Compile Only
-    compileOnly(libs.spigot)
-    // Don't use libs.spigot.api (Unless you like keeping track of authlib and other dependencies yourself!)
+    compileOnly("org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT") {
+        artifact {
+            classifier = "remapped-mojang"
+        }
+    }
 
     compileOnly(libs.vault.api)
     compileOnly(libs.protocol.lib)
@@ -25,6 +30,12 @@ dependencies {
     implementation(libs.libby)
     implementation(libs.adventure.platform.bukkit)
     implementation(libs.adventure.text.minimessage)
+}
+
+configure<JavaPluginExtension> {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 val shadowDependencies: Configuration by configurations.creating {
@@ -79,7 +90,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             groupId = project.group.toString()
-            artifactId = "citizens-main"
+            artifactId = "citizens-${project.name}"
             version = project.version.toString()
             artifact(tasks.named("sourcesJar").get())
             artifact(tasks.named("javadocJar").get())
