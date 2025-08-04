@@ -2,7 +2,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.kotlin.dsl.*
 import org.gradle.api.plugins.JavaPluginExtension
 
-description = "Citizens Parent BS"
+description = "Citizens Parent"
 
 allprojects {
     group = "net.citizensnpcs"

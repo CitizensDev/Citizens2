@@ -1,7 +1,7 @@
 rootProject.name = "Citizens3"
 include("API")
 include("Citizens")
-// include("v1_21_R5")
+include("v1_21_R5")
 
 pluginManagement {
     repositories {

@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.kotlin.dsl.*
 import org.gradle.api.artifacts.Configuration
 
 plugins {
@@ -9,9 +10,14 @@ plugins {
 dependencies {
     // Local API module
     api(project(":API"))
+    implementation(project(":Citizens"))
 
     // Compile Only
-    compileOnly(libs.spigot)
+    compileOnly(libs.spigot) {
+        artifact {
+            classifier = "remapped-mojang"
+        }
+    }
     // Don't use libs.spigot.api, unless you want to keep the commented section below up to date.
 
     compileOnly(libs.vault.api)
@@ -45,7 +51,7 @@ tasks.named<ShadowJar>("shadowJar") {
     from(sourceSets.main.get().output)
 
     // Set the output directory to the parent project's build/libs folder
-    archiveFileName.set("Citizens_Main-${project.version}.jar")
+    archiveFileName.set("Citizens-${project.version}.jar")
     destinationDirectory.set(layout.projectDirectory.dir("../build/libs"))
 
     // Dynamically relocate all dependencies from the resolved configuration
