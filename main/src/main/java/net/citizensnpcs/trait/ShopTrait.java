@@ -489,21 +489,20 @@ public class ShopTrait extends Trait {
             if (meta.hasDisplayName()) {
                 meta.setDisplayName(placeholders(meta.getDisplayName(), player));
             }
-            /*
-              if (!meta.hasLore()) {
-                 List<String> lore = Lists.newArrayList();
-                 cost.forEach(c -> lore.add(c.describe()));
-                 result.forEach(r -> {
-                     if (!(r instanceof CommandAction)) {
-                         lore.add(r.describe());
-                     }
-                 });
+            if (Setting.SHOP_USE_DEFAULT_DESCRIPTION.asBoolean() && !meta.hasLore()) {
+                List<String> lore = Lists.newArrayList();
+                cost.forEach(c -> lore.add(c.describe()));
+                result.forEach(r -> {
+                    if (!(r instanceof CommandAction)) {
+                        lore.add(r.describe());
+                    }
+                });
 
-                 if (timesPurchasable > 0) {
-                     lore.add("Times purchasable: " + timesPurchasable);
-                 }
-                 meta.setLore(lore);
-              }*/
+                if (timesPurchasable > 0) {
+                    lore.add("Times purchasable: " + timesPurchasable);
+                }
+                meta.setLore(lore);
+            }
             if (meta.hasLore()) {
                 meta.setLore(Lists.transform(meta.getLore(), line -> placeholders(line, player)));
             }

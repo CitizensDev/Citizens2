@@ -99,8 +99,6 @@ public class Settings {
                 "advanced.check-minecraft-version", true),
         CONTROLLABLE_GROUND_DIRECTION_MODIFIER("The percentage to increase speed when controlling NPCs on the ground",
                 "npc.controllable.ground-direction-modifier", 1.0D),
-        DEBUG_CHUNK_LOADS("Debug chunk load stack traces, not as useful in recent Minecraft versions",
-                "general.debug-chunk-loads", false),
         DEBUG_FILE("Send Citizens debug output to a specific file", "general.debug-file", ""),
         DEBUG_MODE("Enable Citizens debugging", "general.debug-mode", false),
         DEBUG_PATHFINDING("Debug pathfinding by showing fake target blocks", "npc.pathfinding.debug",
@@ -300,6 +298,9 @@ public class Settings {
         SHOP_GLOBAL_VIEW_PERMISSION(
                 "The global view permission that players need to view any NPC shop<br>Defaults to empty (no permission required).",
                 "npc.defaults.shops.global-view-permission", "npc.shops.global-view-permission", ""),
+        SHOP_USE_DEFAULT_DESCRIPTION(
+                "Whether to add default item description placeholders for all shop items by default.",
+                "npc.shops.add-default-item-description", false),
         STORAGE_FILE("storage.file", "saves.yml"),
         TABLIST_REMOVE_PACKET_DELAY("How long to wait before sending the tablist remove packet",
                 "npc.tablist.remove-packet-delay", "2t"),
