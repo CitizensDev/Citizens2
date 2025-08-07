@@ -318,9 +318,12 @@ public class ProtocolLibListener implements Listener {
                 if (type == Server.ENTITY_HEAD_ROTATION) {
                     packet.getBytes().write(0, degToByte(session.getHeadYaw()));
                 } else if (type == Server.ENTITY_LOOK || type == Server.ENTITY_MOVE_LOOK
-                        || type == Server.REL_ENTITY_MOVE_LOOK || type == Server.ENTITY_TELEPORT) {
+                        || type == Server.REL_ENTITY_MOVE_LOOK) {
                     packet.getBytes().write(0, degToByte(session.getBodyYaw()));
                     packet.getBytes().write(1, degToByte(session.getPitch()));
+                } else if (type == Server.ENTITY_TELEPORT) {
+                    packet.getFloat().write(0, session.getBodyYaw());
+                    packet.getFloat().write(1, session.getPitch());
                 }
                 session.onPacketOverwritten();
             }
@@ -370,7 +373,8 @@ public class ProtocolLibListener implements Listener {
         }
         if (event.getNPC().hasTrait(MirrorTrait.class)
                 && event.getNPC().getOrAddTrait(MobType.class).getType() == EntityType.PLAYER) {
-            mirrorTraits.put(event.getNPC().getEntity().getUniqueId(), event.getNPC().getTraitNullable(MirrorTrait.class));
+            mirrorTraits.put(event.getNPC().getEntity().getUniqueId(),
+                    event.getNPC().getTraitNullable(MirrorTrait.class));
         }
     }
 
