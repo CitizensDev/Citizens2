@@ -1,5 +1,6 @@
 package net.citizensnpcs.util;
 
+import java.lang.invoke.MethodHandle;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -190,8 +191,11 @@ public class Util {
     public static Attribute getAttribute(String attribute) {
         if (!SpigotUtil.isRegistryKeyed(Attribute.class)) {
             try {
-                return Attribute.valueOf(attribute.toUpperCase(Locale.ROOT));
+                return (Attribute) ATTRIBUTE_VALUEOF.invoke(attribute.toUpperCase(Locale.ROOT));
             } catch (IllegalArgumentException ignore) {
+                return null;
+            } catch (Throwable e) {
+                e.printStackTrace();
                 return null;
             }
         }
@@ -630,6 +634,8 @@ public class Util {
                 + TimeUnit.MILLISECONDS.convert(delay.getNano(), TimeUnit.NANOSECONDS)) / 50;
     }
 
+    private static MethodHandle ATTRIBUTE_VALUEOF = NMS.getMethodHandle(Attribute.class, "valueOf", false,
+            String.class);
     private static String BEDROCK_NAME_PREFIX = ".";
     private static Scoreboard DUMMY_SCOREBOARD;
     private static final Random RANDOM = new XORShiftRNG();
