@@ -261,9 +261,6 @@ public class EventListen implements Listener {
     void loadNPCs(ChunkEvent event) {
         ChunkCoord coord = new ChunkCoord(event.getChunk());
         Runnable runnable = () -> respawnAllFromCoord(coord, event);
-        if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean() && toRespawn.containsKey(coord)) {
-            new Exception("CITIZENS CHUNK LOAD DEBUG " + coord).printStackTrace();
-        }
         if (event instanceof Cancellable) {
             runnable.run();
         } else {
@@ -1040,9 +1037,6 @@ public class EventListen implements Listener {
             }
             toRespawn.put(coord, npc);
             Messaging.idebug(() -> Joiner.on(' ').join("Despawned", npc, "due to chunk unload at", coord));
-        }
-        if (Messaging.isDebugging() && Setting.DEBUG_CHUNK_LOADS.asBoolean()) {
-            new Exception("CITIZENS CHUNK UNLOAD DEBUG " + coord).printStackTrace();
         }
         if (loadChunk) {
             Messaging.idebug(() -> Joiner.on(' ').join("Loading chunk in 10 ticks due to forced chunk load at", coord));
