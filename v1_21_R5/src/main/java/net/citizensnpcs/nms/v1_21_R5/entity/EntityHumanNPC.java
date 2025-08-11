@@ -179,8 +179,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public PlayerAdvancements getAdvancements() {
-        if (npc == null)
-            return super.getAdvancements();
         if (advancements == null) {
             advancements = new EmptyAdvancementDataPlayer(getServer().getFixerUpper(), getServer().getPlayerList(),
                     this);
