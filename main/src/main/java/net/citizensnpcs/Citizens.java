@@ -537,6 +537,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Metrics metrics = new Metrics(this, 2463);
             metrics.addCustomChart(new Metrics.SingleLineChart("total_npcs",
                     () -> npcRegistry == null ? 0 : Iterables.size(npcRegistry)));
+            metrics.addCustomChart(new Metrics.SingleLineChart("total_templates",
+                    () -> npcRegistry == null ? 0 : Iterables.size(templateRegistry.getAllTemplates())));
             metrics.addCustomChart(new Metrics.SimplePie("locale", () -> Locale.getDefault().getLanguage()));
             metrics.addCustomChart(new Metrics.AdvancedPie("traits", () -> {
                 Map<String, Integer> res = Maps.newHashMap();
