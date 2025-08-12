@@ -2,9 +2,12 @@ package net.citizensnpcs;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -62,12 +65,14 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -127,6 +132,8 @@ import net.citizensnpcs.util.Util;
 
 public class EventListen implements Listener {
     private Listener chunkEventListener;
+    private final Map<Object, Object> chunkTicketTimeouts = CacheBuilder.newBuilder()
+            .expireAfterWrite(1000, TimeUnit.MILLISECONDS).build().asMap();
     private Citizens plugin;
     private final SkinUpdateTracker skinUpdateTracker;
     private final ListMultimap<ChunkCoord, NPC> toRespawn = ArrayListMultimap.create(64, 4);
@@ -146,6 +153,7 @@ public class EventListen implements Listener {
             }, plugin);
         } catch (Throwable ex) {
             Bukkit.getPluginManager().registerEvents(new Listener() {
+
                 @EventHandler
                 public void onPlayerPickupItemEvent(PlayerPickupItemEvent event) {
                     if (event.getItem() instanceof NPCHolder) {
@@ -183,7 +191,9 @@ public class EventListen implements Listener {
                     unloadNPCs(event, toDespawn);
                 }
             }, plugin);
-        } catch (Throwable ex) {
+        } catch (
+
+        Throwable ex) {
         }
         try {
             Class.forName("org.bukkit.event.entity.EntityTransformEvent");
@@ -1003,6 +1013,17 @@ public class EventListen implements Listener {
             }
             Messaging.idebug(() -> Joiner.on(' ').join("Spawned", npc, "during", event, "at", coord));
         }
+        if (ids.size() > 0) {
+            // https://github.com/PaperMC/Paper/issues/9581
+            // XXX: can be removed if support for <=1.21.8 is dropped
+            Chunk chunk = ((ChunkEvent) event).getChunk();
+            if (SUPPORT_CHUNK_TICKETS && SpigotUtil.getVersion()[1] <= 21
+                    && (SpigotUtil.getVersion().length < 3 || SpigotUtil.getVersion()[2] <= 8)
+                    && chunkTicketTimeouts.containsKey(coord) && chunk.addPluginChunkTicket(plugin)) {
+                chunkTicketTimeouts.put(coord, true);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> chunk.removePluginChunkTicket(plugin), 2);
+            }
+        }
         for (NPC npc : ids) {
             toRespawn.remove(coord, npc);
         }
@@ -1020,6 +1041,9 @@ public class EventListen implements Listener {
     private void unloadNPCs(ChunkEvent event, List<NPC> toDespawn) {
         ChunkCoord coord = new ChunkCoord(event.getChunk());
         boolean loadChunk = false;
+        if (toDespawn.size() > 0) {
+            Messaging.idebug(() -> Joiner.on(' ').join("Despawning all NPCs at", coord, "due to", event, "at", coord));
+        }
         for (NPC npc : toDespawn) {
             if (toRespawn.containsValue(npc))
                 continue;
@@ -1048,5 +1072,13 @@ public class EventListen implements Listener {
         }
     }
 
+    private static boolean SUPPORT_CHUNK_TICKETS = true;
     private static boolean SUPPORT_STOP_USE_ITEM = true;
+    static {
+        try {
+            Chunk.class.getMethod("removePluginChunkTicket", Plugin.class);
+        } catch (NoSuchMethodException | SecurityException e) {
+            SUPPORT_CHUNK_TICKETS = false;
+        }
+    }
 }
