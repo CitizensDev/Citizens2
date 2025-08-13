@@ -436,8 +436,8 @@ public class SkinUpdateTracker {
         }
     }
 
-    private static float FIELD_OF_VIEW = 70F;
-    private static int MOVEMENT_SKIN_UPDATE_DISTANCE = 25;
+    private static final float FIELD_OF_VIEW = 70F;
+    private static final int MOVEMENT_SKIN_UPDATE_DISTANCE = 25;
     private static boolean SUPPORTS_WORLD_LOADED = false;
     static {
         try {
