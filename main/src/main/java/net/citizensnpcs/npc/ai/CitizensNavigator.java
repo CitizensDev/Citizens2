@@ -531,8 +531,8 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (!SUPPORT_CHUNK_TICKETS || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
             return;
 
-        ChunkCoord coord = new ChunkCoord(target);
-        if (target != null && coord.equals(activeTicket))
+        ChunkCoord coord = null;
+        if (target != null && (coord = new ChunkCoord(target)).equals(activeTicket))
             return;
 
         // switch ticket to the new chunk

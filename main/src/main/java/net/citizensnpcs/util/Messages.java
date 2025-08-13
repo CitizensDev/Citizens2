@@ -82,10 +82,10 @@ public class Messages {
     public static final String COMMANDS_CLEARED = "citizens.commands.npc.command.cleared";
     public static final String COMMANDS_CYCLE_SET = "citizens.commands.npc.command.cycle-set";
     public static final String COMMANDS_CYCLE_UNSET = "citizens.commands.npc.command.cycle-unset";
-    public static final String COMMANDS_PERSIST_SEQUENCE_SET = "citizens.commands.npc.command.persist-sequence-set";
-    public static final String COMMANDS_PERSIST_SEQUENCE_UNSET = "citizens.commands.npc.command.persist-sequence-unset";
     public static final String COMMANDS_RANDOM_SET = "citizens.commands.npc.commands.random-set";
     public static final String COMMANDS_RANDOM_UNSET = "citizens.commands.npc.commands.random-unset";
+    public static final String COMMANDS_REMEMBER_LAST_USED_SET = "citizens.commands.npc.command.remember-last-used-set";
+    public static final String COMMANDS_REMEMBER_LAST_USED_UNSET = "citizens.commands.npc.command.remember-last-used-unset";
     public static final String COMMANDS_SEQUENTIAL_SET = "citizens.commands.npc.commands.sequential-set";
     public static final String COMMANDS_SEQUENTIAL_UNSET = "citizens.commands.npc.commands.sequential-unset";
     public static final String CONTRIBUTE_TO_TRANSLATION_PROMPT = "citizens.contribute-to-translations-prompt";

@@ -15,6 +15,7 @@ import net.citizensnpcs.util.ChunkCoord;
 public class ChunkTicketTrait extends Trait {
     private ChunkCoord active;
     private int ticks;
+    private long timeout;
 
     public ChunkTicketTrait() {
         super("chunktickettrait");
@@ -28,6 +29,7 @@ public class ChunkTicketTrait extends Trait {
             active.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
             active = null;
             ticks = 0;
+            timeout = System.currentTimeMillis() + 1000;
         }
     }
 
@@ -44,7 +46,8 @@ public class ChunkTicketTrait extends Trait {
         // https://github.com/PaperMC/Paper/issues/9581
         // XXX: can be removed if support for <=1.21.8 is dropped
         if (ticks >= 0 && SpigotUtil.getVersion()[1] <= 21
-                && (SpigotUtil.getVersion().length < 3 || SpigotUtil.getVersion()[2] <= 8)) {
+                && (SpigotUtil.getVersion().length < 3 || SpigotUtil.getVersion()[2] <= 8)
+                && timeout < System.currentTimeMillis()) {
             ticks = 2;
         }
     }
@@ -58,16 +61,16 @@ public class ChunkTicketTrait extends Trait {
             if (ticks == 0) {
                 onDespawn();
             }
-        }
-        if (active != null) {
-            Chunk chunk = npc.getEntity().getLocation().getChunk();
-            ChunkCoord next = new ChunkCoord(chunk);
-            if (!next.equals(active)) {
-                active.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
-                chunk.addPluginChunkTicket(CitizensAPI.getPlugin());
-                active = next;
-            } else {
-                chunk.addPluginChunkTicket(CitizensAPI.getPlugin()); // no way to tell if chunk already has a ticket
+            if (active != null) {
+                Chunk chunk = npc.getEntity().getLocation().getChunk();
+                ChunkCoord next = new ChunkCoord(chunk);
+                if (!next.equals(active)) {
+                    active.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
+                    chunk.addPluginChunkTicket(CitizensAPI.getPlugin());
+                    active = next;
+                } else {
+                    chunk.addPluginChunkTicket(CitizensAPI.getPlugin()); // no way to tell if chunk already has a ticket
+                }
             }
         }
     }

@@ -49,6 +49,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.AttributeTrait;
+import net.citizensnpcs.trait.ChunkTicketTrait;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
@@ -68,13 +69,13 @@ import net.citizensnpcs.util.Util;
 public class CitizensNPC extends AbstractNPC {
     private ChunkCoord cachedCoord;
     private EntityController entityController;
-    private boolean hasTicket;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
 
     public CitizensNPC(UUID uuid, int id, String name, EntityController controller, NPCRegistry registry) {
         super(uuid, id, name, registry);
         setEntityController(controller);
+        addTrait(ChunkTicketTrait.class);
     }
 
     @Override
@@ -620,7 +621,6 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
-
     private static boolean SUPPORT_ATTRIBUTES = false;
     private static boolean SUPPORT_GLOWING = false;
     private static boolean SUPPORT_PICKUP_ITEMS = false;
