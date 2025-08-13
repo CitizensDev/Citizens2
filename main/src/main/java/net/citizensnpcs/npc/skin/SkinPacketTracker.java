@@ -65,7 +65,7 @@ public class SkinPacketTracker {
                 updateNearbyViewers(entity.getNPC().data().get(NPC.Metadata.TRACKING_RANGE,
                         Setting.NPC_SKIN_VIEW_DISTANCE.asInt()));
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), 15);
+        }.runTaskLater(CitizensAPI.getPlugin(), 10);
     }
 
     /**

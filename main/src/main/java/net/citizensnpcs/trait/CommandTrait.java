@@ -80,8 +80,8 @@ public class CommandTrait extends Trait {
     @Persist
     private final List<ItemStack> itemRequirements = Lists.newArrayList();
     private int lastUsedId = -1;
-    @Persist
-    private boolean persistSequence = false;
+    @Persist("persistSequence")
+    private boolean rememberLastUsed = false;
     @Persist(keyType = UUID.class, reify = true, value = "cooldowns")
     private final Map<UUID, PlayerNPCCommand> playerTracking = Maps.newHashMap();
     @Persist
@@ -427,8 +427,8 @@ public class CommandTrait extends Trait {
         return Math.abs(value) > 0.0001 && Math.abs(-1 - value) > 0.0001;
     }
 
-    public boolean persistSequence() {
-        return persistSequence;
+    public boolean rememberLastUsed() {
+        return rememberLastUsed;
     }
 
     public void removeCommandById(int id) {
@@ -442,7 +442,7 @@ public class CommandTrait extends Trait {
             PlayerNPCCommand playerCommand = itr.next();
             playerCommand.pruneCooldowns(globalCooldowns, commands);
             if (playerCommand.lastUsed.isEmpty() && playerCommand.nUsed.isEmpty()
-                    && (!persistSequence || playerCommand.lastUsedId == -1)) {
+                    && (!rememberLastUsed || playerCommand.lastUsedId == -1)) {
                 itr.remove();
             }
         }
@@ -488,8 +488,8 @@ public class CommandTrait extends Trait {
         hideErrorMessages = hide;
     }
 
-    public void setPersistSequence(boolean persistSequence) {
-        this.persistSequence = persistSequence;
+    public void setRememberLastUsed(boolean rememberLastUsed) {
+        this.rememberLastUsed = rememberLastUsed;
     }
 
     public void setTemporaryPermissions(List<String> permissions) {

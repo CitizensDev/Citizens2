@@ -42,12 +42,14 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.npc.ai.AStarNavigationStrategy.AStarPlanner;
+import net.citizensnpcs.trait.ChunkTicketTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
+import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.NMS;
 
 public class CitizensNavigator implements Navigator, Runnable {
-    private Location activeTicket;
+    private ChunkCoord activeTicket;
     private final NavigatorParameters defaultParams = new NavigatorParameters().baseSpeed(UNINITIALISED_SPEED)
             .range(Setting.DEFAULT_PATHFINDING_RANGE.asFloat()).debug(Setting.DEBUG_PATHFINDING.asBoolean())
             .defaultAttackStrategy((attacker, target) -> {
@@ -357,6 +359,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         stationaryTicks = 0;
         if (npc.isSpawned()) {
             NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
+            npc.getOrAddTrait(ChunkTicketTrait.class);
             updateTicket(executing.getTargetAsLocation());
         }
         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
@@ -528,10 +531,8 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (!SUPPORT_CHUNK_TICKETS || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
             return;
 
-        // already have a ticket on same chunk
-        if (target != null && activeTicket != null && target.getBlockX() >> 4 == activeTicket.getBlockX() >> 4
-                && target.getBlockZ() >> 4 == activeTicket.getBlockZ() >> 4
-                && target.getWorld().equals(activeTicket.getWorld()))
+        ChunkCoord coord = new ChunkCoord(target);
+        if (target != null && coord.equals(activeTicket))
             return;
 
         // switch ticket to the new chunk
@@ -542,7 +543,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             activeTicket = null;
             return;
         }
-        activeTicket = target.clone();
+        activeTicket = coord;
         activeTicket.getChunk().addPluginChunkTicket(CitizensAPI.getPlugin());
     }
 

@@ -564,7 +564,7 @@ public class NPCCommands {
             @Arg(
                     value = 1,
                     completions = { "add", "execute", "remove", "permissions", "persistsequence", "sequential", "cycle",
-                            "random", "forgetplayer", "hideerrors", "errormsg", "clearerror", "expcost", "itemcost",
+                            "random", "forgetplayer", "hideerrors", "errormessage", "clearerror", "expcost", "itemcost",
                             "cost" }) String action)
             throws CommandException {
         CommandTrait commands = npc.getOrAddTrait(CommandTrait.class);
@@ -668,14 +668,14 @@ public class NPCCommands {
                     commands.getExecutionMode() == ExecutionMode.CYCLE ? ExecutionMode.LINEAR : ExecutionMode.CYCLE);
             Messaging.sendTr(sender, commands.getExecutionMode() == ExecutionMode.CYCLE ? Messages.COMMANDS_CYCLE_SET
                     : Messages.COMMANDS_CYCLE_UNSET);
-        } else if (action.equalsIgnoreCase("persistsequence")) {
+        } else if (action.equalsIgnoreCase("rememberlastused")) {
             if (args.argsLength() == 2) {
-                commands.setPersistSequence(!commands.persistSequence());
+                commands.setRememberLastUsed(!commands.rememberLastUsed());
             } else {
-                commands.setPersistSequence(Boolean.parseBoolean(args.getString(3)));
+                commands.setRememberLastUsed(Boolean.parseBoolean(args.getString(3)));
             }
-            Messaging.sendTr(sender, commands.persistSequence() ? Messages.COMMANDS_PERSIST_SEQUENCE_SET
-                    : Messages.COMMANDS_PERSIST_SEQUENCE_UNSET);
+            Messaging.sendTr(sender, commands.rememberLastUsed() ? Messages.COMMANDS_REMEMBER_LAST_USED_SET
+                    : Messages.COMMANDS_REMEMBER_LAST_USED_UNSET);
         } else if (action.equalsIgnoreCase("remove")) {
             if (args.argsLength() == 2)
                 throw new CommandUsageException();
@@ -728,7 +728,7 @@ public class NPCCommands {
                 InventoryMenu.createSelfRegistered(new ItemRequirementGUI(commands, args.getInteger(2)))
                         .present((Player) sender);
             }
-        } else if (action.equalsIgnoreCase("errormsg")) {
+        } else if (action.equalsIgnoreCase("errormessage")) {
             CommandTraitError which = Util.matchEnum(CommandTraitError.values(), args.getString(2));
             if (which == null)
                 throw new CommandException(Messages.NPC_COMMAND_INVALID_ERROR_MESSAGE,
@@ -842,7 +842,6 @@ public class NPCCommands {
             @Flag(value = "template", completionsProvider = TemplateCompletions.class) String templateName,
             @Flag("registry") String registryName) throws CommandException {
         String name = args.getJoinedStrings(1).trim();
-
         if (args.hasValueFlag("type")) {
             if (type == null)
                 throw new CommandException(Messaging.tr(Messages.NPC_CREATE_INVALID_MOBTYPE, args.getFlag("type")));

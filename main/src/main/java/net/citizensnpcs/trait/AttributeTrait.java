@@ -34,6 +34,8 @@ public class AttributeTrait extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
+        if (!attributes.containsKey(null))
+            return;
         for (DataKey subkey : key.getRelative("attributes").getSubKeys()) {
             if (Util.getAttribute(subkey.name()) == null) {
                 key.removeKey("attributes." + subkey.name());
@@ -57,11 +59,6 @@ public class AttributeTrait extends Trait {
         }
     }
 
-    public void setAttributeValue(Attribute attribute, double value) {
-        attributes.put(attribute, value);
-        onSpawn();
-    }
-
     public void resetToDefaultValue(Attribute attribute) {
         attributes.remove(attribute);
         if (!(npc.getEntity() instanceof LivingEntity))
@@ -70,5 +67,10 @@ public class AttributeTrait extends Trait {
         LivingEntity le = (LivingEntity) npc.getEntity();
         AttributeInstance instance = le.getAttribute(attribute);
         instance.setBaseValue(instance.getDefaultValue());
+    }
+
+    public void setAttributeValue(Attribute attribute, double value) {
+        attributes.put(attribute, value);
+        onSpawn();
     }
 }
