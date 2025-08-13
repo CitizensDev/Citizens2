@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
@@ -18,6 +19,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.base.Throwables;
@@ -68,6 +70,7 @@ import net.citizensnpcs.util.Util;
 public class CitizensNPC extends AbstractNPC {
     private ChunkCoord cachedCoord;
     private EntityController entityController;
+    private boolean hasTicket;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
 
@@ -351,7 +354,7 @@ public class CitizensNPC extends AbstractNPC {
 
             @Override
             public void accept(Runnable cancel) {
-                if (getEntity() == null || !hasTrait(PacketNPC.class) && !getEntity().isValid()) {
+                if (getEntity() == null || (!hasTrait(PacketNPC.class) && !getEntity().isValid())) {
                     if (timer++ > Setting.ENTITY_SPAWN_WAIT_DURATION.asTicks()) {
                         Messaging.debug("Couldn't spawn ", CitizensNPC.this, "waited", timer,
                                 "ticks but entity not added to world");
@@ -505,6 +508,15 @@ public class CitizensNPC extends AbstractNPC {
                     NMS.trySwim(getEntity());
                 }
             }
+            // TODO: consolidate chunk tickets into a trait
+            if (SUPPORT_CHUNK_TICKETS) {
+                boolean keepLoaded = data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean());
+                if (!keepLoaded && isUpdating(NPCUpdate.PACKET)) {
+                    getEntity().getLocation().getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
+                } else if (keepLoaded) {
+                    getEntity().getLocation().getChunk().addPluginChunkTicket(CitizensAPI.getPlugin());
+                }
+            }
             if (SUPPORT_GLOWING && data().has(NPC.Metadata.GLOWING)) {
                 getEntity().setGlowing(data().get(NPC.Metadata.GLOWING, false));
             }
@@ -619,12 +631,19 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
+
     private static boolean SUPPORT_ATTRIBUTES = false;
+    private static boolean SUPPORT_CHUNK_TICKETS = true;
     private static boolean SUPPORT_GLOWING = false;
     private static boolean SUPPORT_PICKUP_ITEMS = false;
     private static boolean SUPPORT_SILENT = false;
     private static boolean SUPPORT_USE_ITEM = true;
     static {
+        try {
+            Chunk.class.getMethod("removePluginChunkTicket", Plugin.class);
+        } catch (NoSuchMethodException | SecurityException e) {
+            SUPPORT_CHUNK_TICKETS = false;
+        }
         try {
             Entity.class.getMethod("setGlowing", boolean.class);
             SUPPORT_GLOWING = true;
