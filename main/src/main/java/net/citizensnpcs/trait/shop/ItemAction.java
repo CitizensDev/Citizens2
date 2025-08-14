@@ -158,19 +158,20 @@ public class ItemAction extends NPCShopAction {
         if (a.getType() != b.getType() || metaFilter.size() > 0 && !metaMatches(a, b, metaFilter))
             return false;
 
-        // remove common footgun - repair_cost is often added but minecraft ignores it in similarity comparisons
-        if (metaFilter.size() == 0 && !requireUndamaged && a.getItemMeta() instanceof Repairable
-                && b.getItemMeta() instanceof Repairable) {
-            a = a.clone();
-            b = b.clone();
+        if (metaFilter.size() == 0) {
+            // remove common footgun - repair_cost is often added but minecraft ignores it in similarity comparisons
+            if (!requireUndamaged && a.getItemMeta() instanceof Repairable && b.getItemMeta() instanceof Repairable) {
+                a = a.clone();
+                b = b.clone();
 
-            ItemMeta meta = a.getItemMeta();
-            ((Repairable) meta).setRepairCost(0);
-            a.setItemMeta(meta);
+                ItemMeta meta = a.getItemMeta();
+                ((Repairable) meta).setRepairCost(0);
+                a.setItemMeta(meta);
 
-            meta = b.getItemMeta();
-            ((Repairable) meta).setRepairCost(0);
-            b.setItemMeta(meta);
+                meta = b.getItemMeta();
+                ((Repairable) meta).setRepairCost(0);
+                b.setItemMeta(meta);
+            }
             if (!a.isSimilar(b))
                 return false;
         }
