@@ -197,11 +197,9 @@
                     <includeDependencySources>true</includeDependencySources>
                     <dependencySourceIncludes>
                         <dependencySourceInclude>net.citizensnpcs:citizensapi</dependencySourceInclude>
+                        <dependencySourceInclude>io.papermc.paper:paper-api</dependencySourceInclude>
                     </dependencySourceIncludes>
-                    <excludePackageNames>net.citizensnpcs.commands</excludePackageNames>
-                    <additionalOptions>-Xdoclint:none -quiet</additionalOptions>
-                    <failOnError>false</failOnError>
-                    <detectOfflineLinks>false</detectOfflineLinks>
+                    <excludePackageNames>net.citizensnpcs.commands</excludePackageNames> 
                 </configuration>
             </plugin>
             <plugin>
