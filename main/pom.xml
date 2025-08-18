@@ -199,6 +199,9 @@
                         <dependencySourceInclude>net.citizensnpcs:citizensapi</dependencySourceInclude>
                     </dependencySourceIncludes>
                     <excludePackageNames>net.citizensnpcs.commands</excludePackageNames>
+                    <additionalOptions>-Xdoclint:none -quiet</additionalOptions>
+                    <failOnError>false</failOnError>
+                    <detectOfflineLinks>false</detectOfflineLinks>
                 </configuration>
             </plugin>
             <plugin>
