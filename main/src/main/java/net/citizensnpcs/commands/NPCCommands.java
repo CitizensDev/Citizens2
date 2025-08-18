@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.Vector;
+import org.bukkit.util.Vector;
 import java.util.stream.Collectors;
 
 import org.bukkit.Art;
@@ -3898,7 +3898,7 @@ public class NPCCommands {
 
     static {
         try {
-            SUPPORT_RAYTRACE = World.class.getMethod("rayTraceEntities", Location.class, Vector.class,
+            SUPPORT_RAYTRACE = World.class.getMethod("rayTraceEntities", Location.class, java.util.Vector.class,
                     double.class) != null;
         } catch (Exception e) {
         }
