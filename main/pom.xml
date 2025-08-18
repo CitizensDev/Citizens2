@@ -20,6 +20,10 @@
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>        
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -62,7 +66,7 @@
         <dependency>
             <groupId>it.unimi.dsi</groupId>
             <artifactId>fastutil</artifactId>
-            <version>8.5.15</version>
+            <version>8.5.16</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -188,6 +192,7 @@
                     <doclint>none</doclint>
                     <links>
                         <link>https://hub.spigotmc.org/javadocs/spigot</link>
+                        <link>https://jd.papermc.io/paper/</link>
                     </links>
                     <includeDependencySources>true</includeDependencySources>
                     <dependencySourceIncludes>
