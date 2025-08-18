@@ -8,6 +8,7 @@ import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Interaction;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -25,6 +26,8 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     @Persist
     private float height = -1;
     private NPC interaction;
+    @Persist
+    private Vector offset = ZERO;
     @Persist
     private float scale = -1;
     @Persist
@@ -44,8 +47,9 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         }
         EntityDim dim = getAdjustedDimensions();
         NMS.setDimensions(npc.getEntity(), dim);
-        return new BoundingBox(location.getX() - dim.width / 2, location.getY(), location.getZ() - dim.width / 2,
-                location.getX() + dim.width / 2, location.getY() + dim.height, location.getZ() + dim.width / 2);
+        return new BoundingBox(location.getX() - dim.width / 2 + offset.getX(), location.getY() + offset.getY(),
+                location.getZ() - dim.width / 2 + offset.getZ(), location.getX() + dim.width / 2 + offset.getX(),
+                location.getY() + dim.height + offset.getY(), location.getZ() + dim.width / 2 + offset.getZ());
     }
 
     public EntityDim getAdjustedDimensions() {
@@ -113,6 +117,10 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         this.height = height;
     }
 
+    public void setOffset(Vector offset) {
+        this.offset = offset;
+    }
+
     public void setScale(float scale) {
         this.scale = scale;
     }
@@ -123,6 +131,7 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
 
     private static boolean SUPPORTS_INTERACTION = true;
     private static boolean SUPPORTS_RESPONSIVE = true;
+    private static final Vector ZERO = new Vector(0, 0, 0);
 
     static {
         try {

@@ -1290,14 +1290,14 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hitbox --scale [scale] --width/height [value]",
+            usage = "hitbox --scale [scale] --width/height [value] --offset [x,y,z]",
             desc = "",
             modifiers = { "hitbox" },
             min = 1,
             max = 1,
             permission = "citizens.npc.hitbox")
     public void hitbox(CommandContext args, CommandSender sender, NPC npc, @Flag("scale") Float scale,
-            @Flag("width") Float width, @Flag("height") Float height) {
+            @Flag("width") Float width, @Flag("height") Float height, @Flag("offset") Vector offset) {
         if (scale != null) {
             npc.getOrAddTrait(BoundingBoxTrait.class).setScale(scale);
         }
@@ -1306,6 +1306,9 @@ public class NPCCommands {
         }
         if (height != null) {
             npc.getOrAddTrait(BoundingBoxTrait.class).setHeight(height);
+        }
+        if (offset != null) {
+            npc.getOrAddTrait(BoundingBoxTrait.class).setOffset(offset);
         }
         EntityDim dim = npc.getOrAddTrait(BoundingBoxTrait.class).getAdjustedDimensions();
         Messaging.sendTr(sender, Messages.BOUNDING_BOX_SET, "width " + dim.width + " height " + dim.height);

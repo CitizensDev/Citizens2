@@ -35,6 +35,8 @@ public class DisplayTrait extends Trait {
     @Persist
     private Quaternionf leftRotation;
     @Persist
+    private Vector offset;
+    @Persist
     private Quaternionf rightRotation;
     @Persist
     private Vector scale;
@@ -51,6 +53,10 @@ public class DisplayTrait extends Trait {
 
     public DisplayTrait() {
         super("displaytrait");
+    }
+
+    public Vector getOffset() {
+        return offset;
     }
 
     @Override
@@ -77,6 +83,9 @@ public class DisplayTrait extends Trait {
         Transformation tf = display.getTransformation();
         if (scale != null) {
             tf.getScale().set(scale.getX(), scale.getY(), scale.getZ());
+        }
+        if (offset != null) {
+            tf.getTranslation().set(offset.getX(), offset.getY(), offset.getZ());
         }
         if (leftRotation != null) {
             tf.getLeftRotation().set(leftRotation);
@@ -117,6 +126,9 @@ public class DisplayTrait extends Trait {
         this.interpolationDuration = interpolationDuration;
     }
 
+    public void setOffset(Vector offset) {
+    }
+
     public void setScale(Vector scale) {
         this.scale = scale;
     }
@@ -139,7 +151,7 @@ public class DisplayTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "display --billboard [billboard] --brightness [blockLight,skyLight] --interpolationdelay [delay] --interpolationduration [duration] --height [height] --width [width] --scale [x,y,z] --viewrange [range] --leftrotation [x,y,z,w] --rightrotation [x,y,z,w]",
+            usage = "display --billboard [billboard] --brightness [blockLight,skyLight] --interpolationdelay [delay] --interpolationduration [duration] --height [height] --width [width] --scale [x,y,z] --viewrange [range] --leftrotation [x,y,z,w] --rightrotation [x,y,z,w] --offset [x,y,z]",
             desc = "",
             modifiers = { "display" },
             min = 1,
@@ -152,7 +164,7 @@ public class DisplayTrait extends Trait {
     public static void display(CommandContext args, CommandSender sender, NPC npc,
             @Flag("billboard") Billboard billboard, @Flag("left_rotation") Quaternionf leftrotation,
             @Flag("right_rotation") Quaternionf rightrotation, @Flag("scale") Vector scale,
-            @Flag("view_range") Float viewRange, @Flag("brightness") String brightness,
+            @Flag("offset") Vector offset, @Flag("view_range") Float viewRange, @Flag("brightness") String brightness,
             @Flag("interpolation_delay") Integer interpolationDelay,
             @Flag("interpolation_duration") Integer interpolationDuration, @Flag("height") Float height,
             @Flag("shadow_radius") Float shadowRadius, @Flag("shadow_strength") Float shadowStrength,
@@ -165,6 +177,9 @@ public class DisplayTrait extends Trait {
         if (brightness != null) {
             trait.setBrightness(new Brightness(Integer.parseInt(brightness.split(",")[0]),
                     Integer.parseInt(brightness.split(",")[1])));
+        }
+        if (offset != null) {
+            trait.setOffset(offset);
         }
         if (interpolationDelay != null) {
             trait.setInterpolationDelay(interpolationDelay);
