@@ -2993,7 +2993,7 @@ public class NPCCommands {
         if (slot == null)
             throw new CommandUsageException();
 
-        if (item == null && args.argsLength() == 3 && args.getString(2).equalsIgnoreCase("hand")) {
+        if (args.argsLength() == 3 && args.getString(2).equalsIgnoreCase("hand")) {
             if (!(sender instanceof Player))
                 throw new ServerCommandException();
             item = ((Player) sender).getItemInHand().clone();
