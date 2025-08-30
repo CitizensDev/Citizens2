@@ -24,7 +24,7 @@ import net.citizensnpcs.trait.Saddle;
         offset = { 0, 2 },
         slots = { @MenuSlot(pat = 'x', compatMaterial = { "BARRIER", "FIRE" }, title = "<4>Unused") },
         value = "xxx")
-public class SteerableEquipperGUI extends InventoryMenuPage {
+public class SaddleEquipperGUI extends InventoryMenuPage {
     @InjectContext
     private NPC npc;
     @MenuSlot(slot = { 0, 1 })

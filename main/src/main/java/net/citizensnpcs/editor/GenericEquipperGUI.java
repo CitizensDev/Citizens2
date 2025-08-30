@@ -30,11 +30,12 @@ import net.citizensnpcs.util.Util;
 @MenuSlot(slot = { 0, 3 }, material = Material.DIAMOND_CHESTPLATE, lore = "Place chestplate below", amount = 1)
 @MenuSlot(slot = { 0, 4 }, material = Material.DIAMOND_LEGGINGS, lore = "Place leggings below", amount = 1)
 @MenuSlot(slot = { 0, 5 }, material = Material.DIAMOND_BOOTS, lore = "Place boots below", amount = 1)
-@MenuSlot(slot = { 0, 6 }, material = Material.DIAMOND_CHESTPLATE, lore = "Place body item below", amount = 1)
+@MenuSlot(slot = { 0, 6 }, material = Material.ELYTRA, lore = "Place body item below", amount = 1)
+@MenuSlot(slot = { 0, 7 }, material = Material.SADDLE, lore = "Place saddle item below", amount = 1)
 @MenuPattern(
-        offset = { 0, 7 },
+        offset = { 0, 8 },
         slots = { @MenuSlot(pat = 'x', compatMaterial = { "BARRIER", "FIRE" }, title = "<4>Unused") },
-        value = "xx\nxx\nxx")
+        value = "x\nx\nx")
 public class GenericEquipperGUI extends InventoryMenuPage {
     @InjectContext
     private NPC npc;
@@ -43,7 +44,8 @@ public class GenericEquipperGUI extends InventoryMenuPage {
     public void initialise(MenuContext ctx) {
         Equipment trait = npc.getOrAddTrait(Equipment.class);
         EquipmentSlot[] slots = new EquipmentSlot[] { EquipmentSlot.HAND, EquipmentSlot.OFF_HAND, EquipmentSlot.HELMET,
-                EquipmentSlot.CHESTPLATE, EquipmentSlot.LEGGINGS, EquipmentSlot.BOOTS, EquipmentSlot.BODY };
+                EquipmentSlot.CHESTPLATE, EquipmentSlot.LEGGINGS, EquipmentSlot.BOOTS, EquipmentSlot.BODY,
+                EquipmentSlot.SADDLE };
         for (int i = 0; i < slots.length; i++) {
             EquipmentSlot slot = slots[i];
             ctx.getSlot(1 * 9 + i).setItemStack(trait.get(slot));
