@@ -102,7 +102,7 @@ public class RotationTrait extends Trait {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null)
             return;
-        NMS.sendPositionUpdate(npc.getEntity(), ImmutableList.of(player), false);
+        NMS.sendRotationPacket(npc.getEntity(), ImmutableList.of(player));
     }
 
     @Override
@@ -142,7 +142,7 @@ public class RotationTrait extends Trait {
         }
 
         @Override
-        public void apply() {
+        public void apply(Function<Player, Boolean> filter) {
             NMS.setBodyYaw(entity, bodyYaw);
             NMS.setHeadYaw(entity, headYaw);
             NMS.setPitch(entity, pitch);
@@ -215,9 +215,9 @@ public class RotationTrait extends Trait {
         }
 
         @Override
-        public void apply() {
+        public void apply(Function<Player, Boolean> filter) {
             if (Math.abs(lastBodyYaw - bodyYaw) + Math.abs(lastHeadYaw - headYaw) + Math.abs(pitch - lastPitch) > 1) {
-                NMS.sendPositionUpdateNearby(entity, false, bodyYaw, pitch, headYaw);
+                NMS.sendRotationPacketNearby(entity, bodyYaw, pitch, headYaw);
             }
         }
 
@@ -510,7 +510,7 @@ public class RotationTrait extends Trait {
                     rot.bodyYaw = rot.headYaw;
                 }
             }
-            rot.apply();
+            rot.apply(params.filter);
         }
     }
 
@@ -523,7 +523,7 @@ public class RotationTrait extends Trait {
             this.pitch = pitch;
         }
 
-        public abstract void apply();
+        public abstract void apply(Function<Player, Boolean> filter);
 
         @Override
         public RotationTriple clone() {

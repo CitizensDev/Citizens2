@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
-import org.bukkit.util.Vector;
 import java.util.stream.Collectors;
 
 import org.bukkit.Art;
@@ -53,6 +52,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -1829,6 +1829,8 @@ public class NPCCommands {
             toggle = false;
         }
         if (perPlayer != null) {
+            if (((Citizens) CitizensAPI.getPlugin()).getProtocolLibListener() == null)
+                throw new CommandException("ProtocolLib must be enabled to use this feature");
             trait.setPerPlayer(perPlayer);
             Messaging.sendTr(sender, perPlayer ? Messages.LOOKCLOSE_PERPLAYER_SET : Messages.LOOKCLOSE_PERPLAYER_UNSET,
                     npc.getName());
@@ -2852,8 +2854,7 @@ public class NPCCommands {
         if (yaw != null) {
             NMS.setBodyYaw(npc.getEntity(), yaw);
             if (npc.getEntity().getType() == EntityType.PLAYER) {
-                NMS.sendPositionUpdateNearby(npc.getEntity(), true, yaw, npc.getEntity().getLocation().getPitch(),
-                        null);
+                NMS.sendRotationPacketNearby(npc.getEntity(), yaw, npc.getEntity().getLocation().getPitch(), null);
                 PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
             }
         }

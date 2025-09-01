@@ -813,26 +813,24 @@ public class NMS {
         BRIDGE.sendComponent(player, component);
     }
 
-    public static void sendPositionUpdate(Entity from, Collection<Player> to, boolean position) {
-        sendPositionUpdate(from, to, position, NMS.getYaw(from), from.getLocation().getPitch(), NMS.getHeadYaw(from));
+    public static void sendRotationPacket(Entity from, Iterable<Player> to) {
+        sendRotationPacket(from, to, NMS.getYaw(from), from.getLocation().getPitch(), NMS.getHeadYaw(from));
     }
 
-    public static void sendPositionUpdate(Entity from, Collection<Player> to, boolean position, Float bodyYaw,
-            Float pitch, Float headYaw) {
-        BRIDGE.sendPositionUpdate(from, to, position, bodyYaw, pitch, headYaw);
+    public static void sendRotationPacket(Entity from, Iterable<Player> to, Float bodyYaw, Float pitch, Float headYaw) {
+        BRIDGE.sendPositionUpdate(from, to, false, bodyYaw, pitch, headYaw);
     }
 
-    public static void sendPositionUpdateNearby(Entity from, boolean position) {
-        sendPositionUpdateNearby(from, position, NMS.getYaw(from), from.getLocation().getPitch(), NMS.getHeadYaw(from));
+    public static void sendRotationPacketNearby(Entity from, Float bodyYaw, Float pitch, Float headYaw) {
+        sendRotationPacketNearby(from, bodyYaw, pitch, headYaw, p -> true);
     }
 
-    public static void sendPositionUpdateNearby(Entity from, boolean position, Float bodyYaw, Float pitch,
-            Float headYaw) {
-        sendPositionUpdate(from,
-                Lists.newArrayList(
-                        Iterables.filter(CitizensAPI.getLocationLookup().getNearbyPlayers(from.getLocation(), 64),
-                                p -> !p.equals(from))),
-                position, bodyYaw, pitch, headYaw);
+    public static void sendRotationPacketNearby(Entity from, Float bodyYaw, Float pitch, Float headYaw,
+            Function<Player, Boolean> function) {
+        sendRotationPacket(from,
+                Iterables.filter(CitizensAPI.getLocationLookup().getNearbyPlayers(from.getLocation(), 64),
+                        p -> (function == null || function.apply(p)) && !p.equals(from)),
+                bodyYaw, pitch, headYaw);
     }
 
     public static boolean sendTabListAdd(Player recipient, Player listPlayer) {

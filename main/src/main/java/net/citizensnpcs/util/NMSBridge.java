@@ -197,7 +197,7 @@ public interface NMSBridge {
 
     public void sendComponent(Player player, Object component);
 
-    public void sendPositionUpdate(Entity from, Collection<Player> to, boolean position, Float bodyYaw, Float pitch,
+    public void sendPositionUpdate(Entity from, Iterable<Player> to, boolean position, Float bodyYaw, Float pitch,
             Float headYaw);
 
     public boolean sendTabListAdd(Player recipient, Player listPlayer);

@@ -1419,7 +1419,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void sendPositionUpdate(org.bukkit.entity.Entity from, Collection<Player> to, boolean position,
+    public void sendPositionUpdate(org.bukkit.entity.Entity from, Iterable<Player> to, boolean position,
             Float bodyYaw, Float pitch, Float headYaw) {
         List<Packet<?>> toSend = getPositionUpdate(from, position, bodyYaw, pitch, headYaw);
         for (Player dest : to) {

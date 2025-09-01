@@ -290,7 +290,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         lib.setLogLevel(LogLevel.INFO);
         // Unfortunately, transitive dependency management is not supported in this library.
 
-                lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-minimessage")
+        lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-text-minimessage")
                 .version("4.24.0").relocate("net{}kyori", "clib{}net{}kyori").build());
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-api").version("4.24.0")
                 .relocate("net{}kyori", "clib{}net{}kyori").build());
