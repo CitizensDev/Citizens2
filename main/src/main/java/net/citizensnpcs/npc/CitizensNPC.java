@@ -392,7 +392,7 @@ public class CitizensNPC extends AbstractNPC {
                 }
                 EntityType type = entity.getType();
                 if (type.isAlive()) {
-                    LivingEntity le = (LivingEntity) getEntity();
+                    LivingEntity le = (LivingEntity) entity;
                     le.setRemoveWhenFarAway(false);
 
                     if (type == EntityType.PLAYER || Util.isHorse(type)) {
