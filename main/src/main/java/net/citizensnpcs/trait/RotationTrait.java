@@ -29,6 +29,7 @@ import net.citizensnpcs.api.persistence.Persistable;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -56,15 +57,18 @@ public class RotationTrait extends Trait {
         if (params.filter == null && params.uuidFilter == null)
             throw new IllegalStateException();
         RotationSession session = new RotationSession(params);
-        PacketRotationSession lrs = new PacketRotationSession(session);
+        PacketRotationSession prs = new PacketRotationSession(session);
         if (params.uuidFilter != null) {
             for (UUID uuid : params.uuidFilter) {
-                packetSessionsByUUID.put(uuid, lrs);
+                packetSessionsByUUID.put(uuid, prs);
             }
         } else {
-            packetSessions.add(lrs);
+            packetSessions.add(prs);
         }
-        return lrs;
+        if (npc.isSpawned()) {
+            prs.run(npc.getEntity());
+        }
+        return prs;
     }
 
     private Location getEyeLocation() {
@@ -80,9 +84,9 @@ public class RotationTrait extends Trait {
     }
 
     public PacketRotationSession getPacketSession(Player player) {
-        PacketRotationSession lrs = packetSessionsByUUID.get(player.getUniqueId());
-        if (lrs != null && lrs.triple != null)
-            return lrs;
+        PacketRotationSession prs = packetSessionsByUUID.get(player.getUniqueId());
+        if (prs != null && prs.triple != null)
+            return prs;
 
         for (PacketRotationSession session : packetSessions) {
             if (session.accepts(player) && session.triple != null)
@@ -99,10 +103,12 @@ public class RotationTrait extends Trait {
         PacketRotationSession prs = packetSessionsByUUID.remove(uuid);
         if (prs == null || !npc.isSpawned())
             return;
+        prs.end();
         Player player = Bukkit.getPlayer(uuid);
         if (player == null)
             return;
         NMS.sendRotationPacket(npc.getEntity(), ImmutableList.of(player));
+        Messaging.debug("Reset packet session for", uuid);
     }
 
     @Override
@@ -123,8 +129,8 @@ public class RotationTrait extends Trait {
             ran.add(session);
             session.run(npc.getEntity());
         }
-        packetSessions = Lists.newCopyOnWriteArrayList(packetSessions.stream().filter(s -> s.isActive())
-                .collect(Collectors.toCollection(CopyOnWriteArrayList::new)));
+        packetSessions = packetSessions.stream().filter(s -> s.isActive())
+                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
         packetSessionsByUUID.values().removeIf(s -> !s.isActive());
         if (npc.getNavigator().isNavigating())
             // npc.yHeadRot = rotateIfNecessary(npc.yHeadRot, npc.yBodyRot, 75);
@@ -217,7 +223,7 @@ public class RotationTrait extends Trait {
         @Override
         public void apply(Function<Player, Boolean> filter) {
             if (Math.abs(lastBodyYaw - bodyYaw) + Math.abs(lastHeadYaw - headYaw) + Math.abs(pitch - lastPitch) > 1) {
-                NMS.sendRotationPacketNearby(entity, bodyYaw, pitch, headYaw);
+                NMS.sendRotationPacketNearby(entity, bodyYaw, pitch, headYaw, filter);
             }
         }
 

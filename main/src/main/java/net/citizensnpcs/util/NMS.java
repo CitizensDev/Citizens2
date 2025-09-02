@@ -814,7 +814,7 @@ public class NMS {
     }
 
     public static void sendRotationPacket(Entity from, Iterable<Player> to) {
-        sendRotationPacket(from, to, NMS.getYaw(from), from.getLocation().getPitch(), NMS.getHeadYaw(from));
+        sendRotationPacket(from, to, null, null, null);
     }
 
     public static void sendRotationPacket(Entity from, Iterable<Player> to, Float bodyYaw, Float pitch, Float headYaw) {
