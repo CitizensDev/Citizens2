@@ -290,8 +290,6 @@ public class HologramTrait extends Trait {
             return;
 
         lines.remove(idx).removeNPC();
-
-        reloadLineHolograms();
     }
 
     @Override
@@ -376,7 +374,6 @@ public class HologramTrait extends Trait {
 
     public void setBackgroundColor(int idx, Color color) {
         lines.get(idx).setBackgroundColor(color);
-        reloadLineHolograms();
     }
 
     public void setDefaultBackgroundColor(Color color) {
@@ -390,7 +387,6 @@ public class HologramTrait extends Trait {
         if (nameLine != null && nameLine.backgroundColor == old) {
             nameLine.setBackgroundColor(color);
         }
-        reloadLineHolograms();
     }
 
     public void setDefaultTextShadow(boolean shadow) {
@@ -411,7 +407,6 @@ public class HologramTrait extends Trait {
             return;
         }
         lines.get(idx).setText(text);
-        reloadLineHolograms();
     }
 
     /**
@@ -442,12 +437,10 @@ public class HologramTrait extends Trait {
         } else if (type.equalsIgnoreCase("bottom")) {
             lines.get(idx).mb = margin;
         }
-        reloadLineHolograms();
     }
 
     public void setTextShadow(int idx, boolean shadow) {
         lines.get(idx).setTextShadow(shadow);
-        reloadLineHolograms();
     }
 
     public void setViewRange(int range) {
