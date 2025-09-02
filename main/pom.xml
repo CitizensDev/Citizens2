@@ -154,6 +154,11 @@
                     <include>*.json</include>
                     <include>LICENSE</include>
                 </includes>
+            </resource> 
+            <resource>
+                <directory>src/main/resources/templates</directory>
+                <targetPath>templates</targetPath>
+                <filtering>false</filtering>
             </resource>
         </resources>
         <plugins>
