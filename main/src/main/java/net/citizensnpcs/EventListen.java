@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -63,7 +62,6 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -1051,13 +1049,5 @@ public class EventListen implements Listener {
         }
     }
 
-    private static boolean SUPPORT_CHUNK_TICKETS = true;
     private static boolean SUPPORT_STOP_USE_ITEM = true;
-    static {
-        try {
-            Chunk.class.getMethod("removePluginChunkTicket", Plugin.class);
-        } catch (NoSuchMethodException | SecurityException e) {
-            SUPPORT_CHUNK_TICKETS = false;
-        }
-    }
 }

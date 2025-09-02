@@ -275,6 +275,7 @@ import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
+import net.minecraft.network.protocol.game.ClientboundSetCameraPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
@@ -1414,13 +1415,18 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void sendCameraPacket(Player player, org.bukkit.entity.Entity entity) {
+        sendPacket(player, new ClientboundSetCameraPacket(getHandle(entity)));
+    }
+
+    @Override
     public void sendComponent(Player player, Object component) {
         getHandle(player).sendSystemMessage((Component) component);
     }
 
     @Override
-    public void sendPositionUpdate(org.bukkit.entity.Entity from, Iterable<Player> to, boolean position,
-            Float bodyYaw, Float pitch, Float headYaw) {
+    public void sendPositionUpdate(org.bukkit.entity.Entity from, Iterable<Player> to, boolean position, Float bodyYaw,
+            Float pitch, Float headYaw) {
         List<Packet<?>> toSend = getPositionUpdate(from, position, bodyYaw, pitch, headYaw);
         for (Player dest : to) {
             sendPackets(dest, toSend);

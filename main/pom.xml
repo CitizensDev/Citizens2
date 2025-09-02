@@ -182,7 +182,7 @@
                         <goal>javadoc</goal>
                         <goal>jar</goal>
                       </goals>
-                      <phase>package</phase>
+                      <phase>deploy</phase>
                     </execution>
                 </executions>
                 <configuration>

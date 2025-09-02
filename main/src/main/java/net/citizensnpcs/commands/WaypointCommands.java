@@ -32,7 +32,7 @@ import net.citizensnpcs.util.Util;
 @Requirements(ownership = true, selected = true)
 public class WaypointCommands {
     @Command(
-            aliases = { "waypoints", "waypoint", "wp" },
+            aliases = { "waypoints", "wp" },
             usage = "add [x] [y] [z] (world) (--index idx)",
             desc = "",
             modifiers = { "add" },
@@ -59,7 +59,7 @@ public class WaypointCommands {
     }
 
     @Command(
-            aliases = { "waypoints", "waypoint", "wp" },
+            aliases = { "waypoints", "wp" },
             usage = "disableteleport",
             desc = "",
             modifiers = { "disableteleport", "dt" },
@@ -81,7 +81,7 @@ public class WaypointCommands {
     }
 
     @Command(
-            aliases = { "waypoints", "waypoint", "wp" },
+            aliases = { "waypoints", "wp" },
             usage = "hpa",
             desc = "",
             modifiers = { "hpa" },
@@ -100,7 +100,7 @@ public class WaypointCommands {
     }
 
     @Command(
-            aliases = { "waypoints", "waypoint", "wp" },
+            aliases = { "waypoints", "wp" },
             usage = "provider [provider name]",
             desc = "",
             modifiers = { "provider" },
@@ -124,7 +124,7 @@ public class WaypointCommands {
     }
 
     @Command(
-            aliases = { "waypoints", "waypoint", "wp" },
+            aliases = { "waypoints", "wp" },
             usage = "remove (x y z world) (--index idx)",
             desc = "",
             modifiers = { "remove" },

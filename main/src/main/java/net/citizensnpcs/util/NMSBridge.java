@@ -195,6 +195,8 @@ public interface NMSBridge {
 
     public void replaceTrackerEntry(Entity entity);
 
+    public void sendCameraPacket(Player player, Entity entity);
+
     public void sendComponent(Player player, Object component);
 
     public void sendPositionUpdate(Entity from, Iterable<Player> to, boolean position, Float bodyYaw, Float pitch,

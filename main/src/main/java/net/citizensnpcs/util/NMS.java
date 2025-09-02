@@ -809,6 +809,10 @@ public class NMS {
         BRIDGE.replaceTrackerEntry(entity);
     }
 
+    public static void sendCameraPacket(Player player, Entity entity) {
+        BRIDGE.sendCameraPacket(player, entity);
+    }
+
     public static void sendComponent(Player player, Object component) {
         BRIDGE.sendComponent(player, component);
     }
