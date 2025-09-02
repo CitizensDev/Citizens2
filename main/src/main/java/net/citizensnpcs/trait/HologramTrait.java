@@ -597,11 +597,12 @@ public class HologramTrait extends Trait {
 
         /**
          * Gets hologram entities associated with the Hologram Trait.
+         *
          * @implNote Known implementations:
-         * <ul>
-         *     <li>{@link ItemRenderer#getEntities()}</li>
-         *     <li>{@link SingleEntityHologramRenderer#getEntities()}</li>
-         * </ul>
+         *           <ul>
+         *           <li>{@link ItemRenderer#getEntities()}</li>
+         *           <li>{@link SingleEntityHologramRenderer#getEntities()}</li>
+         *           </ul>
          * @return Any associated hologram entities.
          */
         Collection<Entity> getEntities();
@@ -966,6 +967,7 @@ public class HologramTrait extends Trait {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
             disp.setInterpolationDelay(0);
             disp.setBillboard(Billboard.CENTER);
+            disp.setSeeThrough(true);
             if (color != null) {
                 disp.setBackgroundColor(color);
             }
