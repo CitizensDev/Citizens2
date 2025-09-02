@@ -15,6 +15,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
+import net.citizensnpcs.api.trait.TraitTemplateParser;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.MobType;
@@ -173,6 +174,12 @@ public class CitizensTraitFactory implements TraitFactory {
     @Override
     public Collection<TraitInfo> getRegisteredTraits() {
         return registered.values();
+    }
+
+    @Override
+    public TraitTemplateParser getTemplateParser(String name) {
+        TraitInfo info = registered.get(name.toLowerCase(Locale.ROOT));
+        return info == null ? null : info.getParser();
     }
 
     @Override
