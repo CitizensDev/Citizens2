@@ -22,7 +22,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.SetMultimap;
 
 import net.citizensnpcs.NPCNeedsRespawnEvent;
@@ -378,9 +377,12 @@ public class CitizensNPC extends AbstractNPC {
                     cancel.run();
                     return;
                 }
+                NMS.replaceTracker(entity);
+                data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
+
                 navigator.onSpawn();
 
-                for (Trait trait : traits.values().toArray(ObjectArrays.newArray(Trait.class, traits.size()))) {
+                for (Trait trait : traits.values().toArray(new Trait[traits.size()])) {
                     try {
                         trait.onSpawn();
                     } catch (Throwable ex) {
@@ -388,8 +390,6 @@ public class CitizensNPC extends AbstractNPC {
                         ex.printStackTrace();
                     }
                 }
-                NMS.replaceTracker(entity);
-                data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
                 EntityType type = entity.getType();
                 if (type.isAlive()) {
                     LivingEntity le = (LivingEntity) getEntity();
