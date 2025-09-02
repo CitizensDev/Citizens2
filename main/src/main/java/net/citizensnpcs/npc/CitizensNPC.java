@@ -363,6 +363,7 @@ public class CitizensNPC extends AbstractNPC {
                     }
                     return;
                 }
+                Entity entity = getEntity();
                 // Set the spawned state
                 getOrAddTrait(CurrentLocation.class).setLocation(to);
                 getOrAddTrait(Spawned.class).setSpawned(true);
@@ -387,12 +388,12 @@ public class CitizensNPC extends AbstractNPC {
                         ex.printStackTrace();
                     }
                 }
-                NMS.replaceTracker(getEntity());
+                NMS.replaceTracker(entity);
                 data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
-                EntityType type = getEntity().getType();
+                EntityType type = entity.getType();
                 if (type.isAlive()) {
-                    LivingEntity entity = (LivingEntity) getEntity();
-                    entity.setRemoveWhenFarAway(false);
+                    LivingEntity le = (LivingEntity) getEntity();
+                    le.setRemoveWhenFarAway(false);
 
                     if (type == EntityType.PLAYER || Util.isHorse(type)) {
                         if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class)
@@ -402,7 +403,7 @@ public class CitizensNPC extends AbstractNPC {
                         }
                     }
                     if (type == EntityType.PLAYER) {
-                        PlayerUpdateTask.register(getEntity());
+                        PlayerUpdateTask.register(entity);
                         if (SUPPORT_ATTRIBUTES
                                 && Util.getRegistryValue(Registry.ATTRIBUTE, "waypoint_transmit_range") != null) {
                             AttributeTrait attr = getOrAddTrait(AttributeTrait.class);
@@ -411,7 +412,7 @@ public class CitizensNPC extends AbstractNPC {
                             }
                         }
                     }
-                    entity.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
+                    le.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
                             Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks()));
                 }
                 if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
@@ -424,7 +425,7 @@ public class CitizensNPC extends AbstractNPC {
                 Messaging.debug("Spawned", CitizensNPC.this, "SpawnReason." + reason);
                 cancel.run();
                 if (callback != null) {
-                    callback.accept(getEntity());
+                    callback.accept(entity);
                 }
             }
         };
