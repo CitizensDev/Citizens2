@@ -565,6 +565,8 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private void updateCustomNameVisibility() {
+        if (!isSpawned())
+            return;
         String nameplateVisible = data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString();
         if (requiresNameHologram()) {
             nameplateVisible = "false";
@@ -576,9 +578,6 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private void updateFlyableState() {
-        if (!CitizensAPI.hasImplementation())
-            return;
-
         EntityType type = isSpawned() ? getEntity().getType() : getOrAddTrait(MobType.class).getType();
         if (type == null || !Util.isAlwaysFlyable(type))
             return;
@@ -592,7 +591,7 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private void updateScoreboard() {
-        if (data().has(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME)) {
+        if (isSpawned() && data().has(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME)) {
             getOrAddTrait(ScoreboardTrait.class).update();
         }
     }
