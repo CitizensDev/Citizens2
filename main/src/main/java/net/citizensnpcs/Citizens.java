@@ -609,7 +609,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private class CitizensSaveTask implements Runnable {
         @Override
         public void run() {
-            storeNPCs(false);
+            storeNPCs(true);
         }
     }
 }
