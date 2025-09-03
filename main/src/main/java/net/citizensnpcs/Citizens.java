@@ -179,7 +179,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
             if (save) {
                 if (registry == npcRegistry) {
-                    storeNPCs(false);
+                    storeNPCsNow();
                 } else {
                     registry.saveToStore();
                 }
@@ -337,7 +337,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     public void onDependentPluginDisable() {
         if (enabled) {
-            storeNPCs(false);
+            storeNPCsNow();
             saveOnDisable = false;
         }
     }
@@ -402,7 +402,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         traitFactory = new CitizensTraitFactory(this);
         selector = new NPCSelector(this);
+
+        saveResource("/templates/citizens/templates.yml", true);
         templateRegistry = new TemplateRegistry(new File(getDataFolder(), "templates").toPath());
+
         if (!new File(getDataFolder(), "skins").exists()) {
             new File(getDataFolder(), "skins").mkdir();
         }
@@ -538,7 +541,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             metrics.addCustomChart(new Metrics.SingleLineChart("total_npcs",
                     () -> npcRegistry == null ? 0 : Iterables.size(npcRegistry)));
             metrics.addCustomChart(new Metrics.SingleLineChart("total_templates",
-                    () -> npcRegistry == null ? 0 : Iterables.size(templateRegistry.getAllTemplates())));
+                    () -> npcRegistry == null ? 0
+                            : (int) templateRegistry.getAllTemplates().stream()
+                                    .filter(t -> !t.getKey().getNamespace().equals("citizens")).count()));
             metrics.addCustomChart(new Metrics.SimplePie("locale", () -> Locale.getDefault().getLanguage()));
             metrics.addCustomChart(new Metrics.AdvancedPie("traits", () -> {
                 Map<String, Integer> res = Maps.newHashMap();
@@ -557,23 +562,21 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     public void storeNPCs() {
-        storeNPCs(false);
-    }
-
-    public void storeNPCs(boolean async) {
         if (saves == null)
             return;
         saves.storeAll(npcRegistry);
         shops.storeShops();
-        if (async) {
-            new Thread(() -> {
-                shops.saveToDisk();
-                saves.saveToDiskImmediate();
-            }).start();
-        } else {
-            shops.saveToDisk();
-            saves.saveToDiskImmediate();
-        }
+        shops.saveToDisk();
+        saves.saveToDisk();
+    }
+
+    public void storeNPCsNow() {
+        if (saves == null)
+            return;
+        saves.storeAll(npcRegistry);
+        shops.storeShops();
+        shops.saveToDiskImmediate();
+        saves.saveToDiskImmediate();
     }
 
     @Override
@@ -609,7 +612,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private class CitizensSaveTask implements Runnable {
         @Override
         public void run() {
-            storeNPCs(true);
+            storeNPCs();
         }
     }
 }

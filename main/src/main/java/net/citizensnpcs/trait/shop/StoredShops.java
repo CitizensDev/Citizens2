@@ -61,6 +61,10 @@ public class StoredShops {
     }
 
     public void saveToDisk() {
+        storage.saveAsync();
+    }
+
+    public void saveToDiskImmediate() {
         storage.save();
     }
 

@@ -18,7 +18,7 @@ public interface EntityPacketTracker extends Runnable {
 
     public void unlinkAll(Consumer<Player> callback);
 
-    public static class PacketAggregator {
+    public static class PacketBundler {
         private final Set<PlayerConnection> connections = Sets.newHashSet();
         private List<Object> packets;
 
@@ -82,7 +82,6 @@ public interface EntityPacketTracker extends Runnable {
                 PlayerConnection other = (PlayerConnection) obj;
                 if (!Objects.equals(uuid, other.uuid)) {
                     return false;
-
                 }
                 return true;
             }

@@ -27,6 +27,7 @@ import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.AttributeTrait;
 import net.citizensnpcs.trait.BatTrait;
+import net.citizensnpcs.trait.BehaviorTrait;
 import net.citizensnpcs.trait.BoundingBoxTrait;
 import net.citizensnpcs.trait.ChunkTicketTrait;
 import net.citizensnpcs.trait.ClickRedirectTrait;
@@ -87,6 +88,8 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(AttributeTrait.class));
         registerTrait(TraitInfo.create(Anchors.class).optInToStats());
         registerTrait(TraitInfo.create(BatTrait.class));
+        registerTrait(TraitInfo.create(BehaviorTrait.class).optInToStats()
+                .withTemplateParser(BehaviorTrait.createTemplateParser()));
         registerTrait(TraitInfo.create(BoundingBoxTrait.class));
         registerTrait(TraitInfo.create(ClickRedirectTrait.class));
         registerTrait(TraitInfo.create(ChunkTicketTrait.class));

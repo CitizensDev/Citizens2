@@ -73,7 +73,7 @@ import net.citizensnpcs.trait.PacketNPC;
 import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
-import net.citizensnpcs.util.EntityPacketTracker.PacketAggregator;
+import net.citizensnpcs.util.EntityPacketTracker.PacketBundler;
 
 public class NMS {
     private NMS() {
@@ -187,11 +187,11 @@ public class NMS {
     }
 
     public static EntityPacketTracker createPacketTracker(Entity entity) {
-        return createPacketTracker(entity, new PacketAggregator());
+        return createPacketTracker(entity, new PacketBundler());
     }
 
-    public static EntityPacketTracker createPacketTracker(Entity entity, PacketAggregator agg) {
-        return BRIDGE.createPacketTracker(entity, agg);
+    public static EntityPacketTracker createPacketTracker(Entity entity, PacketBundler bundler) {
+        return BRIDGE.createPacketTracker(entity, bundler);
     }
 
     /*
