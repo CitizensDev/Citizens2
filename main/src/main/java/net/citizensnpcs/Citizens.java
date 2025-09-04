@@ -403,7 +403,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         traitFactory = new CitizensTraitFactory(this);
         selector = new NPCSelector(this);
 
-        saveResource("/templates/citizens/templates.yml", true);
+        saveResource("templates/citizens/templates.yml", true);
         templateRegistry = new TemplateRegistry(new File(getDataFolder(), "templates").toPath());
 
         if (!new File(getDataFolder(), "skins").exists()) {
