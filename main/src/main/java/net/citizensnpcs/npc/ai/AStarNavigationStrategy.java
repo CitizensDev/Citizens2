@@ -96,7 +96,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location dest = plan.isFinalEntry() ? current : Util.getCenterLocation(current.getBlock());
         /* Proper door movement - gets stuck on corners at times
-        
+
         Block block = loc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
          if (MinecraftBlockExaminer.isDoor(block.getType())) {
            Door door = (Door) block.getState().getData();
@@ -166,7 +166,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             });
             VectorGoal goal = new VectorGoal(to, (float) params.pathDistanceMargin());
             state = ASTAR.getStateFor(goal,
-                    new VectorNode(goal, from, new NMSChunkBlockSource(from, params.range()), params.examiners()));
+                    new VectorNode(goal, from, new NMSChunkBlockSource(from, params.range()), params));
         }
 
         public CancelReason tick(int iterationsPerTick, int maxIterations) {

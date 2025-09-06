@@ -85,8 +85,8 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location location = npc.getEntity().getLocation();
         VectorGoal goal = new VectorGoal(target, (float) parameters.pathDistanceMargin());
-        state = ASTAR.getStateFor(goal, new VectorNode(goal, location,
-                new NMSChunkBlockSource(location, parameters.range()), parameters.examiners()));
+        state = ASTAR.getStateFor(goal,
+                new VectorNode(goal, location, new NMSChunkBlockSource(location, parameters.range()), parameters));
     }
 
     public void setPlan(Path path) {
