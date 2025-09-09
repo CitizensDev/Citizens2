@@ -125,7 +125,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         } else {
             Vector dir = dest.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize()
                     .multiply(0.2 * params.speedModifier());
-            boolean liquidOrInLiquid = MinecraftBlockExaminer.isLiquidOrInLiquid(loc.getBlock());
+            boolean liquidOrInLiquid = MinecraftBlockExaminer.isLiquidOrWaterlogged(loc.getBlock());
             if (dY >= 1 && xzDistance <= 0.4 || dY >= 0.2 && liquidOrInLiquid) {
                 dir.add(new Vector(0, 0.75, 0));
             }
@@ -153,10 +153,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
                 public float getCost(BlockSource source, PathPoint point) {
                     Vector pos = point.getVector();
                     Material above = source.getMaterialAt(pos.getBlockX(), pos.getBlockY() + 1, pos.getBlockZ());
-                    return params.avoidWater() && (MinecraftBlockExaminer.isLiquid(above)
-                            || MinecraftBlockExaminer.isLiquidOrInLiquid(pos.toLocation(source.getWorld()).getBlock()))
-                                    ? 2F
-                                    : 0F;
+                    return params.avoidWater() && (MinecraftBlockExaminer.isLiquid(above) || MinecraftBlockExaminer
+                            .isLiquidOrWaterlogged(source.getMaterialAt(pos), source.getBlockDataAt(pos))) ? 2F : 0F;
                 }
 
                 @Override

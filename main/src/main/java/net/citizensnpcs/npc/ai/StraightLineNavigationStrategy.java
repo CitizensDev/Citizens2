@@ -120,7 +120,7 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             Vector dir = destVector.subtract(currLoc.toVector()).normalize().multiply(0.2);
             Block in = currLoc.getBlock();
             if (distance > 0 && dY >= 1 && xzDistance <= 2.75
-                    || dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrInLiquid(in)) {
+                    || dY >= 0.2 && MinecraftBlockExaminer.isLiquidOrWaterlogged(in)) {
                 dir.add(new Vector(0, 0.75, 0));
             }
             Util.faceLocation(npc.getEntity(), destLoc);
