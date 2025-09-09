@@ -75,8 +75,7 @@ public class Settings {
         ALWAYS_USE_NAME_HOLOGRAM("Always use holograms for names instead of only for hex colors / placeholders",
                 "npc.always-use-name-holograms", false),
         ASTAR_ITERATIONS_PER_TICK("Number of blocks to search per tick (Citizens pathfinder)",
-                "npc.pathfinding.new-finder.iterations-per-tick", "npc.pathfinding.new-finder.iterations-per-tick",
-                250),
+                "npc.pathfinding.citizens.iterations-per-tick", "npc.pathfinding.new-finder.iterations-per-tick", 250),
         AUTH_SERVER_URL("Search for gameprofiles using this URL", "general.authlib.profile-url",
                 "https://sessionserver.mojang.com/session/minecraft/profile/"),
         BOSSBAR_RANGE("The default bossbar range, in blocks", "npc.default.bossbar-view-range", 64),
@@ -97,6 +96,14 @@ public class Settings {
         CHAT_RANGE("Nearby player range in blocks", "npc.chat.options.range", 5),
         CHECK_MINECRAFT_VERSION("Whether to check the minecraft version for compatibility (do not change)",
                 "advanced.check-minecraft-version", true),
+        CITIZENS_PATHFINDER_ASYNC_CHUNK_CACHE_TTL(
+                "Duration of time to keep chunks used in async pathfinding in memory for.<br>Decrease this value if you expect chunks to be changed rapidly during pathfinding, or increase it if chunks rarely change during pathfinding at the expense of memory.",
+                "npc.pathfinding.citizens.async-chunk-cache-expiry", "5s"),
+        CITIZENS_PATHFINDER_CHECK_BOUNDING_BOXES(
+                "Whether to check bounding boxes when pathfinding such as between fences, inside doors, or other half-blocks",
+                "npc.pathfinding.citizens.check-bounding-boxes", false),
+        CITIZENS_PATHFINDER_OPENS_DOORS("Whether to open doors while pathfinding (should close them as well)",
+                "npc.pathfinding.citizens.open-doors", false),
         CONTROLLABLE_GROUND_DIRECTION_MODIFIER("The percentage to increase speed when controlling NPCs on the ground",
                 "npc.controllable.ground-direction-modifier", 1.0D),
         DEBUG_FILE("Send Citizens debug output to a specific file", "general.debug-file", ""),
@@ -225,16 +232,11 @@ public class Settings {
                 "How many times to try load NPC skins (due to Minecraft rate-limiting skin requests, should rarely be less than 5",
                 "npc.skins.max-retries", -1),
         MAXIMUM_ASTAR_ITERATIONS("The maximum number of blocks to check when pathfinding",
-                "npc.pathfinding.maximum-new-pathfinder-iterations", "npc.pathfinding.new-finder.maximum-iterations",
-                1024),
+                "npc.pathfinding.citizens.maximum-pathfinder-iterations",
+                "npc.pathfinding.new-finder.maximum-iterations", 1024),
         MAXIMUM_VISITED_NODES("The maximum number of blocks to check", "npc.pathfinding.maximum-visited-blocks",
                 "npc.pathfinding.minecraft.max-visited-blocks", 1024),
         MESSAGE_COLOUR("general.color-scheme.message", "<green>"),
-        NEW_PATHFINDER_CHECK_BOUNDING_BOXES(
-                "Whether to check bounding boxes when pathfinding such as between fences, inside doors, or other half-blocks",
-                "npc.pathfinding.new-finder.check-bounding-boxes", false),
-        NEW_PATHFINDER_OPENS_DOORS("Whether to open doors while pathfinding (should close them as well)",
-                "npc.pathfinding.new-finder.open-doors", false),
         NPC_ATTACK_DISTANCE("The range in blocks before attacking the target", "npc.pathfinding.attack-range", 1.75),
         NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN(
                 "The global cooldown before a command can be used again, must be in seconds",
@@ -346,6 +348,13 @@ public class Settings {
 
         public double asDouble() {
             return ((Number) value).doubleValue();
+        }
+
+        public Duration asDuration() {
+            if (duration == null) {
+                duration = SpigotUtil.parseDuration(asString(), null);
+            }
+            return duration;
         }
 
         public float asFloat() {

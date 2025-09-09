@@ -19,6 +19,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.TargetType;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.astar.AStarMachine;
+import net.citizensnpcs.api.astar.AStarMachine.AStarState;
 import net.citizensnpcs.api.astar.pathfinder.BlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.FlyingBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
@@ -37,7 +38,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
     private final NavigatorParameters parameters;
     private Path plan;
     private boolean planned;
-    private AStarMachine<VectorNode, Path>.AStarState state;
+    private AStarState<VectorNode> state;
     private final Location target;
     private Vector vector;
 

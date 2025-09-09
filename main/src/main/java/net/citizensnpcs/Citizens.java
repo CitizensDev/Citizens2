@@ -39,6 +39,7 @@ import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.LocationLookup;
 import net.citizensnpcs.api.NMSHelper;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.astar.pathfinder.AsyncChunkCache;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.Injector;
 import net.citizensnpcs.api.event.CitizensEnableEvent;
@@ -83,6 +84,7 @@ import net.milkbowl.vault.economy.Economy;
 
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final List<NPCRegistry> anonymousRegistries = Lists.newArrayList();
+    private AsyncChunkCache asyncChunkCache;
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private boolean enabled;
@@ -189,6 +191,16 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
+    public AsyncChunkCache getAsyncChunkCache() {
+        if (asyncChunkCache == null) {
+            // TODO: should parallelism be configurable? or too confusing?
+            asyncChunkCache = new AsyncChunkCache(this, 2,
+                    Setting.CITIZENS_PATHFINDER_ASYNC_CHUNK_CACHE_TTL.asDuration().toMillis());
+        }
+        return asyncChunkCache;
+    }
+
+    @Override
     public CommandManager getCommandManager() {
         return commands;
     }
@@ -198,7 +210,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     @Override
-    public net.citizensnpcs.api.npc.NPCSelector getDefaultNPCSelector() {
+    public NPCSelector getDefaultNPCSelector() {
         return selector;
     }
 
