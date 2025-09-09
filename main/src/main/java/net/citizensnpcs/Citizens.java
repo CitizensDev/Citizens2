@@ -366,6 +366,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         templateRegistry = null;
         npcRegistry = null;
         locationLookup = null;
+        if (asyncChunkCache != null) {
+            asyncChunkCache.shutdown();
+            asyncChunkCache = null;
+        }
         enabled = false;
         saveOnDisable = true;
         ProfileFetcher.shutdown();
