@@ -157,8 +157,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     public static class AStarPlanner implements PathPlanner {
         int iterations;
-        int iterationsPerTick = Setting.ASTAR_ITERATIONS_PER_TICK.asInt();
-        int maxIterations = Setting.MAXIMUM_ASTAR_ITERATIONS.asInt();
+        int iterationsPerTick = Setting.CITIZENS_PATHFINDER_ASTAR_ITERATIONS_PER_TICK.asInt();
+        int maxIterations = Setting.CITIZENS_PATHFINDER_MAXIMUM_ASTAR_ITERATIONS.asInt();
         NavigatorParameters params;
         Path plan;
         AStarState<VectorNode> state;

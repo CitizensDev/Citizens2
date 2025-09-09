@@ -194,7 +194,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public AsyncChunkCache getAsyncChunkCache() {
         if (asyncChunkCache == null) {
             // TODO: should parallelism be configurable? or too confusing?
-            asyncChunkCache = new AsyncChunkCache(this, 2,
+            asyncChunkCache = new AsyncChunkCache(this, Runtime.getRuntime().availableProcessors() > 8 ? 4 : 2,
                     Setting.CITIZENS_PATHFINDER_ASYNC_CHUNK_CACHE_TTL.asDuration().toMillis());
         }
         return asyncChunkCache;

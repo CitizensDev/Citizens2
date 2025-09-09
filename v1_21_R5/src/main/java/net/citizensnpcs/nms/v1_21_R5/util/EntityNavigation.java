@@ -64,7 +64,7 @@ public class EntityNavigation extends PathNavigation {
         this.followRange = entityinsentient.getAttribute(Attributes.FOLLOW_RANGE);
         this.nodeEvaluator = new EntityNodeEvaluator();
         this.nodeEvaluator.setCanPassDoors(true);
-        this.pathFinder = new EntityPathfinder(this.nodeEvaluator, Setting.MAXIMUM_VISITED_NODES.asInt());
+        this.pathFinder = new EntityPathfinder(this.nodeEvaluator, Setting.MINECRAFT_PATHFINDER_MAXIMUM_VISITED_NODES.asInt());
     }
 
     @Override
