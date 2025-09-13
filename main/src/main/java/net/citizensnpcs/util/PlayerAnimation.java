@@ -21,6 +21,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SleepTrait;
+import net.citizensnpcs.trait.SneakTrait;
 
 public enum PlayerAnimation {
     ARM_SWING,
@@ -60,7 +61,17 @@ public enum PlayerAnimation {
     }
 
     public void play(Player player, Supplier<Iterable<Player>> to) {
-        if (this == SIT) {
+        if (this == SNEAK) {
+            if (player instanceof NPCHolder) {
+                ((NPCHolder) player).getNPC().getOrAddTrait(SneakTrait.class).setSneaking(true);
+                return;
+            }
+        } else if (this == STOP_SNEAKING) {
+            if (player instanceof NPCHolder) {
+                ((NPCHolder) player).getNPC().getOrAddTrait(SneakTrait.class).setSneaking(false);
+                return;
+            }
+        } else if (this == SIT) {
             if (player instanceof NPCHolder) {
                 ((NPCHolder) player).getNPC().getOrAddTrait(SitTrait.class).setSitting(player.getLocation());
                 return;
