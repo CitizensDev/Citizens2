@@ -34,6 +34,11 @@ public class ChunkTicketTrait extends Trait {
     }
 
     @Override
+    public void onRemove() {
+        onDespawn();
+    }
+
+    @Override
     public void onSpawn() {
         if (!SUPPORT_CHUNK_TICKETS)
             return;
@@ -54,23 +59,21 @@ public class ChunkTicketTrait extends Trait {
 
     @Override
     public void run() {
-        if (!SUPPORT_CHUNK_TICKETS)
+        if (!SUPPORT_CHUNK_TICKETS || ticks <= 0)
             return;
-        if (ticks > 0) {
-            ticks--;
-            if (ticks == 0) {
-                onDespawn();
-            }
-            if (active != null) {
-                Chunk chunk = npc.getEntity().getLocation().getChunk();
-                ChunkCoord next = new ChunkCoord(chunk);
-                if (!next.equals(active)) {
-                    active.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
-                    chunk.addPluginChunkTicket(CitizensAPI.getPlugin());
-                    active = next;
-                } else {
-                    chunk.addPluginChunkTicket(CitizensAPI.getPlugin()); // no way to tell if chunk already has a ticket
-                }
+        ticks--;
+        if (ticks == 0) {
+            onDespawn();
+        }
+        if (active != null) {
+            Chunk chunk = npc.getEntity().getLocation().getChunk();
+            ChunkCoord next = new ChunkCoord(chunk);
+            if (!next.equals(active)) {
+                active.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
+                chunk.addPluginChunkTicket(CitizensAPI.getPlugin());
+                active = next;
+            } else {
+                chunk.addPluginChunkTicket(CitizensAPI.getPlugin()); // no way to tell if chunk already has a ticket
             }
         }
     }
