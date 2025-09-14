@@ -45,9 +45,6 @@ public class ChunkTicketTrait extends Trait {
         if (npc.data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean())) {
             ticks = -1;
         }
-        Chunk chunk = npc.getEntity().getLocation().getChunk();
-        active = new ChunkCoord(chunk);
-        active.getChunk().addPluginChunkTicket(CitizensAPI.getPlugin());
         // https://github.com/PaperMC/Paper/issues/9581
         // XXX: can be removed if support for <=1.21.8 is dropped
         if (ticks >= 0 && SpigotUtil.getVersion()[1] <= 21
@@ -55,25 +52,31 @@ public class ChunkTicketTrait extends Trait {
                 && timeout < System.currentTimeMillis()) {
             ticks = 2;
         }
+        if (ticks != 0) {
+            Chunk chunk = npc.getEntity().getLocation().getChunk();
+            chunk.addPluginChunkTicket(CitizensAPI.getPlugin());
+            active = new ChunkCoord(chunk);
+        }
     }
 
     @Override
     public void run() {
         if (!SUPPORT_CHUNK_TICKETS || ticks <= 0)
             return;
-        ticks--;
-        if (ticks == 0) {
+        if (--ticks == 0) {
             onDespawn();
+            return;
         }
         if (active != null) {
+            Plugin plugin = CitizensAPI.getPlugin();
             Chunk chunk = npc.getEntity().getLocation().getChunk();
             ChunkCoord next = new ChunkCoord(chunk);
             if (!next.equals(active)) {
-                active.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
-                chunk.addPluginChunkTicket(CitizensAPI.getPlugin());
+                active.getChunk().removePluginChunkTicket(plugin);
+                chunk.addPluginChunkTicket(plugin);
                 active = next;
-            } else {
-                chunk.addPluginChunkTicket(CitizensAPI.getPlugin()); // no way to tell if chunk already has a ticket
+            } else if (!chunk.getPluginChunkTickets().contains(plugin)) {
+                chunk.addPluginChunkTicket(plugin);
             }
         }
     }
