@@ -61,7 +61,7 @@ public class ChunkTicketTrait extends Trait {
 
     @Override
     public void run() {
-        if (!SUPPORT_CHUNK_TICKETS || ticks <= 0)
+        if (!SUPPORT_CHUNK_TICKETS || ticks == 0)
             return;
         if (--ticks == 0) {
             onDespawn();
