@@ -597,18 +597,18 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private void updateUsingItemState(Player player) {
-        boolean useItem = data().get(NPC.Metadata.USING_HELD_ITEM, false),
+        boolean helditem = data().get(NPC.Metadata.USING_HELD_ITEM, false),
                 offhand = data().get(NPC.Metadata.USING_OFFHAND_ITEM, false);
 
         if (!SUPPORT_USE_ITEM)
             return;
 
-        if (data().has("citizens-was-using-item")) {
+        if (!helditem && !offhand && data().has("citizens-was-using-item")) {
             PlayerAnimation.STOP_USE_ITEM.play(player, 64);
             data().remove("citizens-was-using-item");
         }
         try {
-            if (useItem) {
+            if (helditem) {
                 PlayerAnimation.START_USE_MAINHAND_ITEM.play(player, 64);
                 data().set("citizens-was-using-item", true);
             } else if (offhand) {
