@@ -85,7 +85,8 @@ public class SitTrait extends Trait {
         if (chair.isSpawned() && !NMS.getPassengers(chair.getEntity()).contains(npc.getEntity())) {
             NMS.mount(chair.getEntity(), npc.getEntity());
         }
-        if (chair.getStoredLocation() != null && chair.getStoredLocation().distance(sittingAt) >= 0.03) {
+        if (chair.getStoredLocation() != null && (chair.getStoredLocation().getWorld() != sittingAt.getWorld()
+                || chair.getStoredLocation().distance(sittingAt) >= 0.03)) {
             chair.teleport(sittingAt.clone(), TeleportCause.PLUGIN);
         }
     }
