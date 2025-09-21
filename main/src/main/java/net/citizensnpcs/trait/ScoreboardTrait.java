@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -38,7 +37,7 @@ public class ScoreboardTrait extends Trait {
     private final PerPlayerMetadata<Boolean> metadata;
     private ChatColor previousGlowingColor;
     @Persist
-    private Set<String> tags = new HashSet<>();
+    private Set<String> tags = Sets.newHashSet("CITIZENS_NPC");
 
     public ScoreboardTrait() {
         super("scoreboardtrait");
@@ -94,7 +93,7 @@ public class ScoreboardTrait extends Trait {
 
     @Override
     public void load(DataKey key) {
-        if (color.isFormat()) {
+        if (color != null && color.isFormat()) {
             color = null;
         }
     }
@@ -150,7 +149,6 @@ public class ScoreboardTrait extends Trait {
     public void onSpawn() {
         changed = true;
         if (SUPPORT_TAGS) {
-            tags.add("CITIZENS_NPC");
             npc.getEntity().getScoreboardTags().clear();
             npc.getEntity().getScoreboardTags().addAll(tags);
         }
