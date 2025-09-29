@@ -406,10 +406,7 @@ public class CitizensNPC extends AbstractNPC {
                         PlayerUpdateTask.register(entity);
                         if (SUPPORT_ATTRIBUTES
                                 && Util.getRegistryValue(Registry.ATTRIBUTE, "waypoint_transmit_range") != null) {
-                            AttributeTrait attr = getOrAddTrait(AttributeTrait.class);
-                            if (!attr.hasAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE)) {
-                                attr.setAttributeValue(Attribute.WAYPOINT_TRANSMIT_RANGE, 0);
-                            }
+                            ((LivingEntity) entity).getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE).setBaseValue(0);
                         }
                     }
                     le.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
