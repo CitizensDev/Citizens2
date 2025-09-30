@@ -5,6 +5,7 @@ import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.trait.TraitTemplateParser;
+import net.citizensnpcs.api.util.DataKey;
 
 @TraitName("behavior")
 public class BehaviorTrait extends Trait {
@@ -39,6 +40,40 @@ public class BehaviorTrait extends Trait {
     @Override
     public void onSpawn() {
         npc.getDefaultGoalController().addBehavior(root, 1);
+    }
+
+    /*
+     * sequence:
+     *  -
+     *  -
+     *  -
+     * selector:
+     *  -
+     *  -
+     *  -
+     * if <cond>:
+     * else <cond>:
+     * then (callback):
+     * loop <loop>:
+     * random (cond):
+     */
+    private Behavior parseLeaf(String name) {
+        return null;
+    }
+
+    private Behavior parseLeaf(String name, DataKey key) {
+        return null;
+    }
+
+    private Behavior recursiveParse(DataKey key) {
+        if (key.getSubKeys().iterator().hasNext()) {
+            for (DataKey sub : key.getSubKeys()) {
+                return parseLeaf(sub.name(), sub);
+            }
+        } else {
+            return parseLeaf(key.getString(""));
+        }
+        return root;
     }
 
     public static TraitTemplateParser createTemplateParser() {

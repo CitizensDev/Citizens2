@@ -412,9 +412,9 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
         // updatingUsingItem
         if (isUsingItem()) {
-            if (ItemStack.isSameItem(this.getItemInHand(this.getUsedItemHand()), this.useItem)) {
-                useItem = this.getItemInHand(this.getUsedItemHand());
-                updateUsingItem(this.useItem);
+            if (ItemStack.isSameItem(getItemInHand(getUsedItemHand()), useItem)) {
+                useItem = getItemInHand(getUsedItemHand());
+                updateUsingItem(useItem);
             } else {
                 stopUsingItem();
             }

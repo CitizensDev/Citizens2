@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.bukkit.entity.Player;
 
@@ -43,6 +44,14 @@ public interface EntityPacketTracker extends Runnable {
         public void send(Object packet, List<UUID> ignoring) {
             for (PlayerConnection conn : connections) {
                 if (ignoring.contains(conn.uuid))
+                    continue;
+                conn.conn.accept(packet);
+            }
+        }
+
+        public void send(Object packet, Predicate<UUID> ignoring) {
+            for (PlayerConnection conn : connections) {
+                if (ignoring.test(conn.uuid))
                     continue;
                 conn.conn.accept(packet);
             }

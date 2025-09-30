@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
@@ -19,6 +20,7 @@ import com.mojang.authlib.ProfileLookupCallback;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.util.GameProfileWrapper;
 import net.citizensnpcs.util.MojangSkinGenerator;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -133,7 +135,8 @@ class ProfileFetchThread implements Runnable {
         NMS.findProfilesByNames(javaNames.toArray(new String[javaNames.size()]), new ProfileLookupCallback() {
             @SuppressWarnings("unused")
             public void onProfileLookupFailed(GameProfile profile, Exception e) {
-                onProfileLookupFailed(profile.getName(), e);
+                GameProfileWrapper gpw = GameProfileWrapper.fromMojangProfile(profile);
+                onProfileLookupFailed(gpw.name, e);
             }
 
             @Override
@@ -155,19 +158,25 @@ class ProfileFetchThread implements Runnable {
                 }
             }
 
-            @Override
             public void onProfileLookupSucceeded(GameProfile profile) {
-                Messaging.idebug(() -> "Fetched profile " + profile.getId() + " for player " + profile.getName());
+                GameProfileWrapper gpw = GameProfileWrapper.fromMojangProfile(profile);
+                onProfileLookupSucceeded(gpw.name, gpw.uuid);
+            }
 
-                ProfileRequest request = findRequest(profile.getName(), requests);
+            @Override
+            public void onProfileLookupSucceeded(String profileName, UUID profileId) {
+                Messaging.idebug(() -> "Fetched profile " + profileId + " for player " + profileName);
+
+                ProfileRequest request = findRequest(profileName, requests);
                 if (request == null)
                     return;
 
                 try {
-                    request.setResult(NMS.fillProfileProperties(profile, true), ProfileFetchResult.SUCCESS);
+                    request.setResult(NMS.fillProfileProperties(new GameProfile(profileId, profileName), true),
+                            ProfileFetchResult.SUCCESS);
                 } catch (Throwable e) {
                     if (Messaging.isDebugging()) {
-                        Messaging.debug("Filling profile lookup for player '" + profile.getName() + "' failed: "
+                        Messaging.debug("Filling profile lookup for player '" + profileName + "' failed: "
                                 + getExceptionMsg(e) + " " + isTooManyRequests(e));
                         Messaging.debug(Throwables.getStackTraceAsString(e));
                     }

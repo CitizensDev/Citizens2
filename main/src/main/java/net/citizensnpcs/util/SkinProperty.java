@@ -4,7 +4,6 @@ import java.lang.invoke.MethodHandle;
 import java.util.Collection;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 
 public class SkinProperty {
     public final String name;
@@ -17,9 +16,11 @@ public class SkinProperty {
         this.signature = signature;
     }
 
-    public void apply(GameProfile profile) {
-        profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
-        profile.getProperties().put("textures", new com.mojang.authlib.properties.Property(name, value, signature));
+    public void applyTextures(GameProfile profile) {
+        GameProfileWrapper gpw = GameProfileWrapper.fromMojangProfile(profile);
+        gpw.properties.removeAll("textures"); // ensure client does not crash due to duplicate properties.
+        gpw.properties.put("textures", this);
+        gpw.applyProperties(profile);
     }
 
     public static SkinProperty fromMojang(Object prop) {
@@ -37,16 +38,22 @@ public class SkinProperty {
     public static SkinProperty fromMojangProfile(GameProfile profile) {
         if (profile == null)
             return null;
-        Collection<Property> textures = profile.getProperties().get("textures");
-        if (textures == null || textures.size() == 0)
+        GameProfileWrapper gpw = GameProfileWrapper.fromMojangProfile(profile);
+        Collection<SkinProperty> textures = gpw.properties.get("textures");
+        if (textures.size() == 0)
             return null;
-        return fromMojang(textures.iterator().next());
+        return gpw.properties.get("textures").iterator().next();
     }
 
     private static MethodHandle GET_NAME_METHOD = null;
     private static MethodHandle GET_SIGNATURE_METHOD = null;
     private static MethodHandle GET_VALUE_METHOD = null;
+    private static MethodHandle PROPERTIES_METHOD = null;
     static {
+        PROPERTIES_METHOD = NMS.getMethodHandle(GameProfile.class, "getProperties", false);
+        if (PROPERTIES_METHOD == null) {
+            PROPERTIES_METHOD = NMS.getMethodHandle(GameProfile.class, "properties", false);
+        }
         GET_NAME_METHOD = NMS.getMethodHandle(com.mojang.authlib.properties.Property.class, "getName", false);
         if (GET_NAME_METHOD == null) {
             GET_NAME_METHOD = NMS.getMethodHandle(com.mojang.authlib.properties.Property.class, "name", false);

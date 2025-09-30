@@ -25,6 +25,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.skin.profile.ProfileFetcher;
 import net.citizensnpcs.trait.SkinTrait;
+import net.citizensnpcs.util.GameProfileWrapper;
 import net.citizensnpcs.util.SkinProperty;
 
 /**
@@ -250,11 +251,12 @@ public class Skin {
             isValid = false;
             return;
         }
-        if (!profile.getName().toLowerCase(Locale.ROOT).equals(skinName)) {
-            Messaging.debug("GameProfile name (" + profile.getName() + ") and " + "skin name (" + skinName
+        GameProfileWrapper gpw = GameProfileWrapper.fromMojangProfile(profile);
+        if (!gpw.name.toLowerCase(Locale.ROOT).equals(skinName)) {
+            Messaging.debug("GameProfile name (" + gpw.name + ") and " + "skin name (" + skinName
                     + ") do not match. Has the user renamed recently?");
         }
-        skinId = profile.getId();
+        skinId = gpw.uuid;
         skinData = SkinProperty.fromMojangProfile(profile);
 
         List<SkinnableEntity> entities = new ArrayList<>(pending.keySet());
@@ -363,7 +365,7 @@ public class Skin {
                 && current.signature.equals(skinProperty.signature))
             return;
 
-        skinProperty.apply(profile);
+        skinProperty.applyTextures(profile);
     }
 
     private static final Map<String, Skin> CACHE = new HashMap<>(20);

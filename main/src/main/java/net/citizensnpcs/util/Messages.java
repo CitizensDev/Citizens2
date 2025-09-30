@@ -94,6 +94,7 @@ public class Messages {
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
     public static final String COPIER_EDITOR_BEGIN = "citizens.editors.copier.begin";
     public static final String COPIER_EDITOR_END = "citizens.editors.copier.end";
+    public static final String COPPER_WEATHER_STATE_SET = "citizens.commands.npc.coppergolem.weather-state-set";
     public static final String COSMETIC_EQUIPMENT_SET = "citizens.commands.npc.setequipment.cosmetic-set";
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.commands.waypoints.current-provider";
     public static final String DEFAULT_POSE_SET = "citizens.commands.npc.pose.default-pose-set";
@@ -152,6 +153,7 @@ public class Messages {
     public static final String GAMEMODE_DESCRIBE = "citizens.commands.npc.gamemode.describe";
     public static final String GAMEMODE_INVALID = "citizens.commands.npc.gamemode.invalid";
     public static final String GAMEMODE_SET = "citizens.commands.npc.gamemode.set";
+    public static final String GLOWING_COLOR_CANNOT_BE_FORMAT = "citizens.commands.npc.glowing.color-cannot-be-format";
     public static final String GLOWING_COLOR_SET = "citizens.commands.npc.glowing.color-set";
     public static final String GLOWING_SET = "citizens.commands.npc.glowing.set";
     public static final String GLOWING_UNSET = "citizens.commands.npc.glowing.unset";
@@ -203,6 +205,7 @@ public class Messages {
     public static final String INVALID_BEE_ANGER = "citizens.commands.npc.bee.invalid-anger";
     public static final String INVALID_CAT_COLLAR_COLOR = "citizens.commands.npc.cat.invalid-collar-color";
     public static final String INVALID_CAT_TYPE = "citizens.commands.npc.cat.invalid-type";
+    public static final String INVALID_COPPER_WEATHER_STATE = "citizens.commands.npc.coppergolem.invalid-weather-state";
     public static final String INVALID_ENTITY_TYPE = "citizens.commands.npc.type.invalid";
     public static final String INVALID_FOX_TYPE = "citizens.commands.npc.fox.invalid-fox-type";
     public static final String INVALID_FROG_VARIANT = "citizens.commands.npc.frog.invalid-variant";

@@ -48,10 +48,10 @@ public class AttributeTrait extends Trait {
     public void onSpawn() {
         if (!(npc.getEntity() instanceof LivingEntity))
             return;
-        LivingEntity le = (LivingEntity) npc.getEntity();
+        LivingEntity entity = (LivingEntity) npc.getEntity();
         for (Map.Entry<Attribute, Double> entry : attributes.entrySet()) {
             final Attribute key = entry.getKey();
-            final AttributeInstance attributeInstance = le.getAttribute(key);
+            final AttributeInstance attributeInstance = entity.getAttribute(key);
             if (attributeInstance == null)
                 continue;
 

@@ -1261,6 +1261,8 @@ public class NPCCommands {
     public void glowing(CommandContext args, CommandSender sender, NPC npc, @Flag("color") ChatColor color)
             throws CommandException {
         if (color != null) {
+            if (color.isFormat())
+                throw new CommandException(Messages.GLOWING_COLOR_CANNOT_BE_FORMAT, color.name());
             npc.getOrAddTrait(ScoreboardTrait.class).setColor(color);
             if (!npc.data().has(NPC.Metadata.GLOWING)) {
                 npc.data().setPersistent(NPC.Metadata.GLOWING, true);

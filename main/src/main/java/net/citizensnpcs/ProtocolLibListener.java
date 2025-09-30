@@ -35,11 +35,8 @@ import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 
 import net.citizensnpcs.api.event.NPCAddTraitEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
@@ -56,7 +53,6 @@ import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.SkinProperty;
 import net.citizensnpcs.util.Util;
 
 public class ProtocolLibListener implements Listener {
@@ -238,7 +234,6 @@ public class ProtocolLibListener implements Listener {
                     return;
 
                 boolean changed = false;
-                GameProfile playerProfile = null;
                 WrappedGameProfile wgp = null;
                 WrappedChatComponent playerName = null;
                 for (int i = 0; i < list.size(); i++) {
@@ -250,8 +245,7 @@ public class ProtocolLibListener implements Listener {
                     if (trait == null || !trait.isMirroring(event.getPlayer()))
                         continue;
 
-                    if (playerProfile == null) {
-                        playerProfile = NMS.getProfile(event.getPlayer());
+                    if (wgp == null) {
                         wgp = WrappedGameProfile.fromPlayer(event.getPlayer());
                         playerName = WrappedChatComponent.fromText(
                                 Util.possiblyStripBedrockPrefix(event.getPlayer().getDisplayName(), wgp.getUUID()));
@@ -261,17 +255,14 @@ public class ProtocolLibListener implements Listener {
                                 npcInfo.getGameMode(), playerName));
                         continue;
                     }
-                    Collection<Property> textures = playerProfile.getProperties().get("textures");
+                    Collection<WrappedSignedProperty> textures = wgp.getProperties().get("textures");
                     if (textures == null || textures.size() == 0)
                         continue;
 
                     npcInfo.getProfile().getProperties().clear();
-                    for (String key : playerProfile.getProperties().keySet()) {
-                        npcInfo.getProfile().getProperties().putAll(key,
-                                Iterables.transform(playerProfile.getProperties().get(key), skin -> {
-                                    SkinProperty sp = SkinProperty.fromMojang(skin);
-                                    return new WrappedSignedProperty(sp.name, sp.value, sp.signature);
-                                }));
+                    npcInfo.getProfile().getProperties().putAll("textures", textures);
+                    for (String key : wgp.getProperties().keySet()) {
+                        npcInfo.getProfile().getProperties().putAll(key, wgp.getProperties().get(key));
                     }
                     changed = true;
                 }

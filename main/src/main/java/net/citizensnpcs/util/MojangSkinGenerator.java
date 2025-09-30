@@ -160,7 +160,7 @@ public class MojangSkinGenerator {
                 GameProfile profile = new GameProfile(
                         UUID.fromString("00000000-0000-0000-" + hex.substring(0, 4) + "-" + hex.substring(4)), name);
                 new SkinProperty((String) output.get("texture_id"), (String) output.get("value"),
-                        (String) output.get("signature")).apply(profile);
+                        (String) output.get("signature")).applyTextures(profile);
                 return profile;
             } finally {
                 if (reader != null) {
