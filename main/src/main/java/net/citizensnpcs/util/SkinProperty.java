@@ -3,8 +3,6 @@ package net.citizensnpcs.util;
 import java.lang.invoke.MethodHandle;
 import java.util.Collection;
 
-import com.mojang.authlib.GameProfile;
-
 public class SkinProperty {
     public final String name;
     public final String signature;
@@ -16,7 +14,7 @@ public class SkinProperty {
         this.signature = signature;
     }
 
-    public void applyTextures(GameProfile profile) {
+    public void applyTextures(Object profile) {
         GameProfileWrapper gpw = GameProfileWrapper.fromMojangProfile(profile);
         gpw.properties.removeAll("textures"); // ensure client does not crash due to duplicate properties.
         gpw.properties.put("textures", this);
@@ -35,7 +33,7 @@ public class SkinProperty {
         }
     }
 
-    public static SkinProperty fromMojangProfile(GameProfile profile) {
+    public static SkinProperty fromMojangProfile(Object profile) {
         if (profile == null)
             return null;
         GameProfileWrapper gpw = GameProfileWrapper.fromMojangProfile(profile);
@@ -50,9 +48,9 @@ public class SkinProperty {
     private static MethodHandle GET_VALUE_METHOD = null;
     private static MethodHandle PROPERTIES_METHOD = null;
     static {
-        PROPERTIES_METHOD = NMS.getMethodHandle(GameProfile.class, "getProperties", false);
+        PROPERTIES_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "getProperties", false);
         if (PROPERTIES_METHOD == null) {
-            PROPERTIES_METHOD = NMS.getMethodHandle(GameProfile.class, "properties", false);
+            PROPERTIES_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "properties", false);
         }
         GET_NAME_METHOD = NMS.getMethodHandle(com.mojang.authlib.properties.Property.class, "getName", false);
         if (GET_NAME_METHOD == null) {

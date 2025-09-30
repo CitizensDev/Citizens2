@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.mojang.authlib.GameProfile;
 
 public class GameProfileWrapper {
     public final String name;
@@ -22,7 +21,7 @@ public class GameProfileWrapper {
         this.properties = properties;
     }
 
-    public void applyProperties(GameProfile profile) {
+    public void applyProperties(Object profile) {
         try {
             Multimap<String, Object> mojang = (Multimap<String, Object>) PROPERTIES_METHOD.invoke(profile);
             for (String key : properties.keySet()) {
@@ -41,13 +40,13 @@ public class GameProfileWrapper {
         }
     }
 
-    public static GameProfileWrapper fromMojangProfile(GameProfile profile) {
+    public static GameProfileWrapper fromMojangProfile(Object profile) {
         if (profile == null)
             return null;
         return new GameProfileWrapper(getName(profile), getId(profile), getProperties(profile));
     }
 
-    private static UUID getId(GameProfile profile) {
+    private static UUID getId(Object profile) {
         try {
             return (UUID) GET_ID_METHOD.invoke(profile);
         } catch (Throwable e) {
@@ -56,7 +55,7 @@ public class GameProfileWrapper {
         }
     }
 
-    private static String getName(GameProfile profile) {
+    private static String getName(Object profile) {
         try {
             return (String) GET_NAME_METHOD.invoke(profile);
         } catch (Throwable e) {
@@ -65,7 +64,7 @@ public class GameProfileWrapper {
         }
     }
 
-    private static Multimap<String, SkinProperty> getProperties(GameProfile profile) {
+    private static Multimap<String, SkinProperty> getProperties(Object profile) {
         try {
             Multimap<String, Object> mojang = (Multimap<String, Object>) PROPERTIES_METHOD.invoke(profile);
             Multimap<String, SkinProperty> converted = HashMultimap.create();
@@ -92,17 +91,17 @@ public class GameProfileWrapper {
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        PROPERTIES_METHOD = NMS.getMethodHandle(GameProfile.class, "getProperties", false);
+        PROPERTIES_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "getProperties", false);
         if (PROPERTIES_METHOD == null) {
-            PROPERTIES_METHOD = NMS.getMethodHandle(GameProfile.class, "properties", false);
+            PROPERTIES_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "properties", false);
         }
-        GET_NAME_METHOD = NMS.getMethodHandle(GameProfile.class, "getName", false);
+        GET_NAME_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "getName", false);
         if (GET_NAME_METHOD == null) {
-            GET_NAME_METHOD = NMS.getMethodHandle(GameProfile.class, "name", false);
+            GET_NAME_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "name", false);
         }
-        GET_ID_METHOD = NMS.getMethodHandle(GameProfile.class, "getId", false);
+        GET_ID_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "getId", false);
         if (GET_ID_METHOD == null) {
-            GET_ID_METHOD = NMS.getMethodHandle(GameProfile.class, "id", false);
+            GET_ID_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "id", false);
         }
     }
 }
