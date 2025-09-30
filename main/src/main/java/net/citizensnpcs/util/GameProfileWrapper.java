@@ -1,6 +1,8 @@
 package net.citizensnpcs.util;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,8 +26,15 @@ public class GameProfileWrapper {
         try {
             Multimap<String, Object> mojang = (Multimap<String, Object>) PROPERTIES_METHOD.invoke(profile);
             for (String key : properties.keySet()) {
-                mojang.putAll(key, Collections2.transform(properties.get(key),
-                        p -> new com.mojang.authlib.properties.Property(p.name, p.value, p.signature)));
+                mojang.putAll(key, Collections2.transform(properties.get(key), p -> {
+                    try {
+                        return PROPERTY_CONSTRUCTOR.newInstance(p.name, p.value, p.signature);
+                    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                            | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }));
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -74,7 +83,15 @@ public class GameProfileWrapper {
     private static MethodHandle GET_ID_METHOD = null;
     private static MethodHandle GET_NAME_METHOD = null;
     private static MethodHandle PROPERTIES_METHOD = null;
+    private static Constructor<?> PROPERTY_CONSTRUCTOR;
     static {
+        try {
+            PROPERTY_CONSTRUCTOR = Class.forName("com.mojang.authlib.properties.Property").getConstructor(String.class,
+                    String.class, String.class);
+            PROPERTY_CONSTRUCTOR.setAccessible(true);
+        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         PROPERTIES_METHOD = NMS.getMethodHandle(GameProfile.class, "getProperties", false);
         if (PROPERTIES_METHOD == null) {
             PROPERTIES_METHOD = NMS.getMethodHandle(GameProfile.class, "properties", false);
