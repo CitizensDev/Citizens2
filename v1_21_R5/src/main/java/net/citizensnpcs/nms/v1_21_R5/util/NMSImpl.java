@@ -1748,6 +1748,17 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setProfile(Player entity, GameProfile profile) {
+        if (PLAYER_PROFILE_FIELD != null) {
+            try {
+                PLAYER_PROFILE_FIELD.invoke(getHandle(entity), profile);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SET_PROFILE_METHOD == null) {
             SET_PROFILE_METHOD = NMS.getMethodHandle(meta.getClass(), "setProfile", true, GameProfile.class);
@@ -2752,6 +2763,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "cv");
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
@@ -2817,6 +2829,8 @@ public class NMSImpl implements NMSBridge {
     public static final MethodHandle PAPER_PLAYER_MOB_COUNTS = NMS.getGetter(ServerPlayer.class, "mobCounts", false);
     private static final MethodHandle PLAYER_INFO_ENTRIES_LIST = NMS
             .getFirstFinalSetter(ClientboundPlayerInfoUpdatePacket.class, List.class);
+    private static final MethodHandle PLAYER_PROFILE_FIELD = NMS
+            .getFirstFinalSetter(net.minecraft.world.entity.player.Player.class, GameProfile.class);
     private static final MethodHandle PLAYERINFO_ENTRIES = PLAYER_INFO_ENTRIES_LIST;
     private static final MethodHandle POSITION_CODEC_GETTER = NMS.getFirstGetter(ServerEntity.class,
             VecDeltaCodec.class);

@@ -26,6 +26,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.skin.profile.ProfileFetcher;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.GameProfileWrapper;
+import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.SkinProperty;
 
 /**
@@ -365,7 +366,7 @@ public class Skin {
                 && current.signature.equals(skinProperty.signature))
             return;
 
-        skinProperty.applyTextures(profile);
+        NMS.setProfile(entity.getBukkitEntity(), skinProperty.applyProperties(profile));
     }
 
     private static final Map<String, Skin> CACHE = new HashMap<>(20);

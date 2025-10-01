@@ -3,6 +3,8 @@ package net.citizensnpcs.util;
 import java.lang.invoke.MethodHandle;
 import java.util.Collection;
 
+import com.mojang.authlib.GameProfile;
+
 public class SkinProperty {
     public final String name;
     public final String signature;
@@ -14,11 +16,11 @@ public class SkinProperty {
         this.signature = signature;
     }
 
-    public void applyTextures(Object profile) {
+    public GameProfile applyProperties(Object profile) {
         GameProfileWrapper gpw = GameProfileWrapper.fromMojangProfile(profile);
         gpw.properties.removeAll("textures"); // ensure client does not crash due to duplicate properties.
         gpw.properties.put("textures", this);
-        gpw.applyProperties(profile);
+        return gpw.applyProperties(profile);
     }
 
     public static SkinProperty fromMojang(Object prop) {

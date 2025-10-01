@@ -366,21 +366,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    public void setSkinName(String name) {
-        npc.getOrAddTrait(SkinTrait.class).setSkinName(name);
-    }
-
-    @Override
-    public void setSkinName(String name, boolean forceUpdate) {
-        npc.getOrAddTrait(SkinTrait.class).setSkinName(name, forceUpdate);
-    }
-
-    @Override
-    public void setSkinPersistent(String skinName, String signature, String data) {
-        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(skinName, signature, data);
-    }
-
-    @Override
     public void tick() {
         super.tick();
         if (npc == null)
@@ -517,21 +502,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         @Override
         public void setSkinFlags(byte flags) {
             ((SkinnableEntity) this.entity).setSkinFlags(flags);
-        }
-
-        @Override
-        public void setSkinName(String name) {
-            ((SkinnableEntity) this.entity).setSkinName(name);
-        }
-
-        @Override
-        public void setSkinName(String skinName, boolean forceUpdate) {
-            ((SkinnableEntity) this.entity).setSkinName(skinName, forceUpdate);
-        }
-
-        @Override
-        public void setSkinPersistent(String skinName, String signature, String data) {
-            ((SkinnableEntity) this.entity).setSkinPersistent(skinName, signature, data);
         }
     }
 

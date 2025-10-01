@@ -48,7 +48,7 @@ public class CopperGolemTrait extends Trait {
             max = 1,
             permission = "citizens.npc.coppergolem")
     @Requirements(selected = true, ownership = true, types = EntityType.COPPER_GOLEM)
-    public static void CopperGolem(CommandContext args, CommandSender sender, NPC npc,
+    public static void copperGolem(CommandContext args, CommandSender sender, NPC npc,
             @Flag("weatherstate") CopperGolem.CopperWeatherState state) throws CommandException {
         CopperGolemTrait trait = npc.getOrAddTrait(CopperGolemTrait.class);
         String output = "";

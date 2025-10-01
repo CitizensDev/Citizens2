@@ -275,6 +275,8 @@ public interface NMSBridge {
     public default void setPose(Entity entity, EntityPose pose) {
     }
 
+    public void setProfile(Player entity, GameProfile profile);
+
     public void setProfile(SkullMeta meta, GameProfile profile);
 
     public void setShouldJump(Entity entity);

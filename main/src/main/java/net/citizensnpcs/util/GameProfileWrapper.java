@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.PropertyMap;
 
 public class GameProfileWrapper {
     public final String name;
@@ -21,9 +23,9 @@ public class GameProfileWrapper {
         this.properties = properties;
     }
 
-    public void applyProperties(Object profile) {
+    public GameProfile applyProperties(Object profile) {
         try {
-            Multimap<String, Object> mojang = (Multimap<String, Object>) PROPERTIES_METHOD.invoke(profile);
+            Multimap mojang = HashMultimap.create();
             for (String key : properties.keySet()) {
                 mojang.putAll(key, Collections2.transform(properties.get(key), p -> {
                     try {
@@ -35,9 +37,11 @@ public class GameProfileWrapper {
                     return null;
                 }));
             }
+            return GAME_PROFILE_CONSTRUCTOR.newInstance(getId(profile), getName(profile), new PropertyMap(mojang));
         } catch (Throwable e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public static GameProfileWrapper fromMojangProfile(Object profile) {
@@ -79,6 +83,7 @@ public class GameProfileWrapper {
         }
     }
 
+    private static Constructor<GameProfile> GAME_PROFILE_CONSTRUCTOR;
     private static MethodHandle GET_ID_METHOD = null;
     private static MethodHandle GET_NAME_METHOD = null;
     private static MethodHandle PROPERTIES_METHOD = null;
@@ -89,6 +94,13 @@ public class GameProfileWrapper {
                     String.class, String.class);
             PROPERTY_CONSTRUCTOR.setAccessible(true);
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            GAME_PROFILE_CONSTRUCTOR = com.mojang.authlib.GameProfile.class.getConstructor(UUID.class, String.class,
+                    PropertyMap.class);
+            GAME_PROFILE_CONSTRUCTOR.setAccessible(true);
+        } catch (NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
         }
         PROPERTIES_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "getProperties", false);

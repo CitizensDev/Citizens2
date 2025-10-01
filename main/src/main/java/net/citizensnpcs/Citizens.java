@@ -126,8 +126,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     profile = new GameProfile(UUID.randomUUID(), null);
                 }
             }
-            new SkinProperty("textures", texture, null).applyTextures(profile);
-            NMS.setProfile(meta, profile);
+            NMS.setProfile(meta, new SkinProperty("textures", texture, null).applyProperties(profile));
         }
 
         @Override

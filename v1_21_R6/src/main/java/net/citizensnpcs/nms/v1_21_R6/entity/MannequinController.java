@@ -53,6 +53,9 @@ public class MannequinController extends MobEntityController {
         public EntityMannequinNPC(EntityType<? extends Mannequin> types, Level level, NPC npc) {
             super(level);
             this.npc = (CitizensNPC) npc;
+            if (npc != null && !npc.useMinecraftAI()) {
+                setHideDescription(true);
+            }
         }
 
         @Override
@@ -145,10 +148,11 @@ public class MannequinController extends MobEntityController {
 
         @Override
         public boolean onClimbable() {
-            if (npc == null || !npc.isFlyable())
+            if (npc == null || !npc.isFlyable()) {
                 return super.onClimbable();
-            else
+            } else {
                 return false;
+            }
         }
 
         @Override
