@@ -2,16 +2,25 @@ package net.citizensnpcs.nms.v1_21_R6.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_21_R6.CraftServer;
-import org.bukkit.craftbukkit.v1_21_R6.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_21_R6.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_21_R6.entity.CraftMannequin;
+import org.bukkit.entity.LivingEntity;
+
+import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_21_R6.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v1_21_R6.util.MobAI;
+import net.citizensnpcs.nms.v1_21_R6.util.MobAI.ForwardingMobAI;
 import net.citizensnpcs.nms.v1_21_R6.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_21_R6.util.NMSImpl;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.npc.skin.SkinPacketTracker;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.npc.skin.SkinnableEntity.ForwardingSkinnableEntity;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.SkinProperty;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -19,11 +28,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.Mannequin;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -43,8 +54,10 @@ public class MannequinController extends MobEntityController {
         return (org.bukkit.entity.Mannequin) super.getBukkitEntity();
     }
 
-    public static class EntityMannequinNPC extends Mannequin implements NPCHolder {
+    public static class EntityMannequinNPC extends Mannequin implements NPCHolder, SkinnableEntity, ForwardingMobAI {
+        private final MobAI ai;
         private final CitizensNPC npc;
+        private final SkinPacketTracker skinTracker;
 
         public EntityMannequinNPC(EntityType<? extends Mannequin> types, Level level) {
             this(types, level, null);
@@ -55,7 +68,17 @@ public class MannequinController extends MobEntityController {
             this.npc = (CitizensNPC) npc;
             if (npc != null && !npc.useMinecraftAI()) {
                 setHideDescription(true);
+                skinTracker = new SkinPacketTracker(this);
+                ai = new BasicMobAI(this);
+            } else {
+                ai = null;
+                skinTracker = null;
             }
+        }
+
+        @Override
+        public void applyTexture(SkinProperty property) {
+            setProfile(ResolvableProfile.createResolved(property.applyProperties(getProfile().partialProfile())));
         }
 
         @Override
@@ -92,11 +115,21 @@ public class MannequinController extends MobEntityController {
         }
 
         @Override
-        public CraftEntity getBukkitEntity() {
+        public GameProfile gameProfile() {
+            return getProfile().partialProfile();
+        }
+
+        @Override
+        public MobAI getAI() {
+            return ai;
+        }
+
+        @Override
+        public CraftLivingEntity getBukkitEntity() {
             if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new MannequinNPC(this));
             }
-            return super.getBukkitEntity();
+            return (CraftLivingEntity) super.getBukkitEntity();
         }
 
         @Override
@@ -127,6 +160,11 @@ public class MannequinController extends MobEntityController {
         @Override
         public PushReaction getPistonPushReaction() {
             return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
+        }
+
+        @Override
+        public SkinPacketTracker getSkinTracker() {
+            return skinTracker;
         }
 
         @Override
@@ -180,10 +218,24 @@ public class MannequinController extends MobEntityController {
         }
 
         @Override
+        public void setSkinFlags(byte flags) {
+            getEntityData().set(Avatar.DATA_PLAYER_MODE_CUSTOMISATION, flags);
+        }
+
+        @Override
         public Entity teleport(TeleportTransition transition) {
             if (npc == null)
                 return super.teleport(transition);
             return NMSImpl.teleportAcrossWorld(this, transition);
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            if (npc == null)
+                return;
+            npc.update();
+            tickAI();
         }
 
         @Override
@@ -208,9 +260,19 @@ public class MannequinController extends MobEntityController {
         }
     }
 
-    public static class MannequinNPC extends CraftMannequin implements ForwardingNPCHolder {
+    public static class MannequinNPC extends CraftMannequin implements ForwardingNPCHolder, ForwardingSkinnableEntity {
         public MannequinNPC(EntityMannequinNPC entity) {
             super((CraftServer) Bukkit.getServer(), entity);
+        }
+
+        @Override
+        public LivingEntity getBukkitEntity() {
+            return (LivingEntity) entity;
+        }
+
+        @Override
+        public SkinnableEntity getUnderlying() {
+            return (SkinnableEntity) entity;
         }
     }
 }

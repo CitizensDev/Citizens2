@@ -264,6 +264,16 @@ public class SkinLayers extends Trait {
             flag = 1 << offset;
         }
 
+        public static Set<Layer> fromByte(byte flags) {
+            Set<Layer> layers = EnumSet.noneOf(Layer.class);
+            for (Layer layer : Layer.values()) {
+                if ((flags & layer.flag) == 0) {
+                    layers.add(layer);
+                }
+            }
+            return layers;
+        }
+
         public static byte toByte(Set<Layer> flags) {
             byte b = 0;
             for (Layer layer : flags) {

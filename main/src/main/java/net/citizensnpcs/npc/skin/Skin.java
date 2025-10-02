@@ -26,7 +26,6 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.skin.profile.ProfileFetcher;
 import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.GameProfileWrapper;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.SkinProperty;
 
 /**
@@ -341,6 +340,12 @@ public class Skin {
         return skin;
     }
 
+    public static boolean hasSkin(String name) {
+        synchronized (CACHE) {
+            return CACHE.containsKey(name);
+        }
+    }
+
     private static void setNPCSkinData(SkinnableEntity entity, String skinName, UUID skinId,
             SkinProperty skinProperty) {
         NPC npc = entity.getNPC();
@@ -358,7 +363,7 @@ public class Skin {
     }
 
     private static void setNPCTexture(SkinnableEntity entity, SkinProperty skinProperty) {
-        GameProfile profile = entity.getProfile();
+        GameProfile profile = entity.gameProfile();
 
         // don't set property if already set since this sometimes causes packet errors that disconnect the client.
         SkinProperty current = SkinProperty.fromMojangProfile(profile);
@@ -366,7 +371,7 @@ public class Skin {
                 && current.signature.equals(skinProperty.signature))
             return;
 
-        NMS.setProfile(entity.getBukkitEntity(), skinProperty.applyProperties(profile));
+        entity.applyTexture(skinProperty);
     }
 
     private static final Map<String, Skin> CACHE = new HashMap<>(20);

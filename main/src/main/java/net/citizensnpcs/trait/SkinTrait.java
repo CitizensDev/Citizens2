@@ -95,9 +95,9 @@ public class SkinTrait extends Trait {
     }
 
     private void onSkinChange(boolean forceUpdate) {
-        if (npc.isSpawned() && npc.getEntity() instanceof SkinnableEntity) {
-            ((SkinnableEntity) npc.getEntity()).getSkinTracker().notifySkinChange(forceUpdate);
-        }
+        if (!npc.isSpawned() || !(npc.getEntity() instanceof SkinnableEntity))
+            return;
+        ((SkinnableEntity) npc.getEntity()).getSkinTracker().notifySkinChange(forceUpdate);
     }
 
     @Override

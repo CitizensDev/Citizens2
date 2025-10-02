@@ -957,10 +957,6 @@ public class NMS {
         BRIDGE.setPose(entity, pose);
     }
 
-    public static void setProfile(Player entity, GameProfile profile) {
-        BRIDGE.setProfile(entity, profile);
-    }
-
     public static void setProfile(SkullMeta meta, GameProfile profile) {
         BRIDGE.setProfile(meta, profile);
     }

@@ -4,11 +4,9 @@ import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.util.NMS;
 
 /**
@@ -52,39 +50,6 @@ public class SkinPacketTracker {
     }
 
     /**
-     * Invoke when the NPC entity is spawned.
-     */
-    public void onSpawnNPC() {
-        isRemoved = false;
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!entity.getNPC().isSpawned())
-                    return;
-
-                updateNearbyViewers(entity.getNPC().data().get(NPC.Metadata.TRACKING_RANGE,
-                        Setting.NPC_SKIN_VIEW_DISTANCE.asInt()));
-            }
-        }.runTaskLater(CitizensAPI.getPlugin(), 10);
-    }
-
-    /**
-     * Send skin related packets to all nearby players within the specified block radius.
-     *
-     * @param radius
-     *            The radius.
-     */
-    public void updateNearbyViewers(double radius) {
-        Player from = entity.getBukkitEntity();
-
-        CitizensAPI.getLocationLookup().getNearbyPlayers(from.getLocation(), radius).forEach(player -> {
-            if (!player.canSee(from) || player.hasMetadata("NPC"))
-                return;
-            updateViewer(player);
-        });
-    }
-
-    /**
      * Send skin related packets to a player.
      *
      * @param player
@@ -97,9 +62,10 @@ public class SkinPacketTracker {
             return;
 
         skin.apply(entity);
-        if (NMS.sendTabListAdd(player, entity.getBukkitEntity()) && entity.getNPC().shouldRemoveFromTabList()) {
+        if (entity.getBukkitEntity() instanceof Player && NMS.sendTabListAdd(player, (Player) entity.getBukkitEntity())
+                && entity.getNPC().shouldRemoveFromTabList()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-                    () -> NMS.sendTabListRemove(player, entity.getBukkitEntity()),
+                    () -> NMS.sendTabListRemove(player, (Player) entity.getBukkitEntity()),
                     Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
         }
     }

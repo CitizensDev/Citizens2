@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -52,7 +53,7 @@ public class SkinUpdateTracker {
     // determines if a player is near a skinnable entity and, if checkFov set, if the
     // skinnable entity is within the player's field of view.
     private boolean canSee(Player player, SkinnableEntity skinnable, boolean checkFov) {
-        Player entity = skinnable.getBukkitEntity();
+        LivingEntity entity = skinnable.getBukkitEntity();
         if (entity == null || !player.canSee(entity) || !player.getWorld().equals(entity.getWorld()))
             return false;
 
@@ -96,9 +97,9 @@ public class SkinUpdateTracker {
         for (NPC npc : getAllNPCs()) {
             SkinnableEntity skinnable = getSkinnable(npc);
             // if checking field of view, don't add skins that have already been updated for FOV
-            if (skinnable == null || checkFov && tracker.fovVisibleSkins.contains(skinnable)) {
+            if (skinnable == null || checkFov && tracker.fovVisibleSkins.contains(skinnable))
                 continue;
-            }
+
             if (canSee(player, skinnable, checkFov)) {
                 results.add(skinnable);
             }
@@ -113,9 +114,9 @@ public class SkinUpdateTracker {
         for (SkinnableEntity skinnable : navigating.keySet()) {
             // make sure player hasn't already been updated to prevent excessive tab list flashing
             // while NPC's are navigating and to reduce the number of times #canSee is invoked.
-            if (tracker.fovVisibleSkins.contains(skinnable)) {
+            if (tracker.fovVisibleSkins.contains(skinnable))
                 continue;
-            }
+
             if (canSee(player, skinnable, true)) {
                 output.add(skinnable);
             }
@@ -125,9 +126,8 @@ public class SkinUpdateTracker {
     @Nullable
     private SkinnableEntity getSkinnable(NPC npc) {
         Entity entity = npc.getEntity();
-        if (entity == null)
+        if (entity == null || entity.getType().name().equals("MANNEQUIN"))
             return null;
-
         return entity instanceof SkinnableEntity ? (SkinnableEntity) entity : null;
     }
 
@@ -200,7 +200,6 @@ public class SkinUpdateTracker {
      *            The spawned NPC.
      */
     public void onNPCSpawn(NPC npc) {
-        Objects.requireNonNull(npc);
         SkinnableEntity skinnable = getSkinnable(npc);
         if (skinnable == null)
             return;
@@ -216,7 +215,6 @@ public class SkinUpdateTracker {
      *            The player that moved.
      */
     public void onPlayerMove(Player player) {
-        Objects.requireNonNull(player);
         PlayerTracker updateTracker = playerTrackers.get(player.getUniqueId());
         if (updateTracker == null || !updateTracker.shouldUpdate(player))
             return;
@@ -312,21 +310,21 @@ public class SkinUpdateTracker {
             if (navigating.isEmpty() || playerTrackers.isEmpty())
                 return;
 
-            List<SkinnableEntity> nearby = new ArrayList<>(10);
+            List<SkinnableEntity> fov = new ArrayList<>(10);
             Set<UUID> seen = Sets.newHashSet();
             for (Player player : Bukkit.getOnlinePlayers()) {
                 seen.add(player.getUniqueId());
-                if (player.hasMetadata("NPC")) {
+                if (player.hasMetadata("NPC"))
                     continue;
-                }
-                getNewVisibleNavigating(player, nearby);
 
-                for (SkinnableEntity skinnable : nearby) {
+                getNewVisibleNavigating(player, fov);
+
+                for (SkinnableEntity skinnable : fov) {
                     PlayerTracker tracker = getTracker(player, false);
                     tracker.fovVisibleSkins.add(skinnable);
                     updater.queue.offer(new UpdateInfo(player, skinnable));
                 }
-                nearby.clear();
+                fov.clear();
             }
             playerTrackers.keySet().removeIf(uuid -> !seen.contains(uuid));
         }

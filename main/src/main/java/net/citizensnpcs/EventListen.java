@@ -110,6 +110,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.SkinUpdateTracker;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.ClickRedirectTrait;
@@ -526,10 +527,12 @@ public class EventListen implements Listener {
         }
         if (npc.getEntity() instanceof SkinnableEntity) {
             SkinnableEntity skinnable = (SkinnableEntity) npc.getEntity();
-            if (skinnable.getSkinTracker().getSkin() != null) {
-                skinnable.getSkinTracker().getSkin().apply(skinnable);
+            if (Skin.hasSkin(skinnable.getSkinName())) {
+                Skin.get(skinnable).apply(skinnable);
             }
-            onNPCPlayerLinkToPlayer(event);
+            if (npc.getEntity() instanceof Player) {
+                onNPCPlayerLinkToPlayer(event);
+            }
         }
         if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
             HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);

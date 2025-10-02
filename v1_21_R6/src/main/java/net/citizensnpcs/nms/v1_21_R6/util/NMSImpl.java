@@ -110,6 +110,7 @@ import net.citizensnpcs.nms.v1_21_R6.entity.DrownedController;
 import net.citizensnpcs.nms.v1_21_R6.entity.EnderDragonController;
 import net.citizensnpcs.nms.v1_21_R6.entity.EndermanController;
 import net.citizensnpcs.nms.v1_21_R6.entity.EndermiteController;
+import net.citizensnpcs.nms.v1_21_R6.entity.EntityHumanNPC;
 import net.citizensnpcs.nms.v1_21_R6.entity.EvokerController;
 import net.citizensnpcs.nms.v1_21_R6.entity.FoxController;
 import net.citizensnpcs.nms.v1_21_R6.entity.FrogController;
@@ -1782,17 +1783,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setProfile(Player entity, GameProfile profile) {
-        if (PLAYER_PROFILE_FIELD != null) {
-            try {
-                PLAYER_PROFILE_FIELD.invoke(getHandle(entity), profile);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
     public void setProfile(SkullMeta meta, GameProfile profile) {
         if (SET_PROFILE_METHOD == null) {
             SET_PROFILE_METHOD = NMS.getMethodHandle(meta.getClass(), "setProfile", true, GameProfile.class);
@@ -2688,6 +2678,16 @@ public class NMSImpl implements NMSBridge {
             }
         } catch (Throwable ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public static void setProfile(EntityHumanNPC entity, Object profile) {
+        if (PLAYER_PROFILE_FIELD != null) {
+            try {
+                PLAYER_PROFILE_FIELD.invoke(entity, profile);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
     }
 

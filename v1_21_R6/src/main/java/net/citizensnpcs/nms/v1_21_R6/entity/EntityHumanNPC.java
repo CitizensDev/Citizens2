@@ -7,7 +7,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_21_R6.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R6.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
@@ -32,8 +31,8 @@ import net.citizensnpcs.npc.skin.SkinPacketTracker;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.EntityPoseTrait;
 import net.citizensnpcs.trait.Gravity;
-import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.SkinProperty;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -51,6 +50,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -86,6 +86,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             ai = null;
             skinTracker = null;
         }
+    }
+
+    @Override
+    public void applyTexture(SkinProperty property) {
+        NMSImpl.setProfile(this, property.applyProperties(gameProfile()));
     }
 
     @Override
@@ -179,6 +184,11 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public GameProfile gameProfile() {
+        return getGameProfile();
+    }
+
+    @Override
     public PlayerAdvancements getAdvancements() {
         if (advancements == null) {
             advancements = new EmptyAdvancementDataPlayer(server.getFixerUpper(), server.getPlayerList(), this);
@@ -231,20 +241,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
-    public GameProfile getProfile() {
-        return super.getGameProfile();
-    }
-
-    @Override
-    public String getSkinName() {
-        String skinName = npc.getOrAddTrait(SkinTrait.class).getSkinName();
-        if (skinName == null) {
-            skinName = npc.getName();
-        }
-        return skinName.toLowerCase();
-    }
-
-    @Override
     public SkinPacketTracker getSkinTracker() {
         return skinTracker;
     }
@@ -279,7 +275,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         try {
             EmptyConnection conn = new EmptyConnection(PacketFlow.CLIENTBOUND);
             connection = new EmptyPacketListener(minecraftServer, conn, this,
-                    CommonListenerCookie.createInitial(getProfile(), false));
+                    CommonListenerCookie.createInitial(gameProfile(), false));
             // paper now inserts a brand name field
         } catch (IOException e) {
             e.printStackTrace();
@@ -361,7 +357,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public void setSkinFlags(byte flags) {
-        getEntityData().set(net.minecraft.world.entity.player.Player.DATA_PLAYER_MODE_CUSTOMISATION, flags);
+        getEntityData().set(Avatar.DATA_PLAYER_MODE_CUSTOMISATION, flags);
     }
 
     @Override
@@ -437,7 +433,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         effectsDirty = true;
     }
 
-    public static class PlayerNPC extends CraftPlayer implements NPCHolder, SkinnableEntity {
+    public static class PlayerNPC extends CraftPlayer implements NPCHolder, ForwardingSkinnableEntity {
         private final CitizensNPC npc;
 
         private PlayerNPC(EntityHumanNPC entity) {
@@ -451,11 +447,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             if (entity != null && entity.getType().name().contains("ITEM_FRAME"))
                 return false; // optimise for large maps in item frames
             return super.canSee(entity);
-        }
-
-        @Override
-        public Player getBukkitEntity() {
-            return this;
         }
 
         @Override
@@ -474,13 +465,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         }
 
         @Override
-        public String getSkinName() {
-            return ((SkinnableEntity) this.entity).getSkinName();
-        }
-
-        @Override
-        public SkinPacketTracker getSkinTracker() {
-            return ((SkinnableEntity) this.entity).getSkinTracker();
+        public SkinnableEntity getUnderlying() {
+            return (SkinnableEntity) entity;
         }
 
         @Override
@@ -496,11 +482,6 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         @Override
         public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
             ((CraftServer) Bukkit.getServer()).getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
-        }
-
-        @Override
-        public void setSkinFlags(byte flags) {
-            ((SkinnableEntity) this.entity).setSkinFlags(flags);
         }
     }
 

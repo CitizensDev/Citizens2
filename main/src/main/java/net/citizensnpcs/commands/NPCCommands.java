@@ -3129,9 +3129,13 @@ public class NPCCommands {
             max = 4,
             flags = "bectls",
             permission = "citizens.npc.skin")
-    @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
+    @Requirements(selected = true, ownership = true)
     public void skin(CommandContext args, CommandSender sender, NPC npc, @Flag("url") String url,
             @Flag("file") String file) throws CommandException {
+        EntityType type = npc.getOrAddTrait(MobType.class).getType();
+        if (type != EntityType.PLAYER && !npc.getOrAddTrait(MobType.class).getType().name().equals("MANNEQUIN"))
+            throw new RequirementMissingException(
+                    Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type)));
         String skinName = npc.getName();
         SkinTrait trait = npc.getOrAddTrait(SkinTrait.class);
         if (args.hasFlag('c')) {
