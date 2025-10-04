@@ -37,7 +37,14 @@ public class GameProfileWrapper {
                     return null;
                 }));
             }
-            return GAME_PROFILE_CONSTRUCTOR.newInstance(getId(profile), getName(profile), new PropertyMap(mojang));
+            if (GAME_PROFILE_RECORD_CONSTRUCTOR != null) {
+                return GAME_PROFILE_RECORD_CONSTRUCTOR.newInstance(getId(profile), getName(profile),
+                        new PropertyMap(mojang));
+            } else if (GAME_PROFILE_CONSTRUCTOR != null) {
+                Object object = GAME_PROFILE_CONSTRUCTOR.newInstance(getId(profile), getName(profile));
+                setProperties(object, mojang);
+                return (GameProfile) object;
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -83,7 +90,18 @@ public class GameProfileWrapper {
         }
     }
 
+    private static void setProperties(Object profile, Multimap map) {
+        try {
+            Multimap<String, Object> mojang = (Multimap<String, Object>) PROPERTIES_METHOD.invoke(profile);
+            mojang.clear();
+            mojang.putAll(map);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     private static Constructor<GameProfile> GAME_PROFILE_CONSTRUCTOR;
+    private static Constructor<GameProfile> GAME_PROFILE_RECORD_CONSTRUCTOR;
     private static MethodHandle GET_ID_METHOD = null;
     private static MethodHandle GET_NAME_METHOD = null;
     private static MethodHandle PROPERTIES_METHOD = null;
@@ -97,11 +115,17 @@ public class GameProfileWrapper {
             e.printStackTrace();
         }
         try {
-            GAME_PROFILE_CONSTRUCTOR = com.mojang.authlib.GameProfile.class.getConstructor(UUID.class, String.class,
-                    PropertyMap.class);
-            GAME_PROFILE_CONSTRUCTOR.setAccessible(true);
+            GAME_PROFILE_RECORD_CONSTRUCTOR = com.mojang.authlib.GameProfile.class.getConstructor(UUID.class,
+                    String.class, PropertyMap.class);
+            GAME_PROFILE_RECORD_CONSTRUCTOR.setAccessible(true);
         } catch (NoSuchMethodException | SecurityException e) {
-            e.printStackTrace();
+            try {
+                GAME_PROFILE_CONSTRUCTOR = com.mojang.authlib.GameProfile.class.getConstructor(UUID.class,
+                        String.class);
+                GAME_PROFILE_CONSTRUCTOR.setAccessible(true);
+            } catch (NoSuchMethodException | SecurityException e1) {
+                e1.printStackTrace();
+            }
         }
         PROPERTIES_METHOD = NMS.getMethodHandle(com.mojang.authlib.GameProfile.class, "getProperties", false);
         if (PROPERTIES_METHOD == null) {
