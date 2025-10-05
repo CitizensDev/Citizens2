@@ -93,6 +93,13 @@ public class CamelController extends MobEntityController {
         }
 
         @Override
+        public boolean canSimulateMovement() {
+            if (npc != null && riding)
+                return true;
+            return super.canSimulateMovement();
+        }
+
+        @Override
         public boolean causeFallDamage(double f, float f1, DamageSource damagesource) {
             if (npc == null || !npc.isFlyable())
                 return super.causeFallDamage(f, f1, damagesource);
@@ -178,13 +185,6 @@ public class CamelController extends MobEntityController {
         @Override
         public PushReaction getPistonPushReaction() {
             return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
-        }
-
-        @Override
-        public boolean canSimulateMovement() {
-            if (npc != null && riding)
-                return true;
-            return super.canSimulateMovement();
         }
 
         @Override

@@ -92,7 +92,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     public void applyTexture(SkinProperty property) {
         this.gameProfile().getProperties().clear();
         this.gameProfile().getProperties().putAll(property.name,
-                ImmutableList.of(new Property(property.name, property.signature, property.value)));
+                ImmutableList.of(new Property(property.name, property.value, property.signature)));
     }
 
     @Override
