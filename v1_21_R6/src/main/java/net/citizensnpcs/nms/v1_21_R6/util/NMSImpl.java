@@ -375,6 +375,7 @@ import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.decoration.Mannequin;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Shulker;
@@ -1676,6 +1677,11 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setLyingDown(org.bukkit.entity.Entity cat, boolean lying) {
         ((Cat) getHandle(cat)).setLying(lying);
+    }
+
+    @Override
+    public void setMannequinDescription(org.bukkit.entity.Entity mannequin, Object component) {
+        ((Mannequin) getHandle(mannequin)).setDescription((Component) component);
     }
 
     @Override

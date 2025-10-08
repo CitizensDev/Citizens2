@@ -913,6 +913,10 @@ public class NMS {
         BRIDGE.setLyingDown(cat, lying);
     }
 
+    public static void setMannequinDescription(Entity mannequin, Object component) {
+        BRIDGE.setMannequinDescription(mannequin, component);
+    }
+
     public static void setNavigationTarget(org.bukkit.entity.Entity handle, org.bukkit.entity.Entity target,
             float speed) {
         BRIDGE.setNavigationTarget(handle, target, speed);

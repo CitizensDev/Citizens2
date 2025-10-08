@@ -191,7 +191,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     @Override
     public PlayerAdvancements getAdvancements() {
         if (advancements == null) {
-            advancements = new EmptyAdvancementDataPlayer(server.getFixerUpper(), server.getPlayerList(), this);
+            advancements = new EmptyAdvancementDataPlayer(level().getServer().getFixerUpper(),
+                    level().getServer().getPlayerList(), this);
         }
         return advancements;
     }
@@ -276,6 +277,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             EmptyConnection conn = new EmptyConnection(PacketFlow.CLIENTBOUND);
             connection = new EmptyPacketListener(minecraftServer, conn, this,
                     CommonListenerCookie.createInitial(gameProfile(), false));
+            advancements = new EmptyAdvancementDataPlayer(minecraftServer.getFixerUpper(),
+                    minecraftServer.getPlayerList(), this);
             // paper now inserts a brand name field
         } catch (IOException e) {
             e.printStackTrace();

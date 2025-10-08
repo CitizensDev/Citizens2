@@ -43,7 +43,7 @@ public class GameProfileWrapper {
             } else if (GAME_PROFILE_CONSTRUCTOR != null) {
                 Object object = GAME_PROFILE_CONSTRUCTOR.newInstance(getId(profile), getName(profile));
                 setProperties(object, mojang);
-                return (GameProfile) object;
+                return GameProfile.class.cast(object);
             }
         } catch (Throwable e) {
             e.printStackTrace();

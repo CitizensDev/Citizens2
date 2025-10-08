@@ -246,6 +246,9 @@ public interface NMSBridge {
         throw new UnsupportedOperationException();
     }
 
+    public default void setMannequinDescription(Entity mannequin, Object component) {
+    }
+
     public void setNavigationTarget(Entity handle, Entity target, float speed);
 
     public void setNavigationType(Entity entity, MinecraftNavigationType type);

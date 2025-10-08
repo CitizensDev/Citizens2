@@ -9,7 +9,7 @@
     <artifactId>citizens-v1_21_R6</artifactId>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <craftbukkit.version>1.21.9-R0.1-SNAPSHOT</craftbukkit.version>
+        <craftbukkit.version>1.21.10-R0.1-SNAPSHOT</craftbukkit.version>
     </properties>
 
     <dependencies>
