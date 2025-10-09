@@ -22,8 +22,6 @@ import net.citizensnpcs.util.NMS;
 public class MannequinTrait extends Trait {
     @Persist
     private String description;
-    // @Persist
-    // private final Set<PlayerModelPart> hiddenParts = EnumSet.noneOf(PlayerModelPart.class);
     @Persist
     private boolean hideDescription = true;
     @Persist
@@ -42,9 +40,6 @@ public class MannequinTrait extends Trait {
             if (mainHand != null) {
                 mannequin.setMainHand(mainHand);
             }
-            /*     for (PlayerModelPart part : PlayerModelPart.values()) {
-                mannequin.setModelPartShown(part, !hiddenParts.contains(part));
-            }*/
             if (npc.isUpdating(NPCUpdate.PACKET)) {
                 NMS.setMannequinDescription(mannequin, Messaging.minecraftComponentFromRawMessage(description));
             }
@@ -68,18 +63,10 @@ public class MannequinTrait extends Trait {
     public void setMainHand(MainHand hand) {
         this.mainHand = hand;
     }
-    /*
-    public void setPartShown(PlayerModelPart part, boolean shown) {
-        if (shown) {
-            hiddenParts.remove(part);
-        } else {
-            hiddenParts.add(part);
-        }
-    }*/
 
     @Command(
             aliases = { "npc" },
-            usage = "mannequin --hide_description [true|false] --show_part [part] --hide_part [part] --immovable [true|false] --description [description] --main_hand [LEFT|RIGHT]",
+            usage = "mannequin --hide_description [true|false] --immovable [true|false] --description [description] --main_hand [LEFT|RIGHT]",
             desc = "",
             modifiers = { "mannequin" },
             min = 1,
@@ -104,12 +91,6 @@ public class MannequinTrait extends Trait {
         if (mainHand != null) {
             trait.setMainHand(mainHand);
         }
-        /*   if (show != null) {
-            trait.setPartShown(show, true);
-        }
-        if (hide != null) {
-            trait.setPartShown(hide, false);
-        }*/
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
         }

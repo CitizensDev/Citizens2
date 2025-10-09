@@ -24,7 +24,6 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -259,9 +258,7 @@ public class ScoreboardTrait extends Trait {
         }
         try {
             Team.class.getDeclaredMethod("getColor");
-            if (!SpigotUtil.getMinecraftPackage().contains("1_12_R1")) {
-                SUPPORT_GLOWING_COLOR = true;
-            }
+            SUPPORT_GLOWING_COLOR = true;
         } catch (NoSuchMethodException | SecurityException e) {
         }
         try {

@@ -3133,7 +3133,7 @@ public class NPCCommands {
     public void skin(CommandContext args, CommandSender sender, NPC npc, @Flag("url") String url,
             @Flag("file") String file) throws CommandException {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();
-        if (type != EntityType.PLAYER && !npc.getOrAddTrait(MobType.class).getType().name().equals("MANNEQUIN"))
+        if (type != EntityType.PLAYER && !type.name().equals("MANNEQUIN"))
             throw new RequirementMissingException(
                     Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type)));
         String skinName = npc.getName();
@@ -3259,10 +3259,14 @@ public class NPCCommands {
             min = 1,
             max = 5,
             permission = "citizens.npc.skinlayers")
-    @Requirements(types = EntityType.PLAYER, selected = true, ownership = true)
+    @Requirements(selected = true, ownership = true)
     public void skinLayers(CommandContext args, CommandSender sender, NPC npc, @Flag("cape") Boolean cape,
             @Flag("hat") Boolean hat, @Flag("jacket") Boolean jacket, @Flag("sleeves") Boolean sleeves,
             @Flag("pants") Boolean pants) throws CommandException {
+        EntityType type = npc.getOrAddTrait(MobType.class).getType();
+        if (type != EntityType.PLAYER && !type.name().equals("MANNEQUIN"))
+            throw new RequirementMissingException(
+                    Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type)));
         SkinLayers trait = npc.getOrAddTrait(SkinLayers.class);
         if (cape != null) {
             trait.setVisible(Layer.CAPE, cape);

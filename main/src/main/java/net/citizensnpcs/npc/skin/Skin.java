@@ -355,7 +355,8 @@ public class Skin {
         npc.data().setPersistent(CACHED_SKIN_UUID_NAME_METADATA, skinName);
         npc.data().setPersistent(CACHED_SKIN_UUID_METADATA, skinId.toString());
         if (skinProperty.value != null) {
-            skinTrait.setTexture(skinProperty.value, skinProperty.signature == null ? "" : skinProperty.signature);
+            skinTrait.applyTextureInternal(skinProperty.signature == null ? "" : skinProperty.signature,
+                    skinProperty.value);
             setNPCTexture(entity, skinProperty);
         } else {
             skinTrait.clearTexture();

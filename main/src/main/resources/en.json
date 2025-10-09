@@ -829,7 +829,7 @@
   "citizens.nms-errors.updating-pathfinding-range" : "Could not update pathfinding range: {0}. ",
   "citizens.notifications.error-reloading" : "Error occured while reloading, see console.",
   "citizens.notifications.exception-updating-npc" : "Exception while updating {0}: {1}.",
-  "citizens.notifications.incompatible-version" : "v{0} is not compatible with Minecraft {1} - try upgrading Minecraft or Citizens. Disabling...",
+  "citizens.notifications.incompatible-version" : "v{0} is not compatible with your version of Minecraft. Disabling...",
   "citizens.notifications.locale" : "Using locale {0}.",
   "citizens.notifications.metrics-load-error" : "Unable to start metrics: {0}.",
   "citizens.notifications.missing-translations" : "Missing translations file for locale {0}. Defaulting to en locale.",

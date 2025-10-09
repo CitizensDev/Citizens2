@@ -191,7 +191,7 @@ public class SkinTrait extends Trait {
         onSkinChange(false);
     }
 
-    public void setTexture(String value, String signature) {
+    public void applyTextureInternal(String signature, String value) {
         textureRaw = value;
         this.signature = signature;
     }

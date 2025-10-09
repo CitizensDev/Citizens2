@@ -57,7 +57,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
-import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.api.util.Storage;
 import net.citizensnpcs.api.util.Translator;
@@ -388,14 +387,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         config = new Settings(getDataFolder());
         setupTranslator();
         // Disable if the server is not using the compatible Minecraft version
-        String mcVersion = SpigotUtil.getMinecraftPackage();
         try {
-            NMS.loadBridge(mcVersion);
+            NMS.loadBridge();
         } catch (Exception e) {
             if (Messaging.isDebugging()) {
                 e.printStackTrace();
             }
-            Messaging.severeTr(Messages.CITIZENS_INCOMPATIBLE, getDescription().getVersion(), mcVersion);
+            Messaging.severeTr(Messages.CITIZENS_INCOMPATIBLE, getDescription().getVersion());
             NMS.shutdown();
             CitizensAPI.shutdown();
             Bukkit.getPluginManager().disablePlugin(this);
