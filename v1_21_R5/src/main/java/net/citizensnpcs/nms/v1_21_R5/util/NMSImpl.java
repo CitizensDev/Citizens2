@@ -62,7 +62,6 @@ import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.HttpAuthenticationService;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.minecraft.client.MinecraftClient;
-import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UndashedUuid;
@@ -225,7 +224,6 @@ import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.EntityPoseTrait.EntityPose;
-import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.versioned.AllayTrait;
 import net.citizensnpcs.trait.versioned.AreaEffectCloudTrait;
@@ -1252,62 +1250,6 @@ public class NMSImpl implements NMSBridge {
         if (handle == null)
             return;
         handle.startRiding(getHandle(entity), true);
-    }
-
-    @Override
-    public void onPlayerInfoAdd(Player player, Object raw, Function<UUID, MirrorTrait> mirrorTraits) {
-        ClientboundPlayerInfoUpdatePacket packet = (ClientboundPlayerInfoUpdatePacket) raw;
-        List<ClientboundPlayerInfoUpdatePacket.Entry> list = Lists.newArrayList(packet.entries());
-        boolean changed = false;
-        GameProfile playerProfile = null;
-        for (int i = 0; i < list.size(); i++) {
-            ClientboundPlayerInfoUpdatePacket.Entry npcInfo = list.get(i);
-            if (npcInfo == null) {
-                continue;
-            }
-            MirrorTrait trait = mirrorTraits.apply(npcInfo.profileId());
-            if (trait == null || !trait.isMirroring(player)) {
-                continue;
-            }
-            boolean disableTablist = trait.getNPC().shouldRemoveFromTabList();
-
-            if (disableTablist != npcInfo.listed()) {
-                list.set(i,
-                        new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), npcInfo.profile(),
-                                !disableTablist, npcInfo.latency(), npcInfo.gameMode(),
-                                !disableTablist ? npcInfo.displayName() : Component.empty(), npcInfo.showHat(),
-                                npcInfo.listOrder(), npcInfo.chatSession()));
-                changed = true;
-            }
-            if (playerProfile == null) {
-                playerProfile = NMS.getProfile(player);
-            }
-            if (trait.mirrorName()) {
-                list.set(i, new ClientboundPlayerInfoUpdatePacket.Entry(npcInfo.profileId(), playerProfile,
-                        !disableTablist, npcInfo.latency(), npcInfo.gameMode(),
-                        Component.literal(
-                                Util.possiblyStripBedrockPrefix(playerProfile.getName(), playerProfile.getId())),
-                        npcInfo.showHat(), npcInfo.listOrder(), npcInfo.chatSession()));
-                changed = true;
-                continue;
-            }
-            Collection<Property> textures = playerProfile.getProperties().get("textures");
-            if (textures == null || textures.size() == 0) {
-                continue;
-            }
-            npcInfo.profile().getProperties().clear();
-            for (String key : playerProfile.getProperties().keySet()) {
-                npcInfo.profile().getProperties().putAll(key, playerProfile.getProperties().get(key));
-            }
-            changed = true;
-        }
-        if (changed) {
-            try {
-                PLAYER_INFO_ENTRIES_LIST.invoke(packet, list);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override

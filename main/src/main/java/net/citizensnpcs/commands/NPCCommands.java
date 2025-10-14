@@ -1830,8 +1830,8 @@ public class NPCCommands {
             toggle = false;
         }
         if (perPlayer != null) {
-            if (((Citizens) CitizensAPI.getPlugin()).getProtocolLibListener() == null)
-                throw new CommandException("ProtocolLib must be enabled to use this feature");
+            if (((Citizens) CitizensAPI.getPlugin()).getPacketEventsListener() == null)
+                throw new CommandException("PacketEvents must be enabled to use this feature");
             trait.setPerPlayer(perPlayer);
             Messaging.sendTr(sender, perPlayer ? Messages.LOOKCLOSE_PERPLAYER_SET : Messages.LOOKCLOSE_PERPLAYER_UNSET,
                     npc.getName());
@@ -2009,13 +2009,15 @@ public class NPCCommands {
     @Requirements(selected = true, ownership = true)
     public void mirror(CommandContext args, CommandSender sender, NPC npc, @Flag("name") Boolean name,
             @Flag("equipment") Boolean equipment) throws CommandException {
-        if (((Citizens) CitizensAPI.getPlugin()).getProtocolLibListener() == null)
-            throw new CommandException("ProtocolLib must be enabled to use this feature");
+        if (((Citizens) CitizensAPI.getPlugin()).getPacketEventsListener() == null)
+            throw new CommandException("PacketEvents must be enabled to use this feature");
 
         MirrorTrait trait = npc.getOrAddTrait(MirrorTrait.class);
+        if (equipment != null) {
+            trait.setMirrorEquipment(equipment);
+        }
         if (name != null) {
             trait.setEnabled(true);
-            trait.setMirrorEquipment(equipment);
             trait.setMirrorName(name);
             Messaging.sendTr(sender, name ? Messages.MIRROR_NAME_SET : Messages.MIRROR_NAME_UNSET, npc.getName());
         } else {

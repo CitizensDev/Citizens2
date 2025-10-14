@@ -20,10 +20,14 @@
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>        
+        </repository>
         <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.io/repository/maven-releases/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -40,7 +44,7 @@
         <repository>
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
-        </repository> 
+        </repository>
         <repository>
             <id>AlessioDP</id>
             <url>https://repo.alessiodp.com/releases/</url>
@@ -50,15 +54,15 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>${craftbukkit.version}</version> 
+            <version>${craftbukkit.version}</version>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>${craftbukkit.version}</version>  
+            <version>${craftbukkit.version}</version>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>net.byteflux</groupId>
             <artifactId>libby-bukkit</artifactId>
@@ -71,9 +75,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.dmulloy2</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>5.4.0</version>
+            <groupId>com.github.retrooper</groupId>
+            <artifactId>packetevents-spigot</artifactId>
+            <version>2.9.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -91,7 +95,7 @@
         <dependency>
             <groupId>net.citizensnpcs</groupId>
             <artifactId>citizensapi</artifactId>
-            <version>${citizensapi.version}</version> 
+            <version>${citizensapi.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -111,7 +115,7 @@
             <artifactId>worldguard-bukkit</artifactId>
             <version>${worldguard.version}</version>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
@@ -154,7 +158,7 @@
                     <include>*.json</include>
                     <include>LICENSE</include>
                 </includes>
-            </resource> 
+            </resource>
             <resource>
                 <directory>src/main/resources/templates</directory>
                 <targetPath>templates</targetPath>
@@ -182,12 +186,12 @@
                 <version>${maven-javadoc-plugin.version}</version>
                 <executions>
                     <execution>
-                      <id>attach-javadoc</id>
-                      <goals>
-                        <goal>javadoc</goal>
-                        <goal>jar</goal>
-                      </goals>
-                      <phase>package</phase>
+                        <id>attach-javadoc</id>
+                        <goals>
+                            <goal>javadoc</goal>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
                     </execution>
                 </executions>
                 <configuration>
@@ -201,8 +205,8 @@
                     </links>
                     <includeDependencySources>true</includeDependencySources>
                     <dependencySourceIncludes>
-                        <dependencySourceInclude>net.citizensnpcs:citizensapi</dependencySourceInclude> 
-                    </dependencySourceIncludes> 
+                        <dependencySourceInclude>net.citizensnpcs:citizensapi</dependencySourceInclude>
+                    </dependencySourceIncludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -253,7 +257,7 @@
                                 </filter>
                             </filters>
                             <relocations>
-                            <!--
+                                <!--
                                 <relocation>
                                     <pattern>it.unimi.dsi</pattern>
                                     <shadedPattern>clib.fastutil</shadedPattern>

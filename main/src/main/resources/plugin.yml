@@ -1,6 +1,6 @@
 name: Citizens
 authors: [fullwall]
-softdepend: [Vault, PlaceholderAPI, WorldGuard, ProtocolLib]
+softdepend: [Vault, PlaceholderAPI, WorldGuard, packetevents]
 version: ${project.version} (build ${BUILD_NUMBER})
 main: net.citizensnpcs.Citizens
 website: https://www.citizensnpcs.co

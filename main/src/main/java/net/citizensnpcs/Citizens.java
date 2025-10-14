@@ -22,13 +22,14 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.comphenix.protocol.ProtocolLibrary;
+import com.github.retrooper.packetevents.PacketEvents;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
 import ch.ethz.globis.phtree.PhTreeHelper;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import net.byteflux.libby.LibraryManager;
@@ -138,7 +139,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         }
     };
     private CitizensNPCRegistry npcRegistry;
-    private ProtocolLibListener protocolListener;
+    private boolean packetEventsEnabled = true;
+    private PacketEventsListener packetEventsListener;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
     private NPCSelector selector;
@@ -270,8 +272,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return getClassLoader();
     }
 
-    public ProtocolLibListener getProtocolLibListener() {
-        return protocolListener;
+    public PacketEventsListener getPacketEventsListener() {
+        return packetEventsListener;
     }
 
     public StoredShops getShops() {
@@ -373,6 +375,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         Skin.clearCache();
         NMS.shutdown();
         CitizensAPI.shutdown();
+        if (packetEventsEnabled) {
+            PacketEvents.getAPI().terminate();
+        }
     }
 
     @Override
@@ -449,6 +454,16 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void onImplementationChanged() {
         Messaging.severeTr(Messages.CITIZENS_IMPLEMENTATION_DISABLED);
         Bukkit.getPluginManager().disablePlugin(this);
+    }
+
+    @Override
+    public void onLoad() {
+        try {
+            PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+            PacketEvents.getAPI().load();
+        } catch (Throwable t) {
+            packetEventsEnabled = false;
+        }
     }
 
     public void registerCommandClass(Class<?> clazz) {
@@ -599,13 +614,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private class CitizensLoadTask implements Runnable {
         @Override
         public void run() {
-            Plugin plib = Bukkit.getPluginManager().getPlugin("ProtocolLib");
-            if (Setting.HOOK_PROTOCOLLIB.asBoolean() && plib != null && plib.isEnabled()
-                    && ProtocolLibrary.getProtocolManager() != null) {
+            if (packetEventsEnabled) {
                 try {
-                    protocolListener = new ProtocolLibListener(Citizens.this);
+                    packetEventsListener = new PacketEventsListener(Citizens.this);
                 } catch (Throwable t) {
-                    Messaging.severe("ProtocolLib support not enabled due to following error:");
+                    Messaging.severe("PacketEvents support not enabled due to following error:");
                     t.printStackTrace();
                 }
             }

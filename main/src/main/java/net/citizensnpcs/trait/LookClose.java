@@ -26,7 +26,6 @@ import net.citizensnpcs.api.event.NPCLookCloseChangeTargetEvent;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -58,6 +57,7 @@ public class LookClose extends Trait {
     private boolean randomSwitchTargets;
     @Persist
     private float[] randomYawRange = { 0, 360 };
+    @Persist
     private double range = Setting.DEFAULT_LOOK_CLOSE_RANGE.asDouble();
     @Persist("realisticlooking")
     private boolean realisticLooking = Setting.DEFAULT_REALISTIC_LOOKING.asBoolean();
@@ -236,11 +236,6 @@ public class LookClose extends Trait {
                 && entity.getLocation().distance(npc.getStoredLocation()) <= range && !isInvisible(entity);
     }
 
-    @Override
-    public void load(DataKey key) {
-        range = key.getDouble("range");
-    }
-
     /**
      * Enables/disables the trait
      */
@@ -305,11 +300,6 @@ public class LookClose extends Trait {
                     100 - 4 * (int) Math.floor(npc.getStoredLocation().distanceSquared(lookingAt.getLocation())));
             npc.getEntity().setSilent(wasSilent);
         }
-    }
-
-    @Override
-    public void save(DataKey key) {
-        key.setDouble("range", range);
     }
 
     public void setDisableWhileNavigating(boolean set) {

@@ -3,8 +3,6 @@ package net.citizensnpcs.util;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.function.Function;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -42,7 +40,6 @@ import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.npc.ai.MCNavigationStrategy.MCNavigator;
 import net.citizensnpcs.npc.ai.MCTargetStrategy.TargetNavigator;
 import net.citizensnpcs.trait.EntityPoseTrait.EntityPose;
-import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.versioned.ArmadilloTrait.ArmadilloState;
 import net.citizensnpcs.trait.versioned.CamelTrait.CamelPose;
 import net.citizensnpcs.trait.versioned.SnifferTrait.SnifferState;
@@ -168,9 +165,6 @@ public interface NMSBridge {
     }
 
     public void mount(Entity entity, Entity passenger);
-
-    public default void onPlayerInfoAdd(Player player, Object source, Function<UUID, MirrorTrait> mirrorTraits) {
-    }
 
     public InventoryView openAnvilInventory(Player player, Inventory anvil, String title);
 
