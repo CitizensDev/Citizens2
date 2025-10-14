@@ -163,7 +163,8 @@ public class PacketEventsListener implements Listener {
                     }
                 }
                 try {
-                    return DESERIALIZE_METHOD.invoke(MINIMESSAGE, Messaging.convertLegacyCodes(raw));
+                    return DESERIALIZE_METHOD.invoke(MINIMESSAGE,
+                            Messaging.convertLegacyCodes(raw).replace("<csr>", ""));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
