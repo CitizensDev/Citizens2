@@ -85,7 +85,7 @@ public class CopperGolemTrait extends Trait {
     private static Class WEATHER_STATE_CLASS;
     static {
         try {
-            WEATHER_STATE_CLASS = Class.forName("org.bukkit.entity.CopperGolem.CopperWeatherState");
+            WEATHER_STATE_CLASS = Class.forName("org.bukkit.entity.CopperGolem$CopperWeatherState");
             SPIGOT_SET_WEATHER_STATE = NMS.getMethodHandle(CopperGolem.class, "setWeatherState", false,
                     WEATHER_STATE_CLASS);
         } catch (ClassNotFoundException e) {
