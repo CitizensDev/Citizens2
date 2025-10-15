@@ -1,6 +1,6 @@
 package net.citizensnpcs.trait;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +54,7 @@ public class RotationTrait extends Trait {
      * @return The created session
      */
     public PacketRotationSession createPacketSession(RotationParams params) {
-        if (params.filter == null && params.uuidFilter == null)
+        if (params.filter == null)
             throw new IllegalStateException();
         RotationSession session = new RotationSession(params);
         PacketRotationSession prs = new PacketRotationSession(session);
@@ -243,7 +243,7 @@ public class RotationTrait extends Trait {
         private float maxYawPerTick = 40;
         private volatile boolean persist = false;
         private float[] pitchRange = { -180, 180 };
-        private List<UUID> uuidFilter;
+        private Collection<UUID> uuidFilter;
         private float[] yawRange = { -180, 180 };
 
         public boolean accepts(Player player) {
@@ -386,13 +386,14 @@ public class RotationTrait extends Trait {
             }
         }
 
-        public RotationParams uuidFilter(List<UUID> uuids) {
-            uuidFilter = uuids;
+        public RotationParams uuidFilter(Collection<UUID> uuids) {
+            this.uuidFilter = uuids;
+            filter = p -> uuids.contains(p.getUniqueId());
             return this;
         }
 
         public RotationParams uuidFilter(UUID... uuids) {
-            return uuidFilter(Arrays.asList(uuids));
+            return uuidFilter(Sets.newHashSet(uuids));
         }
 
         public RotationParams yawRange(float[] val) {
