@@ -3,6 +3,7 @@ package net.citizensnpcs.npc.skin;
 import java.util.Locale;
 import java.util.Set;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.LivingEntity;
 
 import com.mojang.authlib.GameProfile;
@@ -19,16 +20,16 @@ public interface SkinnableEntity extends NPCHolder {
     void applyTexture(SkinProperty property);
 
     /**
+     * Get entity game profile.
+     */
+    GameProfile gameProfile();
+
+    /**
      * Get the bukkit entity.
      */
     default LivingEntity getBukkitEntity() {
         return (LivingEntity) getNPC().getEntity();
     }
-
-    /**
-     * Get entity game profile.
-     */
-    GameProfile gameProfile();
 
     /**
      * Get the name of the player whose skin the NPC uses.
@@ -62,6 +63,9 @@ public interface SkinnableEntity extends NPCHolder {
         setSkinFlags(SkinLayers.Layer.toByte(flags));
     }
 
+    default void setSkinPatch(PlayerSkinModelType type, NamespacedKey body, NamespacedKey cape, NamespacedKey elytra) {
+    }
+
     public static interface ForwardingSkinnableEntity extends SkinnableEntity {
         @Override
         default void applyTexture(SkinProperty property) {
@@ -84,5 +88,16 @@ public interface SkinnableEntity extends NPCHolder {
         default void setSkinFlags(byte flags) {
             getUnderlying().setSkinFlags(flags);
         }
+
+        @Override
+        default void setSkinPatch(PlayerSkinModelType type, NamespacedKey body, NamespacedKey cape,
+                NamespacedKey elytra) {
+            getUnderlying().setSkinPatch(type, body, cape, elytra);
+        }
+    }
+
+    public enum PlayerSkinModelType {
+        SLIM,
+        WIDE;
     }
 }

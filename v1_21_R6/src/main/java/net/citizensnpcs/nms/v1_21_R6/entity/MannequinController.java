@@ -1,12 +1,16 @@
 package net.citizensnpcs.nms.v1_21_R6.entity;
 
+import java.util.Optional;
+
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_21_R6.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R6.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_21_R6.entity.CraftMannequin;
 import org.bukkit.entity.LivingEntity;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.datafixers.util.Either;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_21_R6.util.ForwardingNPCHolder;
@@ -23,7 +27,9 @@ import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.SkinProperty;
 import net.citizensnpcs.util.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.ClientAsset.ResourceTexture;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
@@ -32,6 +38,8 @@ import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.Mannequin;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin.Patch;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.component.ResolvableProfile;
@@ -220,6 +228,27 @@ public class MannequinController extends MobEntityController {
         @Override
         public void setSkinFlags(byte flags) {
             getEntityData().set(Avatar.DATA_PLAYER_MODE_CUSTOMISATION, flags);
+        }
+
+        @Override
+        public void setSkinPatch(PlayerSkinModelType type, NamespacedKey body, NamespacedKey cape,
+                NamespacedKey elytra) {
+            setProfile(
+                    new ResolvableProfile.Static(Either.left(getProfile().partialProfile()),
+                            new Patch(
+                                    body == null ? Optional.empty()
+                                            : Optional.of(new ResourceTexture(ResourceLocation
+                                                    .fromNamespaceAndPath(body.getNamespace(), body.getKey()))),
+                                    cape == null
+                                            ? Optional.empty()
+                                            : Optional.of(new ResourceTexture(ResourceLocation
+                                                    .fromNamespaceAndPath(cape.getNamespace(), cape.getKey()))),
+                                    elytra == null
+                                            ? Optional.empty()
+                                            : Optional.of(new ResourceTexture(ResourceLocation
+                                                    .fromNamespaceAndPath(elytra.getNamespace(), elytra.getKey()))),
+                                    Optional.of(type == PlayerSkinModelType.SLIM ? PlayerModelType.SLIM
+                                            : PlayerModelType.WIDE))));
         }
 
         @Override

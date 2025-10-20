@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import java.util.Objects;
 
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Charsets;
@@ -12,19 +13,27 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.npc.skin.SkinnableEntity.PlayerSkinModelType;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.SkinProperty;
 
 @TraitName("skintrait")
 public class SkinTrait extends Trait {
     @Persist
+    private NamespacedKey body;
+    @Persist
+    private NamespacedKey cape;
+    @Persist
+    private NamespacedKey elytra;
+    @Persist
     private boolean fetchDefaultSkin = Setting.NPC_SKIN_FETCH_DEFAULT.asBoolean();
     private String filledPlaceholder;
+    @Persist
+    private PlayerSkinModelType modelType = PlayerSkinModelType.WIDE;
     @Persist
     private String signature;
     @Persist
@@ -37,6 +46,11 @@ public class SkinTrait extends Trait {
 
     public SkinTrait() {
         super("skintrait");
+    }
+
+    public void applyTextureInternal(String signature, String value) {
+        textureRaw = value;
+        this.signature = signature;
     }
 
     private boolean checkPlaceholder() {
@@ -58,6 +72,10 @@ public class SkinTrait extends Trait {
         textureRaw = null;
         signature = null;
         skinName = null;
+        body = null;
+        cape = null;
+        elytra = null;
+        modelType = PlayerSkinModelType.WIDE;
     }
 
     /**
@@ -89,15 +107,17 @@ public class SkinTrait extends Trait {
         return textureRaw;
     }
 
-    @Override
-    public void load(DataKey key) {
-        checkPlaceholder();
-    }
-
     private void onSkinChange(boolean forceUpdate) {
-        if (!npc.isSpawned() || !(npc.getEntity() instanceof SkinnableEntity))
+        if (!(npc.getEntity() instanceof SkinnableEntity))
             return;
         ((SkinnableEntity) npc.getEntity()).getSkinTracker().notifySkinChange(forceUpdate);
+    }
+
+    @Override
+    public void onSpawn() {
+        if (npc.getEntity() instanceof SkinnableEntity && body != null) {
+            ((SkinnableEntity) npc.getEntity()).setSkinPatch(modelType, body, cape, elytra);
+        }
     }
 
     @Override
@@ -154,6 +174,22 @@ public class SkinTrait extends Trait {
     }
 
     /**
+     * Sets the skin texture patch. Only guaranteed to work on Mannequin NPCs.
+     *
+     * @param patch
+     */
+    public void setSkinPatch(PlayerSkinModelType modelType, NamespacedKey body, NamespacedKey cape,
+            NamespacedKey elytra) {
+        this.body = body;
+        this.cape = cape;
+        this.elytra = elytra;
+        this.modelType = modelType;
+        if (body != null && npc.getEntity() instanceof SkinnableEntity) {
+            ((SkinnableEntity) npc.getEntity()).setSkinPatch(modelType, body, cape, elytra);
+        }
+    }
+
+    /**
      * Set skin data copying from a {@link Player}. Not subject to rate limiting from Mojang.
      *
      * @param player
@@ -189,11 +225,6 @@ public class SkinTrait extends Trait {
         updateSkins = false;
         npc.data().setPersistent(Skin.CACHED_SKIN_UUID_NAME_METADATA, skinName.toLowerCase());
         onSkinChange(false);
-    }
-
-    public void applyTextureInternal(String signature, String value) {
-        textureRaw = value;
-        this.signature = signature;
     }
 
     /**

@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.versioned;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mannequin;
@@ -16,6 +17,8 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.npc.skin.SkinnableEntity.PlayerSkinModelType;
+import net.citizensnpcs.trait.SkinTrait;
 import net.citizensnpcs.util.NMS;
 
 @TraitName("mannequintrait")
@@ -66,7 +69,7 @@ public class MannequinTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "mannequin --hide_description [true|false] --immovable [true|false] --description [description] --main_hand [LEFT|RIGHT]",
+            usage = "mannequin --hide_description [true|false] --immovable [true|false] --description [description] --main_hand [LEFT|RIGHT] --skin_patch_type [type] --skin_patch_body [location] --skin_patch_cape [location] --skin_patch_elytra [location]",
             desc = "",
             modifiers = { "mannequin" },
             min = 1,
@@ -76,7 +79,10 @@ public class MannequinTrait extends Trait {
     public static void mannequin(CommandContext args, CommandSender sender, NPC npc,
             @Flag("description") String description, @Flag("immovable") Boolean immovable,
             @Flag("hide_description") Boolean hideDescription, @Flag("main_hand") MainHand mainHand,
-            @Flag("show_part") Object show, @Flag("hide_part") Object hide) throws CommandException {
+            @Flag("show_part") Object show, @Flag("hide_part") Object hide,
+            @Flag("skin_patch_type") PlayerSkinModelType type, @Flag("skin_patch_body") NamespacedKey body,
+            @Flag("skin_patch_cape") NamespacedKey cape, @Flag("skin_patch_elytra") NamespacedKey elytra)
+            throws CommandException {
         MannequinTrait trait = npc.getOrAddTrait(MannequinTrait.class);
         String output = "";
         if (description != null) {
@@ -90,6 +96,9 @@ public class MannequinTrait extends Trait {
         }
         if (mainHand != null) {
             trait.setMainHand(mainHand);
+        }
+        if (body != null || cape != null || type != null || elytra != null) {
+            npc.getOrAddTrait(SkinTrait.class).setSkinPatch(type, body, cape, elytra);
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);
