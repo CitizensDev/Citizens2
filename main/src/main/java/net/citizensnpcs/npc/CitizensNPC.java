@@ -533,7 +533,10 @@ public class CitizensNPC extends AbstractNPC {
             updateCustomNameVisibility();
 
             if (isLiving) {
-                NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
+                if (!SUPPORT_ATTRIBUTES || !hasTrait(AttributeTrait.class)
+                        || !getTraitNullable(AttributeTrait.class).hasAttribute(Attribute.KNOCKBACK_RESISTANCE)) {
+                    NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
+                }
                 if (SUPPORT_PICKUP_ITEMS) {
                     ((LivingEntity) getEntity()).setCanPickupItems(data().get(NPC.Metadata.PICKUP_ITEMS, false));
                 }
