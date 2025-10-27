@@ -416,6 +416,7 @@ public class CitizensNPC extends AbstractNPC {
                     addTrait(HologramTrait.class);
                 }
                 updateFlyableState();
+                updateCustomName();
                 updateCustomNameVisibility();
                 updateScoreboard();
 
