@@ -22,7 +22,7 @@ public class PausePathfindingTrait extends Trait {
     @Persist("rightclick")
     private boolean rightclick;
     private int t;
-    private int unpauseTaskId = -1;
+    private net.citizensnpcs.api.util.schedulers.SchedulerTask unpauseTaskId = null;
 
     public PausePathfindingTrait() {
         super("pausepathfinding");
@@ -49,12 +49,12 @@ public class PausePathfindingTrait extends Trait {
     }
 
     private void pause() {
-        if (unpauseTaskId != -1) {
-            Bukkit.getScheduler().cancelTask(unpauseTaskId);
+        if (unpauseTaskId != null) {
+            unpauseTaskId.cancel();
         }
         npc.getNavigator().cancelNavigation();
         npc.getNavigator().setPaused(true);
-        unpauseTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+        unpauseTaskId = CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), () -> {
             NMS.setPitch(npc.getEntity(), 0);
             npc.getNavigator().setPaused(false);
         }, pauseTicks <= 0 ? 20 : pauseTicks);
@@ -68,7 +68,7 @@ public class PausePathfindingTrait extends Trait {
     @Override
     public void run() {
         if (lockoutDuration > t++ || playerRange == -1 || !npc.isSpawned()
-                || unpauseTaskId == -1 && !npc.getNavigator().isNavigating())
+                || unpauseTaskId == null && !npc.getNavigator().isNavigating())
             return;
 
         if (CitizensAPI.getLocationLookup()
