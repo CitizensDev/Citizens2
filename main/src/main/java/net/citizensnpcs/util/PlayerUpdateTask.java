@@ -20,9 +20,9 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.PacketNPC;
 
-public class PlayerUpdateTask extends BukkitRunnable {
-    private final List<PlayerTick> players = Lists.newArrayList();
-    private final Set<UUID> uuids = Sets.newHashSet();
+public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.SchedulerRunnable {
+    private final List<PlayerTick> players = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private final Set<UUID> uuids = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     @Override
     public void cancel() {
@@ -91,7 +91,7 @@ public class PlayerUpdateTask extends BukkitRunnable {
 
         @Override
         public void run() {
-            tick.run();
+            net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTask(entity, tick);
         }
     }
 
