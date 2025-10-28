@@ -82,6 +82,9 @@ public class Util {
     }
 
     public static <T> T callPossiblySync(Callable<T> callable, boolean sync) {
+        if (SpigotUtil.isFoliaServer()) {
+            throw new UnsupportedOperationException("Folia does not have a main thread, so it is not supported.");
+        }
         if (!sync) {
             try {
                 return callable.call();
