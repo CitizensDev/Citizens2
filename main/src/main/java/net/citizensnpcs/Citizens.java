@@ -185,6 +185,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     registry.saveToStore();
                 }
             }
+            if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+                if (!this.isEnabled()) return;
+            }
             registry.despawnNPCs(DespawnReason.RELOAD);
         }
     }
