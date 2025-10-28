@@ -7,6 +7,8 @@ import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Enderman;
@@ -232,7 +234,12 @@ public interface NMSBridge {
 
     public void setHeadYaw(Entity entity, float yaw);
 
-    public void setKnockbackResistance(LivingEntity entity, double d);
+    public default void setKnockbackResistance(LivingEntity entity, double d) {
+        AttributeInstance ai = entity.getAttribute(Attribute.KNOCKBACK_RESISTANCE);
+        if (ai != null) {
+            ai.setBaseValue(d);
+        }
+    }
 
     public void setLocationDirectly(Entity entity, Location location);
 

@@ -158,6 +158,13 @@ public class CreakingController extends MobEntityController {
         }
 
         @Override
+        public boolean isHeartBound() {
+            if (npc == null || npc.useMinecraftAI())
+                return super.isHeartBound();
+            return npc.isProtected() ? false : super.isHeartBound();
+        }
+
+        @Override
         public boolean isLeashed() {
             return NMSImpl.isLeashed(npc, super::isLeashed, this);
         }

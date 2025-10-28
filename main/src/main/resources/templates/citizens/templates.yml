@@ -1,0 +1,5 @@
+example:
+  commands:
+    on_spawn:
+      - say Hello! --range 15
+      - npc command add say Hello again!

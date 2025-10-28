@@ -1582,12 +1582,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void setKnockbackResistance(org.bukkit.entity.LivingEntity entity, double d) {
-        LivingEntity handle = getHandle(entity);
-        handle.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(d);
-    }
-
-    @Override
     public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
         // Todo - temp teleport
         if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
