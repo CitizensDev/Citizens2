@@ -92,6 +92,10 @@ public class NMS {
         return BRIDGE.addEntityToWorld(entity, custom);
     }
 
+    public static void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, Consumer<Boolean> isAdded) {
+        BRIDGE.addEntityToWorld(entity, custom, isAdded);
+    }
+
     public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
         BRIDGE.addOrRemoveFromPlayerList(entity, remove);
     }
@@ -1042,7 +1046,11 @@ public class NMS {
     }
 
     public static void setStepHeight(org.bukkit.entity.Entity entity, float height) {
-        BRIDGE.setStepHeight(entity, height);
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
+            BRIDGE.setStepHeight(entity, height);
+        } else {
+            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.setStepHeight(entity, height));
+        }
     }
 
     public static void setTeamNameTagVisible(Team team, boolean visible) {
