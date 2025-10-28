@@ -114,7 +114,7 @@ public class Waypoint {
                 continue;
             }
             int newStart = i + 1;
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> runTriggers(npc, newStart),
+            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), () -> runTriggers(npc, newStart),
                     delay);
             break;
         }
