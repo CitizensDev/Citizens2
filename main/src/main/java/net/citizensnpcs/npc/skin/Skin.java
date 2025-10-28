@@ -37,7 +37,7 @@ public class Skin {
     private boolean hasFetched;
     private volatile boolean isValid = true;
     private final Map<SkinnableEntity, Void> pending = new WeakHashMap<>(15);
-    private BukkitTask retryTask;
+    private net.citizensnpcs.api.util.schedulers.SchedulerTask retryTask;
     private volatile SkinProperty skinData;
     private volatile UUID skinId;
     private final String skinName;
@@ -125,7 +125,7 @@ public class Skin {
         if (!npc.isSpawned())
             return;
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+        CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
         });
@@ -158,7 +158,7 @@ public class Skin {
 
                     fetchRetries++;
                     long delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
-                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), (Runnable) this::fetch,
+                    retryTask = CitizensAPI.getScheduler().runTaskLater(this::fetch,
                             delay);
 
                     Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
@@ -200,8 +200,8 @@ public class Skin {
                     }
                     fetchRetries++;
                     int delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
-                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
-                            (Runnable) this::fetchForced, delay);
+                    retryTask = CitizensAPI.getScheduler().runTaskLater(
+                            this::fetchForced, delay);
 
                     Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
                     break;
