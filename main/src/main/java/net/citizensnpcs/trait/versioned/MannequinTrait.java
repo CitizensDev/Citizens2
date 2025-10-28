@@ -43,8 +43,9 @@ public class MannequinTrait extends Trait {
             if (mainHand != null) {
                 mannequin.setMainHand(mainHand);
             }
-            if (description != null && npc.isUpdating(NPCUpdate.PACKET)) {
-                NMS.setMannequinDescription(mannequin, Messaging.minecraftComponentFromRawMessage(description));
+            if (!hideDescription && npc.isUpdating(NPCUpdate.PACKET)) {
+                NMS.setMannequinDescription(mannequin,
+                        description == null ? null : Messaging.minecraftComponentFromRawMessage(description));
             }
             mannequin.setImmovable(immovable);
             mannequin.setHideDescription(hideDescription);

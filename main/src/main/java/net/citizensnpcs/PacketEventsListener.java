@@ -319,9 +319,6 @@ public class PacketEventsListener implements Listener {
                     packet.setPitch(session.getPitch());
                     packet.write();
                 }
-                Messaging.debug("Modifying body/head yaw for", session, "->", event.getPlayer(), session.getBodyYaw(),
-                        degToByte(session.getBodyYaw()), session.getHeadYaw(), degToByte(session.getHeadYaw()),
-                        session.getPitch(), type);
                 session.onPacketOverwritten();
             }
         }, PacketListenerPriority.HIGHEST);
@@ -362,9 +359,5 @@ public class PacketEventsListener implements Listener {
         if (event.getNPC().getEntity() == null)
             return;
         onSpawn(event);
-    }
-
-    private static byte degToByte(float in) {
-        return (byte) (in * 256.0F / 360.0F);
     }
 }

@@ -85,6 +85,7 @@ public class TemplateCommands {
             min = 1,
             max = 1,
             permission = "citizens.templates.list")
+    @Requirements
     public void list(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         Messaging.sendTr(sender, Messages.TEMPLATE_LIST_HEADER);
         for (Template template : registry.getAllTemplates()) {
