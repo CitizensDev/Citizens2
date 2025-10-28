@@ -359,7 +359,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             String message = event.getMessage();
             if (message.equalsIgnoreCase("triggers")) {
                 event.setCancelled(true);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), () -> {
                     conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
                     conversation.addConversationAbandonedListener(e -> {
                         setPaused(false);
@@ -369,20 +369,20 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 });
             } else if (message.equalsIgnoreCase("clear")) {
                 event.setCancelled(true);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::clearWaypoints);
+                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), this::clearWaypoints);
             } else if (message.equalsIgnoreCase("toggle path") || message.equalsIgnoreCase("markers")) {
                 event.setCancelled(true);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::togglePath);
+                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), this::togglePath);
             } else if (message.equalsIgnoreCase("cycle")) {
                 event.setCancelled(true);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), () -> {
                     cycle = !cycle;
                     Messaging.sendTr(event.getPlayer(), cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET
                             : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
                 });
             } else if (message.equalsIgnoreCase("here")) {
                 event.setCancelled(true);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(),
                         () -> addWaypoint(player.getLocation()));
             }
         }
