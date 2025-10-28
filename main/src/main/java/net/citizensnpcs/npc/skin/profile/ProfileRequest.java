@@ -132,7 +132,7 @@ public class ProfileRequest {
     void setResult(@Nullable GameProfile profile, ProfileFetchResult result) {
         if (!CitizensAPI.hasImplementation())
             return;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+        CitizensAPI.getScheduler().runTask(() -> {
             ProfileRequest.this.profile = profile;
             ProfileRequest.this.result = result;
 
