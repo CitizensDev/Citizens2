@@ -473,7 +473,7 @@ public class HologramTrait extends Trait {
                 cloud.setRadius(0);
                 cloud.setParticle(Particle.BLOCK_MARKER, Bukkit.createBlockData(Material.AIR));
             }
-            hologram.getEntity().teleport(
+            SpigotUtil.teleportAsync(hologram.getEntity(),
                     npc.getEntity().getLocation().clone().add(offset.x,
                             offset.y + NMS.getBoundingBoxHeight(npc.getEntity()) - 0.5, offset.z),
                     TeleportCause.PLUGIN);
@@ -495,7 +495,7 @@ public class HologramTrait extends Trait {
 
         @Override
         protected void render0(NPC npc, Vector3d offset) {
-            hologram.getEntity().teleport(npc.getEntity().getLocation().clone().add(offset.x,
+            SpigotUtil.teleportAsync(hologram.getEntity(), npc.getEntity().getLocation().clone().add(offset.x,
                     offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
         }
     }
@@ -834,7 +834,7 @@ public class HologramTrait extends Trait {
 
         @Override
         protected void render0(NPC npc, Vector3d offset) {
-            hologram.getEntity().teleport(npc.getEntity().getLocation().clone().add(offset.x,
+            SpigotUtil.teleportAsync(hologram.getEntity(), npc.getEntity().getLocation().clone().add(offset.x,
                     offset.y + NMS.getBoundingBoxHeight(npc.getEntity()), offset.z), TeleportCause.PLUGIN);
         }
 
@@ -1000,7 +1000,7 @@ public class HologramTrait extends Trait {
                     disp.setTransformation(tf);
                 }
             }
-            hologram.getEntity().teleport(
+            SpigotUtil.teleportAsync(hologram.getEntity(),
                     base.getEntity().getLocation().clone().add(offset.x,
                             offset.y + NMS.getBoundingBoxHeight(base.getEntity()) + 0.2f, offset.z),
                     TeleportCause.PLUGIN);
