@@ -431,12 +431,12 @@ public class CitizensNPC extends AbstractNPC {
             postSpawn.accept(() -> {
             });
         } else {
-            new BukkitRunnable() {
+            new net.citizensnpcs.api.util.schedulers.SchedulerRunnable() {
                 @Override
                 public void run() {
                     postSpawn.accept(this::cancel);
                 }
-            }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
+            }.runEntityTaskTimer(CitizensAPI.getPlugin(), getEntity(), null, 0, 1);
         }
         return true;
     }
