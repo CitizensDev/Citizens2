@@ -373,7 +373,7 @@ public class CommandTrait extends Trait {
                             if (temporaryPermissionsDuration <= 0) {
                                 attachment.remove();
                             } else {
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                                CitizensAPI.getScheduler().runEntityTask(player,
                                         () -> attachment.remove());
                             }
                             return;
@@ -384,14 +384,14 @@ public class CommandTrait extends Trait {
                 if (command.delay <= 0) {
                     runnable.run();
                 } else {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable, command.delay);
+                    CitizensAPI.getScheduler().runEntityTaskLater(player, runnable, command.delay);
                 }
             }
         };
-        if (Bukkit.isPrimaryThread()) {
+        if (CitizensAPI.getScheduler().isOnOwnerThread(player)) {
             task.run();
         } else {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task);
+            CitizensAPI.getScheduler().runEntityTask(player, task);
         }
     }
 
