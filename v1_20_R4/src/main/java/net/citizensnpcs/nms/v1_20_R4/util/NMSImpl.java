@@ -1379,7 +1379,21 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void replaceTrackerEntry(org.bukkit.entity.Entity entity) {
         ServerLevel server = (ServerLevel) getHandle(entity).level();
-        TrackedEntity entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
+        TrackedEntity entry;
+        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+            try {
+                Entity handle = getHandle(entity);
+                entry = getTrackedEntityFolia(handle);
+                if (entry == null) return;
+                entry.broadcastRemoved();
+                CitizensEntityTracker newTracker = new CitizensEntityTracker(server.getChunkSource().chunkMap, entry);
+                setTrackedEntityFolia(handle, newTracker);
+            } catch (Exception exception) {
+                exception.printStackTrace(System.err);
+            }
+            return;
+        }
+        entry = server.getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
         if (entry == null)
             return;
         entry.broadcastRemoved();
@@ -1577,6 +1591,11 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
+        // Todo temp teleport
+        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+            net.citizensnpcs.api.util.SpigotUtil.teleportAsync(entity, location);
+            return;
+        }
         getHandle(entity).moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
                 location.getPitch());
     }
@@ -2361,8 +2380,13 @@ public class NMSImpl implements NMSBridge {
         }
         List<Packet<?>> toSend = Lists.newArrayList();
         if (position) {
-            TrackedEntity entry = ((ServerLevel) handle.level()).getChunkSource().chunkMap.entityMap
-                    .get(handle.getId());
+            TrackedEntity entry = null;
+            if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+                entry = getTrackedEntityFolia(handle);
+            } else {
+                entry = ((ServerLevel) handle.level()).getChunkSource().chunkMap.entityMap
+                        .get(handle.getId());
+            }
             if (entry == null) {
                 Messaging.debug("Null tracker entity for ", from);
                 return Collections.emptyList();
@@ -2757,6 +2781,27 @@ public class NMSImpl implements NMSBridge {
             ENTITY_REGISTRY_SETTER.invoke(ENTITY_REGISTRY);
         } catch (Throwable e) {
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
+        }
+    }
+
+    private static TrackedEntity getTrackedEntityFolia(Entity entity) {
+        try {
+            java.lang.reflect.Field field = Entity.class.getDeclaredField("tracker");
+            field.setAccessible(true);
+            return (TrackedEntity) field.get(entity);
+        } catch (Throwable e) {
+            e.printStackTrace(System.err);
+        }
+        return null;
+    }
+
+    private void setTrackedEntityFolia(Entity entity, TrackedEntity trackedEntity) {
+        try {
+            java.lang.reflect.Field field = Entity.class.getDeclaredField("tracker");
+            field.setAccessible(true);
+            field.set(entity, trackedEntity);
+        } catch (Throwable e) {
+            e.printStackTrace(System.err);
         }
     }
 }
