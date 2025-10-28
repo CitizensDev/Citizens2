@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -264,7 +265,8 @@ public class EventListen implements Listener {
         if (event instanceof Cancellable) {
             runnable.run();
         } else {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, runnable);
+            final org.bukkit.Chunk chunk = event.getChunk();
+            CitizensAPI.getScheduler().runRegionTask(chunk.getWorld(), chunk.getX(), chunk.getZ(), runnable);
         }
     }
 
@@ -419,7 +421,7 @@ public class EventListen implements Listener {
             return;
 
         int deathAnimationTicks = event.getEntity() instanceof LivingEntity ? 20 : 2;
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        CitizensAPI.getScheduler().runRegionTaskLater(location, () -> {
             if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
                 npc.spawn(location, SpawnReason.TIMED_RESPAWN);
             }
@@ -535,7 +537,7 @@ public class EventListen implements Listener {
         }
         if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
             HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
+            CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(), () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
         }
     }
 
@@ -557,12 +559,12 @@ public class EventListen implements Listener {
         if (!sendTabRemove || !event.getNPC().shouldRemoveFromTabList()) {
             NMS.sendRotationPacket(tracker, ImmutableList.of(event.getPlayer()), null, null, NMS.getHeadYaw(tracker));
             if (resetYaw) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
+                CitizensAPI.getScheduler().runEntityTask(tracker,
                         () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()));
             }
             return;
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        CitizensAPI.getScheduler().runRegionTaskLater(tracker.getLocation(), () -> {
             if (!tracker.isValid() || !event.getPlayer().isValid())
                 return;
 
@@ -611,7 +613,7 @@ public class EventListen implements Listener {
         if (plugin.getNPCRegistry().getNPC(event.getPlayer()) == null)
             return;
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(), () -> {
             NMS.replaceTracker(event.getPlayer());
             NMS.removeFromServerPlayerList(event.getPlayer());
         }, 1);
@@ -674,7 +676,7 @@ public class EventListen implements Listener {
             if (SUPPORT_STOP_USE_ITEM) {
                 try {
                     PlayerAnimation.STOP_USE_ITEM.play(player);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
+                    CitizensAPI.getScheduler().runEntityTask(player,
                             () -> PlayerAnimation.STOP_USE_ITEM.play(player));
                 } catch (UnsupportedOperationException e) {
                     SUPPORT_STOP_USE_ITEM = false;
@@ -778,7 +780,7 @@ public class EventListen implements Listener {
         if (!(event.getEntity() instanceof FishHook))
             return;
         NMS.removeHookIfNecessary((FishHook) event.getEntity());
-        new BukkitRunnable() {
+        new SchedulerRunnable() {
             int n = 0;
 
             @Override
@@ -789,7 +791,7 @@ public class EventListen implements Listener {
                 }
                 NMS.removeHookIfNecessary((FishHook) event.getEntity());
             }
-        }.runTaskTimer(plugin, 0, 1);
+        }.runEntityTaskTimer(plugin, event.getEntity(), null, 0, 1);
     }
 
     @EventHandler
@@ -920,12 +922,12 @@ public class EventListen implements Listener {
                     Bukkit.getPluginManager().callEvent(npcMoveEvent);
                     if (npcMoveEvent.isCancelled()) {
                         final Location eventFrom = npcMoveEvent.getFrom();
-                        Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventFrom), 1L);
+                        CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> SpigotUtil.teleportAsync(entity, eventFrom), 1L);
                         return;
                     }
                     final Location eventTo = npcMoveEvent.getTo();
                     if (eventTo.getWorld() != to.getWorld() || eventTo.distance(to) > 0.001) {
-                        Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventTo), 1L);
+                        CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> SpigotUtil.teleportAsync(entity, eventTo), 1L);
                     }
                 } catch (Throwable ex) {
                     ex.printStackTrace();
@@ -1033,7 +1035,8 @@ public class EventListen implements Listener {
         }
         if (loadChunk) {
             Messaging.idebug(() -> Joiner.on(' ').join("Loading chunk in 10 ticks due to forced chunk load at", coord));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            final org.bukkit.Chunk chunk = event.getChunk();
+            CitizensAPI.getScheduler().runRegionTaskLater(chunk.getWorld(), chunk.getX(), chunk.getZ(), () -> {
                 if (!event.getChunk().isLoaded()) {
                     event.getChunk().load();
                 }
