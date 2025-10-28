@@ -423,6 +423,33 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded) {
+        if (!net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+            isAdded.accept(addEntityToWorld(entity, custom));
+            return;
+        }
+        final Location location = entity.getLocation();
+        CitizensAPI.getScheduler().runRegionTask(location.getWorld(), location.getBlockX() >> 4, location.getBlockZ() >> 4, () -> {
+            final Entity entityNMS = getHandle(entity);
+            final ServerLevel serverLevel = (ServerLevel) entityNMS.level();
+            int viewDistance = -1;
+            ChunkMap chunkMap = null;
+            if (entity instanceof Player) {
+                chunkMap = serverLevel.getChunkSource().chunkMap;
+                viewDistance = chunkMap.serverViewDistance;
+                chunkMap.serverViewDistance = -1;
+            }
+            final ChunkMap chunkMapFinal = chunkMap;
+            final int viewDistanceFinal = viewDistance;
+            boolean success = serverLevel.addFreshEntity(getHandle(entity), custom);
+            if (chunkMapFinal != null) {
+                chunkMapFinal.serverViewDistance = viewDistanceFinal;
+            }
+            isAdded.accept(success);
+        });
+    }
+
+    @Override
     public void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
         if (entity == null)
             return;

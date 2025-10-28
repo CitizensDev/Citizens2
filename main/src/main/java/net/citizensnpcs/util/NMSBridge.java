@@ -54,6 +54,8 @@ public interface NMSBridge {
 
     public boolean addEntityToWorld(Entity entity, SpawnReason custom);
 
+    public void addEntityToWorld(Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded);
+
     public void addOrRemoveFromPlayerList(Entity entity, boolean remove);
 
     public void attack(LivingEntity attacker, LivingEntity target);

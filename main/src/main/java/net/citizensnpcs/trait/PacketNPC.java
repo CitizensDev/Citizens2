@@ -114,5 +114,10 @@ public class PacketNPC extends Trait {
             PlayerUpdateTask.register(getBukkitEntity());
             return true;
         }
+
+        @Override
+        public void spawn(Location at, java.util.function.Consumer<Boolean> callback) {
+            callback.accept(spawn(at));
+        }
     }
 }

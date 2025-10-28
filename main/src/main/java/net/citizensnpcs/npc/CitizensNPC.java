@@ -328,8 +328,14 @@ public class CitizensNPC extends AbstractNPC {
         }
         data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
         boolean wasLoaded = Messaging.isDebugging() ? Util.isLoaded(at) : false;
-        boolean couldSpawn = entityController.spawn(at);
+        final Location location = at;
+        entityController.spawn(location, couldSpawn -> {
+            this.spawn(couldSpawn, reason, wasLoaded, location, callback);
+        });
+        return true; // Todo : Can not determine success yet
+    }
 
+    private boolean spawn(boolean couldSpawn, SpawnReason reason, boolean wasLoaded, Location at, Consumer<Entity> callback) {
         if (!couldSpawn) {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded", wasLoaded,

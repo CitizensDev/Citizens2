@@ -64,7 +64,6 @@ import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredListener;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Joiner;

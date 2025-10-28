@@ -15,4 +15,6 @@ public interface EntityController {
     void remove();
 
     boolean spawn(Location at);
+
+    void spawn(Location at, java.util.function.Consumer<Boolean> callback);
 }
