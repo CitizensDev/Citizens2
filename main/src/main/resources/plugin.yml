@@ -5,6 +5,7 @@ version: ${project.version} (build ${BUILD_NUMBER})
 main: net.citizensnpcs.Citizens
 website: https://www.citizensnpcs.co
 api-version: "1.13"
+folia-supported: true
 libraries:
   - ch.ethz.globis.phtree:phtree:2.8.2
   - org.joml:joml:1.10.8
