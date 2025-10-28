@@ -834,19 +834,35 @@ public class NMS {
     }
 
     public static void remove(Entity entity) {
-        BRIDGE.remove(entity);
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
+            BRIDGE.remove(entity);
+        } else {
+            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.remove(entity));
+        }
     }
 
     public static void removeFromServerPlayerList(Player player) {
-        BRIDGE.removeFromServerPlayerList(player);
+        if (CitizensAPI.getScheduler().isOnOwnerThread(player)) {
+            BRIDGE.removeFromServerPlayerList(player);
+        } else {
+            CitizensAPI.getScheduler().runEntityTask(player, () -> BRIDGE.removeFromServerPlayerList(player));
+        }
     }
 
     public static void removeFromWorld(org.bukkit.entity.Entity entity) {
-        BRIDGE.removeFromWorld(entity);
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
+            BRIDGE.removeFromWorld(entity);
+        } else {
+            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.removeFromWorld(entity));
+        }
     }
 
     public static void removeHookIfNecessary(FishHook entity) {
-        BRIDGE.removeHookIfNecessary(entity);
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
+            BRIDGE.removeHookIfNecessary(entity);
+        } else {
+            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.replaceTrackerEntry(entity));
+        }
     }
 
     public static void replaceTracker(Entity entity) {
