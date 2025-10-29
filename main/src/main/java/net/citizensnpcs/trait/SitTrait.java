@@ -38,14 +38,14 @@ public class SitTrait extends Trait {
         if (chair != null) {
             if (chair.isSpawned()) {
                 chair.getEntity().eject();
+                chair.destroy();
+                chair = null;
                 Location npcLoc = npc.getEntity().getLocation().clone();
                 if (requiresPassengerOffsetCorrection()) {
-                    npcLoc = npcLoc.add(0, 0.3, 0);
+                    npcLoc.add(0, 0.3, 0);
                 }
                 npc.getEntity().teleport(npcLoc);
             }
-            chair.destroy();
-            chair = null;
         }
     }
 
