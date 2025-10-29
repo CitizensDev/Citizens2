@@ -477,7 +477,9 @@ public class Util {
                 + " clicker " + clicker);
 
         if (!player) {
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
+            CitizensAPI.getScheduler().runTask(() -> {
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
+            });
             return;
         }
         boolean wasOp = clicker.isOp();
