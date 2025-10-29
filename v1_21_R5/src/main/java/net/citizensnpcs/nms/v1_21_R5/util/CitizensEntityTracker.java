@@ -83,6 +83,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                 }
                 super.updatePlayer(entityplayer);
             });
+            return;
         }
         super.updatePlayer(entityplayer);
     }
