@@ -3,6 +3,7 @@ package net.citizensnpcs.util;
 import java.util.Objects;
 import java.util.UUID;
 
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -57,7 +58,7 @@ public class ChunkCoord {
             return;
         Chunk chunk = getChunk();
         if (chunk != null) {
-            chunk.setForceLoaded(b);
+            CitizensAPI.getScheduler().runTask(() -> chunk.setForceLoaded(b));
         }
     }
 
