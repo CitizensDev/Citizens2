@@ -52,6 +52,8 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
+import net.citizensnpcs.trait.versioned.DisplayTrait;
+import net.citizensnpcs.trait.versioned.TextDisplayTrait;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -952,19 +954,21 @@ public class HologramTrait extends Trait {
             NPC hologram = registry().createNPC(EntityType.TEXT_DISPLAY, "");
             hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));
+            DisplayTrait displayTrait = hologram.getOrAddTrait(DisplayTrait.class);
+            displayTrait.setBillboard(Billboard.CENTER);
+            displayTrait.setInterpolationDelay(0);
+            TextDisplayTrait textDisplayTrait = hologram.getOrAddTrait(TextDisplayTrait.class);
+            textDisplayTrait.setSeeThrough(true);
+            textDisplayTrait.setShadowed(shadow);
             return hologram;
         }
 
         @Override
         public void render0(NPC base, Vector3d offset) {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
-            disp.setInterpolationDelay(0);
-            disp.setBillboard(Billboard.CENTER);
-            disp.setSeeThrough(true);
             if (color != null) {
                 disp.setBackgroundColor(color);
             }
-            disp.setShadowed(shadow);
             if (SpigotUtil.getVersion()[1] >= 21 && base.getEntity() instanceof LivingEntity) {
                 AttributeInstance inst = ((LivingEntity) base.getEntity())
                         .getAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
