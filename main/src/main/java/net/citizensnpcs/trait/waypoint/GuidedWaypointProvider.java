@@ -145,7 +145,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     return;
                 if (event.getMessage().equalsIgnoreCase("triggers")) {
                     event.setCancelled(true);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    CitizensAPI.getScheduler().runEntityTask(player, () -> {
                         conversation = TriggerEditPrompt.start(player, this);
                         conversation.addConversationAbandonedListener(e -> {
                             setPaused(false);
@@ -155,10 +155,10 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     });
                 } else if (event.getMessage().equalsIgnoreCase("toggle path")) {
                     event.setCancelled(true);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::togglePath);
+                    CitizensAPI.getScheduler().runTask(this::togglePath);
                 } else if (event.getMessage().equalsIgnoreCase("clear")) {
                     event.setCancelled(true);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    CitizensAPI.getScheduler().runTask(() -> {
                         destinations.clear();
                         guides.clear();
                         if (showPath) {
@@ -170,7 +170,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     double d = Double.parseDouble(event.getMessage().replace("distance ", "").trim());
                     if (d <= 0)
                         return;
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    CitizensAPI.getScheduler().runTask(() -> {
                         distance = (float) d;
                         Messaging.sendTr(sender, Messages.GUIDED_WAYPOINT_EDITOR_DISTANCE_SET, d);
                     });

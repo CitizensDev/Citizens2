@@ -185,6 +185,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     registry.saveToStore();
                 }
             }
+            if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+                if (!this.isEnabled()) return;
+            }
             registry.despawnNPCs(DespawnReason.RELOAD);
         }
     }
@@ -443,7 +446,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
-        if (getServer().getScheduler().scheduleSyncDelayedTask(this, new CitizensLoadTask(), 1) == -1) {
+        if (CitizensAPI.getScheduler().runTaskLater(() -> new CitizensLoadTask().run(), 1) == null) {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
             Bukkit.getPluginManager().disablePlugin(this);
         }
@@ -511,7 +514,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void scheduleSaveTask(int delay) {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CitizensSaveTask(), delay, delay);
+        CitizensAPI.getScheduler().runTaskTimer(() -> new CitizensSaveTask().run(), delay, delay);
     }
 
     @Override

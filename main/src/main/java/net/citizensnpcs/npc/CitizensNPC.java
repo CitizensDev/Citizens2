@@ -182,7 +182,13 @@ public class CitizensNPC extends AbstractNPC {
         if (getOrAddTrait(Spawned.class).shouldSpawn()) {
             CurrentLocation current = getOrAddTrait(CurrentLocation.class);
             if (current.getLocation() != null) {
-                spawn(current.getLocation(), SpawnReason.RESPAWN);
+                if (CitizensAPI.getScheduler().isOnOwnerThread(current.getLocation())) {
+                    spawn(current.getLocation(), SpawnReason.RESPAWN);
+                } else {
+                    CitizensAPI.getScheduler().runRegionTask(current.getLocation(), () -> {
+                        spawn(current.getLocation(), SpawnReason.RESPAWN);
+                    });
+                }
             } else if (current.getChunkCoord() != null) {
                 Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, current.getChunkCoord()));
             }
@@ -328,8 +334,19 @@ public class CitizensNPC extends AbstractNPC {
         }
         data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
         boolean wasLoaded = Messaging.isDebugging() ? Util.isLoaded(at) : false;
-        boolean couldSpawn = entityController.spawn(at);
+        final Location location = at;
+        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+            entityController.spawn(location, couldSpawn -> {
+                this.spawn(couldSpawn, reason, wasLoaded, location, callback);
+            });
+            return true;
+        } else {
+            boolean couldSpawn = entityController.spawn(location);
+            return spawn(couldSpawn, reason, wasLoaded, at, callback);
+        }
+    }
 
+    private boolean spawn(boolean couldSpawn, SpawnReason reason, boolean wasLoaded, Location at, Consumer<Entity> callback) {
         if (!couldSpawn) {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded", wasLoaded,
@@ -431,12 +448,12 @@ public class CitizensNPC extends AbstractNPC {
             postSpawn.accept(() -> {
             });
         } else {
-            new BukkitRunnable() {
+            new net.citizensnpcs.api.util.schedulers.SchedulerRunnable() {
                 @Override
                 public void run() {
                     postSpawn.accept(this::cancel);
                 }
-            }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
+            }.runEntityTaskTimer(CitizensAPI.getPlugin(), getEntity(), null, 0, 1);
         }
         return true;
     }
