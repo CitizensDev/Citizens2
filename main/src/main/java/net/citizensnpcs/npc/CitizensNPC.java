@@ -335,10 +335,15 @@ public class CitizensNPC extends AbstractNPC {
         data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
         boolean wasLoaded = Messaging.isDebugging() ? Util.isLoaded(at) : false;
         final Location location = at;
-        entityController.spawn(location, couldSpawn -> {
-            this.spawn(couldSpawn, reason, wasLoaded, location, callback);
-        });
-        return true; // Todo : Can not determine success yet
+        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+            entityController.spawn(location, couldSpawn -> {
+                this.spawn(couldSpawn, reason, wasLoaded, location, callback);
+            });
+            return true;
+        } else {
+            boolean couldSpawn = entityController.spawn(location);
+            return spawn(couldSpawn, reason, wasLoaded, at, callback);
+        }
     }
 
     private boolean spawn(boolean couldSpawn, SpawnReason reason, boolean wasLoaded, Location at, Consumer<Entity> callback) {
