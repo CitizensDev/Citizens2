@@ -44,8 +44,12 @@ public class ChunkCoord {
     }
 
     public Chunk getChunk() {
-        World world = Bukkit.getWorld(worldUUID);
+        World world = getWorld();
         return world != null ? world.getChunkAt(x, z) : null;
+    }
+
+    public World getWorld() {
+        return Bukkit.getWorld(worldUUID);
     }
 
     @Override
