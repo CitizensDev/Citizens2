@@ -20,7 +20,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.PacketNPC;
 
 public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.SchedulerRunnable {
-    private final List<PlayerTick> players = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private final java.util.Queue<PlayerTick> players = new java.util.concurrent.ConcurrentLinkedQueue<>();
     private final Set<UUID> uuids = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     @Override
@@ -100,6 +100,6 @@ public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.Sched
         PLAYERS_PENDING_ADD.add(entity);
     }
 
-    private static final List<Entity> PLAYERS_PENDING_ADD = new ArrayList<>();
-    private static final List<Entity> PLAYERS_PENDING_REMOVE = new ArrayList<>();
+    private static final java.util.Queue<Entity> PLAYERS_PENDING_ADD = new java.util.concurrent.ConcurrentLinkedQueue<>();
+    private static final java.util.Queue<Entity> PLAYERS_PENDING_REMOVE = new java.util.concurrent.ConcurrentLinkedQueue<>();
 }
