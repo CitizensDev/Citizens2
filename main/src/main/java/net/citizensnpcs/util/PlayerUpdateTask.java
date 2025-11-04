@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -20,8 +21,8 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.PacketNPC;
 
-public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.SchedulerRunnable {
-    private final List<PlayerTick> players = new java.util.concurrent.CopyOnWriteArrayList<>();
+public class PlayerUpdateTask extends SchedulerRunnable {
+    private final java.util.Queue<PlayerTick> players = new java.util.concurrent.ConcurrentLinkedQueue<>();
     private final Set<UUID> uuids = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     @Override
@@ -105,6 +106,6 @@ public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.Sched
         PLAYERS_PENDING_ADD.add(entity);
     }
 
-    private static final List<Entity> PLAYERS_PENDING_ADD = new ArrayList<>();
-    private static final Set<UUID> PLAYERS_PENDING_REMOVE = new HashSet<>();
+    private static final java.util.Queue<Entity> PLAYERS_PENDING_ADD = new java.util.concurrent.ConcurrentLinkedQueue<>();
+    private static final java.util.Queue<UUID> PLAYERS_PENDING_REMOVE = new java.util.concurrent.ConcurrentLinkedQueue<>();
 }
