@@ -535,7 +535,8 @@ public class CitizensNPC extends AbstractNPC {
 
             if (isLiving) {
                 if (!SUPPORT_ATTRIBUTES || !hasTrait(AttributeTrait.class)
-                        || !getTraitNullable(AttributeTrait.class).hasAttribute(Attribute.KNOCKBACK_RESISTANCE)) {
+                        || !getTraitNullable(AttributeTrait.class).hasAttribute(Util.getRegistryValue(
+                                Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"))) {
                     NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
                 }
                 if (SUPPORT_PICKUP_ITEMS) {
