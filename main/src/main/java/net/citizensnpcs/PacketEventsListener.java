@@ -180,14 +180,15 @@ public class PacketEventsListener implements Listener {
                 Entity entity = SpigotConversionUtil.getEntityById(event.<Player> getPlayer().getWorld(),
                         packet.getEntityId());
                 NPC npc = plugin.getNPCRegistry().getNPC(entity);
-                if (npc == null || !npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER))
+                if (npc == null || npc.getEntity() == null || !npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER))
                     return;
                 int version = event.getUser().getPacketVersion().getProtocolVersion();
 
                 HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
                 Object fakeName = null;
                 String suppliedName = hr.getPerPlayerText(npc, event.getPlayer());
-                fakeName = version <= 340 ? suppliedName : Optional.of(minimessage(suppliedName));
+                fakeName = version <= ServerVersion.V_1_12_2.getProtocolVersion() ? suppliedName
+                        : Optional.of(minimessage(suppliedName));
                 boolean sneaking = hr.isSneaking(npc, event.getPlayer());
                 boolean delta = false;
 
