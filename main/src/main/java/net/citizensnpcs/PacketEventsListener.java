@@ -21,6 +21,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListener;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
@@ -181,7 +182,7 @@ public class PacketEventsListener implements Listener {
                 NPC npc = plugin.getNPCRegistry().getNPC(entity);
                 if (npc == null || !npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER))
                     return;
-                int version = event.getUser().getClientVersion().getProtocolVersion();
+                int version = event.getUser().getPacketVersion().getProtocolVersion();
 
                 HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
                 Object fakeName = null;
@@ -191,14 +192,15 @@ public class PacketEventsListener implements Listener {
                 boolean delta = false;
 
                 for (EntityData data : packet.getEntityMetadata()) {
-                    if (fakeName != null && data.getIndex() == 2) {
-                        data.setValue(fakeName);
-                        delta = true;
-                    } else if (sneaking && data.getIndex() == 0) {
+                    if (sneaking && data.getIndex() == 0) {
                         byte b = (byte) (((Number) data.getValue()).byteValue() | 0x02);
                         data.setValue(b);
                         delta = true;
-                    } else if (((data.getIndex() == 22 && version <= 762) || (data.getIndex() == 23 && version > 762))
+                    } else if (fakeName != null && data.getIndex() == 2) {
+                        data.setValue(fakeName);
+                        delta = true;
+                    } else if (((data.getIndex() == 22 && version <= ServerVersion.V_1_19_4.getProtocolVersion())
+                            || (data.getIndex() == 23 && version > ServerVersion.V_1_19_4.getProtocolVersion()))
                             && fakeName != null && npc.getEntity().getType() == EntityType.TEXT_DISPLAY) {
                         data.setValue(((Optional<?>) fakeName).get());
                         delta = true;
