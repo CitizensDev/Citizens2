@@ -64,7 +64,7 @@ public class SkinPacketTracker {
         skin.apply(entity);
         if (entity.getBukkitEntity() instanceof Player && NMS.sendTabListAdd(player, (Player) entity.getBukkitEntity())
                 && entity.getNPC().shouldRemoveFromTabList()) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+            CitizensAPI.getScheduler().runEntityTaskLater(player,
                     () -> NMS.sendTabListRemove(player, (Player) entity.getBukkitEntity()),
                     Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
         }

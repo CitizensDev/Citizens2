@@ -29,6 +29,7 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -88,7 +89,7 @@ public class Metrics {
         boolean logSentData = config.getBoolean("logSentData", false);
         boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
         metricsBase = new MetricsBase("bukkit", serverUUID, serviceId, enabled, this::appendPlatformData,
-                this::appendServiceData, submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
+                this::appendServiceData, submitDataTask -> CitizensAPI.getScheduler().runTask(submitDataTask),
                 plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
                 message -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData,
                 logResponseStatusText);
