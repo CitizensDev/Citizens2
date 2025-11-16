@@ -51,7 +51,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -740,16 +739,6 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        NPC npc = plugin.getNPCRegistry().getNPC(event.getPlayer());
-        if (event.getCause() == TeleportCause.PLUGIN && npc != null && !npc.data().has("citizens-force-teleporting")
-                && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
-            event.setCancelled(true);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                npc.data().set("citizens-force-teleporting", true);
-                event.getPlayer().teleport(event.getTo());
-                npc.data().remove("citizens-force-teleporting");
-            }, Setting.PLAYER_TELEPORT_DELAY.asTicks());
-        }
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
     }
 
@@ -929,14 +918,14 @@ public class EventListen implements Listener {
                     final Location to = (Location) getTo.invoke(event);
                     final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, from, to.clone());
                     Bukkit.getPluginManager().callEvent(npcMoveEvent);
-                    if (!npcMoveEvent.isCancelled()) {
-                        final Location eventTo = npcMoveEvent.getTo();
-                        if (!to.equals(eventTo)) {
-                            Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventTo), 1L);
-                        }
-                    } else {
+                    if (npcMoveEvent.isCancelled()) {
                         final Location eventFrom = npcMoveEvent.getFrom();
                         Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventFrom), 1L);
+                        return;
+                    }
+                    final Location eventTo = npcMoveEvent.getTo();
+                    if (npcMoveEvent.hasChangedPosition()) {
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventTo), 1L);
                     }
                 } catch (Throwable ex) {
                     ex.printStackTrace();
