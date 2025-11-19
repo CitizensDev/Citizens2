@@ -173,7 +173,7 @@ public class PolarBearController extends MobEntityController {
 
         @Override
         public Entity teleport(TeleportTransition transition) {
-            if (npc == null)
+            if (npc == null || transition.newLevel().dimension().equals(level().dimension()))
                 return super.teleport(transition);
             return NMSImpl.teleportAcrossWorld(this, transition);
         }

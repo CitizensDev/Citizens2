@@ -39,8 +39,8 @@ public class MoneyAction extends NPCShopAction {
 
     @Override
     public int getMaxRepeats(Entity entity, InventoryMultiplexer inventory) {
-        if (!(entity instanceof Player))
-            return 0;
+        if (!(entity instanceof Player) || money <= 0)
+            return -1;
 
         Economy economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
         return (int) Math.floor(economy.getBalance((Player) entity) / money);
@@ -48,6 +48,8 @@ public class MoneyAction extends NPCShopAction {
 
     @Override
     public Transaction grant(NPCShopStorage storage, Entity entity, InventoryMultiplexer inventory, int repeats) {
+        if (money <= 0)
+            return Transaction.success();
         if (!(entity instanceof Player))
             return Transaction.fail();
 
@@ -76,6 +78,8 @@ public class MoneyAction extends NPCShopAction {
 
     @Override
     public Transaction take(NPCShopStorage storage, Entity entity, InventoryMultiplexer inventory, int repeats) {
+        if (money <= 0)
+            return Transaction.success();
         if (!(entity instanceof Player))
             return Transaction.fail();
 
@@ -122,6 +126,10 @@ public class MoneyAction extends NPCShopAction {
         public InventoryMenuPage createEditor(NPCShopAction previous, Consumer<NPCShopAction> callback) {
             MoneyAction action = previous == null ? new MoneyAction() : (MoneyAction) previous;
             return InputMenus.filteredStringSetter(() -> Double.toString(action.money), s -> {
+                if (s == null) {
+                    action.money = 0;
+                    return false;
+                }
                 try {
                     double result = Double.parseDouble(Messaging.stripColor(s));
                     if (result < 0)

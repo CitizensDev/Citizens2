@@ -272,7 +272,6 @@ public class Settings {
                 "npc.pathfinding.pathfinder-type", "MINECRAFT"),
         PLACEHOLDER_SKIN_UPDATE_FREQUENCY("How often to update skin placeholders",
                 "npc.skins.placeholder-update-frequency-ticks", "npc.skins.placeholder-update-frequency", "5m"),
-        PLAYER_TELEPORT_DELAY("npc.delay-player-teleport-ticks", "npc.delay-player-teleport", -1),
         REMOVE_PLAYERS_FROM_PLAYER_LIST("Whether to remove NPCs from the Java list of players",
                 "npc.player.remove-from-list", true),
         RESET_FORMATTING_ON_COLOR_CHANGE(

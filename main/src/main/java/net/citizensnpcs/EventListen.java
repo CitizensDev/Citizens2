@@ -51,7 +51,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -740,16 +739,6 @@ public class EventListen implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        NPC npc = plugin.getNPCRegistry().getNPC(event.getPlayer());
-        if (event.getCause() == TeleportCause.PLUGIN && npc != null && !npc.data().has("citizens-force-teleporting")
-                && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
-            event.setCancelled(true);
-            CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(), () -> {
-                npc.data().set("citizens-force-teleporting", true);
-                SpigotUtil.teleportAsync(event.getPlayer(), event.getTo());
-                npc.data().remove("citizens-force-teleporting");
-            }, Setting.PLAYER_TELEPORT_DELAY.asTicks());
-        }
         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
     }
 
@@ -910,7 +899,7 @@ public class EventListen implements Listener {
         }
     }
 
-    private void registerMoveEvent(Class<?> clazz) {
+private void registerMoveEvent(Class<?> clazz) {
         try {
             final HandlerList handlers = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
             final Method getEntity = clazz.getMethod("getEntity");
@@ -926,17 +915,17 @@ public class EventListen implements Listener {
                         return;
                     final NPC npc = ((NPCHolder) entity).getNPC();
                     final Location from = (Location) getFrom.invoke(event);
-                    final Location to = (Location) getTo.invoke(event);
-                    final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, from, to.clone());
+                    final Location to = ((Location) getTo.invoke(event)).clone();
+                    final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, from, to);
                     Bukkit.getPluginManager().callEvent(npcMoveEvent);
-                    if (!npcMoveEvent.isCancelled()) {
-                        final Location eventTo = npcMoveEvent.getTo();
-                        if (!to.equals(eventTo)) {
-                            CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> SpigotUtil.teleportAsync(entity, eventTo), 1L);
-                        }
-                    } else {
+                    if (npcMoveEvent.isCancelled()) {
                         final Location eventFrom = npcMoveEvent.getFrom();
                         CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> SpigotUtil.teleportAsync(entity, eventFrom), 1L);
+                        return;
+                    }
+                    final Location eventTo = npcMoveEvent.getTo();
+                    if (eventTo.getWorld() != to.getWorld() || eventTo.distance(to) > 0.001) {
+                        CitizensAPI.getScheduler().runEntityTaskLater(plugin, () -> SpigotUtil.teleportAsync(entity, eventTo), 1L);
                     }
                 } catch (Throwable ex) {
                     ex.printStackTrace();
