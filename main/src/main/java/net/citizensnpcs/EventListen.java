@@ -915,8 +915,8 @@ public class EventListen implements Listener {
                         return;
                     final NPC npc = ((NPCHolder) entity).getNPC();
                     final Location from = (Location) getFrom.invoke(event);
-                    final Location to = (Location) getTo.invoke(event);
-                    final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, from, to.clone());
+                    final Location to = ((Location) getTo.invoke(event)).clone();
+                    final NPCMoveEvent npcMoveEvent = new NPCMoveEvent(npc, from, to);
                     Bukkit.getPluginManager().callEvent(npcMoveEvent);
                     if (npcMoveEvent.isCancelled()) {
                         final Location eventFrom = npcMoveEvent.getFrom();
@@ -924,7 +924,7 @@ public class EventListen implements Listener {
                         return;
                     }
                     final Location eventTo = npcMoveEvent.getTo();
-                    if (npcMoveEvent.hasChangedPosition()) {
+                    if (eventTo.getWorld() != to.getWorld() || eventTo.distance(to) > 0.001) {
                         Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventTo), 1L);
                     }
                 } catch (Throwable ex) {
