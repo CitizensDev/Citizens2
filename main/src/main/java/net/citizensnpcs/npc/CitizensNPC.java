@@ -104,6 +104,11 @@ public class CitizensNPC extends AbstractNPC {
         }
         if (getEntity() instanceof Player) {
             PlayerUpdateTask.deregister(getEntity());
+            if (!shouldRemoveFromTabList()) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    NMS.sendTabListRemove(player, (Player) getEntity());
+                }
+            }
         }
         navigator.onDespawn();
         for (Trait trait : new ArrayList<>(traits.values())) {
