@@ -61,4 +61,9 @@ public abstract class AbstractEntityController implements EntityController {
     public boolean spawn(Location at) {
         return !Util.isLoaded(at) ? false : NMS.addEntityToWorld(bukkitEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
     }
+
+    @Override
+    public void spawn(Location at, java.util.function.Consumer<Boolean> isSpawned) {
+        NMS.addEntityToWorld(bukkitEntity, CreatureSpawnEvent.SpawnReason.CUSTOM, isSpawned);
+    }
 }

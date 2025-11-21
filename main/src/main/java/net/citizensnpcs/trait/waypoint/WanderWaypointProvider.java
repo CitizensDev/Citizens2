@@ -110,17 +110,19 @@ public class WanderWaypointProvider implements WaypointProvider {
                         recalculateTree();
                     } catch (NumberFormatException ex) {
                     }
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    CitizensAPI.getScheduler().runTask(
                             () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_RANGE_SET, xrange, yrange));
                 } else if (message.startsWith("regions")) {
                     event.setCancelled(true);
                     editingRegions = !editingRegions;
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    CitizensAPI.getScheduler().runTask(() -> {
                         if (editingRegions) {
                             for (Location regionCentre : regionCentres) {
-                                Entity entity = markers.createMarker(regionCentre, regionCentre);
-                                entity.setMetadata("wandermarker",
-                                        new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));
+                                CitizensAPI.getScheduler().runRegionTask(regionCentre, () -> {
+                                    Entity entity = markers.createMarker(regionCentre, regionCentre);
+                                    entity.setMetadata("wandermarker",
+                                            new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));
+                                });
                             }
                             Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_REGION_EDITING_START);
                         } else {
@@ -131,11 +133,11 @@ public class WanderWaypointProvider implements WaypointProvider {
                 } else if (message.startsWith("delay")) {
                     event.setCancelled(true);
                     setDelay(Util.parseTicks(message.split(" ")[1]));
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+                    CitizensAPI.getScheduler().runTask(
                             () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
                 } else if (message.startsWith("worldguardregion")) {
                     event.setCancelled(true);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    CitizensAPI.getScheduler().runTask(() -> {
                         Object region = null;
                         String regionId = message.replace("worldguardregion", "").trim();
                         if (regionId.isEmpty()) {
@@ -159,7 +161,7 @@ public class WanderWaypointProvider implements WaypointProvider {
                     });
                 } else if (message.startsWith("pathfind")) {
                     event.setCancelled(true);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                    CitizensAPI.getScheduler().runTask(() -> {
                         pathfind = !pathfind;
                         if (currentGoal != null) {
                             currentGoal.setPathfind(pathfind);

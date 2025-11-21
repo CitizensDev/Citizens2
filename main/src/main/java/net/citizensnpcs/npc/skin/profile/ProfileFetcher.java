@@ -48,7 +48,7 @@ public class ProfileFetcher {
             THREAD_TASK.cancel();
         }
         PROFILE_THREAD = new ProfileFetchThread();
-        THREAD_TASK = Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD, 21, 20);
+        THREAD_TASK = CitizensAPI.getScheduler().runTaskTimerAsynchronously(PROFILE_THREAD, 21, 20);
     }
 
     /**
@@ -66,5 +66,5 @@ public class ProfileFetcher {
     }
 
     private static ProfileFetchThread PROFILE_THREAD;
-    private static BukkitTask THREAD_TASK;
+    private static net.citizensnpcs.api.util.schedulers.SchedulerTask THREAD_TASK;
 }
