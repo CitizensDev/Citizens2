@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -80,7 +81,7 @@ public enum PlayerAnimation {
             final NPC holder = CitizensAPI.getTemporaryNPCRegistry().createNPC(EntityType.ARMOR_STAND, "");
             holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
             holder.spawn(player.getLocation());
-            new net.citizensnpcs.api.util.schedulers.SchedulerRunnable() {
+            new SchedulerRunnable() {
                 @Override
                 public void cancel() {
                     super.cancel();
@@ -137,7 +138,7 @@ public enum PlayerAnimation {
             if (using != null && BAD_ITEMS_TO_USE.contains(using.getType())
                     && player.hasMetadata("citizens-using-item-remaining-ticks")) {
                 int remainingTicks = player.getMetadata("citizens-using-item-remaining-ticks").get(0).asInt();
-                new net.citizensnpcs.api.util.schedulers.SchedulerRunnable() {
+                new SchedulerRunnable() {
                     @Override
                     public void run() {
                         if (!NMS.isValid(player)) {

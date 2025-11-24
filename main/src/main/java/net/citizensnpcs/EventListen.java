@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -778,7 +779,7 @@ public class EventListen implements Listener {
         if (!(event.getEntity() instanceof FishHook))
             return;
         NMS.removeHookIfNecessary((FishHook) event.getEntity());
-        new net.citizensnpcs.api.util.schedulers.SchedulerRunnable() {
+        new SchedulerRunnable() {
             int n = 0;
 
             @Override

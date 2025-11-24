@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Registry;
@@ -453,7 +454,7 @@ public class CitizensNPC extends AbstractNPC {
             postSpawn.accept(() -> {
             });
         } else {
-            new net.citizensnpcs.api.util.schedulers.SchedulerRunnable() {
+            new SchedulerRunnable() {
                 @Override
                 public void run() {
                     postSpawn.accept(this::cancel);

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,7 +20,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.PacketNPC;
 
-public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.SchedulerRunnable {
+public class PlayerUpdateTask extends SchedulerRunnable {
     private final java.util.Queue<PlayerTick> players = new java.util.concurrent.ConcurrentLinkedQueue<>();
     private final Set<UUID> uuids = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
