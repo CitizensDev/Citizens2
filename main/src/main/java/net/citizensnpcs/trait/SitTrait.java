@@ -35,16 +35,12 @@ public class SitTrait extends Trait {
             ((Sittable) npc.getEntity()).setSitting(false);
             return;
         }
-        if (chair != null) {
-            if (chair.isSpawned()) {
-                chair.getEntity().eject();
-                chair.destroy();
-                chair = null;
-                Location npcLoc = npc.getEntity().getLocation().clone();
-                if (requiresPassengerOffsetCorrection()) {
-                    npcLoc.add(0, 0.3, 0);
-                }
-                SpigotUtil.teleportAsync(npc.getEntity(), npcLoc);
+        if (chair != null && chair.isSpawned()) {
+            chair.getEntity().eject();
+            chair.destroy();
+            chair = null;
+            if (requiresPassengerOffsetCorrection()) {
+                SpigotUtil.teleportAsync(npc.getEntity(), npc.getEntity().getLocation().clone().add(0, 0.3, 0));
             }
         }
     }

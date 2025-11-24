@@ -6,8 +6,8 @@ import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.Display.Brightness;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Transformation;
-import org.bukkit.util.Vector;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
@@ -35,11 +35,11 @@ public class DisplayTrait extends Trait {
     @Persist
     private Quaternionf leftRotation;
     @Persist
-    private Vector offset;
+    private Vector3f offset;
     @Persist
     private Quaternionf rightRotation;
     @Persist
-    private Vector scale;
+    private Vector3f scale;
     @Persist
     private Float shadowRadius;
     @Persist
@@ -53,10 +53,6 @@ public class DisplayTrait extends Trait {
 
     public DisplayTrait() {
         super("displaytrait");
-    }
-
-    public Vector getOffset() {
-        return offset;
     }
 
     @Override
@@ -82,10 +78,10 @@ public class DisplayTrait extends Trait {
         }
         Transformation tf = display.getTransformation();
         if (scale != null) {
-            tf.getScale().set(scale.getX(), scale.getY(), scale.getZ());
+            tf.getScale().set(scale);
         }
         if (offset != null) {
-            tf.getTranslation().set(offset.getX(), offset.getY(), offset.getZ());
+            tf.getTranslation().set(offset);
         }
         if (leftRotation != null) {
             tf.getLeftRotation().set(leftRotation);
@@ -126,10 +122,11 @@ public class DisplayTrait extends Trait {
         this.interpolationDuration = interpolationDuration;
     }
 
-    public void setOffset(Vector offset) {
+    public void setOffset(Vector3f offset) {
+        this.offset = offset;
     }
 
-    public void setScale(Vector scale) {
+    public void setScale(Vector3f scale) {
         this.scale = scale;
     }
 
@@ -163,8 +160,8 @@ public class DisplayTrait extends Trait {
             types = { EntityType.ITEM_DISPLAY, EntityType.TEXT_DISPLAY, EntityType.BLOCK_DISPLAY })
     public static void display(CommandContext args, CommandSender sender, NPC npc,
             @Flag("billboard") Billboard billboard, @Flag("left_rotation") Quaternionf leftrotation,
-            @Flag("right_rotation") Quaternionf rightrotation, @Flag("scale") Vector scale,
-            @Flag("offset") Vector offset, @Flag("view_range") Float viewRange, @Flag("brightness") String brightness,
+            @Flag("right_rotation") Quaternionf rightrotation, @Flag("scale") Vector3f scale,
+            @Flag("offset") Vector3f offset, @Flag("view_range") Float viewRange, @Flag("brightness") String brightness,
             @Flag("interpolation_delay") Integer interpolationDelay,
             @Flag("interpolation_duration") Integer interpolationDuration, @Flag("height") Float height,
             @Flag("shadow_radius") Float shadowRadius, @Flag("shadow_strength") Float shadowStrength,
@@ -205,7 +202,9 @@ public class DisplayTrait extends Trait {
         if (scale != null) {
             trait.setScale(scale);
         }
-        trait.onSpawn();
+        if (npc.isSpawned()) {
+            trait.onSpawn();
+        }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
         }

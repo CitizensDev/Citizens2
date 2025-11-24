@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -125,12 +126,22 @@ public class Settings {
         DEFAULT_DISTANCE_MARGIN(
                 "The default MOVEMENT distance in blocks where the NPC will move to before considering a path finished<br>Note: this is different from the PATHFINDING distance which is specified by path-distance-margin",
                 "npc.pathfinding.default-distance-margin", 1),
-        DEFAULT_HOLOGRAM_BACKGROUND_COLOR(
-                "The default background color for holograms, specified as an RGB or RGBA value<br>For example 0,255,123 would be green and 255,255,255,255 would be transparent",
-                "npc.hologram.default-background-color", ""),
         DEFAULT_HOLOGRAM_RENDERER(
                 "The default renderer for holograms, must be one of the following:<br>interaction - requires 1.19+, matches nametags more closely than display<br>display - allows for different colored backgrounds<br>display_vehicle - mounts the display on the NPC<br>areaeffectcloud - the safest option<br>armorstand - the second safest option, has a hitbox clientside<br>armorstand_vehicle - mounts the armorstand on the NPC, only useful for nameplates",
                 "npc.hologram.default-renderer", "display"),
+        DEFAULT_HOLOGRAM_RENDERER_SETTINGS("npc.hologram.default-renderer-settings",
+                ImmutableMap.of("seeThrough", true)) {
+            @Override
+            public void loadFromKey(DataKey root) {
+                value = root.getRaw(path);
+            }
+
+            @Override
+            protected void setAtKey(DataKey root) {
+                root.setRaw(path, value);
+                setComments(root);
+            }
+        },
         DEFAULT_LOOK_CLOSE("Enable look close by default", "npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("Default look close range in blocks", "npc.default.look-close.range", 10),
         DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT("Default distance between hologram lines", "npc.hologram.default-line-height",
