@@ -925,7 +925,7 @@ private void registerMoveEvent(Class<?> clazz) {
                     }
                     final Location eventTo = npcMoveEvent.getTo();
                     if (eventTo.getWorld() != to.getWorld() || eventTo.distance(to) > 0.001) {
-                        CitizensAPI.getScheduler().runEntityTaskLater(plugin, () -> SpigotUtil.teleportAsync(entity, eventTo), 1L);
+                        CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> SpigotUtil.teleportAsync(entity, eventTo), 1L);
                     }
                 } catch (Throwable ex) {
                     ex.printStackTrace();
