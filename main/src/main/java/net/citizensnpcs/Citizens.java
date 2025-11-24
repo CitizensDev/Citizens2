@@ -446,7 +446,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
-        if (CitizensAPI.getScheduler().runTaskLater(() -> new CitizensLoadTask().run(), 1) == null) {
+        if (CitizensAPI.getScheduler().runTaskLater(new CitizensLoadTask(), 1) == null) {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
             Bukkit.getPluginManager().disablePlugin(this);
         }
@@ -514,7 +514,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void scheduleSaveTask(int delay) {
-        CitizensAPI.getScheduler().runTaskTimer(() -> new CitizensSaveTask().run(), delay, delay);
+        CitizensAPI.getScheduler().runTaskTimer(new CitizensSaveTask(), delay, delay);
     }
 
     @Override
