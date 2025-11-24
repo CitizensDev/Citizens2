@@ -2801,6 +2801,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
     private static MethodHandle SKULL_META_PROFILE;
     private static MethodHandle TEAM_FIELD;
+    private static final MethodHandle ENTITY_TRACKER_GETTER_FOLIA = NMS.getGetter(Entity.class, "tracker", false);
+    private static final MethodHandle ENTITY_TRACKER_SETTER_FOLIA = NMS.getSetter(Entity.class, "tracker", false);
     static {
         try {
             ENTITY_REGISTRY = new CustomEntityRegistry(BuiltInRegistries.ENTITY_TYPE);
@@ -2813,22 +2815,18 @@ public class NMSImpl implements NMSBridge {
 
     private static TrackedEntity getTrackedEntityFolia(Entity entity) {
         try {
-            java.lang.reflect.Field field = Entity.class.getDeclaredField("tracker");
-            field.setAccessible(true);
-            return (TrackedEntity) field.get(entity);
-        } catch (Throwable e) {
-            e.printStackTrace(System.err);
+            return (TrackedEntity) ENTITY_TRACKER_GETTER_FOLIA.invoke(entity);
+        } catch (Throwable t) {
+            t.printStackTrace(System.err);
+            return null;
         }
-        return null;
     }
 
-    private void setTrackedEntityFolia(Entity entity, TrackedEntity trackedEntity) {
+    private static void setTrackedEntityFolia(Entity entity, TrackedEntity trackedEntity) {
         try {
-            java.lang.reflect.Field field = Entity.class.getDeclaredField("tracker");
-            field.setAccessible(true);
-            field.set(entity, trackedEntity);
-        } catch (Throwable e) {
-            e.printStackTrace(System.err);
+            ENTITY_TRACKER_SETTER_FOLIA.invoke(entity, trackedEntity);
+        } catch (Throwable t) {
+            t.printStackTrace(System.err);
         }
     }
 }
