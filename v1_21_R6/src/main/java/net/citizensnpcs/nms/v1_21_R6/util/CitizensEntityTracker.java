@@ -77,7 +77,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
             if (REQUIRES_SYNC == null) {
                 REQUIRES_SYNC = !Bukkit.isPrimaryThread();
             }
-            cancelledUpdatePlayer(npc, entityplayer, cancelled -> {
+            cancellableUpdatePlayer(npc, entityplayer, cancelled -> {
                 if (cancelled) {
                     return;
                 }
@@ -88,7 +88,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         super.updatePlayer(entityplayer);
     }
 
-    private void cancelledUpdatePlayer(final NPC npc,
+    private void cancellableUpdatePlayer(final NPC npc,
                                        final ServerPlayer entityplayer,
                                        final java.util.function.Consumer<Boolean> callback) {
         net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTask(entityplayer.getBukkitEntity(), () -> {
