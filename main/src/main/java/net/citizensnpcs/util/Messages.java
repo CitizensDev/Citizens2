@@ -89,7 +89,7 @@ public class Messages {
     public static final String COMMANDS_SEQUENTIAL_SET = "citizens.commands.npc.commands.sequential-set";
     public static final String COMMANDS_SEQUENTIAL_UNSET = "citizens.commands.npc.commands.sequential-unset";
     public static final String CONTRIBUTE_TO_TRANSLATION_PROMPT = "citizens.contribute-to-translations-prompt";
-    public static final Object CONTROLLABLE_CONTROLS_SET = "citizens.commands.npc.controllable.controls-set";
+    public static final String CONTROLLABLE_CONTROLS_SET = "citizens.commands.npc.controllable.controls-set";
     public static final String CONTROLLABLE_REMOVED = "citizens.commands.npc.controllable.removed";
     public static final String CONTROLLABLE_SET = "citizens.commands.npc.controllable.set";
     public static final String COPIER_EDITOR_BEGIN = "citizens.editors.copier.begin";
@@ -170,9 +170,6 @@ public class Messages {
     public static final String HEADONLY_UNSET = "citizens.commands.npc.lookclose.headonly-unset";
     public static final String HOLOGRAM_BACKGROUND_COLOR_SET = "citizens.commands.npc.hologram.background-color-set";
     public static final String HOLOGRAM_CLEARED = "citizens.commands.npc.hologram.cleared";
-    public static final String HOLOGRAM_DEFAULT_BACKGROUND_COLOR_SET = "citizens.commands.npc.hologram.default-background-color-set";
-    public static final String HOLOGRAM_DEFAULT_SHADOW_SET = "citizens.commands.npc.hologram.default-shadow-set";
-    public static final String HOLOGRAM_DEFAULT_SHADOW_UNSET = "citizens.commands.npc.hologram.default-shadow-unset";
     public static final String HOLOGRAM_DESCRIBE_HEADER = "citizens.commands.npc.hologram.text-describe-header";
     public static final String HOLOGRAM_INVALID_LINE = "citizens.commands.npc.hologram.invalid-text-id";
     public static final String HOLOGRAM_LINE_ADD = "citizens.commands.npc.hologram.line-add";
@@ -181,8 +178,7 @@ public class Messages {
     public static final String HOLOGRAM_LINE_SET = "citizens.commands.npc.hologram.text-set";
     public static final String HOLOGRAM_MARGIN_MISSING = "citizens.commands.npc.hologram.margin-missing";
     public static final String HOLOGRAM_MARGIN_SET = "citizens.commands.npc.hologram.margin-set";
-    public static final String HOLOGRAM_SHADOW_SET = "citizens.commands.npc.hologram.shadow-set";
-    public static final String HOLOGRAM_SHADOW_UNSET = "citizens.commands.npc.hologram.shadow-unset";
+    public static final String HOLOGRAM_RENDERER_SELECTED = "citizens.commands.npc.hologram.renderer-selected";
     public static final String HOLOGRAM_TEXT_MISSING = "citizens.commands.npc.hologram.text-missing";
     public static final String HOLOGRAM_TEXT_REMOVED = "citizens.commands.npc.hologram.text-removed";
     public static final String HOLOGRAM_VIEW_RANGE_SET = "citizens.commands.npc.hologram.view-range-set";

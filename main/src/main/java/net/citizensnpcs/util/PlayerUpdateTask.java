@@ -1,6 +1,7 @@
 package net.citizensnpcs.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -35,9 +36,9 @@ public class PlayerUpdateTask extends BukkitRunnable {
     @Override
     public void run() {
         if (PLAYERS_PENDING_REMOVE.size() > 0) {
-            players.removeIf(pt -> PLAYERS_PENDING_REMOVE.contains(pt.entity));
-            for (Entity entity : PLAYERS_PENDING_REMOVE) {
-                uuids.remove(entity.getUniqueId());
+            players.removeIf(pt -> PLAYERS_PENDING_REMOVE.contains(pt.entity.getUniqueId()));
+            for (UUID uuid : PLAYERS_PENDING_REMOVE) {
+                uuids.remove(uuid);
             }
             PLAYERS_PENDING_REMOVE.clear();
         }
@@ -92,14 +93,14 @@ public class PlayerUpdateTask extends BukkitRunnable {
 
     public static void deregister(org.bukkit.entity.Entity entity) {
         PLAYERS_PENDING_ADD.remove(entity);
-        PLAYERS_PENDING_REMOVE.add(entity);
+        PLAYERS_PENDING_REMOVE.add(entity.getUniqueId());
     }
 
     public static void register(org.bukkit.entity.Entity entity) {
-        PLAYERS_PENDING_REMOVE.remove(entity);
+        PLAYERS_PENDING_REMOVE.remove(entity.getUniqueId());
         PLAYERS_PENDING_ADD.add(entity);
     }
 
     private static final List<Entity> PLAYERS_PENDING_ADD = new ArrayList<>();
-    private static final List<Entity> PLAYERS_PENDING_REMOVE = new ArrayList<>();
+    private static final Set<UUID> PLAYERS_PENDING_REMOVE = new HashSet<>();
 }

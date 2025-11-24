@@ -180,7 +180,7 @@ public class PacketEventsListener implements Listener {
                 Entity entity = SpigotConversionUtil.getEntityById(event.<Player> getPlayer().getWorld(),
                         packet.getEntityId());
                 NPC npc = plugin.getNPCRegistry().getNPC(entity);
-                if (npc == null || npc.getEntity() == null || !npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER))
+                if (npc == null || !npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER))
                     return;
                 int version = event.getUser().getPacketVersion().getProtocolVersion();
 

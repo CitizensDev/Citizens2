@@ -21,6 +21,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.google.common.collect.Iterables;
@@ -141,6 +142,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private CitizensNPCRegistry npcRegistry;
     private boolean packetEventsEnabled = true;
     private PacketEventsListener packetEventsListener;
+    private BukkitTask playerUpdateTask;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
     private NPCSelector selector;
@@ -148,6 +150,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
     private TemplateRegistry templateRegistry;
     private NPCRegistry temporaryRegistry;
+
     private CitizensTraitFactory traitFactory;
 
     @Override
@@ -488,6 +491,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void reload() throws NPCLoadException {
         getServer().getPluginManager().callEvent(new CitizensPreReloadEvent());
 
+        playerUpdateTask.cancel();
         Editor.leaveAll();
         config.reload();
         despawnNPCs(false);
@@ -501,6 +505,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         shops.loadFromDisk();
         shops.load();
+
+        playerUpdateTask = new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
 
         getServer().getPluginManager().callEvent(new CitizensReloadEvent());
     }
@@ -628,7 +634,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             startMetrics();
             scheduleSaveTask(Setting.SAVE_TASK_FREQUENCY.asTicks());
             Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
-            new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
+            playerUpdateTask = new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
             enabled = true;
         }
     }

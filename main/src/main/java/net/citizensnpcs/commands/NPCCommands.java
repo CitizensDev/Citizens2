@@ -148,6 +148,7 @@ import net.citizensnpcs.trait.ForcefieldTrait;
 import net.citizensnpcs.trait.GameModeTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
+import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
 import net.citizensnpcs.trait.HomeTrait;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.ItemFrameTrait;
@@ -769,7 +770,7 @@ public class NPCCommands {
         Controllable trait = npc.getOrAddTrait(Controllable.class);
         if (controls != null) {
             trait.setControls(controls);
-            Messaging.send(sender, Messages.CONTROLLABLE_CONTROLS_SET, controls);
+            Messaging.sendTr(sender, Messages.CONTROLLABLE_CONTROLS_SET, controls);
             return;
         }
         if (enabled != null) {
@@ -1317,7 +1318,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] (--duration [duration]) | insert [line #] [text] | set [line #] [text] | remove [line #] | textshadow [line #] | bgcolor [line #] (red,green,blue(,alpha)) | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
+            usage = "hologram add [text] (--duration [duration]) | insert [line #] [text] | set [line #] [text] | remove [line #] | edit_npc [template | name | line #] | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
             desc = "",
             modifiers = { "hologram" },
             min = 1,
@@ -1326,8 +1327,8 @@ public class NPCCommands {
     public void hologram(CommandContext args, CommandSender sender, NPC npc,
             @Arg(
                     value = 1,
-                    completions = { "add", "insert", "set", "bgcolor", "textshadow", "remove", "clear", "lineheight",
-                            "viewrange", "margintop", "marginbottom" }) String action,
+                    completions = { "add", "insert", "set", "edit_npc", "remove", "clear", "lineheight", "viewrange",
+                            "margintop", "marginbottom" }) String action,
             @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion,
             @Flag("duration") Duration duration) throws CommandException {
         HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
@@ -1355,36 +1356,25 @@ public class NPCCommands {
 
             trait.setLine(idx, args.getJoinedStrings(3));
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_SET, idx, args.getJoinedStrings(3));
-        } else if (action.equalsIgnoreCase("bgcolor")) {
-            if (args.argsLength() == 2) {
-                trait.setDefaultBackgroundColor(null);
-                Messaging.sendTr(sender, Messages.HOLOGRAM_DEFAULT_BACKGROUND_COLOR_SET, "empty");
-            } else if (args.argsLength() == 3) {
-                trait.setDefaultBackgroundColor(Util.parseColor(args.getString(2)));
-                Messaging.sendTr(sender, Messages.HOLOGRAM_DEFAULT_BACKGROUND_COLOR_SET, args.getString(2));
+        } else if (action.equalsIgnoreCase("edit_npc")) {
+            HologramRenderer hr = null;
+            if (args.getString(2).equals("name")) {
+                hr = trait.getNameRenderer();
+            } else if (args.getString(2).equals("template")) {
+                hr = trait.getTemplateRenderer();
             } else {
                 int idx = args.getString(2).equals("bottom") ? 0
                         : args.getString(2).equals("top") ? trait.getLines().size() - 1
                                 : Math.max(0, args.getInteger(2));
                 if (idx >= trait.getLines().size())
                     throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
-                trait.setBackgroundColor(idx, Util.parseColor(args.getString(3)));
-                Messaging.sendTr(sender, Messages.HOLOGRAM_BACKGROUND_COLOR_SET, idx, args.getString(3));
+                Iterator<HologramRenderer> itr = trait.getHologramRenderers().iterator();
+                for (int i = 0; i <= idx; i++, hr = itr.next()) {
+                }
             }
-        } else if (action.equalsIgnoreCase("textshadow")) {
-            if (args.argsLength() == 2) {
-                trait.setDefaultTextShadow(!trait.isDefaultTextShadow());
-                Messaging.sendTr(sender, trait.isDefaultTextShadow() ? Messages.HOLOGRAM_DEFAULT_SHADOW_SET
-                        : Messages.HOLOGRAM_DEFAULT_SHADOW_UNSET, npc.getName());
-            } else {
-                int idx = args.getString(2).equals("bottom") ? 0
-                        : args.getString(2).equals("top") ? trait.getLines().size() - 1
-                                : Math.max(0, args.getInteger(2));
-                if (idx >= trait.getLines().size())
-                    throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
-                trait.setTextShadow(idx, Boolean.parseBoolean(args.getString(3)));
-                Messaging.sendTr(sender, Boolean.parseBoolean(args.getString(3)) ? Messages.HOLOGRAM_SHADOW_SET
-                        : Messages.HOLOGRAM_SHADOW_UNSET, idx);
+            if (hr != null && hr.getTemplateNPC() != null) {
+                selector.select(sender, hr.getTemplateNPC());
+                Messaging.sendTr(sender, Messages.HOLOGRAM_RENDERER_SELECTED);
             }
         } else if (action.equalsIgnoreCase("viewrange")) {
             if (args.argsLength() == 2)
@@ -1469,7 +1459,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "homeloc --location [loc] --delay [delay] --distance [distance] -h(ere) -p(athfind) -t(eleport)",
+            usage = "home --location [loc] --delay [delay] --distance [distance] -h(ere) -p(athfind) -t(eleport)",
             desc = "",
             modifiers = { "home" },
             min = 1,
@@ -2029,15 +2019,21 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "mount (--onnpc <npc id|uuid>) (-c(ancel))",
+            usage = "mount (--onnpc <npc id|uuid>) (-d(ismount)) (-c(ancel))",
             desc = "",
             modifiers = { "mount" },
             min = 1,
             max = 1,
-            flags = "c",
+            flags = "cd",
             permission = "citizens.npc.mount")
     public void mount(CommandContext args, CommandSender sender, NPC npc, @Flag("onnpc") String onnpc)
             throws CommandException {
+        if (args.hasFlag('d')) {
+            if (sender instanceof Player) {
+                ((Player) sender).leaveVehicle();
+            }
+            return;
+        }
         if (onnpc != null) {
             NPC mount;
             try {

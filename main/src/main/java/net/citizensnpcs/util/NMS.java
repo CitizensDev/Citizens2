@@ -879,16 +879,12 @@ public class NMS {
                 bodyYaw, pitch, headYaw);
     }
 
-    public static boolean sendTabListAdd(Player recipient, Player listPlayer) {
-        return BRIDGE.sendTabListAdd(recipient, listPlayer);
+    public static boolean sendTabListAdd(Player to, Player listPlayer) {
+        return BRIDGE.sendTabListAdd(to, listPlayer);
     }
 
-    public static void sendTabListRemove(Player recipient, Collection<Player> players) {
-        BRIDGE.sendTabListRemove(recipient, players);
-    }
-
-    public static void sendTabListRemove(Player recipient, Player listPlayer) {
-        sendTabListRemove(recipient, ImmutableList.of(listPlayer));
+    public static void sendTabListRemove(Player to, Player listPlayer) {
+        BRIDGE.sendTabListRemove(to, ImmutableList.of(listPlayer));
     }
 
     public static void sendTeamPacket(Player recipient, Team team, int mode) {
