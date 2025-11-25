@@ -1645,7 +1645,6 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
-        // Todo - temp teleport
         if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
             if (location.getWorld() == entity.getWorld()
                     && CitizensAPI.getScheduler().isOnOwnerThread(entity)
