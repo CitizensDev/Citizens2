@@ -368,7 +368,7 @@ public class CitizensNPC extends AbstractNPC {
                     return;
                 }
                 Entity entity = getEntity();
-                // Set the spawned state
+
                 getOrAddTrait(CurrentLocation.class).setLocation(to);
                 getOrAddTrait(Spawned.class).setSpawned(true);
 

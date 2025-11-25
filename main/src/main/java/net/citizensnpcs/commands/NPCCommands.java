@@ -30,6 +30,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -2555,18 +2556,32 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "playsound [sound] (volume) (pitch) (--at x:y:z:world)",
+            usage = "playsound [sound] (category) (volume) (pitch) (--to [player]) (--at x:y:z:world)",
             desc = "",
             modifiers = { "playsound" },
             min = 2,
-            max = 4,
+            max = 5,
             permission = "citizens.npc.playsound")
     @Requirements(selected = true, ownership = true)
     public void playsound(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String sound,
-            @Arg(value = 2, defValue = "1") Float volume, @Arg(value = 3, defValue = "1") Float pitch,
-            @Flag("at") Location at) throws CommandException {
+            @Arg(value = 2, defValue = "master") SoundCategory category, @Arg(value = 3, defValue = "1") Float volume,
+            @Arg(value = 4, defValue = "1") Float pitch, @Flag("to") String to, @Flag("at") Location at)
+            throws CommandException {
+        if (to != null) {
+            Player player;
+            try {
+                UUID uuid = UUID.fromString(to);
+                player = Bukkit.getPlayer(uuid);
+            } catch (IllegalArgumentException ex) {
+                player = Bukkit.getPlayerExact(to);
+            }
+            if (player != null) {
+                player.playSound(at == null ? npc.getStoredLocation() : at, sound, category, volume, pitch);
+            }
+            return;
+        }
         Location loc = at == null ? npc.getStoredLocation() : at;
-        loc.getWorld().playSound(loc, sound, volume, pitch);
+        loc.getWorld().playSound(loc, sound, category, volume, pitch);
     }
 
     @Command(

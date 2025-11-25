@@ -23,6 +23,7 @@ public abstract class AbstractEntityController implements EntityController {
         if (npc != null) {
             bukkitEntity.setMetadata("NPC", new FixedMetadataValue(CitizensAPI.getPlugin(), true));
             bukkitEntity.setMetadata("NPC-ID", new FixedMetadataValue(CitizensAPI.getPlugin(), npc.getId()));
+            bukkitEntity.setMetadata("NPC-NAME", new FixedMetadataValue(CitizensAPI.getPlugin(), npc.getFullName()));
         }
     }
 
@@ -34,6 +35,7 @@ public abstract class AbstractEntityController implements EntityController {
             return;
         bukkitEntity.removeMetadata("NPC", CitizensAPI.getPlugin());
         bukkitEntity.removeMetadata("NPC-ID", CitizensAPI.getPlugin());
+        bukkitEntity.removeMetadata("NPC-NAME", CitizensAPI.getPlugin());
         bukkitEntity = null;
     }
 
@@ -54,6 +56,7 @@ public abstract class AbstractEntityController implements EntityController {
         }
         bukkitEntity.removeMetadata("NPC", CitizensAPI.getPlugin());
         bukkitEntity.removeMetadata("NPC-ID", CitizensAPI.getPlugin());
+        bukkitEntity.removeMetadata("NPC-NAME", CitizensAPI.getPlugin());
         bukkitEntity = null;
     }
 

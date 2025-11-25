@@ -41,6 +41,8 @@ import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.LocationLookup;
 import net.citizensnpcs.api.NMSHelper;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.ai.tree.BehaviorRegistry;
+import net.citizensnpcs.api.ai.tree.expr.ExpressionRegistry;
 import net.citizensnpcs.api.astar.pathfinder.AsyncChunkCache;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.Injector;
@@ -73,6 +75,8 @@ import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
 import net.citizensnpcs.npc.CitizensTraitFactory;
 import net.citizensnpcs.npc.NPCSelector;
+import net.citizensnpcs.npc.ai.tree.CitizensBehaviorRegistry;
+import net.citizensnpcs.npc.ai.tree.MolangEngine;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.profile.ProfileFetcher;
 import net.citizensnpcs.trait.shop.StoredShops;
@@ -86,6 +90,7 @@ import net.milkbowl.vault.economy.Economy;
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final List<NPCRegistry> anonymousRegistries = Lists.newArrayList();
     private AsyncChunkCache asyncChunkCache;
+    private CitizensBehaviorRegistry behaviorRegistry;
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private boolean enabled;
@@ -168,8 +173,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private NPCDataStore createStorage(File folder) {
-        Storage saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage",
-                true);
+        Storage saves = new YamlStorage(new File(folder, Setting.STORAGE_FILE.asString()), "Citizens NPC Storage");
         if (!saves.load())
             return null;
 
@@ -200,6 +204,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                     Setting.CITIZENS_PATHFINDER_ASYNC_CHUNK_CACHE_TTL.asDuration().toMillis());
         }
         return asyncChunkCache;
+    }
+
+    @Override
+    public BehaviorRegistry getBehaviorRegistry() {
+        return behaviorRegistry;
     }
 
     @Override
@@ -298,6 +307,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return traitFactory;
     }
 
+    private void initialiseBehaviorRegistry() {
+        ExpressionRegistry exprRegistry = new ExpressionRegistry();
+        exprRegistry.registerEngine(new MolangEngine());
+        behaviorRegistry = new CitizensBehaviorRegistry(exprRegistry);
+    }
+
     private void loadAdventure() {
         LibraryManager lib = new BukkitLibraryManager(this);
         lib.addMavenCentral();
@@ -365,6 +380,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         despawnNPCs(saveOnDisable);
         HandlerList.unregisterAll(this);
 
+        behaviorRegistry = null;
         templateRegistry = null;
         npcRegistry = null;
         locationLookup = null;
@@ -408,7 +424,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         }
         saves = createStorage(getDataFolder());
-        shops = new StoredShops(new YamlStorage(new File(getDataFolder(), "shops.yml"), "Citizens NPC Shops", true));
+        initialiseBehaviorRegistry();
+        shops = new StoredShops(new YamlStorage(new File(getDataFolder(), "shops.yml"), "Citizens NPC Shops"));
         if (saves == null || !shops.loadFromDisk()) {
             Messaging.severeTr(Messages.FAILED_LOAD_SAVES);
             Bukkit.getPluginManager().disablePlugin(this);

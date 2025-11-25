@@ -9,6 +9,7 @@ libraries:
   - ch.ethz.globis.phtree:phtree:2.8.2
   - org.joml:joml:1.10.8
   - it.unimi.dsi:fastutil:8.5.16
+  - team.unnamed:mocha:3.0.0
 commands:
   trait: 
     description: Trait commands
