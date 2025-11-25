@@ -83,8 +83,8 @@ public class HologramTrait extends Trait {
         if (Setting.DEFAULT_HOLOGRAM_RENDERER_SETTINGS.asSection() != null) {
             defaultRenderer = createHologramRenderer();
             DataKey key = new MemoryDataKey();
-            key.setRaw("", Setting.DEFAULT_HOLOGRAM_RENDERER_SETTINGS.asSection());
-            PersistenceLoader.load(defaultRenderer, key);
+            key.setRaw("renderer", Setting.DEFAULT_HOLOGRAM_RENDERER_SETTINGS.asSection());
+            PersistenceLoader.load(defaultRenderer, key.getRelative("renderer"));
         }
     }
 
