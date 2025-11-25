@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerTask;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.BlockCommandSender;
@@ -148,7 +149,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private CitizensNPCRegistry npcRegistry;
     private boolean packetEventsEnabled = true;
     private PacketEventsListener packetEventsListener;
-    private BukkitTask playerUpdateTask;
+    private SchedulerTask playerUpdateTask;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
     private NPCSelector selector;
