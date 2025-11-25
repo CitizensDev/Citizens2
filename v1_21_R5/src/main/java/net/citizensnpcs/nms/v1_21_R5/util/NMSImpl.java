@@ -1611,7 +1611,14 @@ public class NMSImpl implements NMSBridge {
     @Override
     public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
         if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
-            net.citizensnpcs.api.util.SpigotUtil.teleportAsync(entity, location);
+            if (location.getWorld() == entity.getWorld()
+                    && CitizensAPI.getScheduler().isOnOwnerThread(entity)
+                    && CitizensAPI.getScheduler().isOnOwnerThread(location)) {
+                getHandle(entity).snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
+                        location.getPitch());
+            } else {
+                net.citizensnpcs.api.util.SpigotUtil.teleportAsync(entity, location);
+            }
             return;
         }
         getHandle(entity).snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
