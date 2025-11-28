@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,30 +18,28 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
-import net.citizensnpcs.api.util.Storage;
-import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 public class Settings {
-    private final Storage config;
-    private final DataKey root;
+    private final YamlConfiguration config;
+    private final File file;
 
     public Settings(File folder) {
-        config = new YamlStorage(new File(folder, "config.yml"), "Citizens Configuration");
-        root = config.getKey("");
+        file = new File(folder, "config.yml");
+        config = YamlConfiguration.loadConfiguration(file);
+        config.options().header("Citizens Configuration");
 
-        config.load();
         for (Setting setting : Setting.values()) {
-            if (!root.keyExists(setting.path)) {
-                setting.setAtKey(root);
+            if (!config.contains(setting.path)) {
+                setting.setAtKey(config);
             } else {
-                setting.loadFromKey(root);
+                setting.loadFromKey(config);
             }
         }
         updateMessagingSettings();
@@ -48,10 +47,14 @@ public class Settings {
     }
 
     public void reload() {
-        config.load();
+        try {
+            config.load(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         for (Setting setting : Setting.values()) {
-            if (root.keyExists(setting.path)) {
-                setting.loadFromKey(root);
+            if (config.contains(setting.path)) {
+                setting.loadFromKey(config);
             }
         }
         updateMessagingSettings();
@@ -59,7 +62,11 @@ public class Settings {
     }
 
     public void save() {
-        config.save();
+        try {
+            config.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateMessagingSettings() {
@@ -132,14 +139,14 @@ public class Settings {
         DEFAULT_HOLOGRAM_RENDERER_SETTINGS("npc.hologram.default-renderer-settings",
                 ImmutableMap.of("seeThrough", true, "shadowed", true)) {
             @Override
-            public void loadFromKey(DataKey root) {
-                value = root.getRaw(path);
+            public void loadFromKey(YamlConfiguration config) {
+                value = config.get(path);
             }
 
             @Override
-            protected void setAtKey(DataKey root) {
-                root.setRaw(path, value);
-                setComments(root);
+            protected void setAtKey(YamlConfiguration config) {
+                config.set(path, value);
+                setComments(config);
             }
         },
         DEFAULT_LOOK_CLOSE("Enable look close by default", "npc.default.look-close.enabled", false),
@@ -179,25 +186,15 @@ public class Settings {
         DEFAULT_TALK_CLOSE("npc.default.talk-close.enabled", false),
         DEFAULT_TALK_CLOSE_RANGE("Default talk close range in blocks", "npc.default.talk-close.range", 5),
         DEFAULT_TEXT("npc.default.talk-close.text", "Hi, I'm <npc>!") {
-            @SuppressWarnings("unchecked")
             @Override
-            public void loadFromKey(DataKey root) {
-                List<String> list = new ArrayList<>();
-                Object raw = root.getRaw(path);
-                if (raw instanceof ConfigurationSection || raw instanceof Map) {
-                    for (DataKey key : root.getRelative(path).getSubKeys()) {
-                        list.add(key.getString(""));
-                    }
-                } else if (raw instanceof Collection) {
-                    list.addAll((Collection<? extends String>) raw);
-                }
-                value = list;
+            public void loadFromKey(YamlConfiguration config) {
+                value = config.getStringList(path);
             }
 
             @Override
-            protected void setAtKey(DataKey root) {
-                root.setRaw(path, Lists.newArrayList(value));
-                setComments(root);
+            protected void setAtKey(YamlConfiguration config) {
+                config.set(path, Lists.newArrayList(value));
+                setComments(config);
             }
         },
         DEFAULT_TEXT_DELAY_MAX("Default maximum delay when talking to players",
@@ -403,36 +400,34 @@ public class Settings {
             if (duration == null) {
                 duration = SpigotUtil.parseDuration(asString(), null);
             }
-            return Util.toTicks(duration);
+            return SpigotUtil.toTicks(duration);
         }
 
-        protected void loadFromKey(DataKey root) {
-            setComments(root);
-            if (migrateFrom != null && root.keyExists(migrateFrom) && !root.keyExists(path)) {
-                value = root.getRaw(migrateFrom);
-                root.removeKey(migrateFrom);
+        protected void loadFromKey(YamlConfiguration config) {
+            if (migrateFrom != null && config.contains(migrateFrom) && !config.contains(path)) {
+                value = config.get(migrateFrom);
+                config.set(migrateFrom, null);
             } else {
-                value = root.getRaw(path);
+                value = config.get(path);
             }
         }
 
-        protected void setAtKey(DataKey root) {
-            root.setRaw(path, value);
-            setComments(root);
+        protected void setAtKey(YamlConfiguration config) {
+            config.set(path, value);
+            setComments(config);
         }
 
-        protected void setComments(DataKey root) {
-            if (!SUPPORTS_SET_COMMENTS || !root.keyExists(path))
+        protected void setComments(YamlConfiguration config) {
+            if (!SUPPORTS_SET_COMMENTS || comments == null)
                 return;
-            ((MemoryDataKey) root).getSection("").setComments(path,
-                    comments == null ? null : Arrays.asList(comments.split("<br>")));
+            config.setComments(path, Arrays.asList(comments.split("<br>")));
         }
     }
 
     private static boolean SUPPORTS_SET_COMMENTS = true;
     static {
         try {
-            ConfigurationSection.class.getMethod("getInlineComments", String.class);
+            ConfigurationSection.class.getMethod("setComments", String.class, List.class);
         } catch (NoSuchMethodException | SecurityException e) {
             SUPPORTS_SET_COMMENTS = false;
         }
