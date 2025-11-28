@@ -81,25 +81,6 @@ public class Util {
         return event.isCancelled();
     }
 
-    public static <T> T callPossiblySync(Callable<T> callable, boolean sync) {
-        if (SpigotUtil.isFoliaServer()) {
-            throw new UnsupportedOperationException("Folia does not have a main thread, so it is not supported.");
-        }
-        if (!sync) {
-            try {
-                return callable.call();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            return Bukkit.getScheduler().callSyncMethod(CitizensAPI.getPlugin(), callable).get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static Vector callPushEvent(NPC npc, double x, double y, double z) {
         boolean allowed = npc == null || !npc.isProtected()
                 || npc.data().has(NPC.Metadata.COLLIDABLE) && npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE);
