@@ -87,6 +87,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>team.unnamed</groupId>
+            <artifactId>mocha</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
             <version>1.10.8</version>

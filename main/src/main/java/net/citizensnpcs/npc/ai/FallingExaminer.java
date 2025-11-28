@@ -21,18 +21,13 @@ public class FallingExaminer implements BlockExaminer {
     }
 
     @Override
-    public float getCost(BlockSource source, PathPoint point) {
-        return fall.containsKey(point) ? 0.25f : 0;
-    }
-
-    @Override
-    public PassableState isPassable(BlockSource source, PathPoint point) {
+    public StandableState canStandAt(BlockSource source, PathPoint point) {
         Vector pos = point.getVector();
         if (!source.isYWithinBounds(pos.getBlockY() - 1))
-            return PassableState.IGNORE;
+            return StandableState.IGNORE;
 
         if (fall.containsKey(point))
-            return PassableState.PASSABLE;
+            return StandableState.STANDABLE;
 
         Vector ppos = point.getParentPoint().getVector();
         if (!MinecraftBlockExaminer.canStandOn(
@@ -42,14 +37,24 @@ public class FallingExaminer implements BlockExaminer {
             if (dist == null && mc.isPassable(source, point.getParentPoint()) == PassableState.PASSABLE) {
                 // start a fall
                 fall.put(point, 0);
-                return PassableState.PASSABLE;
+                return StandableState.STANDABLE;
             } else if (dist != null && dist < maxFallDistance && pos.getBlockY() < ppos.getBlockY()
                     && pos.getBlockX() == ppos.getBlockX() && pos.getBlockZ() == ppos.getBlockZ()
                     && MinecraftBlockExaminer.canStandIn(source.getMaterialAt(pos), source.getBlockDataAt(ppos))) {
                 fall.put(point, dist + 1);
-                return PassableState.PASSABLE;
+                return StandableState.STANDABLE;
             }
         }
-        return PassableState.IGNORE;
+        return StandableState.IGNORE;
+    }
+
+    @Override
+    public float getCost(BlockSource source, PathPoint point) {
+        return fall.containsKey(point) ? 0.25f : 0;
+    }
+
+    @Override
+    public PassableState isPassable(BlockSource source, PathPoint point) {
+        return fall.containsKey(point) ? PassableState.PASSABLE : PassableState.IGNORE;
     }
 }
