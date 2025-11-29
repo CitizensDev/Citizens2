@@ -141,7 +141,7 @@ public class TextDisplayTrait extends Trait {
             trait.setText(text);
         }
         if (npc.isSpawned()) {
-            trait.onSpawn();
+            trait.onPreSpawn();
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());

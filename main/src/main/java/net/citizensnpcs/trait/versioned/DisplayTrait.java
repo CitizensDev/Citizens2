@@ -207,7 +207,7 @@ public class DisplayTrait extends Trait {
             trait.setScale(scale);
         }
         if (npc.isSpawned()) {
-            trait.onSpawn();
+            trait.onPreSpawn();
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
