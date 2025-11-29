@@ -62,7 +62,7 @@ public class TextDisplayTrait extends Trait {
     }
 
     @Override
-    public void onSpawn() {
+    public void onPreSpawn() {
         TextDisplay display = (TextDisplay) npc.getEntity();
         if (text != null) {
             NMS.setTextDisplayComponent(display, Messaging.minecraftComponentFromRawMessage(text));

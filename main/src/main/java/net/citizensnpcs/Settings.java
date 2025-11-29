@@ -3,22 +3,18 @@ package net.citizensnpcs;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.Messaging;
@@ -137,7 +133,7 @@ public class Settings {
                 "The default renderer for holograms, must be one of the following:<br>interaction - requires 1.19+, matches nametags more closely than display<br>display - allows for different colored backgrounds<br>display_vehicle - mounts the display on the NPC<br>areaeffectcloud - the safest option<br>armorstand - the second safest option, has a hitbox clientside<br>armorstand_vehicle - mounts the armorstand on the NPC, only useful for nameplates",
                 "npc.hologram.default-renderer", "display"),
         DEFAULT_HOLOGRAM_RENDERER_SETTINGS("npc.hologram.default-renderer-settings",
-                ImmutableMap.of("seeThrough", true, "shadowed", true)) {
+                ImmutableMap.of("seeThrough", true, "shadowed", true, "billboard", "CENTER", "interpolationDelay", 0)) {
             @Override
             public void loadFromKey(YamlConfiguration config) {
                 value = config.get(path);

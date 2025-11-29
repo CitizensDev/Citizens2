@@ -28,6 +28,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.Util;
 
@@ -130,7 +131,7 @@ public class WanderWaypointProvider implements WaypointProvider {
                     });
                 } else if (message.startsWith("delay")) {
                     event.setCancelled(true);
-                    setDelay(Util.parseTicks(message.split(" ")[1]));
+                    setDelay(SpigotUtil.parseTicks(message.split(" ")[1]));
                     Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
                             () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
                 } else if (message.startsWith("worldguardregion")) {

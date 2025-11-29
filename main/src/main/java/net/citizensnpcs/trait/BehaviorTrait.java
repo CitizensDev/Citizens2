@@ -113,7 +113,7 @@ public class BehaviorTrait extends Trait {
             memory.saveTo(key.getRelative("memory"));
         }
         if (yamlCache != null) {
-            key.setRaw("tree", yamlCache);
+            key.setMap("tree", yamlCache);
             yamlCache = null;
         }
     }
@@ -144,7 +144,7 @@ public class BehaviorTrait extends Trait {
                     BehaviorTrait trait = ctx.npc.getOrAddTrait(BehaviorTrait.class);
                     DataKey memory = new MemoryDataKey();
                     Map<String, Object> values = key.getRelative("tree").getValuesDeep();
-                    memory.setRaw("tree", values);
+                    memory.setMap("tree", values);
                     trait.yamlCache = values;
                     trait.load(memory);
                     return null;
@@ -168,7 +168,7 @@ public class BehaviorTrait extends Trait {
                 BehaviorTrait trait = npc.getOrAddTrait(BehaviorTrait.class);
                 DataKey memory = new MemoryDataKey();
                 Map<String, Object> values = storage.getKey("").getValuesDeep();
-                memory.setRaw("tree", values);
+                memory.setMap("tree", values);
                 trait.yamlCache = values;
                 trait.load(memory);
 

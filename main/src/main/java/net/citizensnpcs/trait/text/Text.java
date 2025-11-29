@@ -29,6 +29,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Paginator;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.util.Messages;
@@ -258,7 +259,7 @@ public class Text extends Trait implements Runnable, Listener {
     }
 
     public void setSpeechBubbleDuration(Duration duration) {
-        this.speechBubbleDuration = Util.toTicks(duration);
+        this.speechBubbleDuration = SpigotUtil.toTicks(duration);
     }
 
     /**

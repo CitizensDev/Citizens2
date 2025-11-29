@@ -55,8 +55,12 @@ public class DisplayTrait extends Trait {
         super("displaytrait");
     }
 
+    public Billboard getBillboard() {
+        return billboard;
+    }
+
     @Override
-    public void onSpawn() {
+    public void onPreSpawn() {
         Display display = (Display) npc.getEntity();
         if (billboard != null) {
             display.setBillboard(billboard);

@@ -432,11 +432,6 @@ public class Util {
         throw new NumberFormatException();
     }
 
-    public static int parseTicks(String raw) {
-        Duration duration = SpigotUtil.parseDuration(raw, null);
-        return duration == null ? -1 : toTicks(duration);
-    }
-
     public static String possiblyConvertToBedrockName(String name) {
         return name.startsWith(BEDROCK_NAME_PREFIX) ? name : BEDROCK_NAME_PREFIX + name;
     }
@@ -626,11 +621,6 @@ public class Util {
                 new TalkableEntity(bystander).talkNear(context, text);
             }
         }
-    }
-
-    public static int toTicks(Duration delay) {
-        return (int) (TimeUnit.MILLISECONDS.convert(delay.getSeconds(), TimeUnit.SECONDS)
-                + TimeUnit.MILLISECONDS.convert(delay.getNano(), TimeUnit.NANOSECONDS)) / 50;
     }
 
     private static MethodHandle ATTRIBUTE_VALUEOF = NMS.getMethodHandle(Attribute.class, "valueOf", false,

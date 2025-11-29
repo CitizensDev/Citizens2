@@ -696,7 +696,7 @@ public class NPCCommands {
             List<String> temporaryPermissions = Arrays.asList(args.getString(2).split(","));
             int duration = -1;
             if (args.argsLength() == 4) {
-                duration = Util.parseTicks(args.getString(3));
+                duration = SpigotUtil.parseTicks(args.getString(3));
             }
             commands.setTemporaryPermissions(temporaryPermissions, duration);
             Messaging.sendTr(sender, Messages.COMMAND_TEMPORARY_PERMISSIONS_SET,
@@ -904,7 +904,7 @@ public class NPCCommands {
                 if (temporaryRegistry.getByUniqueId(temp.getUniqueId()) == temp) {
                     temp.destroy();
                 }
-            }, Util.toTicks(temporaryDuration));
+            }, SpigotUtil.toTicks(temporaryDuration));
         }
         npc.getOrAddTrait(MobType.class).setType(type);
 
@@ -1388,7 +1388,7 @@ public class NPCCommands {
                 throw new CommandException(Messages.HOLOGRAM_TEXT_MISSING);
 
             if (duration != null) {
-                trait.addTemporaryLine(args.getJoinedStrings(2), Util.toTicks(duration));
+                trait.addTemporaryLine(args.getJoinedStrings(2), SpigotUtil.toTicks(duration));
             } else {
                 trait.addLine(args.getJoinedStrings(2));
             }
@@ -1496,8 +1496,8 @@ public class NPCCommands {
             output += " " + Messaging.tr(Messages.HOME_TRAIT_TELEPORT_SET, npc.getName());
         }
         if (delay != null) {
-            trait.setDelayTicks(Util.toTicks(delay));
-            output += " " + Messaging.tr(Messages.HOME_TRAIT_DELAY_SET, Util.toTicks(delay));
+            trait.setDelayTicks(SpigotUtil.toTicks(delay));
+            output += " " + Messaging.tr(Messages.HOME_TRAIT_DELAY_SET, SpigotUtil.toTicks(delay));
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());
@@ -1869,8 +1869,9 @@ public class NPCCommands {
             toggle = false;
         }
         if (randomLookDelay != null) {
-            trait.setRandomLookDelay(Math.max(1, Util.toTicks(randomLookDelay)));
-            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_DELAY_SET, npc.getName(), Util.toTicks(randomLookDelay));
+            trait.setRandomLookDelay(Math.max(1, SpigotUtil.toTicks(randomLookDelay)));
+            Messaging.sendTr(sender, Messages.LOOKCLOSE_RANDOM_DELAY_SET, npc.getName(),
+                    SpigotUtil.toTicks(randomLookDelay));
             toggle = false;
         }
         if (randomPitch != null) {
@@ -2426,11 +2427,11 @@ public class NPCCommands {
                     npc.getName());
         }
         if (lockoutDuration != null) {
-            trait.setLockoutDuration(Util.toTicks(lockoutDuration));
+            trait.setLockoutDuration(SpigotUtil.toTicks(lockoutDuration));
             Messaging.sendTr(sender, Messages.PAUSEPATHFINDING_LOCKOUT_DURATION_SET, npc.getName(), lockoutDuration);
         }
         if (pauseDuration != null) {
-            trait.setPauseDuration(Util.toTicks(pauseDuration));
+            trait.setPauseDuration(SpigotUtil.toTicks(pauseDuration));
             Messaging.sendTr(sender, Messages.PAUSEPATHFINDING_TICKS_SET, npc.getName(), pauseDuration);
         }
     }
@@ -2816,8 +2817,8 @@ public class NPCCommands {
             permission = "citizens.npc.respawn")
     public void respawn(CommandContext args, CommandSender sender, NPC npc, @Arg(1) Duration delay) {
         if (delay != null) {
-            npc.data().setPersistent(NPC.Metadata.RESPAWN_DELAY, Util.toTicks(delay));
-            Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, Util.toTicks(delay));
+            npc.data().setPersistent(NPC.Metadata.RESPAWN_DELAY, SpigotUtil.toTicks(delay));
+            Messaging.sendTr(sender, Messages.RESPAWN_DELAY_SET, SpigotUtil.toTicks(delay));
         } else {
             Messaging.sendTr(sender, Messages.RESPAWN_DELAY_DESCRIBE, npc.data().get(NPC.Metadata.RESPAWN_DELAY, -1));
         }
@@ -3477,7 +3478,8 @@ public class NPCCommands {
         }
         if (bubbleDuration != null) {
             HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
-            trait.addTemporaryLine(Placeholders.replace(message, playerRecipient, npc), Util.toTicks(bubbleDuration));
+            trait.addTemporaryLine(Placeholders.replace(message, playerRecipient, npc),
+                    SpigotUtil.toTicks(bubbleDuration));
             return;
         }
         if (range != null) {
@@ -3857,7 +3859,7 @@ public class NPCCommands {
         } else if (command.equals("delay")) {
             if (args.argsLength() != 3)
                 throw new CommandUsageException();
-            provider.setDelay(Util.parseTicks(args.getString(2)));
+            provider.setDelay(SpigotUtil.parseTicks(args.getString(2)));
             Messaging.sendTr(sender, Messages.WANDER_DELAY_SET, provider.getDelay());
         }
     }

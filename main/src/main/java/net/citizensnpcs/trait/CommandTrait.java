@@ -48,6 +48,7 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.ItemStorage;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.Translator;
 import net.citizensnpcs.trait.shop.ExperienceAction;
 import net.citizensnpcs.trait.shop.ItemAction;
@@ -80,10 +81,10 @@ public class CommandTrait extends Trait {
     @Persist
     private final List<ItemStack> itemRequirements = Lists.newArrayList();
     private int lastUsedId = -1;
-    @Persist("persistSequence")
-    private boolean rememberLastUsed = false;
     @Persist(keyType = UUID.class, reify = true, value = "cooldowns")
     private final Map<UUID, PlayerNPCCommand> playerTracking = Maps.newHashMap();
+    @Persist("persistSequence")
+    private boolean rememberLastUsed = false;
     @Persist
     private final List<String> temporaryPermissions = Lists.newArrayList();
     @Persist
@@ -703,7 +704,7 @@ public class CommandTrait extends Trait {
         }
 
         public NPCCommandBuilder delay(Duration delay) {
-            this.delay = Util.toTicks(delay);
+            this.delay = SpigotUtil.toTicks(delay);
             return this;
         }
 

@@ -65,6 +65,7 @@ import net.citizensnpcs.util.Util;
  */
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
+    private boolean customisedDefaultRenderer;
     private HologramRenderer defaultRenderer;
     private double lastEntityBbHeight = 0;
     private Location lastLoc;
@@ -83,7 +84,7 @@ public class HologramTrait extends Trait {
         if (Setting.DEFAULT_HOLOGRAM_RENDERER_SETTINGS.asSection() != null) {
             defaultRenderer = createHologramRenderer();
             DataKey key = new MemoryDataKey();
-            key.setRaw("renderer", Setting.DEFAULT_HOLOGRAM_RENDERER_SETTINGS.asSection());
+            key.setMap("renderer", Setting.DEFAULT_HOLOGRAM_RENDERER_SETTINGS.asSection().getValues(true));
             PersistenceLoader.load(defaultRenderer, key.getRelative("renderer"));
         }
     }
@@ -226,6 +227,7 @@ public class HologramTrait extends Trait {
     }
 
     public HologramRenderer getTemplateRenderer() {
+        customisedDefaultRenderer = true;
         return defaultRenderer == null ? defaultRenderer = new TextDisplayRenderer() : defaultRenderer;
     }
 
@@ -241,10 +243,11 @@ public class HologramTrait extends Trait {
     @Override
     public void load(DataKey root) {
         clear();
-        if (!root.getString("renderer_template.type", "").isEmpty()) {
+        if (!root.getString("default_renderer.type", "").isEmpty()) {
+            customisedDefaultRenderer = true;
             defaultRenderer = null;
-            defaultRenderer = PersistenceLoader.load(createRenderer(root.getString("renderer_template.type")),
-                    root.getRelative("renderer_template"));
+            defaultRenderer = PersistenceLoader.load(createRenderer(root.getString("default_renderer.type")),
+                    root.getRelative("default_renderer"));
         }
         for (DataKey key : root.getRelative("lines").getIntegerSubKeys()) {
             HologramLine line = new HologramLine(key.keyExists("text") ? key.getString("text") : key.getString(""),
@@ -364,13 +367,13 @@ public class HologramTrait extends Trait {
 
     @Override
     public void save(DataKey root) {
-        root.removeKey("renderer_template");
-        if (defaultRenderer != null) {
-            root.setString("renderer_template.type",
+        root.removeKey("default_renderer");
+        if (defaultRenderer != null && customisedDefaultRenderer) {
+            root.setString("default_renderer.type",
                     defaultRenderer instanceof TextDisplayRenderer ? "display"
                             : defaultRenderer instanceof AreaEffectCloudRenderer ? "areaeffectcloud"
                                     : defaultRenderer instanceof InteractionVehicleRenderer ? "interaction" : "");
-            PersistenceLoader.save(defaultRenderer, root.getRelative("renderer_template"));
+            PersistenceLoader.save(defaultRenderer, root.getRelative("default_renderer"));
         }
         root.removeKey("lines");
         int i = 0;
@@ -1042,7 +1045,6 @@ public class HologramTrait extends Trait {
         try {
             Class.forName("org.bukkit.entity.Display");
         } catch (ClassNotFoundException e) {
-            SUPPORTS_DISPLAY = false;
         }
     }
 }
