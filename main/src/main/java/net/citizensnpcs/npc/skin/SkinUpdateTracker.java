@@ -15,6 +15,7 @@ import java.util.WeakHashMap;
 
 import javax.annotation.Nullable;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -288,7 +289,7 @@ public class SkinUpdateTracker {
         if (player.hasMetadata("NPC"))
             return;
 
-        new BukkitRunnable() {
+        new SchedulerRunnable() {
             @Override
             public void run() {
                 List<SkinnableEntity> visible = getNearbyNPCs(player, reset, false);
@@ -300,11 +301,11 @@ public class SkinUpdateTracker {
                     skinnable.getSkinTracker().updateViewer(player);
                 }
             }
-        }.runTaskLater(CitizensAPI.getPlugin(), delay);
+        }.runEntityTaskLater(CitizensAPI.getPlugin(), player, null, delay);
     }
 
     // update players when the NPC navigates into their field of view
-    private class NPCNavigationTracker extends BukkitRunnable {
+    private class NPCNavigationTracker extends SchedulerRunnable {
         @Override
         public void run() {
             if (navigating.isEmpty() || playerTrackers.isEmpty())
@@ -332,7 +333,7 @@ public class SkinUpdateTracker {
 
     // Updates players. Repeating task used to schedule updates without
     // causing excessive scheduling.
-    private static class NPCNavigationUpdater extends BukkitRunnable {
+    private static class NPCNavigationUpdater extends SchedulerRunnable {
         Queue<UpdateInfo> queue = new ArrayDeque<>(20);
 
         @Override

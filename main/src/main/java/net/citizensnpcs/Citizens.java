@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerTask;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.BlockCommandSender;
@@ -147,7 +148,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private CitizensNPCRegistry npcRegistry;
     private boolean packetEventsEnabled = true;
     private PacketEventsListener packetEventsListener;
-    private BukkitTask playerUpdateTask;
+    private SchedulerTask playerUpdateTask;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
     private NPCSelector selector;
@@ -191,6 +192,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
                 } else {
                     registry.saveToStore();
                 }
+            }
+            if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+                if (!this.isEnabled()) return;
             }
             registry.despawnNPCs(DespawnReason.RELOAD);
         }
@@ -463,7 +467,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
         // Setup NPCs after all plugins have been enabled (allows for multiworld
         // support and for NPCs to properly register external settings)
-        if (getServer().getScheduler().scheduleSyncDelayedTask(this, new CitizensLoadTask(), 1) == -1) {
+        if (CitizensAPI.getScheduler().runTaskLater(new CitizensLoadTask(), 1) == null) {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
             Bukkit.getPluginManager().disablePlugin(this);
         }
@@ -534,7 +538,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void scheduleSaveTask(int delay) {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CitizensSaveTask(), delay, delay);
+        CitizensAPI.getScheduler().runTaskTimer(new CitizensSaveTask(), delay, delay);
     }
 
     @Override
