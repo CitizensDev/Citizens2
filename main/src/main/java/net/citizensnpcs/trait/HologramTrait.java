@@ -162,9 +162,6 @@ public class HologramTrait extends Trait {
         if (defaultRenderer != null) {
             return defaultRenderer.copy();
         }
-        if (!SUPPORTS_DISPLAY) {
-            setting = SpigotUtil.getVersion()[1] <= 8 ? "armorstand" : "areaeffectcloud";
-        }
         switch (setting) {
             case "areaeffectcloud":
                 return new AreaEffectCloudRenderer();
@@ -245,7 +242,10 @@ public class HologramTrait extends Trait {
         clear();
         if (!root.getString("default_renderer.type", "").isEmpty()) {
             customisedDefaultRenderer = true;
-            defaultRenderer = null;
+            if (defaultRenderer != null) {
+                defaultRenderer.destroy();
+                defaultRenderer = null;
+            }
             defaultRenderer = PersistenceLoader.load(createRenderer(root.getString("default_renderer.type")),
                     root.getRelative("default_renderer"));
         }
@@ -1039,12 +1039,5 @@ public class HologramTrait extends Trait {
     }
 
     private static final Pattern ITEM_MATCHER = Pattern.compile("<item:((?:minecraft:)?[a-zA-Z0-9_ ]*?)(:.*?)?>");
-    private static boolean SUPPORTS_DISPLAY = true;
 
-    static {
-        try {
-            Class.forName("org.bukkit.entity.Display");
-        } catch (ClassNotFoundException e) {
-        }
-    }
 }
