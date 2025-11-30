@@ -401,14 +401,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onEnable() {
-        loadAdventure();
         PhTreeHelper.enablePooling(false);
         PhTreeHelper.ARRAY_POOLING_POOL_SIZE = 0;
         PhTreeHelper.ARRAY_POOLING_MAX_ARRAY_SIZE = 0;
         PhTreeHelper.MAX_OBJECT_POOL_SIZE = 0;
 
-        CitizensAPI.setImplementation(this);
-        config = new Settings(getDataFolder());
         setupTranslator();
         // Disable if the server is not using the compatible Minecraft version
         try {
@@ -477,11 +474,17 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onLoad() {
-        try {
-            PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-            PacketEvents.getAPI().load();
-        } catch (Throwable t) {
-            packetEventsEnabled = false;
+        loadAdventure();
+        CitizensAPI.setImplementation(this);
+        config = new Settings(getDataFolder());
+        packetEventsEnabled = Setting.HOOK_PACKETEVENTS.asBoolean();
+        if (packetEventsEnabled) {
+            try {
+                PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+                PacketEvents.getAPI().load();
+            } catch (Throwable t) {
+                packetEventsEnabled = false;
+            }
         }
     }
 
