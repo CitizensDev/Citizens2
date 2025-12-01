@@ -21,7 +21,7 @@ import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.Messaging;
 
 @TraitName("displaytrait")
-public class DisplayTrait extends Trait {
+public class DisplayTrait extends Trait implements Cloneable {
     @Persist
     private Billboard billboard;
     @Persist
@@ -55,12 +55,32 @@ public class DisplayTrait extends Trait {
         super("displaytrait");
     }
 
+    @Override
+    public DisplayTrait clone() {
+        DisplayTrait copy = new DisplayTrait();
+        copy.billboard = billboard;
+        copy.blockLight = blockLight;
+        copy.height = height;
+        copy.interpolationDelay = interpolationDelay;
+        copy.interpolationDuration = interpolationDuration;
+        copy.leftRotation = leftRotation == null ? null : new Quaternionf(leftRotation);
+        copy.rightRotation = rightRotation == null ? null : new Quaternionf(rightRotation);
+        copy.offset = offset == null ? null : new Vector3f(offset);
+        copy.scale = scale == null ? null : new Vector3f(scale);
+        copy.shadowRadius = shadowRadius;
+        copy.shadowStrength = shadowStrength;
+        copy.skyLight = skyLight;
+        copy.viewRange = viewRange;
+        copy.width = width;
+        return copy;
+    }
+
     public Billboard getBillboard() {
         return billboard;
     }
 
     @Override
-    public void onPreSpawn() {
+    public void onSpawn() {
         Display display = (Display) npc.getEntity();
         if (billboard != null) {
             display.setBillboard(billboard);
@@ -207,7 +227,7 @@ public class DisplayTrait extends Trait {
             trait.setScale(scale);
         }
         if (npc.isSpawned()) {
-            trait.onPreSpawn();
+            trait.onSpawn();
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());

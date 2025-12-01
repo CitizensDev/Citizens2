@@ -448,15 +448,15 @@ public class HologramTrait extends Trait {
 
         @Override
         public HologramRenderer copy() {
-            AreaEffectCloudRenderer r = new AreaEffectCloudRenderer();
-            r.trait = trait;
-            return r;
+            AreaEffectCloudRenderer copy = new AreaEffectCloudRenderer();
+            copy.trait = trait.clone();
+            return copy;
         }
 
         @Override
         protected NPC createNPC(NPC base, String name, Vector3d offset) {
             NPC npc = registry().createNPC(EntityType.AREA_EFFECT_CLOUD, name);
-            npc.addTrait(trait);
+            npc.addTrait(trait.clone());
             rendered = false;
             return npc;
         }
@@ -967,10 +967,10 @@ public class HologramTrait extends Trait {
 
         @Override
         public HologramRenderer copy() {
-            TextDisplayRenderer r = new TextDisplayRenderer();
-            r.dt = dt;
-            r.tdt = tdt;
-            return r;
+            TextDisplayRenderer copy = new TextDisplayRenderer();
+            copy.dt = dt.clone();
+            copy.tdt = tdt.clone();
+            return copy;
         }
 
         @Override
@@ -978,8 +978,8 @@ public class HologramTrait extends Trait {
             NPC hologram = registry().createNPC(EntityType.TEXT_DISPLAY, "");
             hologram.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
             hologram.data().set(NPC.Metadata.TEXT_DISPLAY_COMPONENT, Messaging.minecraftComponentFromRawMessage(name));
-            hologram.addTrait(dt);
-            hologram.addTrait(tdt);
+            hologram.addTrait(dt.clone());
+            hologram.addTrait(tdt.clone());
             return hologram;
         }
 
@@ -1017,14 +1017,6 @@ public class HologramTrait extends Trait {
     }
 
     public static class TextDisplayVehicleRenderer extends TextDisplayRenderer {
-        @Override
-        public HologramRenderer copy() {
-            TextDisplayVehicleRenderer r = new TextDisplayVehicleRenderer();
-            r.dt = dt;
-            r.tdt = tdt;
-            return r;
-        }
-
         @Override
         public void render0(NPC npc, Vector3d offset) {
             super.render0(npc, offset);

@@ -19,7 +19,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.NMS;
 
 @TraitName("textdisplaytrait")
-public class TextDisplayTrait extends Trait {
+public class TextDisplayTrait extends Trait implements Cloneable {
     @Persist
     private TextAlignment alignment;
     @Persist
@@ -35,6 +35,18 @@ public class TextDisplayTrait extends Trait {
 
     public TextDisplayTrait() {
         super("textdisplaytrait");
+    }
+
+    @Override
+    public TextDisplayTrait clone() {
+        TextDisplayTrait copy = new TextDisplayTrait();
+        copy.alignment = alignment;
+        copy.bgcolor = bgcolor;
+        copy.lineWidth = lineWidth;
+        copy.shadowed = shadowed;
+        copy.seeThrough = seeThrough;
+        copy.text = text;
+        return copy;
     }
 
     public TextAlignment getAlignment() {
@@ -62,7 +74,7 @@ public class TextDisplayTrait extends Trait {
     }
 
     @Override
-    public void onPreSpawn() {
+    public void onSpawn() {
         TextDisplay display = (TextDisplay) npc.getEntity();
         if (text != null) {
             NMS.setTextDisplayComponent(display, Messaging.minecraftComponentFromRawMessage(text));
@@ -141,7 +153,7 @@ public class TextDisplayTrait extends Trait {
             trait.setText(text);
         }
         if (npc.isSpawned()) {
-            trait.onPreSpawn();
+            trait.onSpawn();
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output.trim());

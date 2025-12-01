@@ -36,6 +36,17 @@ public class AreaEffectCloudTrait extends Trait {
     }
 
     @Override
+    public AreaEffectCloudTrait clone() {
+        AreaEffectCloudTrait copy = new AreaEffectCloudTrait();
+        copy.color = color;
+        copy.duration = duration;
+        copy.particle = particle;
+        copy.radius = radius;
+        copy.type = type;
+        return copy;
+    }
+
+    @Override
     public void onSpawn() {
         AreaEffectCloud cloud = (AreaEffectCloud) npc.getEntity();
         if (color != null) {
