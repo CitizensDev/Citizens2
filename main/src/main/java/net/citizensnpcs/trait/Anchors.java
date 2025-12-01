@@ -82,8 +82,9 @@ public class Anchors extends Trait {
     @Override
     public void save(DataKey key) {
         key.removeKey("list");
+        key = key.getRelative("list");
         for (int i = 0; i < anchors.size(); i++) {
-            key.setString("list." + String.valueOf(i), anchors.get(i).stringValue());
+            key.setString(String.valueOf(i), anchors.get(i).stringValue());
         }
     }
 

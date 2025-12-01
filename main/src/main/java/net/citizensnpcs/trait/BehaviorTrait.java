@@ -70,12 +70,14 @@ public class BehaviorTrait extends Trait {
     }
 
     private void parse(DataKey yaml) {
+        if (!yaml.hasSubKeys())
+            return;
         scope = NPCExpressionContext.createFor(npc);
         if (memory == null) {
             memory = new Memory();
         }
         BehaviorTreeParser parser = new BehaviorTreeParser(CitizensAPI.getBehaviorRegistry());
-        root = parser.parse(yaml, npc, scope, memory);
+        root = parser.parse(yaml.getSubKeys().iterator().next(), npc, scope, memory);
 
         if (root == null)
             return;

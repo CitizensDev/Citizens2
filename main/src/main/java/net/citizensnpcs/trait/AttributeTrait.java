@@ -36,9 +36,10 @@ public class AttributeTrait extends Trait {
     public void load(DataKey key) throws NPCLoadException {
         if (!attributes.containsKey(null))
             return;
-        for (DataKey subkey : key.getRelative("attributes").getSubKeys()) {
+        DataKey root = key.getRelative("attributes");
+        for (DataKey subkey : root.getSubKeys()) {
             if (Util.getAttribute(subkey.name()) == null) {
-                key.removeKey("attributes." + subkey.name());
+                root.removeKey(subkey.name());
             }
         }
         attributes.remove(null);

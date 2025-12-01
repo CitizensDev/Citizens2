@@ -3,3 +3,18 @@ example:
     on_template_apply:
       - say --range 15 Hello!
       - npc command add say Hello again!
+behavior_tree_example:
+  traits:
+    -
+      name: behavior 
+      tree:
+        sequence:
+          - loop `memory.get('patrol_count', 0) < 3`:
+            - walkto `npc.location.x + 10` `npc.location.y` `npc.location.z`
+            - wait 2s
+            - cooldown speak 10s
+            - say Patrolling area `memory.get('patrol_count', 0)`
+            - walkto `npc.location.x - 10` `npc.location.y` `npc.location.z`
+            - set patrol_count `memory.get('patrol_count', 0) + 1`
+          - say Patrol complete!
+          - forget patrol_count
