@@ -69,11 +69,8 @@ public class ConditionAction extends NPCShopAction {
     }
 
     public void setExpression(String expression) {
-        if (!CitizensAPI.getBehaviorRegistry().getExpressionRegistry().isPossiblyExpression(expression)) {
-            expression = CitizensAPI.getBehaviorRegistry().getExpressionRegistry()
-                    .applyDefaultExpressionMarkup(expression);
-        }
-        this.condition = expression;
+        this.condition = CitizensAPI.getExpressionRegistry().applyDefaultExpressionMarkup(expression);
+        this.expression = null;
     }
 
     @Override

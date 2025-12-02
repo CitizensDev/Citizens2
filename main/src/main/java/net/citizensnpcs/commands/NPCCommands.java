@@ -91,6 +91,7 @@ import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.event.PlayerCloneNPCEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.event.SpawnReason;
+import net.citizensnpcs.api.expr.ExpressionScope;
 import net.citizensnpcs.api.gui.InventoryMenu;
 import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
@@ -124,6 +125,7 @@ import net.citizensnpcs.commands.history.RemoveNPCHistoryItem;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.EntityControllers;
 import net.citizensnpcs.npc.NPCSelector;
+import net.citizensnpcs.npc.ai.tree.NPCExpressionScope;
 import net.citizensnpcs.trait.Age;
 import net.citizensnpcs.trait.Anchors;
 import net.citizensnpcs.trait.ArmorStandTrait;
@@ -1141,6 +1143,21 @@ public class NPCCommands {
             throw new CommandUsageException();
         npc.getOrAddTrait(EntityPoseTrait.class).setPose(pose);
         Messaging.sendTr(sender, Messages.ENTITYPOSE_SET, pose);
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "eval [expression]",
+            desc = "",
+            modifiers = { "eval" },
+            min = 2,
+            max = -1,
+            permission = "citizens.npc.eval")
+    @Requirements
+    public void eval(CommandContext args, CommandSender sender, NPC npc) {
+        String expression = CitizensAPI.getExpressionRegistry().applyDefaultExpressionMarkup(args.getJoinedStrings(1));
+        ExpressionScope scope = npc == null ? new ExpressionScope() : NPCExpressionScope.createFor(npc);
+        Messaging.send(sender, CitizensAPI.getExpressionRegistry().parseValue(expression).evaluate(scope));
     }
 
     @Command(
