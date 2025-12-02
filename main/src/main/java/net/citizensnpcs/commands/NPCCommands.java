@@ -190,6 +190,7 @@ import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
 
+@Requirements(selected = true, ownership = true)
 public class NPCCommands {
     private final CommandHistory history;
     private final NPCSelector selector;
