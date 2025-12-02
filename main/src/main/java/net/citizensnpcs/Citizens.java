@@ -90,10 +90,11 @@ import net.milkbowl.vault.economy.Economy;
 public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final List<NPCRegistry> anonymousRegistries = Lists.newArrayList();
     private AsyncChunkCache asyncChunkCache;
-    private CitizensBehaviorRegistry behaviorRegistry;
+    private BehaviorRegistry behaviorRegistry;
     private final CommandManager commands = new CommandManager();
     private Settings config;
     private boolean enabled;
+    private ExpressionRegistry expressionRegistry;
     private LocationLookup locationLookup;
     private final NMSHelper nmsHelper = new NMSHelper() {
         private boolean SUPPORT_OWNER_PROFILE = false;
@@ -155,7 +156,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
     private TemplateRegistry templateRegistry;
     private NPCRegistry temporaryRegistry;
-
     private CitizensTraitFactory traitFactory;
 
     @Override
@@ -223,6 +223,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public NPCSelector getDefaultNPCSelector() {
         return selector;
+    }
+
+    @Override
+    public ExpressionRegistry getExpressionRegistry() {
+        return expressionRegistry;
     }
 
     @Override
@@ -308,9 +313,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private void initialiseBehaviorRegistry() {
-        ExpressionRegistry exprRegistry = new ExpressionRegistry();
-        exprRegistry.registerEngine(new MolangEngine());
-        behaviorRegistry = new CitizensBehaviorRegistry(exprRegistry);
+        expressionRegistry = new ExpressionRegistry();
+        expressionRegistry.registerEngine(new MolangEngine());
+        behaviorRegistry = new CitizensBehaviorRegistry(expressionRegistry);
     }
 
     private void loadAdventure() {

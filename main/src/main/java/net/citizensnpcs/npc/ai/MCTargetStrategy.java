@@ -20,7 +20,7 @@ import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.util.NMS;
 
 public class MCTargetStrategy implements PathStrategy, EntityTarget {
-    private final boolean aggro;
+    private final boolean aggressive;
     private int attackDelay;
     private CancelReason cancelReason;
     private final Entity handle;
@@ -30,7 +30,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private TargetNavigator targetNavigator;
     private int updateCounter = -1;
 
-    public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggro, NavigatorParameters params) {
+    public MCTargetStrategy(NPC npc, org.bukkit.entity.Entity target, boolean aggressive, NavigatorParameters params) {
         this.npc = npc;
         parameters = params;
         handle = npc.getEntity();
@@ -38,7 +38,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         TargetNavigator nms = NMS.getTargetNavigator(npc.getEntity(), target, params);
         targetNavigator = nms != null && params.pathfinderType() == PathfinderType.MINECRAFT ? nms
                 : new AStarTargeter();
-        this.aggro = aggro;
+        this.aggressive = aggressive;
     }
 
     private boolean canAttack() {
@@ -88,7 +88,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
 
     @Override
     public boolean isAggressive() {
-        return aggro;
+        return aggressive;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (parameters.straightLineTargetingDistance() > 0 && !(targetNavigator instanceof StraightLineTargeter)) {
             targetNavigator = new StraightLineTargeter(targetNavigator);
         }
-        if (!aggro && distance() <= parameters.distanceMargin()) {
+        if (!aggressive && distance() <= parameters.distanceMargin()) {
             stop();
             return false;
         } else if (updateCounter == -1 || updateCounter++ > parameters.updatePathRate()) {
@@ -127,7 +127,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         targetNavigator.update();
 
         NMS.look(handle, target);
-        if (aggro && canAttack()) {
+        if (aggressive && canAttack()) {
             AttackStrategy strategy = parameters.attackStrategy();
             if (strategy != null && !strategy.handle((LivingEntity) handle, (LivingEntity) getTarget())
                     && strategy != parameters.defaultAttackStrategy()) {
@@ -135,9 +135,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
             }
             attackDelay = parameters.attackDelayTicks();
         }
-        if (attackDelay > 0) {
-            attackDelay--;
-        }
+        attackDelay--;
         return false;
     }
 

@@ -67,7 +67,7 @@ public class BossBarTrait extends Trait {
 
         if (activeBar == null) {
             activeBar = Bukkit.getServer().createBossBar(npc.getFullName(), color, style,
-                    flags.toArray(new BarFlag[flags.size()]));
+                    flags.toArray(new BarFlag[0]));
         }
         return activeBar;
     }

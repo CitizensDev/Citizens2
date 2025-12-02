@@ -1,36 +1,50 @@
 package net.citizensnpcs.npc.ai.tree;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 import net.citizensnpcs.api.ai.tree.BehaviorRegistry;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.ai.tree.InstantBehavior;
+import net.citizensnpcs.api.ai.tree.expr.BehaviorSignals;
 import net.citizensnpcs.api.ai.tree.expr.ExpressionRegistry;
 import net.citizensnpcs.api.ai.tree.expr.ExpressionRegistry.ExpressionValue;
-import net.citizensnpcs.api.ai.tree.expr.SignalManager;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Util;
 
 /**
- * Citizens2-specific extension of BehaviorRegistry. Adds behaviors that depend on Citizens2 implementation classes.
+ * Adds behaviors that depend on implementation classes.
  */
 public class CitizensBehaviorRegistry extends BehaviorRegistry {
-
-    public CitizensBehaviorRegistry() {
-        super();
-    }
-
     public CitizensBehaviorRegistry(ExpressionRegistry expressionRegistry) {
         super(expressionRegistry);
     }
 
-    public CitizensBehaviorRegistry(ExpressionRegistry expressionRegistry, SignalManager signalManager) {
+    public CitizensBehaviorRegistry(ExpressionRegistry expressionRegistry, BehaviorSignals signalManager) {
         super(expressionRegistry, signalManager);
     }
 
     @Override
     protected void registerDefaults() {
         super.registerDefaults();
+
+        registerBehavior("print", (params, context) -> {
+            String message = context.getArgOrParam(0, "message", params, null);
+            if (message == null && params != null) {
+                message = params.getString("");
+            }
+            if (message == null)
+                return null;
+
+            ExpressionValue messageHolder = getExpressionRegistry().parseValue(message);
+
+            return (InstantBehavior) () -> {
+                String msg = messageHolder.evaluateAsString(context.getScope());
+                Messaging.log(msg);
+                return BehaviorStatus.SUCCESS;
+            };
+        });
 
         registerBehavior("say", (params, context) -> {
             String message = context.getArgOrParam(0, "message", params, null);
@@ -42,27 +56,15 @@ public class CitizensBehaviorRegistry extends BehaviorRegistry {
 
             ExpressionValue messageHolder = getExpressionRegistry().parseValue(message);
 
-            return new InstantBehavior() {
-                @Override
-                public void reset() {
-                }
-
-                @Override
-                public BehaviorStatus run() {
-                    NPC npc = context.getNPC();
-                    String msg = messageHolder.evaluateAsString(context.getScope());
-                    Util.runCommand(npc, null, "say " + msg, false, false);
-                    return BehaviorStatus.SUCCESS;
-                }
-
-                @Override
-                public boolean shouldExecute() {
-                    return true;
-                }
+            return (InstantBehavior) () -> {
+                NPC npc = context.getNPC();
+                String msg = messageHolder.evaluateAsString(context.getScope());
+                Util.runCommand(npc, null, "say " + msg, false, false);
+                return BehaviorStatus.SUCCESS;
             };
         });
 
-        // Makes the NPC look at coordinates or entity
+        // Makes the NPC look at coordinates
         registerBehavior("look", (params, context) -> {
             String xStr = context.getArgOrParam(0, "x", params, null);
             String yStr = context.getArgOrParam(1, "y", params, null);
@@ -77,20 +79,13 @@ public class CitizensBehaviorRegistry extends BehaviorRegistry {
 
             return new InstantBehavior() {
                 @Override
-                public void reset() {
-                }
-
-                @Override
                 public BehaviorStatus run() {
                     NPC npc = context.getNPC();
-                    if (!npc.isSpawned()) {
-                        return BehaviorStatus.FAILURE;
-                    }
                     double x = xHolder.evaluateAsNumber(context.getScope());
                     double y = yHolder.evaluateAsNumber(context.getScope());
                     double z = zHolder.evaluateAsNumber(context.getScope());
 
-                    org.bukkit.Location target = new org.bukkit.Location(npc.getStoredLocation().getWorld(), x, y, z);
+                    Location target = new Location(npc.getStoredLocation().getWorld(), x, y, z);
                     npc.faceLocation(target);
                     return BehaviorStatus.SUCCESS;
                 }
@@ -119,23 +114,14 @@ public class CitizensBehaviorRegistry extends BehaviorRegistry {
 
             return new InstantBehavior() {
                 @Override
-                public void reset() {
-                }
-
-                @Override
                 public BehaviorStatus run() {
                     NPC npc = context.getNPC();
-                    if (!npc.isSpawned()) {
-                        return BehaviorStatus.FAILURE;
-                    }
                     double x = xHolder.evaluateAsNumber(context.getScope());
                     double y = yHolder.evaluateAsNumber(context.getScope());
                     double z = zHolder.evaluateAsNumber(context.getScope());
 
-                    org.bukkit.Location target = new org.bukkit.Location(
-                            worldHolder == null ? npc.getStoredLocation().getWorld()
-                                    : Bukkit.getWorld(worldHolder.evaluateAsString(context.getScope())),
-                            x, y, z);
+                    Location target = new Location(worldHolder == null ? npc.getStoredLocation().getWorld()
+                            : Bukkit.getWorld(worldHolder.evaluateAsString(context.getScope())), x, y, z);
                     npc.teleport(target, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.PLUGIN);
                     return BehaviorStatus.SUCCESS;
                 }

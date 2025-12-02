@@ -3,6 +3,8 @@ package net.citizensnpcs.npc.ai.tree;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.bukkit.entity.Player;
+
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.ai.tree.Behavior;
@@ -71,28 +73,22 @@ public class BehaviorTreeParser {
     }
 
     private Behavior createCommandBehavior(String command, BehaviorRegistry.BehaviorContext context) {
-        ExpressionRegistry exprRegistry = registry.getExpressionRegistry();
-        ExpressionValue commandHolder = exprRegistry.parseValue(command);
+        ExpressionRegistry expressions = registry.getExpressionRegistry();
+        ExpressionValue commandHolder = expressions.parseValue(command);
 
         return new InstantBehavior() {
             @Override
-            public void reset() {
-            }
-
-            @Override
             public BehaviorStatus run() {
-                NPC npc = context.getNPC();
-                if (!npc.isSpawned()) {
-                    return BehaviorStatus.FAILURE;
-                }
-                String cmd = commandHolder.evaluateAsString(context.getScope());
-                Util.runCommand(npc, null, cmd, false, false);
+                String command = commandHolder.evaluateAsString(context.getScope());
+                Util.runCommand(context.getNPC(),
+                        context.getNPC().getEntity() instanceof Player ? ((Player) context.getNPC().getEntity()) : null,
+                        command, command.contains("-o"), command.contains("-p"));
                 return BehaviorStatus.SUCCESS;
             }
 
             @Override
-            public boolean shouldExecute() {
-                return true;
+            public String toString() {
+                return "CommandBehavior[" + command + "]";
             }
         };
     }
@@ -107,18 +103,14 @@ public class BehaviorTreeParser {
 
         return new InstantBehavior() {
             @Override
-            public void reset() {
-            }
-
-            @Override
             public BehaviorStatus run() {
                 exprHolder.evaluate(context.getScope());
                 return BehaviorStatus.SUCCESS;
             }
 
             @Override
-            public boolean shouldExecute() {
-                return true;
+            public String toString() {
+                return "ExpressionBehavior[" + expression + "]";
             }
         };
     }
@@ -154,12 +146,12 @@ public class BehaviorTreeParser {
 
         return () -> {
             Object value = context.getScope().get(conditionStr);
-            if (value instanceof Boolean) {
+            if (value instanceof Boolean)
                 return (Boolean) value;
-            }
-            if (value instanceof Number) {
+
+            if (value instanceof Number)
                 return ((Number) value).doubleValue() != 0;
-            }
+
             return value != null;
         };
     }
@@ -171,72 +163,37 @@ public class BehaviorTreeParser {
             ExpressionValue timeoutHolder = exprRegistry.parseValue(timeoutStr);
             int ticks = (int) timeoutHolder.evaluateAsNumber(context.getScope());
 
-            List<Behavior> children = Lists.newArrayList();
-            for (DataKey sub : key.getIntegerSubKeys()) {
-                Behavior child = parseNode(sub, context);
-                if (child != null) {
-                    children.add(child);
-                }
-            }
-            Behavior body = children.size() == 1 ? children.get(0) : Sequence.createSequence(children);
+            List<Behavior> children = parseContainerChildren(key, context);
+            Behavior body = children.size() == 1 ? children.get(0)
+                    : Sequence.createSequence(coalesceInstantBehaviors(children));
             return new TimeoutDecorator(body, ticks);
         }
         if (name.equalsIgnoreCase("invert")) {
-            List<Behavior> children = Lists.newArrayList();
-            for (DataKey sub : key.getIntegerSubKeys()) {
-                Behavior child = parseNode(sub, context);
-                if (child != null) {
-                    children.add(child);
-                }
-            }
-            Behavior body = children.size() == 1 ? children.get(0) : Sequence.createSequence(children);
+            List<Behavior> children = parseContainerChildren(key, context);
+            Behavior body = children.size() == 1 ? children.get(0)
+                    : Sequence.createSequence(coalesceInstantBehaviors(children));
             return new InverterDecorator(body);
         }
         if (name.startsWith("loop ")) {
             String conditionStr = name.substring(5).trim();
             Supplier<Boolean> condition = parseCondition(conditionStr, context);
 
-            List<Behavior> children = Lists.newArrayList();
-            for (DataKey sub : key.getIntegerSubKeys()) {
-                Behavior child = parseNode(sub, context);
-                if (child != null) {
-                    children.add(child);
-                }
-            }
-            Behavior body = children.size() == 1 ? children.get(0) : Sequence.createSequence(children);
+            List<Behavior> children = parseContainerChildren(key, context);
+            Behavior body = children.size() == 1 ? children.get(0)
+                    : Sequence.createSequence(coalesceInstantBehaviors(children));
             return Loop.createWithCondition(body, condition);
         }
-        if (name.equalsIgnoreCase("sequence")) {
-            List<Behavior> children = Lists.newArrayList();
-            for (DataKey sub : key.getIntegerSubKeys()) {
-                Behavior child = parseNode(sub, context);
-                if (child != null) {
-                    children.add(child);
-                }
-            }
-            children = coalesceInstantBehaviors(children);
-            return Sequence.createSequence(children);
+        if (name.equalsIgnoreCase("sequence") || name.equalsIgnoreCase("seq")) {
+            List<Behavior> children = parseContainerChildren(key, context);
+            return Sequence.createSequence(coalesceInstantBehaviors(children));
         }
         if (name.equalsIgnoreCase("random") || name.equalsIgnoreCase("selector")) {
-            List<Behavior> children = Lists.newArrayList();
-            for (DataKey sub : key.getIntegerSubKeys()) {
-                Behavior child = parseNode(sub, context);
-                if (child != null) {
-                    children.add(child);
-                }
-            }
+            List<Behavior> children = parseContainerChildren(key, context);
             return Selector.selecting(children).build();
         }
         if (name.equalsIgnoreCase("parallel")) {
-            List<Behavior> children = Lists.newArrayList();
-            for (DataKey sub : key.getIntegerSubKeys()) {
-                Behavior child = parseNode(sub, context);
-                if (child != null) {
-                    children.add(child);
-                }
-            }
             List<Behavior> parallelWrapped = Lists.newArrayList();
-            for (Behavior child : children) {
+            for (Behavior child : parseContainerChildren(key, context)) {
                 parallelWrapped.add(new ParallelBehaviorWrapper(child));
             }
             return new ParallelComposite(parallelWrapped);
@@ -249,6 +206,44 @@ public class BehaviorTreeParser {
             return parseEvalBlock(key, language, context);
         }
         return parseLeaf(name, key, context);
+    }
+
+    private List<Behavior> parseContainerChildren(DataKey key, BehaviorRegistry.BehaviorContext context) {
+        List<Behavior> children = Lists.newArrayList();
+        DataKey ifKey = null;
+        DataKey elseKey = null;
+        for (DataKey sub : key.getIntegerSubKeys()) {
+            if (sub.hasSubKeys()) {
+                sub = sub.getSubKeys().iterator().next();
+            }
+            if (ifKey != null) {
+                if (sub.name().equals("else")) {
+                    elseKey = sub;
+                }
+                Behavior child = parseIfElse(ifKey, elseKey, context);
+                if (child != null) {
+                    children.add(child);
+                }
+                ifKey = null;
+                elseKey = null;
+                continue;
+            }
+            if (sub.name().startsWith("if ")) {
+                ifKey = sub;
+                continue;
+            }
+            Behavior child = parseNode(sub, context);
+            if (child != null) {
+                children.add(child);
+            }
+        }
+        if (ifKey != null) {
+            Behavior child = parseIfElse(ifKey, elseKey, context);
+            if (child != null) {
+                children.add(child);
+            }
+        }
+        return children;
     }
 
     /**
@@ -269,7 +264,7 @@ public class BehaviorTreeParser {
         String engineName = language != null ? language : exprRegistry.getDefaultEngineName();
         ExpressionEngine engine = exprRegistry.getEngine(engineName);
         if (engine == null) {
-            Messaging.debug("Unknown expression language", engineName);
+            Messaging.severe("Unknown expression language", engineName);
             return EMPTY;
         }
         for (DataKey sub : key.getIntegerSubKeys()) {
@@ -282,23 +277,11 @@ public class BehaviorTreeParser {
                 }
             }
         }
-        return new InstantBehavior() {
-            @Override
-            public void reset() {
+        return (InstantBehavior) () -> {
+            for (CompiledExpression expr : expressions) {
+                expr.evaluate(context.getScope());
             }
-
-            @Override
-            public BehaviorStatus run() {
-                for (CompiledExpression expr : expressions) {
-                    expr.evaluate(context.getScope());
-                }
-                return BehaviorStatus.SUCCESS;
-            }
-
-            @Override
-            public boolean shouldExecute() {
-                return true;
-            }
+            return BehaviorStatus.SUCCESS;
         };
     }
 
@@ -307,9 +290,12 @@ public class BehaviorTreeParser {
         Supplier<Boolean> condition = parseCondition(conditionStr, context);
 
         Behavior ifBehavior;
-        if (ifKey.getSubKeys().iterator().hasNext()) {
+        if (ifKey.hasSubKeys()) {
             List<Behavior> children = Lists.newArrayList();
             for (DataKey sub : ifKey.getIntegerSubKeys()) {
+                if (sub.hasSubKeys()) {
+                    sub = sub.getSubKeys().iterator().next();
+                }
                 Behavior child = parseNode(sub, context);
                 if (child != null) {
                     children.add(child);
@@ -322,9 +308,12 @@ public class BehaviorTreeParser {
         }
         Behavior elseBehavior = null;
         if (elseKey != null) {
-            if (elseKey.getSubKeys().iterator().hasNext()) {
+            if (elseKey.hasSubKeys()) {
                 List<Behavior> children = Lists.newArrayList();
                 for (DataKey sub : elseKey.getIntegerSubKeys()) {
+                    if (sub.hasSubKeys()) {
+                        sub = sub.getSubKeys().iterator().next();
+                    }
                     Behavior child = parseNode(sub, context);
                     if (child != null) {
                         children.add(child);
@@ -369,14 +358,20 @@ public class BehaviorTreeParser {
                 escaped = true;
                 continue;
             }
-            if (!inQuotes && (c == '"' || c == '\'')) {
+            if (!inQuotes && (c == '"' || c == '\'' || c == '`')) {
                 inQuotes = true;
                 quoteChar = c;
+                if (c == '`') {
+                    current.append(c);
+                }
                 continue;
             }
             if (inQuotes && c == quoteChar) {
                 inQuotes = false;
                 quoteChar = 0;
+                if (c == '`') {
+                    current.append(c);
+                }
                 continue;
             }
             if (!inQuotes && Character.isWhitespace(c)) {
@@ -391,16 +386,16 @@ public class BehaviorTreeParser {
         if (current.length() > 0) {
             args.add(current.toString());
         }
-        return args.toArray(new String[args.size()]);
+        return args.toArray(new String[0]);
     }
 
     private Behavior parseLeaf(String name, DataKey params, BehaviorRegistry.BehaviorContext context) {
         if (name == null || name.isEmpty())
             return EMPTY;
 
-        if (name.startsWith("/")) {
+        if (name.startsWith("/"))
             return createCommandBehavior(name.substring(1), context);
-        }
+
         if (name.startsWith("`"))
             return createExpressionBehavior(name, context);
 
@@ -416,14 +411,14 @@ public class BehaviorTreeParser {
         }
         Behavior behavior = registry.createBehavior(behaviorName, params, context);
         if (behavior == null) {
-            Messaging.debug("Unknown behavior", behaviorName);
+            Messaging.severe("Unknown behavior", behaviorName);
             return EMPTY;
         }
         return behavior;
     }
 
     private Behavior parseNode(DataKey key, BehaviorRegistry.BehaviorContext context) {
-        if (key.getSubKeys().iterator().hasNext()) {
+        if (key.hasSubKeys()) {
             DataKey ifKey = null;
             DataKey elseKey = null;
             for (DataKey sub : key.getSubKeys()) {
@@ -434,9 +429,9 @@ public class BehaviorTreeParser {
                     elseKey = sub;
                 }
             }
-            if (ifKey != null) {
+            if (ifKey != null)
                 return parseIfElse(ifKey, elseKey, context);
-            }
+
             return parseContainer(key.name(), key, context);
         } else {
             String value = key.getString("");
@@ -459,6 +454,11 @@ public class BehaviorTreeParser {
         @Override
         public boolean shouldExecute() {
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return "EmptyBehavior";
         }
     };
 }

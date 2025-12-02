@@ -1,6 +1,11 @@
 package net.citizensnpcs.npc.ai.tree;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -18,6 +23,7 @@ import team.unnamed.mocha.runtime.MochaFunction;
 import team.unnamed.mocha.runtime.value.Function;
 import team.unnamed.mocha.runtime.value.MutableObjectBinding;
 import team.unnamed.mocha.runtime.value.NumberValue;
+import team.unnamed.mocha.runtime.value.ObjectProperty;
 import team.unnamed.mocha.runtime.value.ObjectValue;
 import team.unnamed.mocha.runtime.value.StringValue;
 import team.unnamed.mocha.runtime.value.Value;
@@ -46,9 +52,6 @@ public class MolangEngine implements ExpressionEngine {
         return "molang";
     }
 
-    /**
-     * Wrapper for passing ItemStack through Mocha expressions.
-     */
     public static class ItemStackValue implements Value {
         private final ItemStack itemStack;
 
@@ -58,6 +61,50 @@ public class MolangEngine implements ExpressionEngine {
 
         public ItemStack getItemStack() {
             return itemStack;
+        }
+    }
+
+    private static class LazyObjectBinding implements ObjectValue {
+        private final Map<String, Value> eagerProperties = new HashMap<>();
+        private final Map<String, Supplier<?>> lazyProperties = new HashMap<>();
+
+        @Override
+        public Value get(String property) {
+            Value eagerValue = eagerProperties.get(property);
+            if (eagerValue != null)
+                return eagerValue;
+
+            Supplier<?> supplier = lazyProperties.get(property);
+            if (supplier != null) {
+                Object value = supplier.get();
+                return toMochaValue(value);
+            }
+            return NumberValue.zero();
+        }
+
+        @Override
+        public ObjectProperty getProperty(String property) {
+            return ObjectProperty.property(get(property), false);
+        }
+
+        @Override
+        public boolean set(String property, Value value) {
+            lazyProperties.remove(property);
+            eagerProperties.put(property, value);
+            return true;
+        }
+
+        public void setEager(String name, Value value) {
+            eagerProperties.put(name, value);
+        }
+
+        public void setLazy(String name, Supplier<?> supplier) {
+            lazyProperties.put(name, supplier);
+        }
+
+        @Override
+        public String toString() {
+            return "LazyObjectBinding [eagerProperties=" + eagerProperties + ", lazyProperties=" + lazyProperties + "]";
         }
     }
 
@@ -83,33 +130,36 @@ public class MolangEngine implements ExpressionEngine {
         }
 
         private void bindScopeVariables(MochaEngine<?> evalEngine, ExpressionScope scope) {
-            MutableObjectBinding variables = new MutableObjectBinding();
+            Map<String, LazyObjectBinding> topLevelObjects = new HashMap<>();
 
             for (String name : scope.getVariableNames()) {
-                Object value = scope.get(name);
-                if (value != null) {
-                    String[] parts = name.split("\\.");
-                    if (parts.length == 1) {
-                        variables.set(name, toMochaValue(value));
-                    } else {
-                        MutableObjectBinding current = variables;
-                        for (int i = 0; i < parts.length - 1; i++) {
-                            Value existing = current.get(parts[i]);
-                            MutableObjectBinding nested;
-                            if (existing instanceof MutableObjectBinding) {
-                                nested = (MutableObjectBinding) existing;
-                            } else {
-                                nested = new MutableObjectBinding();
-                                current.set(parts[i], nested);
-                            }
-                            current = nested;
+                String[] parts = name.split("\\.", 2);
+
+                if (parts.length == 1) {
+                    if (scope.isConstant(name)) {
+                        Object value = scope.get(name);
+                        if (value != null) {
+                            evalEngine.scope().set(name, toMochaValue(value));
                         }
-                        current.set(parts[parts.length - 1], toMochaValue(value));
+                    } else {
+                        Supplier<?> supplier = scope.getSupplier(name);
+                        if (supplier != null) {
+                            evalEngine.scope().set(name, (Function<?>) (ctx, args) -> toMochaValue(supplier.get()));
+                        }
                     }
+                } else {
+                    String topLevel = parts[0];
+                    String remaining = parts[1];
+
+                    LazyObjectBinding top = topLevelObjects.get(topLevel);
+                    if (top == null) {
+                        top = new LazyObjectBinding();
+                        topLevelObjects.put(topLevel, top);
+                        evalEngine.scope().set(topLevel, top);
+                    }
+                    setNestedProperty(top, remaining, scope, name);
                 }
             }
-            evalEngine.scope().set("v", variables);
-            evalEngine.scope().set("variable", variables);
         }
 
         @Override
@@ -153,6 +203,40 @@ public class MolangEngine implements ExpressionEngine {
         public String evaluateAsString(ExpressionScope scope) {
             Object result = evaluate(scope);
             return result == null ? "" : result.toString();
+        }
+
+        private void setNestedProperty(LazyObjectBinding parent, String path, ExpressionScope scope, String fullName) {
+            String[] parts = path.split("\\.", 2);
+            String currentPart = parts[0];
+
+            if (parts.length == 1) {
+                if (scope.isConstant(fullName)) {
+                    Object value = scope.get(fullName);
+                    if (value != null) {
+                        parent.setEager(currentPart, toMochaValue(value));
+                    }
+                } else {
+                    Supplier<?> supplier = scope.getSupplier(fullName);
+                    if (supplier != null) {
+                        parent.setLazy(currentPart, supplier);
+                    }
+                }
+            } else {
+                Value existing = parent.get(currentPart);
+                LazyObjectBinding nested;
+                if (existing instanceof LazyObjectBinding) {
+                    nested = (LazyObjectBinding) existing;
+                } else {
+                    nested = new LazyObjectBinding();
+                    parent.setEager(currentPart, nested);
+                }
+                setNestedProperty(nested, parts[1], scope, fullName);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "MolangCompiledExpression [function=" + function + "]";
         }
     }
 
@@ -264,8 +348,8 @@ public class MolangEngine implements ExpressionEngine {
                 ((Player) npc.getEntity()).getInventory().setItemInMainHand(item);
                 return NumberValue.of(1);
             }
-            EntityEquipment equip = npc.getEntity() instanceof org.bukkit.entity.LivingEntity
-                    ? ((org.bukkit.entity.LivingEntity) npc.getEntity()).getEquipment()
+            EntityEquipment equip = npc.getEntity() instanceof LivingEntity
+                    ? ((LivingEntity) npc.getEntity()).getEquipment()
                     : null;
             if (equip != null) {
                 equip.setItemInMainHand(item);
@@ -286,8 +370,8 @@ public class MolangEngine implements ExpressionEngine {
                 ((Player) npc.getEntity()).getInventory().setItemInOffHand(item);
                 return NumberValue.of(1);
             }
-            EntityEquipment equip = npc.getEntity() instanceof org.bukkit.entity.LivingEntity
-                    ? ((org.bukkit.entity.LivingEntity) npc.getEntity()).getEquipment()
+            EntityEquipment equip = npc.getEntity() instanceof LivingEntity
+                    ? ((LivingEntity) npc.getEntity()).getEquipment()
                     : null;
             if (equip != null) {
                 equip.setItemInOffHand(item);
@@ -304,8 +388,8 @@ public class MolangEngine implements ExpressionEngine {
             if (item == null)
                 return NumberValue.zero();
 
-            EntityEquipment equip = npc.getEntity() instanceof org.bukkit.entity.LivingEntity
-                    ? ((org.bukkit.entity.LivingEntity) npc.getEntity()).getEquipment()
+            EntityEquipment equip = npc.getEntity() instanceof LivingEntity
+                    ? ((LivingEntity) npc.getEntity()).getEquipment()
                     : null;
             if (equip != null) {
                 ItemStack hand = equip.getItemInMainHand();
@@ -323,8 +407,8 @@ public class MolangEngine implements ExpressionEngine {
             if (item == null)
                 return NumberValue.zero();
 
-            EntityEquipment equip = npc.getEntity() instanceof org.bukkit.entity.LivingEntity
-                    ? ((org.bukkit.entity.LivingEntity) npc.getEntity()).getEquipment()
+            EntityEquipment equip = npc.getEntity() instanceof LivingEntity
+                    ? ((LivingEntity) npc.getEntity()).getEquipment()
                     : null;
             if (equip == null)
                 return NumberValue.zero();

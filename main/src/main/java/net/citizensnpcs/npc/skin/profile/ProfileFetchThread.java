@@ -132,7 +132,7 @@ class ProfileFetchThread implements Runnable {
                 javaNames.add(request.getPlayerName());
             }
         }
-        NMS.findProfilesByNames(javaNames.toArray(new String[javaNames.size()]), new ProfileLookupCallback() {
+        NMS.findProfilesByNames(javaNames.toArray(new String[0]), new ProfileLookupCallback() {
             @SuppressWarnings("unused")
             public void onProfileLookupFailed(GameProfile profile, Exception e) {
                 GameProfileWrapper gpw = GameProfileWrapper.fromMojangProfile(profile);

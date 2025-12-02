@@ -319,11 +319,10 @@ public class CitizensNPC extends AbstractNPC {
         }
         getOrAddTrait(CurrentLocation.class).setLocation(at);
         entityController.create(at.clone(), this);
-
         if (getEntity() instanceof SkinnableEntity && !hasTrait(SkinLayers.class)) {
             ((SkinnableEntity) getEntity()).setSkinFlags(EnumSet.allOf(SkinLayers.Layer.class));
         }
-        for (Trait trait : traits.values().toArray(new Trait[traits.values().size()])) {
+        for (Trait trait : traits.values().toArray(new Trait[0])) {
             try {
                 trait.onPreSpawn();
             } catch (Throwable ex) {
@@ -334,7 +333,6 @@ public class CitizensNPC extends AbstractNPC {
         data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
         boolean wasLoaded = Messaging.isDebugging() ? Util.isLoaded(at) : false;
         boolean couldSpawn = entityController.spawn(at);
-
         if (!couldSpawn) {
             if (Messaging.isDebugging()) {
                 Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded", wasLoaded,
@@ -368,10 +366,6 @@ public class CitizensNPC extends AbstractNPC {
                     return;
                 }
                 Entity entity = getEntity();
-
-                getOrAddTrait(CurrentLocation.class).setLocation(to);
-                getOrAddTrait(Spawned.class).setSpawned(true);
-
                 NPCSpawnEvent spawnEvent = new NPCSpawnEvent(CitizensNPC.this, to, reason);
                 Bukkit.getPluginManager().callEvent(spawnEvent);
 
@@ -385,9 +379,10 @@ public class CitizensNPC extends AbstractNPC {
                 NMS.replaceTracker(entity);
                 data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
 
+                getOrAddTrait(Spawned.class).setSpawned(true);
+                getOrAddTrait(CurrentLocation.class).setLocation(to);
                 navigator.onSpawn();
-
-                for (Trait trait : traits.values().toArray(new Trait[traits.size()])) {
+                for (Trait trait : traits.values().toArray(new Trait[0])) {
                     try {
                         trait.onSpawn();
                     } catch (Throwable ex) {

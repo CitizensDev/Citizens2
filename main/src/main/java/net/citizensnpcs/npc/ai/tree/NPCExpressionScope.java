@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.tree.expr.ExpressionScope;
 import net.citizensnpcs.api.npc.NPC;
@@ -11,19 +12,7 @@ import net.citizensnpcs.api.npc.NPC;
 /**
  * Factory for creating expression scopes with NPC-related bindings.
  */
-public class NPCExpressionContext {
-
-    /**
-     * Creates a child scope with additional custom variables.
-     *
-     * @param parent
-     *            the parent scope
-     * @return a child scope
-     */
-    public static ExpressionScope createChild(ExpressionScope parent) {
-        return parent.createChild();
-    }
-
+public class NPCExpressionScope {
     /**
      * Creates an expression scope with lazy bindings for NPC properties.
      *
@@ -134,47 +123,32 @@ public class NPCExpressionContext {
         });
 
         // Navigator state
-        scope.bind("nav.navigating", () -> npc.getNavigator().isNavigating());
-        scope.bind("nav.paused", () -> npc.getNavigator().isPaused());
+        scope.bind("nav.navigating", npc.getNavigator()::isNavigating);
+        scope.bind("nav.paused", npc.getNavigator()::isPaused);
 
         // Nearby entity count (expensive - use sparingly)
         scope.bind("nearby.count", () -> {
-            Entity entity = npc.getEntity();
-            if (entity != null) {
-                return entity.getNearbyEntities(10, 10, 10).size();
-            }
+            if (npc.isSpawned())
+                return npc.getEntity().getNearbyEntities(10, 10, 10).size();
+
             return 0;
         });
 
         // Nearby player detection
-        scope.bind("nearby.player", () -> {
-            Entity entity = npc.getEntity();
-            if (entity != null) {
-                for (Entity nearby : entity.getNearbyEntities(10, 10, 10)) {
-                    if (nearby instanceof org.bukkit.entity.Player) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        });
+        scope.bind("nearby.player", () -> CitizensAPI.getLocationLookup().getNearbyPlayers(npc.getStoredLocation(), 20)
+                .iterator().hasNext());
 
         // Distance to nearest player
         scope.bind("nearby.player.distance", () -> {
-            Entity entity = npc.getEntity();
-            if (entity != null) {
-                double nearest = Double.MAX_VALUE;
-                for (Entity nearby : entity.getNearbyEntities(50, 50, 50)) {
-                    if (nearby instanceof org.bukkit.entity.Player) {
-                        double dist = entity.getLocation().distance(nearby.getLocation());
-                        if (dist < nearest) {
-                            nearest = dist;
-                        }
-                    }
+            Location stored = npc.getStoredLocation();
+            double nearest = Double.MAX_VALUE;
+            for (Entity nearby : CitizensAPI.getLocationLookup().getNearbyPlayers(stored, 20)) {
+                double dist = stored.distance(nearby.getLocation());
+                if (dist < nearest) {
+                    nearest = dist;
                 }
-                return nearest < Double.MAX_VALUE ? nearest : 0;
             }
-            return 0;
+            return nearest < Double.MAX_VALUE ? nearest : 0;
         });
 
         return scope;

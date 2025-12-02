@@ -34,6 +34,7 @@ public class Messages {
     public static final String BEE_NO_NECTAR = "citizens.commands.npc.bee.no-nectar";
     public static final String BEE_NOT_STUNG = "citizens.commands.npc.bee.not-stung";
     public static final String BEE_STUNG = "citizens.commands.npc.bee.bee-stung";
+    public static final String BEHAVIOR_TREE_APPLIED = "citizens.commands.npc.behavior.tree-applied";
     public static final String BOAT_TYPE_SET = "citizens.commands.npc.boat.type-set";
     public static final String BOUNDING_BOX_SET = "citizens.commands.npc.hitbox.set";
     public static final String CAMEL_POSE_SET = "citizens.commands.npc.camel.pose-set";
@@ -199,6 +200,7 @@ public class Messages {
     public static final String INVALID_ANIMATION = "citizens.editors.waypoints.triggers.animation.invalid-animation";
     public static final String INVALID_AXOLOTL_VARIANT = "citizens.commands.npc.axolotl.invalid-variant";
     public static final String INVALID_BEE_ANGER = "citizens.commands.npc.bee.invalid-anger";
+    public static final String INVALID_BEHAVIOR_FILE = "citizens.commands.npc.behavior.invalid-file";
     public static final String INVALID_CAT_COLLAR_COLOR = "citizens.commands.npc.cat.invalid-collar-color";
     public static final String INVALID_CAT_TYPE = "citizens.commands.npc.cat.invalid-type";
     public static final String INVALID_COPPER_WEATHER_STATE = "citizens.commands.npc.coppergolem.invalid-weather-state";
@@ -335,6 +337,7 @@ public class Messages {
     public static final String PARROT_VARIANT_SET = "citizens.commands.npc.parrot.variant-set";
     public static final String PASSIVE_SET = "citizens.commands.npc.passive.set";
     public static final String PASSIVE_UNSET = "citizens.commands.npc.passive.unset";
+    public static final String PATHFINDING_OPTIONS_ATTACK_DELAY_TICKS_SET = "citizens.commands.npc.pathopt.attack-delay-set";
     public static final String PATHFINDING_OPTIONS_ATTACK_RANGE_SET = "citizens.commands.npc.pathopt.attack-range-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_SET = "citizens.commands.npc.pathopt.avoid-water-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_UNSET = "citizens.commands.npc.pathopt.avoid-water-unset";

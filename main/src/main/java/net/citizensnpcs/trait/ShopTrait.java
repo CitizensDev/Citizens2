@@ -68,6 +68,8 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.trait.shop.CommandAction;
 import net.citizensnpcs.trait.shop.CommandAction.CommandActionGUI;
+import net.citizensnpcs.trait.shop.ConditionAction;
+import net.citizensnpcs.trait.shop.ConditionAction.ConditionActionGUI;
 import net.citizensnpcs.trait.shop.ExperienceAction;
 import net.citizensnpcs.trait.shop.ExperienceAction.ExperienceActionGUI;
 import net.citizensnpcs.trait.shop.ItemAction;
@@ -1107,7 +1109,7 @@ public class ShopTrait extends Trait {
         }
 
         public ItemStack[] getInventory() {
-            return inventory.toArray(new ItemStack[inventory.size()]);
+            return inventory.toArray(new ItemStack[0]);
         }
 
         public int getInventorySizeLimit() {
@@ -1143,7 +1145,7 @@ public class ShopTrait extends Trait {
         public void transact(Consumer<ItemStack[]> action, int additional) {
             if (isUnlimited())
                 return;
-            ItemStack[] items = inventory.toArray(new ItemStack[inventory.size() + additional]);
+            ItemStack[] items = inventory.toArray(new ItemStack[0]);
             action.accept(items);
             inventory = Arrays.stream(items).filter(i -> i != null && i.getAmount() > 0 && i.getType() != Material.AIR)
                     .collect(Collectors.toList());
@@ -1434,5 +1436,6 @@ public class ShopTrait extends Trait {
         NPCShopAction.register(CommandAction.class, "command", new CommandActionGUI());
         NPCShopAction.register(ExperienceAction.class, "experience", new ExperienceActionGUI());
         NPCShopAction.register(OpenShopAction.class, "open_shop", new OpenShopActionGUI());
+        NPCShopAction.register(ConditionAction.class, "condition", new ConditionActionGUI());
     }
 }

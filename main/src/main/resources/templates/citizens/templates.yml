@@ -6,15 +6,16 @@ example:
 behavior_tree_example:
   traits:
     -
-      name: behavior 
+      name: behavior
       tree:
         sequence:
-          - loop `memory.get('patrol_count', 0) < 3`:
-            - walkto `npc.location.x + 10` `npc.location.y` `npc.location.z`
-            - wait 2s
-            - cooldown speak 10s
-            - say Patrolling area `memory.get('patrol_count', 0)`
-            - walkto `npc.location.x - 10` `npc.location.y` `npc.location.z`
-            - set patrol_count `memory.get('patrol_count', 0) + 1`
-          - say Patrol complete!
-          - forget patrol_count
+          - if `npc.spawned`:
+              - cooldown patrol 10s
+              - loop `memory.get('patrol_count', 0) < 3`:
+                - print Patrolling area `memory.get('patrol_count', 0)`
+                - walkto `npc.x + 5` `npc.y` `npc.z`
+                - wait 2s
+                - walkto `npc.x - 5` `npc.y` `npc.z`
+                - set patrol_count `memory.get('patrol_count', 0) + 1`
+              - print Patrol complete!
+              - forget patrol_count
