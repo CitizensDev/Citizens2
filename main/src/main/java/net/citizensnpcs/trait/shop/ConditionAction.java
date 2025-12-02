@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.tree.expr.CompiledExpression;
-import net.citizensnpcs.api.ai.tree.expr.ExpressionEngine.ExpressionCompileException;
-import net.citizensnpcs.api.ai.tree.expr.ExpressionScope;
+import net.citizensnpcs.api.expr.CompiledExpression;
+import net.citizensnpcs.api.expr.ExpressionEngine.ExpressionCompileException;
+import net.citizensnpcs.api.expr.ExpressionScope;
 import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.persistence.Persist;

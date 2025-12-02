@@ -11,10 +11,10 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import net.citizensnpcs.api.ai.tree.expr.CompiledExpression;
-import net.citizensnpcs.api.ai.tree.expr.ExpressionEngine;
-import net.citizensnpcs.api.ai.tree.expr.ExpressionScope;
-import net.citizensnpcs.api.ai.tree.expr.Memory;
+import net.citizensnpcs.api.expr.CompiledExpression;
+import net.citizensnpcs.api.expr.ExpressionEngine;
+import net.citizensnpcs.api.expr.ExpressionScope;
+import net.citizensnpcs.api.expr.Memory;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.util.SpigotUtil;

@@ -6,7 +6,7 @@ import org.bukkit.entity.LivingEntity;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.EntityTarget;
-import net.citizensnpcs.api.ai.tree.expr.ExpressionScope;
+import net.citizensnpcs.api.expr.ExpressionScope;
 import net.citizensnpcs.api.npc.NPC;
 
 /**

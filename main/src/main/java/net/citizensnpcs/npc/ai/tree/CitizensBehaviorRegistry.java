@@ -4,11 +4,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import net.citizensnpcs.api.ai.tree.BehaviorRegistry;
+import net.citizensnpcs.api.ai.tree.BehaviorSignals;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.ai.tree.InstantBehavior;
-import net.citizensnpcs.api.ai.tree.expr.BehaviorSignals;
-import net.citizensnpcs.api.ai.tree.expr.ExpressionRegistry;
-import net.citizensnpcs.api.ai.tree.expr.ExpressionRegistry.ExpressionValue;
+import net.citizensnpcs.api.expr.ExpressionRegistry;
+import net.citizensnpcs.api.expr.ExpressionRegistry.ExpressionValue;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Util;
@@ -113,6 +113,7 @@ public class CitizensBehaviorRegistry extends BehaviorRegistry {
             ExpressionValue worldHolder = worldStr == null ? null : getExpressionRegistry().parseValue(worldStr);
 
             return new InstantBehavior() {
+
                 @Override
                 public BehaviorStatus run() {
                     NPC npc = context.getNPC();
