@@ -11,12 +11,15 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.primitives.Doubles;
+
 import net.citizensnpcs.api.expr.CompiledExpression;
 import net.citizensnpcs.api.expr.ExpressionEngine;
 import net.citizensnpcs.api.expr.ExpressionScope;
 import net.citizensnpcs.api.expr.Memory;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
+import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil;
 import team.unnamed.mocha.MochaEngine;
 import team.unnamed.mocha.runtime.MochaFunction;
@@ -127,6 +130,17 @@ public class MolangEngine implements ExpressionEngine {
                 evalEngine.scope().set("inv", createInvBinding(npc));
             }
             evalEngine.scope().set("item", createItemBinding());
+
+            // papi('placeholder_name')
+            evalEngine.scope().set("papi", (Function<?>) (context, args) -> {
+                if (args.length() < 1)
+                    return StringValue.of("");
+
+                String placeholderName = args.next().eval().getAsString();
+                Player player = scope.getPlayer();
+
+                return new NumberParseableValue(Placeholders.replace(placeholderName, player));
+            });
         }
 
         private void bindScopeVariables(MochaEngine<?> evalEngine, ExpressionScope scope) {
@@ -237,6 +251,37 @@ public class MolangEngine implements ExpressionEngine {
         @Override
         public String toString() {
             return "MolangCompiledExpression [function=" + function + "]";
+        }
+    }
+
+    private static class NumberParseableValue implements Value {
+        private Double cache;
+        private final String string;
+
+        NumberParseableValue(String value) {
+            this.string = value;
+        }
+
+        @Override
+        public boolean getAsBoolean() {
+            try {
+                return Double.parseDouble(string) != 0;
+            } catch (NumberFormatException e) {
+                return "true".equalsIgnoreCase(string.trim()) || !string.isEmpty();
+            }
+        }
+
+        @Override
+        public double getAsNumber() {
+            if (cache == null) {
+                cache = Doubles.tryParse(string.trim());
+            }
+            return cache;
+        }
+
+        @Override
+        public String getAsString() {
+            return string;
         }
     }
 

@@ -41,6 +41,7 @@ public class ConditionAction extends NPCShopAction {
 
     private ExpressionScope createTransactionScope(Player player) {
         ExpressionScope scope = new ExpressionScope();
+        scope.setPlayer(player);
         return scope;
     }
 
