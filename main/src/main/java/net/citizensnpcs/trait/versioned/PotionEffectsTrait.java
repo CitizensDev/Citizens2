@@ -81,8 +81,8 @@ public class PotionEffectsTrait extends Trait {
             desc = "",
             modifiers = { "potioneffect" },
             flags = "it",
-            min = 3,
-            max = 4,
+            min = 2,
+            max = 2,
             permission = "citizens.npc.potioneffect")
     @Requirements(selected = true, ownership = true, livingEntity = true)
     public static void potioneffect(CommandContext args, CommandSender sender, NPC npc,
