@@ -1,9 +1,15 @@
 package net.citizensnpcs.nms.v1_21_R5.entity;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_21_R5.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R5.entity.CraftCreaking;
 import org.bukkit.craftbukkit.v1_21_R5.entity.CraftEntity;
+import org.bukkit.entity.Player;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_21_R5.util.ForwardingNPCHolder;
@@ -60,6 +66,33 @@ public class CreakingController extends MobEntityController {
         public EntityCreakingNPC(EntityType<? extends Creaking> types, Level level, NPC npc) {
             super(types, level);
             this.npc = (CitizensNPC) npc;
+            if (npc != null) {
+                setIsActive(true);
+            }
+        }
+
+        @Override
+        public void addPassenger(Entity passenger) {
+            if (npc == null || npc.useMinecraftAI()) {
+                super.addPassenger(passenger);
+                return;
+            }
+            if (passenger.getVehicle() != this) {
+                throw new IllegalStateException("Use x.startRiding(y), not y.addPassenger(x)");
+            } else {
+                if (this.passengers.isEmpty()) {
+                    this.passengers = ImmutableList.of(passenger);
+                } else {
+                    List<Entity> list = Lists.newArrayList(this.passengers);
+                    if (!this.level().isClientSide() && passenger instanceof Player
+                            && !(this.getFirstPassenger() instanceof Player)) {
+                        list.add(0, passenger);
+                    } else {
+                        list.add(passenger);
+                    }
+                    this.passengers = ImmutableList.copyOf(list);
+                }
+            }
         }
 
         @Override
@@ -88,7 +121,7 @@ public class CreakingController extends MobEntityController {
 
         @Override
         public boolean checkCanMove() {
-            return npc == null || npc.useMinecraftAI() ? super.canMove() : true;
+            return npc == null || npc.useMinecraftAI() ? super.checkCanMove() : true;
         }
 
         @Override

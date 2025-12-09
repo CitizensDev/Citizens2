@@ -2809,7 +2809,7 @@ public class NMSImpl implements NMSBridge {
             VecDeltaCodec.class);
     private static final MethodHandle PUFFERFISH_DEFLATE = NMS.getSetter(Pufferfish.class, "ct");
     private static final MethodHandle PUFFERFISH_INFLATE = NMS.getSetter(Pufferfish.class, "f");
-    public static EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = NMS.getFirstStaticObject(Rabbit.class,
+    public static final EntityDataAccessor<Integer> RABBIT_TYPE_DATAWATCHER = NMS.getFirstStaticObject(Rabbit.class,
             EntityDataAccessor.class);
     private static final Random RANDOM = Util.getFastRandom();
     private static final MethodHandle SERVER_ENTITY_GETTER = NMS.getFirstGetter(TrackedEntity.class,
