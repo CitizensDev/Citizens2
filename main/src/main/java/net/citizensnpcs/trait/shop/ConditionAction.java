@@ -108,7 +108,7 @@ public class ConditionAction extends NPCShopAction {
                 ConditionAction old = (ConditionAction) previous;
                 description = old.describe();
             }
-            return Util.createItem(Material.WRITTEN_BOOK, "Condition", description);
+            return Util.createItem(Material.ENCHANTED_BOOK, "Condition", description);
         }
 
         @Override

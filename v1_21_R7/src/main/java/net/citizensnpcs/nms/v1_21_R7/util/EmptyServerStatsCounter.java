@@ -1,0 +1,54 @@
+package net.citizensnpcs.nms.v1_21_R7.util;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.datafixers.DataFixer;
+
+import net.citizensnpcs.api.CitizensAPI;
+import net.minecraft.SharedConstants;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.ServerStatsCounter;
+import net.minecraft.stats.Stat;
+import net.minecraft.world.entity.player.Player;
+
+public class EmptyServerStatsCounter extends ServerStatsCounter {
+    public EmptyServerStatsCounter() {
+        super(MinecraftServer.getServer(), CitizensAPI.getDataFolder().toPath());
+    }
+
+    @Override
+    public void markAllDirty() {
+    }
+
+    @Override
+    public void parse(DataFixer datafixer, JsonElement s) {
+    }
+
+    @Override
+    public void save() {
+    }
+
+    @Override
+    public void sendStats(ServerPlayer entityplayer) {
+    }
+
+    @Override
+    public void setValue(Player entityhuman, Stat<?> statistic, int i) {
+    }
+
+    @Override
+    protected JsonElement toJson() {
+        return JSON;
+    }
+
+    private static final JsonElement JSON;
+
+    static {
+        JsonObject element = new JsonObject();
+        element.add("stats", new JsonObject());
+        element.addProperty("DataVersion",
+                Integer.valueOf(SharedConstants.getCurrentVersion().dataVersion().version()));
+        JSON = element;
+    }
+}

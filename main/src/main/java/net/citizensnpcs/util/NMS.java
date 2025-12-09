@@ -770,8 +770,10 @@ public class NMS {
             case 21:
                 if (version[2] < 9) {
                     rev = "v1_21_R5";
-                } else {
+                } else if (version[2] < 11) {
                     rev = "v1_21_R6";
+                } else {
+                    rev = "v1_21_R7";
                 }
                 break;
         }
