@@ -15,7 +15,6 @@
         <placeholderapi.version>2.11.5</placeholderapi.version>
         <citizensapi.version>${project.version}</citizensapi.version>
         <worldguard.version>7.1.0-SNAPSHOT</worldguard.version>
-        <maven.javadoc.skip>true</maven.javadoc.skip> 
     </properties>
     <repositories>
         <repository>
