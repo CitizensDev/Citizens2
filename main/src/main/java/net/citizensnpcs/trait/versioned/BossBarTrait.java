@@ -235,7 +235,8 @@ public class BossBarTrait extends Trait {
             desc = "",
             modifiers = { "bossbar" },
             min = 1,
-            max = 1)
+            max = 1,
+            permission = "citizens.npc.bossbar")
     @Requirements(selected = true, ownership = true)
     public static void bossbar(CommandContext args, CommandSender sender, NPC npc, @Flag("style") BarStyle style,
             @Flag("track") String track, @Flag("color") BarColor color, @Flag("visible") Boolean visible,
@@ -257,7 +258,7 @@ public class BossBarTrait extends Trait {
         if (visible != null) {
             trait.setVisible(visible);
         }
-        if (range != null) {
+        if (range != null && sender.hasPermission("citizens.npc.bossbar.range")) {
             trait.setRange(range);
         }
         if (viewpermission != null) {

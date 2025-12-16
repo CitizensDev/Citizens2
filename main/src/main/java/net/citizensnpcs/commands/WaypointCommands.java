@@ -9,8 +9,6 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.citizensnpcs.Settings.Setting;
-import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.astar.pathfinder.ChunkBlockSource;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
@@ -56,28 +54,6 @@ public class WaypointCommands {
             throw new CommandException("Index out of range. Can't be more than " + waypoints.size());
         waypoints.add(index, new Waypoint(loc));
         Messaging.sendTr(sender, Messages.WAYPOINT_ADDED, Util.prettyPrintLocation(loc), index);
-    }
-
-    @Command(
-            aliases = { "waypoints", "wp" },
-            usage = "disableteleport",
-            desc = "",
-            modifiers = { "disableteleport", "dt" },
-            min = 1,
-            max = 1,
-            permission = "citizens.waypoints.disableteleport")
-    public void disableTeleporting(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        npc.data().setPersistent(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION,
-                !npc.data().get(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION,
-                        !Setting.DEFAULT_STUCK_ACTION.asString().contains("teleport")));
-        if (npc.data().get(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION,
-                !Setting.DEFAULT_STUCK_ACTION.asString().contains("teleport"))) {
-            npc.getNavigator().getDefaultParameters().stuckAction(null);
-            Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_DISABLED, npc.getName());
-        } else {
-            npc.getNavigator().getDefaultParameters().stuckAction(TeleportStuckAction.INSTANCE);
-            Messaging.sendTr(sender, Messages.WAYPOINT_TELEPORTING_ENABLED, npc.getName());
-        }
     }
 
     @Command(

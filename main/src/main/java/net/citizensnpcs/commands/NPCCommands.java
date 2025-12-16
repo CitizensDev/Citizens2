@@ -69,6 +69,7 @@ import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.PathfinderType;
+import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.command.Arg;
@@ -1203,7 +1204,7 @@ public class NPCCommands {
             name = args.getString(1);
         }
         OfflinePlayer player = Bukkit.getOfflinePlayer(name);
-        if (!player.hasPlayedBefore() && !player.isOnline()) {
+        if (!player.hasPlayedBefore() && !player.isOnline() && sender.hasPermission("citizens.npc.follow.others")) {
             NPCCommandSelector.Callback callback = followingNPC -> {
                 if (followingNPC == null)
                     throw new CommandException(CommandMessages.MUST_HAVE_SELECTED);
@@ -1219,6 +1220,8 @@ public class NPCCommands {
                     args.getString(1));
             return;
         }
+        if (!player.getPlayer().equals(sender) && !sender.hasPermission("citizens.npc.follow.others"))
+            throw new CommandException(CommandMessages.NO_PERMISSION);
         boolean following = explicit == null ? !trait.isEnabled() : explicit;
         trait.follow(following ? player.getPlayer() : null);
         Messaging.sendTr(sender, following ? Messages.FOLLOW_SET : Messages.FOLLOW_UNSET, npc.getName(),
@@ -2328,19 +2331,31 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathopt --avoid-water|aw [true|false] --attack-delay-duration [duration] --open-doors [true|false] --path-range [range] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --pathfinder-type [CITIZENS|MINECRAFT] --falling-distance [distance]",
+            usage = "pathopt --avoid-teleporting [true|false] --avoid-water [true|false] --attack-delay-duration [duration] --open-doors [true|false] --path-range [range] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --pathfinder-type [CITIZENS|MINECRAFT] --falling-distance [distance]",
             desc = "",
             modifiers = { "pathopt", "po", "patho" },
             min = 1,
             max = 1,
             permission = "citizens.npc.pathfindingoptions")
     public void pathfindingOptions(CommandContext args, CommandSender sender, NPC npc, @Flag("path-range") Float range,
-            @Flag("avoid-water") Boolean avoidwater, @Flag("open-doors") Boolean opendoors,
-            @Flag("stationary-ticks") Integer stationaryTicks, @Flag("distance-margin") Double distanceMargin,
-            @Flag("attack-delay-duration") Duration duration, @Flag("path-distance-margin") Double pathDistanceMargin,
-            @Flag("attack-range") Double attackRange, @Flag("falling-distance") Integer fallingDistance,
-            @Flag("pathfinder-type") PathfinderType pathfinderType) throws CommandException {
+            @Flag("avoid-water") Boolean avoidwater, @Flag("avoid-teleporting") Boolean avoidteleporting,
+            @Flag("open-doors") Boolean opendoors, @Flag("stationary-ticks") Integer stationaryTicks,
+            @Flag("distance-margin") Double distanceMargin, @Flag("attack-delay-duration") Duration duration,
+            @Flag("path-distance-margin") Double pathDistanceMargin, @Flag("attack-range") Double attackRange,
+            @Flag("falling-distance") Integer fallingDistance, @Flag("pathfinder-type") PathfinderType pathfinderType)
+            throws CommandException {
         String output = "";
+
+        if (avoidteleporting != null) {
+            npc.data().setPersistent(NPC.Metadata.DISABLE_DEFAULT_STUCK_ACTION, avoidteleporting);
+            if (avoidteleporting) {
+                npc.getNavigator().getDefaultParameters().stuckAction(null);
+                output += Messaging.tr(Messages.WAYPOINT_TELEPORTING_DISABLED, npc.getName());
+            } else {
+                npc.getNavigator().getDefaultParameters().stuckAction(TeleportStuckAction.INSTANCE);
+                output += Messaging.tr(Messages.WAYPOINT_TELEPORTING_ENABLED, npc.getName());
+            }
+        }
         if (avoidwater != null) {
             npc.getNavigator().getDefaultParameters().avoidWater(avoidwater);
             output += Messaging.tr(avoidwater ? Messages.PATHFINDING_OPTIONS_AVOID_WATER_SET

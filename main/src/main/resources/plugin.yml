@@ -46,7 +46,9 @@ permissions:
   citizens.npc.axolotl: {default:op}
   citizens.npc.bat: {default:op}
   citizens.npc.bee: {default:op}
+  citizens.npc.behavior: {default:op}
   citizens.npc.boat: {default:op}
+  citizens.npc.bossbar: {default:op}
   citizens.npc.breakblock: {default:op}
   citizens.npc.camel: {default:op}
   citizens.npc.cat: {default:op}
@@ -56,6 +58,7 @@ permissions:
   citizens.npc.command: {default:op}
   citizens.npc.configgui: {default:op}
   citizens.npc.edit.copier: {default:op}
+  citizens.npc.coppergolem: {default:op}
   citizens.npc.copy: {default:op}
   citizens.npc.cow: {default:op}
   citizens.npc.create: {default:op}
@@ -69,6 +72,7 @@ permissions:
   citizens.npc.enderman: {default:op}
   citizens.npc.entitypose: {default:op}
   citizens.npc.edit.equip: {default:op}
+  citizens.npc.eval: {default:op}
   citizens.npc.flyable: {default:op}
   citizens.npc.follow: {default:op}
   citizens.npc.forcefield: {default:op}
@@ -93,6 +97,7 @@ permissions:
   citizens.npc.list: {default:op}
   citizens.npc.llama: {default:op}
   citizens.npc.lookclose: {default:op}
+  citizens.npc.mannequin: {default:op}
   citizens.npc.metadata: {default:op}
   citizens.npc.minecart: {default:op}
   citizens.npc.mirror: {default:op}
@@ -146,6 +151,7 @@ permissions:
   citizens.npc.sound: {default:op}
   citizens.npc.spawn: {default:op}
   citizens.npc.speak: {default:op}
+  citizens.npc.spectate: {default:op}
   citizens.npc.speed: {default:op}
   citizens.npc.spellcaster: {default:op}
   citizens.npc.swim: {default:op}
@@ -177,7 +183,6 @@ permissions:
   citizens.npc.trait.clearsaves: {default:op}
   citizens.waypoints.help: {default:op}
   citizens.waypoints.add: {default:op}
-  citizens.waypoints.disableteleport: {default:op}
   citizens.waypoints.hpa: {default:op}
   citizens.waypoints.provider: {default:op}
   citizens.waypoints.remove: {default:op}
@@ -477,6 +482,18 @@ permissions:
   citizens.npc.controllable.creaking: {default:op}
   citizens.npc.create.happy_ghast: {default:op}
   citizens.npc.controllable.happy_ghast: {default:op}
+  citizens.npc.create.copper_golem: {default:op}
+  citizens.npc.controllable.copper_golem: {default:op}
+  citizens.npc.create.mannequin: {default:op}
+  citizens.npc.controllable.mannequin: {default:op}
+  citizens.npc.create.camel_husk: {default:op}
+  citizens.npc.controllable.camel_husk: {default:op}
+  citizens.npc.create.nautilus: {default:op}
+  citizens.npc.controllable.nautilus: {default:op}
+  citizens.npc.create.parched: {default:op}
+  citizens.npc.controllable.parched: {default:op}
+  citizens.npc.create.zombie_nautilus: {default:op}
+  citizens.npc.controllable.zombie_nautilus: {default:op}
   citizens.npc.create.fishing_bobber: {default:op}
   citizens.npc.controllable.fishing_bobber: {default:op}
   citizens.npc.create.lightning_bolt: {default:op}
@@ -595,6 +612,8 @@ permissions:
   citizens.npc.command.ignoreerrors.itemcost: {default:false}
   citizens.npc.command.ignoreerrors.cooldown: {default:false}
   citizens.npc.command.ignoreerrors.globalcooldown: {default:false}
+  citizens.npc.follow.others: {default:op}
+  citizens.npc.bossbar.range: {default:op}
   citizens.npc.shop.editor.set-shop-type: {default:op}
   citizens.npc.shop.editor.show-on-right-click: {default:op}
   citizens.npc.shop.editor.actions.edit-item: {default:op}
@@ -611,7 +630,6 @@ permissions:
     default: op
     children:
       citizens.waypoints.add: true
-      citizens.waypoints.disableteleport: true
       citizens.waypoints.help: true
       citizens.waypoints.hpa: true
       citizens.waypoints.provider: true
@@ -628,6 +646,11 @@ permissions:
       citizens.templates.apply: true
       citizens.templates.generate: true
       citizens.templates.list: true
+  citizens.npc.bossbar.*:
+    default: op
+    children:
+      citizens.npc.bossbar: true
+      citizens.npc.bossbar.range: true
   citizens.npc.command.ignoreerrors.*:
     default: op
     children:
@@ -654,7 +677,10 @@ permissions:
       citizens.npc.axolotl: true
       citizens.npc.bat: true
       citizens.npc.bee: true
+      citizens.npc.behavior: true
       citizens.npc.boat: true
+      citizens.npc.bossbar: true
+      citizens.npc.bossbar.range: true
       citizens.npc.breakblock: true
       citizens.npc.camel: true
       citizens.npc.cat: true
@@ -690,6 +716,7 @@ permissions:
       citizens.npc.controllable.breeze: true
       citizens.npc.controllable.breeze_wind_charge: true
       citizens.npc.controllable.camel: true
+      citizens.npc.controllable.camel_husk: true
       citizens.npc.controllable.cat: true
       citizens.npc.controllable.cave_spider: true
       citizens.npc.controllable.cherry_boat: true
@@ -698,6 +725,7 @@ permissions:
       citizens.npc.controllable.chicken: true
       citizens.npc.controllable.cod: true
       citizens.npc.controllable.command_block_minecart: true
+      citizens.npc.controllable.copper_golem: true
       citizens.npc.controllable.cow: true
       citizens.npc.controllable.creaking: true
       citizens.npc.controllable.creeper: true
@@ -753,10 +781,12 @@ permissions:
       citizens.npc.controllable.magma_cube: true
       citizens.npc.controllable.mangrove_boat: true
       citizens.npc.controllable.mangrove_chest_boat: true
+      citizens.npc.controllable.mannequin: true
       citizens.npc.controllable.marker: true
       citizens.npc.controllable.minecart: true
       citizens.npc.controllable.mooshroom: true
       citizens.npc.controllable.mule: true
+      citizens.npc.controllable.nautilus: true
       citizens.npc.controllable.oak_boat: true
       citizens.npc.controllable.oak_chest_boat: true
       citizens.npc.controllable.ocelot: true
@@ -765,6 +795,7 @@ permissions:
       citizens.npc.controllable.pale_oak_boat: true
       citizens.npc.controllable.pale_oak_chest_boat: true
       citizens.npc.controllable.panda: true
+      citizens.npc.controllable.parched: true
       citizens.npc.controllable.parrot: true
       citizens.npc.controllable.phantom: true
       citizens.npc.controllable.pig: true
@@ -819,8 +850,10 @@ permissions:
       citizens.npc.controllable.zoglin: true
       citizens.npc.controllable.zombie: true
       citizens.npc.controllable.zombie_horse: true
+      citizens.npc.controllable.zombie_nautilus: true
       citizens.npc.controllable.zombie_villager: true
       citizens.npc.controllable.zombified_piglin: true
+      citizens.npc.coppergolem: true
       citizens.npc.copy: true
       citizens.npc.cow: true
       citizens.npc.create: true
@@ -844,6 +877,7 @@ permissions:
       citizens.npc.create.breeze: true
       citizens.npc.create.breeze_wind_charge: true
       citizens.npc.create.camel: true
+      citizens.npc.create.camel_husk: true
       citizens.npc.create.cat: true
       citizens.npc.create.cave_spider: true
       citizens.npc.create.cherry_boat: true
@@ -852,6 +886,7 @@ permissions:
       citizens.npc.create.chicken: true
       citizens.npc.create.cod: true
       citizens.npc.create.command_block_minecart: true
+      citizens.npc.create.copper_golem: true
       citizens.npc.create.cow: true
       citizens.npc.create.creaking: true
       citizens.npc.create.creeper: true
@@ -907,10 +942,12 @@ permissions:
       citizens.npc.create.magma_cube: true
       citizens.npc.create.mangrove_boat: true
       citizens.npc.create.mangrove_chest_boat: true
+      citizens.npc.create.mannequin: true
       citizens.npc.create.marker: true
       citizens.npc.create.minecart: true
       citizens.npc.create.mooshroom: true
       citizens.npc.create.mule: true
+      citizens.npc.create.nautilus: true
       citizens.npc.create.oak_boat: true
       citizens.npc.create.oak_chest_boat: true
       citizens.npc.create.ocelot: true
@@ -919,6 +956,7 @@ permissions:
       citizens.npc.create.pale_oak_boat: true
       citizens.npc.create.pale_oak_chest_boat: true
       citizens.npc.create.panda: true
+      citizens.npc.create.parched: true
       citizens.npc.create.parrot: true
       citizens.npc.create.phantom: true
       citizens.npc.create.pig: true
@@ -973,6 +1011,7 @@ permissions:
       citizens.npc.create.zoglin: true
       citizens.npc.create.zombie: true
       citizens.npc.create.zombie_horse: true
+      citizens.npc.create.zombie_nautilus: true
       citizens.npc.create.zombie_villager: true
       citizens.npc.create.zombified_piglin: true
       citizens.npc.createall: true
@@ -989,8 +1028,10 @@ permissions:
       citizens.npc.enderdragon: true
       citizens.npc.enderman: true
       citizens.npc.entitypose: true
+      citizens.npc.eval: true
       citizens.npc.flyable: true
       citizens.npc.follow: true
+      citizens.npc.follow.others: true
       citizens.npc.forcefield: true
       citizens.npc.fox: true
       citizens.npc.frog: true
@@ -1116,6 +1157,7 @@ permissions:
       citizens.npc.list: true
       citizens.npc.llama: true
       citizens.npc.lookclose: true
+      citizens.npc.mannequin: true
       citizens.npc.metadata: true
       citizens.npc.minecart: true
       citizens.npc.mirror: true
@@ -1175,6 +1217,7 @@ permissions:
       citizens.npc.sound: true
       citizens.npc.spawn: true
       citizens.npc.speak: true
+      citizens.npc.spectate: true
       citizens.npc.speed: true
       citizens.npc.spellcaster: true
       citizens.npc.swim: true
@@ -1219,7 +1262,10 @@ permissions:
       citizens.npc.axolotl: true
       citizens.npc.bat: true
       citizens.npc.bee: true
+      citizens.npc.behavior: true
       citizens.npc.boat: true
+      citizens.npc.bossbar: true
+      citizens.npc.bossbar.range: true
       citizens.npc.breakblock: true
       citizens.npc.camel: true
       citizens.npc.cat: true
@@ -1255,6 +1301,7 @@ permissions:
       citizens.npc.controllable.breeze: true
       citizens.npc.controllable.breeze_wind_charge: true
       citizens.npc.controllable.camel: true
+      citizens.npc.controllable.camel_husk: true
       citizens.npc.controllable.cat: true
       citizens.npc.controllable.cave_spider: true
       citizens.npc.controllable.cherry_boat: true
@@ -1263,6 +1310,7 @@ permissions:
       citizens.npc.controllable.chicken: true
       citizens.npc.controllable.cod: true
       citizens.npc.controllable.command_block_minecart: true
+      citizens.npc.controllable.copper_golem: true
       citizens.npc.controllable.cow: true
       citizens.npc.controllable.creaking: true
       citizens.npc.controllable.creeper: true
@@ -1318,10 +1366,12 @@ permissions:
       citizens.npc.controllable.magma_cube: true
       citizens.npc.controllable.mangrove_boat: true
       citizens.npc.controllable.mangrove_chest_boat: true
+      citizens.npc.controllable.mannequin: true
       citizens.npc.controllable.marker: true
       citizens.npc.controllable.minecart: true
       citizens.npc.controllable.mooshroom: true
       citizens.npc.controllable.mule: true
+      citizens.npc.controllable.nautilus: true
       citizens.npc.controllable.oak_boat: true
       citizens.npc.controllable.oak_chest_boat: true
       citizens.npc.controllable.ocelot: true
@@ -1330,6 +1380,7 @@ permissions:
       citizens.npc.controllable.pale_oak_boat: true
       citizens.npc.controllable.pale_oak_chest_boat: true
       citizens.npc.controllable.panda: true
+      citizens.npc.controllable.parched: true
       citizens.npc.controllable.parrot: true
       citizens.npc.controllable.phantom: true
       citizens.npc.controllable.pig: true
@@ -1384,8 +1435,10 @@ permissions:
       citizens.npc.controllable.zoglin: true
       citizens.npc.controllable.zombie: true
       citizens.npc.controllable.zombie_horse: true
+      citizens.npc.controllable.zombie_nautilus: true
       citizens.npc.controllable.zombie_villager: true
       citizens.npc.controllable.zombified_piglin: true
+      citizens.npc.coppergolem: true
       citizens.npc.copy: true
       citizens.npc.cow: true
       citizens.npc.create: true
@@ -1409,6 +1462,7 @@ permissions:
       citizens.npc.create.breeze: true
       citizens.npc.create.breeze_wind_charge: true
       citizens.npc.create.camel: true
+      citizens.npc.create.camel_husk: true
       citizens.npc.create.cat: true
       citizens.npc.create.cave_spider: true
       citizens.npc.create.cherry_boat: true
@@ -1417,6 +1471,7 @@ permissions:
       citizens.npc.create.chicken: true
       citizens.npc.create.cod: true
       citizens.npc.create.command_block_minecart: true
+      citizens.npc.create.copper_golem: true
       citizens.npc.create.cow: true
       citizens.npc.create.creaking: true
       citizens.npc.create.creeper: true
@@ -1472,10 +1527,12 @@ permissions:
       citizens.npc.create.magma_cube: true
       citizens.npc.create.mangrove_boat: true
       citizens.npc.create.mangrove_chest_boat: true
+      citizens.npc.create.mannequin: true
       citizens.npc.create.marker: true
       citizens.npc.create.minecart: true
       citizens.npc.create.mooshroom: true
       citizens.npc.create.mule: true
+      citizens.npc.create.nautilus: true
       citizens.npc.create.oak_boat: true
       citizens.npc.create.oak_chest_boat: true
       citizens.npc.create.ocelot: true
@@ -1484,6 +1541,7 @@ permissions:
       citizens.npc.create.pale_oak_boat: true
       citizens.npc.create.pale_oak_chest_boat: true
       citizens.npc.create.panda: true
+      citizens.npc.create.parched: true
       citizens.npc.create.parrot: true
       citizens.npc.create.phantom: true
       citizens.npc.create.pig: true
@@ -1538,6 +1596,7 @@ permissions:
       citizens.npc.create.zoglin: true
       citizens.npc.create.zombie: true
       citizens.npc.create.zombie_horse: true
+      citizens.npc.create.zombie_nautilus: true
       citizens.npc.create.zombie_villager: true
       citizens.npc.create.zombified_piglin: true
       citizens.npc.createall: true
@@ -1554,8 +1613,10 @@ permissions:
       citizens.npc.enderdragon: true
       citizens.npc.enderman: true
       citizens.npc.entitypose: true
+      citizens.npc.eval: true
       citizens.npc.flyable: true
       citizens.npc.follow: true
+      citizens.npc.follow.others: true
       citizens.npc.forcefield: true
       citizens.npc.fox: true
       citizens.npc.frog: true
@@ -1681,6 +1742,7 @@ permissions:
       citizens.npc.list: true
       citizens.npc.llama: true
       citizens.npc.lookclose: true
+      citizens.npc.mannequin: true
       citizens.npc.metadata: true
       citizens.npc.minecart: true
       citizens.npc.mirror: true
@@ -1740,6 +1802,7 @@ permissions:
       citizens.npc.sound: true
       citizens.npc.spawn: true
       citizens.npc.speak: true
+      citizens.npc.spectate: true
       citizens.npc.speed: true
       citizens.npc.spellcaster: true
       citizens.npc.swim: true
@@ -1770,7 +1833,6 @@ permissions:
       citizens.templates.list: true
       citizens.trait.help: true
       citizens.waypoints.add: true
-      citizens.waypoints.disableteleport: true
       citizens.waypoints.help: true
       citizens.waypoints.hpa: true
       citizens.waypoints.provider: true
@@ -1938,6 +2000,7 @@ permissions:
       citizens.npc.create.breeze: true
       citizens.npc.create.breeze_wind_charge: true
       citizens.npc.create.camel: true
+      citizens.npc.create.camel_husk: true
       citizens.npc.create.cat: true
       citizens.npc.create.cave_spider: true
       citizens.npc.create.cherry_boat: true
@@ -1946,6 +2009,7 @@ permissions:
       citizens.npc.create.chicken: true
       citizens.npc.create.cod: true
       citizens.npc.create.command_block_minecart: true
+      citizens.npc.create.copper_golem: true
       citizens.npc.create.cow: true
       citizens.npc.create.creaking: true
       citizens.npc.create.creeper: true
@@ -2001,10 +2065,12 @@ permissions:
       citizens.npc.create.magma_cube: true
       citizens.npc.create.mangrove_boat: true
       citizens.npc.create.mangrove_chest_boat: true
+      citizens.npc.create.mannequin: true
       citizens.npc.create.marker: true
       citizens.npc.create.minecart: true
       citizens.npc.create.mooshroom: true
       citizens.npc.create.mule: true
+      citizens.npc.create.nautilus: true
       citizens.npc.create.oak_boat: true
       citizens.npc.create.oak_chest_boat: true
       citizens.npc.create.ocelot: true
@@ -2013,6 +2079,7 @@ permissions:
       citizens.npc.create.pale_oak_boat: true
       citizens.npc.create.pale_oak_chest_boat: true
       citizens.npc.create.panda: true
+      citizens.npc.create.parched: true
       citizens.npc.create.parrot: true
       citizens.npc.create.phantom: true
       citizens.npc.create.pig: true
@@ -2067,8 +2134,14 @@ permissions:
       citizens.npc.create.zoglin: true
       citizens.npc.create.zombie: true
       citizens.npc.create.zombie_horse: true
+      citizens.npc.create.zombie_nautilus: true
       citizens.npc.create.zombie_villager: true
       citizens.npc.create.zombified_piglin: true
+  citizens.npc.follow.*:
+    default: op
+    children:
+      citizens.npc.follow: true
+      citizens.npc.follow.others: true
   citizens.npc.shop.editor.*:
     default: op
     children:
@@ -2102,6 +2175,7 @@ permissions:
       citizens.npc.controllable.breeze: true
       citizens.npc.controllable.breeze_wind_charge: true
       citizens.npc.controllable.camel: true
+      citizens.npc.controllable.camel_husk: true
       citizens.npc.controllable.cat: true
       citizens.npc.controllable.cave_spider: true
       citizens.npc.controllable.cherry_boat: true
@@ -2110,6 +2184,7 @@ permissions:
       citizens.npc.controllable.chicken: true
       citizens.npc.controllable.cod: true
       citizens.npc.controllable.command_block_minecart: true
+      citizens.npc.controllable.copper_golem: true
       citizens.npc.controllable.cow: true
       citizens.npc.controllable.creaking: true
       citizens.npc.controllable.creeper: true
@@ -2165,10 +2240,12 @@ permissions:
       citizens.npc.controllable.magma_cube: true
       citizens.npc.controllable.mangrove_boat: true
       citizens.npc.controllable.mangrove_chest_boat: true
+      citizens.npc.controllable.mannequin: true
       citizens.npc.controllable.marker: true
       citizens.npc.controllable.minecart: true
       citizens.npc.controllable.mooshroom: true
       citizens.npc.controllable.mule: true
+      citizens.npc.controllable.nautilus: true
       citizens.npc.controllable.oak_boat: true
       citizens.npc.controllable.oak_chest_boat: true
       citizens.npc.controllable.ocelot: true
@@ -2177,6 +2254,7 @@ permissions:
       citizens.npc.controllable.pale_oak_boat: true
       citizens.npc.controllable.pale_oak_chest_boat: true
       citizens.npc.controllable.panda: true
+      citizens.npc.controllable.parched: true
       citizens.npc.controllable.parrot: true
       citizens.npc.controllable.phantom: true
       citizens.npc.controllable.pig: true
@@ -2231,6 +2309,7 @@ permissions:
       citizens.npc.controllable.zoglin: true
       citizens.npc.controllable.zombie: true
       citizens.npc.controllable.zombie_horse: true
+      citizens.npc.controllable.zombie_nautilus: true
       citizens.npc.controllable.zombie_villager: true
       citizens.npc.controllable.zombified_piglin: true
   citizens.npc.shop.*:

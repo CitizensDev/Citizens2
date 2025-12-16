@@ -500,8 +500,8 @@ public class Messages {
     public static final String WAYPOINT_EDITOR_SHOWING_MARKERS = "citizens.editors.waypoints.linear.showing-markers";
     public static final String WAYPOINT_PROVIDER_SET = "citizens.commands.waypoints.set-provider";
     public static final String WAYPOINT_REMOVED = "citizens.commands.waypoints.waypoint-removed";
-    public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.waypoints.disableteleporting.disabled";
-    public static final String WAYPOINT_TELEPORTING_ENABLED = "citizens.commands.waypoints.disableteleporting.enabled";
+    public static final String WAYPOINT_TELEPORTING_DISABLED = "citizens.commands.npc.pathopt.teleporting-disabled";
+    public static final String WAYPOINT_TELEPORTING_ENABLED = "citizens.commands.npc.pathopt.teleporting-enabled";
     public static final String WAYPOINT_TRIGGER_ADD_PROMPT = "citizens.editors.waypoints.triggers.add.prompt";
     public static final String WAYPOINT_TRIGGER_ADDED_SUCCESSFULLY = "citizens.editors.waypoints.triggers.add.added";
     public static final String WAYPOINT_TRIGGER_ANIMATION_AT_SET = "citizens.editors.waypoints.triggers.animation.at-set";
