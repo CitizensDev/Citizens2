@@ -1,8 +1,8 @@
 package net.citizensnpcs.trait.waypoint;
 
 import java.util.AbstractList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -484,7 +484,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         private boolean ascending = true;
         private final Location cachedLocation = new Location(null, 0, 0, 0);
         private Waypoint currentDestination;
-        private Iterator<Waypoint> itr;
+        private ListIterator<Waypoint> itr;
         private boolean paused;
         private GoalSelector selector;
 
@@ -500,56 +500,67 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             return npc.getNavigator();
         }
 
-        private Iterator<Waypoint> getNewIterator() {
+        private ListIterator<Waypoint> getNewIterator() {
             LinearWaypointsCompleteEvent event = new LinearWaypointsCompleteEvent(LinearWaypointProvider.this,
                     getUnsafeIterator());
             Bukkit.getPluginManager().callEvent(event);
-            Iterator<Waypoint> next = event.getNextWaypoints();
-            return next;
+            return event.getNextWaypoints();
         }
 
-        private Iterator<Waypoint> getUnsafeIterator() {
+        private ListIterator<Waypoint> getUnsafeIterator() {
             if (cycle && ascending) {
                 ascending = false;
-                return new Iterator<Waypoint>() {
-                    int idx = waypoints.size() - 1;
-
-                    @Override
-                    public boolean hasNext() {
-                        return idx >= 0 && idx < waypoints.size();
-                    }
-
-                    @Override
-                    public Waypoint next() {
-                        return waypoints.get(idx--);
-                    }
-
-                    @Override
-                    public void remove() {
-                        waypoints.remove(Math.max(0, idx - 1));
-                    }
-                };
             } else {
                 ascending = true;
-                return new Iterator<Waypoint>() {
-                    int idx = 0;
-
-                    @Override
-                    public boolean hasNext() {
-                        return idx < waypoints.size();
-                    }
-
-                    @Override
-                    public Waypoint next() {
-                        return waypoints.get(idx++);
-                    }
-
-                    @Override
-                    public void remove() {
-                        waypoints.remove(Math.max(0, idx - 1));
-                    }
-                };
             }
+            return new ListIterator<Waypoint>() {
+                int idx = 0;
+
+                @Override
+                public void add(Waypoint e) {
+                    waypoints.add(e);
+                }
+
+                @Override
+                public boolean hasNext() {
+                    return ascending ? idx < waypoints.size() : idx > 0;
+                }
+
+                @Override
+                public boolean hasPrevious() {
+                    return ascending ? idx > 0 : idx < waypoints.size();
+                }
+
+                @Override
+                public Waypoint next() {
+                    return ascending ? waypoints.get(idx++) : waypoints.get(idx--);
+                }
+
+                @Override
+                public int nextIndex() {
+                    return ascending ? idx + 1 : idx - 1;
+                }
+
+                @Override
+                public Waypoint previous() {
+                    return ascending ? waypoints.get(idx--) : waypoints.get(idx++);
+                }
+
+                @Override
+                public int previousIndex() {
+                    return ascending ? idx - 1 : idx + 1;
+                }
+
+                @Override
+                public void remove() {
+                    waypoints.remove(Math.max(0, ascending ? idx - 1 : idx + 1));
+                }
+
+                @Override
+                public void set(Waypoint e) {
+                    waypoints.set(idx, e);
+                }
+            };
         }
 
         public boolean isPaused() {
@@ -588,6 +599,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 if (npc != null && npc.getNavigator().isNavigating()) {
                     npc.getNavigator().cancelNavigation();
                 }
+                itr.previous();
             }
         }
 
