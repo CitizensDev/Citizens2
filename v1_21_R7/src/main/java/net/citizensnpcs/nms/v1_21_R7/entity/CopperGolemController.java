@@ -18,6 +18,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -28,6 +29,8 @@ import net.minecraft.world.entity.animal.golem.CopperGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -102,6 +105,11 @@ public class CopperGolemController extends MobEntityController {
         public void customServerAiStep(ServerLevel level) {
             super.customServerAiStep(level);
             if (npc != null) {
+                if (npc.isProtected()) {
+                    nextWeatheringTick = -2;
+                } else if (nextWeatheringTick == -2) {
+                    nextWeatheringTick = -1;
+                }
                 NMSImpl.updateMinecraftAIState(npc, this);
                 npc.update();
             }
@@ -174,9 +182,18 @@ public class CopperGolemController extends MobEntityController {
 
         @Override
         public InteractionResult mobInteract(Player entityhuman, InteractionHand enumhand) {
-            if (npc == null || !npc.isProtected())
-                return super.mobInteract(entityhuman, enumhand);
-            return InteractionResult.FAIL;
+            if (npc != null && npc.isProtected()) {
+                ItemStack itemstack = entityhuman.getItemInHand(enumhand);
+                if (itemstack.isEmpty())
+                    return InteractionResult.PASS;
+                if (itemstack.is(Items.SHEARS) && this.readyForShearing())
+                    return InteractionResult.PASS;
+                if (itemstack.is(Items.HONEYCOMB))
+                    return InteractionResult.PASS;
+                if (itemstack.is(ItemTags.AXES))
+                    return InteractionResult.PASS;
+            }
+            return super.mobInteract(entityhuman, enumhand);
         }
 
         @Override

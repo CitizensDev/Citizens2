@@ -54,7 +54,7 @@ public class CopperGolemTrait extends Trait {
 
     @Command(
             aliases = { "npc" },
-            usage = "coppergolem (--weatherstate state)",
+            usage = "coppergolem (--weatherstate state) (--weatheringtick tick)",
             desc = "",
             modifiers = { "coppergolem" },
             min = 1,
@@ -62,18 +62,20 @@ public class CopperGolemTrait extends Trait {
             permission = "citizens.npc.coppergolem")
     @Requirements(selected = true, ownership = true, types = EntityType.COPPER_GOLEM)
     public static void copperGolem(CommandContext args, CommandSender sender, NPC npc,
-            @Flag("weatherstate") String state) throws CommandException {
+            @Flag("weatherstate") String state, @Flag("weatheringtick") Long tick) throws CommandException {
         CopperGolemTrait trait = npc.getOrAddTrait(CopperGolemTrait.class);
         String output = "";
-        if (args.hasValueFlag("variant")) {
-            if (state == null)
-                throw new CommandException(Messages.INVALID_COPPER_WEATHER_STATE);
+        if (state != null) {
             try {
                 trait.setWeatherState(Enum.valueOf(WEATHER_STATE_CLASS, state.toUpperCase(Locale.ROOT)));
             } catch (IllegalArgumentException ex) {
                 throw new CommandException(Messages.INVALID_COPPER_WEATHER_STATE);
             }
             output += Messaging.tr(Messages.COPPER_WEATHER_STATE_SET, state);
+        }
+        if (tick != null) {
+            ((CopperGolem) npc.getEntity()).setNextWeatheringTick(tick);
+            output += Messaging.tr(Messages.COPPER_WEATHER_TICK_SET, tick);
         }
         if (!output.isEmpty()) {
             Messaging.send(sender, output);

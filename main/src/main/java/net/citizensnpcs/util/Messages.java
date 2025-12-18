@@ -96,6 +96,7 @@ public class Messages {
     public static final String COPIER_EDITOR_BEGIN = "citizens.editors.copier.begin";
     public static final String COPIER_EDITOR_END = "citizens.editors.copier.end";
     public static final String COPPER_WEATHER_STATE_SET = "citizens.commands.npc.coppergolem.weather-state-set";
+    public static final String COPPER_WEATHER_TICK_SET = "citizens.commands.npc.coppergolem.weather-tick-set";
     public static final String COSMETIC_EQUIPMENT_SET = "citizens.commands.npc.setequipment.cosmetic-set";
     public static final String CURRENT_WAYPOINT_PROVIDER = "citizens.commands.waypoints.current-provider";
     public static final String DEFAULT_POSE_SET = "citizens.commands.npc.pose.default-pose-set";
