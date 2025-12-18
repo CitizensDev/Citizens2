@@ -2898,8 +2898,8 @@ public class NMSImpl implements NMSBridge {
     private static final Collection<MethodHandle> TRACKED_ENTITY_SETTERS = NMS.getSettersOfType(Entity.class,
             TrackedEntity.class);
     public static final MethodHandle WAITING_FOR_RESPAWN = NMS.getSetter(ServerGamePacketListenerImpl.class, "Y");
-    private static final MethodHandle ENTITY_TRACKER_GETTER_FOLIA = NMS.getGetter(Entity.class, "tracker", false);
-    private static final MethodHandle ENTITY_TRACKER_SETTER_FOLIA = NMS.getSetter(Entity.class, "tracker", false);
+    private static final MethodHandle ENTITY_TRACKER_GETTER_FOLIA = NMS.getGetter(Entity.class, "trackedEntity", false);
+    private static final MethodHandle ENTITY_TRACKER_SETTER_FOLIA = NMS.getSetter(Entity.class, "trackedEntity", false);
     static {
         try {
             ENTITY_REGISTRY = new CustomEntityRegistry(BuiltInRegistries.ENTITY_TYPE);
