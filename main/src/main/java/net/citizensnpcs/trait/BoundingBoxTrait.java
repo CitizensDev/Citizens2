@@ -5,7 +5,9 @@ import java.util.function.Supplier;
 
 import org.bukkit.Location;
 import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Interaction;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
@@ -60,6 +62,17 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         return new EntityDim(width == -1 ? desired.width : width, height == -1 ? desired.height : height);
     }
 
+    private Location getBaseLocation(Entity entity) {
+        Location loc = entity.getLocation();
+        String entityType = entity.getType().toString();
+        if (entityType.equals("ITEM_DISPLAY")) {
+            loc.add(0, -0.5, 0);
+        } else if (entityType.equals("BLOCK_DISPLAY")) {
+            loc.add(0.5, 0, 0.5);
+        }
+        return loc;
+    }
+
     @Override
     public void onDespawn() {
         npc.data().remove(NPC.Metadata.BOUNDING_BOX_FUNCTION);
@@ -76,9 +89,14 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
 
     @Override
     public void onSpawn() {
-        if (npc.getEntity().getType().toString().contains("BLOCK_DISPLAY")) {
+        if (npc.getEntity().getType().toString().equals("BLOCK_DISPLAY")) {
             BoundingBox bb = NMS.getCollisionBox(((BlockDisplay) npc.getEntity()).getBlock());
             base = EntityDim.from(bb);
+        } else if (npc.getEntity().getType() == EntityType.FALLING_BLOCK) {
+            BoundingBox bb = NMS.getCollisionBox(((FallingBlock) npc.getEntity()).getBlockData());
+            base = EntityDim.from(bb);
+        } else if (npc.getEntity().getType().toString().equals("ITEM_DISPLAY")) {
+            base = EntityDim.from(new BoundingBox(0, 0, 0, 1, 1, 1));
         } else {
             base = EntityDim.from(npc.getEntity());
         }
@@ -99,11 +117,11 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         if (interaction == null)
             return;
         if (!interaction.isSpawned()) {
-            interaction.spawn(npc.getEntity().getLocation());
+            interaction.spawn(getBaseLocation(npc.getEntity()));
             return;
         }
         EntityDim dim = getAdjustedDimensions();
-        interaction.teleport(npc.getEntity().getLocation(), TeleportCause.PLUGIN);
+        interaction.teleport(getBaseLocation(npc.getEntity()), TeleportCause.PLUGIN);
         Interaction box = ((Interaction) interaction.getEntity());
         box.setInteractionWidth(dim.width);
         box.setInteractionHeight(dim.height);
