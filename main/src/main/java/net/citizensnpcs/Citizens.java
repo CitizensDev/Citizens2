@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import net.citizensnpcs.api.util.*;
 import net.citizensnpcs.api.util.schedulers.SchedulerTask;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -60,12 +61,7 @@ import net.citizensnpcs.api.npc.SimpleNPCDataStore;
 import net.citizensnpcs.api.npc.templates.TemplateRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
-import net.citizensnpcs.api.util.Messaging;
-import net.citizensnpcs.api.util.Placeholders;
 import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
-import net.citizensnpcs.api.util.Storage;
-import net.citizensnpcs.api.util.Translator;
-import net.citizensnpcs.api.util.YamlStorage;
 import net.citizensnpcs.commands.AdminCommands;
 import net.citizensnpcs.commands.EditorCommands;
 import net.citizensnpcs.commands.NPCCommands;
@@ -486,6 +482,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
     @Override
     public void onLoad() {
+        if (SpigotUtil.isFoliaServer()) {
+            // Packet rewriting cannot be supported on Folia, because to call entities,
+            // it must be done on their thread, so there will be a 1-tick delay,
+            // therefore it is not currently supported.
+            packetEventsEnabled = false;
+            return;
+        }
         try {
             PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
             PacketEvents.getAPI().load();
