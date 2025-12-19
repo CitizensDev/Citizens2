@@ -62,7 +62,8 @@ public class PlayerUpdateTask extends SchedulerRunnable {
                     Messaging.severe("Player registered twice with different NPC instances", rm.entity.getUniqueId());
                 }
                 if (rm.entity instanceof Player) {
-                    ((Player) rm.entity).kickPlayer(null);
+                    NMS.removeFromWorld(rm.entity);
+                    NMS.remove(rm.entity);
                 } else {
                     rm.entity.remove();
                 }
