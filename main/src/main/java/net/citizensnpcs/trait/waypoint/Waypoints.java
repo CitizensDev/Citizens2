@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.command.CommandSender;
@@ -20,7 +21,6 @@ import net.citizensnpcs.util.StringHelper;
 @TraitName("waypoints")
 public class Waypoints extends Trait {
     private WaypointProvider provider;
-    private final Map<String, WaypointProvider> providerCache = Maps.newHashMap();
     private String providerName = "linear";
 
     public Waypoints() {
@@ -28,14 +28,12 @@ public class Waypoints extends Trait {
     }
 
     private WaypointProvider create(String name, Class<? extends WaypointProvider> clazz) {
-        return providerCache.computeIfAbsent(name, s -> {
-            try {
-                return clazz.newInstance();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                return null;
-            }
-        });
+        try {
+            return clazz.newInstance();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     public void describeProviders(CommandSender sender) {
@@ -107,11 +105,19 @@ public class Waypoints extends Trait {
      * @return Whether the operation succeeded
      */
     public boolean setWaypointProvider(String name) {
-        name = name.toLowerCase();
+        if (name == null || name.isEmpty()) {
+            if (provider != null) {
+                provider.onRemove();
+            }
+            provider = null;
+            return true;
+        }
+        name = name.toLowerCase(Locale.ROOT);
         Class<? extends WaypointProvider> clazz = PROVIDERS.get(name);
         if (provider != null) {
             provider.onRemove();
         }
+        provider = null;
         if (clazz == null || (provider = create(name, clazz)) == null)
             return false;
         providerName = name;
@@ -133,7 +139,7 @@ public class Waypoints extends Trait {
         PROVIDERS.put(name, clazz);
     }
 
-    private static Map<String, Class<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
+    private static final Map<String, Class<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
 
     static {
         PROVIDERS.put("linear", LinearWaypointProvider.class);
