@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.lang.reflect.Constructor;
 import java.util.Locale;
 import java.util.Map;
 
@@ -20,14 +21,16 @@ import net.citizensnpcs.util.StringHelper;
 
 @TraitName("waypoints")
 public class Waypoints extends Trait {
-    private WaypointProvider provider;
+    private WaypointProvider provider = new LinearWaypointProvider();
     private String providerName = "linear";
 
     public Waypoints() {
         super("waypoints");
     }
 
-    private WaypointProvider create(String name, Class<? extends WaypointProvider> clazz) {
+    private WaypointProvider create(String name, Constructor<? extends WaypointProvider> clazz) {
+        if (clazz == null)
+            return null;
         try {
             return clazz.newInstance();
         } catch (Exception ex) {
@@ -65,21 +68,14 @@ public class Waypoints extends Trait {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        provider = null;
         providerName = key.getString("provider", "linear");
-        Class<? extends WaypointProvider> clazz = PROVIDERS.get(providerName);
-        provider = create(providerName, clazz);
+        provider = create(providerName, PROVIDERS.get(providerName));
         if (provider == null)
             return;
         PersistenceLoader.load(provider, key.getRelative(providerName));
         if (npc != null) {
             provider.onSpawn(npc);
         }
-    }
-
-    @Override
-    public void onAttach() {
-        provider = new LinearWaypointProvider(npc);
     }
 
     @Override
@@ -113,11 +109,12 @@ public class Waypoints extends Trait {
             return true;
         }
         name = name.toLowerCase(Locale.ROOT);
-        Class<? extends WaypointProvider> clazz = PROVIDERS.get(name);
+        Constructor<? extends WaypointProvider> clazz = PROVIDERS.get(name);
         if (provider != null) {
             provider.onRemove();
         }
         provider = null;
+        providerName = null;
         if (clazz == null || (provider = create(name, clazz)) == null)
             return false;
         providerName = name;
@@ -136,14 +133,18 @@ public class Waypoints extends Trait {
      *            The name of the waypoint provider
      */
     public static void registerWaypointProvider(Class<? extends WaypointProvider> clazz, String name) {
-        PROVIDERS.put(name, clazz);
+        try {
+            PROVIDERS.put(name, clazz.getConstructor());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private static final Map<String, Class<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
+    private static final Map<String, Constructor<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
 
     static {
-        PROVIDERS.put("linear", LinearWaypointProvider.class);
-        PROVIDERS.put("wander", WanderWaypointProvider.class);
-        PROVIDERS.put("guided", GuidedWaypointProvider.class);
+        registerWaypointProvider(LinearWaypointProvider.class, "linear");
+        registerWaypointProvider(WanderWaypointProvider.class, "wander");
+        registerWaypointProvider(GuidedWaypointProvider.class, "guided");
     }
 }
