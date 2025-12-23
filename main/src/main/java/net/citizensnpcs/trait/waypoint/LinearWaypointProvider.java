@@ -62,10 +62,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
     public LinearWaypointProvider() {
     }
 
-    public LinearWaypointProvider(NPC npc) {
-        this.npc = npc;
-    }
-
     public void addWaypoint(Waypoint waypoint) {
         waypoints.add(waypoint);
         if (currentGoal != null) {
@@ -543,7 +539,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
                 @Override
                 public Waypoint previous() {
-                    return ascending ? waypoints.get(idx--) : waypoints.get(idx++);
+                    return ascending ? waypoints.get(--idx) : waypoints.get(++idx);
                 }
 
                 @Override
