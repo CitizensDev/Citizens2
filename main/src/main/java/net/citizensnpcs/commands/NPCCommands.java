@@ -3403,6 +3403,14 @@ public class NPCCommands {
         }
         if (args.hasFlag('s')) {
             npc.data().setPersistent(NPC.Metadata.SILENT, !npc.data().get(NPC.Metadata.SILENT, false));
+            if (args.hasFlag('s')) {
+                npc.data().setPersistent(NPC.Metadata.SILENT, !npc.data().get(NPC.Metadata.SILENT, false));
+                if (npc.data().get(NPC.Metadata.SILENT, false)) {
+                    ambientSound = deathSound = hurtSound = "";
+                } else {
+                    ambientSound = deathSound = hurtSound = null;
+                }
+            }
         }
         if (args.hasFlag('d')) {
             ambientSound = deathSound = hurtSound = null;
