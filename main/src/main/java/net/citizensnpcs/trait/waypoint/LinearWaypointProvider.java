@@ -378,8 +378,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 });
             } else if (message.equalsIgnoreCase("here")) {
                 event.setCancelled(true);
-                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(),
-                        () -> addWaypoint(player.getLocation()));
+                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), () -> addWaypoint(player.getLocation()));
             }
         }
 
@@ -633,17 +632,18 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             }
             double margin = getNavigator().getLocalParameters().distanceMargin();
             getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
-                if (npc.isSpawned() && currentDestination != null
-                        && npc.getStoredLocation().distance(currentDestination.getLocation()) <= margin + 1) {
-                    currentDestination.onReach(npc);
+                Waypoint waypoint = currentDestination;
+                selector.finish();
+                if (npc.isSpawned() && waypoint != null
+                        && npc.getStoredLocation().distance(waypoint.getLocation()) <= margin + 1) {
+                    waypoint.onReach(npc);
                     if (cachePaths && cancelReason == null) {
                         Iterable<Vector> path = getNavigator().getPathStrategy().getPath();
                         if (Iterables.size(path) > 0) {
-                            cachedPaths.put(new SourceDestinationPair(npcLoc, currentDestination), path);
+                            cachedPaths.put(new SourceDestinationPair(npcLoc, waypoint), path);
                         }
                     }
                 }
-                selector.finish();
             });
 
             return true;
