@@ -77,34 +77,45 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
             if (REQUIRES_SYNC == null) {
                 REQUIRES_SYNC = !Bukkit.isPrimaryThread();
             }
-            boolean cancelled = Util.callPossiblySync(() -> {
-                NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
-                try {
-                    Bukkit.getPluginManager().callEvent(event);
-                } catch (IllegalStateException e) {
-                    REQUIRES_SYNC = true;
-                    throw e;
+            cancellableUpdatePlayer(npc, entityplayer, cancelled -> {
+                if (cancelled) {
+                    return;
                 }
-                if (event.isCancelled())
-                    return true;
-
-                Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
-                if (TRACKING_RANGE_SETTER != null && trackingRange != null
-                        && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
-                    try {
-                        TRACKING_RANGE_SETTER.invoke(CitizensEntityTracker.this, trackingRange);
-                        npc.data().set("last-tracking-range", trackingRange);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                }
-                return false;
-            }, REQUIRES_SYNC);
-
-            if (cancelled)
-                return;
+                super.updatePlayer(entityplayer);
+            });
+            return;
         }
         super.updatePlayer(entityplayer);
+    }
+
+    private void cancellableUpdatePlayer(final NPC npc,
+                                       final ServerPlayer entityplayer,
+                                       final java.util.function.Consumer<Boolean> callback) {
+        net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTask(entityplayer.getBukkitEntity(), () -> {
+            NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
+            try {
+                Bukkit.getPluginManager().callEvent(event);
+            } catch (IllegalStateException e) {
+                REQUIRES_SYNC = true;
+                throw e;
+            }
+            if (event.isCancelled()) {
+                callback.accept(true);
+                return;
+            }
+
+            Integer trackingRange = npc.data().get(NPC.Metadata.TRACKING_RANGE);
+            if (TRACKING_RANGE_SETTER != null && trackingRange != null
+                    && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
+                try {
+                    TRACKING_RANGE_SETTER.invoke(CitizensEntityTracker.this, trackingRange);
+                    npc.data().set("last-tracking-range", trackingRange);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+            callback.accept(false);
+        });
     }
 
     public static Collection<org.bukkit.entity.Entity> getSeenBy(TrackedEntity tracker) {

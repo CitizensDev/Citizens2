@@ -35,7 +35,7 @@ public class PacketNPC extends Trait {
     public void onRemove(RemoveReason reason) {
         if (reason == RemoveReason.REMOVAL) {
             npc.despawn(DespawnReason.PENDING_RESPAWN);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            CitizensAPI.getScheduler().runRegionTask(npc.getStoredLocation(), () -> {
                 if (npc.getStoredLocation() != null) {
                     npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
                 }
@@ -113,6 +113,11 @@ public class PacketNPC extends Trait {
             NMS.setLocationDirectly(base.getBukkitEntity(), at);
             PlayerUpdateTask.register(getBukkitEntity());
             return true;
+        }
+
+        @Override
+        public void spawn(Location at, java.util.function.Consumer<Boolean> callback) {
+            callback.accept(spawn(at));
         }
     }
 }

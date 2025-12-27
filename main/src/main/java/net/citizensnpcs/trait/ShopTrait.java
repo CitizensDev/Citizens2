@@ -1223,7 +1223,7 @@ public class ShopTrait extends Trait {
             currentPage = newPage;
             NPCShopPage page = shop.pages.get(currentPage);
             if (page.title != null && !page.title.isEmpty()) {
-                Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
+                CitizensAPI.getScheduler().runEntityTaskLater(player,
                         () -> ctx.setTitle(Placeholders.replace(page.title, player)), 1);
             }
             for (int i = 0; i < ctx.getInventory().getSize(); i++) {

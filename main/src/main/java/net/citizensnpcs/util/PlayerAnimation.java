@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -80,7 +81,7 @@ public enum PlayerAnimation {
             final NPC holder = CitizensAPI.getTemporaryNPCRegistry().createNPC(EntityType.ARMOR_STAND, "");
             holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
             holder.spawn(player.getLocation());
-            new BukkitRunnable() {
+            new SchedulerRunnable() {
                 @Override
                 public void cancel() {
                     super.cancel();
@@ -98,7 +99,7 @@ public enum PlayerAnimation {
                         NMS.mount(holder.getEntity(), player);
                     }
                 }
-            }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
+            }.runEntityTaskTimer(CitizensAPI.getPlugin(), holder.getEntity(), null, 0, 1);
             return;
         } else if (this == STOP_SITTING) {
             if (player instanceof NPCHolder) {
@@ -125,7 +126,8 @@ public enum PlayerAnimation {
         } else if (this == STOP_USE_ITEM || this == START_USE_MAINHAND_ITEM || this == START_USE_OFFHAND_ITEM) {
             NMS.playAnimation(this, player, to.get());
             if (player.hasMetadata("citizens-using-item-id")) {
-                Bukkit.getScheduler().cancelTask(player.getMetadata("citizens-using-item-id").get(0).asInt());
+                net.citizensnpcs.api.util.schedulers.SchedulerTask task = (net.citizensnpcs.api.util.schedulers.SchedulerTask) player.getMetadata("citizens-using-item-id").get(0).value();
+                if (task != null) task.cancel();
                 player.removeMetadata("citizens-using-item-id", CitizensAPI.getPlugin());
             }
             if (this == STOP_USE_ITEM)
@@ -136,7 +138,7 @@ public enum PlayerAnimation {
             if (using != null && BAD_ITEMS_TO_USE.contains(using.getType())
                     && player.hasMetadata("citizens-using-item-remaining-ticks")) {
                 int remainingTicks = player.getMetadata("citizens-using-item-remaining-ticks").get(0).asInt();
-                new BukkitRunnable() {
+                new SchedulerRunnable() {
                     @Override
                     public void run() {
                         if (!NMS.isValid(player)) {
@@ -150,7 +152,7 @@ public enum PlayerAnimation {
                                     new FixedMetadataValue(CitizensAPI.getPlugin(), getTaskId()));
                         }
                     }
-                }.runTaskTimer(CitizensAPI.getPlugin(), Math.max(0, remainingTicks + 1),
+                }.runEntityTaskTimer(CitizensAPI.getPlugin(), player, null, Math.max(0, remainingTicks + 1),
                         Math.max(1, remainingTicks + 1));
             }
             return;

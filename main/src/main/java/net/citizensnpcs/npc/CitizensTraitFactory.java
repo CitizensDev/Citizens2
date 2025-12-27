@@ -79,8 +79,8 @@ import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.NMS;
 
 public class CitizensTraitFactory implements TraitFactory {
-    private final List<TraitInfo> defaultTraits = Lists.newArrayList();
-    private final Map<String, TraitInfo> registered = Maps.newHashMap();
+    private final List<TraitInfo> defaultTraits = Lists.newCopyOnWriteArrayList();
+    private final Map<String, TraitInfo> registered = Maps.newConcurrentMap();
 
     public CitizensTraitFactory(Citizens plugin) {
         registerTrait(TraitInfo.create(Age.class));

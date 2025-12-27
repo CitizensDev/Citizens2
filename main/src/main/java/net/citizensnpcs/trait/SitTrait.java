@@ -40,7 +40,7 @@ public class SitTrait extends Trait {
             chair.destroy();
             chair = null;
             if (requiresPassengerOffsetCorrection()) {
-                npc.getEntity().teleport(npc.getEntity().getLocation().clone().add(0, 0.3, 0));
+                SpigotUtil.teleportAsync(npc.getEntity(), npc.getEntity().getLocation().clone().add(0, 0.3, 0));
             }
         }
     }

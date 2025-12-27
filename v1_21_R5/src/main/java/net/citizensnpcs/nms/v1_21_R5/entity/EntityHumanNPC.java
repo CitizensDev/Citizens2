@@ -123,7 +123,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             return;
 
         super.die(damagesource);
-        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
+        CitizensAPI.getScheduler().runEntityTaskLater(EntityHumanNPC.this.getBukkitEntity(), () -> {
             level().removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
             level().getChunkSource().removeEntity(EntityHumanNPC.this);
         }, 15); // give enough time for death and smoke animation
@@ -270,7 +270,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         boolean damaged = super.hurtServer(level, damagesource, f);
         if (damaged && hurtMarked) {
             hurtMarked = false;
-            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> EntityHumanNPC.this.hurtMarked = true);
+            CitizensAPI.getScheduler().runEntityTask(EntityHumanNPC.this.getBukkitEntity(), () -> EntityHumanNPC.this.hurtMarked = true);
         }
         return damaged;
     }

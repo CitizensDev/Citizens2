@@ -66,6 +66,7 @@ public class ScoreboardTrait extends Trait {
     }
 
     public void createTeam(String entityName) {
+        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) return; // Not Supported on Folia
         String teamName = Util.getTeamName(npc.getUniqueId());
         npc.data().set(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, teamName);
         Scoreboard scoreboard = Util.getDummyScoreboard();
@@ -99,6 +100,7 @@ public class ScoreboardTrait extends Trait {
 
     @Override
     public void onDespawn(DespawnReason reason) {
+        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) return; // Not Supported on Folia
         previousGlowingColor = null;
         String name = lastName;
         String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
@@ -134,7 +136,7 @@ public class ScoreboardTrait extends Trait {
         if (reason == DespawnReason.REMOVAL || reason == DespawnReason.RELOAD) {
             cleanup.run();
         } else {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), cleanup,
+            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), cleanup,
                     reason == DespawnReason.DEATH && npc.getEntity() instanceof LivingEntity ? 20 : 2);
         }
     }

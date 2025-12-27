@@ -37,7 +37,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     private final String name;
     private final Int2ObjectOpenHashMap<NPC> npcs = new Int2ObjectOpenHashMap<>();
     private final NPCDataStore saves;
-    private final Map<UUID, NPC> uniqueNPCs = Maps.newHashMap();
+    private final Map<UUID, NPC> uniqueNPCs = Maps.newConcurrentMap();
 
     public CitizensNPCRegistry(NPCDataStore store) {
         this(store, "");

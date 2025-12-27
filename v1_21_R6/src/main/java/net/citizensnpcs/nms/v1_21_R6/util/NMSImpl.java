@@ -433,6 +433,33 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded) {
+        if (!net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+            isAdded.accept(addEntityToWorld(entity, custom));
+            return;
+        }
+        final Location location = entity.getLocation();
+        CitizensAPI.getScheduler().runRegionTask(location.getWorld(), location.getBlockX() >> 4, location.getBlockZ() >> 4, () -> {
+            final Entity entityNMS = getHandle(entity);
+            final ServerLevel serverLevel = (ServerLevel) entityNMS.level();
+            int viewDistance = -1;
+            ChunkMap chunkMap = null;
+            if (entity instanceof Player) {
+                chunkMap = serverLevel.getChunkSource().chunkMap;
+                viewDistance = chunkMap.serverViewDistance;
+                chunkMap.serverViewDistance = -1;
+            }
+            final ChunkMap chunkMapFinal = chunkMap;
+            final int viewDistanceFinal = viewDistance;
+            boolean success = serverLevel.addFreshEntity(getHandle(entity), custom);
+            if (chunkMapFinal != null) {
+                chunkMapFinal.serverViewDistance = viewDistanceFinal;
+            }
+            isAdded.accept(success);
+        });
+    }
+
+    @Override
     public void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
         if (entity == null)
             return;
@@ -1404,7 +1431,21 @@ public class NMSImpl implements NMSBridge {
     public void replaceTrackerEntry(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         ChunkMap cm = ((ServerLevel) handle.level()).getChunkSource().chunkMap;
-        TrackedEntity entry = cm.entityMap.get(entity.getEntityId());
+        TrackedEntity entry;
+        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+            try {
+                ServerLevel server = (ServerLevel) getHandle(entity).level();
+                entry = getTrackedEntityFolia(handle);
+                if (entry == null) return;
+                entry.broadcastRemoved();
+                CitizensEntityTracker newTracker = new CitizensEntityTracker(server.getChunkSource().chunkMap, entry);
+                setTrackedEntityFolia(handle, newTracker);
+            } catch (Exception exception) {
+                exception.printStackTrace(System.err);
+            }
+            return;
+        }
+        entry = cm.entityMap.get(entity.getEntityId());
         if (entry == null)
             return;
         entry.broadcastRemoved();
@@ -1604,6 +1645,17 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
+        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+            if (location.getWorld() == entity.getWorld()
+                    && CitizensAPI.getScheduler().isOnOwnerThread(entity)
+                    && CitizensAPI.getScheduler().isOnOwnerThread(location)) {
+                getHandle(entity).snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
+                        location.getPitch());
+            } else {
+                net.citizensnpcs.api.util.SpigotUtil.teleportAsync(entity, location);
+            }
+            return;
+        }
         getHandle(entity).snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
                 location.getPitch());
     }
@@ -2293,8 +2345,13 @@ public class NMSImpl implements NMSBridge {
         }
         List<Packet<?>> toSend = Lists.newArrayList();
         if (position) {
-            TrackedEntity entry = ((ServerLevel) handle.level()).getChunkSource().chunkMap.entityMap
-                    .get(handle.getId());
+            TrackedEntity entry = null;
+            if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+                entry = getTrackedEntityFolia(handle);
+            } else {
+                entry = ((ServerLevel) handle.level()).getChunkSource().chunkMap.entityMap
+                        .get(handle.getId());
+            }
             if (entry == null) {
                 Messaging.debug("Null tracker entity for ", from);
                 return Collections.emptyList();
@@ -2823,6 +2880,8 @@ public class NMSImpl implements NMSBridge {
     private static MethodHandle TEAM_FIELD;
     private static final Collection<MethodHandle> TRACKED_ENTITY_SETTERS = NMS.getSettersOfType(Entity.class,
             TrackedEntity.class);
+    private static final MethodHandle ENTITY_TRACKER_GETTER_FOLIA = NMS.getGetter(Entity.class, "trackedEntity", false);
+    private static final MethodHandle ENTITY_TRACKER_SETTER_FOLIA = NMS.getSetter(Entity.class, "trackedEntity", false);
     static {
         try {
             ENTITY_REGISTRY = new CustomEntityRegistry(BuiltInRegistries.ENTITY_TYPE);
@@ -2831,6 +2890,23 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
+        }
+    }
+
+    private static TrackedEntity getTrackedEntityFolia(Entity entity) {
+        try {
+            return (TrackedEntity) ENTITY_TRACKER_GETTER_FOLIA.invoke(entity);
+        } catch (Throwable t) {
+            t.printStackTrace(System.err);
+            return null;
+        }
+    }
+
+    private static void setTrackedEntityFolia(Entity entity, TrackedEntity trackedEntity) {
+        try {
+            ENTITY_TRACKER_SETTER_FOLIA.invoke(entity, trackedEntity);
+        } catch (Throwable t) {
+            t.printStackTrace(System.err);
         }
     }
 }

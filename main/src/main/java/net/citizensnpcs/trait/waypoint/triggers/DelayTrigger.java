@@ -22,7 +22,7 @@ public class DelayTrigger implements WaypointTrigger {
 
     private void delay(WaypointProvider provider) {
         provider.setPaused(true);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> provider.setPaused(false), delay);
+        CitizensAPI.getScheduler().runTaskLater(() -> provider.setPaused(false), delay);
     }
 
     @Override
