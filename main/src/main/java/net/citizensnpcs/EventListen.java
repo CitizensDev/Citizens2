@@ -4,8 +4,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
-import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -107,6 +107,7 @@ import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import net.citizensnpcs.editor.Editor;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.Skin;
@@ -264,7 +265,7 @@ public class EventListen implements Listener {
         if (event instanceof Cancellable) {
             runnable.run();
         } else {
-            final org.bukkit.Chunk chunk = event.getChunk();
+            Chunk chunk = event.getChunk();
             CitizensAPI.getScheduler().runRegionTask(chunk.getWorld(), chunk.getX(), chunk.getZ(), runnable);
         }
     }
@@ -536,7 +537,8 @@ public class EventListen implements Listener {
         }
         if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
             HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
-            CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(), () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
+            CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(),
+                    () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
         }
     }
 
@@ -675,8 +677,7 @@ public class EventListen implements Listener {
             if (SUPPORT_STOP_USE_ITEM) {
                 try {
                     PlayerAnimation.STOP_USE_ITEM.play(player);
-                    CitizensAPI.getScheduler().runEntityTask(player,
-                            () -> PlayerAnimation.STOP_USE_ITEM.play(player));
+                    CitizensAPI.getScheduler().runEntityTask(player, () -> PlayerAnimation.STOP_USE_ITEM.play(player));
                 } catch (UnsupportedOperationException e) {
                     SUPPORT_STOP_USE_ITEM = false;
                 }
@@ -921,12 +922,14 @@ public class EventListen implements Listener {
                     Bukkit.getPluginManager().callEvent(npcMoveEvent);
                     if (npcMoveEvent.isCancelled()) {
                         final Location eventFrom = npcMoveEvent.getFrom();
-                        CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> SpigotUtil.teleportAsync(entity, eventFrom), 1L);
+                        CitizensAPI.getScheduler().runEntityTaskLater(entity,
+                                () -> SpigotUtil.teleportAsync(entity, eventFrom), 1L);
                         return;
                     }
                     final Location eventTo = npcMoveEvent.getTo();
                     if (eventTo.getWorld() != to.getWorld() || eventTo.distance(to) > 0.001) {
-                        CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> SpigotUtil.teleportAsync(entity, eventTo), 1L);
+                        CitizensAPI.getScheduler().runEntityTaskLater(entity,
+                                () -> SpigotUtil.teleportAsync(entity, eventTo), 1L);
                     }
                 } catch (Throwable ex) {
                     ex.printStackTrace();

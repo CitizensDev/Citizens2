@@ -1,5 +1,7 @@
 package net.citizensnpcs.npc;
 
+import java.util.function.Consumer;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -14,7 +16,5 @@ public interface EntityController {
 
     void remove();
 
-    boolean spawn(Location at);
-
-    void spawn(Location at, java.util.function.Consumer<Boolean> callback);
+    void spawn(Location at, Consumer<Boolean> callback);
 }

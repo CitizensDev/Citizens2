@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -109,15 +108,10 @@ public class PacketNPC extends Trait {
         }
 
         @Override
-        public boolean spawn(Location at) {
+        public void spawn(Location at, java.util.function.Consumer<Boolean> callback) {
             NMS.setLocationDirectly(base.getBukkitEntity(), at);
             PlayerUpdateTask.register(getBukkitEntity());
-            return true;
-        }
-
-        @Override
-        public void spawn(Location at, java.util.function.Consumer<Boolean> callback) {
-            callback.accept(spawn(at));
+            callback.accept(true);
         }
     }
 }

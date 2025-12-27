@@ -537,13 +537,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         if (activeTicket != null) {
             final ChunkCoord tempTicket = activeTicket;
             final World tempWorld = tempTicket.getWorld();
-            if (CitizensAPI.getScheduler().isOnOwnerThread(tempWorld, tempTicket.x, tempTicket.z)) {
+            CitizensAPI.getScheduler().runRegionTask(tempWorld, tempTicket.x, tempTicket.z, () -> {
                 tempTicket.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
-            } else {
-                CitizensAPI.getScheduler().runRegionTask(tempWorld, tempTicket.x, tempTicket.z, () -> {
-                    tempTicket.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
-                });
-            }
+            });
         }
         if (target == null) {
             activeTicket = null;
@@ -552,13 +548,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         activeTicket = coord;
         final ChunkCoord tempTicket = activeTicket;
         final World tempTicketWorld = tempTicket.getWorld();
-        if (CitizensAPI.getScheduler().isOnOwnerThread(tempTicketWorld, tempTicket.x, tempTicket.z)) {
+        CitizensAPI.getScheduler().runRegionTask(tempTicketWorld, tempTicket.x, tempTicket.z, () -> {
             tempTicket.getChunk().addPluginChunkTicket(CitizensAPI.getPlugin());
-        } else {
-            CitizensAPI.getScheduler().runRegionTask(tempTicketWorld, tempTicket.x, tempTicket.z, () -> {
-                tempTicket.getChunk().addPluginChunkTicket(CitizensAPI.getPlugin());
-            });
-        }
+        });
     }
 
     private static boolean SUPPORT_CHUNK_TICKETS = true;

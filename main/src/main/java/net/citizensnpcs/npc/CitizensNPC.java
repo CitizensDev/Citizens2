@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Registry;
@@ -19,7 +18,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
@@ -46,6 +44,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.AttributeTrait;
@@ -340,123 +339,113 @@ public class CitizensNPC extends AbstractNPC {
         data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
         boolean wasLoaded = Messaging.isDebugging() ? Util.isLoaded(at) : false;
         final Location location = at;
-        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
-            entityController.spawn(location, couldSpawn -> {
-                this.spawn(couldSpawn, reason, wasLoaded, location, callback);
-            });
-            return true;
-        } else {
-            boolean couldSpawn = entityController.spawn(location);
-            return spawn(couldSpawn, reason, wasLoaded, at, callback);
-        }
-    }
-
-    private boolean spawn(boolean couldSpawn, SpawnReason reason, boolean wasLoaded, Location at, Consumer<Entity> callback) {
-        if (!couldSpawn) {
-            if (Messaging.isDebugging()) {
-                Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded", wasLoaded,
-                        "is loaded", Util.isLoaded(at));
+        entityController.spawn(location, couldSpawn -> {
+            if (!couldSpawn) {
+                if (Messaging.isDebugging()) {
+                    Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded",
+                            wasLoaded, "is loaded", Util.isLoaded(location));
+                }
+                // we need to wait before trying to spawn
+                entityController.remove();
+                Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, location));
+                data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
+                return;
             }
-            // we need to wait before trying to spawn
-            entityController.remove();
-            Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, at));
-            data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
-            return false;
-        }
-        NMS.setLocationDirectly(getEntity(), at);
-        NMS.setHeadAndBodyYaw(getEntity(), at.getYaw());
+            NMS.setLocationDirectly(getEntity(), location);
+            NMS.setHeadAndBodyYaw(getEntity(), location.getYaw());
 
-        // Paper now doesn't actually set entities as valid for a few ticks while adding entities to chunks
-        // Need to check the entity is really valid for a few ticks before finalising spawning
-        Location to = at;
-        Consumer<Runnable> postSpawn = new Consumer<Runnable>() {
-            private int timer;
+            // Paper now doesn't actually set entities as valid for a few ticks while adding entities to chunks
+            // Need to check the entity is really valid for a few ticks before finalising spawning
+            Location to = location;
+            Consumer<Runnable> postSpawn = new Consumer<Runnable>() {
+                private int timer;
 
-            @Override
-            public void accept(Runnable cancel) {
-                if (getEntity() == null || (!hasTrait(PacketNPC.class) && !getEntity().isValid())) {
-                    if (timer++ > Setting.ENTITY_SPAWN_WAIT_DURATION.asTicks()) {
-                        Messaging.debug("Couldn't spawn ", CitizensNPC.this, "waited", timer,
-                                "ticks but entity not added to world");
+                @Override
+                public void accept(Runnable cancel) {
+                    if (getEntity() == null || (!hasTrait(PacketNPC.class) && !getEntity().isValid())) {
+                        if (timer++ > Setting.ENTITY_SPAWN_WAIT_DURATION.asTicks()) {
+                            Messaging.debug("Couldn't spawn ", CitizensNPC.this, "waited", timer,
+                                    "ticks but entity not added to world");
+                            entityController.remove();
+                            cancel.run();
+                            Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(CitizensNPC.this, to));
+                        }
+                        return;
+                    }
+                    Entity entity = getEntity();
+                    NPCSpawnEvent spawnEvent = new NPCSpawnEvent(CitizensNPC.this, to, reason);
+                    Bukkit.getPluginManager().callEvent(spawnEvent);
+
+                    if (spawnEvent.isCancelled()) {
+                        Messaging.debug("Couldn't spawn", CitizensNPC.this, "SpawnReason." + reason,
+                                "due to event cancellation.");
                         entityController.remove();
                         cancel.run();
-                        Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(CitizensNPC.this, to));
+                        return;
                     }
-                    return;
-                }
-                Entity entity = getEntity();
-                NPCSpawnEvent spawnEvent = new NPCSpawnEvent(CitizensNPC.this, to, reason);
-                Bukkit.getPluginManager().callEvent(spawnEvent);
+                    NMS.replaceTracker(entity);
+                    data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
 
-                if (spawnEvent.isCancelled()) {
-                    Messaging.debug("Couldn't spawn", CitizensNPC.this, "SpawnReason." + reason,
-                            "due to event cancellation.");
-                    entityController.remove();
+                    getOrAddTrait(Spawned.class).setSpawned(true);
+                    getOrAddTrait(CurrentLocation.class).setLocation(to);
+                    navigator.onSpawn();
+                    for (Trait trait : traits.values().toArray(new Trait[0])) {
+                        try {
+                            trait.onSpawn();
+                        } catch (Throwable ex) {
+                            Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
+                            ex.printStackTrace();
+                        }
+                    }
+                    EntityType type = entity.getType();
+                    if (type.isAlive()) {
+                        LivingEntity le = (LivingEntity) entity;
+                        le.setRemoveWhenFarAway(false);
+
+                        if (type == EntityType.PLAYER || Util.isHorse(type)) {
+                            if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class)
+                                    || !getTrait(AttributeTrait.class).hasAttribute(Util.getRegistryValue(
+                                            Registry.ATTRIBUTE, "generic.step_height", "step_height"))) {
+                                NMS.setStepHeight(entity, 1);
+                            }
+                        }
+                        if (type == EntityType.PLAYER) {
+                            PlayerUpdateTask.register(entity);
+                            if (SUPPORT_ATTRIBUTES
+                                    && Util.getRegistryValue(Registry.ATTRIBUTE, "waypoint_transmit_range") != null) {
+                                ((LivingEntity) entity).getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE).setBaseValue(0);
+                            }
+                        }
+                        le.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
+                                Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks()));
+                    }
+                    if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
+                        addTrait(HologramTrait.class);
+                    }
+                    updateFlyableState();
+                    updateCustomName();
+                    updateCustomNameVisibility();
+                    updateScoreboard();
+
+                    Messaging.debug("Spawned", CitizensNPC.this, "SpawnReason." + reason);
                     cancel.run();
-                    return;
-                }
-                NMS.replaceTracker(entity);
-                data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
-
-                getOrAddTrait(Spawned.class).setSpawned(true);
-                getOrAddTrait(CurrentLocation.class).setLocation(to);
-                navigator.onSpawn();
-                for (Trait trait : traits.values().toArray(new Trait[0])) {
-                    try {
-                        trait.onSpawn();
-                    } catch (Throwable ex) {
-                        Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
-                        ex.printStackTrace();
+                    if (callback != null) {
+                        callback.accept(entity);
                     }
                 }
-                EntityType type = entity.getType();
-                if (type.isAlive()) {
-                    LivingEntity le = (LivingEntity) entity;
-                    le.setRemoveWhenFarAway(false);
-
-                    if (type == EntityType.PLAYER || Util.isHorse(type)) {
-                        if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class)
-                                || !getTrait(AttributeTrait.class).hasAttribute(Util
-                                .getRegistryValue(Registry.ATTRIBUTE, "generic.step_height", "step_height"))) {
-                            NMS.setStepHeight(entity, 1);
-                        }
+            };
+            if (getEntity() != null && getEntity().isValid()) {
+                postSpawn.accept(() -> {
+                });
+            } else {
+                new SchedulerRunnable() {
+                    @Override
+                    public void run() {
+                        postSpawn.accept(this::cancel);
                     }
-                    if (type == EntityType.PLAYER) {
-                        PlayerUpdateTask.register(entity);
-                        if (SUPPORT_ATTRIBUTES
-                                && Util.getRegistryValue(Registry.ATTRIBUTE, "waypoint_transmit_range") != null) {
-                            ((LivingEntity) entity).getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE).setBaseValue(0);
-                        }
-                    }
-                    le.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
-                            Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks()));
-                }
-                if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
-                    addTrait(HologramTrait.class);
-                }
-                updateFlyableState();
-                updateCustomName();
-                updateCustomNameVisibility();
-                updateScoreboard();
-
-                Messaging.debug("Spawned", CitizensNPC.this, "SpawnReason." + reason);
-                cancel.run();
-                if (callback != null) {
-                    callback.accept(entity);
-                }
+                }.runEntityTaskTimer(CitizensAPI.getPlugin(), getEntity(), null, 0, 1);
             }
-        };
-        if (getEntity() != null && getEntity().isValid()) {
-            postSpawn.accept(() -> {
-            });
-        } else {
-            new SchedulerRunnable() {
-                @Override
-                public void run() {
-                    postSpawn.accept(this::cancel);
-                }
-            }.runEntityTaskTimer(CitizensAPI.getPlugin(), getEntity(), null, 0, 1);
-        }
+        });
         return true;
     }
 
@@ -555,7 +544,7 @@ public class CitizensNPC extends AbstractNPC {
             if (isLiving) {
                 if (!SUPPORT_ATTRIBUTES || !hasTrait(AttributeTrait.class)
                         || !getTraitNullable(AttributeTrait.class).hasAttribute(Util.getRegistryValue(
-                        Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"))) {
+                                Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"))) {
                     NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
                 }
                 if (SUPPORT_PICKUP_ITEMS) {

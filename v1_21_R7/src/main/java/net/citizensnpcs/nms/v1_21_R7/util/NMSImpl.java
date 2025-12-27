@@ -85,6 +85,7 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.SpigotUtil.InventoryViewAPI;
 import net.citizensnpcs.nms.v1_21_R7.entity.AllayController;
 import net.citizensnpcs.nms.v1_21_R7.entity.ArmadilloController;
@@ -319,7 +320,6 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerBossEvent;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerEntity.Synchronizer;
 import net.minecraft.server.level.ServerLevel;
@@ -421,47 +421,30 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
-        int viewDistance = -1;
-        ChunkMap chunkMap = null;
-
-        if (entity instanceof Player) {
-            chunkMap = ((ServerChunkCache) getHandle(entity).level().getChunkSource()).chunkMap;
-            viewDistance = chunkMap.serverViewDistance;
-            chunkMap.serverViewDistance = -1;
-        }
-        boolean success = getHandle(entity).level().addFreshEntity(getHandle(entity), custom);
-        if (chunkMap != null) {
-            chunkMap.serverViewDistance = viewDistance;
-        }
-        return success;
-    }
-
-    @Override
-    public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded) {
-        if (!net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
-            isAdded.accept(addEntityToWorld(entity, custom));
-            return;
-        }
-        final Location location = entity.getLocation();
-        CitizensAPI.getScheduler().runRegionTask(location.getWorld(), location.getBlockX() >> 4, location.getBlockZ() >> 4, () -> {
-            final Entity entityNMS = getHandle(entity);
-            final ServerLevel serverLevel = (ServerLevel) entityNMS.level();
+    public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, Consumer<Boolean> isAdded) {
+        Runnable task = () -> {
+            Entity handle = getHandle(entity);
+            ServerLevel level = (ServerLevel) handle.level();
             int viewDistance = -1;
             ChunkMap chunkMap = null;
             if (entity instanceof Player) {
-                chunkMap = serverLevel.getChunkSource().chunkMap;
+                chunkMap = level.getChunkSource().chunkMap;
                 viewDistance = chunkMap.serverViewDistance;
                 chunkMap.serverViewDistance = -1;
             }
-            final ChunkMap chunkMapFinal = chunkMap;
-            final int viewDistanceFinal = viewDistance;
-            boolean success = serverLevel.addFreshEntity(getHandle(entity), custom);
-            if (chunkMapFinal != null) {
-                chunkMapFinal.serverViewDistance = viewDistanceFinal;
+            boolean success = level.addFreshEntity(handle, custom);
+            if (chunkMap != null) {
+                chunkMap.serverViewDistance = viewDistance;
             }
             isAdded.accept(success);
-        });
+        };
+        if (SpigotUtil.isFoliaServer()) {
+            final Location location = entity.getLocation();
+            CitizensAPI.getScheduler().runRegionTask(location.getWorld(), location.getBlockX() >> 4,
+                    location.getBlockZ() >> 4, task);
+        } else {
+            task.run();
+        }
     }
 
     @Override
@@ -542,7 +525,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public boolean canNavigateTo(final org.bukkit.entity.Entity entity, final Location dest,
-                                 final NavigatorParameters params) {
+            final NavigatorParameters params) {
         final PathNavigation navigation = getNavigation(entity);
         return navigation.createPath(BlockPos.containing(dest.getX(), dest.getY(), dest.getZ()), 1) != null;
     }
@@ -560,28 +543,28 @@ public class NMSImpl implements NMSBridge {
         // TODO: filtering is slow at the moment
         ServerEntity tracker = new ServerEntity((ServerLevel) handle.level(), handle, handle.getType().updateInterval(),
                 handle.getType().trackDeltas(), new Synchronizer() {
-            @Override
-            public void sendToTrackingPlayers(Packet<? super ClientGamePacketListener> arg0) {
-                agg.send(arg0);
-            }
+                    @Override
+                    public void sendToTrackingPlayers(Packet<? super ClientGamePacketListener> arg0) {
+                        agg.send(arg0);
+                    }
 
-            @Override
-            public void sendToTrackingPlayersAndSelf(Packet<? super ClientGamePacketListener> arg0) {
-                agg.send(arg0);
-            }
+                    @Override
+                    public void sendToTrackingPlayersAndSelf(Packet<? super ClientGamePacketListener> arg0) {
+                        agg.send(arg0);
+                    }
 
-            @Override
-            public void sendToTrackingPlayersFiltered(Packet<? super ClientGamePacketListener> arg0,
-                                                      Predicate<ServerPlayer> arg1) {
-                agg.send(arg0, uuid -> arg1.test((ServerPlayer) getHandle(Bukkit.getEntity(uuid))));
-            }
+                    @Override
+                    public void sendToTrackingPlayersFiltered(Packet<? super ClientGamePacketListener> arg0,
+                            Predicate<ServerPlayer> arg1) {
+                        agg.send(arg0, uuid -> arg1.test((ServerPlayer) getHandle(Bukkit.getEntity(uuid))));
+                    }
 
-            @Override
-            public void sendToTrackingPlayersFilteredAndSelf(Packet<? super ClientGamePacketListener> arg0,
-                                                             Predicate<ServerPlayer> arg1) {
-                agg.send(arg0, uuid -> arg1.test((ServerPlayer) getHandle(Bukkit.getEntity(uuid))));
-            }
-        }, linked);
+                    @Override
+                    public void sendToTrackingPlayersFilteredAndSelf(Packet<? super ClientGamePacketListener> arg0,
+                            Predicate<ServerPlayer> arg1) {
+                        agg.send(arg0, uuid -> arg1.test((ServerPlayer) getHandle(Bukkit.getEntity(uuid))));
+                    }
+                }, linked);
         Map<EquipmentSlot, ItemStack> equipment = Maps.newEnumMap(EquipmentSlot.class);
         return new EntityPacketTracker() {
             @Override
@@ -662,7 +645,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public BlockBreaker getBlockBreaker(org.bukkit.entity.Entity entity, org.bukkit.block.Block targetBlock,
-                                        BlockBreakerConfiguration config) {
+            BlockBreakerConfiguration config) {
         return new CitizensBlockBreaker(entity, targetBlock, config);
     }
 
@@ -867,7 +850,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public MCNavigator getTargetNavigator(org.bukkit.entity.Entity entity, Iterable<Vector> nodes,
-                                          final NavigatorParameters params) {
+            final NavigatorParameters params) {
         List<Node> list = Lists.<Node> newArrayList(Iterables.<Vector, Node> transform(nodes,
                 input -> new Node(input.getBlockX(), input.getBlockY(), input.getBlockZ())));
         Node last = list.size() > 0 ? list.get(list.size() - 1) : null;
@@ -877,13 +860,13 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final Location dest,
-                                          final NavigatorParameters params) {
+            final NavigatorParameters params) {
         return getTargetNavigator(entity, params,
                 input -> input.moveTo(dest.getX(), dest.getY(), dest.getZ(), params.speedModifier()));
     }
 
     private MCNavigator getTargetNavigator(final org.bukkit.entity.Entity entity, final NavigatorParameters params,
-                                           final Function<PathNavigation, Boolean> function) {
+            final Function<PathNavigation, Boolean> function) {
         net.minecraft.world.entity.Entity raw = getHandle(entity);
         raw.setOnGround(true);
         // not sure of a better way around this - if onGround is false, then
@@ -977,7 +960,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public TargetNavigator getTargetNavigator(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity target,
-                                              NavigatorParameters parameters) {
+            NavigatorParameters parameters) {
         PathNavigation navigation = getNavigation(entity);
         return navigation == null ? null : new MCTargetNavigator(entity, navigation, target, parameters);
     }
@@ -1255,7 +1238,7 @@ public class NMSImpl implements NMSBridge {
             double yaw = distanceXZ == 0 ? 0 : Math.toDegrees(Math.acos(xDiff / distanceXZ));
             double pitch = distanceY == 0 ? 0
                     : Math.toDegrees(Math.acos(yDiff / distanceY))
-                    - (handle.getBukkitEntity().getType() == EntityType.PHANTOM ? 45 : 90);
+                            - (handle.getBukkitEntity().getType() == EntityType.PHANTOM ? 45 : 90);
             if (zDiff < 0.0) {
                 yaw += Math.abs(180 - yaw) * 2;
             }
@@ -1368,7 +1351,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void positionInteractionText(org.bukkit.entity.Player player, org.bukkit.entity.Entity entity,
-                                        org.bukkit.entity.Entity mount, double offset) {
+            org.bukkit.entity.Entity mount, double offset) {
         offset += getRidingHeightOffset(entity, mount);
         sendPacket(player,
                 new ClientboundBundlePacket(List.of(
@@ -1441,16 +1424,21 @@ public class NMSImpl implements NMSBridge {
         Entity handle = getHandle(entity);
         ChunkMap cm = ((ServerLevel) handle.level()).getChunkSource().chunkMap;
         TrackedEntity entry;
-        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+        if (SpigotUtil.isFoliaServer()) {
             try {
                 ServerLevel server = (ServerLevel) getHandle(entity).level();
                 entry = getTrackedEntityFolia(handle);
-                if (entry == null) return;
+                if (entry == null)
+                    return;
                 entry.broadcastRemoved();
                 CitizensEntityTracker newTracker = new CitizensEntityTracker(server.getChunkSource().chunkMap, entry);
-                setTrackedEntityFolia(handle, newTracker);
+                try {
+                    ENTITY_TRACKER_SETTER_FOLIA.invoke(entity, newTracker);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
             } catch (Exception exception) {
-                exception.printStackTrace(System.err);
+                exception.printStackTrace();
             }
             return;
         }
@@ -1481,7 +1469,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void sendPositionUpdate(org.bukkit.entity.Entity from, Iterable<Player> to, boolean position, Float bodyYaw,
-                                   Float pitch, Float headYaw) {
+            Float pitch, Float headYaw) {
         List<Packet<?>> toSend = getPositionUpdate(from, position, bodyYaw, pitch, headYaw);
         for (Player dest : to) {
             sendPackets(dest, toSend);
@@ -1654,15 +1642,10 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
-        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
-            if (location.getWorld() == entity.getWorld()
-                    && CitizensAPI.getScheduler().isOnOwnerThread(entity)
-                    && CitizensAPI.getScheduler().isOnOwnerThread(location)) {
-                getHandle(entity).snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
-                        location.getPitch());
-            } else {
-                net.citizensnpcs.api.util.SpigotUtil.teleportAsync(entity, location);
-            }
+        if (SpigotUtil.isFoliaServer()
+                && (location.getWorld() != entity.getWorld() || !CitizensAPI.getScheduler().isOnOwnerThread(location)
+                        || !CitizensAPI.getScheduler().isOnOwnerThread(entity))) {
+            SpigotUtil.teleportAsync(entity, location);
             return;
         }
         getHandle(entity).snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
@@ -2086,7 +2069,7 @@ public class NMSImpl implements NMSBridge {
         private CraftAnvilView bukkitEntity;
 
         private CitizensAnvilMenu(int i, net.minecraft.world.entity.player.Inventory playerinventory,
-                                  ContainerLevelAccess containeraccess, Inventory anvil) {
+                ContainerLevelAccess containeraccess, Inventory anvil) {
             super(i, playerinventory, containeraccess);
             this.anvil = anvil;
         }
@@ -2115,7 +2098,7 @@ public class NMSImpl implements NMSBridge {
         private final Inventory wrapped;
 
         public CitizensInventoryAnvil(Location location, Container inventory, Container resultInventory,
-                                      AnvilMenu container, Inventory wrapped) {
+                AnvilMenu container, Inventory wrapped) {
             super(location, inventory, resultInventory);
             this.wrapped = wrapped;
         }
@@ -2139,7 +2122,7 @@ public class NMSImpl implements NMSBridge {
         private final org.bukkit.entity.Entity target;
 
         private MCTargetNavigator(org.bukkit.entity.Entity entity, PathNavigation navigation,
-                                  org.bukkit.entity.Entity target, NavigatorParameters parameters) {
+                org.bukkit.entity.Entity target, NavigatorParameters parameters) {
             this.entity = entity;
             this.navigation = navigation;
             this.target = target;
@@ -2232,7 +2215,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void checkAndUpdateHeight(LivingEntity living, EntityDataAccessor<?> datawatcherobject,
-                                            Consumer<EntityDataAccessor<?>> cb) {
+            Consumer<EntityDataAccessor<?>> cb) {
         EntityDimensions size;
         try {
             size = (EntityDimensions) SIZE_FIELD_GETTER.invoke(living);
@@ -2344,7 +2327,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static List<Packet<?>> getPositionUpdate(org.bukkit.entity.Entity from, boolean position, Float bodyYaw,
-                                                    Float pitch, Float headYaw) {
+            Float pitch, Float headYaw) {
         Entity handle = getHandle(from);
         if (bodyYaw == null) {
             bodyYaw = handle.getYRot();
@@ -2355,11 +2338,10 @@ public class NMSImpl implements NMSBridge {
         List<Packet<?>> toSend = Lists.newArrayList();
         if (position) {
             TrackedEntity entry = null;
-            if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
+            if (SpigotUtil.isFoliaServer()) {
                 entry = getTrackedEntityFolia(handle);
             } else {
-                entry = ((ServerLevel) handle.level()).getChunkSource().chunkMap.entityMap
-                        .get(handle.getId());
+                entry = ((ServerLevel) handle.level()).getChunkSource().chunkMap.entityMap.get(handle.getId());
             }
             if (entry == null) {
                 Messaging.debug("Null tracker entity for ", from);
@@ -2408,6 +2390,15 @@ public class NMSImpl implements NMSBridge {
             return snd;
         Reference<SoundEvent> ref = BuiltInRegistries.SOUND_EVENT.get(Identifier.tryParse(data)).orElse(null);
         return ref == null ? snd : ref.value();
+    }
+
+    private static TrackedEntity getTrackedEntityFolia(Entity entity) {
+        try {
+            return (TrackedEntity) ENTITY_TRACKER_GETTER_FOLIA.invoke(entity);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return null;
+        }
     }
 
     public static boolean isLeashed(NPC npc, Supplier<Boolean> isLeashed, Mob entity) {
@@ -2563,7 +2554,7 @@ public class NMSImpl implements NMSBridge {
                 Vec3 vec3d1 = entity.getDeltaMovement();
                 if ((entity.horizontalCollision || NMS.shouldJump(entity.getBukkitEntity()))
                         && (entity.onClimbable() || entity.getInBlockState().is(Blocks.POWDER_SNOW)
-                        && PowderSnowBlock.canEntityWalkOnPowderSnow(entity))) {
+                                && PowderSnowBlock.canEntityWalkOnPowderSnow(entity))) {
                     vec3d1 = new Vec3(vec3d1.x, 0.2, vec3d1.z);
                 }
                 double d0 = vec3d1.y;
@@ -2845,6 +2836,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle ENTITY_NAVIGATION = NMS.getFirstSetter(Mob.class, PathNavigation.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static MethodHandle ENTITY_REGISTRY_SETTER;
+    private static final MethodHandle ENTITY_TRACKER_GETTER_FOLIA = NMS.getGetter(Entity.class, "trackedEntity", false);
+    private static final MethodHandle ENTITY_TRACKER_SETTER_FOLIA = NMS.getSetter(Entity.class, "trackedEntity", false);
     private static final MethodHandle FALLING_BLOCK_STATE_SETTER = NMS.getFirstSetter(FallingBlockEntity.class,
             BlockState.class);
     private static final MethodHandle FISHING_HOOK_LIFE = NMS.getSetter(FishingHook.class, "i");
@@ -2898,8 +2891,7 @@ public class NMSImpl implements NMSBridge {
     private static final Collection<MethodHandle> TRACKED_ENTITY_SETTERS = NMS.getSettersOfType(Entity.class,
             TrackedEntity.class);
     public static final MethodHandle WAITING_FOR_RESPAWN = NMS.getSetter(ServerGamePacketListenerImpl.class, "Y");
-    private static final MethodHandle ENTITY_TRACKER_GETTER_FOLIA = NMS.getGetter(Entity.class, "trackedEntity", false);
-    private static final MethodHandle ENTITY_TRACKER_SETTER_FOLIA = NMS.getSetter(Entity.class, "trackedEntity", false);
+
     static {
         try {
             ENTITY_REGISTRY = new CustomEntityRegistry(BuiltInRegistries.ENTITY_TYPE);
@@ -2908,22 +2900,6 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
-        }
-    }
-    private static TrackedEntity getTrackedEntityFolia(Entity entity) {
-        try {
-            return (TrackedEntity) ENTITY_TRACKER_GETTER_FOLIA.invoke(entity);
-        } catch (Throwable t) {
-            t.printStackTrace(System.err);
-            return null;
-        }
-    }
-
-    private static void setTrackedEntityFolia(Entity entity, TrackedEntity trackedEntity) {
-        try {
-            ENTITY_TRACKER_SETTER_FOLIA.invoke(entity, trackedEntity);
-        } catch (Throwable t) {
-            t.printStackTrace(System.err);
         }
     }
 }

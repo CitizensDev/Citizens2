@@ -88,12 +88,9 @@ public class NMS {
         BRIDGE.activate(entity);
     }
 
-    public static boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
-        return BRIDGE.addEntityToWorld(entity, custom);
-    }
-
-    public static void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, Consumer<Boolean> isAdded) {
-        BRIDGE.addEntityToWorld(entity, custom, isAdded);
+    public static void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom,
+            Consumer<Boolean> callback) {
+        BRIDGE.addEntityToWorld(entity, custom, callback);
     }
 
     public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {

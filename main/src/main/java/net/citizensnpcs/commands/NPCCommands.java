@@ -921,7 +921,7 @@ public class NPCCommands {
         }
         if (temporaryDuration != null) {
             NPC temp = npc;
-            CitizensAPI.getScheduler().runEntityTaskLater(temp.getEntity(), () -> {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
                 if (temporaryRegistry.getByUniqueId(temp.getUniqueId()) == temp) {
                     temp.destroy();
                 }
@@ -3240,14 +3240,14 @@ public class NPCCommands {
             return;
         } else if (url != null || file != null) {
             Messaging.sendTr(sender, Messages.FETCHING_SKIN, url == null ? file : url);
-            CitizensAPI.getScheduler().runTaskAsynchronously(() -> {
+            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), () -> {
                 try {
                     JSONObject data = null;
                     if (file != null) {
                         File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
                         File skin = new File(skinsFolder, Placeholders.replace(file, sender, npc));
                         if (!skin.exists() || !skin.isFile() || skin.isHidden() || !isInDirectory(skin, skinsFolder)) {
-                            CitizensAPI.getScheduler().runTask(
+                            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
                                     () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
                             return;
                         }
@@ -3262,7 +3262,7 @@ public class NPCCommands {
                     String textureEncoded = (String) texture.get("value");
                     String signature = (String) texture.get("signature");
 
-                    CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
+                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
                         try {
                             trait.setSkinPersistent(uuid, signature, textureEncoded);
                             Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url == null ? file : url);
@@ -3274,7 +3274,7 @@ public class NPCCommands {
                     if (Messaging.isDebugging()) {
                         t.printStackTrace();
                     }
-                    CitizensAPI.getScheduler().runTask(() -> Messaging.sendErrorTr(sender,
+                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> Messaging.sendErrorTr(sender,
                             Messages.ERROR_SETTING_SKIN_URL, url == null ? file : url));
                 }
             });
@@ -3654,7 +3654,7 @@ public class NPCCommands {
             to = to.clone().add(to.getDirection().setY(0));
             to.setDirection(to.getDirection().multiply(-1)).setPitch(0);
         }
-        SpigotUtil.teleportAsync(player, to, TeleportCause.COMMAND);
+        player.teleport(to, TeleportCause.COMMAND);
         Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
     }
 
@@ -3755,7 +3755,7 @@ public class NPCCommands {
             throw new CommandException(Messages.FROM_ENTITY_NOT_FOUND);
         if (to == null)
             throw new CommandException(Messages.TPTO_ENTITY_NOT_FOUND);
-        SpigotUtil.teleportAsync(from, to.getLocation());
+        from.teleport(to);
         Messaging.sendTr(sender, Messages.TPTO_SUCCESS);
     }
 

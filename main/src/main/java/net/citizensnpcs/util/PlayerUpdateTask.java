@@ -1,29 +1,29 @@
 package net.citizensnpcs.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.PacketNPC;
 
 public class PlayerUpdateTask extends SchedulerRunnable {
-    private final java.util.Queue<PlayerTick> players = new java.util.concurrent.ConcurrentLinkedQueue<>();
-    private final Set<UUID> uuids = java.util.concurrent.ConcurrentHashMap.newKeySet();
+    private final List<PlayerTick> players = Lists.newArrayList();
+    private final Set<UUID> uuids = Sets.newHashSet();
 
     @Override
     public void cancel() {
@@ -93,20 +93,20 @@ public class PlayerUpdateTask extends SchedulerRunnable {
 
         @Override
         public void run() {
-            net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTask(entity, tick);
+            CitizensAPI.getScheduler().runEntityTask(entity, tick);
         }
     }
 
-    public static void deregister(org.bukkit.entity.Entity entity) {
+    public static void deregister(Entity entity) {
         PLAYERS_PENDING_ADD.remove(entity);
         PLAYERS_PENDING_REMOVE.add(entity.getUniqueId());
     }
 
-    public static void register(org.bukkit.entity.Entity entity) {
+    public static void register(Entity entity) {
         PLAYERS_PENDING_REMOVE.remove(entity.getUniqueId());
         PLAYERS_PENDING_ADD.add(entity);
     }
 
-    private static final java.util.Queue<Entity> PLAYERS_PENDING_ADD = new java.util.concurrent.ConcurrentLinkedQueue<>();
-    private static final java.util.Queue<UUID> PLAYERS_PENDING_REMOVE = new java.util.concurrent.ConcurrentLinkedQueue<>();
+    private static final Queue<Entity> PLAYERS_PENDING_ADD = new ConcurrentLinkedQueue<>();
+    private static final Queue<UUID> PLAYERS_PENDING_REMOVE = new ConcurrentLinkedQueue<>();
 }

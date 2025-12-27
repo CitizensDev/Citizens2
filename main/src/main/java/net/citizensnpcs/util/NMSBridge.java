@@ -3,6 +3,7 @@ package net.citizensnpcs.util;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -52,9 +53,7 @@ public interface NMSBridge {
     default void activate(Entity entity) {
     }
 
-    public boolean addEntityToWorld(Entity entity, SpawnReason custom);
-
-    public void addEntityToWorld(Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded);
+    public void addEntityToWorld(Entity entity, SpawnReason custom, Consumer<Boolean> callback);
 
     public void addOrRemoveFromPlayerList(Entity entity, boolean remove);
 

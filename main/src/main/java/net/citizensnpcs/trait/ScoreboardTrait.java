@@ -24,6 +24,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
@@ -66,7 +67,8 @@ public class ScoreboardTrait extends Trait {
     }
 
     public void createTeam(String entityName) {
-        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) return; // Not Supported on Folia
+        if (SpigotUtil.isFoliaServer())
+            return; // not supported on Folia
         String teamName = Util.getTeamName(npc.getUniqueId());
         npc.data().set(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, teamName);
         Scoreboard scoreboard = Util.getDummyScoreboard();
@@ -100,7 +102,8 @@ public class ScoreboardTrait extends Trait {
 
     @Override
     public void onDespawn(DespawnReason reason) {
-        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) return; // Not Supported on Folia
+        if (SpigotUtil.isFoliaServer())
+            return; // Not Supported on Folia
         previousGlowingColor = null;
         String name = lastName;
         String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
