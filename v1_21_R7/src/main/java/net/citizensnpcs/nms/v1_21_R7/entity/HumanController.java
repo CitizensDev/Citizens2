@@ -54,11 +54,12 @@ public class HumanController extends AbstractEntityController {
                 e.printStackTrace();
             }
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+        CitizensAPI.getScheduler().runTaskLater(() -> {
+            if (getBukkitEntity() == null) return;
             if (getBukkitEntity() == null || !getBukkitEntity().isValid()
                     || getBukkitEntity() != handle.getBukkitEntity())
                 return;
-            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList());
+            CitizensAPI.getScheduler().runEntityTask(getBukkitEntity(), () -> NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList()));
         }, 20);
         handle.getBukkitEntity().setSleepingIgnored(true);
         return handle.getBukkitEntity();

@@ -835,7 +835,7 @@ public class NMS {
     }
 
     public static void remove(Entity entity) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity.getLocation())) {
             BRIDGE.remove(entity);
         } else {
             CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.remove(entity));
@@ -851,7 +851,7 @@ public class NMS {
     }
 
     public static void removeFromWorld(org.bukkit.entity.Entity entity) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity.getLocation())) {
             BRIDGE.removeFromWorld(entity);
         } else {
             CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.removeFromWorld(entity));
@@ -862,7 +862,7 @@ public class NMS {
         if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
             BRIDGE.removeHookIfNecessary(entity);
         } else {
-            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.replaceTrackerEntry(entity));
+            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.removeHookIfNecessary(entity));
         }
     }
 

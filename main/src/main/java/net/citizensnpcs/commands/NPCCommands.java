@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.bukkit.Art;
@@ -903,10 +905,10 @@ public class NPCCommands {
         } else {
             npc = registry.createNPC(type, name);
         }
-        String msg = "Created [[" + npc.getName() + "]] (ID [[" + npc.getId() + "]])";
+        AtomicReference<String> atomicMsg = new AtomicReference<>("Created [[" + npc.getName() + "]] (ID [[" + npc.getId() + "]])");
 
         if (args.hasFlag('b')) {
-            msg += " as a baby";
+            atomicMsg.set(atomicMsg.get() + " as a baby");
             npc.getOrAddTrait(Age.class).setAge(-24000);
         }
         if (args.hasFlag('s')) {
@@ -921,7 +923,7 @@ public class NPCCommands {
         }
         if (temporaryDuration != null) {
             NPC temp = npc;
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            CitizensAPI.getScheduler().runEntityTaskLater(temp.getEntity(), () -> {
                 if (temporaryRegistry.getByUniqueId(temp.getUniqueId()) == temp) {
                     temp.destroy();
                 }
@@ -932,7 +934,7 @@ public class NPCCommands {
         if (args.hasFlag('p')) {
             npc.addTrait(PacketNPC.class);
         }
-        Location spawnLoc = args.getSenderLocation();
+        AtomicReference<Location> atomicSpawnLoc = new AtomicReference<>(args.getSenderLocation());
 
         CommandSenderCreateNPCEvent event = sender instanceof Player ? new PlayerCreateNPCEvent((Player) sender, npc)
                 : new CommandSenderCreateNPCEvent(sender, npc);
@@ -945,58 +947,66 @@ public class NPCCommands {
             }
             throw new CommandException(reason);
         }
+        AtomicBoolean loadChunk = new AtomicBoolean(false);
         if (at != null) {
-            spawnLoc = at;
-            spawnLoc.getChunk().load();
+            atomicSpawnLoc.set(at);
+            loadChunk.set(true);
         }
-        if (args.hasFlag('c') && spawnLoc != null) {
-            spawnLoc = Util.getCenterLocation(spawnLoc.getBlock());
-        }
-        if (traits != null) {
-            Iterable<String> parts = Splitter.on(',').trimResults().split(traits);
-            StringBuilder builder = new StringBuilder();
-            for (String tr : parts) {
-                Trait trait = CitizensAPI.getTraitFactory().getTrait(tr);
-                if (trait == null) {
-                    continue;
-                }
-                npc.addTrait(trait);
-                builder.append(StringHelper.wrap(tr) + ", ");
+        NPC finalNpc = npc;
+        CitizensAPI.getScheduler().runRegionTask(atomicSpawnLoc.get(), () -> {
+            Location spawnLoc = atomicSpawnLoc.get();
+            if (loadChunk.get()) {
+                spawnLoc.getChunk().load();
             }
-            if (builder.length() > 0) {
-                builder.delete(builder.length() - 2, builder.length());
+            if (args.hasFlag('c') && spawnLoc != null) {
+                spawnLoc = Util.getCenterLocation(spawnLoc.getBlock());
             }
-            msg += " with traits " + builder.toString();
-        }
-        if (templateName != null) {
-            Iterable<String> parts = Splitter.on(',').trimResults().split(templateName);
-            StringBuilder builder = new StringBuilder();
-            for (String part : parts) {
-                if (part.contains(":")) {
-                    Template template = templateRegistry.getTemplateByKey(SpigotUtil.getKey(part));
-                    if (template == null)
+            if (traits != null) {
+                Iterable<String> parts = Splitter.on(',').trimResults().split(traits);
+                StringBuilder builder = new StringBuilder();
+                for (String tr : parts) {
+                    Trait trait = CitizensAPI.getTraitFactory().getTrait(tr);
+                    if (trait == null) {
                         continue;
-                    template.apply(npc);
-                    builder.append(StringHelper.wrap(part) + ", ");
-                    continue;
+                    }
+                    finalNpc.addTrait(trait);
+                    builder.append(StringHelper.wrap(tr) + ", ");
                 }
-                Collection<Template> templates = templateRegistry.getTemplates(part);
-                if (templates.size() != 1)
-                    continue;
-                templates.iterator().next().apply(npc);
-                builder.append(StringHelper.wrap(part) + ", ");
+                if (builder.length() > 0) {
+                    builder.delete(builder.length() - 2, builder.length());
+                }
+                atomicMsg.set(atomicMsg.get() + " with traits " + builder.toString());
             }
-            if (builder.length() > 0) {
-                builder.delete(builder.length() - 2, builder.length());
+            if (templateName != null) {
+                Iterable<String> parts = Splitter.on(',').trimResults().split(templateName);
+                StringBuilder builder = new StringBuilder();
+                for (String part : parts) {
+                    if (part.contains(":")) {
+                        Template template = templateRegistry.getTemplateByKey(SpigotUtil.getKey(part));
+                        if (template == null)
+                            continue;
+                        template.apply(finalNpc);
+                        builder.append(StringHelper.wrap(part) + ", ");
+                        continue;
+                    }
+                    Collection<Template> templates = templateRegistry.getTemplates(part);
+                    if (templates.size() != 1)
+                        continue;
+                    templates.iterator().next().apply(finalNpc);
+                    builder.append(StringHelper.wrap(part) + ", ");
+                }
+                if (builder.length() > 0) {
+                    builder.delete(builder.length() - 2, builder.length());
+                }
+                atomicMsg.set(atomicMsg.get() + " with templates " + builder.toString());
             }
-            msg += " with templates " + builder.toString();
-        }
-        if (!args.hasFlag('u') && spawnLoc != null) {
-            npc.spawn(spawnLoc, SpawnReason.CREATE);
-        }
-        selector.select(sender, npc);
-        history.add(sender, new CreateNPCHistoryItem(npc));
-        Messaging.send(sender, msg + '.');
+            if (!args.hasFlag('u') && spawnLoc != null) {
+                finalNpc.spawn(spawnLoc, SpawnReason.CREATE);
+            }
+            selector.select(sender, finalNpc);
+            history.add(sender, new CreateNPCHistoryItem(finalNpc));
+            Messaging.send(sender, atomicMsg.get() + '.');
+        });
     }
 
     @Command(
@@ -3240,14 +3250,14 @@ public class NPCCommands {
             return;
         } else if (url != null || file != null) {
             Messaging.sendTr(sender, Messages.FETCHING_SKIN, url == null ? file : url);
-            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), () -> {
+            CitizensAPI.getScheduler().runTaskAsynchronously(() -> {
                 try {
                     JSONObject data = null;
                     if (file != null) {
                         File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
                         File skin = new File(skinsFolder, Placeholders.replace(file, sender, npc));
                         if (!skin.exists() || !skin.isFile() || skin.isHidden() || !isInDirectory(skin, skinsFolder)) {
-                            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
+                            CitizensAPI.getScheduler().runTask(
                                     () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
                             return;
                         }
@@ -3262,7 +3272,7 @@ public class NPCCommands {
                     String textureEncoded = (String) texture.get("value");
                     String signature = (String) texture.get("signature");
 
-                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
+                    CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
                         try {
                             trait.setSkinPersistent(uuid, signature, textureEncoded);
                             Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url == null ? file : url);
@@ -3274,7 +3284,7 @@ public class NPCCommands {
                     if (Messaging.isDebugging()) {
                         t.printStackTrace();
                     }
-                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> Messaging.sendErrorTr(sender,
+                    CitizensAPI.getScheduler().runTask(() -> Messaging.sendErrorTr(sender,
                             Messages.ERROR_SETTING_SKIN_URL, url == null ? file : url));
                 }
             });
@@ -3659,7 +3669,7 @@ public class NPCCommands {
             to = to.clone().add(to.getDirection().setY(0));
             to.setDirection(to.getDirection().multiply(-1)).setPitch(0);
         }
-        player.teleport(to, TeleportCause.COMMAND);
+        SpigotUtil.teleportAsync(player, to, TeleportCause.COMMAND);
         Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
     }
 
@@ -3760,7 +3770,7 @@ public class NPCCommands {
             throw new CommandException(Messages.FROM_ENTITY_NOT_FOUND);
         if (to == null)
             throw new CommandException(Messages.TPTO_ENTITY_NOT_FOUND);
-        from.teleport(to);
+        SpigotUtil.teleportAsync(from, to.getLocation());
         Messaging.sendTr(sender, Messages.TPTO_SUCCESS);
     }
 
