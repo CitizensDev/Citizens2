@@ -249,6 +249,7 @@ import net.citizensnpcs.trait.versioned.EnderDragonTrait;
 import net.citizensnpcs.trait.versioned.FoxTrait;
 import net.citizensnpcs.trait.versioned.FrogTrait;
 import net.citizensnpcs.trait.versioned.GoatTrait;
+import net.citizensnpcs.trait.versioned.ItemDisplayTrait;
 import net.citizensnpcs.trait.versioned.LlamaTrait;
 import net.citizensnpcs.trait.versioned.MannequinTrait;
 import net.citizensnpcs.trait.versioned.MushroomCowTrait;
@@ -1031,6 +1032,7 @@ public class NMSImpl implements NMSBridge {
         registerTraitWithCommand(manager, FoxTrait.class);
         registerTraitWithCommand(manager, FrogTrait.class);
         registerTraitWithCommand(manager, GoatTrait.class);
+        registerTraitWithCommand(manager, ItemDisplayTrait.class);
         registerTraitWithCommand(manager, LlamaTrait.class);
         registerTraitWithCommand(manager, MannequinTrait.class);
         registerTraitWithCommand(manager, MushroomCowTrait.class);
