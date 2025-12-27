@@ -518,10 +518,10 @@ public class CitizensNPC extends AbstractNPC {
                 getEntity().setGlowing(data().get(NPC.Metadata.GLOWING, false));
             }
             if (SUPPORT_SILENT && data().has(NPC.Metadata.SILENT)) {
-                getEntity().setSilent(Boolean.parseBoolean(data().get(NPC.Metadata.SILENT).toString()));
+                getEntity().setSilent(data().get(NPC.Metadata.SILENT, false));
             }
             if (data().has(NPC.Metadata.AGGRESSIVE)) {
-                NMS.setAggressive(getEntity(), data().<Boolean> get(NPC.Metadata.AGGRESSIVE));
+                NMS.setAggressive(getEntity(), data().get(NPC.Metadata.AGGRESSIVE, false));
             }
             boolean isLiving = getEntity() instanceof LivingEntity;
             if (isUpdating(NPCUpdate.PACKET)) {

@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import net.citizensnpcs.api.CitizensAPI;

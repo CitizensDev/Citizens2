@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 
@@ -106,16 +105,15 @@ public class Waypoint {
         for (int i = start; i < triggers.size(); i++) {
             WaypointTrigger trigger = triggers.get(i);
             trigger.onWaypointReached(npc, location.clone());
-            if (!(trigger instanceof DelayTrigger)) {
+            if (!(trigger instanceof DelayTrigger))
                 continue;
-            }
+
             int delay = ((DelayTrigger) trigger).getDelay();
-            if (delay <= 0) {
+            if (delay <= 0)
                 continue;
-            }
+
             int newStart = i + 1;
-            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), () -> runTriggers(npc, newStart),
-                    delay);
+            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), () -> runTriggers(npc, newStart), delay);
             break;
         }
     }

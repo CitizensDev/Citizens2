@@ -56,11 +56,11 @@ import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
-public class PacketEventsListener implements Listener {
+public class PacketEventsHook implements Listener {
     private final Map<UUID, MirrorTrait> mirrorTraits = Maps.newConcurrentMap();
     private final Map<Integer, RotationTrait> rotationTraits = Maps.newConcurrentMap();
 
-    public PacketEventsListener(Citizens plugin) {
+    public PacketEventsHook(Citizens plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
         PacketEvents.getAPI().init();
         PacketEvents.getAPI().getEventManager().registerListener(new PacketListener() {

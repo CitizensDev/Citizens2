@@ -94,6 +94,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private BehaviorRegistry behaviorRegistry;
     private final CommandManager commands = new CommandManager();
     private Settings config;
+    private DenizenHook denizenHook;
     private boolean enabled;
     private ExpressionRegistry expressionRegistry;
     private LocationLookup locationLookup;
@@ -148,7 +149,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     };
     private CitizensNPCRegistry npcRegistry;
     private boolean packetEventsEnabled;
-    private PacketEventsListener packetEventsListener;
+    private PacketEventsHook packetEventsHook;
     private SchedulerTask playerUpdateTask;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
@@ -157,6 +158,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private final Map<String, NPCRegistry> storedRegistries = Maps.newHashMap();
     private TemplateRegistry templateRegistry;
     private NPCRegistry temporaryRegistry;
+
     private CitizensTraitFactory traitFactory;
 
     @Override
@@ -292,8 +294,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return getClassLoader();
     }
 
-    public PacketEventsListener getPacketEventsListener() {
-        return packetEventsListener;
+    public PacketEventsHook getPacketEventsListener() {
+        return packetEventsHook;
     }
 
     public StoredShops getShops() {
@@ -566,7 +568,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             RegisteredServiceProvider<Economy> provider = Bukkit.getServicesManager().getRegistration(Economy.class);
             if (provider != null && provider.getProvider() != null) {
                 Economy economy = provider.getProvider();
-                Bukkit.getPluginManager().registerEvents(new PaymentListener(economy), this);
+                Bukkit.getPluginManager().registerEvents(new PaymentHook(economy), this);
             }
             Messaging.logTr(Messages.LOADED_ECONOMY);
         } catch (NoClassDefFoundError e) {
@@ -648,13 +650,23 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     }
 
     private class CitizensLoadTask implements Runnable {
+
         @Override
         public void run() {
             if (packetEventsEnabled) {
                 try {
-                    packetEventsListener = new PacketEventsListener(Citizens.this);
+                    packetEventsHook = new PacketEventsHook(Citizens.this);
                 } catch (Throwable t) {
                     Messaging.severe("PacketEvents support not enabled due to following error:");
+                    t.printStackTrace();
+                }
+            }
+            if (Bukkit.getPluginManager().getPlugin("Denizen") != null
+                    && Bukkit.getPluginManager().getPlugin("Denizen").isEnabled()) {
+                try {
+                    denizenHook = new DenizenHook(Citizens.this);
+                } catch (Throwable t) {
+                    Messaging.severe("Denizen support not enabled due to following error:");
                     t.printStackTrace();
                 }
             }
