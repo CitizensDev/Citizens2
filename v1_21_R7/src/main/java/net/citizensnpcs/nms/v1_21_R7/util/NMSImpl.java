@@ -1435,7 +1435,7 @@ public class NMSImpl implements NMSBridge {
                 entry.broadcastRemoved();
                 CitizensEntityTracker newTracker = new CitizensEntityTracker(server.getChunkSource().chunkMap, entry);
                 try {
-                    ENTITY_TRACKER_SETTER_FOLIA.invoke(entity, newTracker);
+                    ENTITY_TRACKER_SETTER_FOLIA.invoke(handle, newTracker);
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
