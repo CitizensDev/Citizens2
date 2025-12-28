@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v1_21_R7.entity;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_21_R7.CraftWorld;
 import org.bukkit.entity.Entity;
@@ -55,11 +54,12 @@ public class HumanController extends AbstractEntityController {
             }
         }
         CitizensAPI.getScheduler().runTaskLater(() -> {
-            if (getBukkitEntity() == null) return;
             if (getBukkitEntity() == null || !getBukkitEntity().isValid()
                     || getBukkitEntity() != handle.getBukkitEntity())
                 return;
-            CitizensAPI.getScheduler().runEntityTask(getBukkitEntity(), () -> NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList()));
+            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList());
+            CitizensAPI.getScheduler().runEntityTask(getBukkitEntity(),
+                    () -> NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList()));
         }, 20);
         handle.getBukkitEntity().setSleepingIgnored(true);
         return handle.getBukkitEntity();

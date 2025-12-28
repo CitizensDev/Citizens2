@@ -10,6 +10,7 @@ import com.mojang.datafixers.util.Pair;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.schedulers.SchedulerTask;
 import net.citizensnpcs.nms.v1_21_R5.util.ForwardingNPCHolder;
 import net.citizensnpcs.nms.v1_21_R5.util.NMSBoundingBox;
 import net.citizensnpcs.nms.v1_21_R5.util.NMSImpl;
@@ -58,7 +59,7 @@ public class AllayController extends MobEntityController {
 
     public static class EntityAllayNPC extends Allay implements NPCHolder {
         private final CitizensNPC npc;
-        private int taskId = -1;
+        private SchedulerTask taskId;
 
         public EntityAllayNPC(EntityType<? extends Allay> types, Level level) {
             this(types, level, null);
@@ -166,8 +167,8 @@ public class AllayController extends MobEntityController {
         protected InteractionResult mobInteract(Player var0, InteractionHand var1) {
             if (npc != null && npc.isProtected()) {
                 // prevent clientside prediction
-                if (taskId == -1) {
-                    taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+                if (taskId == null) {
+                    taskId = CitizensAPI.getScheduler().runEntityTaskLater(var0.getBukkitEntity(), () -> {
                         NMSImpl.sendPacket((org.bukkit.entity.Player) var0.getBukkitEntity(),
                                 new ClientboundSetEquipmentPacket(getId(),
                                         Lists.newArrayList(
@@ -176,7 +177,7 @@ public class AllayController extends MobEntityController {
                                                 Pair.of(EquipmentSlot.MAINHAND,
                                                         this.getItemInHand(InteractionHand.MAIN_HAND)))));
                         ((org.bukkit.entity.Player) var0.getBukkitEntity()).updateInventory();
-                        taskId = -1;
+                        taskId = null;
                     }, 2);
                 }
                 return InteractionResult.FAIL;

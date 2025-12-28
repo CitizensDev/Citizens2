@@ -56,6 +56,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         super(TargetType.LOCATION);
         this.params = params;
         this.npc = npc;
+        if (!MinecraftBlockExaminer.canStandIn(dest.getBlock())) {
+            dest = MinecraftBlockExaminer.findValidLocationAbove(dest, 2);
+        }
         destination = dest;
         // TODO: remove this constructor
         if (params.pathfinderType() == PathfinderType.CITIZENS_ASYNC) {

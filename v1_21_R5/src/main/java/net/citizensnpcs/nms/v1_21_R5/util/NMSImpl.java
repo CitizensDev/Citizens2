@@ -1813,7 +1813,7 @@ public class NMSImpl implements NMSBridge {
             warden.setPose(Pose.EMERGING);
             warden.playSound(SoundEvents.WARDEN_EMERGE, 5.0F, 1.0F);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> {
                 if (warden.hasPose(Pose.EMERGING)) {
                     warden.setPose(Pose.STANDING);
                 }
@@ -1825,7 +1825,7 @@ public class NMSImpl implements NMSBridge {
             warden.setPose(Pose.ROARING);
             warden.playSound(SoundEvents.WARDEN_ROAR, 3.0F, 1.0F);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> {
                 if (warden.hasPose(Pose.ROARING)) {
                     warden.setPose(Pose.STANDING);
                 }

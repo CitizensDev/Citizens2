@@ -1852,7 +1852,7 @@ public class NMSImpl implements NMSBridge {
             warden.setPose(Pose.EMERGING);
             warden.playSound(SoundEvents.WARDEN_EMERGE, 5.0F, 1.0F);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> {
                 if (warden.hasPose(Pose.EMERGING)) {
                     warden.setPose(Pose.STANDING);
                 }
@@ -1864,7 +1864,7 @@ public class NMSImpl implements NMSBridge {
             warden.setPose(Pose.ROARING);
             warden.playSound(SoundEvents.WARDEN_ROAR, 3.0F, 1.0F);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
+            CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> {
                 if (warden.hasPose(Pose.ROARING)) {
                     warden.setPose(Pose.STANDING);
                 }
@@ -2873,7 +2873,6 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
     private static MethodHandle SKULL_META_PROFILE;
     private static MethodHandle TEAM_FIELD;
-
     private static final Collection<MethodHandle> TRACKED_ENTITY_SETTERS = NMS.getSettersOfType(Entity.class,
             TrackedEntity.class);
 

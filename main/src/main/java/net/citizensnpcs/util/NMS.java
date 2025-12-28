@@ -843,7 +843,7 @@ public class NMS {
     }
 
     public static void removeFromServerPlayerList(Player player) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(player)) {
+        if (CitizensAPI.getScheduler().isOnOwnerThread(player.getLocation())) {
             BRIDGE.removeFromServerPlayerList(player);
         } else {
             CitizensAPI.getScheduler().runEntityTask(player, () -> BRIDGE.removeFromServerPlayerList(player));
@@ -851,7 +851,7 @@ public class NMS {
     }
 
     public static void removeFromWorld(org.bukkit.entity.Entity entity) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity.getLocation())) {
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
             BRIDGE.removeFromWorld(entity);
         } else {
             CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.removeFromWorld(entity));
