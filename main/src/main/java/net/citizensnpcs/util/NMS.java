@@ -94,7 +94,12 @@ public class NMS {
     }
 
     public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
-        BRIDGE.addOrRemoveFromPlayerList(entity, remove);
+        // It needs to call spawnChunkTracker, which must be called on the regional thread.
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity.getLocation())) {
+            BRIDGE.addOrRemoveFromPlayerList(entity, remove);
+        } else {
+            CitizensAPI.getScheduler().runRegionTask(entity.getLocation(), () -> BRIDGE.addOrRemoveFromPlayerList(entity, remove));
+        }
     }
 
     public static void attack(LivingEntity attacker, LivingEntity bukkitTarget) {
@@ -851,10 +856,11 @@ public class NMS {
     }
 
     public static void removeFromWorld(org.bukkit.entity.Entity entity) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
+        // It needs to call spawnChunkTracker, which must be called on the regional thread.
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity.getLocation())) {
             BRIDGE.removeFromWorld(entity);
         } else {
-            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.removeFromWorld(entity));
+            CitizensAPI.getScheduler().runRegionTask(entity.getLocation(), () -> BRIDGE.removeFromWorld(entity));
         }
     }
 
