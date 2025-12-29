@@ -94,11 +94,11 @@ public class NMS {
     }
 
     public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
-        // It needs to call spawnChunkTracker, which must be called on the regional thread.
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity.getLocation())) {
+        Location location = entity.getLocation();
+        if (CitizensAPI.getScheduler().isOnOwnerThread(location)) {
             BRIDGE.addOrRemoveFromPlayerList(entity, remove);
         } else {
-            CitizensAPI.getScheduler().runRegionTask(entity.getLocation(), () -> BRIDGE.addOrRemoveFromPlayerList(entity, remove));
+            CitizensAPI.getScheduler().runRegionTask(location, () -> BRIDGE.addOrRemoveFromPlayerList(entity, remove));
         }
     }
 
@@ -840,7 +840,7 @@ public class NMS {
     }
 
     public static void remove(Entity entity) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity.getLocation())) {
+        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
             BRIDGE.remove(entity);
         } else {
             CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.remove(entity));
@@ -848,7 +848,7 @@ public class NMS {
     }
 
     public static void removeFromServerPlayerList(Player player) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(player.getLocation())) {
+        if (CitizensAPI.getScheduler().isOnOwnerThread(player)) {
             BRIDGE.removeFromServerPlayerList(player);
         } else {
             CitizensAPI.getScheduler().runEntityTask(player, () -> BRIDGE.removeFromServerPlayerList(player));
@@ -856,11 +856,11 @@ public class NMS {
     }
 
     public static void removeFromWorld(org.bukkit.entity.Entity entity) {
-        // It needs to call spawnChunkTracker, which must be called on the regional thread.
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity.getLocation())) {
+        Location location = entity.getLocation();
+        if (CitizensAPI.getScheduler().isOnOwnerThread(location)) {
             BRIDGE.removeFromWorld(entity);
         } else {
-            CitizensAPI.getScheduler().runRegionTask(entity.getLocation(), () -> BRIDGE.removeFromWorld(entity));
+            CitizensAPI.getScheduler().runRegionTask(location, () -> BRIDGE.removeFromWorld(entity));
         }
     }
 
