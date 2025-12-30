@@ -840,10 +840,11 @@ public class NMS {
     }
 
     public static void remove(Entity entity) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
+        Location location = entity.getLocation();
+        if (CitizensAPI.getScheduler().isOnOwnerThread(location)) {
             BRIDGE.remove(entity);
         } else {
-            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.remove(entity));
+            CitizensAPI.getScheduler().runRegionTask(location, () -> BRIDGE.remove(entity));
         }
     }
 
