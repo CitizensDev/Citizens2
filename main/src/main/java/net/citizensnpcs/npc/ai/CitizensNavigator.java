@@ -204,7 +204,7 @@ public class CitizensNavigator implements Navigator, Runnable {
         Location npcLoc = npc.getStoredLocation();
         Location targetLoc = getTargetAsLocation();
 
-        if (!npcLoc.getWorld().equals(targetLoc.getWorld()) || localParams.range() < npcLoc.distance(targetLoc)) {
+        if (!npcLoc.getWorld().equals(targetLoc.getWorld()) || npcLoc.distance(targetLoc) > localParams.range()) {
             stopNavigating(CancelReason.STUCK);
             return;
         }
@@ -212,27 +212,52 @@ public class CitizensNavigator implements Navigator, Runnable {
             return;
 
         updatePathfindingRange();
-        boolean finished = executing.update();
-        if (!finished) {
-            localParams.run();
-        }
-        if (localParams.lookAtFunction() != null) {
-            if (session == null) {
-                RotationTrait trait = npc.getOrAddTrait(RotationTrait.class);
-                session = trait
-                        .createPacketSession(trait.getGlobalParameters().clone().filter(p -> true).persist(true));
-            }
-            session.getSession().rotateToFace(localParams.lookAtFunction().apply(this));
-        }
-        if (localParams.destinationTeleportMargin() > 0
-                && npcLoc.distance(targetLoc) <= localParams.destinationTeleportMargin()) {
-            // TODO: easing?
-            npc.teleport(targetLoc, TeleportCause.PLUGIN);
-            finished = true;
-        }
-        if (!finished)
-            return;
 
+        if (localParams.destinationTeleportMargin() > 0
+                && localParams.withinMargin(npcLoc, targetLoc, localParams.destinationTeleportMargin())) {
+            Location from = npcLoc.clone();
+            Location to = targetLoc.clone();
+            to.setYaw(from.getYaw());
+            to.setPitch(from.getPitch());
+            npc.teleport(to, TeleportCause.PLUGIN);
+            /*
+            long totalTicks = (long) Math.ceil(npcLoc.distance(targetLoc) / localParams.speed());
+            teleporting = new SchedulerRunnable() {
+                long currentTick = 0;
+            
+                @Override
+                public void run() {
+                    if (!npc.getEntity().isValid()) {
+                        cancel();
+                        return;
+                    }
+                    double t = (double) ++currentTick / totalTicks;
+            
+                    double newX = from.getX() + (to.getX() - to.getX()) * t;
+                    double newY = from.getY() + (to.getY() - to.getY()) * t;
+                    double newZ = from.getZ() + (to.getZ() - to.getZ()) * t;
+            
+                    if (t >= 1.0) {
+                        cancel();
+                    }
+                }
+            }.runEntityTask(CitizensAPI.getPlugin(), npc.getEntity(), null);*/
+        } else {
+            boolean finished = executing.update();
+            if (!finished) {
+                localParams.run();
+            }
+            if (localParams.lookAtFunction() != null) {
+                if (session == null) {
+                    RotationTrait trait = npc.getOrAddTrait(RotationTrait.class);
+                    session = trait
+                            .createPacketSession(trait.getGlobalParameters().clone().filter(p -> true).persist(true));
+                }
+                session.getSession().rotateToFace(localParams.lookAtFunction().apply(this));
+            }
+            if (!finished)
+                return;
+        }
         if (executing.getCancelReason() != null) {
             stopNavigating(executing.getCancelReason());
         } else {

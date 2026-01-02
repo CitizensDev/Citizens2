@@ -342,6 +342,7 @@ public class Messages {
     public static final String PATHFINDING_OPTIONS_ATTACK_RANGE_SET = "citizens.commands.npc.pathopt.attack-range-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_SET = "citizens.commands.npc.pathopt.avoid-water-set";
     public static final String PATHFINDING_OPTIONS_AVOID_WATER_UNSET = "citizens.commands.npc.pathopt.avoid-water-unset";
+    public static final String PATHFINDING_OPTIONS_DESTINATION_TELEPORT_MARGIN_SET = "citizens.commands.npc.pathopt.destination-teleport-margin-set";
     public static final String PATHFINDING_OPTIONS_DISTANCE_MARGIN_SET = "citizens.commands.npc.pathopt.distance-margin-set";
     public static final String PATHFINDING_OPTIONS_FALLING_DISTANCE_SET = "citizens.commands.npc.pathopt.falling-distance-set";
     public static final String PATHFINDING_OPTIONS_OPEN_DOORS_SET = "citizens.commands.npc.pathopt.open-doors-set";

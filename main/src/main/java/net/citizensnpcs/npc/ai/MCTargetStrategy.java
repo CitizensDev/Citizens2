@@ -44,16 +44,13 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     private boolean canAttack() {
         BoundingBox handleBB = NMS.getBoundingBox(handle), targetBB = NMS.getBoundingBox(target);
         return attackDelay <= 0 && handleBB.maxY > targetBB.minY && handleBB.minY < targetBB.maxY
-                && distance() <= parameters.attackRange() && ((LivingEntity) handle).hasLineOfSight(target);
+                && handle.getLocation().distance(target.getLocation()) <= parameters.attackRange()
+                && ((LivingEntity) handle).hasLineOfSight(target);
     }
 
     @Override
     public void clearCancelReason() {
         cancelReason = null;
-    }
-
-    private double distance() {
-        return handle.getLocation().distance(target.getLocation());
     }
 
     @Override
@@ -72,7 +69,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
     }
 
     @Override
-    public org.bukkit.entity.Entity getTarget() {
+    public Entity getTarget() {
         return target;
     }
 
@@ -117,7 +114,7 @@ public class MCTargetStrategy implements PathStrategy, EntityTarget {
         if (parameters.straightLineTargetingDistance() > 0 && !(targetNavigator instanceof StraightLineTargeter)) {
             targetNavigator = new StraightLineTargeter(targetNavigator);
         }
-        if (!aggressive && distance() <= parameters.distanceMargin()) {
+        if (!aggressive && parameters.withinMargin(handle.getLocation(), target.getLocation())) {
             stop();
             return false;
         } else if (updateCounter == -1 || updateCounter++ > parameters.updatePathRate()) {

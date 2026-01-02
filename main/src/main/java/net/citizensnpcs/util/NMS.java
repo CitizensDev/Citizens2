@@ -88,18 +88,13 @@ public class NMS {
         BRIDGE.activate(entity);
     }
 
-    public static void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom,
-            Consumer<Boolean> callback) {
+    public static void addEntityToWorld(Entity entity, SpawnReason custom, Consumer<Boolean> callback) {
         BRIDGE.addEntityToWorld(entity, custom, callback);
     }
 
-    public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
-        Location location = entity.getLocation();
-        if (CitizensAPI.getScheduler().isOnOwnerThread(location)) {
-            BRIDGE.addOrRemoveFromPlayerList(entity, remove);
-        } else {
-            CitizensAPI.getScheduler().runRegionTask(location, () -> BRIDGE.addOrRemoveFromPlayerList(entity, remove));
-        }
+    public static void addOrRemoveFromPlayerList(Entity entity, boolean remove) {
+        CitizensAPI.getScheduler().checkedRunRegionTask(entity.getLocation(),
+                () -> BRIDGE.addOrRemoveFromPlayerList(entity, remove));
     }
 
     public static void attack(LivingEntity attacker, LivingEntity bukkitTarget) {
@@ -239,7 +234,7 @@ public class NMS {
         return BRIDGE.getBossBar(entity);
     }
 
-    public static BoundingBox getBoundingBox(org.bukkit.entity.Entity handle) {
+    public static BoundingBox getBoundingBox(Entity handle) {
         return BRIDGE.getBoundingBox(handle);
     }
 
@@ -515,7 +510,7 @@ public class NMS {
         return null;
     }
 
-    public static float getForwardBackwardMovement(org.bukkit.entity.Entity bukkitEntity) {
+    public static float getForwardBackwardMovement(Entity bukkitEntity) {
         return BRIDGE.getForwardBackwardMovement(bukkitEntity);
     }
 
@@ -537,7 +532,7 @@ public class NMS {
         return null;
     }
 
-    public static float getHeadYaw(org.bukkit.entity.Entity entity) {
+    public static float getHeadYaw(Entity entity) {
         return BRIDGE.getHeadYaw(entity);
     }
 
@@ -589,7 +584,7 @@ public class NMS {
         return entity == null ? null : BRIDGE.getPacketTracker(entity);
     }
 
-    public static List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
+    public static List<Entity> getPassengers(Entity entity) {
         return BRIDGE.getPassengers(entity);
     }
 
@@ -654,8 +649,12 @@ public class NMS {
         return null;
     }
 
-    public static float getStepHeight(org.bukkit.entity.Entity entity) {
+    public static float getStepHeight(Entity entity) {
         return BRIDGE.getStepHeight(entity);
+    }
+
+    public static TargetNavigator getTargetNavigator(Entity entity, Entity target, NavigatorParameters parameters) {
+        return BRIDGE.getTargetNavigator(entity, target, parameters);
     }
 
     public static MCNavigator getTargetNavigator(Entity entity, Iterable<Vector> dest, NavigatorParameters params) {
@@ -666,16 +665,11 @@ public class NMS {
         return BRIDGE.getTargetNavigator(entity, dest, params);
     }
 
-    public static TargetNavigator getTargetNavigator(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity target,
-            NavigatorParameters parameters) {
-        return BRIDGE.getTargetNavigator(entity, target, parameters);
-    }
-
-    public static org.bukkit.entity.Entity getVehicle(org.bukkit.entity.Entity entity) {
+    public static Entity getVehicle(Entity entity) {
         return BRIDGE.getVehicle(entity);
     }
 
-    public static Collection<Player> getViewingPlayers(org.bukkit.entity.Entity entity) {
+    public static Collection<Player> getViewingPlayers(Entity entity) {
         return BRIDGE.getViewingPlayers(entity);
     }
 
@@ -683,7 +677,7 @@ public class NMS {
         return BRIDGE.getWidth(entity);
     }
 
-    public static float getXZMovement(org.bukkit.entity.Entity bukkitEntity) {
+    public static float getXZMovement(Entity bukkitEntity) {
         return BRIDGE.getXZMovement(bukkitEntity);
     }
 
@@ -713,7 +707,7 @@ public class NMS {
         return false;
     }
 
-    public static boolean isOnGround(org.bukkit.entity.Entity entity) {
+    public static boolean isOnGround(Entity entity) {
         return BRIDGE.isOnGround(entity);
     }
 
@@ -794,23 +788,23 @@ public class NMS {
                 .newInstance();
     }
 
+    public static void look(Entity bhandle, Entity btarget) {
+        BRIDGE.look(bhandle, btarget);
+    }
+
     public static void look(Entity entity, float yaw, float pitch) {
         BRIDGE.look(entity, yaw, pitch);
     }
 
-    public static void look(org.bukkit.entity.Entity entity, Location to, boolean headOnly, boolean immediate) {
+    public static void look(Entity entity, Location to, boolean headOnly, boolean immediate) {
         BRIDGE.look(entity, to, headOnly, immediate);
-    }
-
-    public static void look(org.bukkit.entity.Entity bhandle, org.bukkit.entity.Entity btarget) {
-        BRIDGE.look(bhandle, btarget);
     }
 
     public static void markPoseDirty(Entity tracker) {
         BRIDGE.markPoseDirty(tracker);
     }
 
-    public static void mount(org.bukkit.entity.Entity entity, org.bukkit.entity.Entity passenger) {
+    public static void mount(Entity entity, Entity passenger) {
         BRIDGE.mount(entity, passenger);
     }
 
@@ -840,37 +834,19 @@ public class NMS {
     }
 
     public static void remove(Entity entity) {
-        Location location = entity.getLocation();
-        if (CitizensAPI.getScheduler().isOnOwnerThread(location)) {
-            BRIDGE.remove(entity);
-        } else {
-            CitizensAPI.getScheduler().runRegionTask(location, () -> BRIDGE.remove(entity));
-        }
+        CitizensAPI.getScheduler().checkedRunRegionTask(entity.getLocation(), () -> BRIDGE.remove(entity)); 
     }
 
     public static void removeFromServerPlayerList(Player player) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(player)) {
-            BRIDGE.removeFromServerPlayerList(player);
-        } else {
-            CitizensAPI.getScheduler().runEntityTask(player, () -> BRIDGE.removeFromServerPlayerList(player));
-        }
+        CitizensAPI.getScheduler().checkedRunEntityTask(player, () -> BRIDGE.removeFromServerPlayerList(player));
     }
 
-    public static void removeFromWorld(org.bukkit.entity.Entity entity) {
-        Location location = entity.getLocation();
-        if (CitizensAPI.getScheduler().isOnOwnerThread(location)) {
-            BRIDGE.removeFromWorld(entity);
-        } else {
-            CitizensAPI.getScheduler().runRegionTask(location, () -> BRIDGE.removeFromWorld(entity));
-        }
+    public static void removeFromWorld(Entity entity) {
+        CitizensAPI.getScheduler().checkedRunRegionTask(entity.getLocation(), () -> BRIDGE.removeFromWorld(entity));
     }
 
     public static void removeHookIfNecessary(FishHook entity) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
-            BRIDGE.removeHookIfNecessary(entity);
-        } else {
-            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.removeHookIfNecessary(entity));
-        }
+        CitizensAPI.getScheduler().checkedRunEntityTask(entity, () -> BRIDGE.removeHookIfNecessary(entity));
     }
 
     public static void replaceTracker(Entity entity) {
@@ -945,7 +921,7 @@ public class NMS {
         BRIDGE.setCustomName(entity, component, string);
     }
 
-    public static void setDestination(org.bukkit.entity.Entity entity, double x, double y, double z, float speed) {
+    public static void setDestination(Entity entity, double x, double y, double z, float speed) {
         BRIDGE.setDestination(entity, x, y, z, speed);
     }
 
@@ -957,11 +933,11 @@ public class NMS {
         BRIDGE.setEndermanAngry(enderman, angry);
     }
 
-    public static void setHeadAndBodyYaw(org.bukkit.entity.Entity entity, float yaw) {
+    public static void setHeadAndBodyYaw(Entity entity, float yaw) {
         BRIDGE.setHeadAndBodyYaw(entity, yaw);
     }
 
-    public static void setHeadYaw(org.bukkit.entity.Entity entity, float yaw) {
+    public static void setHeadYaw(Entity entity, float yaw) {
         BRIDGE.setHeadYaw(entity, yaw);
     }
 
@@ -981,8 +957,7 @@ public class NMS {
         BRIDGE.setMannequinDescription(mannequin, component);
     }
 
-    public static void setNavigationTarget(org.bukkit.entity.Entity handle, org.bukkit.entity.Entity target,
-            float speed) {
+    public static void setNavigationTarget(Entity handle, Entity target, float speed) {
         BRIDGE.setNavigationTarget(handle, target, speed);
     }
 
@@ -1002,7 +977,7 @@ public class NMS {
         BRIDGE.setPandaSitting(entity, sitting);
     }
 
-    public static void setPeekShulker(org.bukkit.entity.Entity entity, int peek) {
+    public static void setPeekShulker(Entity entity, int peek) {
         if (!entity.getType().name().equals("SHULKER"))
             throw new IllegalArgumentException("entity must be a shulker");
 
@@ -1029,7 +1004,7 @@ public class NMS {
         BRIDGE.setProfile(meta, profile);
     }
 
-    public static void setShouldJump(org.bukkit.entity.Entity entity) {
+    public static void setShouldJump(Entity entity) {
         BRIDGE.setShouldJump(entity);
     }
 
@@ -1049,12 +1024,8 @@ public class NMS {
         BRIDGE.setSnifferState(entity, state);
     }
 
-    public static void setStepHeight(org.bukkit.entity.Entity entity, float height) {
-        if (CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
-            BRIDGE.setStepHeight(entity, height);
-        } else {
-            CitizensAPI.getScheduler().runEntityTask(entity, () -> BRIDGE.setStepHeight(entity, height));
-        }
+    public static void setStepHeight(Entity entity, float height) {
+        CitizensAPI.getScheduler().checkedRunEntityTask(entity, () -> BRIDGE.setStepHeight(entity, height));
     }
 
     public static void setTeamNameTagVisible(Team team, boolean visible) {
@@ -1081,7 +1052,7 @@ public class NMS {
         return npc != null && npc.data().has(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS) ? false : defaultResponse.get();
     }
 
-    public static boolean shouldJump(org.bukkit.entity.Entity entity) {
+    public static boolean shouldJump(Entity entity) {
         return BRIDGE.shouldJump(entity);
     }
 
@@ -1097,11 +1068,11 @@ public class NMS {
         BRIDGE.sleep(entity, sleep);
     }
 
-    public static void trySwim(org.bukkit.entity.Entity entity) {
+    public static void trySwim(Entity entity) {
         trySwim(entity, SwimmingExaminer.isWaterMob(entity) ? 0.02F : 0.04F);
     }
 
-    public static void trySwim(org.bukkit.entity.Entity entity, float power) {
+    public static void trySwim(Entity entity, float power) {
         BRIDGE.trySwim(entity, power);
     }
 
@@ -1109,7 +1080,7 @@ public class NMS {
         BRIDGE.updateInventoryTitle(player, view, newTitle);
     }
 
-    public static void updateNavigationWorld(org.bukkit.entity.Entity entity, org.bukkit.World world) {
+    public static void updateNavigationWorld(Entity entity, org.bukkit.World world) {
         BRIDGE.updateNavigationWorld(entity, world);
     }
 

@@ -118,7 +118,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location dest = plan.isFinalEntry() ? current : Util.getCenterLocation(current.getBlock());
         /* Proper door movement - gets stuck on corners at times
-        
+
         Block block = loc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
          if (MinecraftBlockExaminer.isDoor(block.getType())) {
            Door door = (Door) block.getState().getData();
@@ -128,11 +128,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
            dest.setZ(vector.getZ() + targetFace.getModZ());
            }
         }*/
-        double dX = dest.getX() - loc.getX();
-        double dZ = dest.getZ() - loc.getZ();
-        double dY = dest.getY() - loc.getY();
-        double xzDistance = Math.sqrt(dX * dX + dZ * dZ);
-        if (Math.abs(dY) < 1 && xzDistance <= params.distanceMargin()) {
+        if (params.withinMargin(loc, dest)) {
             plan.update(npc);
             if (plan.isComplete())
                 return true;
@@ -148,6 +144,10 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             Vector dir = dest.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize()
                     .multiply(0.2 * params.speedModifier());
             boolean liquidOrInLiquid = MinecraftBlockExaminer.isLiquidOrWaterlogged(loc.getBlock());
+            double dX = dest.getX() - loc.getX();
+            double dY = dest.getY() - loc.getY();
+            double dZ = dest.getZ() - loc.getZ();
+            double xzDistance = Math.sqrt(dX * dX + dZ * dZ);
             if (dY >= 1 && xzDistance <= 0.4 || dY >= 0.2 && liquidOrInLiquid) {
                 dir.add(new Vector(0, 0.75, 0));
             }

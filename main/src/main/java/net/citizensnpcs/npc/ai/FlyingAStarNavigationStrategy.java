@@ -138,7 +138,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         if (getCancelReason() != null || plan == null || plan.isComplete())
             return true;
         Location current = npc.getEntity().getLocation();
-        if (current.toVector().distance(vector) <= parameters.distanceMargin()) {
+        if (parameters.withinMargin(current.toVector(), vector)) {
             plan.update(npc);
             if (plan.isComplete())
                 return true;
@@ -157,16 +157,16 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         }
         Vector dest = plan.isFinalEntry() ? vector
                 : new Vector(vector.getX() + 0.5D, vector.getY() + 0.1D, vector.getZ() + 0.5D);
-        double d0 = dest.getX() - current.getX();
-        double d1 = dest.getY() - current.getY();
-        double d2 = dest.getZ() - current.getZ();
+        double dx = dest.getX() - current.getX();
+        double dy = dest.getY() - current.getY();
+        double dz = dest.getZ() - current.getZ();
 
         Vector velocity = npc.getEntity().getVelocity();
         double motX = velocity.getX(), motY = velocity.getY(), motZ = velocity.getZ();
 
-        motX += (Math.signum(d0) * 0.5D - motX) * 0.1;
-        motY += (Math.signum(d1) - motY) * 0.1;
-        motZ += (Math.signum(d2) * 0.5D - motZ) * 0.1;
+        motX += (Math.signum(dx) * 0.5D - motX) * 0.1;
+        motY += (Math.signum(dy) - motY) * 0.1;
+        motZ += (Math.signum(dz) * 0.5D - motZ) * 0.1;
         velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
         npc.getEntity().setVelocity(velocity);
 

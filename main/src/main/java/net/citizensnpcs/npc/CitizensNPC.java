@@ -186,14 +186,9 @@ public class CitizensNPC extends AbstractNPC {
 
         if (getOrAddTrait(Spawned.class).shouldSpawn()) {
             CurrentLocation current = getOrAddTrait(CurrentLocation.class);
-            if (current.getLocation() != null) {
-                if (CitizensAPI.getScheduler().isOnOwnerThread(current.getLocation())) {
-                    spawn(current.getLocation(), SpawnReason.RESPAWN);
-                } else {
-                    CitizensAPI.getScheduler().runRegionTask(current.getLocation(), () -> {
-                        spawn(current.getLocation(), SpawnReason.RESPAWN);
-                    });
-                }
+            Location location = current.getLocation();
+            if (location != null) {
+                CitizensAPI.getScheduler().checkedRunRegionTask(location, () -> spawn(location, SpawnReason.RESPAWN));
             } else if (current.getChunkCoord() != null) {
                 Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, current.getChunkCoord()));
             }

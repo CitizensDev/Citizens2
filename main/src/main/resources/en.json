@@ -58,6 +58,7 @@
   "citizens.commands.npc.horse.tamed-set" : "[{{0}] is now tamed.",
   "citizens.commands.npc.horse.tamed-unset" : "[{{0}] is no longer tamed.",
   "citizens.commands.npc.bat.awake-set" : "[[{0}]] is now awake.",
+  "citizens.commands.npc.pathopt.destination-teleport-margin-set": "Destination teleport margin set to [[{0}]] blocks",
   "citizens.commands.npc.bat.awake-unset" : "[[{0}]] is no longer awake.",
   "citizens.commands.npc.bat.description" : "Set bat modifiers",
   "citizens.commands.npc.bat.help" : "",

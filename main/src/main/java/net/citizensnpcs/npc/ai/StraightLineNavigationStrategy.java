@@ -62,7 +62,7 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             return true;
 
         Location currLoc = npc.getEntity().getLocation();
-        if (currLoc.distance(destination) <= params.distanceMargin()) {
+        if (params.withinMargin(currLoc, destination)) {
             if (npc.isFlyable()) {
                 npc.getEntity().setVelocity(new Vector(0, 0, 0));
             }
@@ -87,8 +87,8 @@ public class StraightLineNavigationStrategy extends AbstractPathStrategy {
             destVector = destLoc.toVector();
         }
         double dX = destVector.getX() - currLoc.getX();
-        double dZ = destVector.getZ() - currLoc.getZ();
         double dY = destVector.getY() - currLoc.getY();
+        double dZ = destVector.getZ() - currLoc.getZ();
         double xzDistance = dX * dX + dZ * dZ;
         double distance = xzDistance + dY * dY;
         if (npc.isFlyable()) {

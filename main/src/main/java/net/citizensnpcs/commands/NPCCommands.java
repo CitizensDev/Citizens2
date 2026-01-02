@@ -2328,7 +2328,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "pathopt --avoid-teleporting [true|false] --avoid-water [true|false] --attack-delay-duration [duration] --open-doors [true|false] --path-range [range] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --pathfinder-type [CITIZENS|MINECRAFT] --falling-distance [distance]",
+            usage = "pathopt --avoid-teleporting [true|false] --avoid-water [true|false] --attack-delay-duration [duration] --destination-teleport-margin [margin] --open-doors [true|false] --path-range [range] --stationary-ticks [ticks] --attack-range [range] --distance-margin [margin] --path-distance-margin [margin] --pathfinder-type [CITIZENS|MINECRAFT] --falling-distance [distance]",
             desc = "",
             modifiers = { "pathopt", "po", "patho" },
             min = 1,
@@ -2337,6 +2337,7 @@ public class NPCCommands {
     public void pathfindingOptions(CommandContext args, CommandSender sender, NPC npc, @Flag("path-range") Float range,
             @Flag("avoid-water") Boolean avoidwater, @Flag("avoid-teleporting") Boolean avoidteleporting,
             @Flag("open-doors") Boolean opendoors, @Flag("stationary-ticks") Integer stationaryTicks,
+            @Flag("destination-teleport-margin") Double destinationTeleportMargin,
             @Flag("distance-margin") Double distanceMargin, @Flag("attack-delay-duration") Duration duration,
             @Flag("path-distance-margin") Double pathDistanceMargin, @Flag("attack-range") Double attackRange,
             @Flag("falling-distance") Integer fallingDistance, @Flag("pathfinder-type") PathfinderType pathfinderType)
@@ -2374,6 +2375,14 @@ public class NPCCommands {
             npc.getNavigator().getDefaultParameters().stationaryTicks(stationaryTicks);
             output += " "
                     + Messaging.tr(Messages.PATHFINDING_OPTIONS_STATIONARY_TICKS_SET, npc.getName(), stationaryTicks);
+        }
+        if (destinationTeleportMargin != null) {
+            if (destinationTeleportMargin < 0)
+                throw new CommandUsageException();
+            npc.getNavigator().getDefaultParameters().destinationTeleportMargin(destinationTeleportMargin);
+            output += " " + Messaging.tr(Messages.PATHFINDING_OPTIONS_DESTINATION_TELEPORT_MARGIN_SET, npc.getName(),
+                    destinationTeleportMargin);
+
         }
         if (distanceMargin != null) {
             if (distanceMargin < 0)
