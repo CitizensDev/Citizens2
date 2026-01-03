@@ -305,7 +305,6 @@ import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetCameraPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.VecDeltaCodec;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -1347,6 +1346,10 @@ public class NMSImpl implements NMSBridge {
             org.bukkit.entity.Entity mount, double offset) {
         offset += getRidingHeightOffset(entity, mount);
         sendPacket(player,
+                new ClientboundBundlePacket(List.of(new ClientboundSetEntityDataPacket(entity.getEntityId(),
+                        List.of(new SynchedEntityData.DataItem<>(INTERACTION_WIDTH, 0.05f).value(),
+                                new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, (float) offset).value())))));
+        /*   sendPacket(player,
                 new ClientboundBundlePacket(List.of(
                         new ClientboundSetEntityDataPacket(entity.getEntityId(),
                                 List.of(new SynchedEntityData.DataItem<>(INTERACTION_WIDTH, 0.05f).value(),
@@ -1355,7 +1358,7 @@ public class NMSImpl implements NMSBridge {
                                         new SynchedEntityData.DataItem<>(DATA_NAME_VISIBLE, true).value())),
                         new ClientboundSetPassengersPacket(getHandle(mount)),
                         new ClientboundSetEntityDataPacket(entity.getEntityId(),
-                                List.of(new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, 999999f).value())))));
+                                List.of(new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, 999999f).value())))));*/
     }
 
     @Override
