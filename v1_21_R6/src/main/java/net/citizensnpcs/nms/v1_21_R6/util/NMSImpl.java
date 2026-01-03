@@ -1349,7 +1349,7 @@ public class NMSImpl implements NMSBridge {
         sendPacket(player,
                 new ClientboundBundlePacket(List.of(
                         new ClientboundSetEntityDataPacket(entity.getEntityId(),
-                                List.of(new SynchedEntityData.DataItem<>(INTERACTION_WIDTH, 0f).value(),
+                                List.of(new SynchedEntityData.DataItem<>(INTERACTION_WIDTH, 0.05f).value(),
                                         new SynchedEntityData.DataItem<>(INTERACTION_HEIGHT, (float) offset).value(),
                                         new SynchedEntityData.DataItem<>(DATA_POSE, Pose.CROAKING).value(),
                                         new SynchedEntityData.DataItem<>(DATA_NAME_VISIBLE, true).value())),
