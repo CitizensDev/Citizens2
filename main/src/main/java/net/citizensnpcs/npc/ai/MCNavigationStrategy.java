@@ -36,7 +36,7 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
         if (!MinecraftBlockExaminer.canStandIn(dest.getBlock())) {
             dest = MinecraftBlockExaminer.findValidLocationAbove(dest, 2);
         }
-        target = dest.getBlock().getLocation();
+        target = dest;
         parameters = params;
         entity = npc.getEntity();
         navigator = NMS.getTargetNavigator(entity, target, params);
