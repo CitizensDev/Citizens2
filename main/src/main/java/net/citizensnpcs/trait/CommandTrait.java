@@ -762,32 +762,53 @@ public class CommandTrait extends Trait {
             for (DataKey key : root.getRelative("itemCost").getIntegerSubKeys()) {
                 items.add(ItemStorage.loadItemStack(key));
             }
-            double cost = root.getDouble("cost", -1);
-            int exp = root.getInt("experienceCost", -1);
             return new NPCCommand(Integer.parseInt(root.name()), root.getString("command"),
-                    Hand.valueOf(root.getString("hand")), Boolean.parseBoolean(root.getString("player")),
-                    Boolean.parseBoolean(root.getString("op")), root.getInt("cooldown"), perms, root.getInt("n"),
-                    root.getInt("gn"), root.getInt("delay"), root.getInt("globalcooldown"), cost, exp, items,
-                    Boolean.parseBoolean(root.getString("npc")));
+                    Hand.valueOf(root.getString("hand")), root.getBoolean("player", false),
+                    root.getBoolean("op", false), root.getInt("cooldown", 0), perms, root.getInt("n", 0),
+                    root.getInt("gn", 0), root.getInt("delay", 0), root.getInt("globalcooldown", 0),
+                    root.getDouble("cost", -1), root.getInt("experienceCost", -1), items,
+                    root.getBoolean("npc", false));
         }
 
         @Override
         public void save(NPCCommand instance, DataKey root) {
             root.setString("command", instance.command);
             root.setString("hand", instance.hand.name());
-            root.setBoolean("player", instance.player);
-            root.setBoolean("npc", instance.npc);
-            root.setBoolean("op", instance.op);
-            root.setInt("cooldown", instance.cooldown);
-            root.setInt("globalcooldown", instance.globalCooldown);
-            root.setInt("n", instance.n);
-            root.setInt("gn", instance.gn);
-            root.setInt("delay", instance.delay);
+            if (instance.player) {
+                root.setBoolean("player", instance.player);
+            }
+            if (instance.npc) {
+                root.setBoolean("npc", instance.npc);
+            }
+            if (instance.op) {
+                root.setBoolean("op", instance.op);
+            }
+            if (instance.cooldown > 0) {
+                root.setInt("cooldown", instance.cooldown);
+            }
+            if (instance.globalCooldown > 0) {
+                root.setInt("globalcooldown", instance.globalCooldown);
+            }
+            if (instance.n > 0) {
+                root.setInt("n", instance.n);
+            }
+            if (instance.gn > 0) {
+                root.setInt("gn", instance.gn);
+            }
+            if (instance.delay > 0) {
+                root.setInt("delay", instance.delay);
+            }
+            if (instance.cost != -1) {
+                root.setDouble("cost", instance.cost);
+            }
+            if (instance.experienceCost != -1) {
+                root.setInt("experienceCost", instance.experienceCost);
+            }
+            root.removeKey("permissions");
             for (int i = 0; i < instance.perms.size(); i++) {
                 root.setString("permissions." + i, instance.perms.get(i));
             }
-            root.setDouble("cost", instance.cost);
-            root.setInt("experienceCost", instance.experienceCost);
+            root.removeKey("itemCost");
             for (int i = 0; i < instance.itemCost.size(); i++) {
                 ItemStorage.saveItem(root.getRelative("itemCost." + i), instance.itemCost.get(i));
             }
