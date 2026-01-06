@@ -462,11 +462,6 @@ public class HologramTrait extends Trait {
         }
 
         @Override
-        public NPC getTemplateNPC() {
-            return createNPC(null, "", new Vector3d(0, 0, 0));
-        }
-
-        @Override
         protected void render0(NPC npc, Vector3d offset) {
             AreaEffectCloud cloud = (AreaEffectCloud) hologram.getEntity();
             if (!rendered) {
@@ -711,11 +706,6 @@ public class HologramTrait extends Trait {
         }
 
         @Override
-        public NPC getTemplateNPC() {
-            return createNPC(null, "", new Vector3d(0, 0, 0));
-        }
-
-        @Override
         public void onSeenByPlayer(NPC npc, Player player) {
             if (lastOffset == null || hologram == null)
                 return;
@@ -876,6 +866,11 @@ public class HologramTrait extends Trait {
             return Placeholders.replace(text, viewer, npc);
         }
 
+        @Override
+        public NPC getTemplateNPC() {
+            return hologram != null ? hologram : createNPC(null, "", new Vector3d(0, 0, 0));
+        }
+
         protected NPCRegistry registry() {
             return registry == null ? registry = CitizensAPI.getTemporaryNPCRegistry() : registry;
         }
@@ -962,6 +957,7 @@ public class HologramTrait extends Trait {
         public TextDisplayRenderer() {
             dt.setBillboard(Billboard.CENTER);
             dt.setInterpolationDelay(0);
+            dt.setInterpolationDuration(0);
             tdt.setSeeThrough(true);
         }
 
@@ -984,8 +980,12 @@ public class HologramTrait extends Trait {
         }
 
         @Override
-        public NPC getTemplateNPC() {
-            return createNPC(null, "", null);
+        public void destroy() {
+            if (hologram != null) {
+                dt = hologram.getOrAddTrait(DisplayTrait.class).clone();
+                tdt = hologram.getOrAddTrait(TextDisplayTrait.class).clone();
+            }
+            super.destroy();
         }
 
         @Override
@@ -1017,6 +1017,14 @@ public class HologramTrait extends Trait {
     }
 
     public static class TextDisplayVehicleRenderer extends TextDisplayRenderer {
+        @Override
+        public HologramRenderer copy() {
+            TextDisplayVehicleRenderer copy = new TextDisplayVehicleRenderer();
+            copy.dt = dt.clone();
+            copy.tdt = tdt.clone();
+            return copy;
+        }
+
         @Override
         public void render0(NPC npc, Vector3d offset) {
             super.render0(npc, offset);

@@ -2,7 +2,6 @@ package net.citizensnpcs.npc.skin;
 
 import java.util.Objects;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.Settings.Setting;
@@ -58,7 +57,7 @@ public class SkinPacketTracker {
     public void updateViewer(Player player) {
         Objects.requireNonNull(player);
 
-        if (isRemoved || player.hasMetadata("NPC"))
+        if (true || isRemoved || player.hasMetadata("NPC"))
             return;
 
         skin.apply(entity);
