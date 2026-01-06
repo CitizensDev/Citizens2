@@ -16,6 +16,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -38,6 +39,17 @@ public class CopperGolemTrait extends Trait {
             }
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void load(DataKey key) {
+        if (weather != null && weather instanceof String) {
+            try {
+                weather = Enum.valueOf(WEATHER_STATE_CLASS, weather.toString());
+            } catch (IllegalArgumentException ex) {
+                Messaging.severe("Error loading weathering state for", npc, "value", weather.toString());
+            }
         }
     }
 
