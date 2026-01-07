@@ -4,20 +4,19 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
+import net.citizensnpcs.api.util.schedulers.SchedulerTask;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.SitTrait;
@@ -125,10 +124,10 @@ public enum PlayerAnimation {
             return;
         } else if (this == STOP_USE_ITEM || this == START_USE_MAINHAND_ITEM || this == START_USE_OFFHAND_ITEM) {
             NMS.playAnimation(this, player, to.get());
-            if (player.hasMetadata("citizens-using-item-id")) {
-                net.citizensnpcs.api.util.schedulers.SchedulerTask task = (net.citizensnpcs.api.util.schedulers.SchedulerTask) player.getMetadata("citizens-using-item-id").get(0).value();
-                if (task != null) task.cancel();
-                player.removeMetadata("citizens-using-item-id", CitizensAPI.getPlugin());
+            if (player.hasMetadata("citizens-using-item")) {
+                SchedulerTask task = (SchedulerTask) player.getMetadata("citizens-using-item").get(0).value();
+                task.cancel();
+                player.removeMetadata("citizens-using-item", CitizensAPI.getPlugin());
             }
             if (this == STOP_USE_ITEM)
                 return;
@@ -147,9 +146,9 @@ public enum PlayerAnimation {
                         }
                         NMS.playAnimation(PlayerAnimation.STOP_USE_ITEM, player, to.get());
                         NMS.playAnimation(PlayerAnimation.this, player, to.get());
-                        if (!player.hasMetadata("citizens-using-item-id")) {
-                            player.setMetadata("citizens-using-item-id",
-                                    new FixedMetadataValue(CitizensAPI.getPlugin(), getTaskId()));
+                        if (!player.hasMetadata("citizens-using-item")) {
+                            player.setMetadata("citizens-using-item",
+                                    new FixedMetadataValue(CitizensAPI.getPlugin(), this));
                         }
                     }
                 }.runEntityTaskTimer(CitizensAPI.getPlugin(), player, null, Math.max(0, remainingTicks + 1),
