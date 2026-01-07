@@ -994,7 +994,8 @@ public class HologramTrait extends Trait {
             if (SpigotUtil.getVersion()[1] >= 21 && base.getEntity() instanceof LivingEntity) {
                 AttributeInstance inst = ((LivingEntity) base.getEntity())
                         .getAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
-                if (inst != null) {
+                Float scale = inst == null ? null : (float) inst.getValue();
+                if (inst != null && disp.getTransformation().getScale().distance(scale, scale, scale) > 0.01) {
                     Transformation tf = disp.getTransformation();
                     tf.getScale().set(inst.getValue());
                     disp.setTransformation(tf);
@@ -1027,8 +1028,17 @@ public class HologramTrait extends Trait {
 
         @Override
         public void render0(NPC npc, Vector3d offset) {
-            super.render0(npc, offset);
             TextDisplay disp = (TextDisplay) hologram.getEntity();
+            if (SpigotUtil.getVersion()[1] >= 21 && npc.getEntity() instanceof LivingEntity) {
+                AttributeInstance inst = ((LivingEntity) npc.getEntity())
+                        .getAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
+                Float scale = inst == null ? null : (float) inst.getValue();
+                if (inst != null && disp.getTransformation().getScale().distance(scale, scale, scale) > 0.01) {
+                    Transformation tf = disp.getTransformation();
+                    tf.getScale().set(inst.getValue());
+                    disp.setTransformation(tf);
+                }
+            }
             Transformation tf = disp.getTransformation();
             tf.getTranslation().y = (float) offset.y + 0.2f;
             disp.setTransformation(tf);
