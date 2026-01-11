@@ -35,6 +35,8 @@ public class ChatTrigger implements WaypointTrigger {
 
     @Override
     public void onWaypointReached(NPC npc, Location waypoint) {
+        if (!npc.isSpawned())
+            return;
         if (radius <= 0) {
             for (Player player : npc.getEntity().getWorld().getPlayers()) {
                 for (String line : lines) {

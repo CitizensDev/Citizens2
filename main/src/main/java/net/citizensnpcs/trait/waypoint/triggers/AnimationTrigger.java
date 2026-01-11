@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -36,7 +35,7 @@ public class AnimationTrigger implements WaypointTrigger {
 
     @Override
     public void onWaypointReached(NPC npc, Location waypoint) {
-        if (npc.getEntity().getType() != EntityType.PLAYER)
+        if (!(npc.getEntity() instanceof Player))
             return;
 
         if (at != null) {
