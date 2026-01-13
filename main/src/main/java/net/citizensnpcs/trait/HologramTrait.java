@@ -30,6 +30,7 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Transformation;
 import org.joml.Vector3d;
 
@@ -97,12 +98,12 @@ public class HologramTrait extends Trait {
      */
     public void addLine(String text) {
         lines.add(new HologramLine(text, true, -1, createHologramRenderer()));
-        reloadLineHolograms();
+        onDespawn();
     }
 
     public void addLine(String text, HologramRenderer hr) {
         lines.add(new HologramLine(text, hr));
-        reloadLineHolograms();
+        onDespawn();
     }
 
     /**
@@ -116,12 +117,12 @@ public class HologramTrait extends Trait {
      */
     public void addTemporaryLine(String text, int ticks) {
         lines.add(new HologramLine(text, false, ticks, createHologramRenderer()));
-        reloadLineHolograms();
+        onDespawn();
     }
 
     public void addTemporaryLine(String text, int ticks, HologramRenderer hr) {
         lines.add(new HologramLine(text, false, ticks, hr));
-        reloadLineHolograms();
+        onDespawn();
     }
 
     /**
@@ -237,7 +238,16 @@ public class HologramTrait extends Trait {
 
     public void insertLine(int idx, String text) {
         lines.add(idx, new HologramLine(text, true, -1, createHologramRenderer()));
-        reloadLineHolograms();
+        onDespawn();
+    }
+
+    private boolean isVisible(Entity entity) {
+        if (entity instanceof LivingEntity) {
+            LivingEntity le = (LivingEntity) entity;
+            if (!le.isVisibleByDefault() || le.getPotionEffect(PotionEffectType.INVISIBILITY) != null)
+                return false;
+        }
+        return true;
     }
 
     @Override
@@ -263,12 +273,26 @@ public class HologramTrait extends Trait {
 
     @Override
     public void onDespawn() {
-        reloadLineHolograms();
+        for (HologramLine line : lines) {
+            line.removeNPC();
+        }
+        if (nameLine != null) {
+            nameLine.removeNPC();
+            nameLine = null;
+        }
     }
 
     @Override
     public void onRemove() {
         onDespawn();
+    }
+
+    public boolean onSeenByPlayer(Player player) {
+        if (!npc.isSpawned())
+            return false;
+        if (!isVisible(npc.getEntity()) || !player.canSee(npc.getEntity()))
+            return false;
+        return true;
     }
 
     @Override
@@ -278,16 +302,6 @@ public class HologramTrait extends Trait {
 
         lastNameplateVisible = Boolean
                 .parseBoolean(npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString());
-    }
-
-    private void reloadLineHolograms() {
-        for (HologramLine line : lines) {
-            line.removeNPC();
-        }
-        if (nameLine != null) {
-            nameLine.removeNPC();
-            nameLine = null;
-        }
     }
 
     /**
@@ -301,13 +315,11 @@ public class HologramTrait extends Trait {
             return;
 
         lines.remove(idx).removeNPC();
-
-        reloadLineHolograms();
     }
 
     @Override
     public void run() {
-        if (!npc.isSpawned()) {
+        if (!npc.isSpawned() || !isVisible(npc.getEntity())) {
             onDespawn();
             return;
         }
@@ -324,9 +336,9 @@ public class HologramTrait extends Trait {
         Location npcLoc = npc.getEntity().getLocation();
         Vector3d offset = new Vector3d();
         boolean updatePosition = Setting.HOLOGRAM_ALWAYS_UPDATE_POSITION.asBoolean() || lastLoc == null
-                || lastLoc.getWorld() != npcLoc.getWorld() || lastLoc.distance(npcLoc) >= 0.001
-                || lastNameplateVisible != nameplateVisible
-                || Math.abs(lastEntityBbHeight - NMS.getBoundingBoxHeight(npc.getEntity())) >= 0.05;
+                || lastLoc.getWorld() != npcLoc.getWorld() || lastNameplateVisible != nameplateVisible
+                || Math.abs(lastEntityBbHeight - NMS.getBoundingBoxHeight(npc.getEntity())) >= 0.05
+                || lastLoc.distance(npcLoc) >= 0.001;
         boolean updateText = false;
 
         if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
@@ -402,7 +414,6 @@ public class HologramTrait extends Trait {
             return;
         }
         lines.get(idx).setText(text);
-        reloadLineHolograms();
     }
 
     /**
@@ -414,7 +425,7 @@ public class HologramTrait extends Trait {
      */
     public void setLineHeight(double height) {
         lineHeight = height;
-        reloadLineHolograms();
+        onDespawn();
     }
 
     /**
@@ -433,12 +444,12 @@ public class HologramTrait extends Trait {
         } else if (type.equalsIgnoreCase("bottom")) {
             lines.get(idx).mb = margin;
         }
-        reloadLineHolograms();
+        onDespawn();
     }
 
     public void setViewRange(int range) {
         this.viewRange = range;
-        reloadLineHolograms();
+        onDespawn();
     }
 
     public static class AreaEffectCloudRenderer extends SingleEntityHologramRenderer {
@@ -610,7 +621,7 @@ public class HologramTrait extends Trait {
         /**
          * If {@link NPC.Metadata#HOLOGRAM_RENDERER} is set on any entity and ProtocolLib is enabled, returns whether
          * the NPC should be considered sneaking or not to the viewing player. Presently called only when player first
-         * sees the NPC (i.e. not proactively).Note: this should be async-safe. This method is fragile and may be moved
+         * sees the NPC (i.e. not proactively). Note: this should be async-safe. This method is fragile and may be moved
          * elsewhere.
          *
          * @param npc
@@ -1049,6 +1060,7 @@ public class HologramTrait extends Trait {
     }
 
     private static final Pattern ITEM_MATCHER = Pattern.compile("<item:((?:minecraft:)?[a-zA-Z0-9_ ]*?)(:.*?)?>");
+
     private static boolean SUPPORTS_DISPLAY = true;
 
     static {

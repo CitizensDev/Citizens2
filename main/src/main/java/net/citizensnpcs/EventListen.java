@@ -117,6 +117,7 @@ import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
 import net.citizensnpcs.trait.TargetableTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
@@ -591,6 +592,11 @@ public class EventListen implements Listener {
         }
         ClickRedirectTrait crt = npc.getTraitNullable(ClickRedirectTrait.class);
         if (crt != null) {
+            if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)
+                    && !crt.getRedirectToNPC().getOrAddTrait(HologramTrait.class).onSeenByPlayer(event.getPlayer())) {
+                event.setCancelled(true);
+                return;
+            }
             npc = crt.getRedirectToNPC();
         }
         pf = npc.getTraitNullable(PlayerFilter.class);
