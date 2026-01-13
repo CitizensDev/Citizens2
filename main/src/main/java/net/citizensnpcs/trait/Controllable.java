@@ -71,7 +71,7 @@ public class Controllable extends Trait {
         }
         if (found)
             return false;
-        enterOrLeaveVehicle(npc, toMount);
+        NMS.mount(npc.getEntity(), toMount);
         return true;
     }
 
@@ -104,6 +104,12 @@ public class Controllable extends Trait {
     private void onRightClick(NPCRightClickEvent event) {
         if (!enabled || !npc.isSpawned())
             return;
+        if (!event.getClicker()
+                .hasPermission("citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase(Locale.ROOT))
+                || !event.getClicker().hasPermission("citizens.npc.controllable")
+                || ownerRequired && !npc.getOrAddTrait(Owner.class).isOwnedBy(event.getClicker()))
+            return;
+        mount(event.getClicker());
         controller.rightClickEntity(event);
         event.setDelayedCancellation(true);
     }
@@ -217,7 +223,6 @@ public class Controllable extends Trait {
 
         @Override
         public void rightClickEntity(NPCRightClickEvent event) {
-            enterOrLeaveVehicle(npc, event.getClicker());
         }
 
         @Override
@@ -260,7 +265,6 @@ public class Controllable extends Trait {
 
         @Override
         public void rightClickEntity(NPCRightClickEvent event) {
-            enterOrLeaveVehicle(npc, event.getClicker());
         }
 
         @Override
@@ -299,7 +303,6 @@ public class Controllable extends Trait {
 
         @Override
         public void rightClickEntity(NPCRightClickEvent event) {
-            enterOrLeaveVehicle(npc, event.getClicker());
         }
 
         @Override
@@ -346,7 +349,6 @@ public class Controllable extends Trait {
 
         @Override
         public void rightClickEntity(NPCRightClickEvent event) {
-            enterOrLeaveVehicle(npc, event.getClicker());
         }
 
         @Override
@@ -363,24 +365,6 @@ public class Controllable extends Trait {
             npc.getEntity().setVelocity(npc.getEntity().getVelocity().multiply(new Vector(1, 0.98, 1)));
             setMountedYaw(npc.getEntity());
         }
-    }
-
-    private static void enterOrLeaveVehicle(NPC npc, Player player) {
-        List<Entity> passengers = NMS.getPassengers(player);
-        if (passengers.size() > 0) {
-            if (passengers.contains(player)) {
-                player.leaveVehicle();
-            }
-            return;
-        }
-        if (!player
-                .hasPermission("citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase(Locale.ROOT))
-                || !player.hasPermission("citizens.npc.controllable")
-                || npc.getOrAddTrait(Controllable.class).ownerRequired
-                        && !npc.getOrAddTrait(Owner.class).isOwnedBy(player))
-            return;
-
-        NMS.mount(npc.getEntity(), player);
     }
 
     private static void setMountedYaw(Entity entity) {
