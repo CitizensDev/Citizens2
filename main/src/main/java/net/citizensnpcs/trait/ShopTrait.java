@@ -946,7 +946,7 @@ public class ShopTrait extends Trait {
         public NPCShopSettings(ShopTrait trait, NPCShop shop) {
             this.trait = trait;
             this.shop = shop;
-            this.storage = trait.storage != null ? trait.storage : shop.storage;
+            this.storage = trait != null && trait.storage != null ? trait.storage : shop.storage;
         }
 
         @Override
