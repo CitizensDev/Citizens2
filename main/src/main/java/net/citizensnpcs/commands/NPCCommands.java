@@ -2474,7 +2474,7 @@ public class NPCCommands {
             throws CommandException {
         PausePathfindingTrait trait = npc.getOrAddTrait(PausePathfindingTrait.class);
         if (playerRange != null) {
-            if (playerRange <= 0)
+            if (playerRange <= 0 && playerRange != -1)
                 throw new CommandException("Invalid range");
             trait.setPlayerRange(playerRange);
             Messaging.sendTr(sender, Messages.PAUSEPATHFINDING_RANGE_SET, npc.getName(), playerRange);
