@@ -636,7 +636,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
                 Waypoint waypoint = currentDestination;
                 selector.finish();
-                if (cancelReason != null)
+                if (cancelReason != null || waypoint == null)
                     return;
                 waypoint.onReach(npc);
                 if (cachePaths && strategy != null) {
