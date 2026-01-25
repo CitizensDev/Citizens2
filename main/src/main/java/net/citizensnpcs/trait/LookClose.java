@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -26,6 +28,8 @@ import net.citizensnpcs.api.event.NPCLookCloseChangeTargetEvent;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.DataKey;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
@@ -42,6 +46,9 @@ public class LookClose extends Trait {
     private boolean enabled = Setting.DEFAULT_LOOK_CLOSE.asBoolean();
     @Persist
     private boolean enableRandomLook = Setting.DEFAULT_RANDOM_LOOK_CLOSE.asBoolean();
+    private Predicate<Entity> entityFilter;
+    @Persist
+    private String filter;
     @Persist("headonly")
     private boolean headOnly;
     @Persist("linkedbody")
@@ -232,8 +239,18 @@ public class LookClose extends Trait {
     }
 
     private boolean isValid(Player entity) {
+        if (entityFilter != null && !entityFilter.test(entity))
+            return false;
         return entity.isOnline() && entity.isValid() && entity.getWorld() == npc.getEntity().getWorld()
                 && entity.getLocation().distance(npc.getStoredLocation()) <= range && !isInvisible(entity);
+    }
+
+    @Override
+    public void load(DataKey key) {
+        entityFilter = null;
+        if (filter != null) {
+            entityFilter = SpigotUtil.parseEntityFilter(filter);
+        }
     }
 
     /**
@@ -304,6 +321,11 @@ public class LookClose extends Trait {
 
     public void setDisableWhileNavigating(boolean set) {
         disableWhileNavigating = set;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+        this.entityFilter = SpigotUtil.parseEntityFilter(filter);
     }
 
     public void setHeadOnly(boolean headOnly) {

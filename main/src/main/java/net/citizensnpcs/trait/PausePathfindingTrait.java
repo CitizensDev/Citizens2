@@ -1,6 +1,5 @@
 package net.citizensnpcs.trait;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -9,6 +8,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitEventHandler;
 import net.citizensnpcs.api.trait.TraitName;
+import net.citizensnpcs.api.util.schedulers.SchedulerTask;
 import net.citizensnpcs.util.NMS;
 
 @TraitName("pausepathfinding")
@@ -22,7 +22,7 @@ public class PausePathfindingTrait extends Trait {
     @Persist("rightclick")
     private boolean rightclick;
     private int t;
-    private net.citizensnpcs.api.util.schedulers.SchedulerTask unpauseTaskId = null;
+    private SchedulerTask unpauseTaskId = null;
 
     public PausePathfindingTrait() {
         super("pausepathfinding");

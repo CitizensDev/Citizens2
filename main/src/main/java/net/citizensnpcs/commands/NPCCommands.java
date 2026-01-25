@@ -441,7 +441,7 @@ public class NPCCommands {
     public void attribute(CommandContext args, CommandSender sender, NPC npc,
             @Arg(value = 1, completionsProvider = OptionalAttributeCompletions.class) String attribute,
             @Arg(2) Double value) {
-        Attribute attr = Util.getAttribute(attribute);
+        Attribute attr = SpigotUtil.getEnumValue(Attribute.class, attribute);
         if (attr == null) {
             Messaging.sendErrorTr(sender, Messages.ATTRIBUTE_NOT_FOUND, attribute);
             return;
@@ -1409,7 +1409,7 @@ public class NPCCommands {
             }
             if (hr != null && hr.getTemplateNPC() != null) {
                 selector.select(sender, hr.getTemplateNPC());
-                Messaging.sendTr(sender, Messages.HOLOGRAM_RENDERER_SELECTED);
+                Messaging.sendTr(sender, Messages.HOLOGRAM_RENDERER_SELECTED, hr.getPerPlayerText(npc, null));
             }
         } else if (action.equalsIgnoreCase("viewrange")) {
             if (args.argsLength() == 2)
@@ -1831,7 +1831,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "lookclose --range [range] -r[ealistic looking] --randomlook [true|false] --perplayer [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false] --targetnpcs [true|false]",
+            usage = "lookclose --range [range] --filter [filter] -r[ealistic looking] --randomlook [true|false] --perplayer [true|false] --randomswitchtargets [true|false] --randompitchrange [min,max] --randomyawrange [min,max] --disablewhennavigating [true|false] --targetnpcs [true|false]",
             desc = "",
             modifiers = { "lookclose", "look" },
             min = 1,
@@ -1840,17 +1840,22 @@ public class NPCCommands {
             permission = "citizens.npc.lookclose")
     public void lookClose(CommandContext args, CommandSender sender, NPC npc,
             @Flag({ "randomlook", "rlook" }) Boolean randomlook, @Flag("range") Double range,
-            @Flag("randomlookdelay") Duration randomLookDelay, @Flag("randomyawrange") String randomYaw,
-            @Flag("randompitchrange") String randomPitch, @Flag("randomswitchtargets") Boolean randomSwitchTargets,
-            @Flag("headonly") Boolean headonly, @Flag("linkedbody") Boolean linkedbody,
-            @Flag("disablewhennavigating") Boolean disableWhenNavigating, @Flag("perplayer") Boolean perPlayer,
-            @Flag("targetnpcs") Boolean targetNPCs) throws CommandException {
+            @Flag("filter") String filter, @Flag("randomlookdelay") Duration randomLookDelay,
+            @Flag("randomyawrange") String randomYaw, @Flag("randompitchrange") String randomPitch,
+            @Flag("randomswitchtargets") Boolean randomSwitchTargets, @Flag("headonly") Boolean headonly,
+            @Flag("linkedbody") Boolean linkedbody, @Flag("disablewhennavigating") Boolean disableWhenNavigating,
+            @Flag("perplayer") Boolean perPlayer, @Flag("targetnpcs") Boolean targetNPCs) throws CommandException {
         boolean toggle = true;
         LookClose trait = npc.getOrAddTrait(LookClose.class);
         if (randomlook != null) {
             trait.setRandomLook(randomlook);
             Messaging.sendTr(sender, randomlook ? Messages.LOOKCLOSE_RANDOM_SET : Messages.LOOKCLOSE_RANDOM_STOPPED,
                     npc.getName());
+            toggle = false;
+        }
+        if (filter != null) {
+            trait.setFilter(filter);
+            Messaging.sendTr(sender, Messages.LOOKCLOSE_FILTER_SET, filter);
             toggle = false;
         }
         if (perPlayer != null) {
@@ -3202,7 +3207,6 @@ public class NPCCommands {
             max = 4,
             flags = "bectls",
             permission = "citizens.npc.skin")
-
     public void skin(CommandContext args, CommandSender sender, NPC npc, @Flag("url") String url,
             @Flag("file") String file) throws CommandException {
         EntityType type = npc.getOrAddTrait(MobType.class).getType();

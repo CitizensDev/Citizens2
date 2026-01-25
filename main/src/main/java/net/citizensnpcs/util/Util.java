@@ -11,7 +11,6 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -22,8 +21,6 @@ import org.bukkit.Color;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -172,20 +169,6 @@ public class Util {
         NMS.look(entity, to, headOnly, immediate);
     }
 
-    public static Attribute getAttribute(String attribute) {
-        if (!SpigotUtil.isRegistryKeyed(Attribute.class)) {
-            try {
-                return (Attribute) ATTRIBUTE_VALUEOF.invoke(attribute.toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException ignore) {
-                return null;
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-        return getRegistryValue(Registry.ATTRIBUTE, attribute);
-    }
-
     public static Location getCenterLocation(Block block) {
         Location bloc = block.getLocation();
         Location center = new Location(bloc.getWorld(), bloc.getBlockX() + 0.5, bloc.getBlockY(),
@@ -251,16 +234,6 @@ public class Util {
 
     public static Random getFastRandom() {
         return RANDOM;
-    }
-
-    public static <T extends Keyed> T getRegistryValue(Registry<T> registry, String... keyCandidates) {
-        for (String keyCandidate : keyCandidates) {
-            final NamespacedKey key = SpigotUtil.getKey(keyCandidate);
-            final T value = registry.get(key);
-            if (value != null)
-                return value;
-        }
-        return null;
     }
 
     public static String getTeamName(UUID id) {

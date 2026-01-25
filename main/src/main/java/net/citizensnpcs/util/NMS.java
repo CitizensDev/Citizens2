@@ -131,8 +131,8 @@ public class NMS {
         if (npc.getEntity() == null)
             return;
         if (SUPPORTS_ATTRIBUTABLE && npc.getEntity() instanceof Attributable) {
-            AttributeInstance attribute = ((Attributable) npc.getEntity()).getAttribute(
-                    Util.getRegistryValue(Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"));
+            AttributeInstance attribute = ((Attributable) npc.getEntity()).getAttribute(SpigotUtil
+                    .getRegistryValue(Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"));
             if (attribute != null) {
                 strength *= 1 - attribute.getValue();
             }
@@ -834,7 +834,7 @@ public class NMS {
     }
 
     public static void remove(Entity entity) {
-        CitizensAPI.getScheduler().checkedRunRegionTask(entity.getLocation(), () -> BRIDGE.remove(entity)); 
+        CitizensAPI.getScheduler().checkedRunRegionTask(entity.getLocation(), () -> BRIDGE.remove(entity));
     }
 
     public static void removeFromServerPlayerList(Player player) {

@@ -44,6 +44,7 @@ import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
@@ -399,15 +400,15 @@ public class CitizensNPC extends AbstractNPC {
 
                         if (type == EntityType.PLAYER || Util.isHorse(type)) {
                             if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class)
-                                    || !getTrait(AttributeTrait.class).hasAttribute(Util.getRegistryValue(
+                                    || !getTrait(AttributeTrait.class).hasAttribute(SpigotUtil.getRegistryValue(
                                             Registry.ATTRIBUTE, "generic.step_height", "step_height"))) {
                                 NMS.setStepHeight(entity, 1);
                             }
                         }
                         if (type == EntityType.PLAYER) {
                             PlayerUpdateTask.register(entity);
-                            if (SUPPORT_ATTRIBUTES
-                                    && Util.getRegistryValue(Registry.ATTRIBUTE, "waypoint_transmit_range") != null) {
+                            if (SUPPORT_ATTRIBUTES && SpigotUtil.getRegistryValue(Registry.ATTRIBUTE,
+                                    "waypoint_transmit_range") != null) {
                                 ((LivingEntity) entity).getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE).setBaseValue(0);
                             }
                         }
@@ -538,7 +539,7 @@ public class CitizensNPC extends AbstractNPC {
 
             if (isLiving) {
                 if (!SUPPORT_ATTRIBUTES || !hasTrait(AttributeTrait.class)
-                        || !getTraitNullable(AttributeTrait.class).hasAttribute(Util.getRegistryValue(
+                        || !getTraitNullable(AttributeTrait.class).hasAttribute(SpigotUtil.getRegistryValue(
                                 Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"))) {
                     NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
                 }

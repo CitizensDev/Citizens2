@@ -420,7 +420,9 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         Location target = targetIn.clone();
         setTarget(params -> {
-            if (npc.isFlyable()) {
+            if (params.locationStrategyFactory() != null) {
+                return params.locationStrategyFactory().create(npc, params, target);
+            } else if (npc.isFlyable()) {
                 return new FlyingAStarNavigationStrategy(npc, target, params);
             } else if (params.pathfinderType().isCitizens() || !(npc.getEntity() instanceof LivingEntity)) {
                 return new AStarNavigationStrategy(npc, target, params);

@@ -66,6 +66,7 @@ import net.citizensnpcs.util.Util;
  */
 @TraitName("hologramtrait")
 public class HologramTrait extends Trait {
+    private double baseHeight;
     private boolean customisedDefaultRenderer;
     private HologramRenderer defaultRenderer;
     private double lastEntityBbHeight = 0;
@@ -160,9 +161,9 @@ public class HologramTrait extends Trait {
     }
 
     private HologramRenderer createRenderer(String setting) {
-        if (defaultRenderer != null) {
+        if (defaultRenderer != null)
             return defaultRenderer.copy();
-        }
+
         if (!SUPPORTS_DISPLAY) {
             setting = SpigotUtil.getVersion()[1] <= 8 ? "armorstand" : "areaeffectcloud";
         }
@@ -300,6 +301,7 @@ public class HologramTrait extends Trait {
         if (!npc.isSpawned())
             return;
 
+        baseHeight = NMS.getBoundingBoxHeight(npc.getEntity());
         lastNameplateVisible = Boolean
                 .parseBoolean(npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString());
     }
@@ -334,12 +336,12 @@ public class HologramTrait extends Trait {
             }
         }
         Location npcLoc = npc.getEntity().getLocation();
-        Vector3d offset = new Vector3d();
         boolean updatePosition = Setting.HOLOGRAM_ALWAYS_UPDATE_POSITION.asBoolean() || lastLoc == null
                 || lastLoc.getWorld() != npcLoc.getWorld() || lastNameplateVisible != nameplateVisible
                 || Math.abs(lastEntityBbHeight - NMS.getBoundingBoxHeight(npc.getEntity())) >= 0.05
                 || lastLoc.distance(npcLoc) >= 0.001;
         boolean updateText = false;
+        Vector3d offset = new Vector3d(0, 0, 0);
 
         if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
             t = 0;
@@ -1004,7 +1006,7 @@ public class HologramTrait extends Trait {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
             if (SpigotUtil.getVersion()[1] >= 21 && base.getEntity() instanceof LivingEntity) {
                 AttributeInstance inst = ((LivingEntity) base.getEntity())
-                        .getAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
+                        .getAttribute(SpigotUtil.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
                 Float scale = inst == null ? null : (float) inst.getValue();
                 if (inst != null && disp.getTransformation().getScale().distance(scale, scale, scale) > 0.01) {
                     Transformation tf = disp.getTransformation();
@@ -1042,7 +1044,7 @@ public class HologramTrait extends Trait {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
             if (SpigotUtil.getVersion()[1] >= 21 && npc.getEntity() instanceof LivingEntity) {
                 AttributeInstance inst = ((LivingEntity) npc.getEntity())
-                        .getAttribute(Util.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
+                        .getAttribute(SpigotUtil.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
                 Float scale = inst == null ? null : (float) inst.getValue();
                 if (inst != null && disp.getTransformation().getScale().distance(scale, scale, scale) > 0.01) {
                     Transformation tf = disp.getTransformation();
@@ -1060,13 +1062,13 @@ public class HologramTrait extends Trait {
     }
 
     private static final Pattern ITEM_MATCHER = Pattern.compile("<item:((?:minecraft:)?[a-zA-Z0-9_ ]*?)(:.*?)?>");
-
     private static boolean SUPPORTS_DISPLAY = true;
 
     static {
         try {
             Class.forName("org.bukkit.entity.Display");
         } catch (ClassNotFoundException e) {
+            SUPPORTS_DISPLAY = false;
         }
     }
 }

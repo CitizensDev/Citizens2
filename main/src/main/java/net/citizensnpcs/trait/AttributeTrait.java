@@ -13,7 +13,7 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.util.Util;
+import net.citizensnpcs.api.util.SpigotUtil;
 
 @TraitName("attributetrait")
 public class AttributeTrait extends Trait {
@@ -38,7 +38,7 @@ public class AttributeTrait extends Trait {
             return;
         DataKey root = key.getRelative("attributes");
         for (DataKey subkey : root.getSubKeys()) {
-            if (Util.getAttribute(subkey.name()) == null) {
+            if (SpigotUtil.getEnumValue(Attribute.class, subkey.name()) == null) {
                 root.removeKey(subkey.name());
             }
         }

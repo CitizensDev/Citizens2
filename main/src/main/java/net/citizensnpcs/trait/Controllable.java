@@ -47,6 +47,11 @@ public class Controllable extends Trait {
         super("controllable");
     }
 
+    private Player getFirstPlayer() {
+        return (Player) NMS.getPassengers(npc.getEntity()).stream().filter(e -> e instanceof Player).findFirst()
+                .orElse(null);
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -60,16 +65,14 @@ public class Controllable extends Trait {
      */
     public boolean mount(Player toMount) {
         List<Entity> passengers = NMS.getPassengers(npc.getEntity());
-        if (passengers.size() != 0)
-            return false;
-        boolean found = false;
+        boolean alreadyMounted = false;
         for (Entity passenger : passengers) {
             if (passenger != null && passenger == toMount) {
-                found = true;
+                alreadyMounted = true;
                 break;
             }
         }
-        if (found)
+        if (alreadyMounted)
             return false;
         NMS.mount(npc.getEntity(), toMount);
         return true;
@@ -104,9 +107,9 @@ public class Controllable extends Trait {
     private void onRightClick(NPCRightClickEvent event) {
         if (!enabled || !npc.isSpawned())
             return;
-        if (!event.getClicker()
-                .hasPermission("citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase(Locale.ROOT))
-                || !event.getClicker().hasPermission("citizens.npc.controllable")
+        if (!event.getClicker().hasPermission("citizens.npc.controllable")
+                || !event.getClicker().hasPermission(
+                        "citizens.npc.controllable." + npc.getEntity().getType().name().toLowerCase(Locale.ROOT))
                 || ownerRequired && !npc.getOrAddTrait(Owner.class).isOwnedBy(event.getClicker()))
             return;
         mount(event.getClicker());
@@ -135,10 +138,13 @@ public class Controllable extends Trait {
     public void run() {
         if (!enabled || !npc.isSpawned())
             return;
-        List<Entity> passengers = NMS.getPassengers(npc.getEntity());
-        if (npc.getNavigator().isNavigating() || passengers.size() == 0 || !(passengers.get(0) instanceof Player))
+        if (npc.getNavigator().isNavigating())
             return;
-        Player player = (Player) passengers.get(0);
+
+        Player player = getFirstPlayer();
+        if (player == null)
+            return;
+
         ControllableInput input = new ControllableInput();
         if (SUPPORTS_PLAYER_INPUT_EVENT) {
             input.forward = player.getCurrentInput().isForward() ? 1 : player.getCurrentInput().isBackward() ? -1 : 0;
@@ -177,8 +183,11 @@ public class Controllable extends Trait {
 
     public boolean toggle() {
         enabled = !enabled;
-        if (!enabled && NMS.getPassengers(npc.getEntity()).size() > 0) {
-            NMS.getPassengers(npc.getEntity()).get(0).leaveVehicle();
+        if (!enabled) {
+            Player player = getFirstPlayer();
+            if (player != null) {
+                player.leaveVehicle();
+            }
         }
         return enabled;
     }

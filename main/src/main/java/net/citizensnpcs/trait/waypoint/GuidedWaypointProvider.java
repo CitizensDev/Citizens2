@@ -48,7 +48,7 @@ import net.citizensnpcs.util.Util;
  * along the roads.
  */
 public class GuidedWaypointProvider implements EnumerableWaypointProvider {
-    private GuidedAIGoal currentGoal;
+    private GuidedGoal currentGoal;
     private final List<Waypoint> destinations = Lists.newArrayList();
     private float distance = -1;
     private final List<Waypoint> guides = Lists.newArrayList();
@@ -292,7 +292,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     public void onSpawn(NPC npc) {
         this.npc = npc;
         if (currentGoal == null) {
-            currentGoal = new GuidedAIGoal();
+            currentGoal = new GuidedGoal();
             npc.getDefaultGoalController().addGoal(currentGoal, 1);
         }
     }
@@ -349,7 +349,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         return Iterables.concat(destinations, guides);
     }
 
-    private class GuidedAIGoal implements Goal {
+    private class GuidedGoal implements Goal {
         private GuidedPlan plan;
         private Waypoint target;
 
@@ -400,50 +400,50 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 target = null;
                 return false;
             }
-            plan = ASTAR.runFully(new GuidedGoal(target), new GuidedNode(null, new Waypoint(npc.getStoredLocation())));
+            plan = ASTAR.runFully(new PathfinderGoal(target), new PathfinderNode(null, new Waypoint(npc.getStoredLocation())));
             return plan != null;
         }
     }
 
-    private static class GuidedGoal implements AStarGoal<GuidedNode> {
+    private static class PathfinderGoal implements AStarGoal<PathfinderNode> {
         private final Waypoint dest;
 
-        public GuidedGoal(Waypoint dest) {
+        public PathfinderGoal(Waypoint dest) {
             this.dest = dest;
         }
 
         @Override
-        public float g(GuidedNode from, GuidedNode to) {
+        public float g(PathfinderNode from, PathfinderNode to) {
             return (float) from.distance(to.waypoint);
         }
 
         @Override
-        public float getInitialCost(GuidedNode node) {
+        public float getInitialCost(PathfinderNode node) {
             return h(node);
         }
 
         @Override
-        public float h(GuidedNode from) {
+        public float h(PathfinderNode from) {
             return (float) from.distance(dest);
         }
 
         @Override
-        public boolean isFinished(GuidedNode node) {
+        public boolean isFinished(PathfinderNode node) {
             return node.waypoint.equals(dest);
         }
     }
 
-    private class GuidedNode extends AStarNode {
+    private class PathfinderNode extends AStarNode {
         private final Waypoint waypoint;
 
-        public GuidedNode(GuidedNode parent, Waypoint waypoint) {
+        public PathfinderNode(PathfinderNode parent, Waypoint waypoint) {
             super(parent);
             this.waypoint = waypoint;
         }
 
         @Override
         public Plan buildPlan() {
-            return new GuidedPlan(this.<GuidedNode> orderedPath());
+            return new GuidedPlan(this.<PathfinderNode> orderedPath());
         }
 
         public double distance(Waypoint dest) {
@@ -456,7 +456,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 return true;
             if (obj == null || getClass() != obj.getClass())
                 return false;
-            GuidedNode other = (GuidedNode) obj;
+            PathfinderNode other = (PathfinderNode) obj;
             if (!Objects.equals(waypoint, other.waypoint))
                 return false;
             return true;
@@ -470,7 +470,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
                     waypoint.getLocation().getBlockZ());
             List<AStarNode> neighbours = Lists.newArrayList();
-            query.forEachRemaining(wp -> neighbours.add(new GuidedNode(this, wp)));
+            query.forEachRemaining(wp -> neighbours.add(new PathfinderNode(this, wp)));
 
             return neighbours;
         }
@@ -490,7 +490,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         private int index = 0;
         private final Waypoint[] path;
 
-        public GuidedPlan(Iterable<GuidedNode> path) {
+        public GuidedPlan(Iterable<PathfinderNode> path) {
             this.path = Iterables.toArray(Iterables.transform(path, to -> to.waypoint), Waypoint.class);
         }
 
@@ -509,5 +509,5 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         }
     }
 
-    private static final AStarMachine<GuidedNode, GuidedPlan> ASTAR = AStarMachine.createWithDefaultStorage();
+    private static final AStarMachine<PathfinderNode, GuidedPlan> ASTAR = AStarMachine.createWithDefaultStorage();
 }
