@@ -29,7 +29,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.ai.Navigator;
-import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.PathStrategy;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.command.CommandContext;
@@ -511,7 +510,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 ascending = true;
             }
             return new ListIterator<Waypoint>() {
-                int idx = 0;
+                int idx = ascending ? 0 : waypoints.size() - 1;
 
                 @Override
                 public void add(Waypoint e) {
