@@ -57,7 +57,7 @@ public class SkinPacketTracker {
     public void updateViewer(Player player) {
         Objects.requireNonNull(player);
 
-        if (true || isRemoved || player.hasMetadata("NPC"))
+        if (isRemoved || player.hasMetadata("NPC"))
             return;
 
         skin.apply(entity);
