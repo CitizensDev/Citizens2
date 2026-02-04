@@ -35,6 +35,7 @@ import net.citizensnpcs.api.ai.event.NavigationReplaceEvent;
 import net.citizensnpcs.api.ai.event.NavigationStuckEvent;
 import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
+import net.citizensnpcs.api.astar.pathfinder.FallingExaminer;
 import net.citizensnpcs.api.astar.pathfinder.FlyingBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;

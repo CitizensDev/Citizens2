@@ -1,6 +1,5 @@
 package net.citizensnpcs.npc;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
@@ -39,7 +38,6 @@ import net.citizensnpcs.api.npc.BlockBreaker;
 import net.citizensnpcs.api.npc.BlockBreaker.BlockBreakerConfiguration;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.api.util.DataKey;
@@ -81,9 +79,7 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public boolean despawn(DespawnReason reason) {
         if (reason == DespawnReason.RELOAD) {
-            for (Trait trait : traits.values()) {
-                HandlerList.unregisterAll(trait);
-            }
+            traits.forEach(HandlerList::unregisterAll);
         }
         if (getEntity() == null && reason != DespawnReason.DEATH) {
             Messaging.debug("Tried to despawn", this, "while already despawned, DespawnReason." + reason);
@@ -112,9 +108,9 @@ public class CitizensNPC extends AbstractNPC {
             }
         }
         navigator.onDespawn();
-        for (Trait trait : new ArrayList<>(traits.values())) {
+        traits.forEach(trait -> {
             trait.onDespawn(reason);
-        }
+        });
         Messaging.debug("Despawned", this, "DespawnReason." + reason);
 
         if (reason == DespawnReason.DEATH) {
@@ -324,14 +320,14 @@ public class CitizensNPC extends AbstractNPC {
         if (getEntity() instanceof SkinnableEntity && !hasTrait(SkinLayers.class)) {
             ((SkinnableEntity) getEntity()).setSkinFlags(EnumSet.allOf(SkinLayers.Layer.class));
         }
-        for (Trait trait : traits.values().toArray(new Trait[0])) {
+        traits.forEach(trait -> {
             try {
                 trait.onPreSpawn();
             } catch (Throwable ex) {
                 Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
                 ex.printStackTrace();
             }
-        }
+        });
         data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
         boolean wasLoaded = Messaging.isDebugging() ? Util.isLoaded(at) : false;
         final Location location = at;
@@ -385,14 +381,14 @@ public class CitizensNPC extends AbstractNPC {
                     getOrAddTrait(Spawned.class).setSpawned(true);
                     getOrAddTrait(CurrentLocation.class).setLocation(to);
                     navigator.onSpawn();
-                    for (Trait trait : traits.values().toArray(new Trait[0])) {
+                    traits.forEach(trait -> {
                         try {
                             trait.onSpawn();
                         } catch (Throwable ex) {
                             Messaging.severeTr(Messages.TRAIT_ONSPAWN_FAILED, trait.getName(), getId());
                             ex.printStackTrace();
                         }
-                    }
+                    });
                     EntityType type = entity.getType();
                     if (type.isAlive()) {
                         LivingEntity le = (LivingEntity) entity;

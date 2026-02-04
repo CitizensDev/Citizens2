@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.util.NMS;
 
 /**
  * Persists various {@link Horse} metadata.
@@ -128,10 +127,8 @@ public class HorseModifiers extends Trait {
     private static boolean SUPPORTS_CARRYING_CHEST;
     static {
         try {
-            if (NMS.getMethodHandle(Class.forName("org.bukkit.entity.ChestedHorse"), "setCarryingChest", false,
-                    boolean.class) != null) {
-                SUPPORTS_CARRYING_CHEST = true;
-            }
+            Class.forName("org.bukkit.entity.ChestedHorse").getMethod("setCarryingChest", boolean.class);
+            SUPPORTS_CARRYING_CHEST = true;
         } catch (Throwable e) {
         }
     }

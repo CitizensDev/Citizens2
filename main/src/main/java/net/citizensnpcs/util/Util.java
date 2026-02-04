@@ -1,6 +1,5 @@
 package net.citizensnpcs.util;
 
-import java.lang.invoke.MethodHandle;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -582,8 +580,6 @@ public class Util {
         }
     }
 
-    private static MethodHandle ATTRIBUTE_VALUEOF = NMS.getMethodHandle(Attribute.class, "valueOf", false,
-            String.class);
     private static String BEDROCK_NAME_PREFIX = ".";
     private static Scoreboard DUMMY_SCOREBOARD;
     private static final Random RANDOM = new XORShiftRNG();

@@ -119,6 +119,7 @@ import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
+import net.citizensnpcs.trait.HomeTrait;
 import net.citizensnpcs.trait.TargetableTrait;
 import net.citizensnpcs.trait.versioned.SnowmanTrait;
 import net.citizensnpcs.util.ChunkCoord;
@@ -424,7 +425,11 @@ public class EventListen implements Listener {
         int deathAnimationTicks = event.getEntity() instanceof LivingEntity ? 20 : 2;
         CitizensAPI.getScheduler().runRegionTaskLater(location, () -> {
             if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
-                npc.spawn(location, SpawnReason.TIMED_RESPAWN);
+                Location respawn = location;
+                if (npc.hasTrait(HomeTrait.class) && npc.getOrAddTrait(HomeTrait.class).getHomeLocation() != null) {
+                    respawn = npc.getOrAddTrait(HomeTrait.class).getHomeLocation();
+                }
+                npc.spawn(respawn, SpawnReason.TIMED_RESPAWN);
             }
         }, delay + deathAnimationTicks);
     }

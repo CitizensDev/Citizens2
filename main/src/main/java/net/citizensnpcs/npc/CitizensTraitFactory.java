@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -80,6 +81,14 @@ import net.citizensnpcs.util.NMS;
 
 public class CitizensTraitFactory implements TraitFactory {
     private final List<TraitInfo> defaultTraits = Lists.newArrayList();
+    private final ClassValue<Integer> idOf = new ClassValue<Integer>() {
+        @Override
+        protected Integer computeValue(Class<?> type) {
+            return next.getAndIncrement();
+        }
+    };
+
+    private final AtomicInteger next = new AtomicInteger(0);
     private final Map<String, TraitInfo> registered = Maps.newHashMap();
 
     public CitizensTraitFactory(Citizens plugin) {
@@ -172,6 +181,11 @@ public class CitizensTraitFactory implements TraitFactory {
     public void deregisterTrait(TraitInfo info) {
         Objects.requireNonNull(info, "info cannot be null");
         registered.remove(info.getTraitName());
+    }
+
+    @Override
+    public int getId(Class<? extends Trait> clazz) {
+        return idOf.get(clazz);
     }
 
     @Override

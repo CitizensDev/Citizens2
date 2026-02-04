@@ -32,7 +32,7 @@ public class HomeTrait extends Trait {
     }
 
     public Location getHomeLocation() {
-        return location.clone();
+        return location == null ? null : location.clone();
     }
 
     public ReturnStrategy getReturnStrategy() {
