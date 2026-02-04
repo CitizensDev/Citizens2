@@ -118,7 +118,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
         Location dest = plan.isFinalEntry() ? current : Util.getCenterLocation(current.getBlock());
         /* Proper door movement - gets stuck on corners at times
-
+        
         Block block = loc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
          if (MinecraftBlockExaminer.isDoor(block.getType())) {
            Door door = (Door) block.getState().getData();
@@ -247,5 +247,5 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         public CancelReason tick();
     }
 
-    private static final AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();
+    private static final AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithVectorStorage();
 }

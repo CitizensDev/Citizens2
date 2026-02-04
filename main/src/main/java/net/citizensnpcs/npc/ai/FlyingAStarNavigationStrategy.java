@@ -178,5 +178,5 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         return false;
     }
 
-    private static AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithDefaultStorage();
+    private static AStarMachine<VectorNode, Path> ASTAR = AStarMachine.createWithVectorStorage();
 }
