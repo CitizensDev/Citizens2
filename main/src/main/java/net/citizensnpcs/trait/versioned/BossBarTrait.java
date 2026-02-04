@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.versioned;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
@@ -43,7 +44,7 @@ public class BossBarTrait extends Trait {
     @Persist
     private BarColor color = BarColor.PURPLE;
     @Persist
-    private List<BarFlag> flags = Lists.newArrayList();
+    private List<BarFlag> flags = new ArrayList<>();
     private Supplier<Double> progressProvider;
     @Persist
     private int range = -1;
@@ -265,7 +266,7 @@ public class BossBarTrait extends Trait {
             trait.setViewPermission(viewpermission);
         }
         if (flags != null) {
-            List<BarFlag> parsed = Lists.newArrayList();
+            List<BarFlag> parsed = new ArrayList<>();
             for (String s : Splitter.on(',').omitEmptyStrings().trimResults().split(flags)) {
                 BarFlag flag = Util.matchEnum(BarFlag.values(), s);
                 if (flag != null) {

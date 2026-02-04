@@ -1,7 +1,9 @@
 package net.citizensnpcs.trait;
 
 import java.lang.invoke.MethodHandle;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,7 +40,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
@@ -146,7 +147,7 @@ public class ShopTrait extends Trait {
         @Persist(value = "")
         private String name;
         @Persist(reify = true)
-        private final List<NPCShopPage> pages = Lists.newArrayList();
+        private final List<NPCShopPage> pages = new ArrayList<>();
         @Persist(reify = true)
         NPCShopStorage storage = new NPCShopStorage();
         @Persist
@@ -374,7 +375,7 @@ public class ShopTrait extends Trait {
         @Persist
         private String clickToConfirmMessage;
         @Persist
-        private List<NPCShopAction> cost = Lists.newArrayList();
+        private List<NPCShopAction> cost = new ArrayList<>();
         @Persist
         private String costMessage;
         private List<String> defaultLore = ImmutableList.of();
@@ -388,9 +389,9 @@ public class ShopTrait extends Trait {
         @Persist
         private int npurchases;
         @Persist(keyType = UUID.class)
-        private final Map<UUID, Integer> purchases = Maps.newHashMap();
+        private final Map<UUID, Integer> purchases = new HashMap<>();
         @Persist
-        private List<NPCShopAction> result = Lists.newArrayList();
+        private List<NPCShopAction> result = new ArrayList<>();
         @Persist
         private String resultMessage;
         @Persist
@@ -422,7 +423,7 @@ public class ShopTrait extends Trait {
         }
 
         private List<Transaction> apply(List<NPCShopAction> actions, Function<NPCShopAction, Transaction> func) {
-            List<Transaction> pending = Lists.newArrayList();
+            List<Transaction> pending = new ArrayList<>();
             for (NPCShopAction action : actions) {
                 Transaction take = func.apply(action);
                 if (!take.isPossible()) {
@@ -465,11 +466,11 @@ public class ShopTrait extends Trait {
         public NPCShopItem clone() {
             try {
                 NPCShopItem dup = (NPCShopItem) super.clone();
-                dup.cost = Lists.newArrayList();
+                dup.cost = new ArrayList<>();
                 for (NPCShopAction src : cost) {
                     dup.cost.add(src.clone());
                 }
-                dup.result = Lists.newArrayList();
+                dup.result = new ArrayList<>();
                 for (NPCShopAction src : result) {
                     dup.result.add(src.clone());
                 }
@@ -492,7 +493,7 @@ public class ShopTrait extends Trait {
                 meta.setDisplayName(placeholders(meta.getDisplayName(), player));
             }
             if (Setting.SHOP_USE_DEFAULT_DESCRIPTION.asBoolean() && !meta.hasLore()) {
-                List<String> lore = Lists.newArrayList();
+                List<String> lore = new ArrayList<>();
                 cost.forEach(c -> lore.add(c.describe()));
                 result.forEach(r -> {
                     if (!(r instanceof CommandAction)) {
@@ -604,7 +605,7 @@ public class ShopTrait extends Trait {
                 display.setItemMeta(meta);
             }
             if (!defaultLore.isEmpty()) {
-                List<String> output = Lists.newArrayList();
+                List<String> output = new ArrayList<>();
                 ItemMeta meta = display.getItemMeta();
                 for (String lore : defaultLore) {
                     if (lore.trim().equals("<itemlore>")) {
@@ -791,7 +792,7 @@ public class ShopTrait extends Trait {
                     description -> {
                         ItemMeta meta = modified.display.getItemMeta();
                         if (description.isEmpty()) {
-                            meta.setLore(Lists.newArrayList());
+                            meta.setLore(new ArrayList<>());
                         } else {
                             meta.setLore(Messaging.parseComponentsList(description));
                         }
@@ -841,7 +842,7 @@ public class ShopTrait extends Trait {
         @Persist("$key")
         private int index;
         @Persist(keyType = Integer.class, reify = true)
-        private final Map<Integer, NPCShopItem> items = Maps.newHashMap();
+        private final Map<Integer, NPCShopItem> items = new HashMap<>();
         @Persist
         private String title;
 
@@ -1090,7 +1091,7 @@ public class ShopTrait extends Trait {
         @Persist
         private double balance;
         @Persist
-        private List<ItemStack> inventory = Lists.newArrayList();
+        private List<ItemStack> inventory = new ArrayList<>();
         @Persist
         private int inventorySizeLimit = -1;
         @Persist
@@ -1193,7 +1194,7 @@ public class ShopTrait extends Trait {
 
             @Override
             public void onClose(HumanEntity player) {
-                List<ItemStack> items = Lists.newArrayList();
+                List<ItemStack> items = new ArrayList<>();
                 for (int i = 0; i < 3 * 9; i++) {
                     if (ctx.getSlot(i).getCurrentItem() != null) {
                         items.add(ctx.getSlot(i).getCurrentItem().clone());
@@ -1289,9 +1290,9 @@ public class ShopTrait extends Trait {
             this.shop = shop;
             this.player = player;
             this.storage = storage;
-            Map<Integer, NPCShopItem> tradesMap = Maps.newHashMap();
+            Map<Integer, NPCShopItem> tradesMap = new HashMap<>();
             Merchant merchant = Bukkit.createMerchant(shop.getTitle());
-            List<MerchantRecipe> recipes = Lists.newArrayList();
+            List<MerchantRecipe> recipes = new ArrayList<>();
             for (NPCShopPage page : shop.pages) {
                 for (NPCShopItem item : page.items.values()) {
                     ItemStack result = item.getDisplayItem(player);
@@ -1331,7 +1332,7 @@ public class ShopTrait extends Trait {
         }
 
         private int detectSelectedTrade(ItemStack item) {
-            List<Integer> dupes = Lists.newArrayList();
+            List<Integer> dupes = new ArrayList<>();
             for (Map.Entry<Integer, NPCShopItem> entry : trades.entrySet()) {
                 ItemStack result = entry.getValue().getDisplayItem(player).clone();
                 if (!item.isSimilar(result))

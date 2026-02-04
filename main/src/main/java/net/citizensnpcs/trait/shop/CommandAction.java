@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.shop;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -9,8 +10,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
@@ -23,7 +22,7 @@ import net.citizensnpcs.util.Util;
 
 public class CommandAction extends NPCShopAction {
     @Persist
-    public List<String> commands = Lists.newArrayList();
+    public List<String> commands = new ArrayList<>();
     @Persist
     public boolean op = false;
     @Persist
@@ -55,8 +54,7 @@ public class CommandAction extends NPCShopAction {
     }
 
     @Override
-    public Transaction grant(NPCShopStorage storage, Entity entity, InventoryMultiplexer inventory,
-            int repeats) {
+    public Transaction grant(NPCShopStorage storage, Entity entity, InventoryMultiplexer inventory, int repeats) {
         if (!(entity instanceof Player))
             return Transaction.fail();
         Player player = (Player) entity;

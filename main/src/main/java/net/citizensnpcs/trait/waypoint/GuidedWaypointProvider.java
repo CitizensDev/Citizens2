@@ -1,11 +1,11 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 import ch.ethz.globis.phtree.PhRangeQuery;
 import ch.ethz.globis.phtree.PhTree;
@@ -49,9 +48,9 @@ import net.citizensnpcs.util.Util;
  */
 public class GuidedWaypointProvider implements EnumerableWaypointProvider {
     private GuidedGoal currentGoal;
-    private final List<Waypoint> destinations = Lists.newArrayList();
+    private final List<Waypoint> destinations = new ArrayList<>();
     private float distance = -1;
-    private final List<Waypoint> guides = Lists.newArrayList();
+    private final List<Waypoint> guides = new ArrayList<>();
     private NPC npc;
     private boolean paused;
     private final PhTree<Waypoint> tree = PhTree.create(3);
@@ -400,7 +399,8 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                 target = null;
                 return false;
             }
-            plan = ASTAR.runFully(new PathfinderGoal(target), new PathfinderNode(null, new Waypoint(npc.getStoredLocation())));
+            plan = ASTAR.runFully(new PathfinderGoal(target),
+                    new PathfinderNode(null, new Waypoint(npc.getStoredLocation())));
             return plan != null;
         }
     }
@@ -469,7 +469,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     distance == -1 ? npc.getNavigator().getDefaultParameters().range() : distance,
                     waypoint.getLocation().getBlockX(), waypoint.getLocation().getBlockY(),
                     waypoint.getLocation().getBlockZ());
-            List<AStarNode> neighbours = Lists.newArrayList();
+            List<AStarNode> neighbours = new ArrayList<>();
             query.forEachRemaining(wp -> neighbours.add(new PathfinderNode(this, wp)));
 
             return neighbours;

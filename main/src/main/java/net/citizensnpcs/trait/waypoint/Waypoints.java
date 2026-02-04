@@ -1,12 +1,11 @@
 package net.citizensnpcs.trait.waypoint;
 
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.command.CommandSender;
-
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -140,7 +139,7 @@ public class Waypoints extends Trait {
         }
     }
 
-    private static final Map<String, Constructor<? extends WaypointProvider>> PROVIDERS = Maps.newHashMap();
+    private static final Map<String, Constructor<? extends WaypointProvider>> PROVIDERS = new HashMap<>();
 
     static {
         registerWaypointProvider(LinearWaypointProvider.class, "linear");

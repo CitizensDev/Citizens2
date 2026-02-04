@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -14,7 +15,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 
 public class ChatTriggerPrompt extends StringPrompt implements WaypointTriggerPrompt {
-    private final List<String> lines = Lists.newArrayList();
+    private final List<String> lines = new ArrayList<>();
     private double radius = -1;
 
     @Override

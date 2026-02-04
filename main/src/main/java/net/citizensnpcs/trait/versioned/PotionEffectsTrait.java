@@ -1,5 +1,7 @@
 package net.citizensnpcs.trait.versioned;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,9 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.command.Arg;
 import net.citizensnpcs.api.command.Command;
@@ -28,8 +27,8 @@ import net.citizensnpcs.util.Messages;
 @TraitName("potioneffects")
 public class PotionEffectsTrait extends Trait {
     @Persist(valueType = PotionEffect.class)
-    private final Map<String, PotionEffect> persistent = Maps.newHashMap();
-    private final List<PotionEffect> temporary = Lists.newArrayList();
+    private final Map<String, PotionEffect> persistent = new HashMap<>();
+    private final List<PotionEffect> temporary = new ArrayList<>();
 
     public PotionEffectsTrait() {
         super("potioneffects");

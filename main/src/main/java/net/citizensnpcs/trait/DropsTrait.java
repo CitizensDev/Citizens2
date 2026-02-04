@@ -1,5 +1,7 @@
 package net.citizensnpcs.trait;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -12,9 +14,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.gui.InventoryMenu;
@@ -32,7 +31,7 @@ import net.citizensnpcs.util.Util;
 @TraitName("dropstrait")
 public class DropsTrait extends Trait {
     @Persist(reify = true)
-    private List<ItemDrop> drops = Lists.newArrayList();
+    private List<ItemDrop> drops = new ArrayList<>();
 
     public DropsTrait() {
         super("dropstrait");
@@ -54,7 +53,7 @@ public class DropsTrait extends Trait {
 
     @Menu(title = "Add items for drops", type = InventoryType.CHEST, dimensions = { 5, 9 })
     public static class DropsGUI extends InventoryMenuPage {
-        private final Map<Integer, Double> chances = Maps.newHashMap();
+        private final Map<Integer, Double> chances = new HashMap<>();
         private Inventory inventory;
         private DropsTrait trait;
 
@@ -109,7 +108,7 @@ public class DropsTrait extends Trait {
 
         @Override
         public void onClose(HumanEntity player) {
-            List<ItemDrop> drops = Lists.newArrayList();
+            List<ItemDrop> drops = new ArrayList<>();
             for (int i = 0; i < 5; i += 2) {
                 for (int j = 0; j < 9; j++) {
                     int slot = i * 9 + j;

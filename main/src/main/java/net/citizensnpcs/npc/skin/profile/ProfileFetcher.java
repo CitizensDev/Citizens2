@@ -3,9 +3,6 @@ package net.citizensnpcs.npc.skin.profile;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
-
 import net.citizensnpcs.api.CitizensAPI;
 
 /**

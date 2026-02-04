@@ -29,12 +29,13 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import net.citizensnpcs.api.CitizensAPI;
 
 /**
  * bStats collects some data for plugin authors.
@@ -475,8 +476,8 @@ public class Metrics {
          * Escapes the given string like stated in <a href="https://www.ietf.org/rfc/rfc4627.txt">IETF RFC4627</a>.
          *
          * <p>
-         * This method escapes only the necessary characters '"', '&#92;'. and '&#92;u0000' - '&#92;u001F'.
-         * Compact escapes are not used (e.g., '&#92;n' is escaped as "&#92;u000a" and not as "&#92;n").
+         * This method escapes only the necessary characters '"', '&#92;'. and '&#92;u0000' - '&#92;u001F'. Compact
+         * escapes are not used (e.g., '&#92;n' is escaped as "&#92;u000a" and not as "&#92;n").
          *
          * @param value
          *            The value to escape.

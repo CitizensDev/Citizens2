@@ -2,7 +2,6 @@ package net.citizensnpcs.trait.shop;
 
 import java.util.function.Consumer;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;

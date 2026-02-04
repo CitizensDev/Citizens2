@@ -7,8 +7,6 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import org.bukkit.Bukkit;
-
 import com.mojang.authlib.GameProfile;
 
 import net.citizensnpcs.api.CitizensAPI;

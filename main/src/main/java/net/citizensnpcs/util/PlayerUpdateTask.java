@@ -1,5 +1,6 @@
 package net.citizensnpcs.util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -10,7 +11,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -22,7 +22,7 @@ import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.PacketNPC;
 
 public class PlayerUpdateTask extends SchedulerRunnable {
-    private final List<PlayerTick> players = Lists.newArrayList();
+    private final List<PlayerTick> players = new ArrayList<>();
     private final Set<UUID> uuids = Sets.newHashSet();
 
     @Override

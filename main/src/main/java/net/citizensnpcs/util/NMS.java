@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +45,6 @@ import org.slf4j.helpers.NOPLogger;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
@@ -290,7 +290,7 @@ public class NMS {
     }
 
     private static List<Field> getFieldsMatchingType(Class<?> clazz, Class<?> type, boolean allowStatic) {
-        List<Field> found = Lists.newArrayList();
+        List<Field> found = new ArrayList<>();
         for (Field field : clazz.getDeclaredFields()) {
             if (allowStatic ^ Modifier.isStatic(field.getModifiers())) {
                 continue;

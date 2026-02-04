@@ -3,11 +3,12 @@ package net.citizensnpcs.util;
 import java.util.Objects;
 import java.util.UUID;
 
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+
+import net.citizensnpcs.api.CitizensAPI;
 
 public class ChunkCoord {
     public final UUID worldUUID;

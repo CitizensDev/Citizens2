@@ -1,11 +1,11 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.conversations.Prompt;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.persistence.Persister;
@@ -56,8 +56,8 @@ public class WaypointTriggerRegistry implements Persister<WaypointTrigger> {
         }
     }
 
-    private static final Map<String, Class<? extends Prompt>> TRIGGER_PROMPTS = Maps.newHashMap();
-    private static final Map<String, Class<? extends WaypointTrigger>> TRIGGERS = Maps.newHashMap();
+    private static final Map<String, Class<? extends Prompt>> TRIGGER_PROMPTS = new HashMap<>();
+    private static final Map<String, Class<? extends WaypointTrigger>> TRIGGERS = new HashMap<>();
 
     static {
         addTrigger("animation", AnimationTrigger.class, AnimationTriggerPrompt.class);

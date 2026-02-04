@@ -102,6 +102,7 @@ public class Messages {
     public static final String DEFAULT_POSE_SET = "citizens.commands.npc.pose.default-pose-set";
     public static final String DELAY_TRIGGER_PROMPT = "citizens.editors.waypoints.triggers.delay.prompt";
     public static final String DESELECTED_NPC = "citizens.commands.npc.deselect";
+    public static final String DISGUISE_SET = "citizens.commands.npc.disguise.disguise-set";
     public static final String ENDERCRYSTAL_NOT_SHOWING_BOTTOM = "citizens.commands.npc.endercrystal.not-showing-bottom";
     public static final String ENDERCRYSTAL_SHOWING_BOTTOM = "citizens.commands.npc.endercrystal.showing-bottom";
     public static final String ENDERMAN_ANGRY_SET = "citizens.commands.npc.enderman.angry-set";

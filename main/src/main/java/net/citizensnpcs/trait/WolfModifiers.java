@@ -1,12 +1,11 @@
 package net.citizensnpcs.trait;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Wolf.Variant;
-
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -122,7 +121,7 @@ public class WolfModifiers extends Trait {
     }
 
     private static boolean SUPPORT_SET_INTERESTED = true;
-    private static final Map<String, Object> VARIANT_CACHE = Maps.newHashMap();
+    private static final Map<String, Object> VARIANT_CACHE = new HashMap<>();
     static {
         try {
             Wolf.class.getMethod("setInterested", boolean.class);

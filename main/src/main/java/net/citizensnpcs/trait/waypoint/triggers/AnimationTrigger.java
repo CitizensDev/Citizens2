@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import net.citizensnpcs.util.PlayerAnimation;
 
 public class AnimationTrigger implements WaypointTrigger {
     @Persist(required = true)
-    private List<PlayerAnimation> animations = Lists.newArrayList();
+    private List<PlayerAnimation> animations = new ArrayList<>();
     @Persist
     private Location at;
 

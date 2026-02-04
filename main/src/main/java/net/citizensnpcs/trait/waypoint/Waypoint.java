@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +41,7 @@ public class Waypoint {
 
     public void addTrigger(WaypointTrigger trigger) {
         if (triggers == null) {
-            triggers = Lists.newArrayList();
+            triggers = new ArrayList<>();
         }
         triggers.add(trigger);
     }

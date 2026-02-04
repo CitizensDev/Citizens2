@@ -1,13 +1,12 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
@@ -20,7 +19,7 @@ import net.citizensnpcs.util.Util;
  * A helper class for storing a number of entity markers. By default an entity marker is a non-persisted EnderSignal.
  */
 public class EntityMarkers<T> {
-    private final Map<T, Entity> markers = Maps.newHashMap();
+    private final Map<T, Entity> markers = new HashMap<>();
     private final NPCRegistry registry = CitizensAPI.getTemporaryNPCRegistry();
     private EntityType type;
 

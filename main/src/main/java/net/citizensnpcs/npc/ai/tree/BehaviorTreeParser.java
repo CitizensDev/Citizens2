@@ -1,11 +1,10 @@
 package net.citizensnpcs.npc.ai.tree;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 import org.bukkit.entity.Player;
-
-import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorRegistry;
@@ -52,8 +51,8 @@ public class BehaviorTreeParser {
     }
 
     private List<Behavior> coalesceInstantBehaviors(List<Behavior> behaviors) {
-        List<Behavior> result = Lists.newArrayList();
-        List<Behavior> instantGroup = Lists.newArrayList();
+        List<Behavior> result = new ArrayList<>();
+        List<Behavior> instantGroup = new ArrayList<>();
 
         for (Behavior behavior : behaviors) {
             if (behavior instanceof InstantBehavior) {
@@ -61,7 +60,7 @@ public class BehaviorTreeParser {
             } else {
                 if (!instantGroup.isEmpty()) {
                     result.add(instantGroup.size() == 1 ? instantGroup.get(0) : new CoalescedBehavior(instantGroup));
-                    instantGroup = Lists.newArrayList();
+                    instantGroup = new ArrayList<>();
                 }
                 result.add(behavior);
             }
@@ -192,7 +191,7 @@ public class BehaviorTreeParser {
             return Selector.selecting(children).build();
         }
         if (name.equalsIgnoreCase("parallel")) {
-            List<Behavior> parallelWrapped = Lists.newArrayList();
+            List<Behavior> parallelWrapped = new ArrayList<>();
             for (Behavior child : parseContainerChildren(key, context)) {
                 parallelWrapped.add(new ParallelBehaviorWrapper(child));
             }
@@ -209,7 +208,7 @@ public class BehaviorTreeParser {
     }
 
     private List<Behavior> parseContainerChildren(DataKey key, BehaviorRegistry.BehaviorContext context) {
-        List<Behavior> children = Lists.newArrayList();
+        List<Behavior> children = new ArrayList<>();
         DataKey ifKey = null;
         DataKey elseKey = null;
         for (DataKey sub : key.getIntegerSubKeys()) {
@@ -259,7 +258,7 @@ public class BehaviorTreeParser {
      */
     private Behavior parseEvalBlock(DataKey key, String language, BehaviorRegistry.BehaviorContext context) {
         ExpressionRegistry exprRegistry = registry.getExpressionRegistry();
-        List<CompiledExpression> expressions = Lists.newArrayList();
+        List<CompiledExpression> expressions = new ArrayList<>();
 
         String engineName = language != null ? language : exprRegistry.getDefaultEngineName();
         ExpressionEngine engine = exprRegistry.getEngine(engineName);
@@ -291,7 +290,7 @@ public class BehaviorTreeParser {
 
         Behavior ifBehavior;
         if (ifKey.hasSubKeys()) {
-            List<Behavior> children = Lists.newArrayList();
+            List<Behavior> children = new ArrayList<>();
             for (DataKey sub : ifKey.getIntegerSubKeys()) {
                 if (sub.hasSubKeys()) {
                     sub = sub.getSubKeys().iterator().next();
@@ -309,7 +308,7 @@ public class BehaviorTreeParser {
         Behavior elseBehavior = null;
         if (elseKey != null) {
             if (elseKey.hasSubKeys()) {
-                List<Behavior> children = Lists.newArrayList();
+                List<Behavior> children = new ArrayList<>();
                 for (DataKey sub : elseKey.getIntegerSubKeys()) {
                     if (sub.hasSubKeys()) {
                         sub = sub.getSubKeys().iterator().next();
@@ -340,7 +339,7 @@ public class BehaviorTreeParser {
      * @return array of parsed arguments
      */
     private String[] parseInlineArgs(String input) {
-        List<String> args = Lists.newArrayList();
+        List<String> args = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean inQuotes = false;
         char quoteChar = 0;

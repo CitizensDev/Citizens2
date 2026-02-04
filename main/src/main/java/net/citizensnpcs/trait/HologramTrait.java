@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +75,7 @@ public class HologramTrait extends Trait {
     private boolean lastNameplateVisible;
     @Persist
     private double lineHeight = -1;
-    private final List<HologramLine> lines = Lists.newArrayList();
+    private final List<HologramLine> lines = new ArrayList<>();
     private HologramLine nameLine;
     private final NPCRegistry registry = CitizensAPI.getTemporaryNPCRegistry();
     private int t;

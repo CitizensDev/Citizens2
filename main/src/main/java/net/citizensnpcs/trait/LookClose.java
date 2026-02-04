@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -171,7 +171,7 @@ public class LookClose extends Trait {
     }
 
     private List<Player> getNearbyPlayers() {
-        List<Player> options = Lists.newArrayList();
+        List<Player> options = new ArrayList<>();
         Location npcLoc = npc.getStoredLocation();
         Iterable<Player> nearby = targetNPCs
                 ? npc.getEntity().getNearbyEntities(range, range, range).stream()

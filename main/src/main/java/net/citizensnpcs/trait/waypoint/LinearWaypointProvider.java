@@ -1,6 +1,8 @@
 package net.citizensnpcs.trait.waypoint;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -21,8 +23,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -51,14 +51,14 @@ import net.citizensnpcs.util.Util;
  * An ordered list of {@link Waypoint}s to walk between.
  */
 public class LinearWaypointProvider implements EnumerableWaypointProvider {
-    private final Map<SourceDestinationPair, Iterable<Vector>> cachedPaths = Maps.newHashMap();
+    private final Map<SourceDestinationPair, Iterable<Vector>> cachedPaths = new HashMap<>();
     @Persist
     private boolean cachePaths = Setting.DEFAULT_CACHE_WAYPOINT_PATHS.asBoolean();
     private LinearWaypointGoal currentGoal;
     @Persist
     private boolean cycle = false;
     private NPC npc;
-    private final List<Waypoint> waypoints = Lists.newArrayList();
+    private final List<Waypoint> waypoints = new ArrayList<>();
 
     public LinearWaypointProvider() {
     }

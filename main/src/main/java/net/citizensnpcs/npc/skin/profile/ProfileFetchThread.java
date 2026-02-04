@@ -12,8 +12,6 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import org.bukkit.Bukkit;
-
 import com.google.common.base.Throwables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;

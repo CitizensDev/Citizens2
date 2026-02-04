@@ -1,12 +1,11 @@
 package net.citizensnpcs.trait;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
-
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.persistence.Persist;
@@ -18,7 +17,7 @@ import net.citizensnpcs.api.util.SpigotUtil;
 @TraitName("attributetrait")
 public class AttributeTrait extends Trait {
     @Persist(keyType = Attribute.class)
-    private final Map<Attribute, Double> attributes = Maps.newHashMap();
+    private final Map<Attribute, Double> attributes = new HashMap<>();
 
     public AttributeTrait() {
         super("attributetrait");

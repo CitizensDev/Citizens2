@@ -1,5 +1,6 @@
 package net.citizensnpcs.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -9,7 +10,6 @@ import java.util.function.Predicate;
 
 import org.bukkit.entity.Player;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public interface EntityPacketTracker extends Runnable {
@@ -58,7 +58,7 @@ public interface EntityPacketTracker extends Runnable {
         }
 
         public void startBundling() {
-            packets = Lists.newArrayList();
+            packets = new ArrayList<>();
         }
 
         public void stopBundlingAndSend() {

@@ -1,5 +1,6 @@
 package net.citizensnpcs.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +12,6 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.NumericPrompt;
 import org.bukkit.conversations.Prompt;
 
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -105,7 +105,7 @@ public class NPCCommandSelector extends NumericPrompt {
             return;
         }
         String name = args.getString(1);
-        List<NPC> possible = Lists.newArrayList();
+        List<NPC> possible = new ArrayList<>();
         double range = -1;
         if (args.hasValueFlag("range")) {
             range = Math.abs(args.getFlagDouble("range"));

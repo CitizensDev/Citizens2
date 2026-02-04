@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.shop;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
@@ -36,9 +36,9 @@ import net.kyori.adventure.text.Component;
 
 public class ItemAction extends NPCShopAction {
     @Persist
-    public List<ItemStack> items = Lists.newArrayList();
+    public List<ItemStack> items = new ArrayList<>();
     @Persist
-    public List<String> metaFilter = Lists.newArrayList();
+    public List<String> metaFilter = new ArrayList<>();
     @Persist
     public boolean requireUndamaged = true;
 
@@ -329,7 +329,7 @@ public class ItemAction extends NPCShopAction {
 
         @Override
         public void onClose(HumanEntity player) {
-            List<ItemStack> items = Lists.newArrayList();
+            List<ItemStack> items = new ArrayList<>();
             for (int i = 0; i < 3 * 9; i++) {
                 if (ctx.getSlot(i).getCurrentItem() != null) {
                     items.add(ctx.getSlot(i).getCurrentItem().clone());

@@ -1,5 +1,6 @@
 package net.citizensnpcs.editor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.entity.EntityType;
@@ -36,7 +37,7 @@ public class EquipmentEditor extends Editor {
     @Override
     public void begin() {
         if (EQUIPPER_GUIS.containsKey(npc.getEntity().getType()) || !EQUIPPERS.containsKey(npc.getEntity().getType())) {
-            Map<String, Object> ctx = Maps.newHashMap();
+            Map<String, Object> ctx = new HashMap<>();
             ctx.put("npc", npc);
             menu = InventoryMenu.createWithContext(
                     EQUIPPER_GUIS.getOrDefault(npc.getEntity().getType(), GenericEquipperGUI.class), ctx);

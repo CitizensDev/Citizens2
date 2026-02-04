@@ -49,6 +49,7 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.AttributeTrait;
 import net.citizensnpcs.trait.ChunkTicketTrait;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.DisguiseTrait;
 import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
@@ -138,6 +139,12 @@ public class CitizensNPC extends AbstractNPC {
     @Override
     public BlockBreaker getBlockBreaker(Block targetBlock, BlockBreakerConfiguration config) {
         return NMS.getBlockBreaker(getEntity(), targetBlock, config);
+    }
+
+    @Override
+    public Entity getCosmeticEntity() {
+        DisguiseTrait trait = getTraitNullable(DisguiseTrait.class);
+        return trait == null || trait.getCosmeticEntity() == null ? getEntity() : trait.getCosmeticEntity();
     }
 
     @Override

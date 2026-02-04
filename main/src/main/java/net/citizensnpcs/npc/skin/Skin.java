@@ -11,9 +11,7 @@ import java.util.WeakHashMap;
 
 import javax.annotation.Nullable;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.scheduler.BukkitTask;
 
 import com.mojang.authlib.GameProfile;
 
@@ -158,8 +156,7 @@ public class Skin {
 
                     fetchRetries++;
                     long delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
-                    retryTask = CitizensAPI.getScheduler().runTaskLater(this::fetch,
-                            delay);
+                    retryTask = CitizensAPI.getScheduler().runTaskLater(this::fetch, delay);
 
                     Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
                     break;
@@ -200,8 +197,7 @@ public class Skin {
                     }
                     fetchRetries++;
                     int delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
-                    retryTask = CitizensAPI.getScheduler().runTaskLater(
-                            this::fetchForced, delay);
+                    retryTask = CitizensAPI.getScheduler().runTaskLater(this::fetchForced, delay);
 
                     Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
                     break;

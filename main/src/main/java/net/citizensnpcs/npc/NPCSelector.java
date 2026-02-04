@@ -1,5 +1,6 @@
 package net.citizensnpcs.npc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,8 +17,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.metadata.Metadatable;
 import org.bukkit.plugin.Plugin;
-
-import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -133,7 +132,7 @@ public class NPCSelector implements Listener, net.citizensnpcs.api.npc.NPCSelect
         // Remove existing selection if any
         List<String> selectors = npc.data().get("selectors");
         if (selectors == null) {
-            selectors = Lists.newArrayList();
+            selectors = new ArrayList<>();
             npc.data().set("selectors", selectors);
         }
         if (sender instanceof Player) {

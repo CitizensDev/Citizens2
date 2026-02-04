@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.waypoint.triggers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -20,7 +21,7 @@ import net.citizensnpcs.util.PlayerAnimation;
 import net.citizensnpcs.util.Util;
 
 public class AnimationTriggerPrompt extends StringPrompt implements WaypointTriggerPrompt {
-    private final List<PlayerAnimation> animations = Lists.newArrayList();
+    private final List<PlayerAnimation> animations = new ArrayList<>();
     private Location at;
 
     @Override

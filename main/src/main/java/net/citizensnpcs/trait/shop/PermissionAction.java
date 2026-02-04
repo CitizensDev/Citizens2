@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.shop;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -9,8 +10,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.InputMenus;
 import net.citizensnpcs.api.gui.InventoryMenuPage;
@@ -25,7 +24,7 @@ import net.milkbowl.vault.permission.Permission;
 
 public class PermissionAction extends NPCShopAction {
     @Persist
-    public List<String> permissions = Lists.newArrayList();
+    public List<String> permissions = new ArrayList<>();
 
     public PermissionAction() {
     }

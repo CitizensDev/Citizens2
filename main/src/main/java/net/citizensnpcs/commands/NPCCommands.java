@@ -143,6 +143,7 @@ import net.citizensnpcs.trait.CommandTrait.NPCCommandBuilder;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.Controllable.BuiltInControls;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.DisguiseTrait;
 import net.citizensnpcs.trait.DropsTrait;
 import net.citizensnpcs.trait.EnderCrystalTrait;
 import net.citizensnpcs.trait.EndermanTrait;
@@ -605,7 +606,7 @@ public class NPCCommands {
             if (args.hasFlag('s') && hand != CommandTrait.Hand.BOTH) {
                 hand = hand == CommandTrait.Hand.LEFT ? CommandTrait.Hand.SHIFT_LEFT : CommandTrait.Hand.SHIFT_RIGHT;
             }
-            List<String> perms = Lists.newArrayList();
+            List<String> perms = new ArrayList<>();
             if (permissions != null) {
                 perms.addAll(Arrays.asList(permissions.split(",")));
             }
@@ -1071,13 +1072,28 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "disguise --type [type]",
+            desc = "",
+            modifiers = { "disguise" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.disguise")
+    public void disguise(CommandContext args, CommandSender sender, NPC npc, @Flag("type") EntityType type) {
+        DisguiseTrait trait = npc.getOrAddTrait(DisguiseTrait.class);
+        if (type != null) {
+            trait.disguiseAsType(type);
+            Messaging.sendTr(sender, Messages.DISGUISE_SET, type);
+        }
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "drops",
             desc = "",
             modifiers = { "drops" },
             min = 1,
             max = 1,
             permission = "citizens.npc.drops")
-    @Requirements(ownership = true, selected = true)
     public void drops(CommandContext args, Player sender, NPC npc) throws CommandException {
         DropsTrait trait = npc.getOrAddTrait(DropsTrait.class);
         trait.displayEditor(sender);
@@ -1092,7 +1108,6 @@ public class NPCCommands {
             max = 1,
             flags = "b",
             permission = "citizens.npc.endercrystal")
-    @Requirements(ownership = true, selected = true)
     public void endercrystal(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         if (!npc.getOrAddTrait(MobType.class).getType().name().equals("END_CRYSTAL")
                 && !npc.getOrAddTrait(MobType.class).getType().name().equals("ENDER_CRYSTAL"))
@@ -1501,7 +1516,6 @@ public class NPCCommands {
             max = 1,
             flags = "pth",
             permission = "citizens.npc.home")
-    @Requirements(ownership = true, selected = true)
     public void home(CommandContext args, CommandSender sender, NPC npc, @Flag("location") Location loc,
             @Flag("delay") Duration delay, @Flag("distance") Double distance) throws CommandException {
         HomeTrait trait = npc.getOrAddTrait(HomeTrait.class);

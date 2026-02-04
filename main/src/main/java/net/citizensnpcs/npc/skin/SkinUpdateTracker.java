@@ -15,13 +15,11 @@ import java.util.WeakHashMap;
 
 import javax.annotation.Nullable;
 
-import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -30,6 +28,7 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
+import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import net.citizensnpcs.util.Util;
 
 /**

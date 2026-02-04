@@ -2,6 +2,7 @@ package net.citizensnpcs.trait.text;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -14,8 +15,6 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
@@ -40,7 +39,7 @@ import net.citizensnpcs.util.Util;
  */
 @TraitName("text")
 public class Text extends Trait implements Runnable, Listener {
-    private final Map<UUID, Long> cooldowns = Maps.newHashMap();
+    private final Map<UUID, Long> cooldowns = new HashMap<>();
     private int currentIndex;
     @Persist
     private int delay = -1;

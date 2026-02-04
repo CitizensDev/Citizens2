@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.versioned;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -9,8 +10,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pose;
 import org.bukkit.entity.Warden;
-
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.api.command.Arg;
 import net.citizensnpcs.api.command.Command;
@@ -27,7 +26,7 @@ import net.citizensnpcs.util.NMS;
 
 @TraitName("wardentrait")
 public class WardenTrait extends Trait {
-    private final Map<UUID, Integer> anger = Maps.newHashMap();
+    private final Map<UUID, Integer> anger = new HashMap<>();
 
     public WardenTrait() {
         super("wardentrait");

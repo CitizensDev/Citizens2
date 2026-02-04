@@ -1,5 +1,6 @@
 package net.citizensnpcs.trait.shop;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -10,8 +11,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import com.google.common.collect.Lists;
 
 import net.citizensnpcs.api.gui.InventoryMenuPage;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
@@ -117,7 +116,7 @@ public abstract class NPCShopAction implements Cloneable {
         GUI.add(gui);
     }
 
-    private static final List<GUI> GUI = Lists.newArrayList();
+    private static final List<GUI> GUI = new ArrayList<>();
     private static final PersisterRegistry<NPCShopAction> REGISTRY = PersistenceLoader
             .createRegistry(NPCShopAction.class);
 }

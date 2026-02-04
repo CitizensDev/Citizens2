@@ -1,14 +1,13 @@
 package net.citizensnpcs.npc;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
@@ -35,6 +34,7 @@ import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.Controllable;
 import net.citizensnpcs.trait.CurrentLocation;
+import net.citizensnpcs.trait.DisguiseTrait;
 import net.citizensnpcs.trait.DropsTrait;
 import net.citizensnpcs.trait.EnderCrystalTrait;
 import net.citizensnpcs.trait.EndermanTrait;
@@ -80,7 +80,7 @@ import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.NMS;
 
 public class CitizensTraitFactory implements TraitFactory {
-    private final List<TraitInfo> defaultTraits = Lists.newArrayList();
+    private final List<TraitInfo> defaultTraits = new ArrayList<>();
     private final ClassValue<Integer> idOf = new ClassValue<Integer>() {
         @Override
         protected Integer computeValue(Class<?> type) {
@@ -89,7 +89,7 @@ public class CitizensTraitFactory implements TraitFactory {
     };
 
     private final AtomicInteger next = new AtomicInteger(0);
-    private final Map<String, TraitInfo> registered = Maps.newHashMap();
+    private final Map<String, TraitInfo> registered = new HashMap<>();
 
     public CitizensTraitFactory(Citizens plugin) {
         registerTrait(TraitInfo.create(Age.class));
@@ -105,6 +105,7 @@ public class CitizensTraitFactory implements TraitFactory {
         registerTrait(TraitInfo.create(CommandTrait.class).optInToStats());
         registerTrait(TraitInfo.create(Controllable.class).optInToStats());
         registerTrait(TraitInfo.create(CurrentLocation.class));
+        registerTrait(TraitInfo.create(DisguiseTrait.class).optInToStats());
         registerTrait(TraitInfo.create(DropsTrait.class).optInToStats());
         registerTrait(TraitInfo.create(EnderCrystalTrait.class));
         registerTrait(TraitInfo.create(EndermanTrait.class));

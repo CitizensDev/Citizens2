@@ -1,9 +1,9 @@
 package net.citizensnpcs.trait.waypoint;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import com.google.common.collect.ForwardingList;
-import com.google.common.collect.Lists;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -45,7 +44,7 @@ public class WanderWaypointProvider implements WaypointProvider {
     private boolean pathfind = true;
     private boolean paused;
     @Persist
-    private final List<Location> regionCentres = Lists.newArrayList();
+    private final List<Location> regionCentres = new ArrayList<>();
     private PhTreeSolid<Boolean> tree = PhTreeSolid.create(3);
     @Persist
     private String worldguardRegion;
@@ -134,8 +133,8 @@ public class WanderWaypointProvider implements WaypointProvider {
                 } else if (message.startsWith("delay")) {
                     event.setCancelled(true);
                     setDelay(SpigotUtil.parseTicks(message.split(" ")[1]));
-                    CitizensAPI.getScheduler().runTask(
-                            () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
+                    CitizensAPI.getScheduler()
+                            .runTask(() -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
                 } else if (message.startsWith("worldguardregion")) {
                     event.setCancelled(true);
                     CitizensAPI.getScheduler().runTask(() -> {

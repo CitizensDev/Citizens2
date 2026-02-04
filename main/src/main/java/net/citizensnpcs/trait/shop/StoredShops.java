@@ -1,8 +1,8 @@
 package net.citizensnpcs.trait.shop;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -15,9 +15,9 @@ import net.citizensnpcs.trait.ShopTrait.NPCShop;
 
 public class StoredShops {
     @Persist(value = "global", reify = true)
-    public Map<String, NPCShop> globalShops = Maps.newHashMap();
+    public Map<String, NPCShop> globalShops = new HashMap<>();
     @Persist(value = "npc", reify = true)
-    public Map<String, NPCShop> npcShops = Maps.newHashMap();
+    public Map<String, NPCShop> npcShops = new HashMap<>();
     private final Storage storage;
 
     public StoredShops(YamlStorage storage) {

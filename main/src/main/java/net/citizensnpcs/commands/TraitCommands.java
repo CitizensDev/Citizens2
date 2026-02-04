@@ -1,5 +1,6 @@
 package net.citizensnpcs.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -9,7 +10,6 @@ import org.bukkit.command.CommandSender;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
@@ -41,8 +41,8 @@ public class TraitCommands {
             min = 2,
             permission = "citizens.npc.trait")
     public void add(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        List<String> added = Lists.newArrayList();
-        List<String> failed = Lists.newArrayList();
+        List<String> added = new ArrayList<>();
+        List<String> failed = new ArrayList<>();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(1))) {
             if (!sender.hasPermission("citizens.npc.trait." + traitName)
                     && !sender.hasPermission("citizens.npc.trait.*")) {
@@ -96,8 +96,8 @@ public class TraitCommands {
             min = 2,
             permission = "citizens.npc.trait")
     public void remove(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        List<String> removed = Lists.newArrayList();
-        List<String> failed = Lists.newArrayList();
+        List<String> removed = new ArrayList<>();
+        List<String> failed = new ArrayList<>();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(1))) {
             if (!sender.hasPermission("citizens.npc.trait." + traitName)
                     && !sender.hasPermission("citizens.npc.trait.*")) {
@@ -138,9 +138,9 @@ public class TraitCommands {
             min = 1,
             permission = "citizens.npc.trait")
     public void toggle(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        List<String> added = Lists.newArrayList();
-        List<String> removed = Lists.newArrayList();
-        List<String> failed = Lists.newArrayList();
+        List<String> added = new ArrayList<>();
+        List<String> removed = new ArrayList<>();
+        List<String> failed = new ArrayList<>();
         for (String traitName : Splitter.on(',').split(args.getJoinedStrings(0))) {
             if (!sender.hasPermission("citizens.npc.trait." + traitName)
                     && !sender.hasPermission("citizens.npc.trait.*")) {
