@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -164,7 +165,8 @@ public class PacketEventsHook implements Listener {
                     return;
                 // TODO: pull entity-specific metadata from the cosmetic entity
                 List<EntityData<?>> metadata = packet.getEntityMetadata();
-                List<EntityData<?>> filteredMetadata = metadata.stream().filter(data -> data.getIndex() <= 7).toList();
+                List<EntityData<?>> filteredMetadata = metadata.stream().filter(data -> data.getIndex() <= 7)
+                        .collect(Collectors.toList());
 
                 if (filteredMetadata.size() != metadata.size()) {
                     packet.setEntityMetadata(filteredMetadata);
