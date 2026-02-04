@@ -3,6 +3,7 @@ package net.citizensnpcs;
 import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +40,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPl
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate.PlayerInfo;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
 import com.google.common.collect.Maps;
 
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
@@ -61,6 +63,7 @@ import net.citizensnpcs.util.Util;
 
 public class PacketEventsHook implements Listener {
     private final Map<Integer, DisguiseTrait> disguiseTraits = Maps.newConcurrentMap();
+    private final Map<UUID, DisguiseTrait> disguiseTraitsUUID = Maps.newConcurrentMap();
     private final Map<UUID, MirrorTrait> mirrorTraits = Maps.newConcurrentMap();
     private final Map<Integer, RotationTrait> rotationTraits = Maps.newConcurrentMap();
 
@@ -159,6 +162,7 @@ public class PacketEventsHook implements Listener {
                 DisguiseTrait trait = disguiseTraits.get(packet.getEntityId());
                 if (trait == null || trait.getCosmeticEntity() == null)
                     return;
+                // TODO: pull entity-specific metadata from the cosmetic entity
                 List<EntityData<?>> metadata = packet.getEntityMetadata();
                 List<EntityData<?>> filteredMetadata = metadata.stream().filter(data -> data.getIndex() <= 7).toList();
 
@@ -174,12 +178,30 @@ public class PacketEventsHook implements Listener {
                 DisguiseTrait trait = disguiseTraits.get(packet.getEntityId());
                 if (trait == null || trait.getCosmeticEntity() == null)
                     return;
-                packet.setEntityType(EntityTypes.getByName(trait.getCosmeticEntity().getType().getKey().toString()));
-                packet.write();
+                if (trait.getCosmeticEntity() instanceof Player) {
+                    event.setCancelled(true);
+                    // TODO
+                } else {
+                    packet.setEntityType(
+                            EntityTypes.getByName(trait.getCosmeticEntity().getType().getKey().toString()));
+                    packet.write();
+                }
             }
 
             private void handleSpawnPlayer(PacketSendEvent event) {
-                // TODO
+                WrapperPlayServerSpawnPlayer packet = new WrapperPlayServerSpawnPlayer(event);
+                DisguiseTrait trait = disguiseTraits.get(packet.getEntityId());
+                if (trait == null || trait.getCosmeticEntity() == null)
+                    return;
+                if (!(trait.getCosmeticEntity() instanceof Player)) {
+                    event.setCancelled(true);
+                    WrapperPlayServerSpawnEntity spawn = new WrapperPlayServerSpawnEntity(packet.getEntityId(),
+                            Optional.of(packet.getUUID()),
+                            EntityTypes.getByName(trait.getCosmeticEntity().getType().getKey().toString()),
+                            packet.getPosition(), packet.getPitch(), packet.getYaw(), packet.getYaw(), 0,
+                            Optional.empty());
+                    event.getUser().sendPacket(spawn);
+                }
             }
 
             @Override
@@ -188,9 +210,24 @@ public class PacketEventsHook implements Listener {
                     handleSpawnEntity(event);
                 } else if (event.getPacketType() == PacketType.Play.Server.SPAWN_PLAYER) {
                     handleSpawnPlayer(event);
+                } else if (event.getPacketType() == PacketType.Play.Server.PLAYER_INFO) {
+                    WrapperPlayServerPlayerInfo packet = new WrapperPlayServerPlayerInfo(event);
+                    for (Iterator<PlayerData> iterator = packet.getPlayerDataList().iterator(); iterator.hasNext();) {
+                        PlayerData pd = iterator.next();
+                        DisguiseTrait trait = disguiseTraitsUUID.get(pd.getUserProfile().getUUID());
+                        if (trait == null || trait.getCosmeticEntity() == null)
+                            return;
+                        if (!(trait.getCosmeticEntity() instanceof Player)) {
+                            iterator.remove();
+                        }
+                    }
+                    packet.write();
                 } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
                     handleEntityMetadata(event);
                 }
+            }
+
+            private void spawnEntity(WrapperPlayServerSpawnPlayer player, NPC npc, Entity entity) {
             }
         }, PacketListenerPriority.NORMAL);
         PacketEvents.getAPI().getEventManager().registerListener(new PacketListener() {
@@ -385,6 +422,7 @@ public class PacketEventsHook implements Listener {
         rotationTraits.remove(event.getNPC().getEntity().getEntityId());
         mirrorTraits.remove(event.getNPC().getEntity().getUniqueId());
         disguiseTraits.remove(event.getNPC().getEntity().getEntityId());
+        disguiseTraits.remove(event.getNPC().getEntity().getUniqueId());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -399,6 +437,8 @@ public class PacketEventsHook implements Listener {
         }
         if (event.getNPC().hasTrait(DisguiseTrait.class)) {
             disguiseTraits.put(event.getNPC().getEntity().getEntityId(),
+                    event.getNPC().getTraitNullable(DisguiseTrait.class));
+            disguiseTraitsUUID.put(event.getNPC().getEntity().getUniqueId(),
                     event.getNPC().getTraitNullable(DisguiseTrait.class));
         }
         if (event.getNPC().hasTrait(MirrorTrait.class)
