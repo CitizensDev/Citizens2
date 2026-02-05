@@ -22,8 +22,8 @@ import com.google.common.collect.Iterables;
 import ch.ethz.globis.phtree.PhRangeQuery;
 import ch.ethz.globis.phtree.PhTree;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.ai.Goal;
-import net.citizensnpcs.api.ai.GoalSelector;
+import net.citizensnpcs.api.ai.tree.Behavior;
+import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.astar.AStarGoal;
 import net.citizensnpcs.api.astar.AStarMachine;
 import net.citizensnpcs.api.astar.AStarNode;
@@ -283,7 +283,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         if (currentGoal == null)
             return;
         currentGoal.onProviderChanged();
-        npc.getDefaultGoalController().removeGoal(currentGoal);
+        npc.getDefaultBehaviorController().removeBehavior(currentGoal);
         currentGoal = null;
     }
 
@@ -292,7 +292,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         this.npc = npc;
         if (currentGoal == null) {
             currentGoal = new GuidedGoal();
-            npc.getDefaultGoalController().addGoal(currentGoal, 1);
+            npc.getDefaultBehaviorController().addBehavior(currentGoal);
         }
     }
 
@@ -348,7 +348,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         return Iterables.concat(destinations, guides);
     }
 
-    private class GuidedGoal implements Goal {
+    private class GuidedGoal implements Behavior {
         private GuidedPlan plan;
         private Waypoint target;
 
@@ -368,17 +368,16 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         }
 
         @Override
-        public void run(GoalSelector selector) {
+        public BehaviorStatus run() {
             if (plan != null && plan.isComplete()) {
                 target.onReach(npc);
                 plan = null;
             }
-            if (plan == null) {
-                selector.finish();
-                return;
-            }
+            if (plan == null)
+                return BehaviorStatus.SUCCESS;
+
             if (npc.getNavigator().isNavigating())
-                return;
+                return BehaviorStatus.RUNNING;
 
             Waypoint current = plan.getCurrentWaypoint();
             npc.getNavigator().setTarget(Util.getCenterLocation(current.getLocation().getBlock()));
@@ -387,10 +386,11 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
                     plan.update(npc);
                 }
             });
+            return BehaviorStatus.RUNNING;
         }
 
         @Override
-        public boolean shouldExecute(GoalSelector selector) {
+        public boolean shouldExecute() {
             if (paused || destinations.size() == 0 || !npc.isSpawned() || npc.getNavigator().isNavigating())
                 return false;
 
@@ -402,6 +402,29 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
             plan = ASTAR.runFully(new PathfinderGoal(target),
                     new PathfinderNode(null, new Waypoint(npc.getStoredLocation())));
             return plan != null;
+        }
+    }
+
+    private static class GuidedPlan implements Plan {
+        private int index = 0;
+        private final Waypoint[] path;
+
+        public GuidedPlan(Iterable<PathfinderNode> path) {
+            this.path = Iterables.toArray(Iterables.transform(path, to -> to.waypoint), Waypoint.class);
+        }
+
+        public Waypoint getCurrentWaypoint() {
+            return path[index];
+        }
+
+        @Override
+        public boolean isComplete() {
+            return index >= path.length;
+        }
+
+        @Override
+        public void update(Agent agent) {
+            index++;
         }
     }
 
@@ -483,29 +506,6 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
         @Override
         public String toString() {
             return "GuidedNode [" + waypoint + "]";
-        }
-    }
-
-    private static class GuidedPlan implements Plan {
-        private int index = 0;
-        private final Waypoint[] path;
-
-        public GuidedPlan(Iterable<PathfinderNode> path) {
-            this.path = Iterables.toArray(Iterables.transform(path, to -> to.waypoint), Waypoint.class);
-        }
-
-        public Waypoint getCurrentWaypoint() {
-            return path[index];
-        }
-
-        @Override
-        public boolean isComplete() {
-            return index >= path.length;
-        }
-
-        @Override
-        public void update(Agent agent) {
-            index++;
         }
     }
 

@@ -525,7 +525,7 @@ public class NPCCommands {
             });
         }
         BlockBreaker breaker = npc.getBlockBreaker(args.getSenderTargetBlockLocation().getBlock(), cfg);
-        npc.getDefaultGoalController().addBehavior(StatusMapper.singleUse(breaker), 1);
+        npc.getDefaultBehaviorController().addBehavior(StatusMapper.singleUse(breaker));
     }
 
     @Command(

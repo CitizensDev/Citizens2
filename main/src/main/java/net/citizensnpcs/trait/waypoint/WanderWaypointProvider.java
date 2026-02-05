@@ -262,7 +262,7 @@ public class WanderWaypointProvider implements WaypointProvider {
         if (currentGoal == null)
             return;
         currentGoal.pause();
-        npc.getDefaultGoalController().removeGoal(currentGoal);
+        npc.getDefaultBehaviorController().removeBehavior(currentGoal);
         currentGoal = null;
     }
 
@@ -277,9 +277,9 @@ public class WanderWaypointProvider implements WaypointProvider {
                 currentGoal.pause();
             }
         } else {
-            npc.getDefaultGoalController().removeGoal(currentGoal);
+            npc.getDefaultBehaviorController().removeBehavior(currentGoal);
         }
-        npc.getDefaultGoalController().addGoal(currentGoal, 1);
+        npc.getDefaultBehaviorController().addBehavior(currentGoal);
     }
 
     private void recalculateTree() {

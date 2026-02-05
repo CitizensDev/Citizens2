@@ -44,7 +44,7 @@ public class BehaviorTrait extends Trait {
 
     public void applyBehaviorsFromKey(DataKey key) {
         if (root != null) {
-            npc.getDefaultGoalController().removeBehavior(root);
+            npc.getDefaultBehaviorController().removeBehavior(root);
             root = null;
         }
         DataKey load = new MemoryDataKey();
@@ -77,7 +77,7 @@ public class BehaviorTrait extends Trait {
     @Override
     public void onDespawn() {
         if (root != null) {
-            npc.getDefaultGoalController().removeBehavior(root);
+            npc.getDefaultBehaviorController().removeBehavior(root);
             root = null;
         }
     }
@@ -93,7 +93,7 @@ public class BehaviorTrait extends Trait {
         Behavior parsed = parser.parse(yaml.getSubKeys().iterator().next(), npc, scope, memory);
         if (parsed == null)
             return;
-        npc.getDefaultGoalController().addBehavior(root = new RootBehavior(parsed, scope), 1);
+        npc.getDefaultBehaviorController().addBehavior(root = new RootBehavior(parsed, scope));
     }
 
     @Override
