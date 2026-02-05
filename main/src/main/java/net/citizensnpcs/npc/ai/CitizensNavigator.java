@@ -84,7 +84,8 @@ public class CitizensNavigator implements Navigator, Runnable {
         }
         defaultParams.examiner(new SwimmingExaminer(npc));
         if (Setting.CITIZENS_PATHFINDER_JUMPS.asBoolean()) {
-            defaultParams.examiner(new JumpingExaminer(1.8f, 0.3f));
+            defaultParams.examiner(new JumpingExaminer(() -> (int) Math.ceil(npc.getEntity().getHeight()),
+                    () -> getLocalParameters().speed()));
         }
     }
 
