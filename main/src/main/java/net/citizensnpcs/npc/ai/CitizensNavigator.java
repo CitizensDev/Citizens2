@@ -37,6 +37,7 @@ import net.citizensnpcs.api.ai.event.NavigatorCallback;
 import net.citizensnpcs.api.astar.pathfinder.DoorExaminer;
 import net.citizensnpcs.api.astar.pathfinder.FallingExaminer;
 import net.citizensnpcs.api.astar.pathfinder.FlyingBlockExaminer;
+import net.citizensnpcs.api.astar.pathfinder.JumpingExaminer;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.npc.NPC;
@@ -82,6 +83,9 @@ public class CitizensNavigator implements Navigator, Runnable {
             defaultParams.stuckAction(null);
         }
         defaultParams.examiner(new SwimmingExaminer(npc));
+        if (Setting.CITIZENS_PATHFINDER_JUMPS.asBoolean()) {
+            defaultParams.examiner(new JumpingExaminer(1.8f, 0.3f));
+        }
     }
 
     @Override
@@ -225,7 +229,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             long totalTicks = (long) Math.ceil(npcLoc.distance(targetLoc) / localParams.speed());
             teleporting = new SchedulerRunnable() {
                 long currentTick = 0;
-
+            
                 @Override
                 public void run() {
                     if (!npc.getEntity().isValid()) {
@@ -233,11 +237,11 @@ public class CitizensNavigator implements Navigator, Runnable {
                         return;
                     }
                     double t = (double) ++currentTick / totalTicks;
-
+            
                     double newX = from.getX() + (to.getX() - to.getX()) * t;
                     double newY = from.getY() + (to.getY() - to.getY()) * t;
                     double newZ = from.getZ() + (to.getZ() - to.getZ()) * t;
-
+            
                     if (t >= 1.0) {
                         cancel();
                     }

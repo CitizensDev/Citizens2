@@ -106,6 +106,9 @@ public class Settings {
         CITIZENS_PATHFINDER_CHECK_BOUNDING_BOXES(
                 "Whether to check bounding boxes when pathfinding such as between fences, inside doors, or other half-blocks",
                 "npc.pathfinding.citizens.check-bounding-boxes", false),
+        CITIZENS_PATHFINDER_JUMPS(
+                "Whether to simulate jumping while pathfinding - increases pathfinding CPU cost.<br>Async pathfinder recommended. Still experimental.",
+                "npc.pathfinding.citizens.experimental-jumps", false),
         CITIZENS_PATHFINDER_MAXIMUM_ASTAR_ITERATIONS("The maximum number of blocks to check when pathfinding",
                 "npc.pathfinding.citizens.maximum-search-blocks", 1024),
         CITIZENS_PATHFINDER_OPENS_DOORS("Whether to open doors while pathfinding (should close them as well)",
