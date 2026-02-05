@@ -1,6 +1,7 @@
 package net.citizensnpcs;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -27,9 +27,11 @@ import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
@@ -50,6 +52,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
+import net.citizensnpcs.Settings.Setting;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCAddTraitEvent;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCEvent;
@@ -64,10 +68,10 @@ import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
+import net.citizensnpcs.util.EntityMetadataValue;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.SkinProperty;
 import net.citizensnpcs.util.Util;
-import net.kyori.adventure.text.Component;
 
 public class PacketEventsHook implements Listener {
     private MethodHandle DESERIALIZE_METHOD;
@@ -75,6 +79,7 @@ public class PacketEventsHook implements Listener {
     private final Map<UUID, DisguiseTrait> disguiseTraitsUUID = Maps.newConcurrentMap();
     private Object MINIMESSAGE;
     private final Map<UUID, MirrorTrait> mirrorTraits = Maps.newConcurrentMap();
+    private Constructor<PlayerData> PLAYERDATA_CONSTRUCTOR;
     private final Map<Integer, RotationTrait> rotationTraits = Maps.newConcurrentMap();
 
     public PacketEventsHook(Citizens plugin) {
@@ -164,23 +169,35 @@ public class PacketEventsHook implements Listener {
                 }
             }
         }, PacketListenerPriority.NORMAL);
-
         PacketEvents.getAPI().getEventManager().registerListener(new PacketListener() {
+            {
+                try {
+                    Class<?> component = Class.forName("net{}kyori{}adventure.text.Component".replace("{}", "."));
+                    PLAYERDATA_CONSTRUCTOR = PlayerData.class.getConstructor(component, UserProfile.class,
+                            GameMode.class, int.class);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
+
+            private List<EntityData<?>> getMetadata(ClientVersion version, Entity player) {
+                List<EntityMetadataValue> meta = NMS.getMetadata(player);
+                List<EntityData<?>> result = Lists.newArrayListWithExpectedSize(meta.size());
+                for (EntityMetadataValue emv : meta) {
+                    result.add(new EntityData(emv.id, EntityDataTypes.getById(version, emv.serializerId), emv.value));
+                }
+                return result;
+            }
+
             private void handleEntityMetadata(PacketSendEvent event) {
                 WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(event);
 
                 DisguiseTrait trait = disguiseTraits.get(packet.getEntityId());
                 if (trait == null || trait.getCosmeticEntity() == null)
                     return;
-                // TODO: pull entity-specific metadata from the cosmetic entity
-                List<EntityData<?>> metadata = packet.getEntityMetadata();
-                List<EntityData<?>> filteredMetadata = metadata.stream().filter(data -> data.getIndex() <= 7)
-                        .collect(Collectors.toList());
 
-                if (filteredMetadata.size() != metadata.size()) {
-                    packet.setEntityMetadata(filteredMetadata);
-                    packet.write();
-                }
+                packet.setEntityMetadata(getMetadata(event.getUser().getClientVersion(), trait.getCosmeticEntity()));
+                packet.write();
             }
 
             private void handleSpawnEntity(PacketSendEvent event) {
@@ -192,25 +209,31 @@ public class PacketEventsHook implements Listener {
                 if (trait.getCosmeticEntity() instanceof Player) {
                     event.setCancelled(true);
                     Player player = (Player) trait.getCosmeticEntity();
-                    UserProfile profile = new UserProfile(player.getUniqueId(), player.getName());
-                    SkinProperty base = SkinProperty.fromMojang(NMS.getProfile(player));
+                    String fullName = trait.getNPC().getFullName();
+                    UserProfile profile = new UserProfile(player.getUniqueId(), fullName);
+                    SkinProperty base = SkinProperty.fromMojangProfile(NMS.getProfile(player));
                     if (base != null) {
                         profile.setTextureProperties(
                                 Lists.newArrayList(new TextureProperty(base.name, base.value, base.signature)));
                     }
-                    PlayerData playerData = new PlayerData((Component) minimessage(player.getName()), profile,
-                            GameMode.valueOf(player.getGameMode().name()), 0);
-                    WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo(Action.ADD_PLAYER, playerData);
-                    WrapperPlayServerSpawnPlayer spawn = new WrapperPlayServerSpawnPlayer(packet.getEntityId(),
-                            player.getUniqueId(),
-                            new com.github.retrooper.packetevents.protocol.world.Location(packet.getPosition(),
-                                    packet.getHeadYaw(), packet.getPitch()),
-                            version -> Collections.emptyList());
+                    PlayerData playerData = null;
+                    try {
+                        playerData = PLAYERDATA_CONSTRUCTOR.newInstance(minimessage(fullName), profile,
+                                GameMode.valueOf(player.getGameMode().name()), 0);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    event.getUser().sendPacket(new WrapperPlayServerPlayerInfo(Action.ADD_PLAYER, playerData));
+                    event.getUser()
+                            .sendPacket(new WrapperPlayServerSpawnPlayer(packet.getEntityId(), profile.getUUID(),
+                                    new com.github.retrooper.packetevents.protocol.world.Location(packet.getPosition(),
+                                            packet.getHeadYaw(), packet.getPitch()),
+                                    version -> Collections.emptyList()));
+
                     WrapperPlayServerPlayerInfo remove = new WrapperPlayServerPlayerInfo(Action.REMOVE_PLAYER,
                             playerData);
-                    event.getUser().sendPacket(info);
-                    event.getUser().sendPacket(spawn);
-                    event.getUser().sendPacket(remove);
+                    CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(),
+                            () -> event.getUser().sendPacket(remove), Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
                 } else {
                     packet.setEntityType(
                             EntityTypes.getByName(trait.getCosmeticEntity().getType().getKey().toString()));

@@ -1,5 +1,6 @@
 package net.citizensnpcs.nms.v1_21_R7.util;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import net.citizensnpcs.Settings.Setting;
@@ -163,7 +163,7 @@ public class EntityPathfinder extends PathFinder {
     }
 
     private Path reconstructPath(Node var0, BlockPos var1, boolean var2) {
-        List<Node> var3 = Lists.newArrayList();
+        List<Node> var3 = new ArrayList<>();
         Node var4 = var0;
         var3.add(0, var0);
 

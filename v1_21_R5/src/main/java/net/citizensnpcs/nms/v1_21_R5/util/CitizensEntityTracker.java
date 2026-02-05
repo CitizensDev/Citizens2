@@ -16,7 +16,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_21_R5.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.Util;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerEntity;
@@ -88,9 +87,8 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         super.updatePlayer(entityplayer);
     }
 
-    private void cancellableUpdatePlayer(final NPC npc,
-                                       final ServerPlayer entityplayer,
-                                       final java.util.function.Consumer<Boolean> callback) {
+    private void cancellableUpdatePlayer(final NPC npc, final ServerPlayer entityplayer,
+            final java.util.function.Consumer<Boolean> callback) {
         net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTask(entityplayer.getBukkitEntity(), () -> {
             NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
             try {
@@ -103,7 +101,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
                 callback.accept(true);
                 return;
             }
-
             Integer trackingRange = npc.data().get(NPC.Metadata.TRACKING_RANGE);
             if (TRACKING_RANGE_SETTER != null && trackingRange != null
                     && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {

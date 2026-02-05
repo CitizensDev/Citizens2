@@ -71,7 +71,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     private EmptyServerStatsCounter statsCache;
 
     public EntityHumanNPC(MinecraftServer minecraftServer, ServerLevel world, GameProfile gameProfile,
-                          ClientInformation ci, NPC npc) {
+            ClientInformation ci, NPC npc) {
         super(minecraftServer, world, gameProfile, ci);
         this.npc = (CitizensNPC) npc;
         if (npc != null) {
@@ -268,7 +268,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
         boolean damaged = super.hurtServer(level, damagesource, f);
         if (damaged && hurtMarked) {
             hurtMarked = false;
-            CitizensAPI.getScheduler().runEntityTask(EntityHumanNPC.this.getBukkitEntity(), () -> EntityHumanNPC.this.hurtMarked = true);
+            CitizensAPI.getScheduler().runEntityTask(EntityHumanNPC.this.getBukkitEntity(),
+                    () -> EntityHumanNPC.this.hurtMarked = true);
         }
         return damaged;
     }

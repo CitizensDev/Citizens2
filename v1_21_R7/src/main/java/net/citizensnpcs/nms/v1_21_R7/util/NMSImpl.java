@@ -2,6 +2,7 @@ package net.citizensnpcs.nms.v1_21_R7.util;
 
 import java.lang.invoke.MethodHandle;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -274,6 +275,7 @@ import net.citizensnpcs.trait.versioned.TropicalFishTrait;
 import net.citizensnpcs.trait.versioned.VexTrait;
 import net.citizensnpcs.trait.versioned.VillagerTrait;
 import net.citizensnpcs.trait.versioned.WardenTrait;
+import net.citizensnpcs.util.EntityMetadataValue;
 import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.EntityPacketTracker.PacketBundler;
 import net.citizensnpcs.util.Messages;
@@ -312,6 +314,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.VecDeltaCodec;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -468,7 +471,7 @@ public class NMSImpl implements NMSBridge {
             return;
 
         try {
-            CHUNKMAP_UPDATE_PLAYER_STATUS.invoke(handle.level().getChunkSource().chunkMap, handle, !remove);
+            CHUNKMAP_UPDATE_PLAYER_STATUS.invokeExact(handle.level().getChunkSource().chunkMap, handle, !remove);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -590,7 +593,7 @@ public class NMSImpl implements NMSBridge {
                         equipment.put(slot, curr);
                     }
                     if (changed) {
-                        List<com.mojang.datafixers.util.Pair<EquipmentSlot, ItemStack>> vals = Lists.newArrayList();
+                        List<com.mojang.datafixers.util.Pair<EquipmentSlot, ItemStack>> vals = new ArrayList<>();
                         for (EquipmentSlot slot : EquipmentSlot.values()) {
                             vals.add(com.mojang.datafixers.util.Pair.of(slot, equipment.get(slot)));
                         }
@@ -753,6 +756,14 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public List<EntityMetadataValue> getMetadata(org.bukkit.entity.Entity entity) {
+        SynchedEntityData sed = getHandle(entity).getEntityData();
+        return sed.getNonDefaultValues().stream().map(
+                r -> new EntityMetadataValue(r.id(), EntityDataSerializers.getSerializedId(r.serializer()), r.value()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public float getMovementSpeed(org.bukkit.entity.Entity entity) {
         if (entity == null || !(entity instanceof org.bukkit.entity.LivingEntity))
             return DEFAULT_SPEED;
@@ -795,7 +806,7 @@ public class NMSImpl implements NMSBridge {
     public List<org.bukkit.entity.Entity> getPassengers(org.bukkit.entity.Entity entity) {
         Entity handle = getHandle(entity);
         if (handle == null || handle.passengers == null)
-            return Lists.newArrayList();
+            return new ArrayList<>();
         return Lists.transform(handle.passengers, Entity::getBukkitEntity);
     }
 
@@ -888,7 +899,7 @@ public class NMSImpl implements NMSBridge {
             CancelReason reason;
 
             private List<org.bukkit.block.Block> getBlocks(final org.bukkit.entity.Entity entity, Path path) {
-                List<org.bukkit.block.Block> blocks = Lists.newArrayList();
+                List<org.bukkit.block.Block> blocks = new ArrayList<>();
                 for (int i = 0; i < path.getNodeCount(); i++) {
                     Node pp = path.getNode(i);
                     blocks.add(entity.getWorld().getBlockAt(pp.x, pp.y, pp.z));
@@ -1779,7 +1790,7 @@ public class NMSImpl implements NMSBridge {
                 return;
         }
         try {
-            SET_PROFILE_METHOD.invoke(meta, profile);
+            SET_PROFILE_METHOD.invokeExact(meta, profile);
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -2340,7 +2351,7 @@ public class NMSImpl implements NMSBridge {
         if (pitch == null) {
             pitch = handle.getXRot();
         }
-        List<Packet<?>> toSend = Lists.newArrayList();
+        List<Packet<?>> toSend = new ArrayList<>();
         if (position) {
             TrackedEntity entry = null;
             if (SpigotUtil.isFoliaServer()) {
@@ -2825,7 +2836,6 @@ public class NMSImpl implements NMSBridge {
     public static final MethodHandle CONNECTION_PACKET_LISTENER = NMS.getSetter(Connection.class, "n");
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getFirstSetter(CraftBossBar.class,
             ServerBossEvent.class);
-    private static final EntityDataAccessor<Boolean> DATA_NAME_VISIBLE = NMS.getStaticObject(Entity.class, "bn");
     private static final EntityDataAccessor<Pose> DATA_POSE = NMS.getStaticObject(Entity.class, "aE");
     private static final float DEFAULT_SPEED = 1F;
     public static final MethodHandle ENDERDRAGON_CHECK_WALLS = NMS.getFirstMethodHandleWithReturnType(EnderDragon.class,

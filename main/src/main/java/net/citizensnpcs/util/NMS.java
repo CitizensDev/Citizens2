@@ -545,6 +545,10 @@ public class NMS {
         return original;
     }
 
+    public static List<EntityMetadataValue> getMetadata(Entity entity) {
+        return BRIDGE.getMetadata(entity);
+    }
+
     public static MethodHandle getMethodHandle(Class<?> clazz, String method, boolean log, Class<?>... params) {
         if (clazz == null)
             return null;

@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 
 import com.google.common.collect.ForwardingSet;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.event.NPCUnlinkFromPlayerEvent;
@@ -16,7 +17,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v1_21_R7.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
-import net.citizensnpcs.util.Util;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerEntity;
@@ -67,6 +67,34 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         this(map, getTracker(entry), getTrackingDistance(entry), getUpdateInterval(entry), getTrackDelta(entry));
     }
 
+    private void cancellableUpdatePlayer(final NPC npc, final ServerPlayer entityplayer,
+            final java.util.function.Consumer<Boolean> callback) {
+        CitizensAPI.getScheduler().runEntityTask(entityplayer.getBukkitEntity(), () -> {
+            NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
+            try {
+                Bukkit.getPluginManager().callEvent(event);
+            } catch (IllegalStateException e) {
+                REQUIRES_SYNC = true;
+                throw e;
+            }
+            if (event.isCancelled()) {
+                callback.accept(true);
+                return;
+            }
+            Integer trackingRange = npc.data().get(NPC.Metadata.TRACKING_RANGE);
+            if (TRACKING_RANGE_SETTER != null && trackingRange != null
+                    && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
+                try {
+                    TRACKING_RANGE_SETTER.invoke(CitizensEntityTracker.this, trackingRange);
+                    npc.data().set("last-tracking-range", trackingRange);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+            callback.accept(false);
+        });
+    }
+
     @Override
     public void updatePlayer(final ServerPlayer entityplayer) {
         if (entityplayer instanceof EntityHumanNPC)
@@ -86,36 +114,6 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
             return;
         }
         super.updatePlayer(entityplayer);
-    }
-
-    private void cancellableUpdatePlayer(final NPC npc,
-                                       final ServerPlayer entityplayer,
-                                       final java.util.function.Consumer<Boolean> callback) {
-        net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTask(entityplayer.getBukkitEntity(), () -> {
-            NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
-            try {
-                Bukkit.getPluginManager().callEvent(event);
-            } catch (IllegalStateException e) {
-                REQUIRES_SYNC = true;
-                throw e;
-            }
-            if (event.isCancelled()) {
-                callback.accept(true);
-                return;
-            }
-
-            Integer trackingRange = npc.data().get(NPC.Metadata.TRACKING_RANGE);
-            if (TRACKING_RANGE_SETTER != null && trackingRange != null
-                    && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
-                try {
-                    TRACKING_RANGE_SETTER.invoke(CitizensEntityTracker.this, trackingRange);
-                    npc.data().set("last-tracking-range", trackingRange);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-            callback.accept(false);
-        });
     }
 
     public static Collection<org.bukkit.entity.Entity> getSeenBy(TrackedEntity tracker) {

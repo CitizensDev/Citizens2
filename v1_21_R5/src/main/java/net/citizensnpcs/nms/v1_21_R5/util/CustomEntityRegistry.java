@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v1_21_R5.util;
 
 import java.lang.invoke.MethodHandle;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,6 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 
@@ -41,7 +41,7 @@ public class CustomEntityRegistry extends DefaultedMappedRegistry<EntityType<?>>
     private final Reference<EntityType<?>> defaultReference;
     private final BiMap<ResourceLocation, Reference<EntityType<?>>> entities = HashBiMap.create();
     private final BiMap<Reference<EntityType<?>>, ResourceLocation> entityClasses = this.entities.inverse();
-    private final Map<EntityType, Integer> entityIds = Maps.newHashMap();
+    private final Map<EntityType, Integer> entityIds = new HashMap<>();
     private final MappedRegistry<EntityType<?>> wrapped;
 
     public CustomEntityRegistry(DefaultedRegistry<EntityType<?>> original) throws Throwable {

@@ -107,6 +107,7 @@ public class TNTPrimedController extends MobEntityController {
         }
 
         private int fuseRenewalDelay = 9; // give client some time to make the animation look vanilla-like
+
         @Override
         public void tick() {
             if (npc != null) {

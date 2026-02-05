@@ -101,6 +101,8 @@ public interface NMSBridge {
 
     public float getHeadYaw(Entity entity);
 
+    public List<EntityMetadataValue> getMetadata(Entity entity);
+
     public float getMovementSpeed(Entity entity);
 
     public EntityPacketTracker getPacketTracker(Entity entity);
