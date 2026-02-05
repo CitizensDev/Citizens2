@@ -575,6 +575,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         @Override
         public void reset() {
             currentDestination = null;
+            finished = false;
         }
 
         @Override
