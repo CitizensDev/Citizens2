@@ -55,7 +55,7 @@ public class CopperGolemTrait extends Trait {
 
     @Override
     public void run() {
-        if (weather != null && npc.getEntity() instanceof CopperGolem) {
+        if (weather != null && npc.getCosmeticEntity() instanceof CopperGolem) {
             _setWeatherState(weather);
         }
     }
@@ -72,7 +72,7 @@ public class CopperGolemTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.coppergolem")
-    @Requirements(selected = true, ownership = true, types = EntityType.COPPER_GOLEM)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.COPPER_GOLEM)
     public static void copperGolem(CommandContext args, CommandSender sender, NPC npc,
             @Flag("weatherstate") String state, @Flag("weatheringtick") Long tick) throws CommandException {
         CopperGolemTrait trait = npc.getOrAddTrait(CopperGolemTrait.class);

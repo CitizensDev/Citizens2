@@ -49,9 +49,9 @@ public class OcelotModifiers extends Trait {
     }
 
     private void updateModifiers() {
-        if (!(npc.getEntity() instanceof Ocelot))
+        if (!(npc.getCosmeticEntity() instanceof Ocelot))
             return;
-        Ocelot ocelot = (Ocelot) npc.getEntity();
+        Ocelot ocelot = (Ocelot) npc.getCosmeticEntity();
         NMS.setSitting(ocelot, sitting);
         if (!SUPPORTS_CAT_TYPE) {
             migrateToCat();

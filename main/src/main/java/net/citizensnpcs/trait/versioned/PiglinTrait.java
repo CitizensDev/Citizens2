@@ -33,8 +33,8 @@ public class PiglinTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Piglin) {
-            NMS.setPiglinDancing(npc.getEntity(), dancing);
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof Piglin) {
+            NMS.setPiglinDancing(npc.getCosmeticEntity(), dancing);
         }
     }
 
@@ -50,7 +50,7 @@ public class PiglinTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.piglin")
-    @Requirements(selected = true, ownership = true, types = { EntityType.PIGLIN })
+    @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.PIGLIN })
     public static void piglin(CommandContext args, CommandSender sender, NPC npc, @Flag("dancing") Boolean dancing)
             throws CommandException {
         PiglinTrait trait = npc.getOrAddTrait(PiglinTrait.class);

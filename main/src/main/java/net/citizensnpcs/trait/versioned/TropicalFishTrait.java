@@ -47,8 +47,8 @@ public class TropicalFishTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof TropicalFish) {
-            TropicalFish fish = (TropicalFish) npc.getEntity();
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof TropicalFish) {
+            TropicalFish fish = (TropicalFish) npc.getCosmeticEntity();
             fish.setBodyColor(bodyColor);
             fish.setPatternColor(patternColor);
             fish.setPattern(pattern);
@@ -75,7 +75,7 @@ public class TropicalFishTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.tropicalfish")
-    @Requirements(selected = true, ownership = true, types = EntityType.TROPICAL_FISH)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.TROPICAL_FISH)
     public static void tropicalfish(CommandContext args, CommandSender sender, NPC npc, @Flag("body") DyeColor body,
             @Flag("patterncolor") DyeColor patterncolor, @Flag("pattern") Pattern pattern) throws CommandException {
         TropicalFishTrait trait = npc.getOrAddTrait(TropicalFishTrait.class);

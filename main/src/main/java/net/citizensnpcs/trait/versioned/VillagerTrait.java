@@ -43,13 +43,13 @@ public class VillagerTrait extends Trait {
 
     @Override
     public void run() {
-        if (!(npc.getEntity() instanceof Villager))
+        if (!(npc.getCosmeticEntity() instanceof Villager))
             return;
         if (type != null) {
-            ((Villager) npc.getEntity()).setVillagerType(type);
+            ((Villager) npc.getCosmeticEntity()).setVillagerType(type);
         }
         level = Math.min(5, Math.max(1, level));
-        ((Villager) npc.getEntity()).setVillagerLevel(level);
+        ((Villager) npc.getCosmeticEntity()).setVillagerLevel(level);
     }
 
     public void setLevel(int level) {
@@ -69,7 +69,7 @@ public class VillagerTrait extends Trait {
             max = 1,
             flags = "s",
             permission = "citizens.npc.villager")
-    @Requirements(selected = true, ownership = true, types = EntityType.VILLAGER)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.VILLAGER)
     public static void villager(CommandContext args, CommandSender sender, NPC npc,
             @Flag("profession") Profession profession, @Flag("type") Villager.Type type, @Flag("level") Integer level)
             throws CommandException {

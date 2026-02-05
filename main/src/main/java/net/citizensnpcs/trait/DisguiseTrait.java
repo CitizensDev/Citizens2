@@ -34,6 +34,10 @@ public class DisguiseTrait extends Trait {
         return synthetic.getBukkitEntity();
     }
 
+    public EntityType getDisguiseType() {
+        return type;
+    }
+
     @Override
     public void onDespawn() {
         synthetic = null;

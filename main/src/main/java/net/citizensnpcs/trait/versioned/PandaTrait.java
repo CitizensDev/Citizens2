@@ -64,10 +64,10 @@ public class PandaTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Panda) {
-            Panda panda = (Panda) npc.getEntity();
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof Panda) {
+            Panda panda = (Panda) npc.getCosmeticEntity();
             panda.setMainGene(mainGene);
-            NMS.setPandaSitting(npc.getEntity(), sitting);
+            NMS.setPandaSitting(panda, sitting);
             if (SUPPORT_ROLLING_SNEEZING) {
                 try {
                     panda.setRolling(rolling);
@@ -132,7 +132,7 @@ public class PandaTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.panda")
-    @Requirements(selected = true, ownership = true, types = EntityType.PANDA)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.PANDA)
     public static void panda(CommandContext args, CommandSender sender, NPC npc, @Flag("gene") Panda.Gene gene,
             @Flag("hiddengene") Panda.Gene hiddengene) throws CommandException {
         PandaTrait trait = npc.getOrAddTrait(PandaTrait.class);

@@ -43,9 +43,9 @@ public class CatTrait extends Trait {
 
     @Override
     public void run() {
-        if (!(npc.getEntity() instanceof Cat))
+        if (!(npc.getCosmeticEntity() instanceof Cat))
             return;
-        Cat cat = (Cat) npc.getEntity();
+        Cat cat = (Cat) npc.getCosmeticEntity();
         cat.setSitting(sitting);
         cat.setCatType(type);
         if (collarColor != null) {
@@ -103,7 +103,7 @@ public class CatTrait extends Trait {
             max = 1,
             flags = "snl",
             permission = "citizens.npc.cat")
-    @Requirements(selected = true, ownership = true, types = EntityType.CAT)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.CAT)
     public static void cat(CommandContext args, CommandSender sender, NPC npc, @Flag("ccolor") DyeColor ccolor,
             @Flag("type") Cat.Type type) throws CommandException {
         CatTrait trait = npc.getOrAddTrait(CatTrait.class);

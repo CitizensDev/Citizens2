@@ -31,8 +31,8 @@ public class SheepTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.getEntity() instanceof Sheep) {
-            Sheep sheep = (Sheep) npc.getEntity();
+        if (npc.getCosmeticEntity() instanceof Sheep) {
+            Sheep sheep = (Sheep) npc.getCosmeticEntity();
             sheep.setSheared(sheared);
             sheep.setColor(color);
         }

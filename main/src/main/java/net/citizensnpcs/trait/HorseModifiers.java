@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import org.bukkit.entity.ChestedHorse;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
@@ -67,8 +68,8 @@ public class HorseModifiers extends Trait {
 
     @Override
     public void run() {
-        if (npc.getEntity() instanceof Horse) {
-            Horse horse = (Horse) npc.getEntity();
+        if (npc.getCosmeticEntity() instanceof Horse) {
+            Horse horse = (Horse) npc.getCosmeticEntity();
             saddle = horse.getInventory().getSaddle();
             armor = horse.getInventory().getArmor();
         }
@@ -112,15 +113,16 @@ public class HorseModifiers extends Trait {
     }
 
     private void updateModifiers() {
-        if (npc.getEntity() instanceof Horse) {
-            Horse horse = (Horse) npc.getEntity();
+        Entity entity = npc.getCosmeticEntity();
+        if (entity instanceof Horse) {
+            Horse horse = (Horse) entity;
             horse.setColor(color);
             horse.setStyle(style);
             horse.getInventory().setArmor(armor);
             horse.getInventory().setSaddle(saddle);
         }
-        if (SUPPORTS_CARRYING_CHEST && npc.getEntity() instanceof ChestedHorse) {
-            ((ChestedHorse) npc.getEntity()).setCarryingChest(carryingChest);
+        if (SUPPORTS_CARRYING_CHEST && entity instanceof ChestedHorse) {
+            ((ChestedHorse) entity).setCarryingChest(carryingChest);
         }
     }
 

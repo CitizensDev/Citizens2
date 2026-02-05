@@ -48,7 +48,9 @@ public class AreaEffectCloudTrait extends Trait {
 
     @Override
     public void onSpawn() {
-        AreaEffectCloud cloud = (AreaEffectCloud) npc.getEntity();
+        if (!(npc.getCosmeticEntity() instanceof AreaEffectCloud))
+            return;
+        AreaEffectCloud cloud = (AreaEffectCloud) npc.getCosmeticEntity();
         if (color != null) {
             cloud.setColor(color);
         }
@@ -94,7 +96,7 @@ public class AreaEffectCloudTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.areaeffectcloud")
-    @Requirements(selected = true, ownership = true, types = { EntityType.AREA_EFFECT_CLOUD })
+    @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.AREA_EFFECT_CLOUD })
     public static void areaeffectcloud(CommandContext args, CommandSender sender, NPC npc,
             @Flag("duration") Integer duration, @Flag("radius") Float radius, @Flag("color") Color color,
             @Flag("potiontype") PotionType type, @Flag("particle") Particle particle) throws CommandException {

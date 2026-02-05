@@ -39,8 +39,8 @@ public class AxolotlTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Axolotl) {
-            Axolotl axolotl = (Axolotl) npc.getEntity();
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof Axolotl) {
+            Axolotl axolotl = (Axolotl) npc.getCosmeticEntity();
             if (variant != null) {
                 axolotl.setVariant(variant);
             }
@@ -65,7 +65,7 @@ public class AxolotlTrait extends Trait {
             max = 1,
             flags = "d",
             permission = "citizens.npc.axolotl")
-    @Requirements(selected = true, ownership = true, types = EntityType.AXOLOTL)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.AXOLOTL)
     public static void axolotl(CommandContext args, CommandSender sender, NPC npc,
             @Flag("variant") Axolotl.Variant variant) throws CommandException {
         AxolotlTrait trait = npc.getOrAddTrait(AxolotlTrait.class);

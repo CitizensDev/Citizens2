@@ -75,6 +75,8 @@ public class TextDisplayTrait extends Trait implements Cloneable {
 
     @Override
     public void onSpawn() {
+        if (!(npc.getCosmeticEntity() instanceof TextDisplay))
+            return;
         TextDisplay display = (TextDisplay) npc.getEntity();
         if (text != null) {
             NMS.setTextDisplayComponent(display, Messaging.minecraftComponentFromRawMessage(text));
@@ -128,7 +130,7 @@ public class TextDisplayTrait extends Trait implements Cloneable {
             min = 1,
             max = 1,
             permission = "citizens.npc.textdisplay")
-    @Requirements(selected = true, ownership = true, types = { EntityType.TEXT_DISPLAY })
+    @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.TEXT_DISPLAY })
     public static void display(CommandContext args, CommandSender sender, NPC npc, @Flag("shadowed") Boolean shadowed,
             @Flag("seethrough") Boolean seethrough, @Flag("line_width") Integer lineWidth, @Flag("text") String text,
             @Flag("bgcolor") Color bgcolor, @Flag("alignment") TextAlignment alignment) throws CommandException {

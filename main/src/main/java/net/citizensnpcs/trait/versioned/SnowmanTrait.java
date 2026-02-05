@@ -12,7 +12,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.util.Messages;
 
@@ -33,8 +32,8 @@ public class SnowmanTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.getEntity() instanceof Snowman) {
-            ((Snowman) npc.getEntity()).setDerp(derp);
+        if (npc.getCosmeticEntity() instanceof Snowman) {
+            ((Snowman) npc.getCosmeticEntity()).setDerp(derp);
         }
     }
 
@@ -65,8 +64,8 @@ public class SnowmanTrait extends Trait {
             permission = "citizens.npc.snowman")
     @Requirements(selected = true, ownership = true)
     public static void snowman(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if (!npc.getOrAddTrait(MobType.class).getType().name().equals("SNOWMAN")
-                && !npc.getOrAddTrait(MobType.class).getType().name().equals("SNOW_GOLEM"))
+        if (!npc.getCosmeticEntityType().name().equals("SNOWMAN")
+                && !npc.getCosmeticEntityType().name().equals("SNOW_GOLEM"))
             throw new CommandUsageException();
         SnowmanTrait trait = npc.getOrAddTrait(SnowmanTrait.class);
         boolean hasArg = false;

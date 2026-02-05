@@ -1,6 +1,7 @@
 package net.citizensnpcs.trait;
 
 import org.bukkit.entity.Bat;
+import org.bukkit.entity.Entity;
 
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -21,9 +22,10 @@ public class BatTrait extends Trait {
 
     @Override
     public void run() {
-        if (!(npc.getEntity() instanceof Bat))
+        Entity entity = npc.getCosmeticEntity();
+        if (!(entity instanceof Bat))
             return;
-        ((Bat) npc.getEntity()).setAwake(awake);
+        ((Bat) entity).setAwake(awake);
     }
 
     public void setAwake(boolean awake) {

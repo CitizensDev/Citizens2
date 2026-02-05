@@ -31,7 +31,9 @@ public class ItemDisplayTrait extends Trait implements Cloneable {
 
     @Override
     public void onSpawn() {
-        ItemDisplay display = (ItemDisplay) npc.getEntity();
+        if (!(npc.getCosmeticEntity() instanceof ItemDisplay))
+            return;
+        ItemDisplay display = (ItemDisplay) npc.getCosmeticEntity();
         if (transform != null) {
             display.setItemDisplayTransform(transform);
         }
@@ -49,7 +51,7 @@ public class ItemDisplayTrait extends Trait implements Cloneable {
             min = 1,
             max = 1,
             permission = "citizens.npc.itemdisplay")
-    @Requirements(selected = true, ownership = true, types = { EntityType.ITEM_DISPLAY })
+    @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.ITEM_DISPLAY })
     public static void itemdisplay(CommandContext args, CommandSender sender, NPC npc,
             @Flag("transform") ItemDisplayTransform transform) throws CommandException {
         ItemDisplayTrait trait = npc.getOrAddTrait(ItemDisplayTrait.class);

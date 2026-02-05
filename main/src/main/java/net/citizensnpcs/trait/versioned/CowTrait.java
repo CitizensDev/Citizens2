@@ -35,8 +35,8 @@ public class CowTrait extends Trait {
 
     @Override
     public void run() {
-        if (variant != null && npc.getEntity() instanceof Cow) {
-            Cow cow = (Cow) npc.getEntity();
+        if (variant != null && npc.getCosmeticEntity() instanceof Cow) {
+            Cow cow = (Cow) npc.getCosmeticEntity();
             try {
                 COW_VARIANT_SETTER.invoke(cow, variant);
             } catch (Throwable e) {
@@ -58,7 +58,7 @@ public class CowTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.cow")
-    @Requirements(selected = true, ownership = true, types = EntityType.COW)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.COW)
     public static void cow(CommandContext args, CommandSender sender, NPC npc, @Flag("variant") Cow.Variant variant)
             throws CommandException {
         CowTrait trait = npc.getOrAddTrait(CowTrait.class);

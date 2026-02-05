@@ -480,7 +480,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         private boolean ascending = true;
         private final Location cachedLocation = new Location(null, 0, 0, 0);
         private Waypoint currentDestination;
-        private boolean finished;
         private ListIterator<Waypoint> itr;
         private boolean paused;
 
@@ -575,12 +574,11 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         @Override
         public void reset() {
             currentDestination = null;
-            finished = false;
         }
 
         @Override
         public BehaviorStatus run() {
-            if (finished || !getNavigator().isNavigating())
+            if (paused || !getNavigator().isNavigating())
                 return BehaviorStatus.SUCCESS;
             return BehaviorStatus.RUNNING;
         }
@@ -588,7 +586,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         public void setPaused(boolean pause) {
             paused = pause;
             if (pause && currentDestination != null) {
-                finished = true;
                 if (npc != null && npc.getNavigator().isNavigating()) {
                     npc.getNavigator().cancelNavigation();
                 }
@@ -629,7 +626,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             }
             PathStrategy strategy = getNavigator().getPathStrategy();
             getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {
-                finished = true;
                 Waypoint waypoint = currentDestination;
                 if (cancelReason != null || waypoint == null)
                     return;

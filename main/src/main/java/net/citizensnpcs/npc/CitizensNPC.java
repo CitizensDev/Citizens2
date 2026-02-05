@@ -148,6 +148,13 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     @Override
+    public EntityType getCosmeticEntityType() {
+        DisguiseTrait trait = getTraitNullable(DisguiseTrait.class);
+        return trait == null || trait.getDisguiseType() == null ? getOrAddTrait(MobType.class).getType()
+                : trait.getDisguiseType();
+    }
+
+    @Override
     public Entity getEntity() {
         return entityController == null ? null : entityController.getBukkitEntity();
     }

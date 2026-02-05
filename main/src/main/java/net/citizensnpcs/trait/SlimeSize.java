@@ -18,7 +18,6 @@ import net.citizensnpcs.util.Messages;
 public class SlimeSize extends Trait {
     @Persist
     private int size = 3;
-    private boolean slime;
 
     public SlimeSize() {
         super("slimesize");
@@ -34,12 +33,9 @@ public class SlimeSize extends Trait {
 
     @Override
     public void onSpawn() {
-        if (!(npc.getEntity() instanceof Slime)) {
-            slime = false;
-            return;
+        if (npc.getCosmeticEntity() instanceof Slime) {
+            ((Slime) npc.getCosmeticEntity()).setSize(size);
         }
-        ((Slime) npc.getEntity()).setSize(size);
-        slime = true;
     }
 
     /**
@@ -47,8 +43,5 @@ public class SlimeSize extends Trait {
      */
     public void setSize(int size) {
         this.size = size;
-        if (slime) {
-            ((Slime) npc.getEntity()).setSize(size);
-        }
     }
 }

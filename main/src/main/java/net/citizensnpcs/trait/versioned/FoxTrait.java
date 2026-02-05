@@ -69,8 +69,8 @@ public class FoxTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Fox) {
-            Fox fox = (Fox) npc.getEntity();
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof Fox) {
+            Fox fox = (Fox) npc.getCosmeticEntity();
             fox.setSitting(sitting);
             fox.setCrouching(crouching);
             fox.setSleeping(sleeping);
@@ -114,7 +114,7 @@ public class FoxTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.fox")
-    @Requirements(selected = true, ownership = true, types = EntityType.FOX)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.FOX)
     public static void fox(CommandContext args, CommandSender sender, NPC npc, @Flag("sleeping") Boolean sleeping,
             @Flag("sitting") Boolean sitting, @Flag("crouching") Boolean crouching,
             @Flag(value = "type", completions = { "RED", "SNOW" }) String rawtype, @Flag("pouncing") Boolean pouncing,

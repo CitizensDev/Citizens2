@@ -33,9 +33,9 @@ public class SnifferTrait extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || !(npc.getEntity() instanceof Sniffer))
+        if (!npc.isSpawned() || !(npc.getCosmeticEntity() instanceof Sniffer))
             return;
-        NMS.setSnifferState(npc.getEntity(), state);
+        NMS.setSnifferState(npc.getCosmeticEntity(), state);
     }
 
     public void setState(SnifferState state) {
@@ -60,7 +60,7 @@ public class SnifferTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.sniffer")
-    @Requirements(selected = true, ownership = true, types = EntityType.SNIFFER)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.SNIFFER)
     public static void sniffer(CommandContext args, CommandSender sender, NPC npc, @Flag("state") SnifferState state)
             throws CommandException {
         SnifferTrait trait = npc.getOrAddTrait(SnifferTrait.class);

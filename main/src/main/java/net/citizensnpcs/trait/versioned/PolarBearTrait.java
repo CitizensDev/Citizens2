@@ -32,8 +32,8 @@ public class PolarBearTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof PolarBear) {
-            NMS.setPolarBearRearing(npc.getEntity(), rearing);
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof PolarBear) {
+            NMS.setPolarBearRearing(npc.getCosmeticEntity(), rearing);
         }
     }
 
@@ -50,7 +50,7 @@ public class PolarBearTrait extends Trait {
             max = 1,
             flags = "r",
             permission = "citizens.npc.polarbear")
-    @Requirements(selected = true, ownership = true, types = { EntityType.POLAR_BEAR })
+    @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.POLAR_BEAR })
     public static void polarbear(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         PolarBearTrait trait = npc.getOrAddTrait(PolarBearTrait.class);
         String output = "";

@@ -40,8 +40,8 @@ public class BeeTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Bee) {
-            Bee bee = (Bee) npc.getEntity();
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof Bee) {
+            Bee bee = (Bee) npc.getCosmeticEntity();
             bee.setHasStung(stung);
             bee.setAnger(anger);
             bee.setHasNectar(nectar);
@@ -69,7 +69,7 @@ public class BeeTrait extends Trait {
             max = 1,
             flags = "sn",
             permission = "citizens.npc.bee")
-    @Requirements(selected = true, ownership = true, types = EntityType.BEE)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.BEE)
     public static void bee(CommandContext args, CommandSender sender, NPC npc, @Flag("anger") Integer anger)
             throws CommandException {
         BeeTrait trait = npc.getOrAddTrait(BeeTrait.class);

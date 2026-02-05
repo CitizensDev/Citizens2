@@ -50,12 +50,12 @@ public class ShulkerTrait extends Trait {
         if (color == null) {
             color = DyeColor.PURPLE;
         }
-        if (npc.getEntity() instanceof Shulker) {
+        if (npc.getCosmeticEntity() instanceof Shulker) {
             if (peek != lastPeekSet) {
-                NMS.setPeekShulker(npc.getEntity(), peek);
+                NMS.setPeekShulker(npc.getCosmeticEntity(), peek);
                 lastPeekSet = peek;
             }
-            ((Shulker) npc.getEntity()).setColor(color);
+            ((Shulker) npc.getCosmeticEntity()).setColor(color);
         }
     }
 
@@ -76,7 +76,7 @@ public class ShulkerTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.shulker")
-    @Requirements(selected = true, ownership = true, types = { EntityType.SHULKER })
+    @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.SHULKER })
     public static void shulker(CommandContext args, CommandSender sender, NPC npc, @Flag("peek") Integer peek,
             @Flag("color") DyeColor color) throws CommandException {
         ShulkerTrait trait = npc.getOrAddTrait(ShulkerTrait.class);

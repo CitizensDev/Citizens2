@@ -36,8 +36,8 @@ public class GoatTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Goat) {
-            Goat goat = (Goat) npc.getEntity();
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof Goat) {
+            Goat goat = (Goat) npc.getCosmeticEntity();
             if (SUPPORTS_HORNS) {
                 try {
                     goat.setRightHorn(rightHorn);
@@ -66,7 +66,7 @@ public class GoatTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.goat")
-    @Requirements(selected = true, ownership = true, types = EntityType.GOAT)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.GOAT)
     public static void goat(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
         GoatTrait trait = npc.getOrAddTrait(GoatTrait.class);
         boolean left = trait.isLeftHorn(), right = trait.isRightHorn();

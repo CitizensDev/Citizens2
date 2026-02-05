@@ -32,8 +32,8 @@ public class PhantomTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Phantom) {
-            Phantom phantom = (Phantom) npc.getEntity();
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof Phantom) {
+            Phantom phantom = (Phantom) npc.getCosmeticEntity();
             phantom.setSize(size);
         }
     }
@@ -50,7 +50,7 @@ public class PhantomTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.phantom")
-    @Requirements(selected = true, ownership = true, types = EntityType.PHANTOM)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.PHANTOM)
     public static void phantom(CommandContext args, CommandSender sender, NPC npc, @Flag("size") Integer size)
             throws CommandException {
         PhantomTrait trait = npc.getOrAddTrait(PhantomTrait.class);

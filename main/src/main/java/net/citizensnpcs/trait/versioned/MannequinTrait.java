@@ -38,8 +38,8 @@ public class MannequinTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.getEntity() instanceof Mannequin) {
-            Mannequin mannequin = (Mannequin) npc.getEntity();
+        if (npc.getCosmeticEntity() instanceof Mannequin) {
+            Mannequin mannequin = (Mannequin) npc.getCosmeticEntity();
             if (mainHand != null) {
                 mannequin.setMainHand(mainHand);
             }
@@ -76,7 +76,7 @@ public class MannequinTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.mannequin")
-    @Requirements(selected = true, ownership = true, types = EntityType.MANNEQUIN)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.MANNEQUIN)
     public static void mannequin(CommandContext args, CommandSender sender, NPC npc,
             @Flag("description") String description, @Flag("immovable") Boolean immovable,
             @Flag("hide_description") Boolean hideDescription, @Flag("main_hand") MainHand mainHand,

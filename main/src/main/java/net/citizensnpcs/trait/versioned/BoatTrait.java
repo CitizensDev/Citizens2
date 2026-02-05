@@ -53,9 +53,9 @@ public class BoatTrait extends Trait {
         int[] version = SpigotUtil.getVersion();
         if (version[1] >= 21)
             return; // technically this wasn't changed until 1.21.2 but 1.21 / 1.21.1 are no longer supported
-        if (npc.getEntity() instanceof Boat) {
+        if (npc.getCosmeticEntity() instanceof Boat) {
             if (type != null) {
-                ((Boat) npc.getEntity()).setBoatType(type);
+                ((Boat) npc.getCosmeticEntity()).setBoatType(type);
             }
         }
     }

@@ -32,8 +32,8 @@ public class PigTrait extends Trait {
 
     @Override
     public void run() {
-        if (variant != null && npc.getEntity() instanceof Pig) {
-            Pig pig = (Pig) npc.getEntity();
+        if (variant != null && npc.getCosmeticEntity() instanceof Pig) {
+            Pig pig = (Pig) npc.getCosmeticEntity();
             pig.setVariant(variant);
         }
     }
@@ -50,7 +50,7 @@ public class PigTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.pig")
-    @Requirements(selected = true, ownership = true, types = EntityType.PIG)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.PIG)
     public static void pig(CommandContext args, CommandSender sender, NPC npc, @Flag("variant") Pig.Variant variant)
             throws CommandException {
         PigTrait trait = npc.getOrAddTrait(PigTrait.class);

@@ -15,7 +15,6 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
-import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.util.Messages;
@@ -42,8 +41,8 @@ public class LlamaTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Llama) {
-            Llama llama = (Llama) npc.getEntity();
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof Llama) {
+            Llama llama = (Llama) npc.getCosmeticEntity();
             llama.setColor(color);
             llama.setStrength(strength);
         }
@@ -68,7 +67,7 @@ public class LlamaTrait extends Trait {
     @Requirements(selected = true, ownership = true)
     public static void llama(CommandContext args, CommandSender sender, NPC npc,
             @Flag({ "color", "colour" }) Color color, @Flag("strength") Integer strength) throws CommandException {
-        EntityType type = npc.getOrAddTrait(MobType.class).getType();
+        EntityType type = npc.getCosmeticEntityType();
         if (!type.name().contains("LLAMA"))
             throw new CommandException(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type));
         LlamaTrait trait = npc.getOrAddTrait(LlamaTrait.class);

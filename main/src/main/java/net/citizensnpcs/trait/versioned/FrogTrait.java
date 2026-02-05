@@ -34,8 +34,8 @@ public class FrogTrait extends Trait {
 
     @Override
     public void run() {
-        if (variant != null && npc.getEntity() instanceof Frog) {
-            Frog frog = (Frog) npc.getEntity();
+        if (variant != null && npc.getCosmeticEntity() instanceof Frog) {
+            Frog frog = (Frog) npc.getCosmeticEntity();
             frog.setVariant(variant);
         }
     }
@@ -52,7 +52,7 @@ public class FrogTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.frog")
-    @Requirements(selected = true, ownership = true, types = EntityType.FROG)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.FROG)
     public static void frog(CommandContext args, CommandSender sender, NPC npc, @Flag("variant") Frog.Variant variant)
             throws CommandException {
         FrogTrait trait = npc.getOrAddTrait(FrogTrait.class);

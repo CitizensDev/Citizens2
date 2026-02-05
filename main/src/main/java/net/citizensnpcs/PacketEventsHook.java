@@ -2,6 +2,7 @@ package net.citizensnpcs;
 
 import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,8 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.protocol.player.GameMode;
+import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityHeadLook;
@@ -37,11 +40,13 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo.Action;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo.PlayerData;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate.PlayerInfo;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
@@ -60,11 +65,15 @@ import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.RotationTrait;
 import net.citizensnpcs.trait.RotationTrait.PacketRotationSession;
 import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.SkinProperty;
 import net.citizensnpcs.util.Util;
+import net.kyori.adventure.text.Component;
 
 public class PacketEventsHook implements Listener {
+    private MethodHandle DESERIALIZE_METHOD;
     private final Map<Integer, DisguiseTrait> disguiseTraits = Maps.newConcurrentMap();
     private final Map<UUID, DisguiseTrait> disguiseTraitsUUID = Maps.newConcurrentMap();
+    private Object MINIMESSAGE;
     private final Map<UUID, MirrorTrait> mirrorTraits = Maps.newConcurrentMap();
     private final Map<Integer, RotationTrait> rotationTraits = Maps.newConcurrentMap();
 
@@ -182,7 +191,26 @@ public class PacketEventsHook implements Listener {
                     return;
                 if (trait.getCosmeticEntity() instanceof Player) {
                     event.setCancelled(true);
-                    // TODO
+                    Player player = (Player) trait.getCosmeticEntity();
+                    UserProfile profile = new UserProfile(player.getUniqueId(), player.getName());
+                    SkinProperty base = SkinProperty.fromMojang(NMS.getProfile(player));
+                    if (base != null) {
+                        profile.setTextureProperties(
+                                Lists.newArrayList(new TextureProperty(base.name, base.value, base.signature)));
+                    }
+                    PlayerData playerData = new PlayerData((Component) minimessage(player.getName()), profile,
+                            GameMode.valueOf(player.getGameMode().name()), 0);
+                    WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo(Action.ADD_PLAYER, playerData);
+                    WrapperPlayServerSpawnPlayer spawn = new WrapperPlayServerSpawnPlayer(packet.getEntityId(),
+                            player.getUniqueId(),
+                            new com.github.retrooper.packetevents.protocol.world.Location(packet.getPosition(),
+                                    packet.getHeadYaw(), packet.getPitch()),
+                            version -> Collections.emptyList());
+                    WrapperPlayServerPlayerInfo remove = new WrapperPlayServerPlayerInfo(Action.REMOVE_PLAYER,
+                            playerData);
+                    event.getUser().sendPacket(info);
+                    event.getUser().sendPacket(spawn);
+                    event.getUser().sendPacket(remove);
                 } else {
                     packet.setEntityType(
                             EntityTypes.getByName(trait.getCosmeticEntity().getType().getKey().toString()));
@@ -228,35 +256,8 @@ public class PacketEventsHook implements Listener {
                     handleEntityMetadata(event);
                 }
             }
-
-            private void spawnEntity(WrapperPlayServerSpawnPlayer player, NPC npc, Entity entity) {
-            }
         }, PacketListenerPriority.NORMAL);
         PacketEvents.getAPI().getEventManager().registerListener(new PacketListener() {
-            private MethodHandle DESERIALIZE_METHOD;
-            private Object MINIMESSAGE;
-
-            private Object minimessage(String raw) {
-                if (MINIMESSAGE == null) {
-                    try {
-                        MINIMESSAGE = NMS.getMethodHandle(
-                                Class.forName("net{}kyori{}adventure.text.minimessage.MiniMessage".replace("{}", ".")),
-                                "miniMessage", true).invoke();
-                        DESERIALIZE_METHOD = NMS.getMethodHandle(MINIMESSAGE.getClass(), "deserialize", true,
-                                String.class);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                }
-                try {
-                    return DESERIALIZE_METHOD.invoke(MINIMESSAGE,
-                            Messaging.convertLegacyCodes(raw).replace("<csr>", ""));
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
             @Override
             public void onPacketSend(PacketSendEvent event) {
                 if (event.getPacketType() != PacketType.Play.Server.ENTITY_METADATA)
@@ -410,6 +411,25 @@ public class PacketEventsHook implements Listener {
                 session.onPacketOverwritten();
             }
         }, PacketListenerPriority.HIGHEST);
+    }
+
+    private Object minimessage(String raw) {
+        if (MINIMESSAGE == null) {
+            try {
+                MINIMESSAGE = NMS.getMethodHandle(
+                        Class.forName("net{}kyori{}adventure.text.minimessage.MiniMessage".replace("{}", ".")),
+                        "miniMessage", true).invoke();
+                DESERIALIZE_METHOD = NMS.getMethodHandle(MINIMESSAGE.getClass(), "deserialize", true, String.class);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            return DESERIALIZE_METHOD.invoke(MINIMESSAGE, Messaging.convertLegacyCodes(raw).replace("<csr>", ""));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @EventHandler(ignoreCancelled = true)

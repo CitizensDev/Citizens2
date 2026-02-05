@@ -28,8 +28,8 @@ public class VexTrait extends Trait {
 
     @Override
     public void run() {
-        if (charging != null && npc.getEntity() instanceof Vex) {
-            ((Vex) npc.getEntity()).setCharging(charging);
+        if (charging != null && npc.getCosmeticEntity() instanceof Vex) {
+            ((Vex) npc.getCosmeticEntity()).setCharging(charging);
         }
     }
 
@@ -45,7 +45,7 @@ public class VexTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.vex")
-    @Requirements(selected = true, ownership = true, types = { EntityType.VEX })
+    @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.VEX })
     public static void shulker(CommandContext args, CommandSender sender, NPC npc, @Flag("charging") Boolean charging)
             throws CommandException {
         VexTrait trait = npc.getOrAddTrait(VexTrait.class);

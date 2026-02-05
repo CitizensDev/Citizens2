@@ -81,7 +81,9 @@ public class DisplayTrait extends Trait implements Cloneable {
 
     @Override
     public void onSpawn() {
-        Display display = (Display) npc.getEntity();
+        if (!(npc.getCosmeticEntity() instanceof Display))
+            return;
+        Display display = (Display) npc.getCosmeticEntity();
         if (billboard != null) {
             display.setBillboard(billboard);
         }
@@ -181,7 +183,7 @@ public class DisplayTrait extends Trait implements Cloneable {
     @Requirements(
             selected = true,
             ownership = true,
-            types = { EntityType.ITEM_DISPLAY, EntityType.TEXT_DISPLAY, EntityType.BLOCK_DISPLAY })
+            cosmeticTypes = { EntityType.ITEM_DISPLAY, EntityType.TEXT_DISPLAY, EntityType.BLOCK_DISPLAY })
     public static void display(CommandContext args, CommandSender sender, NPC npc,
             @Flag("billboard") Billboard billboard, @Flag("left_rotation") Quaternionf leftrotation,
             @Flag("right_rotation") Quaternionf rightrotation, @Flag("scale") Vector3f scale,

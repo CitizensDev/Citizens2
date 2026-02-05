@@ -22,7 +22,6 @@ public class ItemFrameTrait extends Trait {
     private ItemStack item;
     @Persist
     private Rotation rotation = Rotation.NONE;
-
     @Persist
     private boolean visible = true;
 
@@ -52,8 +51,8 @@ public class ItemFrameTrait extends Trait {
 
     @Override
     public void onSpawn() {
-        if (npc.getEntity() instanceof ItemFrame) {
-            ItemFrame frame = (ItemFrame) npc.getEntity();
+        if (npc.getCosmeticEntity() instanceof ItemFrame) {
+            ItemFrame frame = (ItemFrame) npc.getCosmeticEntity();
             if (rotation != null) {
                 frame.setRotation(rotation);
             }

@@ -32,8 +32,8 @@ public class ChickenTrait extends Trait {
 
     @Override
     public void run() {
-        if (variant != null && npc.getEntity() instanceof Chicken) {
-            Chicken chicken = (Chicken) npc.getEntity();
+        if (variant != null && npc.getCosmeticEntity() instanceof Chicken) {
+            Chicken chicken = (Chicken) npc.getCosmeticEntity();
             chicken.setVariant(variant);
         }
     }
@@ -50,7 +50,7 @@ public class ChickenTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.chicken")
-    @Requirements(selected = true, ownership = true, types = EntityType.CHICKEN)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.CHICKEN)
     public static void chicken(CommandContext args, CommandSender sender, NPC npc,
             @Flag("variant") Chicken.Variant variant) throws CommandException {
         ChickenTrait trait = npc.getOrAddTrait(ChickenTrait.class);

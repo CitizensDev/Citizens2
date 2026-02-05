@@ -49,7 +49,7 @@ public class EnderDragonTrait extends Trait {
     }
 
     private void updateModifiers() {
-        if (!(npc.getEntity() instanceof EnderDragon))
+        if (!(npc.getCosmeticEntity() instanceof EnderDragon))
             return;
         EnderDragon dragon = (EnderDragon) npc.getEntity();
         if (phase != null) {
@@ -65,7 +65,7 @@ public class EnderDragonTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.enderdragon")
-    @Requirements(ownership = true, selected = true, types = EntityType.ENDER_DRAGON)
+    @Requirements(ownership = true, selected = true, cosmeticTypes = EntityType.ENDER_DRAGON)
     public static void enderdragon(CommandContext args, CommandSender sender, NPC npc,
             @Flag("phase") EnderDragon.Phase phase, @Flag("destroywalls") Boolean destroyWalls)
             throws CommandException {

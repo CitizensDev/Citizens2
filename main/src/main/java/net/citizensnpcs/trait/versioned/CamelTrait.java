@@ -32,8 +32,8 @@ public class CamelTrait extends Trait {
 
     @Override
     public void run() {
-        if (pose != null && npc.isSpawned() && npc.getEntity() instanceof Camel) {
-            NMS.setCamelPose(npc.getEntity(), pose);
+        if (pose != null && npc.isSpawned() && npc.getCosmeticEntity() instanceof Camel) {
+            NMS.setCamelPose(npc.getCosmeticEntity(), pose);
         }
     }
 
@@ -55,7 +55,7 @@ public class CamelTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.camel")
-    @Requirements(selected = true, ownership = true, types = EntityType.CAMEL)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.CAMEL)
     public static void camel(CommandContext args, CommandSender sender, NPC npc, @Flag("pose") CamelPose pose)
             throws CommandException {
         CamelTrait trait = npc.getOrAddTrait(CamelTrait.class);

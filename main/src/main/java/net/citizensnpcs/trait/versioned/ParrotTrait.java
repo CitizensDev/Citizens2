@@ -33,8 +33,8 @@ public class ParrotTrait extends Trait {
 
     @Override
     public void run() {
-        if (npc.isSpawned() && npc.getEntity() instanceof Parrot) {
-            Parrot parrot = (Parrot) npc.getEntity();
+        if (npc.isSpawned() && npc.getCosmeticEntity() instanceof Parrot) {
+            Parrot parrot = (Parrot) npc.getCosmeticEntity();
             parrot.setVariant(variant);
         }
     }
@@ -51,7 +51,7 @@ public class ParrotTrait extends Trait {
             min = 1,
             max = 1,
             permission = "citizens.npc.parrot")
-    @Requirements(selected = true, ownership = true, types = EntityType.PARROT)
+    @Requirements(selected = true, ownership = true, cosmeticTypes = EntityType.PARROT)
     public static void parrot(CommandContext args, CommandSender sender, NPC npc, @Flag("variant") Variant variant)
             throws CommandException {
         ParrotTrait trait = npc.getOrAddTrait(ParrotTrait.class);

@@ -33,10 +33,10 @@ public class SpellcasterTrait extends Trait {
 
     @Override
     public void run() {
-        if (!npc.isSpawned() || !(npc.getEntity() instanceof Spellcaster))
+        if (!npc.isSpawned() || !(npc.getCosmeticEntity() instanceof Spellcaster))
             return;
         if (spell != null) {
-            ((Spellcaster) npc.getEntity()).setSpell(spell);
+            ((Spellcaster) npc.getCosmeticEntity()).setSpell(spell);
         }
     }
 
@@ -53,7 +53,7 @@ public class SpellcasterTrait extends Trait {
             max = 1,
             flags = "d",
             permission = "citizens.npc.spellcaster")
-    @Requirements(selected = true, ownership = true, types = { EntityType.EVOKER, EntityType.ILLUSIONER })
+    @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.EVOKER, EntityType.ILLUSIONER })
     public static void Spellcaster(CommandContext args, CommandSender sender, NPC npc, @Flag("spell") Spell spell)
             throws CommandException {
         SpellcasterTrait trait = npc.getOrAddTrait(SpellcasterTrait.class);
