@@ -116,9 +116,8 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (current == null) {
             current = plan.getCurrentVector().toLocation(loc.getWorld());
         }
-        Location dest = plan.isFinalEntry() ? current : Util.getCenterLocation(current.getBlock());
         /* Proper door movement - gets stuck on corners at times
-        
+
         Block block = loc.getWorld().getBlockAt(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
          if (MinecraftBlockExaminer.isDoor(block.getType())) {
            Door door = (Door) block.getState().getData();
@@ -128,7 +127,7 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
            dest.setZ(vector.getZ() + targetFace.getModZ());
            }
         }*/
-        if (params.withinMargin(loc, dest)) {
+        if (params.withinMargin(loc, current)) {
             plan.update(npc);
             if (plan.isComplete())
                 return true;
@@ -136,23 +135,23 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
             return false;
         }
         if (params.debug()) {
-            npc.getEntity().getWorld().playEffect(dest, Effect.ENDER_SIGNAL, 0);
+            npc.getEntity().getWorld().playEffect(current, Effect.ENDER_SIGNAL, 0);
         }
         if (npc.getEntity() instanceof LivingEntity && npc.getEntity().getType() != EntityType.ARMOR_STAND) {
-            NMS.setDestination(npc.getEntity(), dest.getX(), dest.getY(), dest.getZ(), params.speedModifier());
+            NMS.setDestination(npc.getEntity(), current.getX(), current.getY(), current.getZ(), params.speedModifier());
         } else {
-            Vector dir = dest.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize()
+            Vector dir = current.toVector().subtract(npc.getEntity().getLocation().toVector()).normalize()
                     .multiply(0.2 * params.speedModifier());
             boolean liquidOrInLiquid = MinecraftBlockExaminer.isLiquidOrWaterlogged(loc.getBlock());
-            double dX = dest.getX() - loc.getX();
-            double dY = dest.getY() - loc.getY();
-            double dZ = dest.getZ() - loc.getZ();
+            double dX = current.getX() - loc.getX();
+            double dY = current.getY() - loc.getY();
+            double dZ = current.getZ() - loc.getZ();
             double xzDistance = Math.sqrt(dX * dX + dZ * dZ);
             if (dY >= 1 && xzDistance <= 0.4 || dY >= 0.2 && liquidOrInLiquid) {
                 dir.add(new Vector(0, 0.75, 0));
             }
             npc.getEntity().setVelocity(dir);
-            Util.faceLocation(npc.getEntity(), dest);
+            Util.faceLocation(npc.getEntity(), current);
         }
         plan.run(npc);
         return false;
