@@ -63,7 +63,6 @@ public class CitizensNavigator implements Navigator, Runnable {
             .distanceMargin(Setting.DEFAULT_DISTANCE_MARGIN.asDouble())
             .pathDistanceMargin(Setting.DEFAULT_PATH_DISTANCE_MARGIN.asDouble())
             .stationaryTicks(Setting.DEFAULT_STATIONARY_DURATION.asTicks()).stuckAction(TeleportStuckAction.INSTANCE)
-            .examiner(new MinecraftBlockExaminer())
             .pathfinderType(PathfinderType.valueOf(Setting.PATHFINDER_TYPE.asString()))
             .straightLineTargetingDistance(Setting.DEFAULT_STRAIGHT_LINE_TARGETING_DISTANCE.asFloat())
             .destinationTeleportMargin(Setting.DEFAULT_DESTINATION_TELEPORT_MARGIN.asDouble())
@@ -82,7 +81,8 @@ public class CitizensNavigator implements Navigator, Runnable {
                 !Setting.DEFAULT_STUCK_ACTION.asString().contains("teleport"))) {
             defaultParams.stuckAction(null);
         }
-        defaultParams.examiner(new SwimmingExaminer(npc));
+        defaultParams.examiner(new MinecraftBlockExaminer(npc));
+        defaultParams.examiner(new SwimmingExaminer());
         if (Setting.CITIZENS_PATHFINDER_JUMPS.asBoolean()) {
             defaultParams.examiner(new JumpingExaminer(() -> (int) Math.ceil(npc.getEntity().getHeight()),
                     () -> getLocalParameters().speed()));
@@ -230,7 +230,7 @@ public class CitizensNavigator implements Navigator, Runnable {
             long totalTicks = (long) Math.ceil(npcLoc.distance(targetLoc) / localParams.speed());
             teleporting = new SchedulerRunnable() {
                 long currentTick = 0;
-            
+
                 @Override
                 public void run() {
                     if (!npc.getEntity().isValid()) {
@@ -238,11 +238,11 @@ public class CitizensNavigator implements Navigator, Runnable {
                         return;
                     }
                     double t = (double) ++currentTick / totalTicks;
-            
+
                     double newX = from.getX() + (to.getX() - to.getX()) * t;
                     double newY = from.getY() + (to.getY() - to.getY()) * t;
                     double newZ = from.getZ() + (to.getZ() - to.getZ()) * t;
-            
+
                     if (t >= 1.0) {
                         cancel();
                     }
