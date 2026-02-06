@@ -27,7 +27,6 @@ import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
-import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
@@ -503,7 +502,7 @@ public class CitizensNPC extends AbstractNPC {
                 }
             }
             boolean shouldSwim = data().get(NPC.Metadata.SWIM,
-                    !useMinecraftAI() && SwimmingExaminer.isWaterMob(getEntity()))
+                    !useMinecraftAI() && MinecraftBlockExaminer.isWaterMob(getEntity()))
                     && MinecraftBlockExaminer.isLiquid(loc.getBlock().getType());
             if (navigator.isNavigating()) {
                 if (shouldSwim) {

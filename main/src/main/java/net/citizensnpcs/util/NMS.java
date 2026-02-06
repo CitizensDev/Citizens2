@@ -52,7 +52,7 @@ import com.mojang.authlib.minecraft.client.MinecraftClient;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.NavigatorParameters;
-import net.citizensnpcs.api.astar.pathfinder.SwimmingExaminer;
+import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.command.CommandManager;
 import net.citizensnpcs.api.command.exception.CommandException;
 import net.citizensnpcs.api.event.NPCKnockbackEvent;
@@ -1073,7 +1073,7 @@ public class NMS {
     }
 
     public static void trySwim(Entity entity) {
-        trySwim(entity, SwimmingExaminer.isWaterMob(entity) ? 0.02F : 0.04F);
+        trySwim(entity, MinecraftBlockExaminer.isWaterMob(entity) ? 0.02F : 0.04F);
     }
 
     public static void trySwim(Entity entity, float power) {
