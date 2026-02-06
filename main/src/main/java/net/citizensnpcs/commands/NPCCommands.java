@@ -3226,7 +3226,7 @@ public class NPCCommands {
             permission = "citizens.npc.skin")
     public void skin(CommandContext args, CommandSender sender, NPC npc, @Flag("url") String url,
             @Flag("file") String file) throws CommandException {
-        EntityType type = npc.getOrAddTrait(MobType.class).getType();
+        EntityType type = npc.getCosmeticEntityType();
         if (type != EntityType.PLAYER && !type.name().equals("MANNEQUIN"))
             throw new RequirementMissingException(
                     Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE, Util.prettyEnum(type)));
@@ -3313,10 +3313,10 @@ public class NPCCommands {
             trait.setSkinPersistent(args.getString(1), args.getString(3), args.getString(2));
             Messaging.sendTr(sender, Messages.SKIN_SET, npc.getName(), args.getString(1));
             return;
-        } else if (args.hasFlag('s') && npc.getEntity() instanceof Player) {
+        } else if (args.hasFlag('s') && npc.getCosmeticEntity() instanceof Player) {
             ItemStack is = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta sm = (SkullMeta) is.getItemMeta();
-            NMS.setProfile(sm, NMS.getProfile((Player) npc.getEntity()));
+            NMS.setProfile(sm, NMS.getProfile((Player) npc.getCosmeticEntity()));
             is.setItemMeta(sm);
             if (sender instanceof Player && ((Player) sender).getInventory().addItem(is).isEmpty()) {
             } else if (args.getSenderLocation() != null) {

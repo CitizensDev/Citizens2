@@ -63,15 +63,14 @@ public class WaypointCommands {
             modifiers = { "hpa" },
             min = 1,
             max = 1,
-            permission = "citizens.waypoints.hpa")
+            permission = "citizens.admin")
     public void hpa(CommandContext args, CommandSender sender, NPC npc) throws CommandException {
-        if (Messaging.isDebugging() && sender.isOp()) {
+        if (sender.isOp()) {
             HPAGraph graph = new HPAGraph(new ChunkBlockSource(npc.getStoredLocation(), 16),
                     npc.getStoredLocation().getBlockX(), npc.getStoredLocation().getBlockY(),
                     npc.getStoredLocation().getBlockZ());
             graph.addClusters(npc.getStoredLocation().getBlockX(), npc.getStoredLocation().getBlockZ());
-            System.out.println(graph.findPath(new Location(npc.getStoredLocation().getWorld(), 8, 68, -134),
-                    new Location(npc.getStoredLocation().getWorld(), 11, 68, -131)));
+            System.out.println(graph.findPath(npc.getStoredLocation(), ((Player) sender).getLocation()));
         }
     }
 

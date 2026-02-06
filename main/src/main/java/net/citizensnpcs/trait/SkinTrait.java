@@ -108,15 +108,15 @@ public class SkinTrait extends Trait {
     }
 
     private void onSkinChange(boolean forceUpdate) {
-        if (!(npc.getEntity() instanceof SkinnableEntity))
+        if (!(npc.getCosmeticEntity() instanceof SkinnableEntity))
             return;
-        ((SkinnableEntity) npc.getEntity()).getSkinTracker().notifySkinChange(forceUpdate);
+        ((SkinnableEntity) npc.getCosmeticEntity()).getSkinTracker().notifySkinChange(forceUpdate);
     }
 
     @Override
     public void onSpawn() {
-        if (npc.getEntity() instanceof SkinnableEntity && body != null) {
-            ((SkinnableEntity) npc.getEntity()).setSkinPatch(modelType, body, cape, elytra);
+        if (npc.getCosmeticEntity() instanceof SkinnableEntity && body != null) {
+            ((SkinnableEntity) npc.getCosmeticEntity()).setSkinPatch(modelType, body, cape, elytra);
         }
     }
 
@@ -184,9 +184,7 @@ public class SkinTrait extends Trait {
         this.cape = cape;
         this.elytra = elytra;
         this.modelType = modelType;
-        if (body != null && npc.getEntity() instanceof SkinnableEntity) {
-            ((SkinnableEntity) npc.getEntity()).setSkinPatch(modelType, body, cape, elytra);
-        }
+        onSpawn();
     }
 
     /**

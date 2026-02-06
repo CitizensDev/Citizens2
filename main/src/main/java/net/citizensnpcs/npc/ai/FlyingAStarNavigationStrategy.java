@@ -155,8 +155,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
                 PlayerAnimation.START_ELYTRA.play((Player) npc.getEntity());
             }
         }
-        Vector dest = plan.isFinalEntry() ? vector
-                : new Vector(vector.getX() + 0.5D, vector.getY() + 0.1D, vector.getZ() + 0.5D);
+        Vector dest = vector;
         double dx = dest.getX() - current.getX();
         double dy = dest.getY() - current.getY();
         double dz = dest.getZ() - current.getZ();

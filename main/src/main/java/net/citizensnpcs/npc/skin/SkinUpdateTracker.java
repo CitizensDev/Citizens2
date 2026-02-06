@@ -125,7 +125,7 @@ public class SkinUpdateTracker {
 
     @Nullable
     private SkinnableEntity getSkinnable(NPC npc) {
-        Entity entity = npc.getEntity();
+        Entity entity = npc.getCosmeticEntity();
         if (entity == null || entity.getType().name().equals("MANNEQUIN"))
             return null;
         return entity instanceof SkinnableEntity ? (SkinnableEntity) entity : null;

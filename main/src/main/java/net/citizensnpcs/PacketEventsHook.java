@@ -3,7 +3,6 @@ package net.citizensnpcs;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +34,7 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityHeadLook;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
@@ -189,6 +189,38 @@ public class PacketEventsHook implements Listener {
                 return result;
             }
 
+            private PlayerData getPlayerData(Player player, NPC npc) {
+                String fullName = npc.getFullName();
+                UserProfile profile = new UserProfile(player.getUniqueId(), fullName);
+                SkinProperty base = SkinProperty.fromMojangProfile(NMS.getProfile(player));
+                if (base != null) {
+                    profile.setTextureProperties(
+                            Lists.newArrayList(new TextureProperty(base.name, base.value, base.signature)));
+                }
+                PlayerData playerData = null;
+                try {
+                    playerData = PLAYERDATA_CONSTRUCTOR.newInstance(minimessage(npc.getFullName()), profile,
+                            GameMode.valueOf(player.getGameMode().name()), 10);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                return playerData;
+            }
+
+            private void handleDestroyEntities(PacketSendEvent event) {
+                WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(event);
+                for (int eid : packet.getEntityIds()) {
+                    DisguiseTrait trait = disguiseTraits.get(eid);
+                    if (trait == null || trait.getCosmeticEntity() == null)
+                        continue;
+                    if (trait.getCosmeticEntity() instanceof Player) {
+                        WrapperPlayServerPlayerInfo remove = new WrapperPlayServerPlayerInfo(Action.REMOVE_PLAYER,
+                                getPlayerData((Player) trait.getCosmeticEntity(), trait.getNPC()));
+                        event.getUser().sendPacket(remove);
+                    }
+                }
+            }
+
             private void handleEntityMetadata(PacketSendEvent event) {
                 WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(event);
 
@@ -209,26 +241,13 @@ public class PacketEventsHook implements Listener {
                 if (trait.getCosmeticEntity() instanceof Player) {
                     event.setCancelled(true);
                     Player player = (Player) trait.getCosmeticEntity();
-                    String fullName = trait.getNPC().getFullName();
-                    UserProfile profile = new UserProfile(player.getUniqueId(), fullName);
-                    SkinProperty base = SkinProperty.fromMojangProfile(NMS.getProfile(player));
-                    if (base != null) {
-                        profile.setTextureProperties(
-                                Lists.newArrayList(new TextureProperty(base.name, base.value, base.signature)));
-                    }
-                    PlayerData playerData = null;
-                    try {
-                        playerData = PLAYERDATA_CONSTRUCTOR.newInstance(minimessage(fullName), profile,
-                                GameMode.valueOf(player.getGameMode().name()), 0);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
+                    PlayerData playerData = getPlayerData(player, trait.getNPC());
                     event.getUser().sendPacket(new WrapperPlayServerPlayerInfo(Action.ADD_PLAYER, playerData));
                     event.getUser()
-                            .sendPacket(new WrapperPlayServerSpawnPlayer(packet.getEntityId(), profile.getUUID(),
+                            .sendPacket(new WrapperPlayServerSpawnPlayer(packet.getEntityId(), player.getUniqueId(),
                                     new com.github.retrooper.packetevents.protocol.world.Location(packet.getPosition(),
                                             packet.getHeadYaw(), packet.getPitch()),
-                                    version -> Collections.emptyList()));
+                                    version -> getMetadata(version, player)));
 
                     WrapperPlayServerPlayerInfo remove = new WrapperPlayServerPlayerInfo(Action.REMOVE_PLAYER,
                             playerData);
@@ -244,17 +263,14 @@ public class PacketEventsHook implements Listener {
             private void handleSpawnPlayer(PacketSendEvent event) {
                 WrapperPlayServerSpawnPlayer packet = new WrapperPlayServerSpawnPlayer(event);
                 DisguiseTrait trait = disguiseTraits.get(packet.getEntityId());
-                if (trait == null || trait.getCosmeticEntity() == null)
+                if (trait == null || trait.getCosmeticEntity() instanceof Player)
                     return;
-                if (!(trait.getCosmeticEntity() instanceof Player)) {
-                    event.setCancelled(true);
-                    WrapperPlayServerSpawnEntity spawn = new WrapperPlayServerSpawnEntity(packet.getEntityId(),
-                            Optional.of(packet.getUUID()),
-                            EntityTypes.getByName(trait.getCosmeticEntity().getType().getKey().toString()),
-                            packet.getPosition(), packet.getPitch(), packet.getYaw(), packet.getYaw(), 0,
-                            Optional.empty());
-                    event.getUser().sendPacket(spawn);
-                }
+                event.setCancelled(true);
+                WrapperPlayServerSpawnEntity spawn = new WrapperPlayServerSpawnEntity(packet.getEntityId(),
+                        Optional.of(packet.getUUID()),
+                        EntityTypes.getByName(trait.getCosmeticEntity().getType().getKey().toString()),
+                        packet.getPosition(), packet.getPitch(), packet.getYaw(), packet.getYaw(), 0, Optional.empty());
+                event.getUser().sendPacket(spawn);
             }
 
             @Override
@@ -263,6 +279,8 @@ public class PacketEventsHook implements Listener {
                     handleSpawnEntity(event);
                 } else if (event.getPacketType() == PacketType.Play.Server.SPAWN_PLAYER) {
                     handleSpawnPlayer(event);
+                } else if (event.getPacketType() == PacketType.Play.Server.DESTROY_ENTITIES) {
+                    handleDestroyEntities(event);
                 } else if (event.getPacketType() == PacketType.Play.Server.PLAYER_INFO) {
                     WrapperPlayServerPlayerInfo packet = new WrapperPlayServerPlayerInfo(event);
                     for (Iterator<PlayerData> iterator = packet.getPlayerDataList().iterator(); iterator.hasNext();) {
