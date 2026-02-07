@@ -25,6 +25,7 @@ import com.google.common.collect.SetMultimap;
 import net.citizensnpcs.NPCNeedsRespawnEvent;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.ai.Navigator;
 import net.citizensnpcs.api.astar.pathfinder.MinecraftBlockExaminer;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -46,7 +47,6 @@ import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.AttributeTrait;
-import net.citizensnpcs.trait.ChunkTicketTrait;
 import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.DisguiseTrait;
 import net.citizensnpcs.trait.Gravity;
@@ -70,10 +70,10 @@ public class CitizensNPC extends AbstractNPC {
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
 
-    public CitizensNPC(UUID uuid, int id, String name, EntityController controller, NPCRegistry registry) {
-        super(uuid, id, name, registry);
+    public CitizensNPC(UUID uuid, int id, String name, EntityController controller, NPCRegistry registry,
+            CitizensPlugin plugin) {
+        super(uuid, id, name, registry, plugin);
         setEntityController(controller);
-        addTrait(ChunkTicketTrait.class);
     }
 
     @Override
@@ -448,7 +448,7 @@ public class CitizensNPC extends AbstractNPC {
                     public void run() {
                         postSpawn.accept(this::cancel);
                     }
-                }.runEntityTaskTimer(CitizensAPI.getPlugin(), getEntity(), null, 0, 1);
+                }.runEntityTaskTimer(plugin, getEntity(), null, 0, 1);
             }
         });
         return true;
@@ -497,7 +497,7 @@ public class CitizensNPC extends AbstractNPC {
             Location loc = getEntity().getLocation();
             if (data().has(NPC.Metadata.ACTIVATION_RANGE)) {
                 int range = data().get(NPC.Metadata.ACTIVATION_RANGE);
-                if (range == -1 || CitizensAPI.getLocationLookup().getNearbyPlayers(loc, range).iterator().hasNext()) {
+                if (range == -1 || plugin.getLocationLookup().getNearbyPlayers(loc, range).iterator().hasNext()) {
                     NMS.activate(getEntity());
                 }
             }

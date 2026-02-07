@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.CitizensPlugin;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
 import net.citizensnpcs.api.event.SpawnReason;
@@ -36,15 +37,17 @@ import net.citizensnpcs.trait.LookClose;
 public class CitizensNPCRegistry implements NPCRegistry {
     private final String name;
     private final Int2ObjectOpenHashMap<NPC> npcs = new Int2ObjectOpenHashMap<>();
+    private final CitizensPlugin plugin;
     private final NPCDataStore saves;
     private final Map<UUID, NPC> uniqueNPCs = Maps.newConcurrentMap();
 
-    public CitizensNPCRegistry(NPCDataStore store) {
-        this(store, "");
+    public CitizensNPCRegistry(NPCDataStore store, CitizensPlugin plugin) {
+        this(store, plugin, "");
     }
 
-    public CitizensNPCRegistry(NPCDataStore store, String registryName) {
+    public CitizensNPCRegistry(NPCDataStore store, CitizensPlugin cplugin, String registryName) {
         saves = store;
+        plugin = cplugin;
         name = registryName;
     }
 
@@ -64,7 +67,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
-        CitizensNPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this);
+        CitizensNPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this, plugin);
         npc.getOrAddTrait(MobType.class).setType(type);
         npcs.put(id, npc);
         uniqueNPCs.put(npc.getUniqueId(), npc);

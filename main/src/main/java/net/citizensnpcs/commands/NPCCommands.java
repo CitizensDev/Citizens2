@@ -71,6 +71,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.PathfinderType;
 import net.citizensnpcs.api.ai.TeleportStuckAction;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent;
 import net.citizensnpcs.api.ai.tree.StatusMapper;
 import net.citizensnpcs.api.command.Arg;
 import net.citizensnpcs.api.command.Arg.CompletionsProvider.OptionalKeyedCompletions;
@@ -3574,7 +3575,8 @@ public class NPCCommands {
                 }
             });
         }
-        npc.getDefaultSpeechController().speak(context);
+        NPCSpeechEvent event = new NPCSpeechEvent(context);
+        Bukkit.getServer().getPluginManager().callEvent(event);
     }
 
     @Command(

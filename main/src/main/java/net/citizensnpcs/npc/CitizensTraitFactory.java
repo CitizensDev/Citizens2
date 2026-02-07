@@ -9,9 +9,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.event.NPCCreateEvent;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitFactory;
 import net.citizensnpcs.api.trait.TraitInfo;
@@ -79,7 +82,7 @@ import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.EntityPacketTracker;
 import net.citizensnpcs.util.NMS;
 
-public class CitizensTraitFactory implements TraitFactory {
+public class CitizensTraitFactory implements TraitFactory, Listener {
     private final List<TraitInfo> defaultTraits = new ArrayList<>();
     private final ClassValue<Integer> idOf = new ClassValue<Integer>() {
         @Override
@@ -101,7 +104,7 @@ public class CitizensTraitFactory implements TraitFactory {
                 .withTemplateParser(BehaviorTrait.createTemplateParser()));
         registerTrait(TraitInfo.create(BoundingBoxTrait.class));
         registerTrait(TraitInfo.create(ClickRedirectTrait.class));
-        registerTrait(TraitInfo.create(ChunkTicketTrait.class));
+        registerTrait(TraitInfo.create(ChunkTicketTrait.class).asDefaultTrait());
         registerTrait(TraitInfo.create(CommandTrait.class).optInToStats());
         registerTrait(TraitInfo.create(Controllable.class).optInToStats());
         registerTrait(TraitInfo.create(CurrentLocation.class));
@@ -168,23 +171,6 @@ public class CitizensTraitFactory implements TraitFactory {
     }
 
     @Override
-    public void addDefaultTraits(NPC npc) {
-        for (TraitInfo info : defaultTraits) {
-            npc.addTrait(create(info));
-        }
-    }
-
-    private <T extends Trait> T create(TraitInfo info) {
-        return info.tryCreateInstance();
-    }
-
-    @Override
-    public void deregisterTrait(TraitInfo info) {
-        Objects.requireNonNull(info, "info cannot be null");
-        registered.remove(info.getTraitName());
-    }
-
-    @Override
     public int getId(Class<? extends Trait> clazz) {
         return idOf.get(clazz);
     }
@@ -204,24 +190,28 @@ public class CitizensTraitFactory implements TraitFactory {
     public <T extends Trait> T getTrait(Class<T> clazz) {
         for (TraitInfo entry : registered.values()) {
             if (clazz == entry.getTraitClass())
-                return create(entry);
+                return entry.tryCreateInstance();
         }
         return null;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T extends Trait> T getTrait(String name) {
         TraitInfo info = registered.get(name.toLowerCase(Locale.ROOT));
-        if (info == null)
-            return null;
-        return (T) create(info);
+        return info == null ? null : info.tryCreateInstance();
     }
 
     @Override
     public Class<? extends Trait> getTraitClass(String name) {
         TraitInfo info = registered.get(name.toLowerCase(Locale.ROOT));
         return info == null ? null : info.getTraitClass();
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onNPCCreate(NPCCreateEvent event) {
+        for (TraitInfo info : defaultTraits) {
+            event.getNPC().addTrait(info.tryCreateInstance());
+        }
     }
 
     @Override

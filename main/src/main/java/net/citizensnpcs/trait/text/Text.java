@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
@@ -19,6 +20,7 @@ import org.bukkit.event.Listener;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
+import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -218,7 +220,10 @@ public class Text extends Trait implements Runnable, Listener {
             }
         }
         if (sendTextToChat) {
-            npc.getDefaultSpeechController().speak(new SpeechContext(text.get(index), player));
+            SpeechContext context = new SpeechContext(text.get(index), player);
+            context.setTalker(npc.getEntity());
+            NPCSpeechEvent event = new NPCSpeechEvent(context);
+            Bukkit.getServer().getPluginManager().callEvent(event);
         }
         return true;
     }
