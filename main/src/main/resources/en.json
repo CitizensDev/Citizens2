@@ -557,6 +557,8 @@
   "citizens.commands.npc.shop.deleted" : "Shop [[{0}]] deleted.",
   "citizens.commands.npc.shop.description" : "NPC shop edit/show",
   "citizens.commands.npc.shop.help" : "",
+  "citizens.commands.npc.showshop.description" : "NPC shop show",
+  "citizens.commands.npc.showshop.help" : "",
   "citizens.commands.npc.shop.show-player-not-found" : "Player [[{0}]] not online to show shop.",
   "citizens.commands.npc.shulker.color-set" : "[[{0}]]''s color set to [[{1}]].",
   "citizens.commands.npc.shulker.description" : "Sets shulker modifiers",
