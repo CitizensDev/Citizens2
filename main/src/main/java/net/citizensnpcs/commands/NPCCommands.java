@@ -3158,6 +3158,10 @@ public class NPCCommands {
             shop = shops.getShop(args.getString(2));
             if (shop == null && action.equalsIgnoreCase("edit")) {
                 shop = shops.addNamedShop(args.getString(2));
+                if (!shop.canEdit(npc, sender)) {
+                    shops.deleteShop(shop);
+                    throw new NoPermissionsException();
+                }
             }
         }
         if (shop == null)
@@ -3193,13 +3197,46 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "showshop (name)",
+            desc = "",
+            modifiers = { "showshop" },
+            min = 2,
+            max = 2,
+            permission = "citizens.npc.showshop")
+    @Requirements(selected = false, ownership = true)
+    public void showshop(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String shopName,
+            @Flag("player") String flagPlayer) throws CommandException {
+        Player player = null;
+        if (flagPlayer != null) {
+            if (!sender.hasPermission("citizens.npc.showshop.to-others"))
+                throw new NoPermissionsException();
+            player = Bukkit.getPlayer(flagPlayer);
+        } else if (sender instanceof Player) {
+            player = (Player) sender;
+        }
+        if (player == null)
+            throw new CommandException(Messages.SHOP_PLAYER_NOT_FOUND);
+
+        if (shopName == null && npc == null)
+            throw new CommandException(Messages.SHOP_NOT_FOUND, "");
+
+        NPCShop shop = shopName == null && npc != null ? npc.getOrAddTrait(ShopTrait.class).getDefaultShop()
+                : shops.getShop(shopName);
+
+        if (shop == null)
+            throw new CommandException(Messages.SHOP_NOT_FOUND, shopName);
+
+        shop.display(player);
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "sitting (--explicit [true|false]) (--at [at])",
             desc = "",
             modifiers = { "sitting" },
             min = 1,
             max = 2,
             permission = "citizens.npc.sitting")
-
     public void sitting(CommandContext args, CommandSender sender, NPC npc, @Flag("explicit") Boolean explicit,
             @Flag("at") Location at) {
         SitTrait trait = npc.getOrAddTrait(SitTrait.class);
