@@ -485,9 +485,13 @@ public class NPCCommands {
             permission = "citizens.npc.behavior")
     public void behavior(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String file)
             throws CommandException {
+        if (file == null)
+            throw new CommandException(Messages.INVALID_BEHAVIOR_FILE);
+
         BehaviorTrait trait = npc.getOrAddTrait(BehaviorTrait.class);
         File src = new File(CitizensAPI.getDataFolder(), "behaviors");
         File f = new File(src, file);
+
         if (!f.exists() || !f.getParentFile().equals(src))
             throw new CommandException(Messages.INVALID_BEHAVIOR_FILE);
 
@@ -716,6 +720,9 @@ public class NPCCommands {
         } else if (action.equalsIgnoreCase("permissions") || action.equalsIgnoreCase("perms")) {
             if (!sender.hasPermission("citizens.admin"))
                 throw new NoPermissionsException();
+            if (args.argsLength() == 2)
+                throw new CommandUsageException();
+
             List<String> temporaryPermissions = Arrays.asList(args.getString(2).split(","));
             int duration = -1;
             if (args.argsLength() == 4) {
@@ -1414,6 +1421,9 @@ public class NPCCommands {
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_SET, idx, args.getJoinedStrings(3));
         } else if (action.equalsIgnoreCase("edit_npc")) {
             HologramRenderer hr = null;
+            if (args.argsLength() == 2)
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+
             if (args.getString(2).equals("name")) {
                 hr = trait.getNameRenderer();
             } else if (args.getString(2).equals("template")) {
@@ -3144,12 +3154,15 @@ public class NPCCommands {
             max = 4,
             permission = "citizens.npc.shop")
     @Requirements(selected = false, ownership = true)
-    public void shop(CommandContext args, Player sender, NPC npc,
+    public void shop(CommandContext args, CommandSender sender, NPC npc,
             @Arg(value = 1, completions = { "edit", "show", "delete", "copyfrom" }) String action)
             throws CommandException {
+        Player player = sender instanceof Player ? (Player) sender : null;
         if (args.argsLength() == 1) {
+            if (player == null)
+                throw new CommandException(CommandMessages.MUST_BE_INGAME);
             if (npc != null) {
-                npc.getOrAddTrait(ShopTrait.class).getDefaultShop().display(sender);
+                npc.getOrAddTrait(ShopTrait.class).getDefaultShop().display(player);
             }
             return;
         }
@@ -3157,8 +3170,10 @@ public class NPCCommands {
         if (args.argsLength() >= 3) {
             shop = shops.getShop(args.getString(2));
             if (shop == null && action.equalsIgnoreCase("edit")) {
+                if (player == null)
+                    throw new CommandException(CommandMessages.MUST_BE_INGAME);
                 shop = shops.addNamedShop(args.getString(2));
-                if (!shop.canEdit(npc, sender)) {
+                if (!shop.canEdit(npc, player)) {
                     shops.deleteShop(shop);
                     throw new NoPermissionsException();
                 }
@@ -3173,9 +3188,11 @@ public class NPCCommands {
             shops.deleteShop(shop);
             Messaging.sendTr(sender, Messages.SHOP_DELETED, shop.getName());
         } else if (action.equalsIgnoreCase("edit")) {
-            if (!shop.canEdit(npc, sender))
+            if (player == null)
+                throw new CommandException(CommandMessages.MUST_BE_INGAME);
+            if (!shop.canEdit(npc, player))
                 throw new NoPermissionsException();
-            shop.displayEditor(npc == null ? null : npc.getOrAddTrait(ShopTrait.class), sender);
+            shop.displayEditor(npc == null ? null : npc.getOrAddTrait(ShopTrait.class), player);
         } else if (action.equalsIgnoreCase("copyfrom")) {
             if (!shop.canEdit(npc, sender) || !npc.getOrAddTrait(ShopTrait.class).getDefaultShop().canEdit(npc, sender))
                 throw new NoPermissionsException();
@@ -3186,11 +3203,13 @@ public class NPCCommands {
             npc.getOrAddTrait(ShopTrait.class).setDefaultShop(copy);
         } else if (action.equalsIgnoreCase("show")) {
             if (args.argsLength() == 4) {
-                sender = Bukkit.getPlayer(args.getString(3));
-                if (sender == null)
+                player = Bukkit.getPlayer(args.getString(3));
+                if (player == null)
                     throw new CommandException(Messages.SHOP_PLAYER_NOT_FOUND, args.getString(3));
             }
-            shop.display(sender);
+            if (player == null)
+                throw new CommandException(CommandMessages.MUST_BE_INGAME);
+            shop.display(player);
         } else
             throw new CommandUsageException();
     }
