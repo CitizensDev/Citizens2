@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>${craftbukkit.version}</version>
+            <version>1.21.11-R0.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
