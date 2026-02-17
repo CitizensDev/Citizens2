@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -164,7 +165,7 @@ public class ShopTrait extends Trait {
             this.name = name;
         }
 
-        public boolean canEdit(NPC npc, Player sender) {
+        public boolean canEdit(NPC npc, CommandSender sender) {
             return sender.hasPermission("citizens.admin") || sender.hasPermission("citizens.npc.shop.edit")
                     || sender.hasPermission("citizens.npc.shop.edit." + getName())
                     || (npc != null && npc.getOrAddTrait(Owner.class).isOwnedBy(sender));
