@@ -29,6 +29,8 @@ public class AreaEffectCloudTrait extends Trait {
     @Persist
     private Float radius;
     @Persist
+    private Float radiusPerTick;
+    @Persist
     private PotionType type;
 
     public AreaEffectCloudTrait() {
@@ -56,6 +58,9 @@ public class AreaEffectCloudTrait extends Trait {
         }
         if (radius != null) {
             cloud.setRadius(radius);
+        }
+        if (radiusPerTick != null) {
+            cloud.setRadius(radiusPerTick);
         }
         if (duration != null) {
             cloud.setDuration(duration);
@@ -88,9 +93,13 @@ public class AreaEffectCloudTrait extends Trait {
         this.radius = radius;
     }
 
+    public void setRadiusPerTick(Float radiusPerTick) {
+        this.radiusPerTick = radiusPerTick;
+    }
+
     @Command(
             aliases = { "npc" },
-            usage = "areaeffectcloud --color [color] --duration [duration] --radius [radius] --particle [particle]",
+            usage = "areaeffectcloud --color [color] --duration [duration] --radius [radius] --radius_per_tick [radius] --particle [particle]",
             desc = "",
             modifiers = { "areaeffectcloud" },
             min = 1,
@@ -98,12 +107,16 @@ public class AreaEffectCloudTrait extends Trait {
             permission = "citizens.npc.areaeffectcloud")
     @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.AREA_EFFECT_CLOUD })
     public static void areaeffectcloud(CommandContext args, CommandSender sender, NPC npc,
-            @Flag("duration") Integer duration, @Flag("radius") Float radius, @Flag("color") Color color,
+            @Flag("duration") Integer duration, @Flag("radius") Float radius,
+            @Flag("radius_per_tick") Float radiusPerTick, @Flag("color") Color color,
             @Flag("potiontype") PotionType type, @Flag("particle") Particle particle) throws CommandException {
         AreaEffectCloudTrait trait = npc.getOrAddTrait(AreaEffectCloudTrait.class);
         String output = "";
         if (radius != null) {
             trait.setRadius(radius);
+        }
+        if (radiusPerTick != null) {
+            trait.setRadiusPerTick(radiusPerTick);
         }
         if (duration != null) {
             trait.setDuration(duration);

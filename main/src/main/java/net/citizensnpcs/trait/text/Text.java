@@ -222,7 +222,7 @@ public class Text extends Trait implements Runnable, Listener {
         if (sendTextToChat) {
             SpeechContext context = new SpeechContext(text.get(index), player);
             context.setTalker(npc.getEntity());
-            NPCSpeechEvent event = new NPCSpeechEvent(context);
+            NPCSpeechEvent event = new NPCSpeechEvent(npc, context);
             Bukkit.getServer().getPluginManager().callEvent(event);
         }
         return true;

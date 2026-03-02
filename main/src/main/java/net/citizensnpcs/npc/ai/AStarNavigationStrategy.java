@@ -140,7 +140,13 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         if (params.debug()) {
             npc.getEntity().getWorld().playEffect(current, Effect.ENDER_SIGNAL, 0);
         }
-        if (npc.getEntity() instanceof LivingEntity && npc.getEntity().getType() != EntityType.ARMOR_STAND) {
+        if (Messaging.isDebugging()) {
+            Vector v = current.clone().subtract(loc).toVector().normalize().multiply(0.2 * params.speedModifier());
+            if (current.distance(loc) < 0.12) {
+                v.multiply(Math.max(current.distance(loc) / 0.12, 0.7));
+            }
+            npc.getEntity().setVelocity(v);
+        } else if (npc.getEntity() instanceof LivingEntity && npc.getEntity().getType() != EntityType.ARMOR_STAND) {
             NMS.setDestination(npc.getEntity(), current.getX(), current.getY(), current.getZ(), params.speedModifier());
         } else {
             Vector dir = current.toVector().subtract(loc.toVector()).normalize().multiply(0.2 * params.speedModifier());

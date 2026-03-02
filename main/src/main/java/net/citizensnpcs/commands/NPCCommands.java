@@ -3601,7 +3601,7 @@ public class NPCCommands {
             throws CommandException {
         String message = args.getJoinedStrings(1);
 
-        SpeechContext context = new SpeechContext(npc, message);
+        SpeechContext context = new SpeechContext(message);
 
         Player playerRecipient = null;
         if (target != null) {
@@ -3631,8 +3631,7 @@ public class NPCCommands {
                 }
             });
         }
-        NPCSpeechEvent event = new NPCSpeechEvent(context);
-        Bukkit.getServer().getPluginManager().callEvent(event);
+        Bukkit.getServer().getPluginManager().callEvent(new NPCSpeechEvent(npc, context));
     }
 
     @Command(
