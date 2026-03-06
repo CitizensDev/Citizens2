@@ -950,8 +950,17 @@ public class EventListen implements Listener {
             if (npc == null || !npc.isSpawned() || !npc.getEntity().getWorld().equals(event.getWorld()))
                 continue;
 
-            boolean despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
-            if (event.isCancelled() || !despawned) {
+            boolean despawned;
+            if (SpigotUtil.isFoliaServer()) {
+                CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
+                    npc.despawn(DespawnReason.WORLD_UNLOAD);
+                });
+                despawned = true; // Assume despawned on Folia servers.
+            } else {
+                despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
+            }
+
+            if (!despawned) {
                 for (ChunkCoord coord : Lists.newArrayList(toRespawn.keySet())) {
                     if (event.getWorld().getUID().equals(coord.worldUUID)) {
                         respawnAllFromCoord(coord, event);
