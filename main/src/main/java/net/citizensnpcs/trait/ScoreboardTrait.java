@@ -2,14 +2,18 @@ package net.citizensnpcs.trait;
 
 import java.util.Set;
 
+import net.citizensnpcs.Citizens;
+import net.citizensnpcs.trait.scoreboard.AbstractScoreboard;
+import net.citizensnpcs.trait.scoreboard.AbstractTeam;
+import net.citizensnpcs.trait.scoreboard.BukkitScoreboardImpl;
+import net.citizensnpcs.trait.scoreboard.FoliaScoreboardImpl;
+import net.megavex.scoreboardlibrary.api.team.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
 import com.google.common.collect.Iterables;
@@ -25,7 +29,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.SpigotUtil;
-import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.Util;
 
 @TraitName("scoreboardtrait")
@@ -39,6 +42,8 @@ public class ScoreboardTrait extends Trait {
     @Persist
     private Set<String> tags = Sets.newHashSet("CITIZENS_NPC");
 
+    private final AbstractScoreboard scoreboard;
+
     public ScoreboardTrait() {
         super("scoreboardtrait");
         metadata = CitizensAPI.getLocationLookup().<Boolean> registerMetadata("scoreboard", (meta, event) -> {
@@ -47,34 +52,36 @@ public class ScoreboardTrait extends Trait {
                 if (trait == null)
                     continue;
 
-                Team team = trait.getTeam();
+                AbstractTeam team = trait.getTeam();
                 if (team == null || meta.has(event.getPlayer().getUniqueId(), team.getName()))
                     continue;
 
-                NMS.sendTeamPacket(event.getPlayer(), team, 0);
+                //NMS.sendTeamPacket(event.getPlayer(), team, 0);
+                team.sendToPlayer(event.getPlayer(), AbstractTeam.SendMode.ADD_OR_MODIFY);
 
                 meta.set(event.getPlayer().getUniqueId(), team.getName(), true);
             }
         });
+
+        TeamManager teamManager = ((Citizens) CitizensAPI.getPlugin()).getTeamManager();
+        this.scoreboard = SpigotUtil.isFoliaServer() ? new FoliaScoreboardImpl(teamManager) : new BukkitScoreboardImpl();
     }
 
-    private void clearClientTeams(Team team) {
+    private void clearClientTeams(AbstractTeam team) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (metadata.remove(player.getUniqueId(), team.getName())) {
-                NMS.sendTeamPacket(player, team, 1);
+                team.sendToPlayer(player, AbstractTeam.SendMode.REMOVE);
+                //NMS.sendTeamPacket(player, team, 1);
             }
         }
     }
 
     public void createTeam(String entityName) {
-        if (SpigotUtil.isFoliaServer())
-            return; // not supported on Folia
         String teamName = Util.getTeamName(npc.getUniqueId());
         npc.data().set(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, teamName);
-        Scoreboard scoreboard = Util.getDummyScoreboard();
-        Team team = scoreboard.getTeam(teamName);
+        AbstractTeam team = scoreboard.getTeam(teamName);
         if (team == null) {
-            team = scoreboard.registerNewTeam(teamName);
+            team = scoreboard.createTeam(teamName);
         }
         if (!team.hasEntry(entityName)) {
             clearClientTeams(team);
@@ -86,11 +93,11 @@ public class ScoreboardTrait extends Trait {
         return color;
     }
 
-    private Team getTeam() {
+    private AbstractTeam getTeam() {
         String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
         if (teamName.isEmpty())
             return null;
-        return Util.getDummyScoreboard().getTeam(teamName);
+        return scoreboard.getTeam(teamName);
     }
 
     @Override
@@ -102,20 +109,18 @@ public class ScoreboardTrait extends Trait {
 
     @Override
     public void onDespawn(DespawnReason reason) {
-        if (SpigotUtil.isFoliaServer())
-            return; // Not Supported on Folia
         previousGlowingColor = null;
         String name = lastName;
         String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
         if (teamName.isEmpty())
             return;
-        Team team = Util.getDummyScoreboard().getTeam(teamName);
+        AbstractTeam team = scoreboard.getTeam(teamName);
         npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
         if (team == null || name == null || !team.hasEntry(name)) {
             try {
                 if (team != null && team.getSize() == 0) {
                     clearClientTeams(team);
-                    team.unregister();
+                    scoreboard.removeTeam(teamName);
                 }
             } catch (IllegalStateException ex) {
             }
@@ -131,7 +136,7 @@ public class ScoreboardTrait extends Trait {
             }
             if (team.getSize() <= 1) {
                 clearClientTeams(team);
-                team.unregister();
+                scoreboard.removeTeam(teamName);
             } else {
                 team.removeEntry(name);
             }
@@ -177,16 +182,18 @@ public class ScoreboardTrait extends Trait {
         String forceVisible = npc.data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString();
         boolean nameVisibility = !npc.requiresNameHologram()
                 && (forceVisible.equals("true") || forceVisible.equals("hover"));
-        Team team = getTeam();
+        AbstractTeam team = getTeam();
         if (team == null)
             return;
 
         if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 metadata.remove(player.getUniqueId(), team.getName());
-                NMS.sendTeamPacket(player, team, 1);
+                //NMS.sendTeamPacket(player, team, 1);
+                team.sendToPlayer(player, AbstractTeam.SendMode.REMOVE);
             }
-            team.unregister();
+            //team.unregister();
+            scoreboard.removeTeam(team.getName());
             npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
             return;
         }
@@ -196,40 +203,35 @@ public class ScoreboardTrait extends Trait {
                     : npc.getUniqueId().toString();
         }
         if (SUPPORT_TEAM_SETOPTION) {
-            OptionStatus visibility = nameVisibility ? OptionStatus.ALWAYS : OptionStatus.NEVER;
-            if (visibility != team.getOption(Option.NAME_TAG_VISIBILITY)) {
+            AbstractTeam.NameTags visibility = nameVisibility ? AbstractTeam.NameTags.ALWAYS_SHOW : AbstractTeam.NameTags.NEVER_SHOW;
+            if (visibility != team.getNameTagVisibility()) {
                 changed = true;
             }
-            team.setOption(Option.NAME_TAG_VISIBILITY, visibility);
-        } else {
-            NMS.setTeamNameTagVisible(team, nameVisibility);
+            team.setNameTagVisibility(visibility);
         }
+//        else { // TODO
+//            NMS.setTeamNameTagVisible(team, nameVisibility);
+//        }
+
         if (SUPPORT_COLLIDABLE_SETOPTION) {
             try {
-                OptionStatus collide = npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected())
-                        ? OptionStatus.ALWAYS
-                        : OptionStatus.NEVER;
-                if (collide != team.getOption(Option.COLLISION_RULE)) {
+                AbstractTeam.CollisionRule collide = npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected())
+                        ? AbstractTeam.CollisionRule.ALWAYS
+                        : AbstractTeam.CollisionRule.NEVER;
+                if (collide != team.getCollisionRule()) {
                     changed = true;
                 }
-                team.setOption(Option.COLLISION_RULE, collide);
+                team.setCollisionRule(collide);
+                //team.setOption(Option.COLLISION_RULE, collide);
             } catch (NoSuchMethodError e) {
                 SUPPORT_COLLIDABLE_SETOPTION = false;
             } catch (NoClassDefFoundError e) {
                 SUPPORT_COLLIDABLE_SETOPTION = false;
             }
         }
-        if (color != null) {
-            if (SUPPORT_GLOWING_COLOR) {
-                if (team.getColor() == null || previousGlowingColor == null
-                        || previousGlowingColor != null && color != previousGlowingColor) {
-                    team.setColor(color);
-                    previousGlowingColor = color;
-                    changed = true;
-                }
-            } else if (team.getPrefix() == null || team.getPrefix().length() == 0 || previousGlowingColor == null
-                    || previousGlowingColor != null && !team.getPrefix().equals(previousGlowingColor.toString())) {
-                team.setPrefix(color.toString());
+        if (color != null && SUPPORT_GLOWING_COLOR) {
+            if (team.getColor() == null || previousGlowingColor == null || color != previousGlowingColor) {
+                team.setColor(color);
                 previousGlowingColor = color;
                 changed = true;
             }
@@ -241,9 +243,11 @@ public class ScoreboardTrait extends Trait {
                 continue;
 
             if (metadata.has(player.getUniqueId(), team.getName())) {
-                NMS.sendTeamPacket(player, team, 2);
+                //NMS.sendTeamPacket(player, team, 2);
+                team.sendToPlayer(player, AbstractTeam.SendMode.ADD_OR_MODIFY);
             } else {
-                NMS.sendTeamPacket(player, team, 0);
+                //NMS.sendTeamPacket(player, team, 0);
+                team.sendToPlayer(player, AbstractTeam.SendMode.ADD_OR_MODIFY);
 
                 metadata.set(player.getUniqueId(), team.getName(), true);
             }

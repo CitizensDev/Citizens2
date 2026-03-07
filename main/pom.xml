@@ -146,6 +146,17 @@
             <version>0.10.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.megavex</groupId>
+            <artifactId>scoreboard-library-api</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.megavex</groupId>
+            <artifactId>scoreboard-library-implementation</artifactId>
+            <version>2.6.0</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <url>http://www.citizensnpcs.co</url>
     <ciManagement>
@@ -267,6 +278,12 @@
                                         <include>**</include>
                                     </includes>
                                 </filter>
+                                <filter>
+                                    <artifact>net.megavex:scoreboard-library-*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
                             </filters>
                             <relocations>
                                 <!--
@@ -282,6 +299,10 @@
                                 <relocation>
                                     <pattern>net.byteflux.libby</pattern>
                                     <shadedPattern>clib.net.byteflux.libby</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.megavex.scoreboardlibrary</pattern>
+                                    <shadedPattern>clib.net.megavex.scoreboardlibrary</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

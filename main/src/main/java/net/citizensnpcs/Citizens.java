@@ -10,6 +10,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
+import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
+import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
+import net.megavex.scoreboardlibrary.api.team.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.BlockCommandSender;
@@ -96,6 +100,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private boolean enabled;
     private ExpressionRegistry expressionRegistry;
     private LocationLookup locationLookup;
+    private ScoreboardLibrary scoreboardLibrary;
+    private TeamManager teamManager;
     private final NMSHelper nmsHelper = new NMSHelper() {
         private boolean SUPPORT_OWNER_PROFILE = false;
         {
@@ -315,6 +321,14 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return traitFactory;
     }
 
+    public ScoreboardLibrary getScoreboardLibrary() {
+        return scoreboardLibrary;
+    }
+
+    public TeamManager getTeamManager() {
+        return teamManager;
+    }
+
     private void initialiseBehaviorRegistry() {
         expressionRegistry = new ExpressionRegistry();
         expressionRegistry.registerEngine(new MolangEngine());
@@ -405,6 +419,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (packetEventsEnabled) {
             PacketEvents.getAPI().terminate();
         }
+
+        scoreboardLibrary.close();
     }
 
     @Override
@@ -475,6 +491,15 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
             Bukkit.getPluginManager().disablePlugin(this);
         }
+
+        try {
+            scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
+            teamManager = scoreboardLibrary.createTeamManager();
+        } catch (NoPacketAdapterAvailableException e) {
+            scoreboardLibrary = new NoopScoreboardLibrary();
+            getLogger().warning("Server version unsupported, scoreboard functionality will not be visible!");
+        }
+
     }
 
     @Override
