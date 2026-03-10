@@ -20,7 +20,6 @@ public interface AbstractScoreboard {
      */
     void removeTeam(String name);
 
-
     /**
      * Creates a new team if it does not exist.
      * @param name Name of the team.

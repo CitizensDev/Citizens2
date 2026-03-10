@@ -1,15 +1,17 @@
 package net.citizensnpcs.trait.scoreboard;
 
-import net.citizensnpcs.util.Util;
+import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.Nullable;
 
 public class BukkitScoreboardImpl implements AbstractScoreboard {
+    private static Scoreboard DUMMY_SCOREBOARD;
+
     private final Scoreboard delegate;
 
     public BukkitScoreboardImpl() {
-        this.delegate = Util.getDummyScoreboard();
+        this.delegate = getDummyScoreboard();
     }
 
     @Nullable
@@ -33,5 +35,12 @@ public class BukkitScoreboardImpl implements AbstractScoreboard {
     @Override
     public AbstractTeam createTeam(String name) {
         return new BukkitTeamImpl(delegate.registerNewTeam(name));
+    }
+
+    private static Scoreboard getDummyScoreboard() {
+        if (DUMMY_SCOREBOARD == null) {
+            DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
+        }
+        return DUMMY_SCOREBOARD;
     }
 }

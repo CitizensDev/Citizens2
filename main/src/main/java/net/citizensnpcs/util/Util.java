@@ -173,13 +173,6 @@ public class Util {
         return center;
     }
 
-    public static Scoreboard getDummyScoreboard() {
-        if (DUMMY_SCOREBOARD == null) {
-            DUMMY_SCOREBOARD = Bukkit.getScoreboardManager().getNewScoreboard();
-        }
-        return DUMMY_SCOREBOARD;
-    }
-
     public static Entity getEntity(UUID uuid) {
         if (SUPPORTS_BUKKIT_GETENTITY)
             return Bukkit.getEntity(uuid);
@@ -472,7 +465,6 @@ public class Util {
     }
 
     private static String BEDROCK_NAME_PREFIX = ".";
-    private static Scoreboard DUMMY_SCOREBOARD;
     private static final Random RANDOM = new XORShiftRNG();
     private static boolean SUPPORTS_BUKKIT_GETENTITY = true;
     private static boolean SUPPORTS_HAS_EQUIPPABLE = false;
