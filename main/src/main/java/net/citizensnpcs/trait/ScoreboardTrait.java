@@ -204,20 +204,15 @@ public class ScoreboardTrait extends Trait {
         }
 
         if (SUPPORT_COLLIDABLE_SETOPTION) {
-            try {
-                AbstractTeam.CollisionRule collide = npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected())
-                        ? AbstractTeam.CollisionRule.ALWAYS
-                        : AbstractTeam.CollisionRule.NEVER;
-                if (collide != team.getCollisionRule()) {
-                    changed = true;
-                }
-                team.setCollisionRule(collide);
-            } catch (NoSuchMethodError e) {
-                SUPPORT_COLLIDABLE_SETOPTION = false;
-            } catch (NoClassDefFoundError e) {
-                SUPPORT_COLLIDABLE_SETOPTION = false;
+            AbstractTeam.CollisionRule collide = npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected())
+                    ? AbstractTeam.CollisionRule.ALWAYS
+                    : AbstractTeam.CollisionRule.NEVER;
+            if (collide != team.getCollisionRule()) {
+                changed = true;
             }
+            team.setCollisionRule(collide);
         }
+
         if (color != null && SUPPORT_GLOWING_COLOR) {
             if (team.getColor() == null || previousGlowingColor == null || color != previousGlowingColor) {
                 team.setColor(color);
