@@ -321,10 +321,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return traitFactory;
     }
 
-    public ScoreboardLibrary getScoreboardLibrary() {
-        return scoreboardLibrary;
-    }
-
     public TeamManager getTeamManager() {
         return teamManager;
     }
@@ -497,9 +493,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             teamManager = scoreboardLibrary.createTeamManager();
         } catch (NoPacketAdapterAvailableException e) {
             scoreboardLibrary = new NoopScoreboardLibrary();
-            getLogger().warning("Server version unsupported, scoreboard functionality will not be visible!");
         }
-
     }
 
     @Override

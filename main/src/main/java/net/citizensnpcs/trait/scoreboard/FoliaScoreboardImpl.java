@@ -1,5 +1,7 @@
 package net.citizensnpcs.trait.scoreboard;
 
+import net.citizensnpcs.Citizens;
+import net.citizensnpcs.api.CitizensAPI;
 import net.megavex.scoreboardlibrary.api.team.ScoreboardTeam;
 import net.megavex.scoreboardlibrary.api.team.TeamManager;
 
@@ -8,8 +10,8 @@ public class FoliaScoreboardImpl implements AbstractScoreboard {
 
     private final TeamManager delegate;
 
-    public FoliaScoreboardImpl(TeamManager delegate) {
-        this.delegate = delegate;
+    public FoliaScoreboardImpl() {
+        this.delegate = ((Citizens) CitizensAPI.getPlugin()).getTeamManager();
     }
 
     @Override

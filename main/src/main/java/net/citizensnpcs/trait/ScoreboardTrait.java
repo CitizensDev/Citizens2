@@ -56,22 +56,19 @@ public class ScoreboardTrait extends Trait {
                 if (team == null || meta.has(event.getPlayer().getUniqueId(), team.getName()))
                     continue;
 
-                //NMS.sendTeamPacket(event.getPlayer(), team, 0);
                 team.sendToPlayer(event.getPlayer(), AbstractTeam.SendMode.ADD_OR_MODIFY);
 
                 meta.set(event.getPlayer().getUniqueId(), team.getName(), true);
             }
         });
 
-        TeamManager teamManager = ((Citizens) CitizensAPI.getPlugin()).getTeamManager();
-        this.scoreboard = SpigotUtil.isFoliaServer() ? new FoliaScoreboardImpl(teamManager) : new BukkitScoreboardImpl();
+        this.scoreboard = SpigotUtil.isFoliaServer() ? new FoliaScoreboardImpl() : new BukkitScoreboardImpl();
     }
 
     private void clearClientTeams(AbstractTeam team) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (metadata.remove(player.getUniqueId(), team.getName())) {
                 team.sendToPlayer(player, AbstractTeam.SendMode.REMOVE);
-                //NMS.sendTeamPacket(player, team, 1);
             }
         }
     }
@@ -189,10 +186,8 @@ public class ScoreboardTrait extends Trait {
         if (!Setting.USE_SCOREBOARD_TEAMS.asBoolean()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 metadata.remove(player.getUniqueId(), team.getName());
-                //NMS.sendTeamPacket(player, team, 1);
                 team.sendToPlayer(player, AbstractTeam.SendMode.REMOVE);
             }
-            //team.unregister();
             scoreboard.removeTeam(team.getName());
             npc.data().remove(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME);
             return;
@@ -209,9 +204,6 @@ public class ScoreboardTrait extends Trait {
             }
             team.setNameTagVisibility(visibility);
         }
-//        else { // TODO
-//            NMS.setTeamNameTagVisible(team, nameVisibility);
-//        }
 
         if (SUPPORT_COLLIDABLE_SETOPTION) {
             try {
@@ -222,7 +214,6 @@ public class ScoreboardTrait extends Trait {
                     changed = true;
                 }
                 team.setCollisionRule(collide);
-                //team.setOption(Option.COLLISION_RULE, collide);
             } catch (NoSuchMethodError e) {
                 SUPPORT_COLLIDABLE_SETOPTION = false;
             } catch (NoClassDefFoundError e) {
@@ -243,10 +234,8 @@ public class ScoreboardTrait extends Trait {
                 continue;
 
             if (metadata.has(player.getUniqueId(), team.getName())) {
-                //NMS.sendTeamPacket(player, team, 2);
                 team.sendToPlayer(player, AbstractTeam.SendMode.ADD_OR_MODIFY);
             } else {
-                //NMS.sendTeamPacket(player, team, 0);
                 team.sendToPlayer(player, AbstractTeam.SendMode.ADD_OR_MODIFY);
 
                 metadata.set(player.getUniqueId(), team.getName(), true);
