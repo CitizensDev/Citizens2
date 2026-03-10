@@ -6,8 +6,6 @@ import net.megavex.scoreboardlibrary.api.team.ScoreboardTeam;
 import net.megavex.scoreboardlibrary.api.team.TeamManager;
 
 public class FoliaScoreboardImpl implements AbstractScoreboard {
-
-
     private final TeamManager delegate;
 
     public FoliaScoreboardImpl() {

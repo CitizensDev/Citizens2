@@ -6,18 +6,16 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.Nullable;
 
 public class BukkitScoreboardImpl implements AbstractScoreboard {
-
-
-    private final Scoreboard scoreboard;
+    private final Scoreboard delegate;
 
     public BukkitScoreboardImpl() {
-        this.scoreboard = Util.getDummyScoreboard();
+        this.delegate = Util.getDummyScoreboard();
     }
 
     @Nullable
     @Override
     public AbstractTeam getTeam(String name) {
-        Team team = scoreboard.getTeam(name);
+        Team team = delegate.getTeam(name);
         if (team != null) {
             return new BukkitTeamImpl(team);
         }
@@ -26,7 +24,7 @@ public class BukkitScoreboardImpl implements AbstractScoreboard {
 
     @Override
     public void removeTeam(String name) {
-        Team team = scoreboard.getTeam(name);
+        Team team = delegate.getTeam(name);
         if (team != null) {
             team.unregister();
         }
@@ -34,6 +32,6 @@ public class BukkitScoreboardImpl implements AbstractScoreboard {
 
     @Override
     public AbstractTeam createTeam(String name) {
-        return new BukkitTeamImpl(scoreboard.registerNewTeam(name));
+        return new BukkitTeamImpl(delegate.registerNewTeam(name));
     }
 }

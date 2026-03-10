@@ -2,12 +2,10 @@ package net.citizensnpcs.trait;
 
 import java.util.Set;
 
-import net.citizensnpcs.Citizens;
 import net.citizensnpcs.trait.scoreboard.AbstractScoreboard;
 import net.citizensnpcs.trait.scoreboard.AbstractTeam;
 import net.citizensnpcs.trait.scoreboard.BukkitScoreboardImpl;
 import net.citizensnpcs.trait.scoreboard.FoliaScoreboardImpl;
-import net.megavex.scoreboardlibrary.api.team.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;

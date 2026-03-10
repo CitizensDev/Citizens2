@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 public class FoliaTeamImpl implements AbstractTeam {
-
-
     private final ScoreboardTeam delegateTeam;
     private final TeamDisplay delegateDisplay;
 

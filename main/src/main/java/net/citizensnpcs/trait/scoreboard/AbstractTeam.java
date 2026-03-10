@@ -94,6 +94,7 @@ public interface AbstractTeam {
      * Sends the team to a player.
      * @param player Player to send to.
      * @param mode Send mode.
+     * @apiNote Not yet supported on Folia teams. Clients will always have the teams sent to them upon joining.
      */
     void sendToPlayer(Player player, SendMode mode);
 

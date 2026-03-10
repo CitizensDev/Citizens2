@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
 public class BukkitTeamImpl implements AbstractTeam {
-
     private final Team delegate;
 
     public BukkitTeamImpl(Team delegate) {
