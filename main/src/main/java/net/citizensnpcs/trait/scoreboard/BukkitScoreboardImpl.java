@@ -3,7 +3,8 @@ package net.citizensnpcs.trait.scoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class BukkitScoreboardImpl implements AbstractScoreboard {
     private static Scoreboard DUMMY_SCOREBOARD;

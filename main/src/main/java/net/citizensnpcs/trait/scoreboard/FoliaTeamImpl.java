@@ -6,8 +6,8 @@ import net.megavex.scoreboardlibrary.api.team.TeamDisplay;
 import net.megavex.scoreboardlibrary.api.team.enums.NameTagVisibility;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 public class FoliaTeamImpl implements AbstractTeam {
