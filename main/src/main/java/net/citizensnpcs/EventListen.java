@@ -789,6 +789,7 @@ public class EventListen implements Listener {
         skinUpdateTracker.updatePlayer(event.getPlayer(), Setting.INITIAL_PLAYER_JOIN_SKIN_PACKET_DELAY.asTicks(),
                 true);
         plugin.getLocationLookup().onJoin(event);
+        plugin.getTeamManager().addPlayer(event.getPlayer());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -821,6 +822,7 @@ public class EventListen implements Listener {
         }
         skinUpdateTracker.removePlayer(event.getPlayer().getUniqueId());
         plugin.getLocationLookup().onQuit(event);
+        plugin.getTeamManager().removePlayer(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
