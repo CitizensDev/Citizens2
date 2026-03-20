@@ -938,7 +938,7 @@ public class EventListen implements Listener {
             }
             return;
         }
-        if (rider != null || !(npc instanceof Vehicle))
+        if (rider != null || !(npc.getEntity() instanceof Vehicle))
             return;
 
         if (!npc.hasTrait(Controllable.class) || !npc.getTraitNullable(Controllable.class).isEnabled()) {
