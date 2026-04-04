@@ -693,7 +693,7 @@ public class NMSImpl implements NMSBridge {
     @Override
     public BoundingBox getCollisionBox(org.bukkit.block.Block block) {
         ServerLevel world = ((CraftWorld) block.getWorld()).getHandle();
-        VoxelShape shape = ((CraftBlock) block).getNMS().getCollisionShape(world, ((CraftBlock) block).getPosition());
+        VoxelShape shape = getHandle(block).getCollisionShape(world, ((CraftBlock) block).getPosition());
         return shape.isEmpty() ? BoundingBox.EMPTY : NMSBoundingBox.wrap(shape.bounds());
     }
 
@@ -1018,7 +1018,7 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public boolean isSolid(org.bukkit.block.Block in) {
-        BlockState data = ((CraftBlock) in).getNMS();
+        BlockState data = getHandle(in);
         return data.isSuffocating(((CraftWorld) in.getWorld()).getHandle(),
                 new BlockPos(in.getX(), in.getY(), in.getZ()));
     }
@@ -2325,6 +2325,15 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
+    private static BlockState getHandle(org.bukkit.block.Block block) {
+        try {
+            return (BlockState) GET_BLOCK_STATE.invoke(block);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static Entity getHandle(org.bukkit.entity.Entity entity) {
         if (!(entity instanceof CraftEntity))
             return null;
@@ -2845,6 +2854,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "scuteTime");
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
@@ -2898,6 +2908,7 @@ public class NMSImpl implements NMSBridge {
     public static final MethodHandle FOX_SET_FACEPLANTED = NMS.getMethodHandle(Fox.class, "setFaceplanted", true,
             boolean.class);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
+    private static final MethodHandle GET_BLOCK_STATE;
     private static final EntityDataAccessor<Float> INTERACTION_HEIGHT = NMS.getStaticObject(Interaction.class,
             "DATA_HEIGHT_ID");
     private static final EntityDataAccessor<Float> INTERACTION_WIDTH = NMS.getStaticObject(Interaction.class,
@@ -2948,6 +2959,11 @@ public class NMSImpl implements NMSBridge {
             "waitingForRespawn");
 
     static {
+        if (NMS.getMethodHandle(CraftBlock.class, "getNMS", false) != null) {
+            GET_BLOCK_STATE = NMS.getMethodHandle(CraftBlock.class, "getNMS", false);
+        } else {
+            GET_BLOCK_STATE = NMS.getMethodHandle(CraftBlock.class, "getBlockState", false);
+        }
         try {
             ENTITY_REGISTRY = new CustomEntityRegistry(BuiltInRegistries.ENTITY_TYPE);
             ENTITY_REGISTRY_SETTER = NMS.getFinalSetter(BuiltInRegistries.class, "ENTITY_TYPE");
