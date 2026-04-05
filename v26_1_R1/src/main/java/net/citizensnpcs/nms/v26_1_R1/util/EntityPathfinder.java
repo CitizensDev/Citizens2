@@ -1,23 +1,17 @@
 package net.citizensnpcs.nms.v26_1_R1.util;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 import net.citizensnpcs.Settings.Setting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.profiling.Profiler;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.util.profiling.metrics.MetricCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.PathNavigationRegion;
@@ -40,126 +34,134 @@ public class EntityPathfinder extends PathFinder {
         this.maxVisitedNodes = var1;
     }
 
-    private Path findPath(Node var0, Map<Target, BlockPos> var1, float var2, int var3, float var4) {
-        ProfilerFiller var5 = Profiler.get();
-        var5.push("find_path");
-        var5.markForCharting(MetricCategory.PATH_FINDING);
-        Set<Target> var6 = var1.keySet();
-        var0.g = 0.0F;
-        var0.h = this.getBestH(var0, var6);
-        var0.f = var0.h;
+    private Path findPath(Node from, List<Map.Entry<Target, BlockPos>> targets, float maxPathLength, int reachRange,
+            float maxVisitedNodesMultiplier) {
+        from.g = 0.0F;
+        from.h = this.getBestH(from, targets);
+        from.f = from.h;
         this.openSet.clear();
-        this.openSet.insert(var0);
-        Set<Node> var7 = ImmutableSet.of();
-        int var8 = 0;
-        Set<Target> var9 = Sets.newHashSetWithExpectedSize(var6.size());
-        int var10 = (int) (this.maxVisitedNodes * var4);
+        this.openSet.insert(from);
+        int count = 0;
+        List<Map.Entry<Target, BlockPos>> reachedTargets = Lists.newArrayListWithExpectedSize(targets.size());
+        int maxVisitedNodesAdjusted = (int) (this.maxVisitedNodes * maxVisitedNodesMultiplier);
 
         while (!this.openSet.isEmpty()) {
-            ++var8;
-            if (var8 >= var10) {
+            ++count;
+            if (count >= maxVisitedNodesAdjusted) {
                 break;
             }
-            Node var11 = this.openSet.pop();
-            var11.closed = true;
-            Iterator var13 = var6.iterator();
+            Node current = this.openSet.pop();
+            current.closed = true;
+            int neighborCount = 0;
 
-            while (var13.hasNext()) {
-                Target var133 = (Target) var13.next();
-                if (var11.distanceManhattan(var133) <= var3) {
-                    var133.setReached();
-                    var9.add(var133);
+            int i;
+            for (i = targets.size(); neighborCount < i; ++neighborCount) {
+                Map.Entry<Target, BlockPos> entry = targets.get(neighborCount);
+                Target target = entry.getKey();
+                if (current.distanceManhattan(target) <= reachRange) {
+                    target.setReached();
+                    reachedTargets.add(entry);
                 }
             }
-            if (!var9.isEmpty()) {
+            if (!reachedTargets.isEmpty()) {
                 break;
             }
-            if (!(var11.distanceTo(var0) >= var2)) {
-                int var12 = this.nodeEvaluator.getNeighbors(this.neighbors, var11);
+            if (!(current.distanceTo(from) >= maxPathLength)) {
+                neighborCount = this.nodeEvaluator.getNeighbors(this.neighbors, current);
 
-                for (int var133 = 0; var133 < var12; ++var133) {
-                    Node var14 = this.neighbors[var133];
-                    float var15 = this.distance(var11, var14);
-                    var14.walkedDistance = var11.walkedDistance + var15;
-                    float var16 = var11.g + var15 + var14.costMalus;
-                    if (var14.walkedDistance < var2 && (!var14.inOpenSet() || var16 < var14.g)) {
-                        var14.cameFrom = var11;
-                        var14.g = var16;
-                        var14.h = this.getBestH(var14, var6) * 1.5F;
-                        if (var14.inOpenSet()) {
-                            this.openSet.changeCost(var14, var14.g + var14.h);
+                for (i = 0; i < neighborCount; ++i) {
+                    Node neighbor = this.neighbors[i];
+                    float distance = this.distance(current, neighbor);
+                    neighbor.walkedDistance = current.walkedDistance + distance;
+                    float tentativeGScore = current.g + distance + neighbor.costMalus;
+                    if (neighbor.walkedDistance < maxPathLength
+                            && (!neighbor.inOpenSet() || tentativeGScore < neighbor.g)) {
+                        neighbor.cameFrom = current;
+                        neighbor.g = tentativeGScore;
+                        neighbor.h = this.getBestH(neighbor, targets) * 1.5F;
+                        if (neighbor.inOpenSet()) {
+                            this.openSet.changeCost(neighbor, neighbor.g + neighbor.h);
                         } else {
-                            var14.f = var14.g + var14.h;
-                            this.openSet.insert(var14);
+                            neighbor.f = neighbor.g + neighbor.h;
+                            this.openSet.insert(neighbor);
                         }
                     }
                 }
             }
         }
-        Optional<Path> var11 = !var9.isEmpty()
-                ? var9.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var1.get(var1x), true)).min(
-                        Comparator.comparingInt(Path::getNodeCount))
-                : getFallbackDestinations(var1, var6);
-        var5.pop();
-        /*var6.stream().map((var1x) -> {
-           return this.reconstructPath(var1x.getBestNode(), (BlockPos)var2.get(var1x), false);
-        }).min(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount))*/
-        if (var11.isEmpty())
-            return null;
-        Path var12 = var11.get();
-        return var12;
+        Path best = null;
+        boolean entryListIsEmpty = reachedTargets.isEmpty();
+        Comparator<Path> comparator = entryListIsEmpty ? Comparator.comparingInt(Path::getNodeCount)
+                : Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount);
+        Iterator<Map.Entry<Target, BlockPos>> var22 = (entryListIsEmpty ? targets
+                : Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean() ? List.<Map.Entry<Target, BlockPos>> of()
+                        : reachedTargets).iterator();
+        while (var22.hasNext()) {
+            Map.Entry<Target, BlockPos> entry = var22.next();
+            Path path = this.reconstructPath(entry.getKey().getBestNode(), entry.getValue(), !entryListIsEmpty);
+            if (best == null || comparator.compare(path, best) < 0) {
+                best = path;
+            }
+        }
+        return best;
     }
 
-    public Path findPath(PathNavigationRegion var0, LivingEntity var1, Set<BlockPos> var2, float var3, int var4,
-            float var5) {
+    public Path findPath(PathNavigationRegion level, LivingEntity entity, Set<BlockPos> targets, float maxPathLength,
+            int reachRange, float maxVisitedNodesMultiplier) {
         this.openSet.clear();
-        this.nodeEvaluator.prepare(var0, var1);
-        Node var6 = this.nodeEvaluator.getStart();
-        if (var6 == null) {
+        this.nodeEvaluator.prepare(level, entity);
+        Node from = this.nodeEvaluator.getStart();
+        if (from == null) {
             return null;
         } else {
-            Map<Target, BlockPos> var7 = var2.stream().collect(Collectors.toMap((var0x) -> {
-                return this.nodeEvaluator.getTarget(var0x.getX(), var0x.getY(), var0x.getZ());
-            }, Function.identity()));
-            Path var8 = this.findPath(var6, var7, var3, var4, var5);
+            List<Map.Entry<Target, BlockPos>> tos = Lists.newArrayList();
+            Iterator<BlockPos> var9 = targets.iterator();
+
+            while (var9.hasNext()) {
+                BlockPos pos = var9.next();
+                tos.add(new AbstractMap.SimpleEntry<>(this.nodeEvaluator.getTarget(pos.getX(), pos.getY(), pos.getZ()),
+                        pos));
+            }
+            Path path = this.findPath(from, tos, maxPathLength, reachRange, maxVisitedNodesMultiplier);
             this.nodeEvaluator.done();
-            return var8;
+            return path;
         }
     }
 
     @Override
-    public Path findPath(PathNavigationRegion var0, Mob var1, Set<BlockPos> var2, float var3, int var4, float var5) {
+    public Path findPath(PathNavigationRegion level, Mob entity, Set<BlockPos> targets, float maxPathLength,
+            int reachRange, float maxVisitedNodesMultiplier) {
         this.openSet.clear();
-        this.nodeEvaluator.prepare(var0, var1);
-        Node var6 = this.nodeEvaluator.getStart();
-        if (var6 == null) {
+        this.nodeEvaluator.prepare(level, entity);
+        Node from = this.nodeEvaluator.getStart();
+        if (from == null) {
             return null;
         } else {
-            Map<Target, BlockPos> var7 = var2.stream().collect(Collectors.toMap((var0x) -> {
-                return this.nodeEvaluator.getTarget(var0x.getX(), var0x.getY(), var0x.getZ());
-            }, Function.identity()));
-            Path var8 = this.findPath(var6, var7, var3, var4, var5);
+            List<Map.Entry<Target, BlockPos>> tos = Lists.newArrayList();
+            Iterator<BlockPos> var9 = targets.iterator();
+
+            while (var9.hasNext()) {
+                BlockPos pos = var9.next();
+                tos.add(new AbstractMap.SimpleEntry<>(this.nodeEvaluator.getTarget(pos.getX(), pos.getY(), pos.getZ()),
+                        pos));
+            }
+            Path path = this.findPath(from, tos, maxPathLength, reachRange, maxVisitedNodesMultiplier);
             this.nodeEvaluator.done();
-            return var8;
+            return path;
         }
     }
 
-    private float getBestH(Node var0, Set<Target> var1) {
-        float var2 = Float.MAX_VALUE;
-        float var5;
-        for (Iterator var44 = var1.iterator(); var44.hasNext(); var2 = Math.min(var5, var2)) {
-            Target var4 = (Target) var44.next();
-            var5 = var0.distanceTo(var4);
-            var4.updateBest(var5, var0);
-        }
-        return var2;
-    }
+    private float getBestH(Node from, List<Map.Entry<Target, BlockPos>> targets) {
+        float bestH = Float.MAX_VALUE;
+        int i = 0;
 
-    public Optional<Path> getFallbackDestinations(Map<Target, BlockPos> var1, Set<Target> var5) {
-        if (Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean())
-            return Optional.empty();
-        return var5.stream().map(var1x -> this.reconstructPath(var1x.getBestNode(), var1.get(var1x), false))
-                .min(Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount));
+        for (int targetsSize = targets.size(); i < targetsSize; ++i) {
+            Target target = targets.get(i).getKey();
+            float h = from.distanceTo(target);
+            target.updateBest(h, from);
+            bestH = Math.min(h, bestH);
+        }
+        return bestH;
     }
 
     private Path reconstructPath(Node var0, BlockPos var1, boolean var2) {

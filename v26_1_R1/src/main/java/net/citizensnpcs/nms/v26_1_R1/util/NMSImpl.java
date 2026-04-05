@@ -334,6 +334,7 @@ import net.minecraft.server.players.ServerOpList;
 import net.minecraft.server.players.ServerOpListEntry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
@@ -361,6 +362,7 @@ import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
@@ -635,16 +637,13 @@ public class NMSImpl implements NMSBridge {
                 .sessionService();
         if (!(sessionService instanceof YggdrasilMinecraftSessionService))
             return sessionService.fetchProfile(profile.id(), requireSecure).profile();
-        URL url = HttpAuthenticationService.constantURL(getAuthServerBaseUrl() + UndashedUuid.toString(profile.id()));
+        URL url = HttpAuthenticationService
+                .constantURL(Setting.AUTH_SERVER_URL.asString() + UndashedUuid.toString(profile.id()));
         url = HttpAuthenticationService.concatenateURL(url, "unsigned=" + !requireSecure);
         MinecraftClient client = (MinecraftClient) MINECRAFT_CLIENT.invoke(sessionService);
         MinecraftProfilePropertiesResponse response = client.get(url, MinecraftProfilePropertiesResponse.class);
 
         return response.profile();
-    }
-
-    public String getAuthServerBaseUrl() {
-        return Setting.AUTH_SERVER_URL.asString();
     }
 
     @Override
@@ -726,12 +725,15 @@ public class NMSImpl implements NMSBridge {
         MobAI ai = MobAI.from(handle);
         if (ai == null)
             return null;
+
         MoveControl controller = ai.getMoveControl();
         if (controller.hasWanted())
             return new Location(entity.getWorld(), controller.getWantedX(), controller.getWantedY(),
                     controller.getWantedZ());
+
         if (ai.getNavigation().isDone())
             return null;
+
         Vec3 vec = ai.getNavigation().getPath().getNextEntityPos(handle);
         return new Location(entity.getWorld(), vec.x(), vec.y(), vec.z());
     }
@@ -2249,6 +2251,7 @@ public class NMSImpl implements NMSBridge {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public static void clearFluidTracker(NPC npc, Entity handle) {
         Map map;
         try {
@@ -2481,138 +2484,207 @@ public class NMSImpl implements NMSBridge {
 
     public static void moveLogic(LivingEntity entity, Vec3 v) {
         if (entity.isEffectiveAi() || entity.canSimulateMovement()) {
-            double g = 0.08D;
-            boolean flag = entity.getDeltaMovement().y <= 0.0D;
-            if (flag && entity.hasEffect(MobEffects.SLOW_FALLING)) {
-                g = 0.01D;
+            double baseGravity = 0.08D;
+            boolean isFalling = entity.getDeltaMovement().y <= 0.0;
+            double oldY = entity.getY();
+            if (isFalling && entity.hasEffect(MobEffects.SLOW_FALLING)) {
+                baseGravity = 0.01D;
                 entity.fallDistance = 0.0F;
             }
             FluidState fluid = entity.level().getFluidState(entity.blockPosition());
-            if ((entity.isInWater() || entity.isInLava()) && !entity.canStandOnFluid(fluid)) {
-                double d0 = entity.getY();
-                double d1 = g;
-                Vec3 vec3d1;
+
+            if (!entity.canStandOnFluid(fluid)) {
                 if (entity.isInWater()) {
-                    float f = entity.isSprinting() ? 0.9F : 0.8F;
-                    float f1 = 0.02F;
-                    float f2 = (float) entity.getAttributeValue(Attributes.WATER_MOVEMENT_EFFICIENCY);
+                    float slowDown = entity.isSprinting() ? 0.9F : 0.8F;
+                    float speed = 0.02F;
+                    float waterWalker = (float) entity.getAttributeValue(Attributes.WATER_MOVEMENT_EFFICIENCY);
                     if (!entity.onGround()) {
-                        f2 *= 0.5F;
+                        waterWalker *= 0.5F;
                     }
-                    if (f2 > 0.0F) {
-                        f += (0.54600006F - f) * f2;
-                        f1 += (entity.getSpeed() - f1) * f2;
+                    if (waterWalker > 0.0F) {
+                        slowDown += (0.546F - slowDown) * waterWalker;
+                        speed += (entity.getSpeed() - speed) * waterWalker;
                     }
                     if (entity.hasEffect(MobEffects.DOLPHINS_GRACE)) {
-                        f = 0.96F;
+                        slowDown = 0.96F;
                     }
-                    entity.moveRelative(f1, v);
+                    entity.moveRelative(speed, v);
                     entity.move(MoverType.SELF, entity.getDeltaMovement());
-                    Vec3 vec3d2 = entity.getDeltaMovement();
+                    Vec3 ladderMovement = entity.getDeltaMovement();
                     if (entity.horizontalCollision && entity.onClimbable()) {
-                        vec3d2 = new Vec3(vec3d2.x, 0.2, vec3d2.z);
+                        ladderMovement = new Vec3(ladderMovement.x, 0.2, ladderMovement.z);
                     }
-                    vec3d2 = vec3d2.multiply(f, 0.800000011920929, f);
-                    entity.setDeltaMovement(entity.getFluidFallingAdjustedMovement(d1, flag, vec3d2));
+                    ladderMovement = ladderMovement.multiply(slowDown, 0.8, slowDown);
+                    entity.setDeltaMovement(
+                            entity.getFluidFallingAdjustedMovement(baseGravity, isFalling, ladderMovement));
+                    Vec3 movement = entity.getDeltaMovement();
+                    if (entity.horizontalCollision
+                            && entity.isFree(movement.x, movement.y + 0.6 - entity.getY() + oldY, movement.z)) {
+                        entity.setDeltaMovement(movement.x, 0.3, movement.z);
+                    }
+                    boolean canEntityFloatInWater = entity.is(EntityTypeTags.CAN_FLOAT_WHILE_RIDDEN);
+                    if (canEntityFloatInWater && entity.isVehicle()
+                            && entity.getFluidHeight(FluidTags.WATER) > entity.getFluidJumpThreshold()) {
+                        entity.setDeltaMovement(entity.getDeltaMovement().add(0.0, 0.04, 0.0));
+                    }
                 } else {
                     entity.moveRelative(0.02F, v);
                     entity.move(MoverType.SELF, entity.getDeltaMovement());
                     if (entity.getFluidHeight(FluidTags.LAVA) <= entity.getFluidJumpThreshold()) {
-                        entity.setDeltaMovement(entity.getDeltaMovement().multiply(0.5, 0.800000011920929, 0.5));
-                        vec3d1 = entity.getFluidFallingAdjustedMovement(d1, flag, entity.getDeltaMovement());
-                        entity.setDeltaMovement(vec3d1);
+                        entity.setDeltaMovement(entity.getDeltaMovement().multiply(0.5, 0.8, 0.5));
+                        Vec3 movement = entity.getFluidFallingAdjustedMovement(baseGravity, isFalling,
+                                entity.getDeltaMovement());
+                        entity.setDeltaMovement(movement);
                     } else {
                         entity.setDeltaMovement(entity.getDeltaMovement().scale(0.5));
                     }
-                    if (d1 != 0.0) {
-                        entity.setDeltaMovement(entity.getDeltaMovement().add(0.0, -d1 / 4.0, 0.0));
+                    if (baseGravity != 0.0) {
+                        entity.setDeltaMovement(entity.getDeltaMovement().add(0.0, -baseGravity / 4.0, 0.0));
+                    }
+                    boolean canEntityFloatInWater = entity.is(EntityTypeTags.CAN_FLOAT_WHILE_RIDDEN);
+                    if (canEntityFloatInWater && entity.isVehicle()
+                            && entity.getFluidHeight(FluidTags.WATER) > entity.getFluidJumpThreshold()) {
+                        entity.setDeltaMovement(entity.getDeltaMovement().add(0.0, 0.04, 0.0));
                     }
                 }
-                vec3d1 = entity.getDeltaMovement();
-                if (entity.horizontalCollision
-                        && entity.isFree(vec3d1.x, vec3d1.y + 0.6000000238418579 - entity.getY() + d0, vec3d1.z)) {
-                    entity.setDeltaMovement(vec3d1.x, 0.30000001192092896, vec3d1.z);
-                }
             } else if (entity.isFallFlying()) {
-                Vec3 vec3d = entity.getDeltaMovement();
-                Vec3 vec3d1 = entity.getLookAngle();
-                float f = entity.getXRot() * 0.017453292F;
-                double d0 = Math.sqrt(vec3d1.x * vec3d1.x + vec3d1.z * vec3d1.z);
-                double d1 = vec3d.horizontalDistance();
-                double d2 = g;
-                double d3 = Mth.square(Math.cos(f));
-                vec3d = vec3d.add(0.0, d2 * (-1.0 + d3 * 0.75), 0.0);
-                double d4;
-                if (vec3d.y < 0.0 && d0 > 0.0) {
-                    d4 = vec3d.y * -0.1 * d3;
-                    vec3d = vec3d.add(vec3d1.x * d4 / d0, d4, vec3d1.z * d4 / d0);
-                }
-                if (f < 0.0F && d0 > 0.0) {
-                    d4 = d1 * (-Mth.sin(f)) * 0.04;
-                    vec3d = vec3d.add(-vec3d1.x * d4 / d0, d4 * 3.2, -vec3d1.z * d4 / d0);
-                }
-                if (d0 > 0.0) {
-                    vec3d = vec3d.add((vec3d1.x / d0 * d1 - vec3d.x) * 0.1, 0.0, (vec3d1.z / d0 * d1 - vec3d.z) * 0.1);
-                }
-                double h = vec3d.horizontalDistance();
-                entity.setDeltaMovement(vec3d.multiply(0.99, 0.98, 0.99));
-                entity.move(MoverType.SELF, entity.getDeltaMovement());
-                if (entity.horizontalCollision) {
-                    double dd = h - entity.getDeltaMovement().horizontalDistance();
-                    float ff = (float) (dd * 10.0 - 3.0);
-                    if (ff > 0.0F) {
-                        entity.playSound((int) f > 4 ? entity.getFallSounds().big() : entity.getFallSounds().small(),
-                                1.0F, 1.0F);
-                        entity.hurt(entity.damageSources().flyIntoWall(), f);
+                if (entity.onClimbable()) {
+                    BlockPos posBelow = entity.getBlockPosBelowThatAffectsMyMovement();
+                    float blockFriction = entity.onGround()
+                            ? entity.level().getBlockState(posBelow).getBlock().getFriction()
+                            : 1.0F;
+                    entity.moveRelative(entity.onGround()
+                            ? entity.getSpeed() * (0.216F / (blockFriction * blockFriction * blockFriction))
+                            : entity.getControllingPassenger() instanceof Player ? entity.getSpeed() * 0.1F : 0.02F, v);
+                    Vec3 movement = entity.getDeltaMovement();
+                    entity.resetFallDistance();
+                    float max = 0.15F;
+                    double xd = Mth.clamp(movement.x, -max, max);
+                    double zd = Mth.clamp(movement.z, -max, max);
+                    double yd = Math.max(movement.y, -max);
+                    if (yd < 0.0 && !entity.getInBlockState().is(Blocks.SCAFFOLDING)
+                            && entity.isSuppressingSlidingDownLadder() && entity instanceof Player) {
+                        yd = 0.0;
+                    }
+                    movement = new Vec3(xd, yd, zd);
+
+                    entity.setDeltaMovement(movement);
+                    entity.move(MoverType.SELF, entity.getDeltaMovement());
+                    movement = entity.getDeltaMovement();
+                    if ((entity.horizontalCollision || NMS.shouldJump(entity.getBukkitEntity()))
+                            && (entity.onClimbable()
+                                    || entity.wasInPowderSnow && PowderSnowBlock.canEntityWalkOnPowderSnow(entity))) {
+                        movement = new Vec3(movement.x, 0.2, movement.z);
+                    }
+                    double movementY = movement.y;
+                    MobEffectInstance levitationEffect = entity.getEffect(MobEffects.LEVITATION);
+                    if (levitationEffect != null) {
+                        movementY += (0.05 * (levitationEffect.getAmplifier() + 1) - movement.y) * 0.2;
+                    } else if (entity.level().isClientSide() && !entity.level().hasChunkAt(posBelow)) {
+                        if (entity.getY() > entity.level().getMinY()) {
+                            movementY = -0.1;
+                        } else {
+                            movementY = 0.0;
+                        }
+                    } else {
+                        movementY -= baseGravity;
+                    }
+                    if (entity.shouldDiscardFriction()) {
+                        entity.setDeltaMovement(movement.x, movementY, movement.z);
+                    } else {
+                        float friction = blockFriction * 0.91F;
+                        float verticalFriction = entity instanceof FlyingAnimal ? friction : 0.98F;
+                        entity.setDeltaMovement(movement.x * friction, movementY * verticalFriction,
+                                movement.z * friction);
+                    }
+                    entity.stopFallFlying();
+                } else {
+                    Vec3 movement = entity.getDeltaMovement();
+                    double lastSpeed = movement.horizontalDistance();
+                    Vec3 lookAngle = entity.getLookAngle();
+                    float leanAngle = entity.getXRot() * 0.017453292F;
+                    double lookHorLength = Math.sqrt(lookAngle.x * lookAngle.x + lookAngle.z * lookAngle.z);
+                    double moveHorLength = movement.horizontalDistance();
+                    double liftForce = Mth.square(Math.cos(leanAngle));
+                    movement = movement.add(0.0, baseGravity * (-1.0 + liftForce * 0.75), 0.0);
+                    double convert;
+                    if (movement.y < 0.0 && lookHorLength > 0.0) {
+                        convert = movement.y * -0.1 * liftForce;
+                        movement = movement.add(lookAngle.x * convert / lookHorLength, convert,
+                                lookAngle.z * convert / lookHorLength);
+                    }
+                    if (leanAngle < 0.0F && lookHorLength > 0.0) {
+                        convert = moveHorLength * (-Mth.sin(leanAngle)) * 0.04;
+                        movement = movement.add(-lookAngle.x * convert / lookHorLength, convert * 3.2,
+                                -lookAngle.z * convert / lookHorLength);
+                    }
+                    if (lookHorLength > 0.0) {
+                        movement = movement.add((lookAngle.x / lookHorLength * moveHorLength - movement.x) * 0.1, 0.0,
+                                (lookAngle.z / lookHorLength * moveHorLength - movement.z) * 0.1);
+                    }
+                    entity.setDeltaMovement(movement);
+                    entity.move(MoverType.SELF, entity.getDeltaMovement());
+                    double newSpeed = entity.getDeltaMovement().horizontalDistance();
+                    if (entity.horizontalCollision) {
+                        double diff = lastSpeed - newSpeed;
+                        float dmg = (float) (diff * 10.0 - 3.0);
+                        if (dmg > 0.0F) {
+                            entity.playSound(
+                                    (int) dmg > 4 ? entity.getFallSounds().big() : entity.getFallSounds().small(), 1.0F,
+                                    1.0F);
+                            entity.hurt(entity.damageSources().flyIntoWall(), dmg);
+                        }
                     }
                 }
             } else {
-                BlockPos blockposition = entity.getBlockPosBelowThatAffectsMyMovement();
-                float f = entity.onGround() ? entity.level().getBlockState(blockposition).getBlock().getFriction()
+                BlockPos posBelow = entity.getBlockPosBelowThatAffectsMyMovement();
+                float blockFriction = entity.onGround()
+                        ? entity.level().getBlockState(posBelow).getBlock().getFriction()
                         : 1.0F;
-                float f1 = f * 0.91F;
                 entity.moveRelative(
-                        entity.onGround() ? entity.getSpeed() * (0.21600002F / (f * f * f))
+                        entity.onGround()
+                                ? entity.getSpeed() * (0.216F / (blockFriction * blockFriction * blockFriction))
                                 : entity.getControllingPassenger() instanceof Player ? entity.getSpeed() * 0.1F : 0.02F,
                         v);
+                Vec3 movement = entity.getDeltaMovement();
                 if (entity.onClimbable()) {
-                    Vec3 vec3d = entity.getDeltaMovement();
                     entity.resetFallDistance();
-                    double d0 = Mth.clamp(vec3d.x, -0.15, 0.15);
-                    double d1 = Mth.clamp(vec3d.z, -0.15, 0.15);
-                    double d2 = Math.max(vec3d.y, -0.15);
-                    if (d2 < 0.0 && !entity.getInBlockState().is(Blocks.SCAFFOLDING)
+                    float max = 0.15F;
+                    double xd = Mth.clamp(movement.x, -max, max);
+                    double zd = Mth.clamp(movement.z, -max, max);
+                    double yd = Math.max(movement.y, -max);
+                    if (yd < 0.0 && !entity.getInBlockState().is(Blocks.SCAFFOLDING)
                             && entity.isSuppressingSlidingDownLadder() && entity instanceof Player) {
-                        d2 = 0.0;
+                        yd = 0.0;
                     }
-                    vec3d = new Vec3(d0, d2, d1);
-                    entity.setDeltaMovement(vec3d);
+                    movement = new Vec3(xd, yd, zd);
                 }
+                entity.setDeltaMovement(movement);
                 entity.move(MoverType.SELF, entity.getDeltaMovement());
-                Vec3 vec3d1 = entity.getDeltaMovement();
-                if ((entity.horizontalCollision || NMS.shouldJump(entity.getBukkitEntity()))
-                        && (entity.onClimbable() || entity.getInBlockState().is(Blocks.POWDER_SNOW)
-                                && PowderSnowBlock.canEntityWalkOnPowderSnow(entity))) {
-                    vec3d1 = new Vec3(vec3d1.x, 0.2, vec3d1.z);
+                movement = entity.getDeltaMovement();
+                if ((entity.horizontalCollision || NMS.shouldJump(entity.getBukkitEntity())) && (entity.onClimbable()
+                        || entity.wasInPowderSnow && PowderSnowBlock.canEntityWalkOnPowderSnow(entity))) {
+                    movement = new Vec3(movement.x, 0.2, movement.z);
                 }
-                double d0 = vec3d1.y;
-                MobEffectInstance mobeffect = entity.getEffect(MobEffects.LEVITATION);
-                if (mobeffect != null) {
-                    d0 += (0.05 * (mobeffect.getAmplifier() + 1) - vec3d1.y) * 0.2;
-                } else if (entity.level().isClientSide() && !entity.level().hasChunkAt(blockposition)) {
+                double movementY = movement.y;
+                MobEffectInstance levitationEffect = entity.getEffect(MobEffects.LEVITATION);
+                if (levitationEffect != null) {
+                    movementY += (0.05 * (levitationEffect.getAmplifier() + 1) - movement.y) * 0.2;
+                } else if (entity.level().isClientSide() && !entity.level().hasChunkAt(posBelow)) {
                     if (entity.getY() > entity.level().getMinY()) {
-                        d0 = -0.1;
+                        movementY = -0.1;
                     } else {
-                        d0 = 0.0;
+                        movementY = 0.0;
                     }
                 } else {
-                    d0 -= g;
+                    movementY -= baseGravity;
                 }
                 if (entity.shouldDiscardFriction()) {
-                    entity.setDeltaMovement(vec3d1.x, d0, vec3d1.z);
+                    entity.setDeltaMovement(movement.x, movementY, movement.z);
                 } else {
-                    float f2 = entity instanceof FlyingAnimal ? f1 : 0.98F;
-                    entity.setDeltaMovement(vec3d1.x * f1, d0 * f2, vec3d1.z * f1);
+                    float friction = blockFriction * 0.91F;
+                    float verticalFriction = entity instanceof FlyingAnimal ? friction : 0.98F;
+                    entity.setDeltaMovement(movement.x * friction, movementY * verticalFriction, movement.z * friction);
                 }
             }
         }
@@ -2843,9 +2915,28 @@ public class NMSImpl implements NMSBridge {
             if (!npc.data().has("brain") || behaviorMap.size() > 0) {
                 npc.data().set("brain", entity.getBrain());
                 try {
+                    Set<MemoryModuleType<?>> memories = Sets.newHashSet();
+                    Brain.Visitor v = new Brain.Visitor() {
+                        @Override
+                        public <U> void accept(MemoryModuleType<U> type, U value) {
+                            memories.add(type);
+                        }
+
+                        @Override
+                        public <U> void accept(MemoryModuleType<U> type, U value, long timeToLive) {
+                            memories.add(type);
+                        }
+
+                        @Override
+                        public <U> void acceptEmpty(MemoryModuleType<U> type) {
+                            memories.add(type);
+                        }
+                    };
+                    entity.getBrain().forEach(v);
                     Map sensors = (Map) BRAIN_SENSORS_GETTER.invoke(entity.getBrain());
-                    BRAIN_SETTER.invoke(entity, Brain.provider(sensors.keySet(), body -> Collections.EMPTY_LIST)
-                            .makeBrain(entity, entity.getBrain().pack()));
+                    BRAIN_SETTER.invoke(entity,
+                            Brain.provider(memories, sensors.keySet(), body -> Collections.EMPTY_LIST).makeBrain(entity,
+                                    entity.getBrain().pack()));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -2854,7 +2945,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "scuteTime");
-
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);

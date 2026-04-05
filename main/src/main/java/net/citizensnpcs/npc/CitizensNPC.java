@@ -101,7 +101,7 @@ public class CitizensNPC extends AbstractNPC {
                     getEntity().isValid(), ", DespawnReason." + reason);
             return false;
         }
-        boolean keepSelected = getOrAddTrait(Spawned.class).shouldSpawn();
+        boolean keepSelected = hasTrait(Spawned.class) ? getTraitNullable(Spawned.class).shouldSpawn() : false;
         if (!keepSelected) {
             data().remove("selectors");
         }
@@ -114,9 +114,7 @@ public class CitizensNPC extends AbstractNPC {
             }
         }
         navigator.onDespawn();
-        traits.forEach(trait -> {
-            trait.onDespawn(reason);
-        });
+        traits.forEach(trait -> trait.onDespawn(reason));
         Messaging.debug("Despawned", this, "DespawnReason." + reason);
 
         if (reason == DespawnReason.DEATH) {
