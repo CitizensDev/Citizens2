@@ -1,5 +1,7 @@
 package net.citizensnpcs.nms.v26_1_R1.util;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,6 +15,8 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,6 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EntityNavigation extends PathNavigation {
     private boolean avoidSun;
+    private boolean canPathToTargetsBelowSurface;
     private final AttributeInstance followRange;
     protected boolean hasDelayedRecomputation;
     private boolean isStuck;
@@ -49,6 +54,7 @@ public class EntityNavigation extends PathNavigation {
     protected Path path;
     private final EntityPathfinder pathFinder;
     private int reachRange;
+    private float requiredPathLength = 16.0F;
     protected double speedModifier;
     private BlockPos targetPos;
     protected int tick;
@@ -69,9 +75,9 @@ public class EntityNavigation extends PathNavigation {
     }
 
     @Override
-    public boolean canCutCorner(PathType pathtype) {
-        return pathtype != PathType.FIRE && pathtype != PathType.POWDER_SNOW && pathtype != PathType.DAMAGE_CAUTIOUS
-                && pathtype != PathType.WALKABLE_DOOR;
+    public boolean canCutCorner(final PathType pathType) {
+        return pathType != PathType.FIRE_IN_NEIGHBOR && pathType != PathType.DAMAGING_IN_NEIGHBOR
+                && pathType != PathType.WALKABLE_DOOR;
     }
 
     @Override
@@ -82,53 +88,6 @@ public class EntityNavigation extends PathNavigation {
     @Override
     protected boolean canMoveDirectly(Vec3 var0, Vec3 var1) {
         return false;
-        /*
-        int var5 = Mth.floor(var0.x);
-        int var6 = Mth.floor(var0.z);
-        double var7 = var1.x - var0.x;
-        double var9 = var1.z - var0.z;
-        double var11 = var7 * var7 + var9 * var9;
-        if (var11 < 1.0E-8D)
-            return false;
-        double var13 = 1.0D / Math.sqrt(var11);
-        var7 *= var13;
-        var9 *= var13;
-        var2 += 2;
-        var4 += 2;
-        if (!canWalkOn(var5, Mth.floor(var0.y), var6, var2, var3, var4, var0, var7, var9))
-            return false;
-        var2 -= 2;
-        var4 -= 2;
-        double var15 = 1.0D / Math.abs(var7);
-        double var17 = 1.0D / Math.abs(var9);
-        double var19 = var5 - var0.x;
-        double var21 = var6 - var0.z;
-        if (var7 >= 0.0D)
-            var19++;
-        if (var9 >= 0.0D)
-            var21++;
-        var19 /= var7;
-        var21 /= var9;
-        int var23 = (var7 < 0.0D) ? -1 : 1;
-        int var24 = (var9 < 0.0D) ? -1 : 1;
-        int var25 = Mth.floor(var1.x);
-        int var26 = Mth.floor(var1.z);
-        int var27 = var25 - var5;
-        int var28 = var26 - var6;
-        while (var27 * var23 > 0 || var28 * var24 > 0) {
-            if (var19 < var21) {
-                var19 += var15;
-                var5 += var23;
-                var27 = var25 - var5;
-            } else {
-                var21 += var17;
-                var6 += var24;
-                var28 = var26 - var6;
-            }
-            if (!canWalkOn(var5, Mth.floor(var0.y), var6, var2, var3, var4, var0, var7, var9))
-                return false;
-        }
-        return true;*/
     }
 
     @Override
@@ -150,38 +109,16 @@ public class EntityNavigation extends PathNavigation {
     }
 
     @Override
-    public Path createPath(BlockPos var0, int var1) {
-        LevelChunk var2 = this.level.getChunkSource().getChunkNow(SectionPos.blockToSectionCoord(var0.getX()),
-                SectionPos.blockToSectionCoord(var0.getZ()));
-        if (var2 == null)
+    public Path createPath(BlockPos pos, final int reachRange) {
+        LevelChunk chunk = this.level.getChunkSource().getChunkNow(SectionPos.blockToSectionCoord(pos.getX()),
+                SectionPos.blockToSectionCoord(pos.getZ()));
+        if (chunk == null) {
             return null;
-
-        BlockPos.MutableBlockPos var3;
-        if (var2.getBlockState(var0).isAir()) {
-            var3 = var0.mutable().move(Direction.DOWN);
-
-            while (var3.getY() > this.level.getMinY() && var2.getBlockState(var3).isAir()) {
-                var3.move(Direction.DOWN);
-            }
-            if (var3.getY() > this.level.getMinY()) {
-                return supercreatePath(var3.above(), var1);
-            }
-            var3.setY(var0.getY() + 1);
-
-            while (var3.getY() <= this.level.getMaxY() && var2.getBlockState(var3).isAir()) {
-                var3.move(Direction.UP);
-            }
-            var0 = var3;
-        }
-        if (!var2.getBlockState(var0).isSolid()) {
-            return supercreatePath(var0, var1);
         } else {
-            var3 = var0.mutable().move(Direction.UP);
-
-            while (var3.getY() <= this.level.getMaxY() && var2.getBlockState(var3).isSolid()) {
-                var3.move(Direction.UP);
+            if (!this.canPathToTargetsBelowSurface) {
+                pos = this.findSurfacePosition(chunk, pos, reachRange);
             }
-            return supercreatePath(var3.immutable(), var1);
+            return supercreatePath(pos, reachRange);
         }
     }
 
@@ -193,6 +130,53 @@ public class EntityNavigation extends PathNavigation {
     @Override
     public Path createPath(Entity var0, int var1) {
         return createPath(var0.blockPosition(), var1);
+    }
+
+    protected Path createPath(Set<BlockPos> targets, Entity target, int radiusOffset, boolean above, int reachRange,
+            float maxPathLength) {
+        if (targets.isEmpty()) {
+            return null;
+        } else if (this.mob.getY() < this.level.getMinY()) {
+            return null;
+        } else if (!this.canUpdatePath()) {
+            return null;
+        } else if (this.path != null && !this.path.isDone() && targets.contains(this.targetPos)) {
+            return this.path;
+        } else {
+            boolean copiedSet = false;
+            Iterator var8 = targets.iterator();
+
+            do {
+                BlockPos possibleTarget;
+                do {
+                    if (!var8.hasNext()) {
+                        ProfilerFiller profiler = Profiler.get();
+                        profiler.push("pathfind");
+                        possibleTarget = above ? this.mob.blockPosition().above() : this.mob.blockPosition();
+                        int radius = (int) (maxPathLength + radiusOffset);
+                        PathNavigationRegion region = new PathNavigationRegion(this.level,
+                                possibleTarget.offset(-radius, -radius, -radius),
+                                possibleTarget.offset(radius, radius, radius));
+                        Path path = this.pathFinder.findPath(region, this.mob, targets, maxPathLength, reachRange,
+                                this.maxVisitedNodesMultiplier);
+                        profiler.pop();
+                        if (path != null && path.getTarget() != null) {
+                            this.targetPos = path.getTarget();
+                            this.reachRange = reachRange;
+                            this.resetStuckTimeout();
+                        }
+                        return path;
+                    }
+                    possibleTarget = (BlockPos) var8.next();
+                } while (this.mob.level().getWorldBorder().isWithinBounds(possibleTarget));
+                if (!copiedSet) {
+                    copiedSet = true;
+                    targets = new HashSet(targets);
+                }
+                targets.remove(possibleTarget);
+            } while (!targets.isEmpty());
+            return null;
+        }
     }
 
     @Override
@@ -236,50 +220,83 @@ public class EntityNavigation extends PathNavigation {
     }
 
     @Override
-    protected void doStuckDetection(Vec3 var0) {
+    protected void doStuckDetection(final Vec3 mobPos) {
         if (this.tick - this.lastStuckCheck > 100) {
-            float var1 = this.mob.getSpeed() >= 1.0F ? this.mob.getSpeed() : this.mob.getSpeed() * this.mob.getSpeed();
-            float var2 = var1 * 100.0F * 0.25F;
-            if (var0.distanceToSqr(this.lastStuckCheckPos) < var2 * var2) {
+            float effectiveSpeed = this.mob.getSpeed() >= 1.0F ? this.mob.getSpeed()
+                    : this.mob.getSpeed() * this.mob.getSpeed();
+            float thresholdDistance = effectiveSpeed * 100.0F * 0.25F;
+            if (mobPos.distanceToSqr(this.lastStuckCheckPos) < thresholdDistance * thresholdDistance) {
                 this.isStuck = true;
                 this.stop();
             } else {
                 this.isStuck = false;
             }
             this.lastStuckCheck = this.tick;
-            this.lastStuckCheckPos = var0;
+            this.lastStuckCheckPos = mobPos;
         }
         if (this.path != null && !this.path.isDone()) {
-            Vec3i var1 = this.path.getNextNodePos();
-            long var2 = this.level.getGameTime();
-            if (var1.equals(this.timeoutCachedNode)) {
-                this.timeoutTimer += var2 - this.lastTimeoutCheck;
+            Vec3i pos = this.path.getNextNodePos();
+            long time = this.level.getGameTime();
+            if (pos.equals(this.timeoutCachedNode)) {
+                this.timeoutTimer += time - this.lastTimeoutCheck;
             } else {
-                this.timeoutCachedNode = var1;
-                double var4 = var0.distanceTo(Vec3.atBottomCenterOf(this.timeoutCachedNode));
-                this.timeoutLimit = this.mob.getSpeed() > 0.0F ? var4 / this.mob.getSpeed() * 20.0 : 0.0;
+                this.timeoutCachedNode = pos;
+                double distToNode = mobPos.distanceTo(Vec3.atBottomCenterOf(this.timeoutCachedNode));
+                this.timeoutLimit = this.mob.getSpeed() > 0.0F ? distToNode / this.mob.getSpeed() * 20.0 : 0.0;
             }
             if (this.timeoutLimit > 0.0 && this.timeoutTimer > this.timeoutLimit * 3.0) {
                 this.timeoutPath();
             }
-            this.lastTimeoutCheck = var2;
+            this.lastTimeoutCheck = time;
+        }
+    }
+
+    final BlockPos findSurfacePosition(final LevelChunk chunk, BlockPos pos, final int reachRange) {
+        BlockPos.MutableBlockPos columnPos;
+        if (chunk.getBlockState(pos).isAir()) {
+            columnPos = pos.mutable().move(Direction.DOWN);
+
+            while (columnPos.getY() >= this.level.getMinY() && chunk.getBlockState(columnPos).isAir()) {
+                columnPos.move(Direction.DOWN);
+            }
+            if (columnPos.getY() >= this.level.getMinY()) {
+                return columnPos.above();
+            }
+            columnPos.setY(pos.getY() + 1);
+
+            while (columnPos.getY() <= this.level.getMaxY() && chunk.getBlockState(columnPos).isAir()) {
+                columnPos.move(Direction.UP);
+            }
+            pos = columnPos;
+        }
+        if (!chunk.getBlockState(pos).isSolid()) {
+            return pos;
+        } else {
+            columnPos = pos.mutable().move(Direction.UP);
+
+            while (columnPos.getY() <= this.level.getMaxY() && chunk.getBlockState(columnPos).isSolid()) {
+                columnPos.move(Direction.UP);
+            }
+            return columnPos.immutable();
         }
     }
 
     @Override
     protected void followThePath() {
-        Vec3 var0 = this.getTempMobPos();
+        Vec3 mobPos = this.getTempMobPos();
         this.maxDistanceToWaypoint = this.mob.getBbWidth() > 0.75F ? this.mob.getBbWidth() / 2.0F
                 : 0.75F - this.mob.getBbWidth() / 2.0F;
-        Vec3i var1 = this.path.getNextNodePos();
-        double var2 = Math.abs(this.mob.getX() - (var1.getX() + 0.5));
-        double var4 = Math.abs(this.mob.getY() - var1.getY());
-        double var6 = Math.abs(this.mob.getZ() - (var1.getZ() + 0.5));
-        boolean var8 = var2 < this.maxDistanceToWaypoint && var6 < this.maxDistanceToWaypoint && var4 < 1.0;
-        if (var8 || this.canCutCorner(this.path.getNextNode().type) && this.shouldTargetNextNodeInDirection(var0)) {
+        Vec3i currentNodePos = this.path.getNextNodePos();
+        double xDistance = Math.abs(this.mob.getX() - (currentNodePos.getX() + 0.5));
+        double yDistance = Math.abs(this.mob.getY() - currentNodePos.getY());
+        double zDistance = Math.abs(this.mob.getZ() - (currentNodePos.getZ() + 0.5));
+        boolean isCloseEnoughToCurrentNode = xDistance < this.maxDistanceToWaypoint
+                && zDistance < this.maxDistanceToWaypoint && yDistance < 1.0;
+        if (isCloseEnoughToCurrentNode
+                || this.canCutCorner(this.path.getNextNode().type) && this.shouldTargetNextNodeInDirection(mobPos)) {
             this.path.advance();
         }
-        this.doStuckDetection(var0);
+        this.doStuckDetection(mobPos);
     }
 
     @Override
@@ -292,6 +309,10 @@ public class EntityNavigation extends PathNavigation {
     @Override
     public float getMaxDistanceToWaypoint() {
         return this.maxDistanceToWaypoint;
+    }
+
+    private float getMaxPathLength() {
+        return Math.max((float) this.mob.getAttributeValue(Attributes.FOLLOW_RANGE), this.requiredPathLength);
     }
 
     @Override
@@ -310,21 +331,22 @@ public class EntityNavigation extends PathNavigation {
 
     private int getSurfaceY() {
         if (this.mob.isInWater() && this.canFloat()) {
-            int var0 = this.mob.getBlockY();
-            BlockState var1 = this.level.getBlockState(BlockPos.containing(this.mob.getX(), var0, this.mob.getZ()));
-            int var2 = 0;
+            int surface = this.mob.getBlockY();
+            BlockState state = this.level.getBlockState(BlockPos.containing(this.mob.getX(), surface, this.mob.getZ()));
+            int steps = 0;
 
             do {
-                if (!var1.is(Blocks.WATER))
-                    return var0;
-
-                ++var0;
-                var1 = this.level.getBlockState(BlockPos.containing(this.mob.getX(), var0, this.mob.getZ()));
-                ++var2;
-            } while (var2 <= 16);
+                if (!state.is(Blocks.WATER)) {
+                    return surface;
+                }
+                ++surface;
+                state = this.level.getBlockState(BlockPos.containing(this.mob.getX(), surface, this.mob.getZ()));
+                ++steps;
+            } while (steps <= 16);
             return this.mob.getBlockY();
-        } else
+        } else {
             return Mth.floor(this.mob.getY() + 0.5);
+        }
     }
 
     @Override
@@ -337,11 +359,14 @@ public class EntityNavigation extends PathNavigation {
         return new Vec3(this.mob.getX(), getSurfaceY(), this.mob.getZ());
     }
 
-    protected boolean hasValidPathType(PathType var0) {
-        if (var0 == PathType.WATER || var0 == PathType.LAVA)
+    protected boolean hasValidPathType(final PathType pathType) {
+        if (pathType == PathType.WATER) {
             return false;
-        else
-            return var0 != PathType.OPEN;
+        } else if (pathType == PathType.LAVA) {
+            return false;
+        } else {
+            return pathType != PathType.OPEN;
+        }
     }
 
     @Override
@@ -377,32 +402,36 @@ public class EntityNavigation extends PathNavigation {
     }
 
     @Override
-    public boolean moveTo(Path var0, double var1) {
-        if (var0 == null) {
+    public boolean moveTo(final Path newPath, final double speedModifier) {
+        if (newPath == null) {
             this.path = null;
             return false;
         }
-        if (!var0.sameAs(this.path)) {
-            this.path = var0;
+        if (!newPath.sameAs(this.path)) {
+            this.path = newPath;
         }
-        if (isDone())
+        if (this.isDone()) {
             return false;
-        trimPath();
-        if (this.path.getNodeCount() <= 0)
-            return false;
-        this.speedModifier = var1;
-        Vec3 var3 = getTempMobPos();
-        this.lastStuckCheck = this.tick;
-        this.lastStuckCheckPos = var3;
-        return true;
+        } else {
+            this.trimPath();
+            if (this.path.getNodeCount() <= 0) {
+                return false;
+            } else {
+                this.speedModifier = speedModifier;
+                Vec3 mobPos = this.getTempMobPos();
+                this.lastStuckCheck = this.tick;
+                this.lastStuckCheckPos = mobPos;
+                return true;
+            }
+        }
     }
 
     @Override
     public void recomputePath() {
-        if (this.level.getGameTime() - this.timeLastRecompute > 20L) {
+        if (this.level.getGameTime() - this.timeLastRecompute > 20L && this.canUpdatePath()) {
             if (this.targetPos != null) {
                 this.path = null;
-                this.path = createPath(this.targetPos, this.reachRange);
+                this.path = this.createPath(this.targetPos, this.reachRange);
                 this.timeLastRecompute = this.level.getGameTime();
                 this.hasDelayedRecomputation = false;
             }
@@ -447,43 +476,54 @@ public class EntityNavigation extends PathNavigation {
     }
 
     @Override
+    public void setRequiredPathLength(float length) {
+        this.requiredPathLength = length;
+        this.updatePathfinderMaxVisitedNodes();
+    }
+
+    @Override
     public void setSpeedModifier(double var0) {
         this.speedModifier = var0;
     }
 
     @Override
-    public boolean shouldRecomputePath(BlockPos var0) {
-        if (this.hasDelayedRecomputation || this.path == null || this.path.isDone() || this.path.getNodeCount() == 0)
+    public boolean shouldRecomputePath(final BlockPos pos) {
+        if (this.hasDelayedRecomputation) {
             return false;
-        Node var1 = this.path.getEndNode();
-        Vec3 var2 = new Vec3((var1.x + this.mob.getX()) / 2.0D, (var1.y + this.mob.getY()) / 2.0D,
-                (var1.z + this.mob.getZ()) / 2.0D);
-        return var0.closerToCenterThan(var2, this.path.getNodeCount() - this.path.getNextNodeIndex());
-
+        } else if (this.path != null && !this.path.isDone() && this.path.getNodeCount() != 0) {
+            Node target = this.path.getEndNode();
+            Vec3 middlePos = new Vec3((target.x + this.mob.getX()) / 2.0, (target.y + this.mob.getY()) / 2.0,
+                    (target.z + this.mob.getZ()) / 2.0);
+            return pos.closerToCenterThan(middlePos, this.path.getNodeCount() - this.path.getNextNodeIndex());
+        } else {
+            return false;
+        }
     }
 
-    private boolean shouldTargetNextNodeInDirection(Vec3 var0) {
-        if (this.path.getNextNodeIndex() + 1 >= this.path.getNodeCount())
+    private boolean shouldTargetNextNodeInDirection(final Vec3 mobPosition) {
+        if (this.path.getNextNodeIndex() + 1 >= this.path.getNodeCount()) {
             return false;
-        Vec3 var1 = Vec3.atBottomCenterOf(this.path.getNextNodePos());
-        if (!var0.closerThan(var1, 2.0))
-            return false;
-        else if (this.canMoveDirectly(var0, this.path.getNextEntityPos(this.mob)))
-            return true;
-        else {
-            Vec3 var2 = Vec3.atBottomCenterOf(this.path.getNodePos(this.path.getNextNodeIndex() + 1));
-            Vec3 var3 = var1.subtract(var0);
-            Vec3 var4 = var2.subtract(var0);
-            double var5 = var3.lengthSqr();
-            double var7 = var4.lengthSqr();
-            boolean var9 = var7 < var5;
-            boolean var10 = var5 < 0.5;
-            if (!var9 && !var10)
+        } else {
+            Vec3 currentNode = Vec3.atBottomCenterOf(this.path.getNextNodePos());
+            if (!mobPosition.closerThan(currentNode, 2.0)) {
                 return false;
-            else {
-                Vec3 var11 = var3.normalize();
-                Vec3 var12 = var4.normalize();
-                return var12.dot(var11) < 0.0;
+            } else if (this.canMoveDirectly(mobPosition, this.path.getNextEntityPos(this.mob))) {
+                return true;
+            } else {
+                Vec3 nextNode = Vec3.atBottomCenterOf(this.path.getNodePos(this.path.getNextNodeIndex() + 1));
+                Vec3 mobToCurrent = currentNode.subtract(mobPosition);
+                Vec3 mobToNext = nextNode.subtract(mobPosition);
+                double mobToCurrentSqr = mobToCurrent.lengthSqr();
+                double mobToNextSqr = mobToNext.lengthSqr();
+                boolean closerToNextThanCurrent = mobToNextSqr < mobToCurrentSqr;
+                boolean withinCurrentBlock = mobToCurrentSqr < 0.5;
+                if (!closerToNextThanCurrent && !withinCurrentBlock) {
+                    return false;
+                } else {
+                    Vec3 mobDirection = mobToCurrent.normalize();
+                    Vec3 pathDirection = mobToNext.normalize();
+                    return pathDirection.dot(mobDirection) < 0.0;
+                }
             }
         }
     }
@@ -498,16 +538,16 @@ public class EntityNavigation extends PathNavigation {
     }
 
     protected void supertrimPath() {
-        if (this.path == null)
-            return;
-        for (int var0 = 0; var0 < this.path.getNodeCount(); ++var0) {
-            Node var1 = this.path.getNode(var0);
-            Node var2 = var0 + 1 < this.path.getNodeCount() ? this.path.getNode(var0 + 1) : null;
-            BlockState var3 = this.level.getBlockState(new BlockPos(var1.x, var1.y, var1.z));
-            if (var3.is(BlockTags.CAULDRONS)) {
-                this.path.replaceNode(var0, var1.cloneAndMove(var1.x, var1.y + 1, var1.z));
-                if (var2 != null && var1.y >= var2.y) {
-                    this.path.replaceNode(var0 + 1, var1.cloneAndMove(var2.x, var1.y + 1, var2.z));
+        if (this.path != null) {
+            for (int i = 0; i < this.path.getNodeCount(); ++i) {
+                Node node = this.path.getNode(i);
+                Node nextNode = i + 1 < this.path.getNodeCount() ? this.path.getNode(i + 1) : null;
+                BlockState state = this.level.getBlockState(new BlockPos(node.x, node.y, node.z));
+                if (state.is(BlockTags.CAULDRONS)) {
+                    this.path.replaceNode(i, node.cloneAndMove(node.x, node.y + 1, node.z));
+                    if (nextNode != null && node.y >= nextNode.y) {
+                        this.path.replaceNode(i + 1, node.cloneAndMove(nextNode.x, node.y + 1, nextNode.z));
+                    }
                 }
             }
         }
@@ -520,20 +560,21 @@ public class EntityNavigation extends PathNavigation {
             this.recomputePath();
         }
         if (!this.isDone()) {
-            Vec3 var0;
+            Vec3 target;
             if (this.canUpdatePath()) {
                 this.followThePath();
             } else if (this.path != null && !this.path.isDone()) {
-                var0 = this.getTempMobPos();
-                Vec3 var1 = this.path.getNextEntityPos(this.mob);
-                if (var0.y > var1.y && !this.mob.onGround() && Mth.floor(var0.x) == Mth.floor(var1.x)
-                        && Mth.floor(var0.z) == Mth.floor(var1.z)) {
+                target = this.getTempMobPos();
+                Vec3 pos = this.path.getNextEntityPos(this.mob);
+                if (target.y > pos.y && !this.mob.onGround() && Mth.floor(target.x) == Mth.floor(pos.x)
+                        && Mth.floor(target.z) == Mth.floor(pos.z)) {
                     this.path.advance();
                 }
             }
             if (!this.isDone()) {
-                var0 = this.path.getNextEntityPos(this.mob);
-                this.mvmt.getMoveControl().setWantedPosition(var0.x, this.getGroundY(var0), var0.z, this.speedModifier);
+                target = this.path.getNextEntityPos(this.mob);
+                this.mvmt.getMoveControl().setWantedPosition(target.x, this.getGroundY(target), target.z,
+                        this.speedModifier);
             }
         }
     }
@@ -547,16 +588,22 @@ public class EntityNavigation extends PathNavigation {
     protected void trimPath() {
         supertrimPath();
         if (this.avoidSun) {
-            if (this.level.canSeeSky(BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5, this.mob.getZ())))
+            if (this.level.canSeeSky(BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5, this.mob.getZ()))) {
                 return;
-
-            for (int var0 = 0; var0 < this.path.getNodeCount(); ++var0) {
-                Node var1 = this.path.getNode(var0);
-                if (this.level.canSeeSky(new BlockPos(var1.x, var1.y, var1.z))) {
-                    this.path.truncateNodes(var0);
+            }
+            for (int i = 0; i < this.path.getNodeCount(); ++i) {
+                Node node = this.path.getNode(i);
+                if (this.level.canSeeSky(new BlockPos(node.x, node.y, node.z))) {
+                    this.path.truncateNodes(i);
                     return;
                 }
             }
         }
+    }
+
+    @Override
+    public void updatePathfinderMaxVisitedNodes() {
+        int maxVisitedNodes = Mth.floor(this.getMaxPathLength() * 16.0F);
+        this.pathFinder.setMaxVisitedNodes(maxVisitedNodes);
     }
 }
