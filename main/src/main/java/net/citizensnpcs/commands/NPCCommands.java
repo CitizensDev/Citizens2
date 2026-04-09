@@ -3624,13 +3624,13 @@ public class NPCCommands {
             return;
         }
         if (range != null) {
-            npc.getEntity().getNearbyEntities(range, range, range).forEach(e -> {
-                if (!CitizensAPI.getNPCRegistry().isNPC(e)) {
-                    context.addRecipient(e);
-                }
-            });
+            npc.getEntity().getNearbyEntities(range, range, range).stream()
+                    .filter(e -> !CitizensAPI.getNPCRegistry().isNPC(e)).forEach(context::addRecipient);
         }
-        npc.speak(context);
+        if (npc.isSpawned()) {
+            context.setTalker(npc.getEntity());
+            npc.speak(context);
+        }
     }
 
     @Command(
