@@ -156,6 +156,7 @@ import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
 import net.citizensnpcs.trait.HomeTrait;
+import net.citizensnpcs.trait.versioned.TextDisplayTrait;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.ItemFrameTrait;
 import net.citizensnpcs.trait.LookClose;
