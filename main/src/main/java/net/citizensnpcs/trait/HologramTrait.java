@@ -874,7 +874,7 @@ public class HologramTrait extends Trait {
 
         @Override
         public String getPerPlayerText(NPC npc, Player viewer) {
-            return Placeholders.replace(text, viewer, npc);
+            return text == null ? null : Placeholders.replace(text, viewer, npc);
         }
 
         @Override

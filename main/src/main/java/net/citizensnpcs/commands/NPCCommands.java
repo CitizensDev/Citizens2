@@ -1380,7 +1380,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] (--duration [duration]) | insert [line #] [text] | set [line #] [text] | remove [line #] | edit_npc [template | name | line #] | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin]",
+            usage = "hologram add [text] (--duration [duration]) | insert [line #] [text] | set [line #] [text] | remove [line #] | edit_npc [template | name | line #] | clear | lineheight [height] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin] | bgcolor [line #] [color]",
             desc = "",
             modifiers = { "hologram" },
             min = 1,
@@ -1390,9 +1390,13 @@ public class NPCCommands {
             @Arg(
                     value = 1,
                     completions = { "add", "insert", "set", "edit_npc", "remove", "clear", "lineheight", "viewrange",
-                            "margintop", "marginbottom" }) String action,
+                            "bgcolor", "margintop", "marginbottom" }) String action,
             @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion,
             @Flag("duration") Duration duration) throws CommandException {
+        if (npc.hasTrait(ClickRedirectTrait.class)) {
+            npc = npc.getOrAddTrait(ClickRedirectTrait.class).getRedirectToNPC();
+            selector.select(sender, npc);
+        }
         HologramTrait trait = npc.getOrAddTrait(HologramTrait.class);
         if (args.argsLength() == 1) {
             String output = Messaging.tr(Messages.HOLOGRAM_DESCRIBE_HEADER, npc.getName());
@@ -1418,6 +1422,32 @@ public class NPCCommands {
 
             trait.setLine(idx, args.getJoinedStrings(3));
             Messaging.sendTr(sender, Messages.HOLOGRAM_LINE_SET, idx, args.getJoinedStrings(3));
+        } else if (action.equalsIgnoreCase("bgcolor")) {
+            HologramRenderer hr = null;
+            if (args.argsLength() <= 3)
+                throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+
+            if (args.getString(2).equals("name")) {
+                hr = trait.getNameRenderer();
+            } else if (args.getString(2).equals("template")) {
+                hr = trait.getTemplateRenderer();
+            } else {
+                int idx = args.getString(2).equals("bottom") ? 0
+                        : args.getString(2).equals("top") ? trait.getLines().size() - 1
+                                : Math.max(0, args.getInteger(2));
+                if (idx >= trait.getLines().size())
+                    throw new CommandException(Messages.HOLOGRAM_INVALID_LINE);
+                Iterator<HologramRenderer> itr = trait.getHologramRenderers().iterator();
+                for (int i = 0; i <= idx; i++, hr = itr.next()) {
+                }
+            }
+            if (hr != null && hr.getTemplateNPC() != null) {
+                if (hr.getTemplateNPC().getOrAddTrait(MobType.class).getType() != EntityType.TEXT_DISPLAY)
+                    throw new CommandException();
+                hr.getTemplateNPC().getOrAddTrait(TextDisplayTrait.class)
+                        .setBackgroundColor(SpigotUtil.parseColor(args.getString(3)));
+                Messaging.sendTr(sender, Messages.HOLOGRAM_BACKGROUND_COLOR_SET, args.getString(3));
+            }
         } else if (action.equalsIgnoreCase("edit_npc")) {
             HologramRenderer hr = null;
             if (args.argsLength() == 2)
@@ -1519,6 +1549,8 @@ public class NPCCommands {
 
             trait.setMargin(idx, "bottom", args.getDouble(3));
             Messaging.sendTr(sender, Messages.HOLOGRAM_MARGIN_SET, idx, "bottom", args.getDouble(3));
+        } else {
+            throw new CommandUsageException();
         }
     }
 
