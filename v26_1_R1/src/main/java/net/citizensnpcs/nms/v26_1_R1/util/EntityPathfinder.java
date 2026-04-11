@@ -93,7 +93,7 @@ public class EntityPathfinder extends PathFinder {
         boolean entryListIsEmpty = reachedTargets.isEmpty();
         Comparator<Path> comparator = entryListIsEmpty ? Comparator.comparingInt(Path::getNodeCount)
                 : Comparator.comparingDouble(Path::getDistToTarget).thenComparingInt(Path::getNodeCount);
-        Iterator<Map.Entry<Target, BlockPos>> var22 = (entryListIsEmpty ? targets
+        Iterator<Map.Entry<Target, BlockPos>> var22 = (!entryListIsEmpty ? targets
                 : Setting.DISABLE_MC_NAVIGATION_FALLBACK.asBoolean() ? List.<Map.Entry<Target, BlockPos>> of()
                         : reachedTargets).iterator();
         while (var22.hasNext()) {

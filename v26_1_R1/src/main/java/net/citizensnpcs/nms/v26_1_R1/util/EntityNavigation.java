@@ -144,7 +144,7 @@ public class EntityNavigation extends PathNavigation {
             return this.path;
         } else {
             boolean copiedSet = false;
-            Iterator var8 = targets.iterator();
+            Iterator<BlockPos> var8 = targets.iterator();
 
             do {
                 BlockPos possibleTarget;
@@ -167,11 +167,11 @@ public class EntityNavigation extends PathNavigation {
                         }
                         return path;
                     }
-                    possibleTarget = (BlockPos) var8.next();
+                    possibleTarget = var8.next();
                 } while (this.mob.level().getWorldBorder().isWithinBounds(possibleTarget));
                 if (!copiedSet) {
                     copiedSet = true;
-                    targets = new HashSet(targets);
+                    targets = new HashSet<BlockPos>(targets);
                 }
                 targets.remove(possibleTarget);
             } while (!targets.isEmpty());
@@ -190,23 +190,25 @@ public class EntityNavigation extends PathNavigation {
     }
 
     @Override
-    protected Path createPath(Set<BlockPos> var0, int var1, boolean headAbove, int reachRange, float range) {
-        if (var0.isEmpty() || this.mob.getY() < this.level.getMinY() || !canUpdatePath())
+    protected Path createPath(final Set<BlockPos> targets, final int radiusOffset, final boolean above,
+            final int reachRange, final float maxPathLength) {
+        if (targets.isEmpty() || this.mob.getY() < this.level.getMinY() || !this.canUpdatePath()) {
             return null;
-        if (this.path != null && !this.path.isDone() && var0.contains(this.targetPos))
+        } else if (this.path != null && !this.path.isDone() && targets.contains(this.targetPos)) {
             return this.path;
-        BlockPos headPos = headAbove ? this.mob.blockPosition().above() : this.mob.blockPosition();
-        int blockRange = (int) (range + var1);
-        PathNavigationRegion region = new PathNavigationRegion(this.level,
-                headPos.offset(-blockRange, -blockRange, -blockRange),
-                headPos.offset(blockRange, blockRange, blockRange));
-        Path var8 = this.pathFinder.findPath(region, this.mob, var0, range, reachRange, this.maxVisitedNodesMultiplier);
-        if (var8 != null && var8.getTarget() != null) {
-            this.targetPos = var8.getTarget();
+        }
+        BlockPos fromPos = above ? this.mob.blockPosition().above() : this.mob.blockPosition();
+        int radius = (int) (maxPathLength + radiusOffset);
+        PathNavigationRegion region = new PathNavigationRegion(this.level, fromPos.offset(-radius, -radius, -radius),
+                fromPos.offset(radius, radius, radius));
+        Path path = this.pathFinder.findPath(region, this.mob, targets, maxPathLength, reachRange,
+                this.maxVisitedNodesMultiplier);
+        if (path != null && path.getTarget() != null) {
+            this.targetPos = path.getTarget();
             this.reachRange = reachRange;
             this.resetStuckTimeout();
         }
-        return var8;
+        return path;
     }
 
     @Override
