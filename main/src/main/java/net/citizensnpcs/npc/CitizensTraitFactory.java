@@ -171,6 +171,13 @@ public class CitizensTraitFactory implements TraitFactory, Listener {
     }
 
     @Override
+    public void deregisterTrait(TraitInfo info) {
+        defaultTraits.remove(info);
+        idOf.remove(info.getTraitClass());
+        registered.values().remove(info);
+    }
+
+    @Override
     public int getId(Class<? extends Trait> clazz) {
         return idOf.get(clazz);
     }

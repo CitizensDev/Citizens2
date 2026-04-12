@@ -1,0 +1,134 @@
+package net.citizensnpcs.nms.v26_1_R1.entity.nonliving;
+
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftLargeFireball;
+
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.nms.v26_1_R1.entity.MobEntityController;
+import net.citizensnpcs.nms.v26_1_R1.util.ForwardingNPCHolder;
+import net.citizensnpcs.nms.v26_1_R1.util.NMSBoundingBox;
+import net.citizensnpcs.nms.v26_1_R1.util.NMSImpl;
+import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.npc.ai.NPCHolder;
+import net.citizensnpcs.util.NMS;
+import net.citizensnpcs.util.Util;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
+public class LargeFireballController extends MobEntityController {
+    public LargeFireballController() {
+        super(EntityLargeFireballNPC.class, EntityType.FIREBALL);
+    }
+
+    @Override
+    public org.bukkit.entity.LargeFireball getBukkitEntity() {
+        return (org.bukkit.entity.LargeFireball) super.getBukkitEntity();
+    }
+
+    public static class EntityLargeFireballNPC extends LargeFireball implements NPCHolder {
+        private final CitizensNPC npc;
+
+        public EntityLargeFireballNPC(EntityType<? extends LargeFireball> types, Level level) {
+            this(types, level, null);
+        }
+
+        public EntityLargeFireballNPC(EntityType<? extends LargeFireball> types, Level level, NPC npc) {
+            super(types, level);
+            this.npc = (CitizensNPC) npc;
+        }
+
+        @Override
+        public boolean broadcastToPlayer(ServerPlayer player) {
+            return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
+        }
+
+        @Override
+        public CraftEntity getBukkitEntity() {
+            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+                NMSImpl.setBukkitEntity(this, new LargeFireballNPC(this));
+            }
+            return super.getBukkitEntity();
+        }
+
+        @Override
+        public NPC getNPC() {
+            return npc;
+        }
+
+        @Override
+        public PushReaction getPistonPushReaction() {
+            return Util.callPistonPushEvent(npc) ? PushReaction.IGNORE : super.getPistonPushReaction();
+        }
+
+        @Override
+        public boolean isPushable() {
+            return npc == null ? super.isPushable()
+                    : npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected());
+        }
+
+        @Override
+        protected AABB makeBoundingBox(Vec3 vec3) {
+            return NMSBoundingBox.makeBB(npc, super.makeBoundingBox(vec3));
+        }
+
+        @Override
+        public void push(Entity entity) {
+            // this method is called by both the entities involved - cancelling
+            // it will not stop the NPC from moving.
+            super.push(entity);
+            if (npc != null) {
+                Util.callCollisionEvent(npc, entity.getBukkitEntity());
+            }
+        }
+
+        @Override
+        public void refreshDimensions() {
+            if (npc == null) {
+                super.refreshDimensions();
+            } else {
+                NMSImpl.setSize(this, firstTick);
+            }
+        }
+
+        @Override
+        public boolean save(ValueOutput save) {
+            return npc == null ? super.save(save) : false;
+        }
+
+        @Override
+        public Entity teleport(TeleportTransition transition) {
+            if (npc == null || transition.newLevel().dimension().equals(level().dimension()))
+                return super.teleport(transition);
+            return NMSImpl.teleportAcrossWorld(this, transition);
+        }
+
+        @Override
+        public void tick() {
+            if (npc != null) {
+                npc.update();
+                if (!npc.isProtected()) {
+                    super.tick();
+                }
+            } else {
+                super.tick();
+            }
+        }
+
+    }
+
+    public static class LargeFireballNPC extends CraftLargeFireball implements ForwardingNPCHolder {
+        public LargeFireballNPC(EntityLargeFireballNPC entity) {
+            super((CraftServer) Bukkit.getServer(), entity);
+        }
+    }
+}
