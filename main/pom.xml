@@ -11,7 +11,7 @@
     <artifactId>citizens-main</artifactId>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <craftbukkit.version>26.1.1-R0.1-SNAPSHOT</craftbukkit.version>
+        <craftbukkit.version>26.1.2-R0.1-SNAPSHOT</craftbukkit.version>
         <paper.version>[26.1.1, 26.1.2)</paper.version>
         <placeholderapi.version>2.11.5</placeholderapi.version>
         <citizensapi.version>${project.version}</citizensapi.version>
