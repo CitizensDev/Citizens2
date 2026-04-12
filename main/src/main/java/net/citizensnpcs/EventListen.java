@@ -510,7 +510,10 @@ public class EventListen implements Listener {
                 || event.getReason() == DespawnReason.RELOAD) {
             Messaging.idebug(() -> Joiner.on(' ').join("Preventing further respawns of", event.getNPC(),
                     "due to DespawnReason." + event.getReason()));
-            toRespawn.values().remove(event.getNPC());
+            List<ChunkCoord> keys = Lists.newArrayList(toRespawn.keySet());
+            for (ChunkCoord key : keys) {
+                toRespawn.remove(key, event.getNPC());
+            }
         } else {
             Messaging.idebug(() -> Joiner.on(' ').join("Removing", event.getNPC(),
                     "from skin tracker due to DespawnReason." + event.getReason().name()));
@@ -585,7 +588,10 @@ public class EventListen implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCRemove(NPCRemoveEvent event) {
-        toRespawn.values().remove(event.getNPC());
+        List<ChunkCoord> keys = Lists.newArrayList(toRespawn.keySet());
+        for (ChunkCoord key : keys) {
+            toRespawn.remove(key, event.getNPC());
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -615,7 +621,10 @@ public class EventListen implements Listener {
         skinUpdateTracker.onNPCSpawn(event.getNPC());
         Messaging.idebug(() -> Joiner.on(' ').join("Removing respawns of", event.getNPC(),
                 "due to SpawnReason." + event.getReason()));
-        toRespawn.values().remove(event.getNPC());
+        List<ChunkCoord> keys = Lists.newArrayList(toRespawn.keySet());
+        for (ChunkCoord key : keys) {
+            toRespawn.remove(key, event.getNPC());
+        }
     }
 
     @EventHandler
