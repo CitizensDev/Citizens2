@@ -853,7 +853,7 @@ public class NMS {
     }
 
     public static void removeFromWorld(Entity entity) {
-        CitizensAPI.getScheduler().checkedRunRegionTask(entity.getLocation(), () -> BRIDGE.removeFromWorld(entity));
+        CitizensAPI.getScheduler().checkedRunEntityTask(entity, () -> BRIDGE.removeFromWorld(entity));
     }
 
     public static void removeHookIfNecessary(FishHook entity) {
