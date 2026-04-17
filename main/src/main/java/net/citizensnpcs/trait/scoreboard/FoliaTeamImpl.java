@@ -1,7 +1,5 @@
 package net.citizensnpcs.trait.scoreboard;
 
-import net.citizensnpcs.Citizens;
-import net.citizensnpcs.api.CitizensAPI;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.megavex.scoreboardlibrary.api.team.ScoreboardTeam;
 import net.megavex.scoreboardlibrary.api.team.TeamDisplay;
@@ -13,15 +11,12 @@ import javax.annotation.Nullable;
 import java.util.Locale;
 
 public class FoliaTeamImpl implements AbstractTeam {
-
     private final ScoreboardTeam delegateTeam;
     private final TeamDisplay delegateDisplay;
-    private final Citizens plugin;
 
     public FoliaTeamImpl(ScoreboardTeam delegateTeam) {
         this.delegateTeam = delegateTeam;
         this.delegateDisplay = delegateTeam.defaultDisplay();
-        this.plugin = (Citizens) CitizensAPI.getPlugin();
     }
 
 
@@ -89,11 +84,13 @@ public class FoliaTeamImpl implements AbstractTeam {
 
     @Override
     public void sendToPlayer(Player player, SendMode mode) {
-        if (mode == SendMode.ADD_OR_MODIFY) {
-            plugin.getTeamManager().addPlayer(player);
+        // TODO: Currently not implemented
+        /*if (mode == SendMode.ADD_OR_MODIFY) {
+            delegateDisplay.refresh();
+            delegateTeam.display(player, delegateDisplay);
         } else {
-            plugin.getTeamManager().removePlayer(player);
-        }
+            delegateTeam.display(player, delegateTeam.defaultDisplay());
+        }*/
     }
 
     private ChatColor toChatColor(@Nullable NamedTextColor color) {
