@@ -2424,10 +2424,13 @@ public class NMSImpl implements NMSBridge {
     public static void markClientLoaded(ServerGamePacketListenerImpl connection) {
         try {
             WAITING_FOR_RESPAWN.invoke(connection, false);
+            for (int i = 0; i <= 60; i++) {
+                connection.tickClientLoadTimeout();
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    }
+    };
 
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
