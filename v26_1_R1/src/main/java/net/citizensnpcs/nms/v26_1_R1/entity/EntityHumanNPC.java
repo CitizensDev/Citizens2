@@ -288,6 +288,16 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public boolean isInvulnerable() {
+        return getBukkitEntity().getNoDamageTicks() > 0;
+    }
+
+    @Override
+    public boolean isInvulnerableTo(ServerLevel level, DamageSource source) {
+        return isInvulnerable();
+    }
+
+    @Override
     public boolean isInWall() {
         if (npc == null || noPhysics || isSleeping())
             return super.isInWall();
