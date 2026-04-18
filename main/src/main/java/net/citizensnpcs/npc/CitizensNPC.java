@@ -427,6 +427,9 @@ public class CitizensNPC extends AbstractNPC {
                         }
                         le.setNoDamageTicks(data().get(NPC.Metadata.SPAWN_NODAMAGE_TICKS,
                                 Setting.DEFAULT_SPAWN_NODAMAGE_DURATION.asTicks()));
+                        if (le.getNoDamageTicks() == 0) {
+                            le.setInvulnerable(false);
+                        }
                     }
                     if (requiresNameHologram() && !hasTrait(HologramTrait.class)) {
                         addTrait(HologramTrait.class);
