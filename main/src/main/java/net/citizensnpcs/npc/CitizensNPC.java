@@ -77,7 +77,7 @@ public class CitizensNPC extends AbstractNPC {
     private int updateCounter = 0;
 
     public CitizensNPC(UUID uuid, int id, String name, EntityController controller, NPCRegistry registry,
-            CitizensPlugin plugin) {
+                       CitizensPlugin plugin) {
         super(uuid, id, name, registry, plugin);
         setEntityController(controller);
     }
@@ -414,7 +414,7 @@ public class CitizensNPC extends AbstractNPC {
                         if (type == EntityType.PLAYER || Util.isHorse(type)) {
                             if (SUPPORT_ATTRIBUTES && !hasTrait(AttributeTrait.class)
                                     || !getTrait(AttributeTrait.class).hasAttribute(SpigotUtil.getRegistryValue(
-                                            Registry.ATTRIBUTE, "generic.step_height", "step_height"))) {
+                                    Registry.ATTRIBUTE, "generic.step_height", "step_height"))) {
                                 NMS.setStepHeight(entity, 1);
                             }
                         }
@@ -632,7 +632,7 @@ public class CitizensNPC extends AbstractNPC {
             if (isLiving) {
                 if (!SUPPORT_ATTRIBUTES || !hasTrait(AttributeTrait.class)
                         || !getTraitNullable(AttributeTrait.class).hasAttribute(SpigotUtil.getRegistryValue(
-                                Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"))) {
+                        Registry.ATTRIBUTE, "generic.knockback_resistance", "knockback_resistance"))) {
                     NMS.setKnockbackResistance((LivingEntity) getEntity(), isProtected() ? 1D : 0D);
                 }
                 if (SUPPORT_PICKUP_ITEMS) {
