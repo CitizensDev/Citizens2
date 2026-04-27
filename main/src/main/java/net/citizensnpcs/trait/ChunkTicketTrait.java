@@ -26,6 +26,9 @@ public class ChunkTicketTrait extends Trait {
         if (!SUPPORT_CHUNK_TICKETS)
             return;
         if (active != null) {
+            if (ticks < 0) {
+                active.getChunk().setForceLoaded(false);
+            }
             active.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
             active = null;
             ticks = 0;
@@ -55,28 +58,43 @@ public class ChunkTicketTrait extends Trait {
         if (ticks != 0) {
             Chunk chunk = npc.getEntity().getLocation().getChunk();
             chunk.addPluginChunkTicket(CitizensAPI.getPlugin());
+            if (ticks == -1) {
+                chunk.setForceLoaded(true);
+            }
             active = new ChunkCoord(chunk);
         }
     }
 
     @Override
     public void run() {
+        if (npc.data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean())) {
+            ticks = -1;
+        } else if (ticks < 0) {
+            ticks = 0;
+        }
         if (!SUPPORT_CHUNK_TICKETS || ticks == 0)
             return;
         if (--ticks == 0) {
             onDespawn();
             return;
         }
-        if (active != null) {
-            Plugin plugin = CitizensAPI.getPlugin();
-            Chunk chunk = npc.getEntity().getLocation().getChunk();
-            ChunkCoord next = new ChunkCoord(chunk);
-            if (!next.equals(active)) {
-                active.getChunk().removePluginChunkTicket(plugin);
-                chunk.addPluginChunkTicket(plugin);
-                active = next;
-            } else if (!chunk.getPluginChunkTickets().contains(plugin)) {
-                chunk.addPluginChunkTicket(plugin);
+        if (active == null)
+            return;
+        Plugin plugin = CitizensAPI.getPlugin();
+        Chunk chunk = npc.getEntity().getLocation().getChunk();
+        ChunkCoord next = new ChunkCoord(chunk);
+        if (!next.equals(active)) {
+            active.getChunk().removePluginChunkTicket(plugin);
+            chunk.addPluginChunkTicket(plugin);
+            if (ticks < 0) {
+                active.setForceLoaded(false);
+                chunk.setForceLoaded(true);
+            }
+            active = next;
+        } else if (!chunk.getPluginChunkTickets().contains(plugin)) {
+            chunk.addPluginChunkTicket(plugin);
+            if (ticks < 0) {
+                chunk.setForceLoaded(true);
             }
         }
     }
