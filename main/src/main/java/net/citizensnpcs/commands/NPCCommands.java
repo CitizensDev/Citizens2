@@ -156,7 +156,6 @@ import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HologramTrait.HologramRenderer;
 import net.citizensnpcs.trait.HomeTrait;
-import net.citizensnpcs.trait.versioned.TextDisplayTrait;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.ItemFrameTrait;
 import net.citizensnpcs.trait.LookClose;
@@ -185,6 +184,7 @@ import net.citizensnpcs.trait.TargetableTrait;
 import net.citizensnpcs.trait.WitherTrait;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.shop.StoredShops;
+import net.citizensnpcs.trait.versioned.TextDisplayTrait;
 import net.citizensnpcs.trait.waypoint.WanderWaypointProvider;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import net.citizensnpcs.util.Anchor;
@@ -2080,7 +2080,7 @@ public class NPCCommands {
             permission = "citizens.npc.minecart")
     public void minecart(CommandContext args, CommandSender sender, NPC npc, @Flag("item") String item)
             throws CommandException {
-        if (!npc.getOrAddTrait(MobType.class).getType().name().contains("MINECRAFT"))
+        if (!npc.getOrAddTrait(MobType.class).getType().name().contains("MINECART"))
             throw new CommandUsageException();
         if (args.hasValueFlag("offset")) {
             npc.data().setPersistent(NPC.Metadata.MINECART_OFFSET, args.getFlagInteger("offset"));

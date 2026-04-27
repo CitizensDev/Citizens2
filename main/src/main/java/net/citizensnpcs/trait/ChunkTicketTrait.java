@@ -71,6 +71,8 @@ public class ChunkTicketTrait extends Trait {
             ticks = -1;
         } else if (ticks < 0) {
             ticks = 0;
+            onDespawn();
+            return;
         }
         if (!SUPPORT_CHUNK_TICKETS || ticks == 0)
             return;

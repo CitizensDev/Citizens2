@@ -12,6 +12,7 @@ import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 import com.mojang.authlib.GameProfile;
 
@@ -125,8 +126,9 @@ public class Skin {
             return;
 
         CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
+            Location loc = npc.getStoredLocation();
             npc.despawn(DespawnReason.PENDING_RESPAWN);
-            npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
+            npc.spawn(loc, SpawnReason.RESPAWN);
         });
     }
 

@@ -11,11 +11,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -368,18 +366,6 @@ public class Util {
             }
         }
         return list;
-    }
-
-    public static Color parseColor(String string) {
-        if (!string.contains(","))
-            return Color.fromRGB(Integer.decode(string));
-        List<Integer> list = Splitter.on(',').splitToStream(string).map(Integer::parseInt).collect(Collectors.toList());
-        if (list.size() == 3) {
-            return Color.fromRGB(list.get(0), list.get(1), list.get(2));
-        } else if (list.size() == 4) {
-            return Color.fromARGB(list.get(3), list.get(0), list.get(1), list.get(2));
-        }
-        throw new NumberFormatException();
     }
 
     public static String possiblyConvertToBedrockName(String name) {

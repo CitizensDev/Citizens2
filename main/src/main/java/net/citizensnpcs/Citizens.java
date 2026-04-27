@@ -440,6 +440,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             return;
         }
         traitFactory = new CitizensTraitFactory(this);
+        Bukkit.getPluginManager().registerEvents(traitFactory, this);
         npcRegistry = new CitizensNPCRegistry(saves, this, "citizens");
         temporaryRegistry = new CitizensNPCRegistry(new MemoryNPCDataStore(), this, "citizens-temporary");
         locationLookup = new LocationLookup(npcRegistry);
