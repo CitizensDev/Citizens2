@@ -70,11 +70,12 @@ public class ChunkTicketTrait extends Trait {
         if (npc.data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean())) {
             ticks = -1;
         } else if (ticks < 0) {
-            ticks = 0;
+            onDespawn();
+            return;
         }
         if (!SUPPORT_CHUNK_TICKETS || ticks == 0)
             return;
-        if (--ticks == 0) {
+        if (ticks > 0 && --ticks == 0) {
             onDespawn();
             return;
         }
