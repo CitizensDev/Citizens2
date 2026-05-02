@@ -89,7 +89,7 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
 
     private void cancellableUpdatePlayer(final NPC npc, final ServerPlayer entityplayer,
             final java.util.function.Consumer<Boolean> callback) {
-        net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTask(entityplayer.getBukkitEntity(), () -> {
+        net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTaskNow(entityplayer.getBukkitEntity(), () -> {
             NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
             try {
                 Bukkit.getPluginManager().callEvent(event);
