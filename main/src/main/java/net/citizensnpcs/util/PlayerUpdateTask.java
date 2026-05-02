@@ -93,7 +93,7 @@ public class PlayerUpdateTask extends SchedulerRunnable {
 
         @Override
         public void run() {
-            CitizensAPI.getScheduler().runEntityTask(entity, tick);
+            CitizensAPI.getScheduler().runEntityTaskNow(entity, tick);
         }
     }
 

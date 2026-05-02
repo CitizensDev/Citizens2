@@ -125,7 +125,7 @@ public class Skin {
         if (!npc.isSpawned())
             return;
 
-        CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
+        CitizensAPI.getScheduler().runEntityTaskNow(npc.getEntity(), () -> {
             Location loc = npc.getStoredLocation();
             npc.despawn(DespawnReason.PENDING_RESPAWN);
             npc.spawn(loc, SpawnReason.RESPAWN);

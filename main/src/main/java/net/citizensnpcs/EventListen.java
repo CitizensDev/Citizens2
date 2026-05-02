@@ -569,7 +569,7 @@ public class EventListen implements Listener {
         if (!sendTabRemove || !event.getNPC().shouldRemoveFromTabList()) {
             NMS.sendRotationPacket(tracker, ImmutableList.of(event.getPlayer()), null, null, NMS.getHeadYaw(tracker));
             if (resetYaw) {
-                CitizensAPI.getScheduler().runEntityTask(tracker,
+                CitizensAPI.getScheduler().runEntityTaskNow(tracker,
                         () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()));
             }
             return;
@@ -696,8 +696,8 @@ public class EventListen implements Listener {
         if (event.isCancelled()) {
             if (SUPPORT_STOP_USE_ITEM) {
                 try {
-                    PlayerAnimation.STOP_USE_ITEM.play(player);
-                    CitizensAPI.getScheduler().runEntityTask(player, () -> PlayerAnimation.STOP_USE_ITEM.play(player));
+                    CitizensAPI.getScheduler().runEntityTaskNow(player,
+                            () -> PlayerAnimation.STOP_USE_ITEM.play(player));
                 } catch (UnsupportedOperationException e) {
                     SUPPORT_STOP_USE_ITEM = false;
                 }
@@ -874,9 +874,8 @@ public class EventListen implements Listener {
 
             boolean despawned;
             if (SpigotUtil.isFoliaServer()) {
-                CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
-                    npc.despawn(DespawnReason.WORLD_UNLOAD);
-                });
+                CitizensAPI.getScheduler().runEntityTaskNow(npc.getEntity(),
+                        () -> npc.despawn(DespawnReason.WORLD_UNLOAD));
                 despawned = true; // Assume despawned on Folia servers.
             } else {
                 despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
