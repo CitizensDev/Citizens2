@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
@@ -701,7 +702,11 @@ public class EventListen implements Listener {
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         if (event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
-            rightClickEvent.setCancelled(npc.isProtected());
+            rightClickEvent.setDelayedCancellation(npc.isProtected());
+        }
+        if (npc.getEntity() instanceof Ageable
+                && event.getPlayer().getItemInHand().getType().name().equalsIgnoreCase("golden_dandelion")) {
+            rightClickEvent.setDelayedCancellation(npc.isProtected());
         }
         Bukkit.getPluginManager().callEvent(rightClickEvent);
         if (rightClickEvent.isCancelled()) {
