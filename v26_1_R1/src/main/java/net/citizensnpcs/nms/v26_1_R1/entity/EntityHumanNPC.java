@@ -289,7 +289,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public boolean isInWall() {
-        if (npc == null || noPhysics || isSleeping())
+        if (npc == null || noPhysics || isSleeping() || SpigotUtil.isFoliaServer())
             return super.isInWall();
 
         return Util.inBlock(getBukkitEntity());
