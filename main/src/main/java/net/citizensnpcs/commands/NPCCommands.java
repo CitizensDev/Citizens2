@@ -3378,7 +3378,7 @@ public class NPCCommands {
                     String textureEncoded = (String) texture.get("value");
                     String signature = (String) texture.get("signature");
 
-                    CitizensAPI.getScheduler().runEntityTaskNow(npc.getEntity(), () -> {
+                    CitizensAPI.getScheduler().checkedRunEntityTask(npc.getEntity(), () -> {
                         try {
                             trait.setSkinPersistent(uuid, signature, textureEncoded);
                             Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url == null ? file : url);
