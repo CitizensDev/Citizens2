@@ -2884,19 +2884,6 @@ public class NMSImpl implements NMSBridge {
         return handle;
     }
 
-    public static void updateAI(LivingEntity entity) {
-        if (entity instanceof Mob) {
-            Mob handle = (Mob) entity;
-            handle.getSensing().tick();
-            handle.getNavigation().tick();
-            handle.getMoveControl().tick();
-            handle.getLookControl().tick();
-            handle.getJumpControl().tick();
-        } else if (entity instanceof MobAI) {
-            ((MobAI) entity).tickAI();
-        }
-    }
-
     public static void updateMinecraftAIState(NPC npc, Mob entity) {
         if (npc == null)
             return;
