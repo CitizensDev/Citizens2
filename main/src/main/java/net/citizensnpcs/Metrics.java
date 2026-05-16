@@ -90,8 +90,8 @@ public class Metrics {
         boolean logSentData = config.getBoolean("logSentData", false);
         boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
         metricsBase = new MetricsBase("bukkit", serverUUID, serviceId, enabled, this::appendPlatformData,
-                this::appendServiceData, submitDataTask -> CitizensAPI.getScheduler().runTask(submitDataTask),
-                plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
+                this::appendServiceData, CitizensAPI.getScheduler()::runTask, plugin::isEnabled,
+                (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
                 message -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData,
                 logResponseStatusText);
     }

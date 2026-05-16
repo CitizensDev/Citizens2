@@ -1,5 +1,6 @@
 package net.citizensnpcs;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
@@ -8,6 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
@@ -45,6 +49,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -569,7 +574,7 @@ public class EventListen implements Listener {
         if (!sendTabRemove || !event.getNPC().shouldRemoveFromTabList()) {
             NMS.sendRotationPacket(tracker, ImmutableList.of(event.getPlayer()), null, null, NMS.getHeadYaw(tracker));
             if (resetYaw) {
-                CitizensAPI.getScheduler().runEntityTask(tracker,
+                CitizensAPI.getScheduler().checkedRunEntityTask(tracker,
                         () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()));
             }
             return;
@@ -666,6 +671,24 @@ public class EventListen implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (GET_TARGET_ENTITY == null)
+            return;
+        AttributeInstance playerInteractionRange = event.getPlayer().getAttribute(Attribute.ENTITY_INTERACTION_RANGE);
+        Entity target = null;
+        try {
+            target = (Entity) GET_TARGET_ENTITY.invoke(event.getPlayer(),
+                    playerInteractionRange == null ? 3 : (int) Math.ceil(playerInteractionRange.getValue()));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        NPC npc = plugin.getNPCRegistry().getNPC(target);
+        if (npc != null && npc.hasTrait(CommandTrait.class)) {
+            event.setUseItemInHand(Event.Result.DENY);
+        }
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         NPC npc = plugin.getNPCRegistry().getNPC(event.getRightClicked());
@@ -679,7 +702,11 @@ public class EventListen implements Listener {
         Player player = event.getPlayer();
         NPCRightClickEvent rightClickEvent = new NPCRightClickEvent(npc, player);
         if (event.getPlayer().getItemInHand().getType() == Material.NAME_TAG) {
-            rightClickEvent.setCancelled(npc.isProtected());
+            rightClickEvent.setDelayedCancellation(npc.isProtected());
+        }
+        if (npc.getEntity() instanceof Ageable
+                && event.getPlayer().getItemInHand().getType().name().equalsIgnoreCase("golden_dandelion")) {
+            rightClickEvent.setDelayedCancellation(npc.isProtected());
         }
         Bukkit.getPluginManager().callEvent(rightClickEvent);
         if (rightClickEvent.isCancelled()) {
@@ -692,16 +719,6 @@ public class EventListen implements Listener {
         }
         if (rightClickEvent.isDelayedCancellation()) {
             event.setCancelled(true);
-        }
-        if (event.isCancelled()) {
-            if (SUPPORT_STOP_USE_ITEM) {
-                try {
-                    PlayerAnimation.STOP_USE_ITEM.play(player);
-                    CitizensAPI.getScheduler().runEntityTask(player, () -> PlayerAnimation.STOP_USE_ITEM.play(player));
-                } catch (UnsupportedOperationException e) {
-                    SUPPORT_STOP_USE_ITEM = false;
-                }
-            }
         }
     }
 
@@ -876,9 +893,8 @@ public class EventListen implements Listener {
 
             boolean despawned;
             if (SpigotUtil.isFoliaServer()) {
-                CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
-                    npc.despawn(DespawnReason.WORLD_UNLOAD);
-                });
+                CitizensAPI.getScheduler().checkedRunEntityTask(npc.getEntity(),
+                        () -> npc.despawn(DespawnReason.WORLD_UNLOAD));
                 despawned = true; // Assume despawned on Folia servers.
             } else {
                 despawned = npc.despawn(DespawnReason.WORLD_UNLOAD);
@@ -1077,5 +1093,6 @@ public class EventListen implements Listener {
         }
     }
 
-    private static boolean SUPPORT_STOP_USE_ITEM = true;
+    private static final MethodHandle GET_TARGET_ENTITY = NMS.getMethodHandle(LivingEntity.class, "getTargetEntity",
+            false, int.class);
 }

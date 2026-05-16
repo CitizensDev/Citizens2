@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -21,8 +20,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
 
 import net.citizensnpcs.NPCNeedsRespawnEvent;
 import net.citizensnpcs.Settings.Setting;
@@ -63,7 +60,6 @@ import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SneakTrait;
-import net.citizensnpcs.util.ChunkCoord;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
 import net.citizensnpcs.util.PlayerAnimation;
@@ -71,7 +67,6 @@ import net.citizensnpcs.util.PlayerUpdateTask;
 import net.citizensnpcs.util.Util;
 
 public class CitizensNPC extends AbstractNPC {
-    private ChunkCoord cachedCoord;
     private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
@@ -123,12 +118,6 @@ public class CitizensNPC extends AbstractNPC {
             entityController.remove();
         }
         return true;
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        resetCachedCoord();
     }
 
     @Override
@@ -214,17 +203,6 @@ public class CitizensNPC extends AbstractNPC {
     public boolean requiresNameHologram() {
         return !data().has(NPC.Metadata.HOLOGRAM_RENDERER)
                 && (super.requiresNameHologram() || Setting.ALWAYS_USE_NAME_HOLOGRAM.asBoolean());
-    }
-
-    private void resetCachedCoord() {
-        if (cachedCoord == null)
-            return;
-        Set<NPC> npcs = CHUNK_LOADERS.get(cachedCoord);
-        npcs.remove(this);
-        if (npcs.size() == 0) {
-            cachedCoord.setForceLoaded(false);
-        }
-        cachedCoord = null;
     }
 
     @Override
@@ -570,10 +548,9 @@ public class CitizensNPC extends AbstractNPC {
     public void update() {
         try {
             super.update();
-            if (!isSpawned()) {
-                resetCachedCoord();
+            if (!isSpawned())
                 return;
-            }
+
             Location loc = getEntity().getLocation();
             if (data().has(NPC.Metadata.ACTIVATION_RANGE)) {
                 int range = data().get(NPC.Metadata.ACTIVATION_RANGE);
@@ -610,15 +587,6 @@ public class CitizensNPC extends AbstractNPC {
             }
             boolean isLiving = getEntity() instanceof LivingEntity;
             if (isUpdating(NPCUpdate.PACKET)) {
-                if (data().get(NPC.Metadata.KEEP_CHUNK_LOADED, Setting.KEEP_CHUNKS_LOADED.asBoolean())) {
-                    ChunkCoord currentCoord = new ChunkCoord(loc);
-                    if (!currentCoord.equals(cachedCoord)) {
-                        resetCachedCoord();
-                        currentCoord.setForceLoaded(true);
-                        CHUNK_LOADERS.put(currentCoord, this);
-                        cachedCoord = currentCoord;
-                    }
-                }
                 if (isLiving) {
                     updateScoreboard();
                 }
@@ -738,7 +706,6 @@ public class CitizensNPC extends AbstractNPC {
         }
     }
 
-    private static final SetMultimap<ChunkCoord, NPC> CHUNK_LOADERS = HashMultimap.create();
     private static boolean SUPPORT_ATTRIBUTES = false;
     private static boolean SUPPORT_GLOWING = false;
     private static boolean SUPPORT_PICKUP_ITEMS = false;

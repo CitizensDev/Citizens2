@@ -2424,10 +2424,13 @@ public class NMSImpl implements NMSBridge {
     public static void markClientLoaded(ServerGamePacketListenerImpl connection) {
         try {
             WAITING_FOR_RESPAWN.invoke(connection, false);
+            for (int i = 0; i <= 60; i++) {
+                connection.tickClientLoadTimeout();
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    }
+    };
 
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
@@ -2775,19 +2778,6 @@ public class NMSImpl implements NMSBridge {
         handle.setDeltaMovement(transition.deltaMovement());
         handle.portalCooldown = entity.portalCooldown;
         return handle;
-    }
-
-    public static void updateAI(LivingEntity entity) {
-        if (entity instanceof Mob) {
-            Mob handle = (Mob) entity;
-            handle.getSensing().tick();
-            handle.getNavigation().tick();
-            handle.getMoveControl().tick();
-            handle.getLookControl().tick();
-            handle.getJumpControl().tick();
-        } else if (entity instanceof MobAI) {
-            ((MobAI) entity).tickAI();
-        }
     }
 
     public static void updateMinecraftAIState(NPC npc, Mob entity) {

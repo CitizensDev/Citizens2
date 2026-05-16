@@ -66,30 +66,9 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         this(map, getTracker(entry), getTrackingDistance(entry), getUpdateInterval(entry), getTrackDelta(entry));
     }
 
-    @Override
-    public void updatePlayer(final ServerPlayer entityplayer) {
-        if (entityplayer instanceof EntityHumanNPC)
-            return;
-
-        if (!tracker.isRemoved() && !seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
-            NPC npc = ((NPCHolder) tracker).getNPC();
-            if (REQUIRES_SYNC == null) {
-                REQUIRES_SYNC = !Bukkit.isPrimaryThread();
-            }
-            cancellableUpdatePlayer(npc, entityplayer, cancelled -> {
-                if (cancelled) {
-                    return;
-                }
-                super.updatePlayer(entityplayer);
-            });
-            return;
-        }
-        super.updatePlayer(entityplayer);
-    }
-
     private void cancellableUpdatePlayer(final NPC npc, final ServerPlayer entityplayer,
             final java.util.function.Consumer<Boolean> callback) {
-        net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTask(entityplayer.getBukkitEntity(), () -> {
+        net.citizensnpcs.api.CitizensAPI.getScheduler().checkedRunEntityTask(entityplayer.getBukkitEntity(), () -> {
             NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
             try {
                 Bukkit.getPluginManager().callEvent(event);
@@ -113,6 +92,27 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
             }
             callback.accept(false);
         });
+    }
+
+    @Override
+    public void updatePlayer(final ServerPlayer entityplayer) {
+        if (entityplayer instanceof EntityHumanNPC)
+            return;
+
+        if (!tracker.isRemoved() && !seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
+            NPC npc = ((NPCHolder) tracker).getNPC();
+            if (REQUIRES_SYNC == null) {
+                REQUIRES_SYNC = !Bukkit.isPrimaryThread();
+            }
+            cancellableUpdatePlayer(npc, entityplayer, cancelled -> {
+                if (cancelled) {
+                    return;
+                }
+                super.updatePlayer(entityplayer);
+            });
+            return;
+        }
+        super.updatePlayer(entityplayer);
     }
 
     public static Collection<org.bukkit.entity.Entity> getSeenBy(TrackedEntity tracker) {

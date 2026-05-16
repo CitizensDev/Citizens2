@@ -89,11 +89,10 @@ public class SitTrait extends Trait {
 
     public void setSitting(Location at) {
         sittingAt = at != null ? at.clone() : null;
-        if (requiresPassengerOffsetCorrection()) {
-            sittingAt = sittingAt.add(0, 0.3, 0);
-        }
         if (at == null) {
             onDespawn();
+        } else if (requiresPassengerOffsetCorrection()) {
+            sittingAt = sittingAt.add(0, 0.3, 0);
         }
     }
 
