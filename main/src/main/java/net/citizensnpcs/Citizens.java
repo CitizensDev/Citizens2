@@ -377,9 +377,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
 
 
         lib.loadLibrary(Library.builder().groupId("net{}megavex").artifactId("scoreboard-library-api")
-                .version("2.7.0").relocate("net{}megavex{}scoreboardlibrary", "clib{}net{}megavex{}scoreboardlibrary").build());
+                .version("2.7.4").relocate("net{}megavex{}scoreboardlibrary", "clib{}net{}megavex{}scoreboardlibrary").build());
         lib.loadLibrary(Library.builder().groupId("net{}megavex").artifactId("scoreboard-library-implementation")
-                .version("2.7.0").relocate("net{}megavex{}scoreboardlibrary", "clib{}net{}megavex{}scoreboardlibrary").build());
+                .version("2.7.4").relocate("net{}megavex{}scoreboardlibrary", "clib{}net{}megavex{}scoreboardlibrary").build());
     }
 
     @Override
