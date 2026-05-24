@@ -3960,6 +3960,19 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
+            usage = "velocity [x] [y] [z]",
+            desc = "",
+            modifiers = { "velocity", "vel" },
+            min = 4,
+            max = 4,
+            permission = "citizens.npc.velocity")
+    public void velocity(CommandContext args, CommandSender sender, NPC npc, @Arg(1) double x, @Arg(2) double y,
+            @Arg(3) double z) {
+        npc.getEntity().setVelocity(new Vector(x, y, z));
+    }
+
+    @Command(
+            aliases = { "npc" },
             usage = "vulnerable (-t(emporary))",
             desc = "",
             modifiers = { "vulnerable" },

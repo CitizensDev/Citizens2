@@ -1,33 +1,28 @@
 package net.citizensnpcs.trait.scoreboard;
 
-import net.citizensnpcs.Citizens;
-import net.citizensnpcs.api.CitizensAPI;
 import net.megavex.scoreboardlibrary.api.team.ScoreboardTeam;
 import net.megavex.scoreboardlibrary.api.team.TeamManager;
 
 public class FoliaScoreboardImpl implements AbstractScoreboard {
     private final TeamManager delegate;
 
-    public FoliaScoreboardImpl() {
-        this.delegate = ((Citizens) CitizensAPI.getPlugin()).getTeamManager();
-    }
-
-    @Override
-    public AbstractTeam getTeam(String name) {
-        ScoreboardTeam scoreboardTeam = delegate.team(name);
-        if (scoreboardTeam != null) {
-            return new FoliaTeamImpl(scoreboardTeam);
-        }
-        return null;
-    }
-
-    @Override
-    public void removeTeam(String name) {
-        delegate.removeTeam(name);
+    public FoliaScoreboardImpl(CitizensScoreboardManager scoreboardManager) {
+        this.delegate = scoreboardManager.getTeamManager();
     }
 
     @Override
     public AbstractTeam createTeam(String name) {
         return new FoliaTeamImpl(delegate.createIfAbsent(name));
+    }
+
+    @Override
+    public AbstractTeam getTeam(String name) {
+        ScoreboardTeam scoreboardTeam = delegate.team(name);
+        return scoreboardTeam != null ? new FoliaTeamImpl(scoreboardTeam) : null;
+    }
+
+    @Override
+    public void removeTeam(String name) {
+        delegate.removeTeam(name);
     }
 }

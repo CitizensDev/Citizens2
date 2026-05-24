@@ -10,10 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
-import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
-import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
-import net.megavex.scoreboardlibrary.api.team.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.BlockCommandSender;
@@ -83,6 +79,8 @@ import net.citizensnpcs.npc.ai.tree.CitizensBehaviorRegistry;
 import net.citizensnpcs.npc.ai.tree.MolangEngine;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.profile.ProfileFetcher;
+import net.citizensnpcs.trait.scoreboard.CitizensScoreboardManager;
+import net.citizensnpcs.trait.scoreboard.MegavexScoreboardManager;
 import net.citizensnpcs.trait.shop.StoredShops;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.NMS;
@@ -100,8 +98,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private boolean enabled;
     private ExpressionRegistry expressionRegistry;
     private LocationLookup locationLookup;
-    private ScoreboardLibrary scoreboardLibrary;
-    private TeamManager teamManager;
     private final NMSHelper nmsHelper = new NMSHelper() {
         private boolean SUPPORT_OWNER_PROFILE = false;
         {
@@ -157,12 +153,12 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private SchedulerTask playerUpdateTask;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
+    private MegavexScoreboardManager scoreboardManager;
     private NPCSelector selector;
     private StoredShops shops;
     private final Map<String, NPCRegistry> storedRegistries = new HashMap<>();
     private TemplateRegistry templateRegistry;
     private NPCRegistry temporaryRegistry;
-
     private CitizensTraitFactory traitFactory;
 
     @Override
@@ -302,6 +298,10 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         return packetEventsHook;
     }
 
+    public CitizensScoreboardManager getScoreboardManager() {
+        return scoreboardManager;
+    }
+
     public StoredShops getShops() {
         return shops;
     }
@@ -319,10 +319,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     @Override
     public TraitFactory getTraitFactory() {
         return traitFactory;
-    }
-
-    public TeamManager getTeamManager() {
-        return teamManager;
     }
 
     private void initialiseBehaviorRegistry() {
@@ -375,11 +371,11 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         lib.loadLibrary(Library.builder().groupId("net{}kyori").artifactId("adventure-platform-viaversion")
                 .version("4.4.1").relocate("net{}kyori", "clib{}net{}kyori").build());
 
-
-        lib.loadLibrary(Library.builder().groupId("net{}megavex").artifactId("scoreboard-library-api")
-                .version("2.7.4").relocate("net{}megavex{}scoreboardlibrary", "clib{}net{}megavex{}scoreboardlibrary").build());
+        lib.loadLibrary(Library.builder().groupId("net{}megavex").artifactId("scoreboard-library-api").version("2.7.4")
+                .relocate("net{}megavex{}scoreboardlibrary", "clib{}net{}megavex{}scoreboardlibrary").build());
         lib.loadLibrary(Library.builder().groupId("net{}megavex").artifactId("scoreboard-library-implementation")
-                .version("2.7.4").relocate("net{}megavex{}scoreboardlibrary", "clib{}net{}megavex{}scoreboardlibrary").build());
+                .version("2.7.4").relocate("net{}megavex{}scoreboardlibrary", "clib{}net{}megavex{}scoreboardlibrary")
+                .build());
     }
 
     @Override
@@ -421,8 +417,8 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (packetEventsEnabled) {
             PacketEvents.getAPI().terminate();
         }
-
-        scoreboardLibrary.close();
+        scoreboardManager.close();
+        scoreboardManager = null;
     }
 
     @Override
@@ -494,13 +490,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
             Bukkit.getPluginManager().disablePlugin(this);
         }
-
-        try {
-            scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
-            teamManager = scoreboardLibrary.createTeamManager();
-        } catch (NoPacketAdapterAvailableException e) {
-            scoreboardLibrary = new NoopScoreboardLibrary();
-        }
+        scoreboardManager = new MegavexScoreboardManager();
     }
 
     @Override

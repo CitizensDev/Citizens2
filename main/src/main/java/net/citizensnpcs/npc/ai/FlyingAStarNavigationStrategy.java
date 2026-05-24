@@ -168,7 +168,6 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
         motZ += (Math.signum(dz) * 0.5D - motZ) * 0.1;
         velocity.setX(motX).setY(motY).setZ(motZ).multiply(parameters.speed());
         npc.getEntity().setVelocity(velocity);
-
         if (npc.getEntity().getType() != EntityType.ENDER_DRAGON) {
             NMS.setVerticalMovement(npc.getEntity(), 0.5);
             Util.faceLocation(npc.getEntity(), dest.toLocation(npc.getEntity().getWorld()));

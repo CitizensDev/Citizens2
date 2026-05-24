@@ -2,10 +2,6 @@ package net.citizensnpcs.trait;
 
 import java.util.Set;
 
-import net.citizensnpcs.trait.scoreboard.AbstractScoreboard;
-import net.citizensnpcs.trait.scoreboard.AbstractTeam;
-import net.citizensnpcs.trait.scoreboard.BukkitScoreboardImpl;
-import net.citizensnpcs.trait.scoreboard.FoliaScoreboardImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -17,6 +13,7 @@ import org.bukkit.scoreboard.Team.OptionStatus;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.LocationLookup.PerPlayerMetadata;
@@ -26,7 +23,8 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.SpigotUtil;
+import net.citizensnpcs.trait.scoreboard.AbstractScoreboard;
+import net.citizensnpcs.trait.scoreboard.AbstractTeam;
 import net.citizensnpcs.util.Util;
 
 @TraitName("scoreboardtrait")
@@ -37,10 +35,10 @@ public class ScoreboardTrait extends Trait {
     private String lastName;
     private final PerPlayerMetadata<Boolean> metadata;
     private ChatColor previousGlowingColor;
+    private final AbstractScoreboard scoreboard;
+
     @Persist
     private Set<String> tags = Sets.newHashSet("CITIZENS_NPC");
-
-    private final AbstractScoreboard scoreboard;
 
     public ScoreboardTrait() {
         super("scoreboardtrait");
@@ -55,12 +53,11 @@ public class ScoreboardTrait extends Trait {
                     continue;
 
                 team.sendToPlayer(event.getPlayer(), AbstractTeam.SendMode.ADD_OR_MODIFY);
-
                 meta.set(event.getPlayer().getUniqueId(), team.getName(), true);
             }
         });
 
-        this.scoreboard = SpigotUtil.isFoliaServer() ? new FoliaScoreboardImpl() : new BukkitScoreboardImpl();
+        this.scoreboard = ((Citizens) CitizensAPI.getPlugin()).getScoreboardManager().createScoreboard();
     }
 
     private void clearClientTeams(AbstractTeam team) {
@@ -196,13 +193,13 @@ public class ScoreboardTrait extends Trait {
                     : npc.getUniqueId().toString();
         }
         if (SUPPORT_TEAM_SETOPTION) {
-            AbstractTeam.NameTags visibility = nameVisibility ? AbstractTeam.NameTags.ALWAYS_SHOW : AbstractTeam.NameTags.NEVER_SHOW;
+            AbstractTeam.NameTags visibility = nameVisibility ? AbstractTeam.NameTags.ALWAYS_SHOW
+                    : AbstractTeam.NameTags.NEVER_SHOW;
             if (visibility != team.getNameTagVisibility()) {
                 changed = true;
             }
             team.setNameTagVisibility(visibility);
         }
-
         if (SUPPORT_COLLIDABLE_SETOPTION) {
             AbstractTeam.CollisionRule collide = npc.data().<Boolean> get(NPC.Metadata.COLLIDABLE, !npc.isProtected())
                     ? AbstractTeam.CollisionRule.ALWAYS
@@ -212,7 +209,6 @@ public class ScoreboardTrait extends Trait {
             }
             team.setCollisionRule(collide);
         }
-
         if (color != null && SUPPORT_GLOWING_COLOR) {
             if (team.getColor() == null || previousGlowingColor == null || color != previousGlowingColor) {
                 team.setColor(color);
