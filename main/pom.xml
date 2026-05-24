@@ -151,13 +151,13 @@
             <groupId>net.megavex</groupId>
             <artifactId>scoreboard-library-api</artifactId>
             <version>2.7.4</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.megavex</groupId>
             <artifactId>scoreboard-library-implementation</artifactId>
             <version>2.7.4</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <url>http://www.citizensnpcs.co</url>
