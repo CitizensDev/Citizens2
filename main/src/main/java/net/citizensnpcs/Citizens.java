@@ -491,6 +491,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         }
         scoreboardManager = new MegavexScoreboardManager();
+        scoreboardManager.load(this);
     }
 
     @Override
