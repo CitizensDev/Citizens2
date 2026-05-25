@@ -8,6 +8,7 @@ import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
 import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
 import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
 import net.megavex.scoreboardlibrary.api.team.TeamManager;
+import net.megavex.scoreboardlibrary.implementation.ScoreboardLibraryImpl;
 
 public class MegavexScoreboardManager implements CitizensScoreboardManager {
     private ScoreboardLibrary scoreboardLibrary;
@@ -37,11 +38,11 @@ public class MegavexScoreboardManager implements CitizensScoreboardManager {
     @Override
     public void load(Plugin plugin) {
         try {
-            scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(plugin);
-            teamManager = scoreboardLibrary.createTeamManager();
+            scoreboardLibrary = new ScoreboardLibraryImpl(plugin);
         } catch (NoPacketAdapterAvailableException e) {
             scoreboardLibrary = new NoopScoreboardLibrary();
         }
+        teamManager = scoreboardLibrary.createTeamManager();
     }
 
     @Override
