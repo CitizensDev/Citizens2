@@ -33,5 +33,6 @@ public class RabbitType extends Trait {
 
     public void setType(Rabbit.Type type) {
         this.type = type;
+        onSpawn();
     }
 }
