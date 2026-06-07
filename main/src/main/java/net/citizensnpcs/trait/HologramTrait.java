@@ -478,6 +478,7 @@ public class HologramTrait extends Trait {
             if (!rendered) {
                 cloud.setRadius(0);
                 cloud.setParticle(Particle.BLOCK_MARKER, Bukkit.createBlockData(Material.AIR));
+                rendered = true;
             }
             SpigotUtil.teleportAsync(hologram.getEntity(),
                     npc.getEntity().getLocation().clone().add(offset.x,

@@ -79,6 +79,7 @@ import net.citizensnpcs.npc.ai.tree.CitizensBehaviorRegistry;
 import net.citizensnpcs.npc.ai.tree.MolangEngine;
 import net.citizensnpcs.npc.skin.Skin;
 import net.citizensnpcs.npc.skin.profile.ProfileFetcher;
+import net.citizensnpcs.trait.scoreboard.BukkitScoreboardManager;
 import net.citizensnpcs.trait.scoreboard.CitizensScoreboardManager;
 import net.citizensnpcs.trait.scoreboard.MegavexScoreboardManager;
 import net.citizensnpcs.trait.shop.StoredShops;
@@ -153,7 +154,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     private SchedulerTask playerUpdateTask;
     private boolean saveOnDisable = true;
     private NPCDataStore saves;
-    private MegavexScoreboardManager scoreboardManager;
+    private CitizensScoreboardManager scoreboardManager;
     private NPCSelector selector;
     private StoredShops shops;
     private final Map<String, NPCRegistry> storedRegistries = new HashMap<>();
@@ -490,8 +491,13 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
             Bukkit.getPluginManager().disablePlugin(this);
         }
-        scoreboardManager = new MegavexScoreboardManager();
-        scoreboardManager.load(this);
+        // TODO: reimplement megavex implementation with packets to simplify this
+        try {
+            Class.forName("net.kyori.adventure.Adventure");
+            scoreboardManager = new MegavexScoreboardManager(this);
+        } catch (ClassNotFoundException e) {
+            scoreboardManager = new BukkitScoreboardManager(this);
+        }
     }
 
     @Override

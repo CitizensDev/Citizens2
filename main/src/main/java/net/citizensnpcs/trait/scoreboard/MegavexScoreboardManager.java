@@ -12,7 +12,16 @@ import net.megavex.scoreboardlibrary.implementation.ScoreboardLibraryImpl;
 
 public class MegavexScoreboardManager implements CitizensScoreboardManager {
     private ScoreboardLibrary scoreboardLibrary;
-    private TeamManager teamManager;
+    private final TeamManager teamManager;
+
+    public MegavexScoreboardManager(Plugin plugin) {
+        try {
+            scoreboardLibrary = new ScoreboardLibraryImpl(plugin);
+        } catch (NoPacketAdapterAvailableException e) {
+            scoreboardLibrary = new NoopScoreboardLibrary();
+        }
+        teamManager = scoreboardLibrary.createTeamManager();
+    }
 
     @Override
     public void addPlayer(Player player) {
@@ -26,23 +35,7 @@ public class MegavexScoreboardManager implements CitizensScoreboardManager {
 
     @Override
     public AbstractScoreboard createScoreboard() {
-        return SpigotUtil.isFoliaServer() ? new FoliaScoreboardImpl(this) : new BukkitScoreboardImpl();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T getTeamManager() {
-        return (T) teamManager;
-    }
-
-    @Override
-    public void load(Plugin plugin) {
-        try {
-            scoreboardLibrary = new ScoreboardLibraryImpl(plugin);
-        } catch (NoPacketAdapterAvailableException e) {
-            scoreboardLibrary = new NoopScoreboardLibrary();
-        }
-        teamManager = scoreboardLibrary.createTeamManager();
+        return SpigotUtil.isFoliaServer() ? new FoliaScoreboardImpl(teamManager) : new BukkitScoreboardImpl();
     }
 
     @Override
