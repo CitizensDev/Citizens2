@@ -932,6 +932,8 @@ public class HologramTrait extends Trait {
 
         @Override
         public void updateText(NPC npc, String raw) {
+            if (text != null && text.equals(raw))
+                return;
             this.text = raw;
             if (hologram == null)
                 return;
