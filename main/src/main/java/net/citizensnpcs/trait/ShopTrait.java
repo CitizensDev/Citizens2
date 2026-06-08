@@ -621,6 +621,10 @@ public class ShopTrait extends Trait {
             return sb.toString();
         }
 
+        public void resetPurchaseHistory() {
+            purchases.clear();
+        }
+
         public void setDisplayItem(ItemStack itemstack) {
             this.display = itemstack == null ? null : itemstack.clone();
             if (this.display == null)
@@ -688,7 +692,7 @@ public class ShopTrait extends Trait {
             ctx.getSlot(9 * 4 + 7).setItemStack(new ItemStack(Material.APPLE), "Reset purchase history",
                     modified.purchases.size() + " purchases");
             ctx.getSlot(9 * 4 + 7).setClickHandler(e -> {
-                modified.purchases.clear();
+                modified.resetPurchaseHistory();
                 ctx.getSlot(9 * 4 + 7).setDescription(modified.purchases.size() + " purchases");
             });
 

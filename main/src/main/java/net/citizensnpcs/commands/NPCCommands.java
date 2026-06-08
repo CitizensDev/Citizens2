@@ -175,6 +175,8 @@ import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SheepTrait;
 import net.citizensnpcs.trait.ShopTrait;
 import net.citizensnpcs.trait.ShopTrait.NPCShop;
+import net.citizensnpcs.trait.ShopTrait.NPCShopItem;
+import net.citizensnpcs.trait.ShopTrait.NPCShopPage;
 import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SkinLayers;
 import net.citizensnpcs.trait.SkinLayers.Layer;
@@ -3244,6 +3246,45 @@ public class NPCCommands {
             shop.display(player);
         } else
             throw new CommandUsageException();
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "shopitem [shop name/id] [item index] [reset_purchase_history] (--page [page])",
+            desc = "",
+            modifiers = { "shopitem" },
+            min = 6,
+            max = 7,
+            permission = "citizens.npc.shopitem")
+    @Requirements(selected = false, ownership = true)
+    public void shopitem(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String shopName,
+            @Arg(2) Integer index, @Arg(value = 3, completions = { "reset_purchase_history" }) String operation,
+            @Flag("page") Integer page) throws CommandException {
+        NPCShop shop = shopName == null && npc != null ? npc.getOrAddTrait(ShopTrait.class).getDefaultShop()
+                : shops.getShop(shopName);
+
+        if (shop == null)
+            throw new CommandException(Messages.SHOP_NOT_FOUND, shopName);
+
+        if (!shop.canEdit(npc, sender))
+            throw new NoPermissionsException();
+
+        if (page == null || page < 1) {
+            page = 1;
+        }
+        if (--page < shop.getPages().size())
+            throw new CommandException(Messages.SHOP_PAGE_NOT_FOUND, page + 1, shop.getPages().size());
+
+        NPCShopPage shopPage = shop.getPages().get(page);
+        NPCShopItem item = shopPage.getItem(index);
+        if (item == null)
+            throw new CommandException(Messages.SHOP_ITEM_NOT_FOUND, index);
+
+        if ("reset_purchase_history".equals(operation)) {
+            item.resetPurchaseHistory();
+        } else {
+            throw new CommandUsageException();
+        }
     }
 
     @Command(
