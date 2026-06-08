@@ -3261,7 +3261,7 @@ public class NPCCommands {
     @Requirements(selected = false, ownership = true)
     public void shopitem(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String shopName,
             @Arg(value = 2, completions = { "reset_purchases" }) String operation, @Arg(3) String index,
-            @Flag("page") Integer page) throws CommandException {
+            @Flag("page") Integer page, @Flag("player") UUID playerUUID) throws CommandException {
         if (!"all".equals(shopName) && shops.getShop(shopName) == null)
             throw new CommandException(Messages.SHOP_NOT_FOUND, shopName);
         if (page == null || page < 1) {
@@ -3289,6 +3289,8 @@ public class NPCCommands {
             }
             if ("reset_purchases".equals(operation)) {
                 stream.forEach(i -> i.resetPurchaseHistory());
+            } else if ("reset_player_purchases".equals(operation)) {
+                stream.forEach(i -> i.resetPurchaseHistory(playerUUID));
             } else {
                 throw new CommandUsageException();
             }

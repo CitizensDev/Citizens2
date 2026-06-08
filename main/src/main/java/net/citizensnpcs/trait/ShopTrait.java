@@ -626,6 +626,10 @@ public class ShopTrait extends Trait {
             purchases.clear();
         }
 
+        public void resetPurchaseHistory(UUID playerUUID) {
+            purchases.remove(playerUUID);
+        }
+
         public void setDisplayItem(ItemStack itemstack) {
             this.display = itemstack == null ? null : itemstack.clone();
             if (this.display == null)
