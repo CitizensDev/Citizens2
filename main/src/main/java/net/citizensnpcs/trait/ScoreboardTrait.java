@@ -36,7 +36,6 @@ public class ScoreboardTrait extends Trait {
     private final PerPlayerMetadata<Boolean> metadata;
     private ChatColor previousGlowingColor;
     private final AbstractScoreboard scoreboard;
-
     @Persist
     private Set<String> tags = Sets.newHashSet("CITIZENS_NPC");
 
@@ -83,6 +82,10 @@ public class ScoreboardTrait extends Trait {
 
     public ChatColor getColor() {
         return color;
+    }
+
+    public Set<String> getTags() {
+        return tags;
     }
 
     private AbstractTeam getTeam() {

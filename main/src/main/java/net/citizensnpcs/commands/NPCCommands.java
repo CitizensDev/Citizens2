@@ -1833,7 +1833,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "list (page) ((-a) --owner (owner) --type (type) --char (char) --registry (name))",
+            usage = "list (page) (-a[ll]) --owner [owner] --type [type] --registry [name] --tag [tag] --filter [filter expression]",
             desc = "",
             flags = "a",
             modifiers = { "list" },
@@ -1842,8 +1842,8 @@ public class NPCCommands {
             permission = "citizens.npc.list")
     @Requirements
     public void list(CommandContext args, CommandSender sender, NPC npc, @Flag("owner") String owner,
-            @Flag("type") EntityType type, @Flag("page") Integer page, @Flag("registry") String registry)
-            throws CommandException {
+            @Flag("type") EntityType type, @Flag("page") Integer page, @Flag("registry") String registry,
+            @Flag("tag") String tag, @Flag("filter") String filter) throws CommandException {
         NPCRegistry source = registry != null ? CitizensAPI.getNamedNPCRegistry(registry)
                 : CitizensAPI.getNPCRegistry();
         if (source == null)
@@ -1853,6 +1853,29 @@ public class NPCCommands {
         if (args.hasFlag('a')) {
             for (NPC add : source.sorted()) {
                 npcs.add(add);
+            }
+        } else if (filter != null && sender.hasPermission("citizens.admin")) {
+            try {
+                CompiledExpression expr = CitizensAPI.getExpressionRegistry().compile(filter);
+                for (NPC add : source.sorted()) {
+                    ExpressionScope scope = new ExpressionScope();
+                    scope.setNPC(npc);
+                    if (sender instanceof Player) {
+                        scope.setPlayer((Player) sender);
+                    }
+                    if (expr.evaluateAsBoolean(scope)) {
+                        npcs.add(add);
+                    }
+                }
+            } catch (ExpressionCompileException e) {
+                throw new CommandException(e.getMessage());
+            }
+        } else if (tag != null) {
+            for (NPC add : source.sorted()) {
+                if (add.hasTrait(ScoreboardTrait.class)
+                        && add.getOrAddTrait(ScoreboardTrait.class).getTags().contains(tag)) {
+                    npcs.add(add);
+                }
             }
         } else if (owner != null) {
             for (NPC add : source.sorted()) {
