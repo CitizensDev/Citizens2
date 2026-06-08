@@ -21,6 +21,8 @@
   "citizens.commands.npc.behavior.tree-applied" : "Behavior tree [[{1}]] applied to [[{0}]]. All existing behaviors have been removed",
   "citizens.commands.npc.behavior.description" : "Manages behavior trees",
   "citizens.commands.npc.behavior.help" : "",
+  "citizens.commands.npc.shopitem.item-not-found" : "Shop item [[{0}]] not found.",
+  "citizens.commands.npc.shopitem.page-not-found" : "Shop page [[{0}]] does not exist. There are [[{1}]] pages.",
   "citizens.commands.npc.disguise.disguise-set" : "Set disguise type to [[{0}]].",
   "citizens.commands.npc.disguise.help" : "",
   "citizens.commands.npc.disguise.description" : "Manages entity disguises",
