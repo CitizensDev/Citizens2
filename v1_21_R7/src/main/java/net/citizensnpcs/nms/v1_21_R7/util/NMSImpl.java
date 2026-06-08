@@ -2398,14 +2398,19 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
-    public static SoundEvent getSoundEffect(NPC npc, SoundEvent snd, NPC.Metadata meta) {
+    public static SoundEvent getSoundEffect(NPC npc, SoundEvent defaultSound, NPC.Metadata meta) {
         if (npc == null)
-            return snd;
+            return defaultSound;
         String data = npc.data().get(meta);
         if (data == null)
-            return snd;
-        Reference<SoundEvent> ref = BuiltInRegistries.SOUND_EVENT.get(Identifier.tryParse(data)).orElse(null);
-        return ref == null ? snd : ref.value();
+            return defaultSound;
+        Identifier ident = Identifier.tryParse(data);
+        if (ident == null)
+            return defaultSound;
+        Reference<SoundEvent> ref = BuiltInRegistries.SOUND_EVENT.get(ident).orElse(null);
+        if (ref != null)
+            return ref.value();
+        return data.contains(":") ? SoundEvent.createVariableRangeEvent(ident) : defaultSound;
     }
 
     private static TrackedEntity getTrackedEntityFolia(Entity entity) {
