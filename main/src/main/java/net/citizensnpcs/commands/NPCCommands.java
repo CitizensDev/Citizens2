@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
@@ -3250,15 +3251,15 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "shopitem [shop name/id] [item index] [reset_purchase_history] (--page [page])",
+            usage = "shopitem [shop name/id] [reset_purchases] [item index|all] (--page [page])",
             desc = "",
             modifiers = { "shopitem" },
-            min = 6,
-            max = 7,
+            min = 4,
+            max = 5,
             permission = "citizens.npc.shopitem")
     @Requirements(selected = false, ownership = true)
     public void shopitem(CommandContext args, CommandSender sender, NPC npc, @Arg(1) String shopName,
-            @Arg(2) Integer index, @Arg(value = 3, completions = { "reset_purchase_history" }) String operation,
+            @Arg(value = 2, completions = { "reset_purchases" }) String operation, @Arg(3) String index,
             @Flag("page") Integer page) throws CommandException {
         NPCShop shop = shopName == null && npc != null ? npc.getOrAddTrait(ShopTrait.class).getDefaultShop()
                 : shops.getShop(shopName);
@@ -3269,19 +3270,23 @@ public class NPCCommands {
         if (!shop.canEdit(npc, sender))
             throw new NoPermissionsException();
 
-        if (page == null || page < 1) {
-            page = 1;
+        Stream<NPCShopItem> stream = null;
+        if (index.equals("all")) {
+            stream = shop.getPages().stream().flatMap(p -> p.getItems().stream());
+        } else {
+            NPCShopPage shopPage = shop.getPages().get(page);
+            if (page == null || page < 1) {
+                page = 1;
+            }
+            if (--page < shop.getPages().size())
+                throw new CommandException(Messages.SHOP_PAGE_NOT_FOUND, page + 1, shop.getPages().size());
+            NPCShopItem item = shopPage.getItem(Integer.parseInt(index));
+            if (item == null)
+                throw new CommandException(Messages.SHOP_ITEM_NOT_FOUND, index);
+            stream = Stream.of(item);
         }
-        if (--page < shop.getPages().size())
-            throw new CommandException(Messages.SHOP_PAGE_NOT_FOUND, page + 1, shop.getPages().size());
-
-        NPCShopPage shopPage = shop.getPages().get(page);
-        NPCShopItem item = shopPage.getItem(index);
-        if (item == null)
-            throw new CommandException(Messages.SHOP_ITEM_NOT_FOUND, index);
-
-        if ("reset_purchase_history".equals(operation)) {
-            item.resetPurchaseHistory();
+        if ("reset_purchases".equals(operation)) {
+            stream.forEach(i -> i.resetPurchaseHistory());
         } else {
             throw new CommandUsageException();
         }

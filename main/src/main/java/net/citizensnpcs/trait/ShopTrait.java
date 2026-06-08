@@ -3,6 +3,7 @@ package net.citizensnpcs.trait;
 import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -902,6 +903,10 @@ public class ShopTrait extends Trait {
 
         public NPCShopItem getItem(int idx) {
             return items.get(idx);
+        }
+
+        public Collection<NPCShopItem> getItems() {
+            return items.values();
         }
 
         public ItemStack getNextPageItem(Player player, int idx) {
