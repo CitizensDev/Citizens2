@@ -103,7 +103,7 @@ public class Controllable extends Trait {
         }
     }
 
-    @TraitEventHandler(@EventHandler)
+    @TraitEventHandler
     private void onRightClick(NPCRightClickEvent event) {
         if (!enabled || !npc.isSpawned())
             return;

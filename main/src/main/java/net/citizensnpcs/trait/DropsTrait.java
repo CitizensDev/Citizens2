@@ -9,7 +9,6 @@ import java.util.Random;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -41,7 +40,7 @@ public class DropsTrait extends Trait {
         InventoryMenu.createSelfRegistered(new DropsGUI(this)).present(sender);
     }
 
-    @TraitEventHandler(@EventHandler)
+    @TraitEventHandler
     public void onNPCDeath(NPCDeathEvent event) {
         Random random = Util.getFastRandom();
         for (ItemDrop drop : drops) {

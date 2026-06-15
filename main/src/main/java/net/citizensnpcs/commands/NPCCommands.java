@@ -2,6 +2,7 @@ package net.citizensnpcs.commands;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URI;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -43,7 +44,9 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
@@ -1190,6 +1193,45 @@ public class NPCCommands {
         String expression = CitizensAPI.getExpressionRegistry().applyDefaultExpressionMarkup(args.getJoinedStrings(1));
         ExpressionScope scope = npc == null ? new ExpressionScope() : NPCExpressionScope.createFor(npc);
         Messaging.send(sender, CitizensAPI.getExpressionRegistry().parseValue(expression).evaluate(scope));
+    }
+
+    @Command(
+            aliases = { "npc" },
+            usage = "fish [cast_out|reel_in] [location]",
+            desc = "",
+            modifiers = { "fish" },
+            min = 2,
+            max = 3,
+            permission = "citizens.npc.fish")
+    @Requirements(selected = true, ownership = true, types = { EntityType.PLAYER })
+    public void fish(CommandContext args, CommandSender sender, NPC npc,
+            @Arg(value = 1, completions = { "cast_out", "reel_in" }) String command, @Arg(2) Location to)
+            throws CommandException {
+        if (command.equalsIgnoreCase("cast_out")) {
+            Player player = (Player) npc.getEntity();
+            if (player.getItemInHand().getType() != Material.FISHING_ROD)
+                throw new CommandException("NPC must hold a fishing rod");
+            LivingEntity le = (LivingEntity) npc.getEntity();
+            PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
+            FishHook hook = le.launchProjectile(FishHook.class);
+            hook.setVelocity(to.toVector().subtract(le.getLocation().toVector()).normalize());
+            npc.data().set("fish_uuid", hook.getUniqueId());
+            return;
+        } else if (command.equalsIgnoreCase("reel_in")) {
+            if (!npc.data().has("fish_uuid"))
+                return;
+            UUID uuid = npc.data().get("fish_uuid");
+            Entity entity = Bukkit.getEntity(uuid);
+            if (entity != null) {
+                if (npc.getEntity() instanceof Player) {
+                    PlayerAnimation.ARM_SWING.play((Player) npc.getEntity());
+                }
+                entity.remove();
+            }
+            npc.data().remove("fish_uuid");
+            return;
+        }
+        throw new CommandUsageException();
     }
 
     @Command(
@@ -3036,7 +3078,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "rotationsettings [linear|immediate] (--link_body) (--head_only) (--max_pitch_per_tick) (--max_yaw_per_tick) (--pitch_range) (--yaw_range)",
+            usage = "rotationsettings [linear|immediate] (--link_body) (--head_only) (--lock_pitch) (--max_pitch_per_tick) (--max_yaw_per_tick) (--pitch_range) (--yaw_range)",
             desc = "",
             modifiers = { "rotationsettings" },
             min = 2,
@@ -3044,8 +3086,8 @@ public class NPCCommands {
             permission = "citizens.npc.rotationsettings")
     public void rotationsettings(CommandContext args, CommandSender sender, NPC npc,
             @Arg(value = 1, completions = { "linear", "immediate" }) String type, @Flag("link_body") Boolean linkBody,
-            @Flag("head_only") Boolean headOnly, @Flag("max_pitch_per_tick") Float maxPitchPerTick,
-            @Flag("max_yaw_per_tick") Float maxYawPerTick,
+            @Flag("lock_pitch") Boolean lockPitch, @Flag("head_only") Boolean headOnly,
+            @Flag("max_pitch_per_tick") Float maxPitchPerTick, @Flag("max_yaw_per_tick") Float maxYawPerTick,
             @Flag(value = "pitch_range", validator = FloatArrayFlagValidator.class) float[] pitchRange,
             @Flag(value = "yaw_range", validator = FloatArrayFlagValidator.class) float[] yawRange)
             throws CommandException {
@@ -3058,6 +3100,9 @@ public class NPCCommands {
         }
         if (headOnly != null) {
             params.headOnly(headOnly);
+        }
+        if (lockPitch != null) {
+            params.lockPitch(lockPitch);
         }
         if (maxPitchPerTick != null) {
             params.maxPitchPerTick(maxPitchPerTick);
@@ -3382,12 +3427,12 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "skin (-e(xport) -c(lear) -l(atest) -s(kull) -b(edrock)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
+            usage = "skin (-e(xport) -c(lear) -l(atest) -s(kull) -b(edrock) -u(rl)) [name] (or --url [url] --file [file] (-s(lim)) or -t [uuid/name] [data] [signature])",
             desc = "",
             modifiers = { "skin" },
             min = 1,
             max = 4,
-            flags = "bectls",
+            flags = "clusbet",
             permission = "citizens.npc.skin")
     public void skin(CommandContext args, CommandSender sender, NPC npc, @Flag("url") String url,
             @Flag("file") String file) throws CommandException {
@@ -3400,6 +3445,22 @@ public class NPCCommands {
         if (args.hasFlag('c')) {
             trait.clearTexture();
             Messaging.sendTr(sender, Messages.SKIN_CLEARED);
+            return;
+        } else if (args.hasFlag('u')) {
+            if (trait.getTexture() == null)
+                throw new CommandException(Messages.SKIN_REQUIRED);
+
+            try {
+                JSONObject data = (JSONObject) new JSONParser()
+                        .parse(new String(BaseEncoding.base64().decode(trait.getTexture())));
+                JSONObject textures = (JSONObject) data.get("textures");
+                JSONObject skinObj = (JSONObject) textures.get("SKIN");
+                URL textureUrl = URI.create(skinObj.get("url").toString().replace("\\", "")).toURL();
+
+                Messaging.send(sender, textureUrl);
+            } catch (Exception e) {
+                throw new CommandException("Couldn't parse texture: " + e.getMessage());
+            }
             return;
         } else if (args.hasFlag('e')) {
             if (trait.getTexture() == null)
@@ -3416,7 +3477,7 @@ public class NPCCommands {
                         .parse(new String(BaseEncoding.base64().decode(trait.getTexture())));
                 JSONObject textures = (JSONObject) data.get("textures");
                 JSONObject skinObj = (JSONObject) textures.get("SKIN");
-                URL textureUrl = new URL(skinObj.get("url").toString().replace("\\", ""));
+                URL textureUrl = URI.create(skinObj.get("url").toString().replace("\\", "")).toURL();
 
                 if (!textureUrl.getHost().equals("textures.minecraft.net"))
                     throw new CommandException(Messages.ERROR_SETTING_SKIN_URL, "Mojang");

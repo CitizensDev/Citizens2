@@ -50,6 +50,7 @@ import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.HomeTrait;
 import net.citizensnpcs.trait.HorseModifiers;
 import net.citizensnpcs.trait.ItemFrameTrait;
+import net.citizensnpcs.trait.LeashedTrait;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.MirrorTrait;
 import net.citizensnpcs.trait.MountTrait;
@@ -116,6 +117,7 @@ public class CitizensTraitFactory implements TraitFactory, Listener {
         registerTrait(TraitInfo.create(Equipment.class));
         registerTrait(TraitInfo.create(FollowTrait.class).optInToStats());
         registerTrait(TraitInfo.create(ForcefieldTrait.class).optInToStats());
+        registerTrait(TraitInfo.create(LeashedTrait.class).optInToStats().asDefaultTrait());
         registerTrait(TraitInfo.create(GameModeTrait.class));
         registerTrait(TraitInfo.create(Gravity.class));
         registerTrait(TraitInfo.create(HomeTrait.class).optInToStats());

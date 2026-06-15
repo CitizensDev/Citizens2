@@ -13,7 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import net.citizensnpcs.Settings.Setting;
@@ -144,7 +143,7 @@ public class Text extends Trait implements Runnable, Listener {
         range = key.getDouble("range", Setting.DEFAULT_TALK_CLOSE_RANGE.asDouble());
     }
 
-    @TraitEventHandler(@EventHandler)
+    @TraitEventHandler
     private void onRightClick(NPCRightClickEvent event) {
         if (text.size() == 0)
             return;

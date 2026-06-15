@@ -236,10 +236,17 @@ public class RotationTrait extends Trait {
 
     public static class RotationParams implements Persistable, Cloneable {
         private Function<Player, Boolean> filter;
-        private boolean headOnly = false;
-        private boolean immediate = false;
+        @Persist
+        private boolean headOnly;
+        @Persist
+        private boolean immediate;
+        @Persist
         private boolean linkedBody;
+        @Persist
+        private boolean lockPitch;
+        @Persist
         private float maxPitchPerTick = 10;
+        @Persist
         private float maxYawPerTick = 40;
         private volatile boolean persist = false;
         private float[] pitchRange = { -180, 180 };
@@ -289,21 +296,6 @@ public class RotationTrait extends Trait {
 
         @Override
         public void load(DataKey key) {
-            if (key.keyExists("headOnly")) {
-                headOnly = key.getBoolean("headOnly");
-            }
-            if (key.keyExists("immediate")) {
-                immediate = key.getBoolean("immediate");
-            }
-            if (key.keyExists("maxPitchPerTick")) {
-                maxPitchPerTick = (float) key.getDouble("maxPitchPerTick");
-            }
-            if (key.keyExists("maxYawPerTick")) {
-                maxYawPerTick = (float) key.getDouble("maxYawPerTick");
-            }
-            if (key.keyExists("linkedBody")) {
-                linkedBody = key.getBoolean("linkedBody");
-            }
             if (key.keyExists("yawRange")) {
                 String[] parts = key.getString("yawRange").split(",");
                 yawRange = new float[] { Float.parseFloat(parts[0]), Float.parseFloat(parts[1]) };
@@ -312,6 +304,11 @@ public class RotationTrait extends Trait {
                 String[] parts = key.getString("pitchRange").split(",");
                 pitchRange = new float[] { Float.parseFloat(parts[0]), Float.parseFloat(parts[1]) };
             }
+        }
+
+        public RotationParams lockPitch(boolean lockPitch) {
+            this.lockPitch = lockPitch;
+            return this;
         }
 
         public RotationParams maxPitchPerTick(float val) {
@@ -344,13 +341,6 @@ public class RotationTrait extends Trait {
             return Util.clamp(out, pitchRange[0], pitchRange[1], 360);
         }
 
-        /*
-         *  public Vector3 SuperSmoothVector3Lerp( Vector3 pastPosition, Vector3 pastTargetPosition, Vector3 targetPosition, float time, float speed ){
-         Vector3 f = pastPosition - pastTargetPosition + (targetPosition - pastTargetPosition) / (speed * time);
-         return targetPosition - (targetPosition - pastTargetPosition) / (speed*time) + f * Mathf.Exp(-speed*time);
-         }
-         */
-
         private float rotateTowards(float target, float current, float maxRotPerTick) {
             float diff = Util.clamp(current - target);
             return target + clamp(diff, -maxRotPerTick, maxRotPerTick);
@@ -358,22 +348,6 @@ public class RotationTrait extends Trait {
 
         @Override
         public void save(DataKey key) {
-            if (headOnly) {
-                key.setBoolean("headOnly", headOnly);
-            }
-            if (immediate) {
-                key.setBoolean("immediate", immediate);
-            }
-            if (maxPitchPerTick != 10) {
-                key.setDouble("maxPitchPerTick", maxPitchPerTick);
-            } else {
-                key.removeKey("maxPitchPerTick");
-            }
-            if (maxYawPerTick != 40) {
-                key.setDouble("maxYawPerTick", maxYawPerTick);
-            } else {
-                key.removeKey("maxYawPerTick");
-            }
             if (pitchRange[0] != -180 || pitchRange[1] != 180) {
                 key.setString("pitchRange", pitchRange[0] + "," + pitchRange[1]);
             } else {
@@ -450,7 +424,7 @@ public class RotationTrait extends Trait {
          */
         public void rotateToFace(Location target) {
             t = 0;
-            targetPitch = () -> {
+            targetPitch = params.lockPitch ? getEyeLocation()::getPitch : () -> {
                 Location from = getEyeLocation();
                 double dx = target.getX() - from.getX();
                 double dy = target.getY() - from.getY();
@@ -476,7 +450,7 @@ public class RotationTrait extends Trait {
         public void rotateToHave(float yaw, float pitch) {
             t = 0;
             targetYaw = () -> yaw;
-            targetPitch = () -> pitch;
+            targetPitch = params.lockPitch ? getEyeLocation()::getPitch : () -> pitch;
         }
 
         private void run(RotationTriple rot) {

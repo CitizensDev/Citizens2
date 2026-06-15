@@ -87,7 +87,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             return null;
         } else if (args.hasValueFlag("at")) {
             try {
-                Location location = CommandContext.parseLocation(args.getSenderLocation(), args.getFlag("at"));
+                Location location = args.parseLocation(args.getFlag("at"));
                 if (location != null) {
                     waypoints.add(new Waypoint(location));
                 }

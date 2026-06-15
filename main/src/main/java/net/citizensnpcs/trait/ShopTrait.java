@@ -129,7 +129,7 @@ public class ShopTrait extends Trait {
         shops.deleteShop(getDefaultShop());
     }
 
-    @TraitEventHandler(@EventHandler)
+    @TraitEventHandler
     public void onRightClick(NPCRightClickEvent event) {
         if (rightClickShop == null || rightClickShop.isEmpty())
             return;
@@ -499,7 +499,8 @@ public class ShopTrait extends Trait {
             if (isVisibleExpression != null) {
                 try {
                     CompiledExpression expr = CitizensAPI.getExpressionRegistry().compile(isVisibleExpression);
-                    if (!expr.evaluateAsBoolean(ExpressionScope.create(player)))
+                    ExpressionScope scope = ExpressionScope.create(player);
+                    if (!expr.evaluateAsBoolean(scope))
                         return null;
                 } catch (ExpressionCompileException e) {
                     e.printStackTrace();
@@ -540,7 +541,8 @@ public class ShopTrait extends Trait {
             if (isClickableExpression != null) {
                 try {
                     CompiledExpression expr = CitizensAPI.getExpressionRegistry().compile(isClickableExpression);
-                    if (!expr.evaluateAsBoolean(ExpressionScope.create(player)))
+                    ExpressionScope scope = ExpressionScope.create(player);
+                    if (!expr.evaluateAsBoolean(scope))
                         return;
                 } catch (ExpressionCompileException e) {
                     e.printStackTrace();
