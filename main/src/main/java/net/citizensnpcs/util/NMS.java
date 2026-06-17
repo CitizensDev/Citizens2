@@ -783,9 +783,8 @@ public class NMS {
         }
         switch (version[0]) {
             case 26:
-                if (version[1] == 1) {
-                    rev = "v26_1_R1";
-                }
+            case 27:
+                rev = "v26_" + version[1] + "_R1";
                 break;
         }
         Class<?> entity = null;
