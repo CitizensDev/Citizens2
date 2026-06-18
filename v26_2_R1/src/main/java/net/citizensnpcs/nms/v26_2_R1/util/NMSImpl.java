@@ -2267,9 +2267,15 @@ public class NMSImpl implements NMSBridge {
         map.clear();
     }
 
-    public static void clearGoals(NPC npc, GoalSelector... goalSelectors) {
-        if (goalSelectors == null)
+    public static void clearGoals(NPC npc, Mob entity) {
+        GoalSelector[] goalSelectors;
+        try {
+            goalSelectors = new GoalSelector[] { (GoalSelector) GOAL_SELECTOR.invoke(entity),
+                    (GoalSelector) TARGET_SELECTOR.invoke(entity) };
+        } catch (Throwable e) {
+            e.printStackTrace();
             return;
+        }
         int i = 0;
         for (GoalSelector selector : goalSelectors) {
             try {
@@ -2461,7 +2467,7 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    };
+    }
 
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
@@ -2489,7 +2495,7 @@ public class NMSImpl implements NMSBridge {
             return true;
         }
         return false;
-    }
+    };
 
     public static void moveLogic(LivingEntity entity, Vec3 v) {
         if (entity.isEffectiveAi() || entity.canSimulateMovement()) {
@@ -2730,9 +2736,15 @@ public class NMSImpl implements NMSBridge {
         map.putAll(npc.data().get("efi"));
     }
 
-    public static void restoreGoals(NPC npc, GoalSelector... goalSelectors) {
-        if (goalSelectors == null)
+    public static void restoreGoals(NPC npc, Mob entity) {
+        GoalSelector[] goalSelectors;
+        try {
+            goalSelectors = new GoalSelector[] { (GoalSelector) GOAL_SELECTOR.invoke(entity),
+                    (GoalSelector) TARGET_SELECTOR.invoke(entity) };
+        } catch (Throwable e) {
+            e.printStackTrace();
             return;
+        }
         int i = 0;
         for (GoalSelector selector : goalSelectors) {
             try {
@@ -2906,7 +2918,7 @@ public class NMSImpl implements NMSBridge {
         if (npc == null)
             return;
         if (npc.useMinecraftAI()) {
-            restoreGoals(npc, entity.goalSelector, entity.targetSelector);
+            restoreGoals(npc, entity);
             if (npc.data().has("brain")) {
                 try {
                     BRAIN_SETTER.invoke(entity, npc.data().get("brain"));
@@ -2916,7 +2928,7 @@ public class NMSImpl implements NMSBridge {
                 npc.data().remove("brain");
             }
         } else {
-            clearGoals(npc, entity.goalSelector, entity.targetSelector);
+            clearGoals(npc, entity);
             Map behaviorMap = getBehaviorMap(entity);
             if (!npc.data().has("brain") || behaviorMap.size() > 0) {
                 npc.data().set("brain", entity.getBrain());
@@ -2956,8 +2968,10 @@ public class NMSImpl implements NMSBridge {
 
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
+
     private static final MethodHandle ATTRIBUTE_SUPPLIER = NMS.getFirstGetter(AttributeMap.class,
             AttributeSupplier.class);
+
     private static final MethodHandle AVAILABLE_BEHAVIORS_BY_PRIORITY = NMS.getGetter(Brain.class,
             "availableBehaviorsByPriority");
     private static final Set<EntityType> BAD_CONTROLLER_LOOK = EnumSet.of(EntityType.POLAR_BEAR, EntityType.BEE,
@@ -3009,6 +3023,7 @@ public class NMSImpl implements NMSBridge {
             boolean.class);
     private static final Location FROM_LOCATION = new Location(null, 0, 0, 0);
     private static final MethodHandle GET_BLOCK_STATE;
+    private static final MethodHandle GOAL_SELECTOR = NMS.getGetter(Mob.class, "goalSelector");
     private static final EntityDataAccessor<Float> INTERACTION_HEIGHT = NMS.getStaticObject(Interaction.class,
             "DATA_HEIGHT_ID");
     private static final EntityDataAccessor<Float> INTERACTION_WIDTH = NMS.getStaticObject(Interaction.class,
@@ -3054,6 +3069,7 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle SIZE_FIELD_GETTER = NMS.getFirstGetter(Entity.class, EntityDimensions.class);
     private static final MethodHandle SIZE_FIELD_SETTER = NMS.getFirstSetter(Entity.class, EntityDimensions.class);
     private static MethodHandle SKULL_META_PROFILE;
+    private static final MethodHandle TARGET_SELECTOR = NMS.getGetter(Mob.class, "goalSelector");
     private static MethodHandle TEAM_FIELD;
     private static final Collection<MethodHandle> TRACKED_ENTITY_SETTERS = NMS.getSettersOfType(Entity.class,
             TrackedEntity.class);

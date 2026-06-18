@@ -17,7 +17,6 @@ import net.citizensnpcs.npc.AbstractEntityController;
 import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.level.Level;
@@ -38,7 +37,7 @@ public abstract class MobEntityController extends AbstractEntityController {
                 npc);
         NMSImpl.clearFluidTracker(npc, entity);
         if (entity instanceof Mob) {
-            NMSImpl.clearGoals(npc, ((Mob) entity).goalSelector, ((Mob) entity).targetSelector);
+            NMSImpl.clearGoals(npc, ((Mob) entity));
             Mob mob = (Mob) entity;
             if (mob.getLookControl().getClass() == LookControl.class) {
                 NMSImpl.setLookControl(mob, new PitchableLookControl(mob));
@@ -74,10 +73,10 @@ public abstract class MobEntityController extends AbstractEntityController {
         if (constructor != null)
             return constructor;
         try {
-            CONSTRUCTOR_CACHE.put(clazz, constructor = clazz.getConstructor(EntityTypes.class, Level.class, NPC.class));
+            CONSTRUCTOR_CACHE.put(clazz, constructor = clazz.getConstructor(EntityType.class, Level.class, NPC.class));
             return constructor;
         } catch (Exception ex) {
-            throw new IllegalStateException("unable to find an entity constructor");
+            throw new IllegalStateException("unable to find an entity constructor for " + clazz);
         }
     }
 
