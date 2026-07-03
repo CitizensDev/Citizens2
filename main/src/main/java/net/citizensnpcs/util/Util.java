@@ -459,6 +459,7 @@ public class Util {
         TWO_DIGIT_DECIMAL.setMaximumFractionDigits(2);
         try {
             ItemMeta.class.getMethod("hasEquippable");
+            SUPPORTS_HAS_EQUIPPABLE = true;
         } catch (NoSuchMethodException e) {
             SUPPORTS_HAS_EQUIPPABLE = false;
         }
