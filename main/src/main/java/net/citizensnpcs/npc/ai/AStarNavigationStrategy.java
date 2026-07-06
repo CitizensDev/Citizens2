@@ -66,8 +66,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         destination = dest;
         // TODO: simplify
         if (params.pathfinderType() == PathfinderType.CITIZENS_ASYNC) {
-            planner = new AsyncAStarPlanner(CitizensAPI.getAsyncChunkCache()
-                    .findPathAsync(new PathRequest(npc.getEntity().getLocation(), dest, 1, params)));
+            planner = new AsyncAStarPlanner(CitizensAPI.getAsyncChunkCache().findPathAsync(new PathRequest(
+                    npc.getEntity().getLocation(), dest, 1, params,
+                    Setting.CITIZENS_PATHFINDER_MAXIMUM_ASTAR_ITERATIONS.asInt())));
         } else {
             planner = new AStarPlanner(params, npc.getEntity().getLocation(), destination);
         }
@@ -92,6 +93,12 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
     public void stop() {
         if (plan != null && params.debug()) {
             Util.sendBlockChanges(plan.getBlocks(npc.getEntity().getWorld()), null);
+        }
+        // Cancel any in-flight async request; it was previously abandoned on stop(), so every dynamic-target
+        // repath left a live request occupying the worker pool + its captured chunk snapshots.
+        if (planner != null) {
+            planner.cancel();
+            planner = null;
         }
         plan = null;
     }
@@ -224,6 +231,11 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
         }
 
         @Override
+        public void cancel() {
+            future.cancel(true);
+        }
+
+        @Override
         public Path getPath() {
             return path;
         }
@@ -249,6 +261,9 @@ public class AStarNavigationStrategy extends AbstractPathStrategy {
 
     // TODO: lift this into a navigationstrategy rather than this arbitrary interface
     public static interface PathPlanner {
+        default void cancel() {
+        }
+
         public Path getPath();
 
         public CancelReason tick();
