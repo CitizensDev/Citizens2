@@ -25,6 +25,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.boss.enderdragon.DragonFlightHistory.Sample;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
@@ -86,9 +87,9 @@ public class EnderDragonController extends MobEntityController {
                     new double[][] { toa(flightHistory.get(0, 1F)), toa(flightHistory.get(5, 1F)),
                             toa(flightHistory.get(10, 1F)), toa(flightHistory.get(12, 1F)),
                             toa(flightHistory.get(14, 1F)), toa(flightHistory.get(16, 1F)) });
+            EnderDragonPart[] subEntities = getSubEntities();
             for (int j = 0; j < subEntities.length; ++j) {
-                Vec3 vec3 = new Vec3(this.subEntities[j].getX(), this.subEntities[j].getY(),
-                        this.subEntities[j].getZ());
+                Vec3 vec3 = new Vec3(subEntities[j].getX(), subEntities[j].getY(), subEntities[j].getZ());
                 subEntities[j].setPos(this.getX() + pos[j][0], this.getY() + pos[j][1], this.getZ() + pos[j][2]);
                 subEntities[j].xo = subEntities[j].xOld = vec3.x;
                 subEntities[j].yo = subEntities[j].yOld = vec3.y;
