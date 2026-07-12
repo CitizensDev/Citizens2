@@ -22,6 +22,10 @@ public class SleepTrait extends Trait {
         super("sleeptrait");
     }
 
+    public boolean isSleeping() {
+        return sleeping;
+    }
+
     @Override
     public void onDespawn() {
         npc.getOrAddTrait(EntityPoseTrait.class).setPose(null);
