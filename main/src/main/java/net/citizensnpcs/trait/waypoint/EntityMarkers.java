@@ -50,7 +50,9 @@ public class EntityMarkers<T> {
     }
 
     public void destroyMarkers() {
-        registry.deregisterAll();
+        for (Entity entity : markers.values()) {
+            ((NPCHolder) entity).getNPC().destroy();
+        }
         markers.clear();
     }
 

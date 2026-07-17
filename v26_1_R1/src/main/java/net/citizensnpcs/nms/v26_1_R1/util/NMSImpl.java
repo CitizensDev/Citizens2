@@ -1338,18 +1338,6 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
-    public void openHorseInventory(Tameable horse, Player equipper) {
-        LivingEntity handle = getHandle(horse);
-        ServerPlayer equipperHandle = (ServerPlayer) getHandle(equipper);
-        if (handle == null || equipperHandle == null)
-            return;
-        boolean wasTamed = horse.isTamed();
-        horse.setTamed(true);
-        ((AbstractHorse) handle).openCustomInventoryScreen(equipperHandle);
-        horse.setTamed(wasTamed);
-    }
-
-    @Override
     public void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to) {
         PlayerAnimationImpl.play(animation, player, to);
     }

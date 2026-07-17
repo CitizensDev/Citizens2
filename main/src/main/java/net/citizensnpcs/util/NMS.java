@@ -822,10 +822,6 @@ public class NMS {
         return BRIDGE.openAnvilInventory(player, inventory, title);
     }
 
-    public static void openHorseScreen(Tameable horse, Player equipper) {
-        BRIDGE.openHorseInventory(horse, equipper);
-    }
-
     public static void playAnimation(PlayerAnimation animation, Player player, Iterable<Player> to) {
         BRIDGE.playAnimation(animation, player, to);
     }

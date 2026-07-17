@@ -246,6 +246,8 @@ public class Messages {
     public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_SET = "citizens.editors.waypoints.linear.cycle-set";
     public static final String LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET = "citizens.editors.waypoints.linear.cycle-unset";
     public static final String LINEAR_WAYPOINT_EDITOR_END = "citizens.editors.waypoints.linear.end";
+    public static final String LINEAR_WAYPOINT_EDITOR_PATHFIND_SET = "citizens.editors.waypoints.linear.pathfind-set";
+    public static final String LINEAR_WAYPOINT_EDITOR_PATHFIND_UNSET = "citizens.editors.waypoints.linear.pathfind-unset";
     public static final String LINEAR_WAYPOINT_EDITOR_RANGE_EXCEEDED = "citizens.editors.waypoints.linear.range-exceeded";
     public static final String LINEAR_WAYPOINT_EDITOR_REMOVED_WAYPOINT = "citizens.editors.waypoints.linear.removed-waypoint";
     public static final String LINEAR_WAYPOINT_EDITOR_WAYPOINTS_CLEARED = "citizens.editors.waypoints.linear.waypoints-cleared";

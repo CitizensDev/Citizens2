@@ -56,8 +56,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
     private boolean cachePaths = Setting.DEFAULT_CACHE_WAYPOINT_PATHS.asBoolean();
     private LinearWaypointGoal currentGoal;
     @Persist
-    private boolean cycle = false;
+    private boolean cycle;
     private NPC npc;
+    @Persist
+    private boolean pathfind = true;
     private final List<Waypoint> waypoints = new ArrayList<>();
 
     public LinearWaypointProvider() {
@@ -110,6 +112,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         } else if (args.hasFlag('k')) {
             cachePaths = !cachePaths;
             return null;
+        } else if (args.hasFlag('f')) {
+            pathfind = !pathfind;
+            return null;
         } else if (!(sender instanceof Player)) {
             Messaging.sendErrorTr(sender, CommandMessages.MUST_BE_INGAME);
             return null;
@@ -136,9 +141,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
     public void load(DataKey key) {
         for (DataKey root : key.getRelative("points").getIntegerSubKeys()) {
             Waypoint waypoint = PersistenceLoader.load(Waypoint.class, root);
-            if (waypoint == null) {
+            if (waypoint == null)
                 continue;
-            }
+
             waypoints.add(waypoint);
         }
     }
@@ -159,6 +164,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             currentGoal = new LinearWaypointGoal();
             npc.getDefaultBehaviorController().addBehavior(currentGoal);
         }
+    }
+
+    public boolean pathfind() {
+        return pathfind;
     }
 
     @Override
@@ -182,6 +191,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
         if (currentGoal != null) {
             currentGoal.onProviderChanged();
         }
+    }
+
+    public void setPathfind(boolean pathfind) {
+        this.pathfind = pathfind;
     }
 
     @Override
@@ -376,6 +389,13 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                     cycle = !cycle;
                     Messaging.sendTr(event.getPlayer(), cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET
                             : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
+                });
+            } else if (message.equalsIgnoreCase("pathfind")) {
+                event.setCancelled(true);
+                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), () -> {
+                    pathfind = !pathfind;
+                    Messaging.sendTr(event.getPlayer(), pathfind ? Messages.LINEAR_WAYPOINT_EDITOR_PATHFIND_SET
+                            : Messages.LINEAR_WAYPOINT_EDITOR_PATHFIND_UNSET);
                 });
             } else if (message.equalsIgnoreCase("here")) {
                 event.setCancelled(true);
@@ -622,7 +642,12 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 }
             }
             if (!getNavigator().isNavigating()) {
-                getNavigator().setTarget(Util.getCenterLocation(currentDestination.getLocation().getBlock()));
+                if (pathfind) {
+                    getNavigator()
+                            .setStraightLineTarget(Util.getCenterLocation(currentDestination.getLocation().getBlock()));
+                } else {
+                    getNavigator().setTarget(Util.getCenterLocation(currentDestination.getLocation().getBlock()));
+                }
             }
             PathStrategy strategy = getNavigator().getPathStrategy();
             getNavigator().getLocalParameters().addSingleUseCallback(cancelReason -> {

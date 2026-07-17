@@ -8,8 +8,6 @@ import java.util.Objects;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 
-import com.google.common.collect.Lists;
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
@@ -102,9 +100,9 @@ public class Waypoint {
     }
 
     private void runTriggers(NPC npc, int start) {
-        List<WaypointTrigger> triggers = Lists.newArrayList(this.triggers);
-        for (int i = start; i < triggers.size(); i++) {
-            WaypointTrigger trigger = triggers.get(i);
+        WaypointTrigger[] triggers = this.triggers.toArray(new WaypointTrigger[0]);
+        for (int i = start; i < triggers.length; i++) {
+            WaypointTrigger trigger = triggers[i];
             trigger.onWaypointReached(npc, location.clone());
             if (!(trigger instanceof DelayTrigger))
                 continue;
@@ -113,8 +111,13 @@ public class Waypoint {
             if (delay <= 0)
                 continue;
 
+            WaypointProvider provider = npc.getOrAddTrait(Waypoints.class).getCurrentProvider();
+            provider.setPaused(true);
             int newStart = i + 1;
-            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), () -> runTriggers(npc, newStart), delay);
+            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), () -> {
+                provider.setPaused(false);
+                runTriggers(npc, newStart);
+            }, delay);
             break;
         }
     }
