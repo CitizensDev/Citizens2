@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -207,6 +208,17 @@ public class ShopTrait extends Trait {
 
         public String getName() {
             return name == null ? "" : name;
+        }
+
+        public Optional<NPC> getNPC() {
+            if (name.contains("-")) {
+                try {
+                    UUID uuid = UUID.fromString(name);
+                    return Optional.ofNullable(CitizensAPI.getNPCRegistry().getByUniqueIdGlobal(uuid));
+                } catch (IllegalArgumentException e) {
+                }
+            }
+            return Optional.empty();
         }
 
         public NPCShopPage getOrCreatePage(int page) {
