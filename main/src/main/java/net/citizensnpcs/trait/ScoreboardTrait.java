@@ -226,7 +226,7 @@ public class ScoreboardTrait extends Trait {
                 continue;
 
             if (metadata.has(player.getUniqueId(), team.getName())) {
-                team.sendToPlayer(player, AbstractTeam.SendMode.ADD_OR_MODIFY);
+                team.sendToPlayer(player, AbstractTeam.SendMode.UPDATE);
             } else {
                 team.sendToPlayer(player, AbstractTeam.SendMode.ADD_OR_MODIFY);
 
