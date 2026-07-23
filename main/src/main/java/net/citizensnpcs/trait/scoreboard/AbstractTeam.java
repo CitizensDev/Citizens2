@@ -255,7 +255,8 @@ public interface AbstractTeam {
      */
     enum SendMode {
         ADD_OR_MODIFY(0),
-        REMOVE(1);
+        REMOVE(1),
+        UPDATE(2);
 
         private final int value;
 
