@@ -32,6 +32,8 @@ public class OpenShopAction extends NPCShopAction {
     @Override
     public String describe() {
         NPCShop shop = ((Citizens) CitizensAPI.getPlugin()).getShops().getShop(shopName);
+        if (shop == null)
+            return "Open Shop (currently unset)";
         String description = "Open " + shop.getName();
         return description;
     }
