@@ -1,10 +1,8 @@
 package net.citizensnpcs.npc.skin;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -12,6 +10,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.annotation.Nullable;
 
@@ -37,8 +37,8 @@ import net.citizensnpcs.util.Util;
  * @see net.citizensnpcs.EventListen
  */
 public class SkinUpdateTracker {
-    private final Map<SkinnableEntity, Void> navigating = new WeakHashMap<>(25);
-    private final Map<UUID, PlayerTracker> playerTrackers = new HashMap<>(
+    private final Map<SkinnableEntity, Void> navigating = Collections.synchronizedMap(new WeakHashMap<>(25));
+    private final Map<UUID, PlayerTracker> playerTrackers = new ConcurrentHashMap<>(
             Math.max(128, Math.min(1024, Bukkit.getMaxPlayers() / 2)));
     private final NPCNavigationUpdater updater = new NPCNavigationUpdater();
 
@@ -111,7 +111,11 @@ public class SkinUpdateTracker {
     private void getNewVisibleNavigating(Player player, Collection<SkinnableEntity> output) {
         PlayerTracker tracker = getTracker(player, false);
 
-        for (SkinnableEntity skinnable : navigating.keySet()) {
+        List<SkinnableEntity> snapshot;
+        synchronized (navigating) {
+            snapshot = new ArrayList<>(navigating.keySet());
+        }
+        for (SkinnableEntity skinnable : snapshot) {
             // make sure player hasn't already been updated to prevent excessive tab list flashing
             // while NPC's are navigating and to reduce the number of times #canSee is invoked.
             if (tracker.fovVisibleSkins.contains(skinnable))
@@ -133,11 +137,8 @@ public class SkinUpdateTracker {
 
     // get a players tracker, create new one if not exists.
     private PlayerTracker getTracker(Player player, boolean reset) {
-        PlayerTracker tracker = playerTrackers.get(player.getUniqueId());
-        if (tracker == null) {
-            tracker = new PlayerTracker(player);
-            playerTrackers.put(player.getUniqueId(), tracker);
-        } else if (reset) {
+        PlayerTracker tracker = playerTrackers.computeIfAbsent(player.getUniqueId(), ignored -> new PlayerTracker(player));
+        if (reset) {
             tracker.hardReset(player);
         }
         return tracker;
@@ -333,12 +334,12 @@ public class SkinUpdateTracker {
     // Updates players. Repeating task used to schedule updates without
     // causing excessive scheduling.
     private static class NPCNavigationUpdater extends SchedulerRunnable {
-        Queue<UpdateInfo> queue = new ArrayDeque<>(20);
+        final Queue<UpdateInfo> queue = new ConcurrentLinkedQueue<>();
 
         @Override
         public void run() {
-            while (!queue.isEmpty()) {
-                UpdateInfo info = queue.remove();
+            UpdateInfo info;
+            while ((info = queue.poll()) != null) {
                 info.entity.getSkinTracker().updateViewer(info.player);
             }
         }
@@ -347,7 +348,7 @@ public class SkinUpdateTracker {
     // Tracks player location and yaw to determine when the player should be updated
     // with nearby skins.
     private static class PlayerTracker {
-        Set<SkinnableEntity> fovVisibleSkins = new HashSet<>(10);
+        final Set<SkinnableEntity> fovVisibleSkins = ConcurrentHashMap.newKeySet();
         boolean hasMoved;
         Location location = new Location(null, 0, 0, 0);
         float lowerBound;
@@ -360,7 +361,7 @@ public class SkinUpdateTracker {
         }
 
         // reset all
-        void hardReset(Player player) {
+        synchronized void hardReset(Player player) {
             hasMoved = false;
             rotationCount = 0;
             lowerBound = upperBound = startYaw = 0;
@@ -369,7 +370,7 @@ public class SkinUpdateTracker {
         }
 
         // resets initial yaw and location to the players current location and yaw.
-        void reset(Player player) {
+        synchronized void reset(Player player) {
             player.getLocation(location);
             if (rotationCount < 3) {
                 float rotationDegrees = Setting.NPC_SKIN_ROTATION_UPDATE_DEGREES.asFloat();
@@ -383,7 +384,7 @@ public class SkinUpdateTracker {
             }
         }
 
-        boolean shouldUpdate(Player player) {
+        synchronized boolean shouldUpdate(Player player) {
             if (SUPPORTS_WORLD_LOADED && !location.isWorldLoaded()) {
                 hardReset(player);
                 return true;
@@ -425,8 +426,8 @@ public class SkinUpdateTracker {
     }
 
     private static class UpdateInfo {
-        SkinnableEntity entity;
-        Player player;
+        final SkinnableEntity entity;
+        final Player player;
 
         UpdateInfo(Player player, SkinnableEntity entity) {
             this.player = player;
