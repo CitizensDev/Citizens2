@@ -222,8 +222,12 @@ public class ItemAction extends NPCShopAction {
 
     private String stringify(ItemStack item) {
         if (SUPPORT_TRANSLATABLE) {
-            return BukkitComponentSerializer.legacy().serialize(Component.text(item.getAmount() + " ")
-                    .append(Component.translatable().key(item.getTranslationKey())));
+            try {
+                return BukkitComponentSerializer.legacy().serialize(Component.text(item.getAmount() + " ")
+                        .append(Component.translatable().key(item.getTranslationKey())));
+            } catch (NullPointerException ex) {
+                // a null itemstack craftDelegate can cause an exception when getting the translation key
+            }
         }
         return item.getAmount() + " " + Util.prettyEnum(item.getType());
     }

@@ -38,7 +38,6 @@ import net.citizensnpcs.api.event.NPCDespawnEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.editor.Editor;
@@ -60,6 +59,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
     private NPC npc;
     @Persist
     private boolean pathfind = true;
+    @Persist(value = "points", reify = true, valueType = Waypoint.class)
     private final List<Waypoint> waypoints = new ArrayList<>();
 
     public LinearWaypointProvider() {
@@ -139,13 +139,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
     @Override
     public void load(DataKey key) {
-        for (DataKey root : key.getRelative("points").getIntegerSubKeys()) {
-            Waypoint waypoint = PersistenceLoader.load(Waypoint.class, root);
-            if (waypoint == null)
-                continue;
-
-            waypoints.add(waypoint);
-        }
     }
 
     @Override
@@ -172,11 +165,6 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
 
     @Override
     public void save(DataKey key) {
-        key.removeKey("points");
-        DataKey root = key.getRelative("points");
-        for (int i = 0; i < waypoints.size(); ++i) {
-            PersistenceLoader.save(waypoints.get(i), root.getRelative(i));
-        }
     }
 
     public void setCachePaths(boolean cachePaths) {
@@ -655,7 +643,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 if (cancelReason != null || waypoint == null)
                     return;
                 waypoint.onReach(npc);
-                if (cachePaths && strategy != null) {
+                if (cachePaths && strategy != null && strategy.getPath() != null) {
                     Iterable<Vector> path = strategy.getPath();
                     if (Iterables.size(path) > 0) {
                         cachedPaths.put(new SourceDestinationPair(npcLoc, waypoint), path);

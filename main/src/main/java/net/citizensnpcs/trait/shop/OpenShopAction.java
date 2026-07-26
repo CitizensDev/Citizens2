@@ -33,7 +33,7 @@ public class OpenShopAction extends NPCShopAction {
     public String describe() {
         NPCShop shop = ((Citizens) CitizensAPI.getPlugin()).getShops().getShop(shopName);
         if (shop == null)
-            return "Open Shop (currently unset)";
+            return "Open shop (currently unset)";
         String description = "Open " + shop.getName();
         return description;
     }
@@ -74,6 +74,11 @@ public class OpenShopAction extends NPCShopAction {
             OpenShopAction action = previous == null ? new OpenShopAction() : (OpenShopAction) previous;
             return InputMenus.stringSetter(() -> action.shopName, s -> {
                 if (s == null || s.isEmpty()) {
+                    callback.accept(null);
+                    return;
+                }
+                NPCShop shop = ((Citizens) CitizensAPI.getPlugin()).getShops().getShop(s);
+                if (shop == null) {
                     callback.accept(null);
                     return;
                 }
