@@ -428,9 +428,15 @@ public class NMSImpl implements NMSBridge {
 
     @Override
     public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, Consumer<Boolean> isAdded) {
+        boolean canvasPlayer = "Canvas".equals(Bukkit.getName()) && entity instanceof Player;
         Runnable task = () -> {
             Entity handle = getHandle(entity);
             ServerLevel level = (ServerLevel) handle.level();
+            ServerPlayer player = canvasPlayer ? (ServerPlayer) handle : null;
+            Collection<Connection> regionConnections = player == null ? null : getCanvasRegionConnections(level);
+            Connection connection = player == null ? null : getCanvasConnection(player);
+            boolean addedConnection = regionConnections != null && connection != null
+                    && !regionConnections.contains(connection) && regionConnections.add(connection);
             int viewDistance = -1;
             ChunkMap chunkMap = null;
             if (entity instanceof Player) {
@@ -438,9 +444,16 @@ public class NMSImpl implements NMSBridge {
                 viewDistance = chunkMap.serverViewDistance;
                 chunkMap.serverViewDistance = -1;
             }
-            boolean success = level.addFreshEntity(handle, custom);
-            if (chunkMap != null) {
-                chunkMap.serverViewDistance = viewDistance;
+            boolean success;
+            try {
+                success = level.addFreshEntity(handle, custom);
+            } finally {
+                if (addedConnection) {
+                    regionConnections.remove(connection);
+                }
+                if (chunkMap != null) {
+                    chunkMap.serverViewDistance = viewDistance;
+                }
             }
             isAdded.accept(success);
         };
@@ -450,6 +463,28 @@ public class NMSImpl implements NMSBridge {
                     location.getBlockZ() >> 4, task);
         } else {
             task.run();
+        }
+    }
+
+    private static Connection getCanvasConnection(ServerPlayer player) {
+        if (CANVAS_CONNECTION == null)
+            return null;
+        try {
+            return (Connection) CANVAS_CONNECTION.invoke(player.connection);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static Collection<Connection> getCanvasRegionConnections(ServerLevel level) {
+        if (CANVAS_CURRENT_WORLD_DATA == null || CANVAS_REGION_CONNECTIONS == null)
+            return null;
+        try {
+            return (Collection<Connection>) CANVAS_REGION_CONNECTIONS.invoke(CANVAS_CURRENT_WORLD_DATA.invoke(level));
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -1437,8 +1472,8 @@ public class NMSImpl implements NMSBridge {
                 entry = getTrackedEntityFolia(handle);
                 if (entry == null)
                     return;
-                entry.broadcastRemoved();
                 CitizensEntityTracker newTracker = new CitizensEntityTracker(server.getChunkSource().chunkMap, entry);
+                CitizensEntityTracker.transferSeenBy(entry, newTracker);
                 try {
                     ENTITY_TRACKER_SETTER_FOLIA.invoke(handle, newTracker);
                 } catch (Throwable t) {
@@ -2941,6 +2976,13 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle BRAIN_SENSORS_GETTER = NMS.getGetter(Brain.class, "sensors");
     private static final MethodHandle BRAIN_SETTER = NMS.getFirstSetter(LivingEntity.class, Brain.class);
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
+    private static final MethodHandle CANVAS_CONNECTION = "Canvas".equals(Bukkit.getName())
+            ? NMS.getGetter(ServerGamePacketListenerImpl.class.getSuperclass(), "connection", false)
+            : null;
+    private static final MethodHandle CANVAS_CURRENT_WORLD_DATA = "Canvas".equals(Bukkit.getName())
+            ? NMS.getMethodHandle(Level.class, "getCurrentWorldData", false)
+            : null;
+    private static final MethodHandle CANVAS_REGION_CONNECTIONS = loadCanvasRegionConnectionsGetter();
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class,
             "updatePlayerStatus", true, ServerPlayer.class, boolean.class);
     private static final MethodHandle CLIENT_LOADED_TIMEOUT_TIMER = NMS.getSetter(ServerGamePacketListenerImpl.class,
@@ -3031,6 +3073,17 @@ public class NMSImpl implements NMSBridge {
             TrackedEntity.class);
     public static final MethodHandle WAITING_FOR_RESPAWN = NMS.getSetter(ServerGamePacketListenerImpl.class,
             "waitingForRespawn");
+
+    private static MethodHandle loadCanvasRegionConnectionsGetter() {
+        if (!"Canvas".equals(Bukkit.getName()))
+            return null;
+        try {
+            return NMS.getGetter(Class.forName("io.papermc.paper.threadedregions.RegionizedWorldData"), "connections",
+                    false);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
 
     static {
         if (NMS.getMethodHandle(CraftBlock.class, "getNMS", false) != null) {
