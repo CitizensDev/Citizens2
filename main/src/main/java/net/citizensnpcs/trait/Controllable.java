@@ -80,7 +80,7 @@ public class Controllable extends Trait {
 
     @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerInteract(PlayerInteractEvent event) {
-        if (!npc.isSpawned() || !enabled)
+        if (!enabled)
             return;
         Action performed = event.getAction();
         if (!NMS.getPassengers(npc.getEntity()).contains(event.getPlayer()))
@@ -105,7 +105,7 @@ public class Controllable extends Trait {
 
     @TraitEventHandler
     private void onRightClick(NPCRightClickEvent event) {
-        if (!enabled || !npc.isSpawned())
+        if (!enabled)
             return;
         if (!event.getClicker().hasPermission("citizens.npc.controllable")
                 || !event.getClicker().hasPermission(
