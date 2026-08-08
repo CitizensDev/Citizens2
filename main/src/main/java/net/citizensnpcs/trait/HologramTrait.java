@@ -148,8 +148,11 @@ public class HologramTrait extends Trait {
     }
 
     private HologramRenderer createNameRenderer() {
-        String setting = SpigotUtil.getVersion()[1] >= 20 ? "armorstand_vehicle" : "armorstand";
+        String setting = "armorstand_vehicle";
         HologramRenderer renderer = createRenderer(setting);
+        if (renderer instanceof TextDisplayRenderer) {
+            renderer = new TextDisplayVehicleRenderer((TextDisplayRenderer) renderer);
+        }
         if (HologramRendererCreateEvent.handlers.getRegisteredListeners().length > 0) {
             HologramRendererCreateEvent event = new HologramRendererCreateEvent(npc, renderer, true);
             Bukkit.getPluginManager().callEvent(event);
@@ -1032,6 +1035,14 @@ public class HologramTrait extends Trait {
     }
 
     public static class TextDisplayVehicleRenderer extends TextDisplayRenderer {
+        public TextDisplayVehicleRenderer() {
+        }
+
+        public TextDisplayVehicleRenderer(TextDisplayRenderer renderer) {
+            this.dt = renderer.dt;
+            this.tdt = renderer.tdt;
+        }
+
         @Override
         public HologramRenderer copy() {
             TextDisplayVehicleRenderer copy = new TextDisplayVehicleRenderer();
