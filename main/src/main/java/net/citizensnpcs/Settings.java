@@ -148,6 +148,10 @@ public class Settings {
                 setComments(config);
             }
         },
+        DEFAULT_HOLOGRAM_VERTICAL_VIEW_RANGE("Default vertical view range in blocks (defaults to unlimited)",
+                "npc.hologram.default-vertical-view-range", -1),
+        DEFAULT_HOLOGRAM_VIEW_RANGE("Default horizontal view range in blocks (defaults to tracking range)",
+                "npc.hologram.default-view-range", -1),
         DEFAULT_LOOK_CLOSE("Enable look close by default", "npc.default.look-close.enabled", false),
         DEFAULT_LOOK_CLOSE_RANGE("Default look close range in blocks", "npc.default.look-close.range", 10),
         DEFAULT_NPC_HOLOGRAM_LINE_HEIGHT("Default distance between hologram lines", "npc.hologram.default-line-height",

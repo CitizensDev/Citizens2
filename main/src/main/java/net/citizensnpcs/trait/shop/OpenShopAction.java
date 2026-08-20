@@ -56,7 +56,7 @@ public class OpenShopAction extends NPCShopAction {
         // TODO: support hierarchical shops? would need to call InventoryMenu#transition somehow
         return Transaction.create(() -> shop.canView(player), () -> {
             player.closeInventory();
-            CitizensAPI.getScheduler().runEntityTaskLater(player, () -> shop.display(player), 2);
+            CitizensAPI.getScheduler().runEntityTaskLater(player, () -> shop.display(player), 1);
         }, () -> {
             // TODO: closeInventory()? transitionBack()?
         });

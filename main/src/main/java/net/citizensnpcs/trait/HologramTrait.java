@@ -80,7 +80,9 @@ public class HologramTrait extends Trait {
     private final NPCRegistry registry = CitizensAPI.getTemporaryNPCRegistry();
     private int t;
     @Persist
-    private int viewRange = -1;
+    private int verticalViewRange = Setting.DEFAULT_HOLOGRAM_VERTICAL_VIEW_RANGE.asInt();
+    @Persist
+    private int viewRange = Setting.DEFAULT_HOLOGRAM_VIEW_RANGE.asInt();
 
     public HologramTrait() {
         super("hologramtrait");
@@ -232,6 +234,10 @@ public class HologramTrait extends Trait {
     public HologramRenderer getTemplateRenderer() {
         customisedDefaultRenderer = true;
         return defaultRenderer == null ? defaultRenderer = new TextDisplayRenderer() : defaultRenderer;
+    }
+
+    public int getVerticalViewRange() {
+        return verticalViewRange;
     }
 
     public int getViewRange() {
@@ -450,6 +456,11 @@ public class HologramTrait extends Trait {
         onDespawn();
     }
 
+    public void setVerticalViewRange(int range) {
+        this.verticalViewRange = range;
+        onDespawn();
+    }
+
     public void setViewRange(int range) {
         this.viewRange = range;
         onDespawn();
@@ -550,6 +561,7 @@ public class HologramTrait extends Trait {
             if (renderer instanceof SingleEntityHologramRenderer) {
                 SingleEntityHologramRenderer sr = (SingleEntityHologramRenderer) renderer;
                 sr.setViewRange(viewRange);
+                sr.setVerticalViewRange(verticalViewRange);
                 sr.setRegistry(registry);
             }
             setText(text);
@@ -647,7 +659,11 @@ public class HologramTrait extends Trait {
          * @param player
          *            the viewing Player
          */
-        default void onSeenByPlayer(NPC hologram, Player player) {
+        default void onFirstSeenByPlayer(NPC hologram, Player player) {
+        }
+
+        default boolean onSeenByPlayer(NPC npc, Player player) {
+            return true;
         }
 
         /**
@@ -668,7 +684,7 @@ public class HologramTrait extends Trait {
          * @param text
          *            the new hologram text
          */
-        void updateText(NPC parent, String text);
+        void updateText(NPC parent, String text);;
     }
 
     public static class HologramRendererCreateEvent extends NPCEvent {
@@ -721,7 +737,7 @@ public class HologramTrait extends Trait {
         }
 
         @Override
-        public void onSeenByPlayer(NPC npc, Player player) {
+        public void onFirstSeenByPlayer(NPC npc, Player player) {
             if (lastOffset == null || hologram == null)
                 return;
             NMS.positionInteractionText(player, hologram.getEntity(), npc.getEntity(), lastOffset.y);
@@ -858,6 +874,7 @@ public class HologramTrait extends Trait {
         private NPCRegistry registry;
         private int spawnWaitTicks;
         protected String text;
+        private int verticalViewRange = -1;
         private int viewRange = -1;
 
         protected abstract NPC createNPC(NPC base, String text, Vector3d offset);
@@ -886,6 +903,14 @@ public class HologramTrait extends Trait {
             return hologram != null ? hologram : createNPC(null, "", new Vector3d(0, 0, 0));
         }
 
+        @Override
+        public boolean onSeenByPlayer(NPC npc, Player player) {
+            if (verticalViewRange > 0) {
+                return Math.abs(npc.getStoredLocation().getY() - player.getLocation().getY()) <= verticalViewRange;
+            }
+            return true;
+        }
+
         protected NPCRegistry registry() {
             return registry == null ? registry = CitizensAPI.getTemporaryNPCRegistry() : registry;
         }
@@ -909,6 +934,10 @@ public class HologramTrait extends Trait {
 
         public void setRegistry(NPCRegistry registry) {
             this.registry = registry;
+        }
+
+        public void setVerticalViewRange(int range) {
+            this.verticalViewRange = range;
         }
 
         public void setViewRange(int range) {

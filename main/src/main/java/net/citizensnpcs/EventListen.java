@@ -552,7 +552,7 @@ public class EventListen implements Listener {
         if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
             HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
             CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(),
-                    () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
+                    () -> hr.onFirstSeenByPlayer(npc, event.getPlayer()), 2);
         }
     }
 
@@ -608,10 +608,13 @@ public class EventListen implements Listener {
         }
         ClickRedirectTrait crt = npc.getTraitNullable(ClickRedirectTrait.class);
         if (crt != null) {
-            if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)
-                    && !crt.getRedirectToNPC().getOrAddTrait(HologramTrait.class).onSeenByPlayer(event.getPlayer())) {
-                event.setCancelled(true);
-                return;
+            if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
+                HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
+                if (!hr.onSeenByPlayer(npc, event.getPlayer()) || !crt.getRedirectToNPC()
+                        .getOrAddTrait(HologramTrait.class).onSeenByPlayer(event.getPlayer())) {
+                    event.setCancelled(true);
+                    return;
+                }
             }
             npc = crt.getRedirectToNPC();
         }
