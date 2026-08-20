@@ -338,6 +338,7 @@
   "citizens.commands.npc.itemframe.visible-set" : "Visible set to [[{0}]]",
   "citizens.commands.npc.jump.description": "Makes the NPC jump",
   "citizens.commands.npc.jump.help" : "",
+  "citizens.commands.npc.hologram.background-color-set" : "Default hologram background color set to [[{0}]].",
   "citizens.commands.npc.knockback.description" : "Toggle NPC knockback",
   "citizens.commands.npc.knockback.help" : "",
   "citizens.commands.npc.knockback.set" : "[[{0}]] will now take knockback.",
