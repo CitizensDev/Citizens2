@@ -2417,13 +2417,11 @@ public class NMSImpl implements NMSBridge {
     public static void markClientLoaded(ServerGamePacketListenerImpl connection) {
         try {
             WAITING_FOR_RESPAWN.invoke(connection, false);
-            for (int i = 0; i <= 60; i++) {
-                connection.tickClientLoadTimeout();
-            }
+            CLIENT_LOADED_TIMEOUT_TIMER.invoke(connection, 0);
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    };
+    }
 
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
@@ -2801,6 +2799,7 @@ public class NMSImpl implements NMSBridge {
     }
 
     private static final MethodHandle ARMADILLO_SCUTE_TIME = NMS.getSetter(Armadillo.class, "cG");
+
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP = NMS.getFirstGetter(AttributeSupplier.class, Map.class);
     private static final MethodHandle ATTRIBUTE_PROVIDER_MAP_SETTER = NMS.getFirstFinalSetter(AttributeSupplier.class,
             Map.class);
@@ -2815,6 +2814,8 @@ public class NMSImpl implements NMSBridge {
     private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class, "a", true,
             ServerPlayer.class, boolean.class);
+    private static final MethodHandle CLIENT_LOADED_TIMEOUT_TIMER = NMS.getSetter(ServerGamePacketListenerImpl.class,
+            "clientLoadedTimeoutTimer");
     public static final MethodHandle CONNECTION_DISCONNECT_LISTENER = NMS.getSetter(Connection.class, "m");
     public static final MethodHandle CONNECTION_PACKET_LISTENER = NMS.getSetter(Connection.class, "n");
     private static final MethodHandle CRAFT_BOSSBAR_HANDLE_FIELD = NMS.getFirstSetter(CraftBossBar.class,
