@@ -597,7 +597,9 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 if (npc != null && npc.getNavigator().isNavigating()) {
                     npc.getNavigator().cancelNavigation();
                 }
-                itr.previous();
+                if (itr.hasPrevious()) {
+                    itr.previous();
+                }
             }
         }
 
