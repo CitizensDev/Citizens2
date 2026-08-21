@@ -286,12 +286,12 @@
                                     <pattern>it.unimi.dsi</pattern>
                                     <shadedPattern>clib.fastutil</shadedPattern>
                                 </relocation>
-                             -->
                                 <relocation>
                                     <pattern>net.megavex.scoreboardlibrary</pattern>
                                     <shadedPattern>
                                         clib.net.megavex.scoreboardlibrary</shadedPattern>
                                 </relocation>
+                             -->
                                 <relocation>
                                     <pattern>net.kyori</pattern>
                                     <shadedPattern>clib.net.kyori</shadedPattern>

@@ -10,6 +10,7 @@ folia-supported: true
 libraries:
   - ch.ethz.globis.phtree:phtree:2.8.2
   - org.joml:joml:1.10.9
+  - net.megavex:scoreboard-library-implementation:2.8.2
   - it.unimi.dsi:fastutil:8.5.16
   - team.unnamed:mocha:3.0.0  
 commands:
