@@ -42,6 +42,7 @@ public class HumanController extends AbstractEntityController {
         final GameProfile profile = new GameProfile(uuid, name);
         final EntityHumanNPC handle = new EntityHumanNPC(MinecraftServer.getServer(), nmsWorld, profile,
                 ClientInformation.createDefault(), npc);
+        handle.absSnapTo(at.getX(), at.getY(), at.getZ(), at.getYaw(), at.getPitch());
         Skin skin = handle.getSkinTracker().getSkin();
         if (skin != null) {
             skin.apply(handle);
