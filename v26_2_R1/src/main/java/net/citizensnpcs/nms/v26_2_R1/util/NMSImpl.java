@@ -1424,7 +1424,7 @@ public class NMSImpl implements NMSBridge {
             return;
         NPC npc = CitizensAPI.getNPCRegistry().getNPC(hooked.getBukkitEntity());
         if (npc != null && npc.isProtected()) {
-            hook.hookedIn = null;
+            hook.setHookedEntity(null);
             hook.getBukkitEntity().remove();
         }
     }
