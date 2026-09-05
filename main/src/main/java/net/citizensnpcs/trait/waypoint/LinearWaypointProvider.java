@@ -633,10 +633,10 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
             }
             if (!getNavigator().isNavigating()) {
                 if (pathfind) {
+                    getNavigator().setTarget(Util.getCenterLocation(currentDestination.getLocation().getBlock()));
+                } else {
                     getNavigator()
                             .setStraightLineTarget(Util.getCenterLocation(currentDestination.getLocation().getBlock()));
-                } else {
-                    getNavigator().setTarget(Util.getCenterLocation(currentDestination.getLocation().getBlock()));
                 }
             }
             PathStrategy strategy = getNavigator().getPathStrategy();
