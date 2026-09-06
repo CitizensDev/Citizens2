@@ -60,7 +60,7 @@ public class AreaEffectCloudTrait extends Trait {
             cloud.setRadius(radius);
         }
         if (radiusPerTick != null) {
-            cloud.setRadius(radiusPerTick);
+            cloud.setRadiusPerTick(radiusPerTick);
         }
         if (duration != null) {
             cloud.setDuration(duration);

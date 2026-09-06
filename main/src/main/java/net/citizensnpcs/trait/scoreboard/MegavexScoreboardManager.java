@@ -17,7 +17,7 @@ public class MegavexScoreboardManager implements CitizensScoreboardManager {
     public MegavexScoreboardManager(Plugin plugin) {
         try {
             scoreboardLibrary = new ScoreboardLibraryImpl(plugin);
-        } catch (NoPacketAdapterAvailableException e) {
+        } catch (NoPacketAdapterAvailableException | IllegalStateException e) {
             scoreboardLibrary = new NoopScoreboardLibrary();
         }
         teamManager = scoreboardLibrary.createTeamManager();

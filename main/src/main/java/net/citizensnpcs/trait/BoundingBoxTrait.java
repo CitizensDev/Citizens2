@@ -19,6 +19,7 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import net.citizensnpcs.api.util.BoundingBox;
 import net.citizensnpcs.api.util.EntityDim;
+import net.citizensnpcs.trait.versioned.InteractionTrait;
 import net.citizensnpcs.util.NMS;
 
 @TraitName("boundingbox")
@@ -104,12 +105,10 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
         if (!SUPPORTS_INTERACTION)
             return;
         interaction = CitizensAPI.getTemporaryNPCRegistry().createNPC(EntityType.INTERACTION, "");
-        interaction.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+        interaction.data().setPersistent(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         interaction.addTrait(new ClickRedirectTrait(npc));
+        interaction.getOrAddTrait(InteractionTrait.class).setResponsive(true);
         interaction.spawn(npc.getStoredLocation());
-        if (SUPPORTS_RESPONSIVE) {
-            ((Interaction) interaction.getEntity()).setResponsive(true);
-        }
     }
 
     @Override
@@ -148,19 +147,5 @@ public class BoundingBoxTrait extends Trait implements Supplier<BoundingBox> {
     }
 
     private static boolean SUPPORTS_INTERACTION = true;
-    private static boolean SUPPORTS_RESPONSIVE = true;
     private static final Vector ZERO = new Vector(0, 0, 0);
-
-    static {
-        try {
-            Class<?> clazz = Class.forName("org.bukkit.entity.Interaction");
-            try {
-                clazz.getMethod("isResponsive");
-            } catch (NoSuchMethodException | SecurityException e) {
-                SUPPORTS_RESPONSIVE = false;
-            }
-        } catch (ClassNotFoundException e) {
-            SUPPORTS_INTERACTION = false;
-        }
-    }
 }

@@ -146,12 +146,12 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         double posHeight = this.getFloorLevel(new BlockPos(pos.x, pos.y, pos.z));
         Iterator var9 = Plane.HORIZONTAL.iterator();
 
-        Direction directionx;
+        Direction direction;
         while (var9.hasNext()) {
-            directionx = (Direction) var9.next();
-            Node node = this.findAcceptedNode(pos.x + directionx.getStepX(), pos.y, pos.z + directionx.getStepZ(),
-                    jumpSize, posHeight, directionx, blockPathTypeCurrent);
-            this.reusableNeighbors[directionx.get2DDataValue()] = node;
+            direction = (Direction) var9.next();
+            Node node = this.findAcceptedNode(pos.x + direction.getStepX(), pos.y, pos.z + direction.getStepZ(),
+                    jumpSize, posHeight, direction, blockPathTypeCurrent);
+            this.reusableNeighbors[direction.get2DDataValue()] = node;
             if (this.isNeighborValid(node, pos)) {
                 neighbors[p++] = node;
             }
@@ -159,13 +159,13 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
         var9 = Plane.HORIZONTAL.iterator();
 
         while (var9.hasNext()) {
-            directionx = (Direction) var9.next();
-            Direction secondDirection = directionx.getClockWise();
-            if (this.isDiagonalValid(pos, this.reusableNeighbors[directionx.get2DDataValue()],
+            direction = (Direction) var9.next();
+            Direction secondDirection = direction.getClockWise();
+            if (this.isDiagonalValid(pos, this.reusableNeighbors[direction.get2DDataValue()],
                     this.reusableNeighbors[secondDirection.get2DDataValue()])) {
-                Node diagonalNode = this.findAcceptedNode(pos.x + directionx.getStepX() + secondDirection.getStepX(),
-                        pos.y, pos.z + directionx.getStepZ() + secondDirection.getStepZ(), jumpSize, posHeight,
-                        directionx, blockPathTypeCurrent);
+                Node diagonalNode = this.findAcceptedNode(pos.x + direction.getStepX() + secondDirection.getStepX(),
+                        pos.y, pos.z + direction.getStepZ() + secondDirection.getStepZ(), jumpSize, posHeight,
+                        direction, blockPathTypeCurrent);
                 if (this.isDiagonalValid(diagonalNode)) {
                     neighbors[p++] = diagonalNode;
                 }
