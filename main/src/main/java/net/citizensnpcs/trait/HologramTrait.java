@@ -70,6 +70,8 @@ public class HologramTrait extends Trait {
     private double baseHeight;
     private boolean customisedDefaultRenderer;
     private HologramRenderer defaultRenderer;
+    @Persist
+    private Integer hologramUpdateRate;
     private double lastEntityBbHeight = 0;
     private Location lastLoc;
     private boolean lastNameplateVisible;
@@ -236,6 +238,10 @@ public class HologramTrait extends Trait {
         return defaultRenderer == null ? defaultRenderer = new TextDisplayRenderer() : defaultRenderer;
     }
 
+    public int getUpdateRate() {
+        return hologramUpdateRate == null ? Setting.HOLOGRAM_UPDATE_RATE.asTicks() : hologramUpdateRate;
+    }
+
     public int getVerticalViewRange() {
         return verticalViewRange;
     }
@@ -350,7 +356,7 @@ public class HologramTrait extends Trait {
         boolean updateText = false;
         Vector3d offset = new Vector3d(0, 0, 0);
 
-        if (t++ >= Setting.HOLOGRAM_UPDATE_RATE.asTicks() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
+        if (t++ >= getUpdateRate() + Util.getFastRandom().nextInt(3) /* add some jitter */) {
             t = 0;
             updateText = true;
         }
@@ -454,6 +460,13 @@ public class HologramTrait extends Trait {
             lines.get(idx).mb = margin;
         }
         onDespawn();
+    }
+
+    /**
+     * Sets the hologram update rate, in ticks
+     */
+    public void setUpdateRate(Integer rate) {
+        this.hologramUpdateRate = rate;
     }
 
     public void setVerticalViewRange(int range) {

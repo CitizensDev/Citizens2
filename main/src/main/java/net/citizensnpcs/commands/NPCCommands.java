@@ -1429,7 +1429,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "hologram add [text] (--duration [duration]) | insert [line #] [text] | set [line #] [text] | remove [line #] | edit_npc [template | name | line #] | clear | lineheight [height] | verticalviewrange [range] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin] | bgcolor [line #] [color]",
+            usage = "hologram add [text] (--duration [duration]) | insert [line #] [text] | set [line #] [text] | remove [line #] | edit_npc [template | name | line #] | clear | updaterate [ticks] | lineheight [height] | verticalviewrange [range] | viewrange [range] | margintop [line #] [margin] | marginbottom [line #] [margin] | bgcolor [line #] [color]",
             desc = "",
             modifiers = { "hologram" },
             min = 1,
@@ -1439,7 +1439,7 @@ public class NPCCommands {
             @Arg(
                     value = 1,
                     completions = { "add", "insert", "set", "edit_npc", "remove", "clear", "lineheight", "viewrange",
-                            "verticalviewrange", "bgcolor", "margintop", "marginbottom" }) String action,
+                            "updaterate", "verticalviewrange", "bgcolor", "margintop", "marginbottom" }) String action,
             @Arg(value = 2, completionsProvider = HologramTrait.TabCompletions.class) String secondCompletion,
             @Flag("duration") Duration duration) throws CommandException {
         if (npc.hasTrait(ClickRedirectTrait.class)) {
@@ -1527,6 +1527,12 @@ public class NPCCommands {
 
             trait.setViewRange(args.getInteger(2));
             Messaging.sendTr(sender, Messages.HOLOGRAM_VIEW_RANGE_SET, npc.getName(), args.getInteger(2));
+        } else if (action.equalsIgnoreCase("updaterate")) {
+            if (args.argsLength() == 2 || args.getTicks(2) < 0)
+                throw new CommandUsageException();
+
+            trait.setUpdateRate(args.getTicks(2));
+            Messaging.sendTr(sender, Messages.HOLOGRAM_UPDATE_RATE_SET, npc.getName(), args.getTicks(2));
         } else if (action.equalsIgnoreCase("verticalviewrange")) {
             if (args.argsLength() == 2)
                 throw new CommandUsageException();

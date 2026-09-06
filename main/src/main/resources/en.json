@@ -25,6 +25,7 @@
   "citizens.commands.npc.behavior.help" : "",  
   "citizens.commands.npc.shopitem.description" : "Manages shop items",
   "citizens.commands.npc.shopitem.help" : "",
+  "citizens.commands.npc.hologram.update-rate-set" : "[[{0}]]''s hologram update rate set to every [[{1}]] ticks.",
   "citizens.commands.npc.shopitem.item-not-found" : "Shop item [[{0}]] not found.",
   "citizens.commands.npc.shopitem.page-not-found" : "Shop page [[{0}]] does not exist. There are [[{1}]] pages.",
   "citizens.commands.npc.disguise.disguise-set" : "Set disguise type to [[{0}]].",
