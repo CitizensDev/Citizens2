@@ -46,6 +46,7 @@ public class SlimeSize extends Trait {
      */
     public void setSize(int size) {
         this.size = size;
+        onSpawn();
     }
 
     private static boolean CUBE_MOB_EXISTS = true;
