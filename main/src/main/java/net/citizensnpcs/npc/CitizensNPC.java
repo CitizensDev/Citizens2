@@ -552,6 +552,10 @@ public class CitizensNPC extends AbstractNPC {
                 return;
 
             Location loc = getEntity().getLocation();
+            if (loc.getY() < -100000) {
+                loc.setY(-100000);
+                getEntity().teleport(loc);
+            }
             if (data().has(NPC.Metadata.ACTIVATION_RANGE)) {
                 int range = data().get(NPC.Metadata.ACTIVATION_RANGE);
                 if (range == -1 || plugin.getLocationLookup().getNearbyPlayers(loc, range).iterator().hasNext()) {
