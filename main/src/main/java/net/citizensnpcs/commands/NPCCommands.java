@@ -3632,8 +3632,11 @@ public class NPCCommands {
             min = 1,
             max = 2,
             permission = "citizens.npc.slimesize")
-    @Requirements(selected = true, ownership = true, cosmeticTypes = { EntityType.MAGMA_CUBE, EntityType.SLIME })
-    public void slimeSize(CommandContext args, CommandSender sender, NPC npc) {
+    @Requirements(selected = true, ownership = true)
+    public void slimeSize(CommandContext args, CommandSender sender, NPC npc) throws RequirementMissingException {
+        EntityType type = npc.getCosmeticEntityType();
+        if (type != EntityType.MAGMA_CUBE && type != EntityType.SLIME && !type.name().equals("SULFUR_CUBE"))
+            throw new RequirementMissingException(Messaging.tr(CommandMessages.REQUIREMENTS_INVALID_MOB_TYPE));
         SlimeSize trait = npc.getOrAddTrait(SlimeSize.class);
         if (args.argsLength() <= 1) {
             trait.describe(sender);
