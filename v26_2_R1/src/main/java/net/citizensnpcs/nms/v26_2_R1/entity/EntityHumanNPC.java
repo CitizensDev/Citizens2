@@ -8,7 +8,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
@@ -345,6 +344,13 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
     }
 
     @Override
+    public void onRemoval(RemovalReason reason) {
+        // hooked here rather than in remove() because chunk unloads call setRemoved directly
+        NMSImpl.removeRegionConnection(this);
+        super.onRemoval(reason);
+    }
+
+    @Override
     public void push(Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
@@ -356,15 +362,8 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
 
     @Override
     public void remove(RemovalReason reason) {
-        NMSImpl.removeRegionConnection(this);
         super.remove(reason);
         getAdvancements().save();
-    }
-
-    @Override
-    public void remove(RemovalReason reason, EntityRemoveEvent.Cause cause) {
-        NMSImpl.removeRegionConnection(this);
-        super.remove(reason, cause);
     }
 
     @Override
