@@ -1727,6 +1727,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setNoPhysics(org.bukkit.entity.Entity entity, boolean nophysics) {
+        getHandle(entity).noPhysics = nophysics;
+    }
+
+    @Override
     public void setOpWithoutSaving(Player player, boolean op) {
         if (player.isOp() == op)
             return;

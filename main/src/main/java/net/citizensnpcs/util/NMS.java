@@ -975,6 +975,10 @@ public class NMS {
         BRIDGE.setNoGravity(entity, nogravity);
     }
 
+    public static void setNoPhysics(Entity entity, boolean nophysics) {
+        BRIDGE.setNoPhysics(entity, nophysics);
+    }
+
     public static void setOpWithoutSaving(Player player, boolean op) {
         BRIDGE.setOpWithoutSaving(player, op);
     }

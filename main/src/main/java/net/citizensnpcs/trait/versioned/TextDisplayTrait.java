@@ -77,7 +77,7 @@ public class TextDisplayTrait extends Trait implements Cloneable {
     public void onSpawn() {
         if (!(npc.getCosmeticEntity() instanceof TextDisplay))
             return;
-        TextDisplay display = (TextDisplay) npc.getEntity();
+        TextDisplay display = (TextDisplay) npc.getCosmeticEntity();
         if (text != null) {
             NMS.setTextDisplayComponent(display, Messaging.minecraftComponentFromRawMessage(text));
         }

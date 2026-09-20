@@ -296,6 +296,8 @@ public class Messages {
     public static final String MUSHROOM_COW_VARIANT_SET = "citizens.commands.npc.mushroomcow.variant-set";
     public static final String NAMEPLATE_VISIBILITY_SET = "citizens.commands.npc.nameplate.set";
     public static final String NO_NPC_WITH_ID_FOUND = "citizens.commands.npc.spawn.missing-npc-id";
+    public static final String NO_PHYSICS_SET = "citizens.commands.npc.nophysics.set";
+    public static final String NO_PHYSICS_UNSET = "citizens.commands.npc.nophysics.unset";
     public static final String NO_STORED_SPAWN_LOCATION = "citizens.commands.npc.spawn.no-location";
     public static final String NOT_USING_MINECRAFT_AI = "citizens.commands.npc.ai.stopped";
     public static final String NPC_ALREADY_SELECTED = "citizens.commands.npc.select.already-selected";

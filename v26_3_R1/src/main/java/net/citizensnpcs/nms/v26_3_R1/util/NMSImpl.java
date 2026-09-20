@@ -1745,6 +1745,11 @@ public class NMSImpl implements NMSBridge {
     }
 
     @Override
+    public void setNoPhysics(org.bukkit.entity.Entity entity, boolean nophysics) {
+        getHandle(entity).noPhysics = nophysics;
+    }
+
+    @Override
     public void setOpWithoutSaving(Player player, boolean op) {
         if (player.isOp() == op)
             return;
@@ -2486,7 +2491,7 @@ public class NMSImpl implements NMSBridge {
             minecart.setCustomDisplayBlockState(Optional.empty());
         }
         minecart.setDisplayOffset(offset);
-    }
+    };
 
     public static boolean moveFish(NPC npc, Mob handle, Vec3 vec3d) {
         if (npc.useMinecraftAI())
@@ -2499,7 +2504,7 @@ public class NMSImpl implements NMSBridge {
             return true;
         }
         return false;
-    };
+    }
 
     public static void moveLogic(LivingEntity entity, Vec3 v) {
         if (entity.isEffectiveAi() || entity.canSimulateMovement()) {
