@@ -2333,6 +2333,23 @@ public class NPCCommands {
         Messaging.sendTr(sender, Messages.NAMEPLATE_VISIBILITY_SET, old);
     }
 
+    @Command(
+            aliases = { "npc" },
+            usage = "nophysics (--explicit true|false)",
+            desc = "",
+            modifiers = { "nophysics" },
+            min = 1,
+            max = 1,
+            permission = "citizens.npc.nophysics")
+    public void nophysics(CommandContext args, CommandSender sender, NPC npc, @Flag("explicit") Boolean explicit) {
+        boolean phys = !npc.data().get(NPC.Metadata.NO_PHYSICS, false);
+        if (explicit != null) {
+            phys = explicit;
+        }
+        npc.data().set(NPC.Metadata.NO_PHYSICS, phys);
+        Messaging.sendTr(sender, phys ? Messages.NO_PHYSICS_SET : Messages.NO_PHYSICS_UNSET, npc.getName());
+    }
+
     @Command(aliases = { "npc" }, desc = "", max = 0, permission = "citizens.npc.info")
     public void npc(CommandContext args, CommandSender sender, NPC npc) {
         Messaging.send(sender, StringHelper.wrapHeader(npc.getName()));

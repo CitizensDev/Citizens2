@@ -586,6 +586,9 @@ public class CitizensNPC extends AbstractNPC {
             if (SUPPORT_SILENT && data().has(NPC.Metadata.SILENT)) {
                 getEntity().setSilent(data().get(NPC.Metadata.SILENT, false));
             }
+            if (data().has(NPC.Metadata.NO_PHYSICS)) {
+                NMS.setNoPhysics(getEntity(), data().<Boolean> get(NPC.Metadata.NO_PHYSICS));
+            }
             if (data().has(NPC.Metadata.AGGRESSIVE)) {
                 NMS.setAggressive(getEntity(), data().get(NPC.Metadata.AGGRESSIVE, false));
             }
