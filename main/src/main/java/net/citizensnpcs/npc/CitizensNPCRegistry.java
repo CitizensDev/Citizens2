@@ -129,10 +129,18 @@ public class CitizensNPCRegistry implements NPCRegistry {
         Iterator<NPC> itr = iterator();
         while (itr.hasNext()) {
             NPC npc = itr.next();
-            try {
-                npc.despawn(reason);
-            } catch (Throwable e) {
-                e.printStackTrace();
+            Runnable despawn = () -> {
+                try {
+                    npc.despawn(reason);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            };
+            Entity entity = npc.getEntity();
+            if (entity != null) {
+                CitizensAPI.getScheduler().checkedRunEntityTask(entity, despawn);
+            } else {
+                despawn.run();
             }
             itr.remove();
         }
