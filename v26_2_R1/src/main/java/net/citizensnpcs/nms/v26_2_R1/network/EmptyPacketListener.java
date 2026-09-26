@@ -18,6 +18,11 @@ public class EmptyPacketListener extends ServerGamePacketListenerImpl {
     }
 
     @Override
+    public void tick() {
+        // Folia ticks this (no-op)
+    }
+
+    @Override
     public void send(Packet<?> packet) {
     }
 }

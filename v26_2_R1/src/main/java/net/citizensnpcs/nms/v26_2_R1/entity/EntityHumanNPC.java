@@ -276,6 +276,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             EmptyConnection conn = new EmptyConnection(PacketFlow.CLIENTBOUND);
             connection = new EmptyPacketListener(minecraftServer, conn, this,
                     CommonListenerCookie.createInitial(gameProfile(), false));
+            conn.setListenerForServerboundHandshake(connection);
             advancements = new EmptyAdvancementDataPlayer(minecraftServer.getFixerUpper(),
                     minecraftServer.getPlayerList(), this);
             // paper now inserts a brand name field
@@ -340,6 +341,13 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
             return super.onClimbable();
         else
             return false;
+    }
+
+    @Override
+    public void onRemoval(RemovalReason reason) {
+        // hooked here rather than in remove() because chunk unloads call setRemoved directly
+        NMSImpl.removeRegionConnection(this);
+        super.onRemoval(reason);
     }
 
     @Override
