@@ -48,6 +48,7 @@ import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.api.util.schedulers.SchedulerRunnable;
 import net.citizensnpcs.npc.ai.CitizensNavigator;
+import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.AttributeTrait;
 import net.citizensnpcs.trait.CurrentLocation;
@@ -70,6 +71,7 @@ public class CitizensNPC extends AbstractNPC {
     private EntityController entityController;
     private final CitizensNavigator navigator = new CitizensNavigator(this);
     private int updateCounter = 0;
+    private volatile boolean orphanRemovalRetry;
 
     public CitizensNPC(UUID uuid, int id, String name, EntityController controller, NPCRegistry registry,
             CitizensPlugin plugin) {
@@ -328,14 +330,24 @@ public class CitizensNPC extends AbstractNPC {
         final Location location = at;
         entityController.spawn(location, couldSpawn -> {
             if (!couldSpawn) {
+                UUID attemptedUUID = getEntity() == null ? null : getEntity().getUniqueId();
+                boolean retriedAfterOrphanRemoval = orphanRemovalRetry;
+                orphanRemovalRetry = false;
+                entityController.remove();
+                data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
+                if (!retriedAfterOrphanRemoval && attemptedUUID != null
+                        && removeOrphanedEntity(attemptedUUID, location, () -> {
+                            orphanRemovalRetry = true;
+                            spawn(location, reason, callback);
+                        })) {
+                    return;
+                }
                 if (Messaging.isDebugging()) {
                     Messaging.debug("Retrying spawn of", this, "later, SpawnReason." + reason + ". Was loaded",
                             wasLoaded, "is loaded", Util.isLoaded(location));
                 }
                 // we need to wait before trying to spawn
-                entityController.remove();
                 Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, location));
-                data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
                 return;
             }
             NMS.setLocationDirectly(getEntity(), location);
@@ -372,6 +384,7 @@ public class CitizensNPC extends AbstractNPC {
                     }
                     NMS.replaceTracker(entity);
                     data().remove(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS);
+                    orphanRemovalRetry = false;
 
                     getOrAddTrait(Spawned.class).setSpawned(true);
                     getOrAddTrait(CurrentLocation.class).setLocation(to);
@@ -434,6 +447,40 @@ public class CitizensNPC extends AbstractNPC {
             }
         });
         return true;
+    }
+
+    private boolean removeOrphanedEntity(UUID uuid, Location spawnLocation, Runnable afterRemoval) {
+        Entity orphan;
+        try {
+            orphan = Bukkit.getEntity(uuid);
+        } catch (Throwable t) {
+            return false;
+        }
+        if (orphan == null || orphan instanceof NPCHolder) return false;
+        return CitizensAPI.getScheduler().runEntityTask(orphan, () -> {
+            if (!isLeftoverCitizensEntity(orphan)) {
+                Bukkit.getPluginManager().callEvent(new NPCNeedsRespawnEvent(this, spawnLocation));
+                return;
+            }
+            Messaging.log("Removing leftover entity", orphan.getUniqueId(), "from a previous Citizens instance to spawn", this);
+            if (orphan instanceof Player) {
+                NMS.removeFromWorld(orphan);
+                NMS.remove(orphan);
+            } else {
+                orphan.remove();
+            }
+            CitizensAPI.getScheduler().runRegionTask(spawnLocation, afterRemoval);
+        }) != null;
+    }
+
+    private static boolean isLeftoverCitizensEntity(Entity entity) {
+        try {
+            Object handle = entity.getClass().getMethod("getHandle").invoke(entity);
+            return handle != null && handle.getClass().getName().startsWith("net.citizensnpcs.")
+                    && handle.getClass().getClassLoader() != CitizensNPC.class.getClassLoader();
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return false;
+        }
     }
 
     @Override
