@@ -734,7 +734,7 @@ public class NMS {
     public static void loadBridge() throws Exception {
         int[] version = SpigotUtil.getVersion();
         String rev = null;
-        switch (version[1]) {
+        switch (version[0]) {
             case 8:
                 rev = "v1_8_R3";
                 break;
@@ -772,7 +772,7 @@ public class NMS {
                 rev = "v1_20_R4";
                 break;
             case 21:
-                if (version[2] < 9) {
+                if (version[1] < 9) {
                     rev = "v1_21_R5";
                 } else if (version[2] < 11) {
                     rev = "v1_21_R6";
@@ -780,8 +780,6 @@ public class NMS {
                     rev = "v1_21_R7";
                 }
                 break;
-        }
-        switch (version[0]) {
             case 26:
             case 27:
                 rev = "v26_" + version[1] + "_R1";

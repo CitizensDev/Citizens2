@@ -148,7 +148,7 @@ public class FlyingAStarNavigationStrategy extends AbstractPathStrategy {
             npc.getEntity().getWorld().playEffect(vector.toLocation(npc.getEntity().getWorld()), Effect.ENDER_SIGNAL,
                     0);
         }
-        if (npc.getEntity().getType() == EntityType.PLAYER && SpigotUtil.getVersion()[1] > 8) {
+        if (npc.getEntity().getType() == EntityType.PLAYER && SpigotUtil.getVersion()[0] > 8) {
             ItemStack stack = ((Player) npc.getEntity()).getInventory().getChestplate();
             if (stack != null && stack.getType() == Material.ELYTRA
                     && !MinecraftBlockExaminer.canStandOn(current.getBlock().getRelative(BlockFace.DOWN))) {

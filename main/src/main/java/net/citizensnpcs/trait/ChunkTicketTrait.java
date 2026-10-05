@@ -50,8 +50,7 @@ public class ChunkTicketTrait extends Trait {
         }
         // https://github.com/PaperMC/Paper/issues/9581
         // XXX: can be removed if support for <=1.21.8 is dropped
-        if (ticks >= 0 && SpigotUtil.getVersion()[1] <= 21
-                && (SpigotUtil.getVersion().length < 3 || SpigotUtil.getVersion()[2] <= 8)
+        if (ticks >= 0 && SpigotUtil.getVersion()[0] <= 21 && SpigotUtil.getVersion()[1] <= 8
                 && timeout < System.currentTimeMillis()) {
             ticks = 2;
         }

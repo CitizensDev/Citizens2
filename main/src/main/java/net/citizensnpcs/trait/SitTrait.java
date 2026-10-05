@@ -51,8 +51,7 @@ public class SitTrait extends Trait {
     }
 
     private boolean requiresPassengerOffsetCorrection() {
-        return SpigotUtil.getVersion() != null && SpigotUtil.getVersion().length >= 2
-                && SpigotUtil.getVersion()[1] <= 19;
+        return SpigotUtil.getVersion()[0] <= 19;
     }
 
     @Override

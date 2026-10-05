@@ -50,9 +50,8 @@ public class BoatTrait extends Trait {
 
     @Override
     public void onSpawn() {
-        int[] version = SpigotUtil.getVersion();
-        if (version[1] >= 21)
-            return; // technically this wasn't changed until 1.21.2 but 1.21 / 1.21.1 are no longer supported
+        if (SpigotUtil.getVersion()[0] >= 21)
+            return;
         if (npc.getCosmeticEntity() instanceof Boat) {
             if (type != null) {
                 ((Boat) npc.getCosmeticEntity()).setBoatType(type);

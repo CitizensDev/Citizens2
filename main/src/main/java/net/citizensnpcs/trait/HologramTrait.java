@@ -167,7 +167,7 @@ public class HologramTrait extends Trait {
 
     private HologramRenderer createRenderer(String setting) {
         if (!SUPPORTS_DISPLAY) {
-            setting = SpigotUtil.getVersion()[1] <= 8 ? "armorstand" : "areaeffectcloud";
+            setting = SpigotUtil.getVersion()[0] <= 8 ? "armorstand" : "areaeffectcloud";
         }
         if (defaultRenderer != null)
             return defaultRenderer.copy();
@@ -1050,7 +1050,7 @@ public class HologramTrait extends Trait {
         @Override
         public void render0(NPC base, Vector3d offset) {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
-            if (SpigotUtil.getVersion()[1] >= 21 && base.getEntity() instanceof LivingEntity) {
+            if (SpigotUtil.getVersion()[0] >= 21 && base.getEntity() instanceof LivingEntity) {
                 AttributeInstance inst = ((LivingEntity) base.getEntity())
                         .getAttribute(SpigotUtil.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
                 Float scale = inst == null ? null : (float) inst.getValue();
@@ -1096,7 +1096,7 @@ public class HologramTrait extends Trait {
         @Override
         public void render0(NPC npc, Vector3d offset) {
             TextDisplay disp = (TextDisplay) hologram.getEntity();
-            if (SpigotUtil.getVersion()[1] >= 21 && npc.getEntity() instanceof LivingEntity) {
+            if (SpigotUtil.getVersion()[0] >= 21 && npc.getEntity() instanceof LivingEntity) {
                 AttributeInstance inst = ((LivingEntity) npc.getEntity())
                         .getAttribute(SpigotUtil.getRegistryValue(Registry.ATTRIBUTE, "generic.scale", "scale"));
                 Float scale = inst == null ? null : (float) inst.getValue();
