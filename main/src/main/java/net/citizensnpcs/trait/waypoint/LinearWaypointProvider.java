@@ -644,6 +644,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
                 Waypoint waypoint = currentDestination;
                 if (cancelReason != null || waypoint == null)
                     return;
+                reset();
                 waypoint.onReach(npc);
                 if (cachePaths && strategy != null && strategy.getPath() != null) {
                     Iterable<Vector> path = strategy.getPath();
