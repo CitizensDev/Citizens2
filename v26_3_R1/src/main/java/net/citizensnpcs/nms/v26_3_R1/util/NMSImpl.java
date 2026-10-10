@@ -1,6 +1,7 @@
 package net.citizensnpcs.nms.v26_3_R1.util;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +69,6 @@ import com.mojang.authlib.services.MinecraftServicesSessionService;
 import com.mojang.authlib.services.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UndashedUuid;
 
-import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.ai.NavigatorParameters;
@@ -2267,9 +2267,11 @@ public class NMSImpl implements NMSBridge {
 
     @SuppressWarnings("rawtypes")
     public static void clearFluidTracker(NPC npc, Entity handle) {
+        if (ENTITY_FLUID_INTERACTION_MAP == null)
+            return;
         Map map;
         try {
-            map = (Reference2ObjectMap) ENTITY_FLUID_INTERACTION_MAP.invoke(ENTITY_FLUID_INTERACTION.invoke(handle));
+            map = (Map) ENTITY_FLUID_INTERACTION_MAP.invoke(ENTITY_FLUID_INTERACTION.invoke(handle));
         } catch (Throwable e) {
             e.printStackTrace();
             return;
@@ -2746,6 +2748,8 @@ public class NMSImpl implements NMSBridge {
     }
 
     public static void restoreFluidTracker(NPC npc) {
+        if (ENTITY_FLUID_INTERACTION_MAP == null)
+            return;
         Entity handle = getHandle(npc.getEntity());
         Map map;
         try {
@@ -3023,8 +3027,7 @@ public class NMSImpl implements NMSBridge {
             int.class);
     private static final MethodHandle ENTITY_FLUID_INTERACTION = NMS.getFirstGetter(Entity.class,
             EntityFluidInteraction.class);
-    private static final MethodHandle ENTITY_FLUID_INTERACTION_MAP = NMS.getFirstGetter(EntityFluidInteraction.class,
-            Reference2ObjectMap.class);
+    private static MethodHandle ENTITY_FLUID_INTERACTION_MAP;
     private static final MethodHandle ENTITY_NAVIGATION = NMS.getFirstSetter(Mob.class, PathNavigation.class);
     private static CustomEntityRegistry ENTITY_REGISTRY;
     private static MethodHandle ENTITY_REGISTRY_SETTER;
@@ -3110,6 +3113,15 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
+        }
+        try {
+            for (Field field : EntityFluidInteraction.class.getDeclaredFields()) {
+                if (Map.class.isAssignableFrom(field.getType())) {
+                    ENTITY_FLUID_INTERACTION_MAP = NMS.getGetter(EntityFluidInteraction.class, field.getName());
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 }
