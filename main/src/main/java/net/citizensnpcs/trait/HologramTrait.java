@@ -47,6 +47,7 @@ import net.citizensnpcs.api.event.NPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.persistence.Persist;
+import net.citizensnpcs.api.persistence.Persistable;
 import net.citizensnpcs.api.persistence.PersistenceLoader;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
@@ -697,7 +698,7 @@ public class HologramTrait extends Trait {
          * @param text
          *            the new hologram text
          */
-        void updateText(NPC parent, String text);;
+        void updateText(NPC parent, String text);
     }
 
     public static class HologramRendererCreateEvent extends NPCEvent {
@@ -1007,10 +1008,8 @@ public class HologramTrait extends Trait {
         private static final Set<String> LINE_ARGS = ImmutableSet.of("set", "remove", "margintop", "marginbottom");
     }
 
-    public static class TextDisplayRenderer extends SingleEntityHologramRenderer {
-        @Persist(value = "", reify = true)
+    public static class TextDisplayRenderer extends SingleEntityHologramRenderer implements Persistable {
         DisplayTrait dt = new DisplayTrait();
-        @Persist(value = "", reify = true)
         TextDisplayTrait tdt = new TextDisplayTrait();
 
         public TextDisplayRenderer() {
@@ -1040,11 +1039,14 @@ public class HologramTrait extends Trait {
 
         @Override
         public void destroy() {
-            if (hologram != null) {
-                dt = hologram.getOrAddTrait(DisplayTrait.class).clone();
-                tdt = hologram.getOrAddTrait(TextDisplayTrait.class).clone();
-            }
+            sync();
             super.destroy();
+        }
+
+        @Override
+        public void load(DataKey root) {
+            dt = PersistenceLoader.load(DisplayTrait.class, root);
+            tdt = PersistenceLoader.load(TextDisplayTrait.class, root);
         }
 
         @Override
@@ -1064,6 +1066,20 @@ public class HologramTrait extends Trait {
                     base.getEntity().getLocation().clone().add(offset.x,
                             offset.y + NMS.getBoundingBoxHeight(base.getEntity()) + 0.2f, offset.z),
                     TeleportCause.PLUGIN);
+        }
+
+        @Override
+        public void save(DataKey root) {
+            sync();
+            PersistenceLoader.save(dt, root);
+            PersistenceLoader.save(tdt, root);
+        }
+
+        private void sync() {
+            if (hologram != null) {
+                dt = hologram.getOrAddTrait(DisplayTrait.class).clone();
+                tdt = hologram.getOrAddTrait(TextDisplayTrait.class).clone();
+            }
         }
 
         @Override
