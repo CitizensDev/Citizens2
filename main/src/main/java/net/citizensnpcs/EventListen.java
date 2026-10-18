@@ -108,6 +108,7 @@ import net.citizensnpcs.api.event.NPCVehicleDamageEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPC.NPCUpdate;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.PlayerFilter;
 import net.citizensnpcs.api.util.Messaging;
@@ -602,6 +603,9 @@ public class EventListen implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onNPCSeenByPlayer(NPCSeenByPlayerEvent event) {
         NPC npc = event.getNPC();
+        if (!event.isFirstSeen() && !npc.isUpdating(NPCUpdate.PACKET))
+            return;
+
         PlayerFilter pf = npc.getTraitNullable(PlayerFilter.class);
         if (pf != null) {
             event.setCancelled(pf.onSeenByPlayer(event.getPlayer()));

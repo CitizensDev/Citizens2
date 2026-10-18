@@ -1041,6 +1041,8 @@ public class NPCCommands {
         } else if (args.hasFlag('i')) {
             if (!(sender instanceof Player))
                 throw new CommandException(CommandMessages.MUST_BE_INGAME);
+            if (((Player) sender).getItemInHand() == null)
+                throw new CommandException(Messages.NPC_DEBUG_NO_ITEM_IN_HAND);
 
             Messaging.send(sender, NMS.getComponentMap(((Player) sender).getItemInHand()));
         }
@@ -1492,10 +1494,11 @@ public class NPCCommands {
             }
             if (hr != null && hr.getTemplateNPC() != null) {
                 if (hr.getTemplateNPC().getOrAddTrait(MobType.class).getType() != EntityType.TEXT_DISPLAY)
-                    throw new CommandException();
+                    throw new CommandException("Please use the text display renderer instead of "
+                            + hr.getTemplateNPC().getOrAddTrait(MobType.class).getType());
                 hr.getTemplateNPC().getOrAddTrait(TextDisplayTrait.class)
                         .setBackgroundColor(SpigotUtil.parseColor(args.getString(3)));
-                Messaging.sendTr(sender, Messages.HOLOGRAM_BACKGROUND_COLOR_SET,
+                Messaging.sendTr(sender, Messages.HOLOGRAM_BACKGROUND_COLOR_SET, args.getString(2),
                         SpigotUtil.parseColor(args.getString(3)));
             }
         } else if (action.equalsIgnoreCase("edit_npc")) {

@@ -478,7 +478,7 @@ public class CitizensNPC extends AbstractNPC {
             int max = Setting.CHAT_MAX_NUMBER_OF_TARGETS.asInt();
             String[] format = Setting.CHAT_MULTIPLE_TARGETS_FORMAT.asString().split("\\|");
             if (format.length != 4) {
-                Messaging.severe("npc.chat.options.multiple-targets-format invalid!");
+                Messaging.severe("Invalid chat format for multiple targets!");
             }
             if (max == 1) {
                 targets = format[0].replace("<target>", targetNames.get(0)) + format[3];
@@ -691,25 +691,19 @@ public class CitizensNPC extends AbstractNPC {
     }
 
     private static void talkToBystanders(NPC npc, String text, SpeechContext context) {
-        // Get list of nearby entities
         List<Entity> bystanderEntities = npc.getEntity().getNearbyEntities(Setting.CHAT_RANGE.asDouble(),
                 Setting.CHAT_RANGE.asDouble(), Setting.CHAT_RANGE.asDouble());
-        for (Entity bystander : bystanderEntities) {
-            boolean shouldTalk = true;
-            if (!Setting.TALK_CLOSE_TO_NPCS.asBoolean() && CitizensAPI.getNPCRegistry().isNPC(bystander)) {
-                shouldTalk = false;
-            }
+        outer: for (Entity bystander : bystanderEntities) {
+            if (!Setting.TALK_CLOSE_TO_NPCS.asBoolean() && CitizensAPI.getNPCRegistry().isNPC(bystander))
+                continue;
+
             if (context.hasRecipients()) {
                 for (Talkable target : context) {
-                    if (target.getEntity().equals(bystander)) {
-                        shouldTalk = false;
-                        break;
-                    }
+                    if (target.getEntity().equals(bystander))
+                        continue outer;
                 }
             }
-            if (shouldTalk) {
-                new TalkableEntity(bystander).talkNear(context, text);
-            }
+            new TalkableEntity(bystander).talkNear(context, text);
         }
     }
 

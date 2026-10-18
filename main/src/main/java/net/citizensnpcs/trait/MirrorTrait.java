@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import com.google.common.collect.ImmutableMap;
 
 import net.citizensnpcs.api.event.DespawnReason;
-import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
+import net.citizensnpcs.api.event.NPCLinkToPlayerEvent;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -57,7 +57,7 @@ public class MirrorTrait extends Trait {
     }
 
     @TraitEventHandler(@EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR))
-    private void onSeenByPlayer(NPCSeenByPlayerEvent event) {
+    private void onSeenByPlayer(NPCLinkToPlayerEvent event) {
         if (!isMirroringEquipment() || !npc.hasTrait(Equipment.class))
             return;
         for (ItemStack stack : npc.getOrAddTrait(Equipment.class).getEquipment()) {

@@ -67,8 +67,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
-        CitizensNPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this, plugin);
-        npc.getOrAddTrait(MobType.class).setType(type);
+        CitizensNPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this, plugin); 
         npcs.put(id, npc);
         uniqueNPCs.put(npc.getUniqueId(), npc);
         Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));

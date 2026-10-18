@@ -313,6 +313,7 @@ public class Messages {
     public static final String NPC_COPIED = "citizens.commands.npc.copy.copied";
     public static final String NPC_CREATE_INVALID_MOBTYPE = "citizens.commands.npc.create.invalid-mobtype";
     public static final String NPC_CREATE_MISSING_MOBTYPE = "citizens.commands.npc.create.mobtype-missing";
+    public static final String NPC_DEBUG_NO_ITEM_IN_HAND = "citizens.commands.npc.debug.no-item-in-hand";
     public static final String NPC_DESPAWNED = "citizens.commands.npc.despawn.despawned";
     public static final String NPC_NAME_TOO_LONG = "citizens.commands.npc.create.npc-name-too-long";
     public static final String NPC_NOT_CONTROLLABLE = "citizens.commands.npc.controllable.not-controllable";

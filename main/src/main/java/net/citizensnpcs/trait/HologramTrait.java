@@ -919,8 +919,16 @@ public class HologramTrait extends Trait {
 
         @Override
         public boolean onSeenByPlayer(NPC npc, Player player) {
-            if (verticalViewRange > 0) {
-                return Math.abs(npc.getStoredLocation().getY() - player.getLocation().getY()) <= verticalViewRange;
+            if (verticalViewRange > 0 || viewRange > 0) {
+                Location npcLoc = npc.getEntity().getLocation();
+                Location playerLoc = player.getLocation();
+                if (viewRange > 0) {
+                    double dx = npcLoc.getX() - playerLoc.getX();
+                    double dz = npcLoc.getZ() - playerLoc.getZ();
+                    if (dx * dx + dz * dz > viewRange * viewRange)
+                        return false;
+                }
+                return verticalViewRange <= 0 || Math.abs(npcLoc.getY() - playerLoc.getY()) <= verticalViewRange;
             }
             return true;
         }

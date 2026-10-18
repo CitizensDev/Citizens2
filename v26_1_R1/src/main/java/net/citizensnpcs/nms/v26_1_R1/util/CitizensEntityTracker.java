@@ -17,7 +17,6 @@ import net.citizensnpcs.api.event.NPCSeenByPlayerEvent;
 import net.citizensnpcs.api.event.NPCUnlinkFromPlayerEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.SpigotUtil;
-import net.citizensnpcs.nms.v26_1_R1.entity.EntityHumanNPC;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.util.NMS;
 import net.minecraft.server.level.ChunkMap;
@@ -72,24 +71,17 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         this(map, getTracker(entry), getTrackingDistance(entry), getUpdateInterval(entry), getTrackDelta(entry));
     }
 
-    private void cancellableUpdatePlayer(final NPC npc, final ServerPlayer entityplayer,
-            final java.util.function.Consumer<Boolean> callback) {
-        CitizensAPI.getScheduler().checkedRunEntityTask(entityplayer.getBukkitEntity(), () -> {
-            callback.accept(isUpdateCancelled(npc, entityplayer));
-        });
-    }
-
-    private boolean isUpdateCancelled(final NPC npc, final ServerPlayer entityplayer) {
-        NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
+    private boolean isUpdateCancelled(final NPC npc, final ServerPlayer entityplayer, boolean firstSeen) {
+        NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity(), firstSeen);
         try {
             Bukkit.getPluginManager().callEvent(event);
         } catch (IllegalStateException e) {
             REQUIRES_SYNC = true;
             throw e;
         }
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return true;
-        }
+
         Integer trackingRange = npc.data().get(NPC.Metadata.TRACKING_RANGE);
         if (TRACKING_RANGE_SETTER != null && trackingRange != null
                 && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
@@ -103,20 +95,55 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         return false;
     }
 
-    private void updatePlayerFolia(final ServerPlayer entityplayer) {
-        UUID playerId = entityplayer.getUUID();
-        if (!foliaPendingUpdates.add(playerId)) {
+    @Override
+    public void removePlayer(final ServerPlayer entityplayer) {
+        if (SpigotUtil.isFoliaServer()) {
+            CitizensAPI.getScheduler().checkedRunEntityTask(entityplayer.getBukkitEntity(),
+                    () -> CitizensEntityTracker.super.removePlayer(entityplayer));
+        } else {
+            super.removePlayer(entityplayer);
+        }
+    }
+
+    @Override
+    public void updatePlayer(ServerPlayer entityplayer) {
+        if (entityplayer instanceof NPCHolder)
+            return;
+        if (tracker.isRemoved() || !(tracker instanceof NPCHolder)) {
+            super.updatePlayer(entityplayer);
             return;
         }
+        if (SpigotUtil.isFoliaServer()) {
+            updatePlayerFolia(entityplayer);
+            return;
+        }
+        NPC npc = ((NPCHolder) tracker).getNPC();
+        if (REQUIRES_SYNC == null) {
+            REQUIRES_SYNC = !Bukkit.isPrimaryThread();
+        }
+        CitizensAPI.getScheduler().checkedRunEntityTask(entityplayer.getBukkitEntity(), () -> {
+            boolean seen = seenBy.contains(entityplayer.connection);
+            if (isUpdateCancelled(npc, entityplayer, !seen)) {
+                if (seen) {
+                    removePlayer(entityplayer);
+                }
+                return;
+            }
+            super.updatePlayer(entityplayer);
+        });
+    }
+
+    private void updatePlayerFolia(final ServerPlayer entityplayer) {
+        UUID playerId = entityplayer.getUUID();
+        if (!foliaPendingUpdates.add(playerId))
+            return;
+
         CitizensAPI.getScheduler().checkedRunEntityTask(entityplayer.getBukkitEntity(), () -> {
             try {
-                if (tracker.isRemoved()) {
+                if (tracker.isRemoved() || isUpdateCancelled(((NPCHolder) tracker).getNPC(), entityplayer,
+                        !seenBy.contains(entityplayer.connection)))
                     return;
-                }
-                if (!seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder
-                        && isUpdateCancelled(((NPCHolder) tracker).getNPC(), entityplayer)) {
-                    return;
-                }
+
                 super.updatePlayer(entityplayer);
             } finally {
                 foliaPendingUpdates.remove(playerId);
@@ -124,47 +151,8 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         });
     }
 
-    @Override
-    public void removePlayer(final ServerPlayer entityplayer) {
-        if (!SpigotUtil.isFoliaServer()) {
-            super.removePlayer(entityplayer);
-            return;
-        }
-        CitizensAPI.getScheduler().checkedRunEntityTask(entityplayer.getBukkitEntity(),
-                () -> CitizensEntityTracker.super.removePlayer(entityplayer));
-    }
-
-    @Override
-    public void updatePlayer(final ServerPlayer entityplayer) {
-        if (entityplayer instanceof EntityHumanNPC)
-            return;
-
-        if (SpigotUtil.isFoliaServer()) {
-            updatePlayerFolia(entityplayer);
-            return;
-        }
-        if (!tracker.isRemoved() && !seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
-            NPC npc = ((NPCHolder) tracker).getNPC();
-            if (REQUIRES_SYNC == null) {
-                REQUIRES_SYNC = !Bukkit.isPrimaryThread();
-            }
-            cancellableUpdatePlayer(npc, entityplayer, cancelled -> {
-                if (cancelled) {
-                    return;
-                }
-                super.updatePlayer(entityplayer);
-            });
-            return;
-        }
-        super.updatePlayer(entityplayer);
-    }
-
     public static Collection<org.bukkit.entity.Entity> getSeenBy(TrackedEntity tracker) {
         return tracker.seenBy.stream().map(c -> c.getPlayer().getBukkitEntity()).collect(Collectors.toSet());
-    }
-
-    static void transferSeenBy(TrackedEntity previous, CitizensEntityTracker replacement) {
-        replacement.rawSeenBy.addAll(previous.seenBy);
     }
 
     private static boolean getTrackDelta(TrackedEntity entry) {
@@ -200,7 +188,11 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return 0;
+        return 1;
+    }
+
+    static void transferSeenBy(TrackedEntity previous, CitizensEntityTracker replacement) {
+        replacement.rawSeenBy.addAll(previous.seenBy);
     }
 
     private static volatile Boolean REQUIRES_SYNC;
