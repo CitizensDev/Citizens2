@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -497,6 +499,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             Class.forName("net.kyori.adventure.Adventure");
             scoreboardManager = new MegavexScoreboardManager(this);
         } catch (ClassNotFoundException e) {
+            if (SpigotUtil.isFoliaServer()) {
+                Messaging.warn("Adventure not found, NPC scoreboard teams (nametag hiding & glow colors) will not work!");
+            }
             scoreboardManager = new BukkitScoreboardManager(this);
         }
     }
@@ -651,10 +656,58 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
     public void storeNPCs() {
         if (saves == null)
             return;
+        if (SpigotUtil.isFoliaServer()) {
+            storeNPCsOnOwningThreads();
+            return;
+        }
         saves.storeAll(npcRegistry);
         shops.storeShops();
         shops.saveToDisk();
         saves.saveToDisk();
+    }
+
+    private void storeNPCsOnOwningThreads() {
+        shops.storeShops();
+        shops.saveToDisk();
+        NPCDataStore store = saves;
+        AtomicInteger pending = new AtomicInteger(1);
+        AtomicBoolean written = new AtomicBoolean();
+        Runnable writeToDisk = () -> {
+            if (written.compareAndSet(false, true)) {
+                synchronized (store) {
+                    store.saveToDisk();
+                }
+            }
+        };
+        Runnable finished = () -> {
+            if (pending.decrementAndGet() == 0) {
+                writeToDisk.run();
+            }
+        };
+        for (NPC npc : npcRegistry) {
+            Entity entity = npc.getEntity();
+            if (entity == null || CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
+                storeNPC(store, npc);
+                continue;
+            }
+            pending.incrementAndGet();
+            if (CitizensAPI.getScheduler().runEntityTask(entity, () -> {
+                storeNPC(store, npc);
+                finished.run();
+            }) == null) {
+                // entity already removed
+                pending.decrementAndGet();
+            }
+        }
+        finished.run();
+        // entity tasks are silently dropped if the entity is removed before they run
+        CitizensAPI.getScheduler().runTaskLater(writeToDisk, 20);
+    }
+
+    private static void storeNPC(NPCDataStore store, NPC npc) {
+        synchronized (store) {
+            store.store(npc);
+        }
     }
 
     public void storeNPCsNow() {
