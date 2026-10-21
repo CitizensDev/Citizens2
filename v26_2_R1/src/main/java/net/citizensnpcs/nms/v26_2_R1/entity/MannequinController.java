@@ -133,7 +133,7 @@ public class MannequinController extends MobEntityController {
 
         @Override
         public CraftLivingEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
                 NMSImpl.setBukkitEntity(this, new MannequinNPC(this));
             }
             return (CraftLivingEntity) super.getBukkitEntity();

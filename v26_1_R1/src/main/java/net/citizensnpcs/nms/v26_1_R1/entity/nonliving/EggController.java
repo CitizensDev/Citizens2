@@ -74,7 +74,7 @@ public class EggController extends AbstractEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
                 NMSImpl.setBukkitEntity(this, new EggNPC(this));
             }
             return super.getBukkitEntity();

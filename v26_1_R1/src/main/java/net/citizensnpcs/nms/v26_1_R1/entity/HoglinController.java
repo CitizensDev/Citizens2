@@ -105,7 +105,7 @@ public class HoglinController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
                 NMSImpl.setBukkitEntity(this, new HoglinNPC(this));
             }
             return super.getBukkitEntity();

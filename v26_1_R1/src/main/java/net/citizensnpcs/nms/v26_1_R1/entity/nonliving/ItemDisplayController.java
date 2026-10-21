@@ -67,7 +67,7 @@ public class ItemDisplayController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
                 NMSImpl.setBukkitEntity(this, new ItemDisplayNPC(this));
             }
             return super.getBukkitEntity();
