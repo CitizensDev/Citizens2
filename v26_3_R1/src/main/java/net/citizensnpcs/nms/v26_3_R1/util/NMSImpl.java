@@ -2348,6 +2348,15 @@ public class NMSImpl implements NMSBridge {
         return null;
     }
 
+    public static org.bukkit.entity.Entity getBukkitEntity(Entity entity) {
+        try {
+            return (org.bukkit.entity.Entity) BUKKITENTITY_GETTER.invoke(entity);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private static BlockState getHandle(org.bukkit.block.Block block) {
         try {
             return (BlockState) GET_BLOCK_STATE.invoke(block);
@@ -2477,7 +2486,7 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    }
+    };
 
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
@@ -2492,7 +2501,7 @@ public class NMSImpl implements NMSBridge {
             minecart.setCustomDisplayBlockState(Optional.empty());
         }
         minecart.setDisplayOffset(offset);
-    };
+    }
 
     public static boolean moveFish(NPC npc, Mob handle, Vec3 vec3d) {
         if (npc.useMinecraftAI())
@@ -2823,7 +2832,9 @@ public class NMSImpl implements NMSBridge {
 
     public static void setBukkitEntity(Entity entity, CraftEntity bukkitEntity) {
         try {
-            BUKKITENTITY_FIELD_SETTER.invoke(entity, bukkitEntity);
+            synchronized (entity) {
+                BUKKITENTITY_SETTER.invoke(entity, bukkitEntity);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -3002,7 +3013,8 @@ public class NMSImpl implements NMSBridge {
             EntityType.HAPPY_GHAST, EntityType.SHULKER, EntityType.PHANTOM);
     private static final MethodHandle BRAIN_SENSORS_GETTER = NMS.getGetter(Brain.class, "sensors");
     private static final MethodHandle BRAIN_SETTER = NMS.getFirstSetter(LivingEntity.class, Brain.class);
-    private static final MethodHandle BUKKITENTITY_FIELD_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
+    private static final MethodHandle BUKKITENTITY_GETTER = NMS.getGetter(Entity.class, "bukkitEntity");
+    private static final MethodHandle BUKKITENTITY_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class,
             "updatePlayerStatus", true, ServerPlayer.class, boolean.class);
     private static final MethodHandle CLIENT_LOADED_TIMEOUT_TIMER = NMS.getSetter(ServerGamePacketListenerImpl.class,
@@ -3097,6 +3109,7 @@ public class NMSImpl implements NMSBridge {
     private static MethodHandle TEAM_FIELD;
     private static final Collection<MethodHandle> TRACKED_ENTITY_SETTERS = NMS.getSettersOfType(Entity.class,
             TrackedEntity.class);
+
     public static final MethodHandle WAITING_FOR_RESPAWN = NMS.getSetter(ServerGamePacketListenerImpl.class,
             "waitingForRespawn");
 

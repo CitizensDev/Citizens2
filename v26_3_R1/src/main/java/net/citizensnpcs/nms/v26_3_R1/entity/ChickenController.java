@@ -118,7 +118,7 @@ public class ChickenController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && !(super.getBukkitEntity() instanceof NPCHolder)) {
+            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
                 NMSImpl.setBukkitEntity(this, new ChickenNPC(this));
             }
             return super.getBukkitEntity();
