@@ -10,6 +10,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.util.SpigotUtil;
 import net.citizensnpcs.util.NMS;
 
 public abstract class AbstractEntityController implements EntityController {
@@ -50,7 +51,11 @@ public abstract class AbstractEntityController implements EntityController {
         if (bukkitEntity == null)
             return;
         if (bukkitEntity instanceof Player) {
-            NMS.removeFromWorld(bukkitEntity);
+            // On Folia, removing the player from the world untracks it from the player chunk loader, and
+            // discarding it then tries to untrack it again, which throws
+            if (!SpigotUtil.isFoliaServer()) {
+                NMS.removeFromWorld(bukkitEntity);
+            }
             NMS.remove(bukkitEntity);
         } else {
             bukkitEntity.remove();
