@@ -674,14 +674,19 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
             }
         };
         for (NPC npc : npcRegistry) {
+            Runnable storeNPC = () -> {
+                synchronized (store) {
+                    store.store(npc);
+                }
+            };
             Entity entity = npc.getEntity();
             if (entity == null || CitizensAPI.getScheduler().isOnOwnerThread(entity)) {
-                storeNPC(store, npc);
+                storeNPC.run();
                 continue;
             }
             pending.incrementAndGet();
             if (CitizensAPI.getScheduler().runEntityTask(entity, () -> {
-                storeNPC(store, npc);
+                storeNPC.run();
                 finished.run();
             }) == null) {
                 // entity already removed
@@ -692,12 +697,6 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
         if (!written.get()) {
             // entity tasks are silently dropped if the entity is removed before they run
             CitizensAPI.getScheduler().runTaskLater(writeToDisk, 20);
-        }
-    }
-
-    private static void storeNPC(NPCDataStore store, NPC npc) {
-        synchronized (store) {
-            store.store(npc);
         }
     }
 
