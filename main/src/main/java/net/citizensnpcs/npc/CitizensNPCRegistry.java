@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Maps;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -36,7 +36,7 @@ import net.citizensnpcs.trait.LookClose;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final String name;
-    private final Int2ObjectOpenHashMap<NPC> npcs = new Int2ObjectOpenHashMap<>();
+    private final Map<Integer, NPC> npcs = new ConcurrentHashMap<>();
     private final CitizensPlugin plugin;
     private final NPCDataStore saves;
     private final Map<UUID, NPC> uniqueNPCs = Maps.newConcurrentMap();
