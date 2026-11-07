@@ -1,10 +1,8 @@
 package net.citizensnpcs.trait.scoreboard;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import net.citizensnpcs.api.util.Messaging;
 import net.citizensnpcs.api.util.SpigotUtil;
 import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
 import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
@@ -20,8 +18,6 @@ public class MegavexScoreboardManager implements CitizensScoreboardManager {
         try {
             scoreboardLibrary = new ScoreboardLibraryImpl(plugin);
         } catch (NoPacketAdapterAvailableException | IllegalStateException e) {
-            Messaging.warn("Scoreboard library unavailable on " + Bukkit.getBukkitVersion()
-                    + ", NPC scoreboard teams (nametag hiding & glow colors) will not be sent to players:", e);
             scoreboardLibrary = new NoopScoreboardLibrary();
         }
         teamManager = scoreboardLibrary.createTeamManager();
