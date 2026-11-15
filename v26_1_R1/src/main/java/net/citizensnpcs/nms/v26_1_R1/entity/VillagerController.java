@@ -115,7 +115,7 @@ public class VillagerController extends MobEntityController {
 
         @Override
         public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
+            if (npc != null && !(NMSImpl.getBukkitEntity(this) instanceof NPCHolder)) {
                 NMSImpl.setBukkitEntity(this, new VillagerNPC(this));
             }
             return super.getBukkitEntity();
