@@ -13,9 +13,11 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.protocol.game.ClientboundSwingAnimationPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.item.component.SwingAnimation;
 
 public class PlayerAnimationImpl {
     public static void play(PlayerAnimation animation, Player bplayer, Iterable<Player> to) {
@@ -25,6 +27,16 @@ public class PlayerAnimationImpl {
             return;
         }
         switch (animation) {
+            case ARM_SWING:
+                sendPacketNearby(
+                        new ClientboundSwingAnimationPacket(player, InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT),
+                        to);
+                break;
+            case ARM_SWING_OFFHAND:
+                sendPacketNearby(
+                        new ClientboundSwingAnimationPacket(player, InteractionHand.OFF_HAND, SwingAnimation.DEFAULT),
+                        to);
+                break;
             case HURT:
                 sendPacketNearby(new ClientboundHurtAnimationPacket(player), to);
                 break;
@@ -82,10 +94,8 @@ public class PlayerAnimationImpl {
 
     private static final Map<PlayerAnimation, Integer> DEFAULTS = Maps.newEnumMap(PlayerAnimation.class);
     static {
-        DEFAULTS.put(PlayerAnimation.ARM_SWING, 0);
-        DEFAULTS.put(PlayerAnimation.LEAVE_BED, 2);
-        DEFAULTS.put(PlayerAnimation.ARM_SWING_OFFHAND, 3);
-        DEFAULTS.put(PlayerAnimation.CRIT, 4);
-        DEFAULTS.put(PlayerAnimation.MAGIC_CRIT, 5);
+        DEFAULTS.put(PlayerAnimation.LEAVE_BED, 0);
+        DEFAULTS.put(PlayerAnimation.CRIT, 1);
+        DEFAULTS.put(PlayerAnimation.MAGIC_CRIT, 2);
     }
 }
