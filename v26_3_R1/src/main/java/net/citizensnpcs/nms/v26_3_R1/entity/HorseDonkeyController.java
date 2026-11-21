@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftDonkey;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v26_3_R1.util.ForwardingNPCHolder;
@@ -39,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class HorseDonkeyController extends MobEntityController {
     public HorseDonkeyController() {
-        super(EntityHorseDonkeyNPC.class, EntityTypes.DONKEY);
+        super(EntityHorseDonkeyNPC.class, HorseDonkeyNPC.class, EntityTypes.DONKEY);
     }
 
     @Override
@@ -132,14 +131,6 @@ public class HorseDonkeyController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new HorseDonkeyNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

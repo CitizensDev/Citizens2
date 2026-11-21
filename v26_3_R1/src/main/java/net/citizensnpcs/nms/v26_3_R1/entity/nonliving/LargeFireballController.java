@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftLargeFireball;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -28,7 +27,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class LargeFireballController extends MobEntityController {
     public LargeFireballController() {
-        super(EntityLargeFireballNPC.class, EntityTypes.FIREBALL);
+        super(EntityLargeFireballNPC.class, LargeFireballNPC.class, EntityTypes.FIREBALL);
     }
 
     @Override
@@ -51,14 +50,6 @@ public class LargeFireballController extends MobEntityController {
         @Override
         public boolean broadcastToPlayer(ServerPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new LargeFireballNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

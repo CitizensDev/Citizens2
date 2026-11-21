@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftCamel;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v26_3_R1.util.ForwardingNPCHolder;
@@ -39,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CamelController extends MobEntityController {
     public CamelController() {
-        super(EntityCamelNPC.class, EntityTypes.CAMEL);
+        super(EntityCamelNPC.class, CamelNPC.class, EntityTypes.CAMEL);
     }
 
     @Override
@@ -139,14 +138,6 @@ public class CamelController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new CamelNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

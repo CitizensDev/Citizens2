@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftMagmaCube;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -36,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MagmaCubeController extends MobEntityController {
     public MagmaCubeController() {
-        super(EntityMagmaCubeNPC.class, EntityTypes.MAGMA_CUBE);
+        super(EntityMagmaCubeNPC.class, MagmaCubeNPC.class, EntityTypes.MAGMA_CUBE);
     }
 
     @Override
@@ -99,14 +98,6 @@ public class MagmaCubeController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new MagmaCubeNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

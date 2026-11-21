@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftArmadillo;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v26_3_R1.util.ForwardingNPCHolder;
@@ -40,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ArmadilloController extends MobEntityController {
     public ArmadilloController() {
-        super(EntityArmadilloNPC.class, EntityTypes.ARMADILLO);
+        super(EntityArmadilloNPC.class, ArmadilloNPC.class, EntityTypes.ARMADILLO);
     }
 
     @Override
@@ -114,14 +113,6 @@ public class ArmadilloController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new ArmadilloNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

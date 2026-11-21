@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftAllay;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
@@ -42,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class AllayController extends MobEntityController {
     public AllayController() {
-        super(EntityAllayNPC.class, EntityTypes.ALLAY);
+        super(EntityAllayNPC.class, AllayNPC.class, EntityTypes.ALLAY);
     }
 
     @Override
@@ -100,14 +99,6 @@ public class AllayController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new AllayNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

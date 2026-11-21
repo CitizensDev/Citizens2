@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftOminousItemSpawner;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 
@@ -30,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class OminousItemSpawnerController extends MobEntityController {
     public OminousItemSpawnerController() {
-        super(EntityOminousItemSpawnerNPC.class, EntityTypes.OMINOUS_ITEM_SPAWNER);
+        super(EntityOminousItemSpawnerNPC.class, OminousItemSpawnerNPC.class, EntityTypes.OMINOUS_ITEM_SPAWNER);
     }
 
     @Override
@@ -63,14 +62,6 @@ public class OminousItemSpawnerController extends MobEntityController {
         @Override
         public boolean broadcastToPlayer(ServerPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new OminousItemSpawnerNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

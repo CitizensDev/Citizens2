@@ -53,7 +53,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MannequinController extends MobEntityController {
     public MannequinController() {
-        super(EntityMannequinNPC.class, EntityTypes.MANNEQUIN);
+        super(EntityMannequinNPC.class, MannequinNPC.class, EntityTypes.MANNEQUIN);
     }
 
     @Override
@@ -133,9 +133,6 @@ public class MannequinController extends MobEntityController {
 
         @Override
         public CraftLivingEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new MannequinNPC(this));
-            }
             return (CraftLivingEntity) super.getBukkitEntity();
         }
 

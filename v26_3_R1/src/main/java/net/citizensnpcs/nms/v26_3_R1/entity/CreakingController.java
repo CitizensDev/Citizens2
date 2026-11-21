@@ -5,7 +5,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftCreaking;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.ImmutableList;
@@ -41,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CreakingController extends MobEntityController {
     public CreakingController() {
-        super(EntityCreakingNPC.class, EntityTypes.CREAKING);
+        super(EntityCreakingNPC.class, CreakingNPC.class, EntityTypes.CREAKING);
     }
 
     @Override
@@ -147,14 +146,6 @@ public class CreakingController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new CreakingNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

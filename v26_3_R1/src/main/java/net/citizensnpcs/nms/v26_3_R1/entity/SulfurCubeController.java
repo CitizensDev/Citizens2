@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftSulfurCube;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -41,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class SulfurCubeController extends MobEntityController {
     public SulfurCubeController() {
-        super(EntitySulfurCubeNPC.class, EntityTypes.SULFUR_CUBE);
+        super(EntitySulfurCubeNPC.class, SulfurCubeNPC.class, EntityTypes.SULFUR_CUBE);
     }
 
     @Override
@@ -106,14 +105,6 @@ public class SulfurCubeController extends MobEntityController {
         }
 
         @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new SulfurCubeNPC(this));
-            }
-            return super.getBukkitEntity();
-        }
-
-        @Override
         protected SoundEvent getDeathSound() {
             return NMSImpl.getSoundEffect(npc, super.getDeathSound(), NPC.Metadata.DEATH_SOUND);
         }
@@ -171,15 +162,12 @@ public class SulfurCubeController extends MobEntityController {
             if (npc == null || !npc.isProtected())
                 return super.mobInteract(entityhuman, enumhand);
             ItemStack heldItem = entityhuman.getItemInHand(enumhand);
-            if (isBaby() && heldItem.is(ItemTags.SULFUR_CUBE_FOOD) && canAgeUp()) {
+            if (isBaby() && heldItem.is(ItemTags.SULFUR_CUBE_FOOD) && canAgeUp())
                 return InteractionResult.FAIL;
-            } else if (canExplode() && (heldItem.is(Items.FLINT_AND_STEEL) || heldItem.is(Items.FIRE_CHARGE))) {
+            else if (canExplode() && (heldItem.is(Items.FLINT_AND_STEEL) || heldItem.is(Items.FIRE_CHARGE)))
                 return InteractionResult.FAIL;
-            } else if (heldItem.is(Items.SHEARS) && this.readyForShearing()) {
+            else if ((heldItem.is(Items.SHEARS) && this.readyForShearing()) || heldItem.is(ItemTags.SULFUR_CUBE_SWALLOWABLE))
                 return InteractionResult.FAIL;
-            } else if (heldItem.is(ItemTags.SULFUR_CUBE_SWALLOWABLE)) {
-                return InteractionResult.FAIL;
-            }
             return super.mobInteract(entityhuman, enumhand);
         }
 

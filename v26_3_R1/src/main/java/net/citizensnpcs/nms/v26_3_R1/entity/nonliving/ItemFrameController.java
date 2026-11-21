@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ItemFrameController extends MobEntityController {
     public ItemFrameController() {
-        super(EntityItemFrameNPC.class, EntityTypes.ITEM_FRAME);
+        super(EntityItemFrameNPC.class, ItemFrameNPC.class, EntityTypes.ITEM_FRAME);
     }
 
     @Override
@@ -61,14 +61,6 @@ public class ItemFrameController extends MobEntityController {
         @Override
         public boolean broadcastToPlayer(ServerPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new ItemFrameNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

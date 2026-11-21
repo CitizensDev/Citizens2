@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftBlockDisplay;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v26_3_R1.entity.MobEntityController;
@@ -30,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class BlockDisplayController extends MobEntityController {
     public BlockDisplayController() {
-        super(EntityBlockDisplayNPC.class, EntityTypes.BLOCK_DISPLAY);
+        super(EntityBlockDisplayNPC.class, BlockDisplayNPC.class, EntityTypes.BLOCK_DISPLAY);
     }
 
     @Override
@@ -70,14 +69,6 @@ public class BlockDisplayController extends MobEntityController {
         @Override
         public boolean broadcastToPlayer(ServerPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new BlockDisplayNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

@@ -66,7 +66,7 @@ public class EntityPathfinder extends PathFinder {
             if (!reachedTargets.isEmpty()) {
                 break;
             }
-            if (!(current.distanceTo(from) >= maxPathLength)) {
+            if ((current.distanceTo(from) < maxPathLength)) {
                 neighborCount = this.nodeEvaluator.getNeighbors(this.neighbors, current);
 
                 for (i = 0; i < neighborCount; ++i) {
@@ -111,9 +111,9 @@ public class EntityPathfinder extends PathFinder {
         this.openSet.clear();
         this.nodeEvaluator.prepare(level, entity);
         Node from = this.nodeEvaluator.getStart();
-        if (from == null) {
+        if (from == null)
             return null;
-        } else {
+        else {
             List<Map.Entry<Target, BlockPos>> tos = Lists.newArrayList();
             Iterator<BlockPos> var9 = targets.iterator();
 
@@ -134,9 +134,9 @@ public class EntityPathfinder extends PathFinder {
         this.openSet.clear();
         this.nodeEvaluator.prepare(level, entity);
         Node from = this.nodeEvaluator.getStart();
-        if (from == null) {
+        if (from == null)
             return null;
-        } else {
+        else {
             List<Map.Entry<Target, BlockPos>> tos = Lists.newArrayList();
             Iterator<BlockPos> var9 = targets.iterator();
 

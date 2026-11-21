@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftCopperGolem;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v26_3_R1.util.ForwardingNPCHolder;
@@ -41,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CopperGolemController extends MobEntityController {
     public CopperGolemController() {
-        super(EntityCopperGolemNPC.class, EntityTypes.COPPER_GOLEM);
+        super(EntityCopperGolemNPC.class, CopperGolemNPC.class, EntityTypes.COPPER_GOLEM);
     }
 
     @Override
@@ -120,14 +119,6 @@ public class CopperGolemController extends MobEntityController {
         }
 
         @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new CopperGolemNPC(this));
-            }
-            return super.getBukkitEntity();
-        }
-
-        @Override
         protected SoundEvent getDeathSound() {
             return NMSImpl.getSoundEffect(npc, super.getDeathSound(), NPC.Metadata.DEATH_SOUND);
         }
@@ -184,11 +175,7 @@ public class CopperGolemController extends MobEntityController {
         public InteractionResult mobInteract(Player entityhuman, InteractionHand enumhand) {
             if (npc != null && npc.isProtected()) {
                 ItemStack itemstack = entityhuman.getItemInHand(enumhand);
-                if (itemstack.isEmpty())
-                    return InteractionResult.PASS;
-                if (itemstack.is(Items.SHEARS) && this.readyForShearing())
-                    return InteractionResult.PASS;
-                if (itemstack.is(Items.HONEYCOMB))
+                if (itemstack.isEmpty() || (itemstack.is(Items.SHEARS) && this.readyForShearing()) || itemstack.is(Items.HONEYCOMB))
                     return InteractionResult.PASS;
                 if (itemstack.is(ItemTags.AXES))
                     return InteractionResult.PASS;

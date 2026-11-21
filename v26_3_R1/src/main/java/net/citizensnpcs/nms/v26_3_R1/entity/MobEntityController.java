@@ -7,6 +7,7 @@ import java.util.WeakHashMap;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
 import net.citizensnpcs.Settings.Setting;
@@ -22,22 +23,44 @@ import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.level.Level;
 
 public abstract class MobEntityController extends AbstractEntityController {
+    private final Class<?> bukkitClazz;
     private final Class<?> clazz;
     private final EntityType<?> type;
 
-    protected MobEntityController(Class<?> clazz, EntityType<?> type) {
+    protected MobEntityController(Class<?> clazz, Class<?> bukkitClazz, EntityType<?> type) {
         NMS.registerEntityClass(clazz, type);
         this.clazz = clazz;
+        this.bukkitClazz = bukkitClazz;
         this.type = type;
+    }
+
+    private CraftEntity createBukkitEntityFromClass(Object... args) {
+        try {
+            Constructor<?> constructor = CONSTRUCTOR_CACHE.get(bukkitClazz);
+            if (constructor == null) {
+                try {
+                    CONSTRUCTOR_CACHE.put(bukkitClazz, constructor = bukkitClazz.getConstructor(clazz));
+                } catch (Exception ex) {
+                    throw new IllegalStateException("unable to find an entity constructor for " + bukkitClazz);
+                }
+            }
+            return (CraftEntity) constructor.newInstance(args);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     protected Entity createEntity(Location at, NPC npc) {
         net.minecraft.world.entity.Entity entity = createEntityFromClass(type, ((CraftWorld) at.getWorld()).getHandle(),
                 npc);
+        if (bukkitClazz != null) {
+            NMSImpl.setBukkitEntity(entity, createBukkitEntityFromClass(entity));
+        }
         NMSImpl.clearFluidTracker(npc, entity);
         if (entity instanceof Mob) {
-            NMSImpl.clearGoals(npc, ((Mob) entity));
+            NMSImpl.clearGoals(npc, (Mob) entity);
             Mob mob = (Mob) entity;
             if (mob.getLookControl().getClass() == LookControl.class) {
                 NMSImpl.setLookControl(mob, new PitchableLookControl(mob));

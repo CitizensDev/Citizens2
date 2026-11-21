@@ -112,9 +112,9 @@ public class EntityNavigation extends PathNavigation {
     public Path createPath(BlockPos pos, final int reachRange) {
         LevelChunk chunk = this.level.getChunkSource().getChunkNow(SectionPos.blockToSectionCoord(pos.getX()),
                 SectionPos.blockToSectionCoord(pos.getZ()));
-        if (chunk == null) {
+        if (chunk == null)
             return null;
-        } else {
+        else {
             if (!this.canPathToTargetsBelowSurface) {
                 pos = this.findSurfacePosition(chunk, pos, reachRange);
             }
@@ -134,15 +134,11 @@ public class EntityNavigation extends PathNavigation {
 
     protected Path createPath(Set<BlockPos> targets, Entity target, int radiusOffset, boolean above, int reachRange,
             float maxPathLength) {
-        if (targets.isEmpty()) {
+        if (targets.isEmpty() || (this.mob.getY() < this.level.getMinY()) || !this.canUpdatePath())
             return null;
-        } else if (this.mob.getY() < this.level.getMinY()) {
-            return null;
-        } else if (!this.canUpdatePath()) {
-            return null;
-        } else if (this.path != null && !this.path.isDone() && targets.contains(this.targetPos)) {
+        else if (this.path != null && !this.path.isDone() && targets.contains(this.targetPos))
             return this.path;
-        } else {
+        else {
             boolean copiedSet = false;
             Iterator<BlockPos> var8 = targets.iterator();
 
@@ -171,7 +167,7 @@ public class EntityNavigation extends PathNavigation {
                 } while (this.mob.level().getWorldBorder().isWithinBounds(possibleTarget));
                 if (!copiedSet) {
                     copiedSet = true;
-                    targets = new HashSet<BlockPos>(targets);
+                    targets = new HashSet<>(targets);
                 }
                 targets.remove(possibleTarget);
             } while (!targets.isEmpty());
@@ -192,11 +188,10 @@ public class EntityNavigation extends PathNavigation {
     @Override
     protected Path createPath(final Set<BlockPos> targets, final int radiusOffset, final boolean above,
             final int reachRange, final float maxPathLength) {
-        if (targets.isEmpty() || this.mob.getY() < this.level.getMinY() || !this.canUpdatePath()) {
+        if (targets.isEmpty() || this.mob.getY() < this.level.getMinY() || !this.canUpdatePath())
             return null;
-        } else if (this.path != null && !this.path.isDone() && targets.contains(this.targetPos)) {
+        else if (this.path != null && !this.path.isDone() && targets.contains(this.targetPos))
             return this.path;
-        }
         BlockPos fromPos = above ? this.mob.blockPosition().above() : this.mob.blockPosition();
         int radius = (int) (maxPathLength + radiusOffset);
         PathNavigationRegion region = new PathNavigationRegion(this.level, fromPos.offset(-radius, -radius, -radius),
@@ -261,9 +256,8 @@ public class EntityNavigation extends PathNavigation {
             while (columnPos.getY() >= this.level.getMinY() && chunk.getBlockState(columnPos).isAir()) {
                 columnPos.move(Direction.DOWN);
             }
-            if (columnPos.getY() >= this.level.getMinY()) {
+            if (columnPos.getY() >= this.level.getMinY())
                 return columnPos.above();
-            }
             columnPos.setY(pos.getY() + 1);
 
             while (columnPos.getY() <= this.level.getMaxY() && chunk.getBlockState(columnPos).isAir()) {
@@ -271,9 +265,9 @@ public class EntityNavigation extends PathNavigation {
             }
             pos = columnPos;
         }
-        if (!chunk.getBlockState(pos).isSolid()) {
+        if (!chunk.getBlockState(pos).isSolid())
             return pos;
-        } else {
+        else {
             columnPos = pos.mutable().move(Direction.UP);
 
             while (columnPos.getY() <= this.level.getMaxY() && chunk.getBlockState(columnPos).isSolid()) {
@@ -338,17 +332,15 @@ public class EntityNavigation extends PathNavigation {
             int steps = 0;
 
             do {
-                if (!state.is(Blocks.WATER)) {
+                if (!state.is(Blocks.WATER))
                     return surface;
-                }
                 ++surface;
                 state = this.level.getBlockState(BlockPos.containing(this.mob.getX(), surface, this.mob.getZ()));
                 ++steps;
             } while (steps <= 16);
             return this.mob.getBlockY();
-        } else {
+        } else
             return Mth.floor(this.mob.getY() + 0.5);
-        }
     }
 
     @Override
@@ -362,13 +354,10 @@ public class EntityNavigation extends PathNavigation {
     }
 
     protected boolean hasValidPathType(final PathType pathType) {
-        if (pathType == PathType.WATER) {
+        if ((pathType == PathType.WATER) || (pathType == PathType.LAVA))
             return false;
-        } else if (pathType == PathType.LAVA) {
-            return false;
-        } else {
+        else
             return pathType != PathType.OPEN;
-        }
     }
 
     @Override
@@ -412,13 +401,13 @@ public class EntityNavigation extends PathNavigation {
         if (!newPath.sameAs(this.path)) {
             this.path = newPath;
         }
-        if (this.isDone()) {
+        if (this.isDone())
             return false;
-        } else {
+        else {
             this.trimPath();
-            if (this.path.getNodeCount() <= 0) {
+            if (this.path.getNodeCount() <= 0)
                 return false;
-            } else {
+            else {
                 this.speedModifier = speedModifier;
                 Vec3 mobPos = this.getTempMobPos();
                 this.lastStuckCheck = this.tick;
@@ -490,28 +479,26 @@ public class EntityNavigation extends PathNavigation {
 
     @Override
     public boolean shouldRecomputePath(final BlockPos pos) {
-        if (this.hasDelayedRecomputation) {
+        if (this.hasDelayedRecomputation || ((this.path == null) || this.path.isDone() || (this.path.getNodeCount() == 0)))
             return false;
-        } else if (this.path != null && !this.path.isDone() && this.path.getNodeCount() != 0) {
+        else {
             Node target = this.path.getEndNode();
             Vec3 middlePos = new Vec3((target.x + this.mob.getX()) / 2.0, (target.y + this.mob.getY()) / 2.0,
                     (target.z + this.mob.getZ()) / 2.0);
             return pos.closerToCenterThan(middlePos, this.path.getNodeCount() - this.path.getNextNodeIndex());
-        } else {
-            return false;
         }
     }
 
     private boolean shouldTargetNextNodeInDirection(final Vec3 mobPosition) {
-        if (this.path.getNextNodeIndex() + 1 >= this.path.getNodeCount()) {
+        if (this.path.getNextNodeIndex() + 1 >= this.path.getNodeCount())
             return false;
-        } else {
+        else {
             Vec3 currentNode = Vec3.atBottomCenterOf(this.path.getNextNodePos());
-            if (!mobPosition.closerThan(currentNode, 2.0)) {
+            if (!mobPosition.closerThan(currentNode, 2.0))
                 return false;
-            } else if (this.canMoveDirectly(mobPosition, this.path.getNextEntityPos(this.mob))) {
+            else if (this.canMoveDirectly(mobPosition, this.path.getNextEntityPos(this.mob)))
                 return true;
-            } else {
+            else {
                 Vec3 nextNode = Vec3.atBottomCenterOf(this.path.getNodePos(this.path.getNextNodeIndex() + 1));
                 Vec3 mobToCurrent = currentNode.subtract(mobPosition);
                 Vec3 mobToNext = nextNode.subtract(mobPosition);
@@ -519,9 +506,9 @@ public class EntityNavigation extends PathNavigation {
                 double mobToNextSqr = mobToNext.lengthSqr();
                 boolean closerToNextThanCurrent = mobToNextSqr < mobToCurrentSqr;
                 boolean withinCurrentBlock = mobToCurrentSqr < 0.5;
-                if (!closerToNextThanCurrent && !withinCurrentBlock) {
+                if (!closerToNextThanCurrent && !withinCurrentBlock)
                     return false;
-                } else {
+                else {
                     Vec3 mobDirection = mobToCurrent.normalize();
                     Vec3 pathDirection = mobToNext.normalize();
                     return pathDirection.dot(mobDirection) < 0.0;
@@ -590,9 +577,8 @@ public class EntityNavigation extends PathNavigation {
     protected void trimPath() {
         supertrimPath();
         if (this.avoidSun) {
-            if (this.level.canSeeSky(BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5, this.mob.getZ()))) {
+            if (this.level.canSeeSky(BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5, this.mob.getZ())))
                 return;
-            }
             for (int i = 0; i < this.path.getNodeCount(); ++i) {
                 Node node = this.path.getNode(i);
                 if (this.level.canSeeSky(new BlockPos(node.x, node.y, node.z))) {

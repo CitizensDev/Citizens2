@@ -45,9 +45,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
         for (int i = 1; i <= steps; ++i) {
             bb = bb.move(delta);
-            if (this.hasCollisions(bb)) {
+            if (this.hasCollisions(bb))
                 return false;
-            }
         }
         return true;
     }
@@ -109,9 +108,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     protected PathType getCachedPathType(int x, int y, int z) {
-        return (PathType) this.pathTypesByPosCacheByMob.computeIfAbsent(BlockPos.asLong(x, y, z), (k) -> {
-            return this.getPathTypeOfMob(this.currentContext, x, y, z, this.mob);
-        });
+        return (PathType) this.pathTypesByPosCacheByMob.computeIfAbsent(BlockPos.asLong(x, y, z), k -> this.getPathTypeOfMob(this.currentContext, x, y, z, this.mob));
     }
 
     private Node getClosedNode(int x, int y, int z, PathType pathType) {
@@ -188,13 +185,13 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
     public PathType getPathTypeOfMob(PathfindingContext context, int x, int y, int z, LivingEntity var4) {
         Set<PathType> blockTypes = this.getPathTypeWithinMobBB(context, x, y, z);
-        if (blockTypes.size() == 1) {
+        if (blockTypes.size() == 1)
             return blockTypes.iterator().next();
-        } else if (blockTypes.contains(PathType.FENCE)) {
+        else if (blockTypes.contains(PathType.FENCE))
             return PathType.FENCE;
-        } else if (blockTypes.contains(PathType.UNPASSABLE_RAIL)) {
+        else if (blockTypes.contains(PathType.UNPASSABLE_RAIL))
             return PathType.UNPASSABLE_RAIL;
-        } else {
+        else {
             PathType highestMalusPathTypeWithinBB = PathType.BLOCKED;
             float highestMalusWithinBB = mvmt.getPathfindingMalus(highestMalusPathTypeWithinBB);
             Iterator var9 = blockTypes.iterator();
@@ -202,9 +199,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             while (var9.hasNext()) {
                 PathType pathType = (PathType) var9.next();
                 float malusForPathType = mvmt.getPathfindingMalus(pathType);
-                if (malusForPathType < 0.0F) {
+                if (malusForPathType < 0.0F)
                     return pathType;
-                }
                 if (malusForPathType >= highestMalusWithinBB) {
                     highestMalusWithinBB = malusForPathType;
                     highestMalusPathTypeWithinBB = pathType;
@@ -217,23 +213,22 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 boolean capMalusDueToCheapNode = isCurrentNodeCheaper
                         && mvmt.getPathfindingMalus(PathType.BIG_MOBS_CLOSE_TO_DANGER) < highestMalusWithinBB;
                 return capMalusDueToCheapNode ? PathType.BIG_MOBS_CLOSE_TO_DANGER : highestMalusPathTypeWithinBB;
-            } else {
+            } else
                 return currentNodePathType == PathType.OPEN && highestMalusPathTypeWithinBB != PathType.OPEN
                         && highestMalusWithinBB == 0.0F ? PathType.OPEN : highestMalusPathTypeWithinBB;
-            }
         }
     }
 
     @Override
     public PathType getPathTypeOfMob(PathfindingContext context, int x, int y, int z, Mob mob) {
         Set<PathType> blockTypes = this.getPathTypeWithinMobBB(context, x, y, z);
-        if (blockTypes.size() == 1) {
+        if (blockTypes.size() == 1)
             return blockTypes.iterator().next();
-        } else if (blockTypes.contains(PathType.FENCE)) {
+        else if (blockTypes.contains(PathType.FENCE))
             return PathType.FENCE;
-        } else if (blockTypes.contains(PathType.UNPASSABLE_RAIL)) {
+        else if (blockTypes.contains(PathType.UNPASSABLE_RAIL))
             return PathType.UNPASSABLE_RAIL;
-        } else {
+        else {
             PathType highestMalusPathTypeWithinBB = PathType.BLOCKED;
             float highestMalusWithinBB = mob.getPathfindingMalus(highestMalusPathTypeWithinBB);
             Iterator var9 = blockTypes.iterator();
@@ -241,9 +236,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             while (var9.hasNext()) {
                 PathType pathType = (PathType) var9.next();
                 float malusForPathType = mob.getPathfindingMalus(pathType);
-                if (malusForPathType < 0.0F) {
+                if (malusForPathType < 0.0F)
                     return pathType;
-                }
                 if (malusForPathType >= highestMalusWithinBB) {
                     highestMalusWithinBB = malusForPathType;
                     highestMalusPathTypeWithinBB = pathType;
@@ -256,10 +250,9 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 boolean capMalusDueToCheapNode = isCurrentNodeCheaper
                         && mob.getPathfindingMalus(PathType.BIG_MOBS_CLOSE_TO_DANGER) < highestMalusWithinBB;
                 return capMalusDueToCheapNode ? PathType.BIG_MOBS_CLOSE_TO_DANGER : highestMalusPathTypeWithinBB;
-            } else {
+            } else
                 return currentNodePathType == PathType.OPEN && highestMalusPathTypeWithinBB != PathType.OPEN
                         && highestMalusWithinBB == 0.0F ? PathType.OPEN : highestMalusPathTypeWithinBB;
-            }
         }
     }
 
@@ -347,9 +340,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             if (this.canStartAt(reusablePos.set(mobBB.minX, startY, mobBB.minZ))
                     || this.canStartAt(reusablePos.set(mobBB.minX, startY, mobBB.maxZ))
                     || this.canStartAt(reusablePos.set(mobBB.maxX, startY, mobBB.minZ))
-                    || this.canStartAt(reusablePos.set(mobBB.maxX, startY, mobBB.maxZ))) {
+                    || this.canStartAt(reusablePos.set(mobBB.maxX, startY, mobBB.maxZ)))
                 return this.getStartNode(reusablePos);
-            }
         }
         return this.getStartNode(new BlockPos(startPos.getX(), startY, startPos.getZ()));
     }
@@ -367,9 +359,7 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     }
 
     private boolean hasCollisions(AABB aabb) {
-        return this.collisionCache.computeIfAbsent(aabb, (bb) -> {
-            return !this.currentContext.level().noCollision(this.mob, aabb);
-        });
+        return this.collisionCache.computeIfAbsent(aabb, bb -> !this.currentContext.level().noCollision(this.mob, aabb));
     }
 
     protected boolean isAmphibious() {
@@ -384,20 +374,18 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
     protected boolean isDiagonalValid(Node pos, Node ew, Node ns) {
         if (ns != null && ew != null && ns.y <= pos.y && ew.y <= pos.y) {
             if (ew.type != PathType.WALKABLE_DOOR && ns.type != PathType.WALKABLE_DOOR) {
-                if (this.mob.getBbWidth() > 1.0F && (ew.costMalus > 0.0F || ns.costMalus > 0.0F)) {
+                if (this.mob.getBbWidth() > 1.0F && (ew.costMalus > 0.0F || ns.costMalus > 0.0F))
                     return false;
-                } else {
+                else {
                     boolean canPassBetweenPosts = ns.type == PathType.FENCE && ew.type == PathType.FENCE
                             && this.mob.getBbWidth() < 0.5;
                     return (ns.y < pos.y || ns.costMalus >= 0.0F || canPassBetweenPosts)
                             && (ew.y < pos.y || ew.costMalus >= 0.0F || canPassBetweenPosts);
                 }
-            } else {
+            } else
                 return false;
-            }
-        } else {
+        } else
             return false;
-        }
     }
 
     protected boolean isNeighborValid(Node neighbor, Node current) {
@@ -419,15 +407,13 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
     private Node tryFindFirstGroundNodeBelow(int x, int y, int z) {
         for (int currentY = y - 1; currentY >= this.mob.level().getMinY(); --currentY) {
-            if (y - currentY > this.mob.getMaxFallDistance()) {
+            if (y - currentY > this.mob.getMaxFallDistance())
                 return this.getBlockedNode(x, currentY, z);
-            }
             PathType pathType = this.getCachedPathType(x, currentY, z);
             float pathCost = this.mvmt.getPathfindingMalus(pathType);
             if (pathType != PathType.OPEN) {
-                if (pathCost >= 0.0F) {
+                if (pathCost >= 0.0F)
                     return this.getNodeAndUpdateCostToMax(x, currentY, z, pathType, pathCost);
-                }
                 return this.getBlockedNode(x, currentY, z);
             }
         }
@@ -439,9 +425,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
 
         while (y > this.mob.level().getMinY()) {
             PathType pathTypeLocal = this.getCachedPathType(x, y, z);
-            if (pathTypeLocal != PathType.WATER) {
+            if (pathTypeLocal != PathType.WATER)
                 return best;
-            }
             best = this.getNodeAndUpdateCostToMax(x, y, z, pathTypeLocal, this.mvmt.getPathfindingMalus(pathTypeLocal));
             --y;
         }
@@ -452,13 +437,11 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
             PathType blockPathTypeCurrent, BlockPos.MutableBlockPos reusablePos) {
         Node nodeAbove = this.findAcceptedNode(x, y + 1, z, jumpSize - 1, nodeHeight, travelDirection,
                 blockPathTypeCurrent);
-        if (nodeAbove == null) {
+        if (nodeAbove == null)
             return null;
-        } else if (this.mob.getBbWidth() >= 1.0F) {
+        else if ((this.mob.getBbWidth() >= 1.0F) || (nodeAbove.type != PathType.OPEN && nodeAbove.type != PathType.WALKABLE))
             return nodeAbove;
-        } else if (nodeAbove.type != PathType.OPEN && nodeAbove.type != PathType.WALKABLE) {
-            return nodeAbove;
-        } else {
+        else {
             double centerX = x - travelDirection.getStepX() + 0.5;
             double centerZ = z - travelDirection.getStepZ() + 0.5;
             double halfWidth = this.mob.getBbWidth() / 2.0;
@@ -481,18 +464,14 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                 for (int dz = -1; dz <= 1; ++dz) {
                     if (dx != 0 || dz != 0) {
                         PathType pathType = context.getPathTypeFromState(x + dx, y + dy, z + dz);
-                        if (pathType == PathType.DAMAGING) {
+                        if (pathType == PathType.DAMAGING)
                             return PathType.DAMAGING_IN_NEIGHBOR;
-                        }
-                        if (pathType == PathType.FIRE || pathType == PathType.LAVA) {
+                        if (pathType == PathType.FIRE || pathType == PathType.LAVA)
                             return PathType.FIRE_IN_NEIGHBOR;
-                        }
-                        if (pathType == PathType.WATER) {
+                        if (pathType == PathType.WATER)
                             return PathType.WATER_BORDER;
-                        }
-                        if (pathType == PathType.DAMAGE_CAUTIOUS) {
+                        if (pathType == PathType.DAMAGE_CAUTIOUS)
                             return PathType.DAMAGE_CAUTIOUS;
-                        }
                     }
                 }
             }
@@ -546,9 +525,8 @@ public class EntityNodeEvaluator extends EntityNodeEvaluatorBase {
                     var10000 = checkNeighbourBlocks(context, x, y, z, PathType.WALKABLE);
             }
             return var10000;
-        } else {
+        } else
             return blockPathType;
-        }
     }
 
     public static final double SPACE_BETWEEN_WALL_POSTS = 0.5;

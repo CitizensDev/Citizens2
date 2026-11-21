@@ -62,9 +62,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
+import com.mojang.authlib.HttpDiscoveryService;
 import com.mojang.authlib.minecraft.SessionService;
 import com.mojang.authlib.minecraft.client.MinecraftClient;
-import com.mojang.authlib.services.MinecraftServicesDiscoveryService;
 import com.mojang.authlib.services.MinecraftServicesSessionService;
 import com.mojang.authlib.services.response.MinecraftProfilePropertiesResponse;
 import com.mojang.util.UndashedUuid;
@@ -654,9 +654,9 @@ public class NMSImpl implements NMSBridge {
         SessionService sessionService = ((CraftServer) Bukkit.getServer()).getServer().services().sessionService();
         if (!(sessionService instanceof MinecraftServicesSessionService))
             return sessionService.fetchProfile(profile.id(), requireSecure).profile();
-        URL url = MinecraftServicesDiscoveryService
+        URL url = HttpDiscoveryService
                 .constantURL(Setting.AUTH_SERVER_URL.asString() + UndashedUuid.toString(profile.id()));
-        url = MinecraftServicesDiscoveryService.concatenateURL(url, "unsigned=" + !requireSecure);
+        url = HttpDiscoveryService.concatenateURL(url, "unsigned=" + !requireSecure);
         MinecraftClient client = (MinecraftClient) MINECRAFT_CLIENT.invoke(sessionService);
         MinecraftProfilePropertiesResponse response = client.get(url, MinecraftProfilePropertiesResponse.class);
 
@@ -1401,9 +1401,9 @@ public class NMSImpl implements NMSBridge {
         Class<?> search = clazz;
         while ((search = search.getSuperclass()) != null && Entity.class.isAssignableFrom(search)) {
             Identifier key = ENTITY_REGISTRY.getKey(type);
-            if (key == null || type == null)
+            if (key == null || type == null) {
                 continue;
-
+            }
             int code = ENTITY_REGISTRY.getId(type);
             ENTITY_REGISTRY.put(code, key, type);
             return;
@@ -2292,8 +2292,9 @@ public class NMSImpl implements NMSBridge {
             GoalSelector selector = goalSelectors[i];
             try {
                 Collection<WrappedGoal> list = selector.getAvailableGoals();
-                if (list.isEmpty())
+                if (list.isEmpty()) {
                     continue;
+                }
                 npc.data().set("selector" + i, Lists.newArrayList(list));
                 selector.removeAllGoals(g -> true);
             } catch (Exception e) {
@@ -2346,15 +2347,6 @@ public class NMSImpl implements NMSBridge {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static org.bukkit.entity.Entity getBukkitEntity(Entity entity) {
-        try {
-            return (org.bukkit.entity.Entity) BUKKITENTITY_GETTER.invoke(entity);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private static BlockState getHandle(org.bukkit.block.Block block) {
@@ -2486,7 +2478,7 @@ public class NMSImpl implements NMSBridge {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    };
+    }
 
     public static void minecartItemLogic(AbstractMinecart minecart) {
         NPC npc = ((NPCHolder) minecart).getNPC();
@@ -2653,7 +2645,7 @@ public class NMSImpl implements NMSBridge {
                                 lookAngle.z * convert / lookHorLength);
                     }
                     if (leanAngle < 0.0F && lookHorLength > 0.0) {
-                        convert = moveHorLength * (-Mth.sin(leanAngle)) * 0.04;
+                        convert = moveHorLength * -Mth.sin(leanAngle) * 0.04;
                         movement = movement.add(-lookAngle.x * convert / lookHorLength, convert * 3.2,
                                 -lookAngle.z * convert / lookHorLength);
                     }
@@ -3013,7 +3005,6 @@ public class NMSImpl implements NMSBridge {
             EntityType.HAPPY_GHAST, EntityType.SHULKER, EntityType.PHANTOM);
     private static final MethodHandle BRAIN_SENSORS_GETTER = NMS.getGetter(Brain.class, "sensors");
     private static final MethodHandle BRAIN_SETTER = NMS.getFirstSetter(LivingEntity.class, Brain.class);
-    private static final MethodHandle BUKKITENTITY_GETTER = NMS.getGetter(Entity.class, "bukkitEntity");
     private static final MethodHandle BUKKITENTITY_SETTER = NMS.getSetter(Entity.class, "bukkitEntity");
     private static final MethodHandle CHUNKMAP_UPDATE_PLAYER_STATUS = NMS.getMethodHandle(ChunkMap.class,
             "updatePlayerStatus", true, ServerPlayer.class, boolean.class);

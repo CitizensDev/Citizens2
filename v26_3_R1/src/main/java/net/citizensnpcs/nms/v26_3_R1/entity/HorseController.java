@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftHorse;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -39,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class HorseController extends MobEntityController {
     public HorseController() {
-        super(EntityHorseNPC.class, EntityTypes.HORSE);
+        super(EntityHorseNPC.class, HorseNPC.class, EntityTypes.HORSE);
     }
 
     @Override
@@ -132,14 +131,6 @@ public class HorseController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new HorseNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

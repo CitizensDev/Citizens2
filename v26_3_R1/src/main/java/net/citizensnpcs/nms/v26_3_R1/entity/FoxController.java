@@ -4,7 +4,6 @@ import java.lang.invoke.MethodHandle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftFox;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -38,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class FoxController extends MobEntityController {
     public FoxController() {
-        super(EntityFoxNPC.class, EntityTypes.FOX);
+        super(EntityFoxNPC.class, FoxNPC.class, EntityTypes.FOX);
     }
 
     @Override
@@ -113,14 +112,6 @@ public class FoxController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new FoxNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

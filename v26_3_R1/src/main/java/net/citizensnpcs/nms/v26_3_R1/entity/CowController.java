@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftCow;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.nms.v26_3_R1.util.ForwardingNPCHolder;
@@ -40,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class CowController extends MobEntityController {
     public CowController() {
-        super(EntityCowNPC.class, EntityTypes.COW);
+        super(EntityCowNPC.class, CowNPC.class, EntityTypes.COW);
     }
 
     @Override
@@ -111,14 +110,6 @@ public class CowController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new CowNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

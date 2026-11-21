@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftWither;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -32,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class WitherController extends MobEntityController {
     public WitherController() {
-        super(EntityWitherNPC.class, EntityTypes.WITHER);
+        super(EntityWitherNPC.class, WitherNPC.class, EntityTypes.WITHER);
     }
 
     @Override
@@ -92,14 +91,6 @@ public class WitherController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new WitherNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

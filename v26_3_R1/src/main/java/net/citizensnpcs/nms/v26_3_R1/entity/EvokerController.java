@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftEvoker;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -34,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EvokerController extends MobEntityController {
     public EvokerController() {
-        super(EntityEvokerNPC.class, EntityTypes.EVOKER);
+        super(EntityEvokerNPC.class, EvokerNPC.class, EntityTypes.EVOKER);
     }
 
     @Override
@@ -99,14 +98,6 @@ public class EvokerController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new EvokerNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

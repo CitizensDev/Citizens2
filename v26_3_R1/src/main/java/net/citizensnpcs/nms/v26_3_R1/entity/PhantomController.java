@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPhantom;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -35,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class PhantomController extends MobEntityController {
     public PhantomController() {
-        super(EntityPhantomNPC.class, EntityTypes.PHANTOM);
+        super(EntityPhantomNPC.class, PhantomNPC.class, EntityTypes.PHANTOM);
     }
 
     @Override
@@ -106,14 +105,6 @@ public class PhantomController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new PhantomNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

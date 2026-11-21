@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftTurtle;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -38,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class TurtleController extends MobEntityController {
     public TurtleController() {
-        super(EntityTurtleNPC.class, EntityTypes.TURTLE);
+        super(EntityTurtleNPC.class, TurtleNPC.class, EntityTypes.TURTLE);
     }
 
     @Override
@@ -48,9 +47,7 @@ public class TurtleController extends MobEntityController {
 
     public static class EntityTurtleNPC extends Turtle implements NPCHolder {
         private final CitizensNPC npc;
-
         private JumpControl oldJumpController;
-
         private MoveControl oldMoveController;
 
         public EntityTurtleNPC(EntityType<? extends Turtle> types, Level level) {
@@ -121,14 +118,6 @@ public class TurtleController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new TurtleNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

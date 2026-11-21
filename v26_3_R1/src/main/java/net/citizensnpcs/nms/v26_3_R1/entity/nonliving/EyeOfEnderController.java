@@ -3,7 +3,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity.nonliving;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEnderSignal;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EnderSignal;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -29,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class EyeOfEnderController extends MobEntityController {
     public EyeOfEnderController() {
-        super(EntityEyeOfEnderNPC.class, EntityTypes.EYE_OF_ENDER);
+        super(EntityEyeOfEnderNPC.class, EnderSignalNPC.class, EntityTypes.EYE_OF_ENDER);
     }
 
     @Override
@@ -58,14 +57,6 @@ public class EyeOfEnderController extends MobEntityController {
         @Override
         public boolean broadcastToPlayer(ServerPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new EnderSignalNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

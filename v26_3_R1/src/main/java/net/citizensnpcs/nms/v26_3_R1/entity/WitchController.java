@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftWitch;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -34,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class WitchController extends MobEntityController {
     public WitchController() {
-        super(EntityWitchNPC.class, EntityTypes.WITCH);
+        super(EntityWitchNPC.class, WitchNPC.class, EntityTypes.WITCH);
     }
 
     @Override
@@ -99,14 +98,6 @@ public class WitchController extends MobEntityController {
         @Override
         protected SoundEvent getAmbientSound() {
             return NMSImpl.getSoundEffect(npc, super.getAmbientSound(), NPC.Metadata.AMBIENT_SOUND);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new WitchNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

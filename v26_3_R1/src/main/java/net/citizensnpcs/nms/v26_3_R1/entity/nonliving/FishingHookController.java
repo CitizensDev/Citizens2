@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftFishHook;
 import org.bukkit.entity.FishHook;
 
@@ -39,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class FishingHookController extends MobEntityController {
     public FishingHookController() {
-        super(EntityFishingHookNPC.class, EntityTypes.FISHING_BOBBER);
+        super(EntityFishingHookNPC.class, FishingHookNPC.class, EntityTypes.FISHING_BOBBER);
     }
 
     @Override
@@ -81,14 +80,6 @@ public class FishingHookController extends MobEntityController {
             if (entity == getPlayerOwner())
                 return 0D;
             return super.distanceToSqr(entity);
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new FishingHookNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

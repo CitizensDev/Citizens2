@@ -2,7 +2,6 @@ package net.citizensnpcs.nms.v26_3_R1.entity.nonliving;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftMarker;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -28,7 +27,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MarkerController extends MobEntityController {
     public MarkerController() {
-        super(EntityMarkerNPC.class, EntityTypes.MARKER);
+        super(EntityMarkerNPC.class, MarkerNPC.class, EntityTypes.MARKER);
     }
 
     @Override
@@ -51,14 +50,6 @@ public class MarkerController extends MobEntityController {
         @Override
         public boolean broadcastToPlayer(ServerPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new MarkerNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

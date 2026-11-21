@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftItemDisplay;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 
@@ -31,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ItemDisplayController extends MobEntityController {
     public ItemDisplayController() {
-        super(EntityItemDisplayNPC.class, EntityTypes.ITEM_DISPLAY);
+        super(EntityItemDisplayNPC.class, ItemDisplayNPC.class, EntityTypes.ITEM_DISPLAY);
     }
 
     @Override
@@ -64,14 +63,6 @@ public class ItemDisplayController extends MobEntityController {
         @Override
         public boolean broadcastToPlayer(ServerPlayer player) {
             return NMS.shouldBroadcastToPlayer(npc, () -> super.broadcastToPlayer(player));
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new ItemDisplayNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override

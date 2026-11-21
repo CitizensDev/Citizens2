@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftBoat;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -136,14 +135,6 @@ public class RaftController extends AbstractEntityController {
                             vec3d1.z);
                 }
             }
-        }
-
-        @Override
-        public CraftEntity getBukkitEntity() {
-            if (npc != null && NMSImpl.getBukkitEntity(this) == null) {
-                NMSImpl.setBukkitEntity(this, new RaftNPC(this));
-            }
-            return super.getBukkitEntity();
         }
 
         @Override
