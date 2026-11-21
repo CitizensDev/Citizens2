@@ -627,6 +627,10 @@ public class CitizensNPC extends AbstractNPC {
     private void updateCustomName() {
         if (getEntity() == null)
             return;
+        if (getName().isEmpty()) {
+            getEntity().setCustomName(null);
+            return;
+        }
         if (coloredNameComponentCache != null) {
             NMS.setCustomName(getEntity(), coloredNameComponentCache, coloredNameStringCache);
         } else {
@@ -638,7 +642,7 @@ public class CitizensNPC extends AbstractNPC {
         if (!isSpawned())
             return;
         String nameplateVisible = data().<Object> get(NPC.Metadata.NAMEPLATE_VISIBLE, true).toString();
-        if (requiresNameHologram()) {
+        if (requiresNameHologram() || getName().isEmpty()) {
             nameplateVisible = "false";
         }
         if (nameplateVisible.equals("true") || nameplateVisible.equals("hover")) {
