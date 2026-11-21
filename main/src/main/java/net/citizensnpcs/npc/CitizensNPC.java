@@ -522,7 +522,7 @@ public class CitizensNPC extends AbstractNPC {
         }
         Location npcLoc = getEntity().getLocation();
         if (isSpawned() && npcLoc.getWorld() == location.getWorld()) {
-            if (npcLoc.distance(location) < 1) {
+            if (npcLoc.distance(location) < 2) {
                 NMS.setHeadAndBodyYaw(getEntity(), location.getYaw());
             }
             if (getEntity().getType() == EntityType.PLAYER && !getEntity().isInsideVehicle()
