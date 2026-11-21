@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.citizensnpcs.api.util.SpigotUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -17,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Maps;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -36,7 +38,8 @@ import net.citizensnpcs.trait.LookClose;
 
 public class CitizensNPCRegistry implements NPCRegistry {
     private final String name;
-    private final Int2ObjectOpenHashMap<NPC> npcs = new Int2ObjectOpenHashMap<>();
+    private final Map<Integer, NPC> npcs = SpigotUtil.isFoliaServer() ?
+            new ConcurrentHashMap<>() : new Int2ObjectOpenHashMap<>();
     private final CitizensPlugin plugin;
     private final NPCDataStore saves;
     private final Map<UUID, NPC> uniqueNPCs = Maps.newConcurrentMap();
@@ -128,10 +131,18 @@ public class CitizensNPCRegistry implements NPCRegistry {
         Iterator<NPC> itr = iterator();
         while (itr.hasNext()) {
             NPC npc = itr.next();
-            try {
-                npc.despawn(reason);
-            } catch (Throwable e) {
-                e.printStackTrace();
+            Runnable despawn = () -> {
+                try {
+                    npc.despawn(reason);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            };
+            Entity entity = npc.getEntity();
+            if (entity != null) {
+                CitizensAPI.getScheduler().checkedRunEntityTask(entity, despawn);
+            } else {
+                despawn.run();
             }
             itr.remove();
         }
