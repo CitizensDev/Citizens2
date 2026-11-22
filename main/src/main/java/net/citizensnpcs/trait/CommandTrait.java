@@ -56,6 +56,7 @@ import net.citizensnpcs.trait.shop.ExperienceAction;
 import net.citizensnpcs.trait.shop.ItemAction;
 import net.citizensnpcs.trait.shop.MoneyAction;
 import net.citizensnpcs.trait.shop.NPCShopAction.Transaction;
+import net.citizensnpcs.trait.shop.PermissionAction;
 import net.citizensnpcs.util.Messages;
 import net.citizensnpcs.util.StringHelper;
 import net.citizensnpcs.util.Util;
@@ -83,6 +84,8 @@ public class CommandTrait extends Trait {
     @Persist
     private final List<ItemStack> itemRequirements = new ArrayList<>();
     private int lastUsedId = -1;
+    @Persist
+    private final List<String> permissionRequirements = new ArrayList<>();
     @Persist(keyType = UUID.class, reify = true, value = "cooldowns")
     private final Map<UUID, PlayerNPCCommand> playerTracking = new HashMap<>();
     @Persist("persistSequence")
@@ -133,6 +136,13 @@ public class CommandTrait extends Trait {
             }
             txns.add(action);
         }
+        if (command.perms.size() > 0 && !player.hasPermission("citizens.npc.command.ignoreerrors.permission")) {
+            Transaction action = new PermissionAction(command.perms).take(player, 1);
+            if (!action.isPossible()) {
+                sendErrorMessage(player, CommandTraitError.NO_PERMISSION, null);
+            }
+            txns.add(action);
+        }
         return Transaction.compose(txns);
     }
 
@@ -164,6 +174,14 @@ public class CommandTrait extends Trait {
                                 ? stack.getItemMeta().getDisplayName()
                                 : Util.prettyEnum(stack.getType()),
                         stack.getAmount());
+            }
+            txns.add(action);
+        }
+        if (permissionRequirements.size() > 0
+                && !player.hasPermission("citizens.npc.command.ignoreerrors.permission")) {
+            Transaction action = new PermissionAction(permissionRequirements).take(player, 1);
+            if (!action.isPossible()) {
+                sendErrorMessage(player, CommandTraitError.NO_PERMISSION, null);
             }
             txns.add(action);
         }
@@ -481,6 +499,11 @@ public class CommandTrait extends Trait {
 
     public void setExperienceCost(int experienceCost) {
         this.experienceCost = experienceCost;
+    }
+
+    public void setGlobalPermissionRequirements(Collection<String> permissions) {
+        permissionRequirements.clear();
+        permissionRequirements.addAll(permissions);
     }
 
     public void setHideErrorMessages(boolean hide) {
@@ -832,12 +855,6 @@ public class CommandTrait extends Trait {
         }
 
         public boolean canUse(CommandTrait trait, Player player, Hand hand, NPCCommand command) {
-            for (String perm : command.perms) {
-                if (!player.hasPermission(perm)) {
-                    trait.sendErrorMessage(player, CommandTraitError.NO_PERMISSION, null);
-                    return false;
-                }
-            }
             long globalDelay = Setting.NPC_COMMAND_GLOBAL_COMMAND_COOLDOWN.asSeconds();
             long currentTimeSec = System.currentTimeMillis() / 1000;
             String commandKey = command.getEncodedKey();

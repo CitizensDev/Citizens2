@@ -29,7 +29,6 @@ import net.citizensnpcs.api.npc.NPCDataStore;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.RemoveReason;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.npc.ai.NPCHolder;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.LookClose;
@@ -67,7 +66,7 @@ public class CitizensNPCRegistry implements NPCRegistry {
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
-        CitizensNPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this, plugin); 
+        CitizensNPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this, plugin);
         npcs.put(id, npc);
         uniqueNPCs.put(npc.getUniqueId(), npc);
         Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));
@@ -128,10 +127,18 @@ public class CitizensNPCRegistry implements NPCRegistry {
         Iterator<NPC> itr = iterator();
         while (itr.hasNext()) {
             NPC npc = itr.next();
-            try {
-                npc.despawn(reason);
-            } catch (Throwable e) {
-                e.printStackTrace();
+            Runnable despawn = () -> {
+                try {
+                    npc.despawn(reason);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            };
+            Entity entity = npc.getEntity();
+            if (entity != null) {
+                CitizensAPI.getScheduler().checkedRunEntityTask(entity, despawn);
+            } else {
+                despawn.run();
             }
             itr.remove();
         }

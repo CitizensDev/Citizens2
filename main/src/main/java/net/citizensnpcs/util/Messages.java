@@ -74,6 +74,7 @@ public class Messages {
     public static final String COMMAND_MISSING_COST = "citizens.commands.npc.command.cost-missing";
     public static final String COMMAND_NO_COMMANDS_ADDED = "citizens.commands.npc.command.none-added";
     public static final String COMMAND_PAGE_MISSING = "citizens.commands.page-missing";
+    public static final String COMMAND_PERMISSION_COST_SET = "citizens.commands.npc.command.permission-cost-set";
     public static final String COMMAND_REMOVED = "citizens.commands.npc.command.command-removed";
     public static final String COMMAND_RIGHT_HAND_HEADER = "citizens.commands.npc.command.right-hand-header";
     public static final String COMMAND_TEMPORARY_PERMISSIONS_SET = "citizens.commands.npc.command.temporary-permissions-set";

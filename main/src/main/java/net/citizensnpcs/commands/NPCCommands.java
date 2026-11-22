@@ -585,7 +585,7 @@ public class NPCCommands {
 
     @Command(
             aliases = { "npc" },
-            usage = "command (add [command] | execute [player UUID] [hand] | remove [id|all] | permissions [permissions] (duration) | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses] --gn [max # of global uses]",
+            usage = "command (add [command] | execute [player UUID] [hand] | remove [id|all] | permissions [permissions] (duration) | sequential | cycle | random | forgetplayer (uuid) | clearerror [type] (name|uuid) | errormsg [type] [msg] | persistsequence [true|false] | cost [cost] (id) | permissioncost [permissions] (id) | expcost [cost] (id) | itemcost (id)) (-s(hift)) (-l[eft]/-r[ight]) (-p[layer] -o[p]), --cooldown --gcooldown [seconds] --delay [ticks] --permissions [perms] --n [max # of uses] --gn [max # of global uses]",
             desc = "",
             modifiers = { "command", "cmd" },
             min = 1,
@@ -601,8 +601,8 @@ public class NPCCommands {
             @Arg(
                     value = 1,
                     completions = { "add", "execute", "remove", "permissions", "persistsequence", "sequential", "cycle",
-                            "random", "forgetplayer", "hideerrors", "errormessage", "clearerror", "expcost", "itemcost",
-                            "cost" }) String action)
+                            "permissioncost", "random", "forgetplayer", "hideerrors", "errormessage", "clearerror",
+                            "expcost", "itemcost", "cost" }) String action)
             throws CommandException {
         CommandTrait commands = npc.getOrAddTrait(CommandTrait.class);
         if (args.argsLength() == 1) {
@@ -750,6 +750,11 @@ public class NPCCommands {
                 throw new CommandException(Messages.COMMAND_MISSING_COST);
             commands.setExperienceCost(args.getInteger(2));
             Messaging.sendTr(sender, Messages.COMMAND_EXPERIENCE_COST_SET, args.getInteger(2));
+        } else if (action.equalsIgnoreCase("permissioncost")) {
+            if (args.argsLength() == 2)
+                throw new CommandException(Messages.COMMAND_MISSING_COST);
+            commands.setGlobalPermissionRequirements(Splitter.on(',').splitToList(args.getJoinedStrings(2)));
+            Messaging.sendTr(sender, Messages.COMMAND_PERMISSION_COST_SET, args.getJoinedStrings(2));
         } else if (action.equalsIgnoreCase("hideerrors")) {
             commands.setHideErrorMessages(!commands.isHideErrorMessages());
             Messaging.sendTr(sender, commands.isHideErrorMessages() ? Messages.COMMAND_HIDE_ERROR_MESSAGES_SET
@@ -893,9 +898,6 @@ public class NPCCommands {
             Messaging.sendErrorTr(sender, Messages.NPC_NAME_TOO_LONG, nameLength);
             name = name.substring(0, nameLength);
         }
-        if (name.length() == 0)
-            throw new CommandException();
-
         if (!sender.hasPermission("citizens.npc.create.*") && !sender.hasPermission("citizens.npc.createall")
                 && !sender.hasPermission("citizens.npc.create." + type.name().toLowerCase(Locale.ROOT)))
             throw new NoPermissionsException();
@@ -1003,15 +1005,13 @@ public class NPCCommands {
         selector.select(sender, npc);
         history.add(sender, new CreateNPCHistoryItem(npc));
         Messaging.send(sender, msg + '.');
-        NPC finalNPC = npc;
-        Location spawnLoc = at != null ? at : args.getSenderLocation();
-        CitizensAPI.getScheduler().runRegionTask(spawnLoc, () -> {
-            Location loc = args.hasFlag('c') ? Util.getCenterLocation(spawnLoc.getBlock()) : spawnLoc;
-            loc.getChunk().load();
-            if (!args.hasFlag('u')) {
-                finalNPC.spawn(loc, SpawnReason.CREATE);
-            }
-        });
+        if (!args.hasFlag('u')) {
+            Location spawnLoc = at != null ? at : args.getSenderLocation();
+            NPC finalNPC = npc;
+            CitizensAPI.getScheduler().runRegionTask(spawnLoc,
+                    () -> finalNPC.spawn(args.hasFlag('c') ? Util.getCenterLocation(spawnLoc.getBlock()) : spawnLoc,
+                            SpawnReason.CREATE));
+        }
     }
 
     @Command(

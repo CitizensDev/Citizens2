@@ -14,6 +14,7 @@
   "citizens.commands.npc.nophysics.set" : "[[{0}]] now has no collision physics.",
   "citizens.commands.npc.nophysics.unset" : "[[{0}]] now has collision physics.",
   "citizens.commands.npc.nophysics.help" : "",
+  "citizens.commands.npc.command.permission-cost-set" : "Permission cost set to [[{0}]].",
   "citizens.commands.npc.nophysics.description" : "Manage no physics settings",
   "citizens.commands.id-not-found" : "Couldn''t find any NPC with ID [[{0}]].",
   "citizens.commands.invalid-mobtype" : "[[{0}]] is not a valid mobtype.",
