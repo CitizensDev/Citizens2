@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLongArray;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -25,6 +26,7 @@ import com.github.retrooper.packetevents.event.PacketListener;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
@@ -79,6 +81,11 @@ public class PacketEventsHook implements Listener {
     private final Map<UUID, DisguiseTrait> disguiseTraitsUUID = Maps.newConcurrentMap();
     private Object MINIMESSAGE;
     private final Map<UUID, MirrorTrait> mirrorTraits = Maps.newConcurrentMap();
+    // entity IDs that were looked up and are not NPCs, one bit per ID in blocks of 65536
+    private final Map<Integer, AtomicLongArray> nonNPCEntityIds = Maps.newConcurrentMap();
+    // entity IDs that no world knows (packet-only entities of other plugins); forgotten every few seconds
+    private final Map<Integer, AtomicLongArray> unknownEntityIds = Maps.newConcurrentMap();
+    private volatile long unknownEntityIdsCleared = System.nanoTime();
     private Constructor<PlayerData> PLAYERDATA_CONSTRUCTOR;
     private final Map<Integer, RotationTrait> rotationTraits = Maps.newConcurrentMap();
 
@@ -111,14 +118,16 @@ public class PacketEventsHook implements Listener {
 
             @Override
             public void onPacketSend(PacketSendEvent event) {
-                if (event.getPacketType() != PacketType.Play.Server.ENTITY_EQUIPMENT)
+                if (event.getPacketType() != PacketType.Play.Server.ENTITY_EQUIPMENT || isKnownNonNPC(event))
                     return;
                 WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(event);
                 Entity entity = SpigotConversionUtil.getEntityById(event.<Player> getPlayer().getWorld(),
                         packet.getEntityId());
                 NPC npc = plugin.getNPCRegistry().getNPC(entity);
-                if (npc == null)
+                if (npc == null) {
+                    markNonNPC(packet.getEntityId(), entity);
                     return;
+                }
                 MirrorTrait mirror = npc.getTraitNullable(MirrorTrait.class);
                 if (mirror != null && mirror.getEquipmentFunction() != null && mirror.isMirroring(event.getPlayer())) {
                     List<com.github.retrooper.packetevents.protocol.player.Equipment> equipment = new ArrayList<>();
@@ -222,6 +231,9 @@ public class PacketEventsHook implements Listener {
             }
 
             private void handleEntityMetadata(PacketSendEvent event) {
+                int entityId = peekEntityId(event);
+                if (entityId != -1 && !disguiseTraits.containsKey(entityId))
+                    return;
                 WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(event);
 
                 DisguiseTrait trait = disguiseTraits.get(packet.getEntityId());
@@ -301,12 +313,15 @@ public class PacketEventsHook implements Listener {
         PacketEvents.getAPI().getEventManager().registerListener(new PacketListener() {
             @Override
             public void onPacketSend(PacketSendEvent event) {
-                if (event.getPacketType() != PacketType.Play.Server.ENTITY_METADATA)
+                if (event.getPacketType() != PacketType.Play.Server.ENTITY_METADATA || isKnownNonNPC(event))
                     return;
                 WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(event);
                 Entity entity = SpigotConversionUtil.getEntityById(event.<Player> getPlayer().getWorld(),
                         packet.getEntityId());
                 NPC npc = plugin.getNPCRegistry().getNPC(entity);
+                if (npc == null) {
+                    markNonNPC(packet.getEntityId(), entity);
+                }
                 if (npc == null || !npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER))
                     return;
                 int version = event.getUser().getPacketVersion().getProtocolVersion();
@@ -413,6 +428,9 @@ public class PacketEventsHook implements Listener {
             public void onPacketSend(PacketSendEvent event) {
                 if (!rotation.contains(event.getPacketType()))
                     return;
+                int entityId = peekEntityId(event);
+                if (entityId != -1 && !rotationTraits.containsKey(entityId))
+                    return;
 
                 PacketTypeCommon type = event.getPacketType();
                 PacketRotationSession session = null;
@@ -452,6 +470,79 @@ public class PacketEventsHook implements Listener {
                 session.onPacketOverwritten();
             }
         }, PacketListenerPriority.HIGHEST);
+    }
+
+    /**
+     * Whether the packet is about an entity that has already been looked up and is not an NPC. An entity is an NPC
+     * from the moment it exists and entity IDs are not reused, so that answer never changes. An ID that no world knows
+     * belongs to a packet-only entity of another plugin; that answer is only kept for a few seconds, in case the
+     * lookup was simply too early.
+     *
+     * @see #peekEntityId(PacketSendEvent)
+     */
+    private boolean isKnownNonNPC(PacketSendEvent event) {
+        int entityId = peekEntityId(event);
+        if (entityId < 0)
+            return false;
+        long now = System.nanoTime();
+        if (now - unknownEntityIdsCleared > 5_000_000_000L) {
+            unknownEntityIdsCleared = now;
+            unknownEntityIds.clear();
+        }
+        boolean known = contains(nonNPCEntityIds, entityId) || contains(unknownEntityIds, entityId);
+        return known;
+    }
+
+    private static boolean contains(Map<Integer, AtomicLongArray> ids, int entityId) {
+        AtomicLongArray block = ids.get(entityId >>> 16);
+        return block != null && (block.get((entityId & 0xFFFF) >>> 6) & 1L << (entityId & 63)) != 0;
+    }
+
+    /**
+     * Remembers the result of a lookup that found no NPC.
+     *
+     * @param entity
+     *            the entity that was found, or null if no world knows the ID
+     */
+    private void markNonNPC(int entityId, Entity entity) {
+        if (entityId < 0)
+            return;
+        Map<Integer, AtomicLongArray> ids = entity != null ? nonNPCEntityIds : unknownEntityIds;
+        AtomicLongArray block = ids.get(entityId >>> 16);
+        if (block == null) {
+            AtomicLongArray created = new AtomicLongArray(1024);
+            block = ids.putIfAbsent(entityId >>> 16, created);
+            if (block == null) {
+                block = created;
+            }
+        }
+        int index = (entityId & 0xFFFF) >>> 6;
+        long bit = 1L << (entityId & 63);
+        long current;
+        do {
+            current = block.get(index);
+        } while ((current & bit) == 0 && !block.compareAndSet(index, current, current | bit));
+    }
+
+    /**
+     * Reads the entity ID at the start of an entity packet without creating a wrapper. Creating a wrapper decodes the
+     * whole packet and makes PacketEvents encode it again afterwards, which is wasted work for the packets about
+     * entities Citizens does not care about.
+     *
+     * @return the entity ID, or -1 if another listener has already used a wrapper for this packet
+     */
+    private int peekEntityId(PacketSendEvent event) {
+        if (event.getLastUsedWrapper() != null)
+            return -1;
+        Object buffer = event.getByteBuf();
+        int readerIndex = ByteBufHelper.readerIndex(buffer);
+        try {
+            return ByteBufHelper.readVarInt(buffer);
+        } catch (Throwable t) {
+            return -1;
+        } finally {
+            ByteBufHelper.readerIndex(buffer, readerIndex);
+        }
     }
 
     private Object minimessage(String raw) {
