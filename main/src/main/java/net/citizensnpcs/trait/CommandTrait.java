@@ -141,7 +141,7 @@ public class CommandTrait extends Trait {
             if (!action.isPossible()) {
                 sendErrorMessage(player, CommandTraitError.NO_PERMISSION, null);
             }
-            txns.add(action);
+            txns.add(Transaction.fail()); // don't actually take the permission off the player
         }
         return Transaction.compose(txns);
     }
